@@ -163,7 +163,7 @@ class CheckboxCriterion < Criterion
     # Create a new CheckboxCriterion
     criterion = CheckboxCriterion.new
     criterion.name = name
-    # Check that the max_mark is not a string.
+    # Check max_mark is not a string.
     begin
       criterion.max_mark = Float(criterion_yml[1]['max_mark'])
     rescue ArgumentError
@@ -181,5 +181,16 @@ class CheckboxCriterion < Criterion
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion
+  end
+
+  # Returns a hash containing the information of a single checkbox criterion.
+  def self.to_yml(criterion)
+    criterion_info = {}
+    criterion_info['type']         = 'Checkbox'
+    criterion_info['max_mark']     = criterion.max_mark.to_f
+    criterion_info['description']  = criterion.description.blank? ? '' : criterion.description
+    criterion_info['ta_visible']   = criterion.ta_visible
+    criterion_info['peer_visible'] = criterion.peer_visible
+    { "#{criterion.name}" => criterion_info }
   end
 end

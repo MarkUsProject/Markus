@@ -172,10 +172,9 @@ class RubricCriterion < Criterion
     # Create a new RubricCriterion
     criterion = RubricCriterion.new
     criterion.name = name
-    # Check that the weight is not a string, so that the appropriate
-    # max mark can be calculated.
+    # Check max_mark is not a string.
     begin
-      criterion.max_mark = Float(criterion_yml[1]['weight']) * MAX_LEVEL
+      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
     rescue ArgumentError
       raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
     rescue TypeError
@@ -196,6 +195,25 @@ class RubricCriterion < Criterion
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion
+  end
+
+  # Returns a hash containing the information of a single rubric criterion.
+  def self.to_yml(criterion)
+    criterion_info = {}
+    criterion_info['max_mark']     = criterion.max_mark.to_f
+    criterion_info['level_0']      = { 'name'        => criterion.level_0_name,
+                                       'description' => criterion.level_0_description }
+    criterion_info['level_1']      = { 'name'        => criterion.level_1_name,
+                                       'description' => criterion.level_1_description }
+    criterion_info['level_2']      = { 'name'        => criterion.level_2_name,
+                                       'description' => criterion.level_2_description }
+    criterion_info['level_3']      = { 'name'        => criterion.level_3_name,
+                                       'description' => criterion.level_3_description }
+    criterion_info['level_4']      = { 'name'        => criterion.level_4_name,
+                                       'description' => criterion.level_4_description }
+    criterion_info['ta_visible']   = criterion.ta_visible
+    criterion_info['peer_visible'] = criterion.peer_visible
+    { "#{criterion.name}" => criterion_info }
   end
 
   def weight

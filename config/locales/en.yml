@@ -1246,7 +1246,7 @@ en:
           <ul>
             <li><p>The file should have the following format for a rubric criterion:<br>
               <code>criterion_name:<br>
-                &nbsp;&nbsp;weight: weight<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
                 &nbsp;&nbsp;level_0:<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>

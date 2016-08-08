@@ -77,9 +77,9 @@ class CriteriaController < ApplicationController
 
   def download_yml
     assignment = Assignment.find(params[:assignment_id])
-    rubric_file_out = assignment.export_rubric_criteria_yml
-    flex_checkbox_file_out = assignment.export_flexible_checkbox_criteria_yml
-    send_data(rubric_file_out + flex_checkbox_file_out,
+    yml_criteria = {}
+    assignment.get_criteria.each{ |criterion| yml_criteria = yml_criteria.merge(criterion.class.to_yml(criterion)) }
+    send_data(yml_criteria.to_yaml.gsub("---\n", ''),
               type: 'text/plain',
               filename: "#{assignment.short_identifier}_criteria.yml",
               disposition: 'inline')
