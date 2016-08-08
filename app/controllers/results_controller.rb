@@ -448,16 +448,16 @@ class ResultsController < ApplicationController
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       @submission = @grouping.current_submission_used
+      result_from_id = Result.find(params[:id])
+      if result_from_id.is_a_review?
+        @result = result_from_id
+      else
+        @result = @submission.get_original_result
+      end
     else
-      @submission = Submission.find(params[:submission_id])
+      @result = Result.find(params[:id])
+      @submission = @result.submission
       @grouping = @submission.grouping
-    end
-
-    result_from_id = Result.find(params[:id])
-    if result_from_id.is_a_review?
-      @result = result_from_id
-    else
-      @result = @submission.get_original_result
     end
 
     is_review = @result.is_review_for?(@current_user, @assignment) ||
