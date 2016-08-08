@@ -479,7 +479,7 @@ class ResultsController < ApplicationController
     end
 
     is_review = @result.is_review_for?(@current_user, @assignment) ||
-        (@result.is_a_review? && !@current_user.student?)
+        @result.is_a_review?
 
     if @grouping.nil?
       redirect_to controller: 'assignments',
@@ -539,7 +539,7 @@ class ResultsController < ApplicationController
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-          @grouping.membership_status(current_user).nil? || !@current_user.student?
+          !@grouping.membership_status(current_user).nil? || !@current_user.student?
         @mark_criteria = @assignment.get_criteria(:peer)
       end
     else
