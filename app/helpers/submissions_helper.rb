@@ -120,13 +120,18 @@ module SubmissionsHelper
           g[:section] = grouping.section
         end
         if assignment.is_peer_review?
+          # create a array of hashes, where each hash represents a reviewee with the reviewee grouping's
+          # name and URL to view marks
           reviewee_array = Array.new
           prs = grouping.peer_reviews_to_others
           prs.each_with_index do |pr, i|
             reviewee_hash = Hash.new
             reviewee_result = Result.find(pr.result_id)
             reviewee_grouping = reviewee_result.submission.grouping
-            reviewee_hash[:reviewee_url] = get_grouping_name_url(reviewee_grouping, reviewee_result)
+            reviewee_hash[:reviewee_url] = url_for(view_marks_assignment_submission_result_path(assignment.parent_assignment,
+                                                                                                reviewee_result.submission,
+                                                                                                reviewee_result,
+                                                                                                reviewer_grouping_id: grouping.id))
             reviewee_hash[:reviewee_name] = Group.find(reviewee_grouping.group_id).group_name
             reviewee_array[i] = reviewee_hash
           end
