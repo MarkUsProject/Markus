@@ -214,6 +214,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         your_reviews: "Os seus comentários"
         review: "Avaliação"
     peer_review:
+        review: "Avaliação "
         problem: "Um problema inesperado ocorreu"
         submission_nil_failure: "As inscrições para a atribuição original precisam ser coletados primeiro"
         random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
@@ -653,6 +654,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
+      review_title: "Revisão %{assignment_name} : %{group_name}"
       results_name:  "Resultados"
       successfully_changed: "%{changed} resultados atualizados"
       must_select_a_group:  "Você deve selecionar pelo menos um grupo para atualizar"

@@ -67,7 +67,13 @@
 <div class='title_bar'>
   <h1>
     <% if @result.is_a_review? %>
-      <%= t('results.review_for') + sanitize(@assignment.short_identifier) %>
+      <% if @current_user.student? %>
+        <%= t('results.review_for') + sanitize(@assignment.short_identifier) %>
+      <% else %>
+        <%= t('results.review_title',
+              { assignment_name: @assignment.short_identifier,
+                group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
+      <% end %>
     <% else %>
       <%= t('results.results_for') + sanitize(@assignment.short_identifier) %>
     <% end %>

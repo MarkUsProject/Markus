@@ -216,6 +216,7 @@ fr:
         your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
+        review: "Avis "
         problem: "Un problème inattendu est survenue"
         submission_nil_failure: "Les soumissions pour l'affectation d'origine doivent être collectées première"
         random_assign_failure: "Impossible d'attribuer au hasard, trop de commentaires demandés par évaluateur / CONTRÔLER sélectionnés"
@@ -692,6 +693,7 @@ fr:
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
+      review_title: "Avis %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour."
