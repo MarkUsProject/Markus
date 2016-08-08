@@ -140,7 +140,7 @@ module SubmissionsHelper
         g[:name_url] = assignment.is_peer_review? && current_user.is_a_reviewer?(assignment) ?
             edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id) :
             get_grouping_name_url(grouping, result)
-        g[:class_name] = get_tr_class(grouping)
+        g[:class_name] = get_tr_class(grouping, assignment)
         g[:state] = grouping.marking_state(result, assignment, current_user)
         g[:anonymous_id] = i + 1
         g[:error] = ''
@@ -160,8 +160,10 @@ module SubmissionsHelper
   # style the table row green or red respectively.
   # Classname will be applied to the table row
   # and actually styled in CSS.
-  def get_tr_class(grouping)
-    if grouping.is_collected?
+  def get_tr_class(grouping, assignment)
+    if assignment.is_peer_review?
+      nil
+    elsif grouping.is_collected?
       'submission_collected'
     elsif grouping.error_collecting
       'submission_error'
@@ -171,7 +173,7 @@ module SubmissionsHelper
   end
 
   def get_grouping_name_url(grouping, result)
-    if result.is_a_review? && !grouping.peer_reviews_to_others.empty?
+    if !grouping.peer_reviews_to_others.empty? && result.is_a_review?
       url_for(view_marks_assignment_submission_result_path(
                   assignment_id: grouping.assignment.parent_assignment.id, submission_id: result.submission.id,
                   id: result.id, reviewer_grouping_id: grouping.id))

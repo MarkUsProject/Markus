@@ -741,6 +741,9 @@ class Grouping < ActiveRecord::Base
     if !user.student? && assignment.is_peer_review?
       # if an admin or TA is viewing peer review submissions
       pr_results = peer_reviews_to_others.map {|pr| Result.find(pr.result_id)}
+      if pr_results.empty?
+        return 'partial'
+      end
       unreleased_results = pr_results.find_all {|r| !r.released_to_students}
       if unreleased_results.size == 0
         'released'
