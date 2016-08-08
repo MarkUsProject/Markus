@@ -177,6 +177,9 @@ class CheckboxCriterion < Criterion
     # a description is not given.
     criterion.description =
       criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
+    # Visibility options
+    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion
   end
 end

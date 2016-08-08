@@ -1243,27 +1243,36 @@ en:
         empty_error:     "No criteria were found in the provided file."
         syntax_error:    "There is an error in the file you uploaded: %{error}"
         format_yml_html: "
-          <p>The file should have the following format for a rubric criterion:<br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;weight: weight<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>
-          <p>The following for a flexible criterion:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
+          <ul>
+            <li><p>The file should have the following format for a rubric criterion:<br>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;weight: weight<br>
+                &nbsp;&nbsp;level_0:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                &nbsp;&nbsp;level_1:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+                <p>The visibility options are optional.</p>
+            </p></li>
+            <li><p>The following for a flexible criterion:</p>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;type: flexible<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;description: description<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+              <p>The description and visibility options are optional.</p></li>
+            <li><p>And the following for a checkbox criterion:</p>
+              <code>criterion_name:<br>
+              &nbsp;&nbsp;type: checkbox<br>
               &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br></code>
-            <p>The description is optional.</p>
-          <p>And the following for a checkbox criterion:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br></code>
-          <p>The description is optional.</p>"
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>The description and visibility options are optional.</p></li>
+          </ul>"
       errors:
         messages:
           name_taken:             "Criterion name already used."

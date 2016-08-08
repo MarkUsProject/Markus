@@ -183,7 +183,7 @@ class RubricCriterion < Criterion
     rescue NoMethodError
       raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
     end
-    # next comes the level names.
+    # Next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
         criterion['level_' + i.to_s + '_name'] =
@@ -192,6 +192,9 @@ class RubricCriterion < Criterion
           criterion_yml[1]['level_' + i.to_s]['description']
       end
     end
+    # Visibility options
+    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion
   end
 

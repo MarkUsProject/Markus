@@ -42,7 +42,7 @@ class CriteriaController < ApplicationController
     @criteria = @assignment.get_criteria
     # Delete all marks associated with this criterion.
     @criterion.destroy
-    flash[:success] = I18n.t('criterion_deleted_success')
+    flash_message(:success, I18n.t('criterion_deleted_success'))
   end
 
   def update
