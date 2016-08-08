@@ -9,7 +9,7 @@ class AutomatedTestsController < ApplicationController
   before_filter      :authorize_for_student,
                      only: [:student_interface]
 
-  # Update is called when files are added to the assigment
+  # Update is called when files are added to the assignment
   def update
     @assignment = Assignment.find(params[:assignment_id])
     create_test_repo(@assignment)
@@ -28,7 +28,7 @@ class AutomatedTestsController < ApplicationController
                                       new_support_file)
       # Save assignment and associated test files
       if @assignment.save
-        flash[:success] = I18n.t("assignment.update_success")
+        flash[:success] = I18n.t('assignment.update_success')
         unless new_script.nil?
           assignment_tests_path = File.join(
               MarkusConfigurator.markus_config_automated_tests_repository,

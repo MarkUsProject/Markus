@@ -198,8 +198,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             title: "Esquema de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
-        notice:
-            change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
         allow_web_submits: "Permitir envio pelo web"
         vcs_submit: "Permitir que sustenta através de controle de versão"
         is_hidden: "Ocultar este projeto dos alunos"
