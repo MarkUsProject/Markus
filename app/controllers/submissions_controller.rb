@@ -739,8 +739,8 @@ class SubmissionsController < ApplicationController
         assignment.update_results_stats
 
         # These flashes don't get rendered. Find another way to display?
-        flash[:success] = I18n.t('results.successfully_changed',
-                                 changed: changed)
+        flash_now(:success, I18n.t('results.successfully_changed',
+                                 changed: changed))
         if release
           MarkusLogger.instance.log(
             'Marks released for assignment' +
