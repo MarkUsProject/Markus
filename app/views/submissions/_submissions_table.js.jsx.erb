@@ -89,13 +89,29 @@
               return true;
             }
           },
-          {
-            name: 'unmarked',
-            text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
-            func: function(submission) {
-              return submission.state == 'unmarked';
-            }
-          },
+          <% unless @assignment.is_peer_review? %>
+            {
+              name: 'remark_requested',
+              text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
+              func: function(submission) {
+                return submission.state == 'remark';
+              }
+            },
+            {
+              name: 'unmarked',
+              text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
+              func: function(submission) {
+                return submission.state == 'unmarked';
+              }
+            },
+            {
+              name: 'complete',
+              text: '<%= j raw t(:'browse_submissions.show_complete') %>',
+              func: function(submission) {
+                return submission.state == 'completed';
+              }
+            },
+          <% end %>
           {
             name: 'partial',
             text: '<%= j raw t(:'browse_submissions.show_partial') %>',
@@ -104,24 +120,10 @@
             }
           },
           {
-            name: 'complete',
-            text: '<%= j raw t(:'browse_submissions.show_complete') %>',
-            func: function(submission) {
-              return submission.state == 'completed';
-            }
-          },
-          {
             name: 'released',
             text: '<%= j raw t(:'browse_submissions.show_released') %>',
             func: function(submission) {
               return submission.state == 'released';
-            }
-          },
-          {
-            name: 'remark_requested',
-            text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
-            func: function(submission) {
-              return submission.state == 'remark';
             }
           }
         ]
@@ -180,7 +182,6 @@
       this.setState({success: success});
     },
     renderRevieweeList: function(reviewees) {
-      console.log(reviewees)
       return (
         <div>
           {reviewees.map(function(reviewee) {
@@ -286,27 +287,27 @@
         return s;
       }.bind(this));
 
-        return (
-          <div>
-            <ErrorDiv error={this.state.error} />
-            <SuccessDiv success={this.state.success} />
-            <SubmissionsActionBox
-              selected_submissions={this.state.selected_submissions}
-              onError={this.onError}
-              onSuccess={this.onSuccess}
-              refresh={this.refresh}
-            />
-            <Table data={submissions_data}
-              columns={this.props.columns}
-              selectable={true}
-              filters={this.props.filters}
-              secondary_filters={section_filters}
-              filter_type={true}
-              onSelectedRowsChange={this.updateSelectedSubmissions}
-              search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
-            />
-          </div>
-        );
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <SuccessDiv success={this.state.success} />
+          <SubmissionsActionBox
+            selected_submissions={this.state.selected_submissions}
+            onError={this.onError}
+            onSuccess={this.onSuccess}
+            refresh={this.refresh}
+          />
+          <Table data={submissions_data}
+            columns={this.props.columns}
+            selectable={true}
+            filters={this.props.filters}
+            secondary_filters={section_filters}
+            filter_type={true}
+            onSelectedRowsChange={this.updateSelectedSubmissions}
+            search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
+          />
+        </div>
+      );
     }
   });
 
