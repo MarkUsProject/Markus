@@ -67,7 +67,6 @@ namespace :markus do
     a1.message += "\nNote: You are working alone for this assignment."
     a1.group_min = 1
     a1.group_max = 1
-    a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.allow_web_submits = true
     a1.save!
     req_file1.save!
@@ -81,7 +80,6 @@ namespace :markus do
     a2.group_min = 3
     a2.group_max = 5
     a2.invalid_override = false
-    a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a2.allow_web_submits = true
     req_file1 = AssignmentFile.new
     req_file1.filename = "Animal.java"
@@ -112,7 +110,6 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     req_file1.assignment = a3
     a3.submission_rule = rule
     a3.allow_web_submits = true
-    a3.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a3.assignment_stat = AssignmentStat.new
     a3.display_grader_names_to_students = false
     a3.save!

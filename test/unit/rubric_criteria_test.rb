@@ -150,7 +150,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-      @assignment = Assignment.make(marking_scheme_type: 'rubric')
+      @assignment = Assignment.make
       RubricCriterion.make(assignment: @assignment,
                            name: 'Algorithm Design',
                            max_mark: 2.0)

@@ -28,9 +28,7 @@ namespace :db do
           AnnotationText.create(annotation_category: ac, content: random_sentences(3))
         end
       end
-    end
 
-    Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric]).each do |assignment|
       8.times do |index|
         RubricCriterion.create(
             name:                  random_sentences(1),
@@ -49,9 +47,7 @@ namespace :db do
             level_4_description:   random_sentences(5)
         )
       end
-    end
 
-    Assignment.where(marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible]).each do |assignment|
       8.times do |index|
         FlexibleCriterion.create(
             name:                    random_sentences(1),

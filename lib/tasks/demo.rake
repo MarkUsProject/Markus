@@ -33,7 +33,6 @@ namespace :markus do
     a1.repository_folder = "A1"
     a1.submission_rule = rule
     a1.invalid_override = false
-    a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.assignment_stat = AssignmentStat.new
     a1.display_grader_names_to_students = false
     a1.save!
@@ -52,7 +51,6 @@ namespace :markus do
     a2.repository_folder = "A2"
     a2.submission_rule = rule
     a2.invalid_override = false
-    a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a2.assignment_stat = AssignmentStat.new
     a2.display_grader_names_to_students = false
     a2.save!

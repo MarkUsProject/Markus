@@ -138,15 +138,6 @@ function change_submission_rule() {
   }
 }
 
-function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme_type, marking_scheme_type) {
-  if (!is_assignment_new && clicked_marking_scheme_type !== marking_scheme_type) {
-    jQuery('#marking_scheme_notice').removeClass('hidden')
-                                    .show();
-  } else {
-    jQuery('#marking_scheme_notice').hide();
-  }
-}
-
 function toggle_automated_tests(is_testing_framework_enabled) {
   jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
 

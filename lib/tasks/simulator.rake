@@ -75,7 +75,6 @@ namespace :markus do
         assignment.repository_folder = assignment_short_identifier
         assignment.submission_rule = rule
         assignment.invalid_override = false
-        assignment.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
         assignment.display_grader_names_to_students = false
         assignment.assignment_stat = AssignmentStat.new
         assignment.save!
