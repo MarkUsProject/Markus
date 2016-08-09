@@ -253,6 +253,7 @@ en:
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
+        peer_review: "Peer Review"
         download:
             assigned_reviewers_header: "Download Peer Review Assignments"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
@@ -299,7 +300,6 @@ en:
     submissions:        "Submissions"
     summaries:          "Summaries"
     peer_reviews:       "Peer reviews"
-    peer_review:        "Peer Review"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
