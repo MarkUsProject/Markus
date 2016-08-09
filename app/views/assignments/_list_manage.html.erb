@@ -15,7 +15,7 @@
         </thead>
         <tbody>
           <% @assignments.includes(:section_due_dates).each do |assignment| %>
-            <tr>
+            <tr class="<%= assignment.has_peer_review? ? 'has_pr_row' : ''%>">
               <td>
                 <% if controller == 'assignments' %>
                   <% if assignment.is_hidden %>
@@ -25,13 +25,13 @@
                                 { controller: controller,
                                   action: action,
                                   id: assignment },
-                                class: 'assignment_list' %>
+                                class: assignment.is_peer_review? ? 'pr_assignment_list' : 'assignment_list' %>
                   <% else %>
                     <%= link_to assignment.short_identifier + ': ' + assignment.description,
                                 { controller: controller,
                                    action: action,
                                    id: assignment },
-                                class: 'assignment_list' %>
+                                class: assignment.is_peer_review? ? 'pr_assignment_list' : 'assignment_list' %>
                   <% end %>
                 <% else %>
                   <% if assignment.is_hidden %>
@@ -41,13 +41,13 @@
                                 { controller: controller,
                                   action: action,
                                   assignment_id: assignment },
-                                class: 'assignment_list' %>
+                                class: assignment.is_peer_review? ? 'pr_assignment_list' : 'assignment_list' %>
                   <% else %>
                     <%= link_to assignment.short_identifier + ': ' + assignment.description,
                                 { controller: controller,
                                   action: action,
                                   assignment_id: assignment },
-                                class: 'assignment_list'%>
+                                class: assignment.is_peer_review? ? 'pr_assignment_list' : 'assignment_list' %>
                   <% end %>
                 <% end %>
               </td>
