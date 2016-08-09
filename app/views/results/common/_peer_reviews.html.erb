@@ -4,14 +4,14 @@
   </p>
   <div id='peer_review_selector' class='dropdown'>
     <% if @current_user.student? %>
-      <a><%= t('peer_review.review') + (prs.index(current_pr) + 1).to_s %></a>
+      <a><%= t('peer_review.review') + ' ' + (prs.index(current_pr) + 1).to_s %></a>
     <% else %>
       <a><%= current_group_name %></a>
     <% end %>
     <ul>
       <% prs.each_with_index do |pr, i| %>
         <% if @current_user.student? %>
-          <li> <%= link_to(t('peer_review.review') + (i + 1).to_s,
+          <li> <%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
                         view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
         <% else %>
             <% pr_result = Result.find(pr.result_id) %>
