@@ -29,7 +29,7 @@ namespace :db do
         end
       end
 
-      8.times do |index|
+      3.times do |index|
         RubricCriterion.create(
             name:                  random_sentences(1),
             assignment_id:         assignment.id,
@@ -48,13 +48,26 @@ namespace :db do
         )
       end
 
-      8.times do |index|
+      3.times do |index|
         FlexibleCriterion.create(
             name:                    random_sentences(1),
             assignment_id:           assignment.id,
             description:             random_sentences(5),
-            position:                index + 1,
+            position:                index + 4,
             max_mark:                pos_rand(3),
+            created_at:              nil,
+            updated_at:              nil,
+            assigned_groups_count:   nil
+        )
+      end
+
+      3.times do |index|
+        CheckboxCriterion.create(
+            name:                    random_sentences(1),
+            assignment_id:           assignment.id,
+            description:             random_sentences(5),
+            position:                index + 7,
+            max_mark:                1,
             created_at:              nil,
             updated_at:              nil,
             assigned_groups_count:   nil
