@@ -112,9 +112,9 @@
               <br/><br/>
           <% end %>
 
-          <%= f.label :criterion_id_type, t('automated_tests.script_option.associated_criterion') %>
+          <%= f.label :criterion_id, t('automated_tests.script_option.associated_criterion') %>
           <% selected = f.object.criterion.nil? ? nil : f.object.criterion.id.to_s %>
-          <%= f.select :criterion_id_type, options_for_select(criterion_options, selected) %>
+          <%= f.select :criterion_id, options_for_select(criterion_options, selected) %>
 
           <br/><br/>
 

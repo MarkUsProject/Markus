@@ -88,9 +88,10 @@ module AutomatedTestsHelper
           end
         end
       end
-      # always make sure the criterion type is correct
+      # Always make sure the criterion type is correct. The :criterion_id parameter contains a list
+      # of the following form [criterion_id, criterion_type]
       updated_script_files[file_num][:criterion_type] =
-        testscripts[file_num][:criterion_id_type].nil? ? testscripts[file_num][:criterion_id_type] : testscripts[file_num][:criterion_id_type][1]
+        testscripts[file_num][:criterion_id].nil? ? testscripts[file_num][:criterion_id] : testscripts[file_num][:criterion_id][1]
     end
 
     # Create/Update test support files
