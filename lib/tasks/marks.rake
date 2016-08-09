@@ -4,12 +4,11 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
-    #Function used to create marks for both criterias
-    def create_mark(result_id, markable_type, markable)
+    # Creates marks for all criteria
+    def create_mark(result_id, markable)
       Mark.create(
         result_id: result_id,
-        mark: rand(0..4),
-        markable_type: markable_type,
+        mark: rand(0..markable.max_mark).floor,
         markable: markable)
     end
 
@@ -23,8 +22,7 @@ namespace :db do
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria.each do |criterion|
-        criterion_class = criterion.class == RubricCriterion ? 'rubric' : 'flexible'
-        mark = create_mark(result.id, criterion_class, criterion)
+        mark = create_mark(result.id, criterion)
         result.marks.push(mark)
         result.save
       end
