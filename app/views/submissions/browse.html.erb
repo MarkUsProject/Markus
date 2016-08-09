@@ -2,7 +2,7 @@
 
 <% content_for :title do %>
   <% if @assignment.is_peer_review? %>
-    <%=t('assignment.review')%>: <%= sanitize(@assignment.short_identifier) %>
+    <%=t('peer_review.reviews')%>: <%= sanitize(@assignment.short_identifier) %>
   <% else %>
     <%= t('browse_submissions.submissions',
           short_identifier: sanitize(@assignment.short_identifier)) %>

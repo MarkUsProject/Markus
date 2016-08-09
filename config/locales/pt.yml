@@ -212,9 +212,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"
-        review: "Avaliação"
+        review: "Revisãos"
     peer_review:
-        review: "Avaliação "
+        review: "Revisão "
+        reviews: "Revisões"
         problem: "Um problema inesperado ocorreu"
         submission_nil_failure: "As inscrições para a atribuição original precisam ser coletados primeiro"
         random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
