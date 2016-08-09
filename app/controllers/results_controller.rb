@@ -502,6 +502,8 @@ class ResultsController < ApplicationController
       end
 
       @current_pr = PeerReview.find_by(result_id: @result.id)
+      @current_pr_result = Result.find(@current_pr.result_id)
+      @current_group_name = Group.find(@current_pr_result.submission.grouping.group_id).group_name
     end
 
     unless is_review || @submission.has_result?
