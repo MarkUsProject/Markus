@@ -170,7 +170,7 @@ class AutomatedTestsController < ApplicationController
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,
-                     :criterion_id, :_destroy],
+                     :criterion_id_type, :_destroy],
                 test_support_files_attributes:
                     [:id, :file_name, :assignment_id, :description, :_destroy])
   end
