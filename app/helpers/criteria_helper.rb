@@ -18,11 +18,11 @@ module CriteriaHelper
       else
         begin
           type = criterion_yml[1]['type']
-          if type.nil? || type == 'Rubric'
+          if type.nil? || type.casecmp('rubric') == 0
             criterion = RubricCriterion.load_from_yml(criterion_yml)
-          elsif type == 'Flexible'
+          elsif type.casecmp('flexible') == 0
             criterion = FlexibleCriterion.load_from_yml(criterion_yml)
-          elsif type == 'Checkbox'
+          elsif type.casecmp('checkbox') == 0
             criterion = CheckboxCriterion.load_from_yml(criterion_yml)
           else
             raise RuntimeError

@@ -136,13 +136,13 @@ class FlexibleCriterion < Criterion
 
   # Returns a hash containing the information of a single flexible criterion.
   def self.to_yml(criterion)
-    criterion_info = {}
-    criterion_info['type']         = 'Flexible'
-    criterion_info['max_mark']     = criterion.max_mark.to_f
-    criterion_info['description']  = criterion.description.blank? ? '' : criterion.description
-    criterion_info['ta_visible']   = criterion.ta_visible
-    criterion_info['peer_visible'] = criterion.peer_visible
-    { "#{criterion.name}" => criterion_info }
+    { "#{criterion.name}" =>
+      { 'type'         => 'flexible',
+        'max_mark'     => criterion.max_mark.to_f,
+        'description'  => criterion.description.blank? ? '' : criterion.description,
+        'ta_visible'   => criterion.ta_visible,
+        'peer_visible' => criterion.peer_visible }
+    }
   end
 
   def weight

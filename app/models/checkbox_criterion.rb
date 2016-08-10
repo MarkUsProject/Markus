@@ -185,12 +185,12 @@ class CheckboxCriterion < Criterion
 
   # Returns a hash containing the information of a single checkbox criterion.
   def self.to_yml(criterion)
-    criterion_info = {}
-    criterion_info['type']         = 'Checkbox'
-    criterion_info['max_mark']     = criterion.max_mark.to_f
-    criterion_info['description']  = criterion.description.blank? ? '' : criterion.description
-    criterion_info['ta_visible']   = criterion.ta_visible
-    criterion_info['peer_visible'] = criterion.peer_visible
-    { "#{criterion.name}" => criterion_info }
+    { "#{criterion.name}" =>
+      { 'type'         => 'checkbox',
+        'max_mark'     => criterion.max_mark.to_f,
+        'description'  => criterion.description.blank? ? '' : criterion.description,
+        'ta_visible'   => criterion.ta_visible,
+        'peer_visible' => criterion.peer_visible }
+    }
   end
 end
