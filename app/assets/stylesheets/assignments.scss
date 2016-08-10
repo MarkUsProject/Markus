@@ -259,11 +259,13 @@ span.info_date {
 
 /* Table Styles */
 
-.has_pr_row {
-  border-bottom-color: white !important;
+.pr_assignment_list {
+  padding-left: 15px;
+  display: block;
+  padding-top: 11px;
 }
 
-.pr_assignment_list {
-  padding-left: 20px;
+.pr_date {
+  padding-top: 11px;
 }
 
