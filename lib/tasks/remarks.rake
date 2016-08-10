@@ -41,7 +41,7 @@ namespace :db do
       if criterion.class == RubricCriterion
         random_mark = criterion.max_mark / 4 * rand(0..4)
       elsif criterion.class == FlexibleCriterion
-        random_mark = criterion.max_mark.to_i
+        random_mark = rand(0..criterion.max_mark.to_i)
       else
         random_mark = rand(0..1)
       end
