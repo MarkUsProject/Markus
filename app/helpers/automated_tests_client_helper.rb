@@ -2,11 +2,10 @@ require 'json'
 require 'net/ssh'
 require 'net/scp'
 
-# Helper methods for Testing Framework forms
-module AutomatedTestsHelper
-  # This is the waiting list for automated testing. Once a test is requested,
-  # it is enqueued and it is waiting for execution. Resque manages this queue.
-  @queue = MarkusConfigurator.markus_ate_test_queue_name
+module AutomatedTestsClientHelper
+  # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
+  # and it is waiting for the submission files to be copied in the test location. Resque manages this queue.
+  @queue = MarkusConfigurator.markus_ate_file_queue_name
 
   def fetch_latest_tokens_for_grouping(grouping)
     if grouping.token.nil?
@@ -168,8 +167,87 @@ module AutomatedTestsHelper
     assignment
   end
 
-  def self.copy_test_files(assignment, repo_path)
-    submission_path = File.join(repo_path, assignment.repository_folder)
+  # Export group repository for testing. Students' submitted files
+  # are stored in the group repository. They must be exported
+  # before copying to the test server.
+  def export_group_repo(group, repo_dir)
+
+    # Create the automated test repository
+    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+    # Delete student's assignment repository if it already exists
+    if File.exists?(repo_dir)
+      FileUtils.rm_rf(repo_dir)
+    end
+    group.repo.export(repo_dir)
+  end
+
+  # Verify that MarkUs has some files to run the test.
+  # Note: this does not guarantee all required files are presented.
+  # Instead, it checks if there is at least one test script and
+  # source files are successfully exported.
+  def files_available?(assignment, repo_dir)
+
+    # TODO: show the errors to the user instead of raising a runtime error
+    # No test files or test directory
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    if TestScript.find_by(assignment_id: assignment.id).nil? || !File.exist?(test_dir)
+      raise I18n.t('automated_tests.test_files_unavailable')
+    end
+    # No assignment directory or no files in repo (only current and parent directory pointers)
+    assignment_dir = File.join(repo_dir, assignment.repository_folder)
+    if !File.exist?(assignment_dir) || Dir.entries(assignment_dir).length <= 2
+      raise I18n.t('automated_tests.source_files_unavailable')
+    end
+
+    return true
+  end
+
+  # Verify the user has the permission to run the tests - admin
+  # and graders always have the permission, while student has to
+  # belong to the group, and have at least one token.
+  def has_permission?(user, grouping, assignment)
+
+    # TODO: show the errors to the user instead of raising a runtime error
+    if user.admin? || user.ta?
+      return true
+    end
+    # Make sure student belongs to this group
+    unless user.accepted_groupings.include?(grouping)
+      raise I18n.t('automated_tests.not_belong_to_group')
+    end
+    # can skip checking tokens if we have unlimited
+    if assignment.unlimited_tokens
+      return true
+    end
+    t = grouping.token
+    if t.nil? || t.remaining <= 0
+      raise I18n.t('automated_tests.missing_tokens')
+    end
+    t.decrease_tokens
+
+    return true
+  end
+
+  def request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
+
+    grouping = Grouping.find(grouping_id)
+    assignment = grouping.assignment
+    group = grouping.group
+    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
+
+    # TODO export the right repo revision using submission_id
+    export_group_repo(group, repo_dir)
+    if files_available?(assignment, repo_dir) &&
+       (call_on == 'collection' || has_permission?(current_user, grouping, assignment))
+      Resque.enqueue(AutomatedTestsClientHelper, grouping_id, call_on, submission_id)
+    end
+  end
+
+  def copy_test_files(assignment, repo_dir)
+
+    submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
     test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
@@ -204,176 +282,48 @@ module AutomatedTestsHelper
     end
   end
 
-  def self.request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
-    grouping = Grouping.find(grouping_id)
-    assignment = grouping.assignment
-    group = grouping.group
-
-    repo_dir = File.join(
-        MarkusConfigurator.markus_config_automated_tests_repository,
-        group.repo_name)
-    # TODO export the right repo revision using submission_id
-    export_group_repo(group, repo_dir)
-
-    # TODO remove files_available?
-    if files_available?(assignment) && (call_on == 'collection' || has_permission?(current_user, assignment))
-      # TODO handle errors in copy_test_files
-      copy_test_files(assignment, repo_dir)
-      Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on, submission_id)
-    end
-  end
-
-  # Export group repository for testing. Students' submitted files
-  # are stored in the group repository. They must be exported
-  # before copying to the test server.
-  def self.export_group_repo(group, repo_dir)
-    # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
-    end
-
-    # Delete student's assignment repository if it already exists
-    if File.exists?(repo_dir)
-      FileUtils.rm_rf(repo_dir)
-    end
-
-    group.repo.export(repo_dir)
-  end
-
-
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
-  def self.scripts_to_run(assignment, call_on)
-    all_scripts = TestScript.where(assignment_id: assignment.id)
+  def get_scripts_to_run(assignment, call_on)
 
+    all_scripts = TestScript.where(assignment_id: assignment.id)
     # If the test run is requested at collection (by Admin or TA),
     # All of the test scripts should be run.
     if call_on == 'collection'
-      list_run_scripts = all_scripts
+      run_scripts = all_scripts
     elsif call_on == 'submission'
-      list_run_scripts = all_scripts.select(&:run_on_submission)
+      run_scripts = all_scripts.select(&:run_on_submission)
     elsif call_on == 'request'
-      list_run_scripts = all_scripts.select(&:run_on_request)
+      run_scripts = all_scripts.select(&:run_on_request)
     else
-      list_run_scripts = []
+      run_scripts = []
     end
 
-    list_run_scripts.sort_by(&:seq_num)
-  end
-
-
-  # Verify that MarkUs has some files to run the test.
-  # Note: this does not guarantee all required files are presented.
-  # Instead, it checks if there is at least one test script and
-  # source files are successfully exported.
-  def self.files_available?(assignment)
-    test_dir = File.join(
-        MarkusConfigurator.markus_config_automated_tests_repository,
-        assignment.short_identifier)
-    src_dir = @repo_dir
-    assign_dir = @repo_dir + '/' + assignment.repository_folder
-
-    if !File.exist?(test_dir)
-      # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t('automated_tests.test_files_unavailable')
-    elsif !File.exists?(src_dir) || !File.exist?(assign_dir)
-      # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t('automated_tests.source_files_unavailable')
-    end
-
-    # If there are no files in repo (only current and parent directory pointers)
-    if Dir.entries(assign_dir).length <= 2
-      raise I18n.t('automated_tests.source_files_unavailable')
-    end
-
-    if TestScript.find_by(assignment_id: assignment.id).nil?
-      # TODO: show the error to user instead of raising a runtime error
-      raise I18n.t('automated_tests.test_files_unavailable')
-    end
-
-    true
-  end
-
-  # Verify the user has the permission to run the tests - admin
-  # and graders always have the permission, while student has to
-  # belong to the group, and have at least one token.
-  def self.has_permission?(user, assignment)
-    if user.admin? || user.ta?
-      true
-    elsif user.student?
-      # Make sure student belongs to this group
-      unless user.accepted_groupings.include?(@grouping)
-        # TODO: show the error to user instead of raising a runtime error
-        raise I18n.t('automated_tests.not_belong_to_group')
-      end
-      # can skip checking tokens if we have unlimited
-      if assignment.unlimited_tokens
-        return true
-      end
-      t = @grouping.token
-      if t.nil?
-        raise I18n.t('automated_tests.missing_tokens')
-      end
-      if t.remaining > 0
-        t.decrease_tokens
-        true
-      else
-        # TODO: show the error to user instead of raising a runtime error
-        raise I18n.t('automated_tests.missing_tokens')
-      end
-    end
+    return run_scripts.sort_by(&:seq_num)
   end
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(grouping_id, call_on, submission_id = nil)
-    unless submission_id.nil?
-      submission = Submission.find(submission_id)
-    end
+  def perform(grouping_id, call_on, submission_id = nil)
+
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
+    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
+    # TODO handle errors from copy_test_files
+    copy_test_files(assignment, repo_dir)
     # Find the test scripts for this test run, and parse the argument list
-    list_run_scripts = scripts_to_run(assignment, call_on)
+    run_scripts = get_scripts_to_run(assignment, call_on)
     arg_list = ''
-    list_run_scripts.each do |script|
+    run_scripts.each do |script|
       arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
 
-    # run tests and create result files
-    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
-    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
-    test_harness_name = File.basename(test_harness_path)
-    stdout, stderr, status = Open3.capture3("
-      cd '#{test_box_path}' &&
-      ruby '#{test_harness_name}' #{arg_list}
-    ")
-    if status.success?
-      test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
-                                    'test_runs',
-                                    "test_run_#{Time.now.to_i}")
-      FileUtils.mkdir_p(test_results_path)
-      File.write("#{test_results_path}/output.txt", stdout)
-      File.write("#{test_results_path}/error.txt", stderr)
-      # Test scripts must now use calls to the MarkUs API to process results.
-      # process_result(stdout, call_on, assignment, grouping, submission)
-    else
-      m_logger = MarkusLogger.instance
-      src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
-                          group.repo_name,
-                          assignment.repository_folder)
-      m_logger.log("
-        Error launching test in directory #{src_dir}.\n
-        stdout:\n#{stdout};\n
-        stderr:\n#{stderr}
-      ", MarkusLogger::ERROR)
-      # TODO: handle this error better
-      raise 'error'
-    end
+    Resque.enqueue(AutomatedTestsServerHelper, grouping_id, arg_list, submission_id)
   end
 
-  def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
+  def process_result(raw_result, call_on, assignment, grouping, submission = nil)
     result = Hash.from_xml(raw_result)
     repo = grouping.group.repo
     revision = repo.get_latest_revision

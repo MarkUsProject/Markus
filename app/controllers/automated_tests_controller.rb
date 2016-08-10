@@ -2,7 +2,7 @@
 require 'helpers/ensure_config_helper.rb'
 
 class AutomatedTestsController < ApplicationController
-  include AutomatedTestsHelper
+  include AutomatedTestsClientHelper
 
   before_filter      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
@@ -99,7 +99,7 @@ class AutomatedTestsController < ApplicationController
 
   def run_tests(grouping_id)
     begin
-      AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
+      AutomatedTestsClientHelper.request_a_test_run(grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
       #TODO: really shouldn't be leaking error if student.

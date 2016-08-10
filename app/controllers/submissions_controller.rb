@@ -246,7 +246,7 @@ class SubmissionsController < ApplicationController
       success = I18n.t('automated_tests.tests_running',
                        assignment_identifier: assignment.short_identifier)
       partition[0].each do |g|
-        AutomatedTestsHelper.request_a_test_run(
+        AutomatedTestsClientHelper.request_a_test_run(
           g.id,
           'submission',
           current_user,

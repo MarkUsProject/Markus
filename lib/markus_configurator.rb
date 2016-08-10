@@ -278,6 +278,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_ate_file_queue_name
+    if automated_testing_engine_on? && (defined? ATE_FILE_QUEUE_NAME)
+      return ATE_FILE_QUEUE_NAME
+    else
+      return 'file_queue'
+    end
+  end
+
   def markus_ate_test_queue_name
     if automated_testing_engine_on? && (defined? ATE_TEST_QUEUE_NAME)
       return ATE_TEST_QUEUE_NAME
