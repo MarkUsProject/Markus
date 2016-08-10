@@ -28,7 +28,7 @@
                     controller: controller,
                     action: action,
                     id: original_aid %>
-                  <% if assignment.has_peer_review? %>
+                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
                       <%=
                         # assignment name
                         link_to t('results.review_for') + assignment.pr_assignment.short_identifier[0,2],
@@ -42,7 +42,7 @@
                   <%= render partial: 'assignments/assignment_date',
                              locals: { assignment: assignment} %>
 
-                  <% if assignment.has_peer_review? %>
+                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
                     <%= render partial: 'assignments/assignment_date',
                                locals: { assignment: assignment.pr_assignment } %>
                   <% end %>
