@@ -3,14 +3,20 @@
     <%= @current_user.student? ? t('peer_review.reviews_made_on_submission') : t('peer_review.reviewers_reviews') %>
   </p>
   <div id='peer_review_selector' class='dropdown'>
-    <a><%= t('assignment.review') + (prs.index(current_pr) + 1).to_s %></a>
+    <% if @current_user.student? %>
+      <a><%= t('peer_review.review') + ' ' + (prs.index(current_pr) + 1).to_s %></a>
+    <% else %>
+      <a><%= current_group_name %></a>
+    <% end %>
     <ul>
       <% prs.each_with_index do |pr, i| %>
         <% if @current_user.student? %>
-          <li> <%= link_to(t('assignment.review') + (i + 1).to_s,
+          <li> <%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
                         view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
         <% else %>
-            <li> <%= link_to(t('assignment.review') + (i + 1).to_s,
+            <% pr_result = Result.find(pr.result_id) %>
+            <% group_name = Group.find(pr_result.submission.grouping.group_id).group_name %>
+            <li> <%= link_to(group_name,
                              view_marks_assignment_submission_result_path(assignment_id: assignment.id,
                                                                           submission_id: submission.id,
                                                                           id: pr.result_id,

@@ -212,8 +212,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"
-        review: "Avaliação"
+        review: "Revisãos"
     peer_review:
+        review: "Revisão "
+        reviews: "Revisões"
         problem: "Um problema inesperado ocorreu"
         submission_nil_failure: "As inscrições para a atribuição original precisam ser coletados primeiro"
         random_assign_failure: "Não é possível atribuir ao acaso , muitas revisões solicitadas por colaborador / reviewees selecionados"
@@ -447,7 +449,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       could_not_collect:    "Não foi possível coletar a submissão do grupo %{group_name} - a data de coleta ainda não chegou."
       release_marks:        "Mostrar notas"
       unrelease_marks:      "Esconder notas"
+      release_prs:          "Comentários liberação de pares"
+      unrelease_prs:        "Avaliações pelos pares Un - lançamento"
       group_name:           "Nome do grupo"
+      reviewer_name:        "Crítico"
+      reviewee_name:        "Pessoa que está sendo revisado"
       repository_name:      "Repositório: %{repository}"
       repository:           "Repositório"
       commit_date:          "Data de envio"
@@ -649,6 +655,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
+      review_title: "Revisão %{assignment_name} : %{group_name}"
       results_name:  "Resultados"
       successfully_changed: "%{changed} resultados atualizados"
       must_select_a_group:  "Você deve selecionar pelo menos um grupo para atualizar"

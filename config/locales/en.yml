@@ -238,6 +238,8 @@ en:
         your_reviews: "Your Reviews"
         review: "Review"
     peer_review:
+        review: "Review "
+        reviews: "Reviews"
         problem: "An unexpected problem occured"
         submission_nil_failure: "Submissions for original assignment need to be collected first"
         random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
@@ -490,8 +492,12 @@ en:
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
+      release_prs:          "Release Peer Reviews"
+      unrelease_prs:        "Unrelease Peer Reviews"
       run_tests:            "Run Tests"
       group_name:           "Group Name"
+      reviewer_name:        "Reviewer"
+      reviewee_name:        "Reviewee"
       repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
@@ -708,6 +714,7 @@ en:
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
+      review_title: "Review %{assignment_name}: %{group_name}"
       results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"

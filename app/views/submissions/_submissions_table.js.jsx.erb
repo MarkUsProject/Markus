@@ -11,7 +11,8 @@
         columns: [
           {
             id: 'group_name',
-            content: '<%= j raw I18n.t(:'browse_submissions.group_name') %>',
+            content: '<%= @assignment.is_peer_review? ? I18n.t(:'browse_submissions.reviewer_name') :
+                                                        I18n.t(:'browse_submissions.group_name') %>',
             sortable: true,
             compare: compare_anchor_text,
             searchable: true
@@ -33,12 +34,22 @@
               compare: compare_dates,
               searchable: false
             },
+          <% end %>
+          <% if @assignment.is_peer_review? %>
             {
-              id: 'marking_state',
-              content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+              id: 'reviewees',
+              content: '<%= j raw I18n.t(:'browse_submissions.reviewee_name') %>',
               sortable: true,
               searchable: false
             },
+          <% end %>
+          {
+            id: 'marking_state',
+            content: '<%= j raw I18n.t(:'browse_submissions.marking_state') %>',
+            sortable: true,
+            searchable: false
+          },
+          <% unless @assignment.is_peer_review? %>
             <%= raw @grace_credit_column %>
             {
               id: 'tags',
@@ -61,14 +72,14 @@
               sortable: false,
               searchable: false
             },
+            {
+              id: 'final_grade',
+              content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
+              sortable: true,
+              compare: compare_numeric_values,
+              searchable: false
+            }
           <% end %>
-          {
-            id: 'final_grade',
-            content: '<%= j raw I18n.t(:'browse_submissions.final_grade') %>',
-            sortable: true,
-            compare: compare_numeric_values,
-            searchable: false
-          }
         ],
         filters: [
           {
@@ -78,13 +89,29 @@
               return true;
             }
           },
-          {
-            name: 'unmarked',
-            text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
-            func: function(submission) {
-              return submission.state == 'unmarked';
-            }
-          },
+          <% unless @assignment.is_peer_review? %>
+            {
+              name: 'remark_requested',
+              text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
+              func: function(submission) {
+                return submission.state == 'remark';
+              }
+            },
+            {
+              name: 'unmarked',
+              text: '<%= j raw t(:'browse_submissions.show_unmarked') %>',
+              func: function(submission) {
+                return submission.state == 'unmarked';
+              }
+            },
+            {
+              name: 'complete',
+              text: '<%= j raw t(:'browse_submissions.show_complete') %>',
+              func: function(submission) {
+                return submission.state == 'completed';
+              }
+            },
+          <% end %>
           {
             name: 'partial',
             text: '<%= j raw t(:'browse_submissions.show_partial') %>',
@@ -93,24 +120,10 @@
             }
           },
           {
-            name: 'complete',
-            text: '<%= j raw t(:'browse_submissions.show_complete') %>',
-            func: function(submission) {
-              return submission.state == 'completed';
-            }
-          },
-          {
             name: 'released',
             text: '<%= j raw t(:'browse_submissions.show_released') %>',
             func: function(submission) {
               return submission.state == 'released';
-            }
-          },
-          {
-            name: 'remark_requested',
-            text: '<%= j raw t(:'browse_submissions.show_remark_request') %>',
-            func: function(submission) {
-              return submission.state == 'remark';
             }
           }
         ]
@@ -168,8 +181,21 @@
     onSuccess: function(success) {
       this.setState({success: success});
     },
+    renderRevieweeList: function(reviewees) {
+      return (
+        <div>
+          {reviewees.map(function(reviewee) {
+            return  <a href={reviewee.reviewee_url}> {reviewee.reviewee_name} </a>
+          })}
+        </div>
+      );
+    },
     renderMarkingState: function(state) {
-      if (state === 'unmarked') {
+      if (state === 'released') {
+        return (<%= image_tag('icons/email_go.png',
+                              alt: t('marking_state.released'),
+                              title: t('marking_state.released')) %>);
+      } else if (state === 'unmarked') {
         return (<%= image_tag('icons/shape_square.png',
                               alt: t('marking_state.not_collected'),
                               title: t('marking_state.not_collected')) %>);
@@ -181,10 +207,6 @@
         return (<%= image_tag('icons/accept.png',
                               alt: t('marking_state.completed'),
                               title: t('marking_state.completed')) %>);
-      } else if (state === 'released') {
-        return (<%= image_tag('icons/email_go.png',
-                              alt: t('marking_state.released'),
-                              title: t('marking_state.released')) %>);
       } else if (state === 'remark') {
         return (<%= image_tag('icons/double_exclamation.png',
                               alt: t('marking_state.remark_requested'),
@@ -258,37 +280,79 @@
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
           s['has_files'] = submission.has_files;
+          <% if @assignment.is_peer_review? %>
+            s['reviewees'] = this.renderRevieweeList(submission.reviewees);
+          <% end %>
         }
         return s;
       }.bind(this));
 
-        return (
-          <div>
-            <ErrorDiv error={this.state.error} />
-            <SuccessDiv success={this.state.success} />
-            <SubmissionsActionBox
-              selected_submissions={this.state.selected_submissions}
-              onError={this.onError}
-              onSuccess={this.onSuccess}
-              refresh={this.refresh}
-            />
-            <Table data={submissions_data}
-              columns={this.props.columns}
-              selectable={true}
-              filters={this.props.filters}
-              secondary_filters={section_filters}
-              filter_type={true}
-              onSelectedRowsChange={this.updateSelectedSubmissions}
-              search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
-            />
-          </div>
-        );
+      return (
+        <div>
+          <ErrorDiv error={this.state.error} />
+          <SuccessDiv success={this.state.success} />
+          <SubmissionsActionBox
+            selected_submissions={this.state.selected_submissions}
+            onError={this.onError}
+            onSuccess={this.onSuccess}
+            refresh={this.refresh}
+          />
+          <Table data={submissions_data}
+            columns={this.props.columns}
+            selectable={true}
+            filters={this.props.filters}
+            secondary_filters={section_filters}
+            filter_type={true}
+            onSelectedRowsChange={this.updateSelectedSubmissions}
+            search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
+          />
+        </div>
+      );
     }
   });
 
   var SubmissionsActionBox = React.createClass({
     propTypes: {
       selected_submissions: React.PropTypes.array
+    },
+    // TODO: releasePeerReviews and unreleasePeerReviews will make POST calls to their own methods
+    releasePeerReviews: function() {
+      var dataLoad = {
+        release_results: true,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+        error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
+    },
+    unreleasePeerReviews: function() {
+      var dataLoad = {
+        release_results: false,
+        filter: 'none',
+        groupings: this.props.selected_submissions
+      };
+      jQuery.ajax({
+        method: 'POST',
+        url: 'update_submissions',
+        data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this),
+          error: function(xhr, status, text) {
+          var error = text + ': ' + xhr.responseText;
+          this.props.onError(error);
+        }.bind(this)
+      });
     },
     releaseMarks: function() {
       var dataLoad = {
@@ -397,7 +461,15 @@
     render: function() {
       return (
         <div className='react-release-marks'>
-          <% if @current_user.admin? %>
+          <% if @assignment.is_peer_review? %>
+            <button onClick={this.releasePeerReviews}>
+            <%= j raw I18n.t('browse_submissions.release_prs') %>
+            </button>
+            <button onClick={this.unreleasePeerReviews}>
+            <%= j raw t('browse_submissions.unrelease_prs') %>
+            </button>
+          <% end %>
+          <% if @current_user.admin? && !@assignment.is_peer_review? %>
             <button onClick={this.collectSubmissions}>
               <%= j raw I18n.t('collect_submissions.collect') %>
             </button>

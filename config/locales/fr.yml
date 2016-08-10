@@ -216,6 +216,8 @@ fr:
         your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
+        review: "Avis "
+        reviews: "Avis"
         problem: "Un problème inattendu est survenue"
         submission_nil_failure: "Les soumissions pour l'affectation d'origine doivent être collectées première"
         random_assign_failure: "Impossible d'attribuer au hasard, trop de commentaires demandés par évaluateur / CONTRÔLER sélectionnés"
@@ -471,8 +473,12 @@ fr:
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
       release_marks:        "Montrer les notes"
       unrelease_marks:      "Cacher les notes"
+      release_prs:          "Examens par les pairs de sortie"
+      unrelease_prs:        "Un libération examens par les pairs"
       run_tests:            "UPDATE ME"
       group_name:           "Nom du groupe"
+      reviewer_name:        "Critique"
+      reviewee_name:        "Pays examiné"
       repository:           "Répertoire"
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
@@ -688,6 +694,7 @@ fr:
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
+      review_title: "Avis %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour."
