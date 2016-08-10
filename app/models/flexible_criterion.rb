@@ -113,7 +113,7 @@ class FlexibleCriterion < Criterion
     # Create a new RubricCriterion
     criterion = FlexibleCriterion.new
     criterion.name = name
-    # Check that the max_mark is not a string.
+    # Check max_mark is not a string.
     begin
       criterion.max_mark = Float(criterion_yml[1]['max_mark'])
     rescue ArgumentError
@@ -127,7 +127,21 @@ class FlexibleCriterion < Criterion
     # a description is not given.
     criterion.description =
       criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
+    # Visibility options
+    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion
+  end
+
+  # Returns a hash containing the information of a single flexible criterion.
+  def self.to_yml(criterion)
+    { "#{criterion.name}" =>
+      { 'type'         => 'flexible',
+        'max_mark'     => criterion.max_mark.to_f,
+        'description'  => criterion.description.blank? ? '' : criterion.description,
+        'ta_visible'   => criterion.ta_visible,
+        'peer_visible' => criterion.peer_visible }
+    }
   end
 
   def weight
