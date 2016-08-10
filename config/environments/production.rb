@@ -288,8 +288,10 @@ Markus::Application.configure do
   ATE_TEST_SERVER_HOST = 'localhost'
   ATE_TEST_SERVER_USERNAME = 'localhost'
 
+  # The name of the queue on the test client where submission files wait to be copied.
+  ATE_FILE_QUEUE_NAME = 'CSC108_file_queue'
   # The name of the queue on the test server where tests wait to be executed.
-  ATE_TEST_QUEUE_NAME = 'test_queue-CSC108'
+  ATE_TEST_QUEUE_NAME = 'test_queue'
 
   # The name and the path of the test runner script on the test server.
   ATE_TEST_RUNNER_NAME = 'automated_tests/testrunner.rb'
