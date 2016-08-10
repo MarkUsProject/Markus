@@ -46,6 +46,7 @@ class PeerReview < ActiveRecord::Base
                               marking_state: Result::MARKING_STATES[:incomplete])
       peer_review = PeerReview.create!(reviewer: reviewer, result: result)
       result.peer_review_id = peer_review.id
+      result.save!
       return peer_review
     end
   end
