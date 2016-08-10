@@ -9,9 +9,9 @@
         <table id='mark_<%= mark.id %>_table'>
           <%
             (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
-              if (!old_mark.nil? && num_levels == (old_mark.mark.nil? ? old_mark.mark : (old_mark.mark / mark_criterion.weight).round(2)))
+              if (!old_mark.nil? && num_levels == (old_mark.mark.nil? ? old_mark.mark : old_mark.mark / mark_criterion.weight))
                 td_class = 'rubric_criterion_level_old_mark'
-              elsif (num_levels == (mark.mark.nil? ? mark.mark : (mark.mark / mark_criterion.weight).round(2)))
+              elsif (num_levels == (mark.mark.nil? ? mark.mark : mark.mark / mark_criterion.weight))
                 td_class = 'rubric_criterion_level_selected'
               end
 
@@ -26,7 +26,7 @@
                         <strong> <%= level_name %></strong>
                         &nbsp;<%= level_desc %>
                       </div>
-                      <div class='mark'><%= num_levels * mark_criterion.weight %> / <%= mark_criterion.max_mark %></div>
+                      <div class='mark'><%= (num_levels * mark_criterion.weight).round(2) %> / <%= mark_criterion.max_mark %></div>
                     </td>
                   </tr>
               <% end -%>

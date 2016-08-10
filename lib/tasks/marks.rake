@@ -14,13 +14,17 @@ namespace :db do
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
-        mark = Mark.find_by(result_id:     result.id,
-                            markable_id:   criterion.id,
-                            markable_type: criterion.class.to_s)
-        mark.update({ result_id:     result.id,
-                      mark:          rand(0..criterion.max_mark.to_i),
-                      markable_id:   criterion.id,
-                      markable_type: criterion.class.to_s })
+        if criterion.class == RubricCriterion
+          random_mark = criterion.max_mark / 4 * rand(0..4)
+        elsif criterion.class == FlexibleCriterion
+          random_mark = criterion.max_mark.to_i
+        else
+          random_mark = rand(0..1)
+        end
+        on_result_creation_mark = Mark.find_by(result_id:     result.id,
+                                               markable_id:   criterion.id,
+                                               markable_type: criterion.class.to_s)
+        on_result_creation_mark.update_attribute(:mark, random_mark)
         result.save
       end
     end

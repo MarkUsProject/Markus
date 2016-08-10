@@ -236,6 +236,7 @@
         var all = '<%= I18n.t('browse_submissions.sections.all') %>';
         section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
       }
+
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
