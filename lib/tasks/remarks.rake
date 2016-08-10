@@ -3,14 +3,6 @@ namespace :db do
   task :remarks => :environment do
     puts 'Create remark requests'
 
-    # Creates marks for all criteria
-    def create_mark(result_id, markable)
-      Mark.create(
-        result_id: result_id,
-        mark: rand(0..markable.max_mark).floor,
-        markable: markable)
-    end
-
     # Create remark requests for assignments that allow them
     Assignment.where(allow_remarks: true).each do |assignment|
       # Create remark request for first two groups in each assignment
@@ -46,8 +38,13 @@ namespace :db do
 
     #Automate remarks for assignment using appropriate criteria
     remark_group.assignment.get_criteria.each do |criterion|
-      mark = create_mark(remark_submission.remark_result.id, criterion)
-      result.marks.push(mark)
+      mark = Mark.find_by(result_id:     remark_submission.remark_result.id,
+                          markable_id:   criterion.id,
+                          markable_type: criterion.class.to_s)
+      mark.update({ result_id:     remark_submission.remark_result.id,
+                    mark:          rand(0..criterion.max_mark.to_i),
+                    markable_id:   criterion.id,
+                    markable_type: criterion.class.to_s })
       result.save
     end
 

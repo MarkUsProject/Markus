@@ -1,7 +1,6 @@
 <%
 # Erb template for display rubric criterion in the grader view
 %>
-
 <li id='<%= "mark_criterion_#{mark_criterion.id}" %>' class='rubric_criterion expanded'>
   <div class='criterion_title' id='<%= "mark_criterion_title_#{mark_criterion.id}" %>' onclick='<%= "focus_mark_criterion(#{mark_criterion.id})" %>'>
     <div id='<%= "mark_criterion_title_#{mark_criterion.id}_expand" %>'
@@ -12,16 +11,15 @@
                locals: {mark_criterion: mark_criterion,
                         mark: mark,
                         old_mark: old_mark} %>
-
     <div id='<%= "criterion_info_#{mark_criterion.id}" %>'>
       <div class='mark_criterion_level_container' data-id='<%= mark_criterion.id %>'>
         <div class='cursor_hand'>
           <table id='mark_<%= mark.id %>_table'>
            <%
              (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
-              if (!old_mark.nil? && num_levels == (old_mark.mark.nil? ? old_mark.mark : old_mark.mark / mark_criterion.weight))
+              if (!old_mark.nil? && num_levels == (old_mark.mark.nil? ? old_mark.mark : (old_mark.mark / mark_criterion.weight).round(2)))
                 td_class = 'rubric_criterion_level_old_mark'
-              elsif (num_levels == (mark.mark.nil? ? mark.mark : mark.mark / mark_criterion.weight))
+              elsif (num_levels == (mark.mark.nil? ? mark.mark : (mark.mark / mark_criterion.weight).round(2)))
                 td_class = 'rubric_criterion_level_selected'
               else
                 td_class = 'rubric_criterion_level'
