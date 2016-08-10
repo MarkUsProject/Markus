@@ -431,7 +431,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(@criterion.id) }
@@ -862,7 +862,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
         is_expected.to respond_with(:success)
 
         expect { RubricCriterion.find(@criterion.id) }

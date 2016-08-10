@@ -20,7 +20,7 @@ class CriteriaControllerTest < AuthenticatedControllerTest
     should 'upload successfully well formatted yml criteria' do
       yml_string = <<END
 cr1:
-  weight: 5
+  max_mark: 5
   level_0:
     name: what?
     description: fail
@@ -37,7 +37,7 @@ cr1:
     name: poor
     description: I expected more
 cr2:
-  weight: 2
+  max_mark: 2
 END
       post_as @admin,
               :upload_yml,
@@ -51,8 +51,8 @@ END
       cr1 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr1')
       cr2 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr2')
       assert_equal(@assignment.get_criteria(:all, :rubric).size, 2)
-      assert_equal(8, cr2.max_mark) # We get four times what we entered because we entered the weight
-      assert_equal(20, cr1.max_mark)
+      assert_equal(2, cr2.max_mark)
+      assert_equal(5, cr1.max_mark)
       assert_equal('what?', cr1.level_0_name)
       assert_equal('fail', cr1.level_0_description)
       assert_equal('hmm', cr1.level_1_name)
@@ -65,11 +65,11 @@ END
       assert_equal('I expected more', cr1.level_4_description)
     end
 
-    should 'deal with bad weight on yaml file' do
+    should 'deal with bad max_mark on yaml file' do
       post_as @admin,
               :upload_yml,
               assignment_id: @assignment.id,
-              yml_upload:    { rubric: "cr1:\n  weight: monstrously heavy\n" }
+              yml_upload:    { rubric: "cr1:\n  max_mark: monstrously heavy\n" }
 
       assert_response  :redirect
       assert_not_nil set_flash.to(
@@ -83,7 +83,7 @@ END
      post_as @admin,
              :upload_yml,
              assignment_id: @assignment.id,
-             yml_upload:    { rubric: "cr1:\n  weight: 5\na" }
+             yml_upload:    { rubric: "cr1:\n  max_mark: 5\na" }
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('criteria.upload.error.invalid_format') + '  ' +
@@ -115,7 +115,7 @@ END
         post_as @admin,
                 :upload_yml,
                 assignment_id: @assignment.id,
-                yml_upload:    { rubric: "cr1:\n  weight: 5\ncr2:\n  weight: 2\n" }
+                yml_upload:    { rubric: "cr1:\n  max_mark: 5\ncr2:\n  max_mark: 2\n" }
 
 
         assert_response :redirect
@@ -125,7 +125,7 @@ END
                             @criterion,
                             'The preexisting criteria should have been deleted.' )
         assert_equal(@assignment.get_criteria(:all, :rubric).size, 2)
-        assert_equal(@assignment.get_criteria[0].max_mark, 20.0)
+        assert_equal(@assignment.get_criteria[0].max_mark, 5)
       end
 
     end
