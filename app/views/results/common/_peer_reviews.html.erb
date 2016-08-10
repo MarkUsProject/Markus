@@ -14,8 +14,8 @@
           <li> <%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
                         view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
         <% else %>
-            <% pr_result = Result.find(pr.result_id) %>
-            <% group_name = Group.find(pr_result.submission.grouping.group_id).group_name %>
+            <% pr_result = pr.result %>
+            <% group_name = pr_result.submission.grouping.group.group_name %>
             <li> <%= link_to(group_name,
                              view_marks_assignment_submission_result_path(assignment_id: assignment.id,
                                                                           submission_id: submission.id,

@@ -714,7 +714,7 @@ en:
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
-      review_title: "Review %{assignment_name}: %{group_name}"
+      review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
       results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"
