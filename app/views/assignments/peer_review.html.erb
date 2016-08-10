@@ -93,11 +93,11 @@
             <p class='notice'><%= t('student.no_reviews') %></p>
         <% else %>
           <ul>
-          <% @prs.each_with_index do |pr, i| %>
-              <li><%= link_to(t('peer_review.peer_review') + " #{i + 1}",
-                          view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
-           <% end %>
-          </ul>
+            <% @prs.each_with_index do |pr, i| %>
+                <li><%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
+                            view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
+            <% end %>
+          <ul>
         <% end %>
       </div>
     </div>

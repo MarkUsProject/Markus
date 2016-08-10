@@ -51,7 +51,7 @@ module SummariesHelper
                                                              grouping)
       g[:commit_date] = grouping.last_commit_date
       g[:late_commit] = grouping.past_due_date?
-      g[:state] = grouping.marking_state(result)
+      g[:state] = grouping.marking_state(result, assignment, current_user)
       g[:grace_credits_used] = grouping.grace_period_deduction_single
       g[:final_grade] = grouping.final_grade(result)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
