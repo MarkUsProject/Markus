@@ -14,7 +14,7 @@
               <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
 
-           <% if can_show_remark_request_tab_in_marker_pane(submission) %>
+           <% if !@current_user.student? && can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
         </ul>
