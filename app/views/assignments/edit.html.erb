@@ -1,6 +1,6 @@
 <div class='title_bar'>
   <h1><%= @assignment.is_peer_review? ?
-              t('assignment.edit') + ' ' + t('results.review_for') + @assignment.short_identifier[0,2] :
+              t('assignment.edit') + ' ' + t('results.review_for') + @assignment.parent_assignment.short_identifier :
               t('assignment.edit') + @assignment.short_identifier %></h1>
 </div>
 

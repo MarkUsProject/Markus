@@ -2,7 +2,7 @@
   <h1>
     <%= @assignment.is_peer_review? ?
             t('student.peer_assignment',
-              short_identifier: 'for ' + @assignment.short_identifier[0,2]) :
+              short_identifier: 'for ' + @assignment.parent_assignment.short_identifier) :
             t('student.peer_assignment', short_identifier: @assignment.short_identifier) %>
   </h1>
 </div>
