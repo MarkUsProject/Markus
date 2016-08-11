@@ -115,6 +115,7 @@ end
 # but using a seeded database
 group :development, :test, :production_test do
   gem 'faker' # required for database seeding
+  gem 'httparty'
 end
 
 # Gems not needed at runtime should go here so that MarkUs does

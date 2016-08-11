@@ -260,9 +260,6 @@ Markus::Application.configure do
   # The name of the queue on the test server where tests wait to be executed.
   ATE_TEST_QUEUE_NAME = 'test_queue'
 
-  # The name and the path of the test runner script on the test server.
-  ATE_TEST_RUNNER_NAME = "#{::Rails.root.to_s}/automated-tests-files/test_runner/testrunner.rb"
-  
   # The name and the path of the directory where the test runs.
   # This directory will be destroyed and recreated in every test run.
   # Then the test runner script along with all test files and source
