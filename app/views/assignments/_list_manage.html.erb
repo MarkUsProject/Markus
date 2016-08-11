@@ -53,13 +53,13 @@
                   <% if assignment.has_peer_review? %>
                     <% if assignment.pr_assignment.is_hidden %>
                       <%= link_to t('assignment.hidden',
-                                    assignment_text: t('results.review_for') + assignment.pr_assignment.short_identifier[0,2]),
+                                    assignment_text: t('results.review_for') + assignment.short_identifier),
                                   { controller: controller,
                                     action: action,
                                     id: assignment.pr_assignment },
                                   class: 'pr_assignment_list' %>
                     <% else %>
-                      <%= link_to t('results.review_for') + assignment.pr_assignment.short_identifier[0,2],
+                      <%= link_to t('results.review_for') + assignment.short_identifier,
                                   { controller: controller,
                                     action: action,
                                     id: assignment.pr_assignment },
