@@ -1,4 +1,3 @@
-require 'json'
 require 'net/ssh'
 require 'net/scp'
 
@@ -249,7 +248,6 @@ module AutomatedTestsClientHelper
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
@@ -264,8 +262,7 @@ module AutomatedTestsClientHelper
         rm -rf '#{test_box_path}' &&
         mkdir '#{test_box_path}' &&
         cp -r '#{submission_path}'/* '#{test_box_path}' &&
-        cp -r '#{assignment_tests_path}'/* '#{test_box_path}' &&
-        cp -r '#{test_harness_path}' '#{test_box_path}' &&
+        cp -r '#{assignment_tests_path}'/* '#{test_box_path}'
       ")
       return [stdout, stderr, status]
     else
@@ -277,9 +274,10 @@ module AutomatedTestsClientHelper
         test_box_path = ssh.exec!('mktemp -d')
         ssh.scp.upload!(test_server_host, test_server_username, submission_path, test_box_path, :recursive => true)
         ssh.scp.upload!(test_server_host, test_server_username, assignment_tests_path, test_box_path, :recursive => true)
-        ssh.scp.upload!(test_server_host, test_server_username, test_harness_path, test_box_path)
       end
     end
+
+    return test_box_path
   end
 
   # Find the list of test scripts to run the test. Return the list of
@@ -290,16 +288,16 @@ module AutomatedTestsClientHelper
     # If the test run is requested at collection (by Admin or TA),
     # All of the test scripts should be run.
     if call_on == 'collection'
-      run_scripts = all_scripts
+      test_scripts = all_scripts
     elsif call_on == 'submission'
-      run_scripts = all_scripts.select(&:run_on_submission)
+      test_scripts = all_scripts.select(&:run_on_submission)
     elsif call_on == 'request'
-      run_scripts = all_scripts.select(&:run_on_request)
+      test_scripts = all_scripts.select(&:run_on_request)
     else
-      run_scripts = []
+      test_scripts = []
     end
 
-    return run_scripts.sort_by(&:seq_num)
+    return test_scripts.sort_by(&:seq_num)
   end
 
   # Perform a job for automated testing. This code is run by
@@ -312,18 +310,31 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
     # TODO handle errors from copy_test_files
-    copy_test_files(assignment, repo_dir)
-    # Find the test scripts for this test run, and parse the argument list
-    run_scripts = get_scripts_to_run(assignment, call_on)
-    arg_list = ''
-    run_scripts.each do |script|
-      arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
+    test_path = copy_test_files(assignment, repo_dir)
+    test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test_runs')
+    test_scripts = get_scripts_to_run(assignment, call_on)
+    test_scripts.map! do |script|
+      script.script_name
     end
 
-    Resque.enqueue(AutomatedTestsServerHelper, grouping_id, arg_list, submission_id)
+    # TODO verify queue used + do it on remote redis
+    Resque.enqueue(AutomatedTestsServerHelper, test_scripts, test_path, test_results_path, grouping_id, submission_id)
   end
 
   def process_result(raw_result, call_on, assignment, grouping, submission = nil)
+
+    # TODO handle errors
+    # m_logger = MarkusLogger.instance
+    # src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
+    #                     group.repo_name,
+    #                     assignment.repository_folder)
+    # m_logger.log("
+    #     Error launching test in directory #{src_dir}.\n
+    #     stdout:\n#{stdout};\n
+    #     stderr:\n#{stderr}
+    #              ", MarkusLogger::ERROR)
+    # # TODO: handle this error better
+    # raise 'error'
     result = Hash.from_xml(raw_result)
     repo = grouping.group.repo
     revision = repo.get_latest_revision
@@ -380,4 +391,5 @@ module AutomatedTestsClientHelper
     end
 
   end
+
 end

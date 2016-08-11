@@ -1,48 +1,57 @@
+require 'timeout'
+require 'httpparty'
 
 module AutomatedTestsServerHelper
   # This is the waiting list for automated testing on the test server. Once a test is requested, it is enqueued
   # and it is waiting for execution. Resque manages this queue.
   @queue = MarkusConfigurator.markus_ate_test_queue_name
+  TIME_LIMIT = 600
 
-  def perform(grouping_id, arg_list, submission_id = nil)
+  def perform(test_scripts, test_path, test_results_path, auth_key, grouping_id, submission_id = nil)
 
-    unless submission_id.nil?
-      submission = Submission.find(submission_id)
+    # run tests
+    output = '<testrun>\n'
+    errors = ''
+    test_scripts.each do |script|
+      begin
+        # TODO make executable?
+        # file = File.new(script)
+        # file.chmod(0766)
+        # TODO The time limit is handled by pam too
+        Timeout.timeout(TIME_LIMIT) do
+          stdout, stderr, status = Open3.capture3("
+            cd '#{test_path}' &&
+            ./#{script}
+          ")
+          errors += stderr
+        end
+      rescue Timeout::Error
+        Process.kill(9, status.pid)
+        stdout = '
+          <test>\n
+            <actual>Script timeout</actual>\n
+            <status>error</status>\n
+          </test>\n'
+      end
+      output += "
+        <test_script>\n
+          <script_name>#{script}</script_name>\n
+          #{stdout}\n
+        </test_script>\n"
     end
-    grouping = Grouping.find(grouping_id)
-    assignment = grouping.assignment
-    group = grouping.group
+    output += '</testrun>'
 
-    # run tests and create result files
-    test_harness_path = MarkusConfigurator.markus_ate_test_runner_script_name
-    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
-    test_harness_name = File.basename(test_harness_path)
-    stdout, stderr, status = Open3.capture3("
-      cd '#{test_box_path}' &&
-      ruby '#{test_harness_name}' #{arg_list}
-    ")
-    if status.success?
-      test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
-                                    'test_runs',
-                                    "test_run_#{Time.now.to_i}")
-      FileUtils.mkdir_p(test_results_path)
-      File.write("#{test_results_path}/output.txt", stdout)
-      File.write("#{test_results_path}/error.txt", stderr)
-      # Test scripts must now use calls to the MarkUs API to process results.
-      # process_result(stdout, call_on, assignment, grouping, submission)
-    else
-      m_logger = MarkusLogger.instance
-      src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
-                          group.repo_name,
-                          assignment.repository_folder)
-      m_logger.log("
-        Error launching test in directory #{src_dir}.\n
-        stdout:\n#{stdout};\n
-        stderr:\n#{stderr}
-                   ", MarkusLogger::ERROR)
-      # TODO: handle this error better
-      raise 'error'
-    end
+    # store results and send them back to markus
+    test_results_path = File.join(test_results_path, "test_run_#{Time.now.to_i}")
+    FileUtils.mkdir_p(test_results_path)
+    File.write("#{test_results_path}/output.txt", output)
+    File.write("#{test_results_path}/error.txt", errors)
+    # Test scripts must now use calls to the MarkUs API to process results.
+    # process_result(stdout, call_on, assignment, grouping, submission)
+    # api_url = "#{grouping_id}/#{submission_id}"
+    # options = { headers: { 'Authorization' => "MarkUsAuth #{auth_key}",
+    #                        'Accept' => 'application/json' } }
+    # response = HTTParty.post(api_url, options)
   end
 
 end
