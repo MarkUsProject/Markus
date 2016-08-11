@@ -34,23 +34,23 @@
       <div>
         <%= f.label :short_identifier,
                     t('assignment.short_identifier'),
-                    class: 'required' %>
+                    class: @assignment.is_peer_review? ? '' : 'required' %>
         <%= f.text_field :short_identifier,
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          maxlength: 30,
-                         required: true,
+                         required: @assignment.is_peer_review? ? false : true,
                          disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <div>
         <%= f.label :description,
                     t('assignment.name'),
-                    class: 'required' %>
+                    class: @assignment.is_peer_review? ? '' : 'required' %>
         <%= f.text_field :description,
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
-                         required: true,
+                         required: @assignment.is_peer_review? ? false : true,
                          disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
