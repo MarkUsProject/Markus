@@ -89,10 +89,12 @@
             <%= link_to t('groups.groups'),
                         assignment_groups_path(@assignment) %>
           </li>
-          <li class='<%= "active" if controller.controller_name == 'graders' %>'>
-            <%= link_to t('graders.graders'),
-                        assignment_graders_path(@assignment) %>
-          </li>
+          <% unless @assignment.is_peer_review? %>
+            <li class='<%= "active" if controller.controller_name == 'graders' %>'>
+              <%= link_to t('graders.graders'),
+                          assignment_graders_path(@assignment) %>
+            </li>
+          <% end %>
           <li class='<%= "active" if controller.controller_name == 'tags' %>'>
             <%= link_to t('tags.tags'),
                         assignment_tags_path(@assignment) %>
@@ -104,10 +106,12 @@
              <%= link_to @assignment.is_peer_review? ? t('peer_review.reviews') : t(:submissions),
                          browse_assignment_submissions_path(@assignment) %>
           </li>
-          <li class='<%= "active" if controller.controller_name == 'summaries' %>'>
-            <%= link_to t(:summaries),
-                        assignment_summaries_path(@assignment) %>
-          </li>
+          <% unless @assignment.is_peer_review? %>
+            <li class='<%= "active" if controller.controller_name == 'summaries' %>'>
+              <%= link_to t(:summaries),
+                          assignment_summaries_path(@assignment) %>
+            </li>
+          <% end %>
           <% if @assignment.is_peer_review? %>
             <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
               <%= link_to t('peer_reviews'), assignment_peer_reviews_path(@assignment) %>
