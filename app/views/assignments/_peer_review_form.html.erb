@@ -39,7 +39,8 @@
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          maxlength: 30,
-                         required: true %>
+                         required: true,
+                         disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <div>
@@ -49,7 +50,8 @@
         <%= f.text_field :description,
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
-                         required: true %>
+                         required: true,
+                         disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <div>
@@ -57,7 +59,8 @@
         <%= f.text_area :message,
                         cols: 65,
                         rows: 8,
-                        onchange: 'set_onbeforeunload(true);' %>
+                        onchange: 'set_onbeforeunload(true);',
+                        disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <% unless @sections.empty? %>
