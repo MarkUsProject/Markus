@@ -36,7 +36,7 @@ module RandomAssignHelper
     @reviewees = reviewee_ids * (@reviewers.size.to_f / reviewee_ids.size).ceil
 
     # A dictionary mapping grouping id to a set of student ids.
-    @group_to_students = Hash.new { Set.new }
+    @group_to_students = Hash.new { |h, k| h[k] = Set.new }
     groupings = Grouping.joins(:memberships)
                   .where(id: reviewer_ids + reviewee_ids,
                          memberships: { type: 'StudentMembership' })
@@ -56,7 +56,7 @@ module RandomAssignHelper
   #
   # Also add existing peer reviews to @reviewer_to_reviewee_sets.
   def process_existing_peer_reviews(reviewer_ids)
-    PeerReview.includes(:reviewee)
+    PeerReview.includes(:reviewer)
               .where(reviewer_id: reviewer_ids)
               .each do |peer_review|
       reviewer_id = peer_review.reviewer_id
@@ -72,7 +72,7 @@ module RandomAssignHelper
   end
 
   # Updates the data structures so that @reviewers and
-  # @@reviewees together specify a valid mapping of reviewer to
+  # @reviewees together specify a valid mapping of reviewer to
   # reviewee groups.
   # Or, throws an UnableToRandomlyAssignGroupException if this is not possible.
   def create_peer_review_assignments
