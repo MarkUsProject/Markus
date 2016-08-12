@@ -246,7 +246,10 @@ class ResultsController < ApplicationController
       @old_result.save
     end
     @result.released_to_students = released_to_students
-    @result.save
+    if @result.save
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      @result.submission.assignment.update_results_stats
+    end
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'
@@ -466,20 +469,20 @@ class ResultsController < ApplicationController
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       @submission = @grouping.current_submission_used
+      result_from_id = Result.find(params[:id])
+      if result_from_id.is_a_review?
+        @result = result_from_id
+      else
+        @result = @submission.get_original_result
+      end
     else
-      @submission = Submission.find(params[:submission_id])
+      @result = Result.find(params[:id])
+      @submission = @result.submission
       @grouping = @submission.grouping
     end
 
-    result_from_id = Result.find(params[:id])
-    if result_from_id.is_a_review?
-      @result = result_from_id
-    else
-      @result = @submission.get_original_result
-    end
-
     is_review = @result.is_review_for?(@current_user, @assignment) ||
-        (@result.is_a_review? && !@current_user.student?)
+        @result.is_a_review?
 
     if @grouping.nil?
       redirect_to controller: 'assignments',
@@ -495,13 +498,15 @@ class ResultsController < ApplicationController
 
     if is_review
       if @current_user.student?
-        @prs = @grouping.peer_reviews
+        @prs = @grouping.peer_reviews.where(results: { released_to_students: true })
       else
         @reviewer = Grouping.find(params[:reviewer_grouping_id])
         @prs = @reviewer.peer_reviews_to_others
       end
 
       @current_pr = PeerReview.find_by(result_id: @result.id)
+      @current_pr_result = @current_pr.result
+      @current_group_name = @current_pr_result.submission.grouping.group.group_name
     end
 
     unless is_review || @submission.has_result?
@@ -539,7 +544,7 @@ class ResultsController < ApplicationController
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-          @grouping.membership_status(current_user).nil? || !@current_user.student?
+          !@grouping.membership_status(current_user).nil? || !@current_user.student?
         @mark_criteria = @assignment.get_criteria(:peer)
       end
     else

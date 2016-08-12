@@ -235,6 +235,8 @@ en:
         your_reviews: "Your Reviews"
         review: "Review"
     peer_review:
+        review: "Review "
+        reviews: "Reviews"
         problem: "An unexpected problem occured"
         submission_nil_failure: "Submissions for original assignment need to be collected first"
         random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
@@ -487,8 +489,12 @@ en:
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
+      release_prs:          "Release Peer Reviews"
+      unrelease_prs:        "Unrelease Peer Reviews"
       run_tests:            "Run Tests"
       group_name:           "Group Name"
+      reviewer_name:        "Reviewer"
+      reviewee_name:        "Reviewee"
       repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
@@ -705,6 +711,7 @@ en:
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
+      review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
       results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"
@@ -1240,27 +1247,36 @@ en:
         empty_error:     "No criteria were found in the provided file."
         syntax_error:    "There is an error in the file you uploaded: %{error}"
         format_yml_html: "
-          <p>The file should have the following format for a rubric criterion:<br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;weight: weight<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>
-          <p>The following for a flexible criterion:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
+          <ul>
+            <li><p>The file should have the following format for a rubric criterion:<br>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;level_0:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                &nbsp;&nbsp;level_1:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+                <p>The visibility options are optional.</p>
+            </p></li>
+            <li><p>The following for a flexible criterion:</p>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;type: flexible<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;description: description<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+              <p>The description and visibility options are optional.</p></li>
+            <li><p>And the following for a checkbox criterion:</p>
+              <code>criterion_name:<br>
+              &nbsp;&nbsp;type: checkbox<br>
               &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br></code>
-            <p>The description is optional.</p>
-          <p>And the following for a checkbox criterion:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br></code>
-          <p>The description is optional.</p>"
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>The description and visibility options are optional.</p></li>
+          </ul>"
       errors:
         messages:
           name_taken:             "Criterion name already used."

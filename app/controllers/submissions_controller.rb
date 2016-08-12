@@ -731,14 +731,16 @@ class SubmissionsController < ApplicationController
     release = params[:release_results]
 
     begin
-      changed = set_release_on_results(groupings, release)
+      changed = assignment.is_peer_review? ?
+          set_pr_release_on_results(groupings, release) :
+          set_release_on_results(groupings, release)
 
       if changed > 0
         assignment.update_results_stats
 
         # These flashes don't get rendered. Find another way to display?
-        flash[:success] = I18n.t('results.successfully_changed',
-                                 changed: changed)
+        flash_now(:success, I18n.t('results.successfully_changed',
+                                 changed: changed))
         if release
           MarkusLogger.instance.log(
             'Marks released for assignment' +
