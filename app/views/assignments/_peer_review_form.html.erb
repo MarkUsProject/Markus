@@ -125,32 +125,6 @@
       </div>
     </fieldset>
 
-    <%# Marking scheme %>
-    <fieldset>
-      <legend>
-        <span><%= t('assignment.marking_scheme.title') %></span>
-      </legend>
-
-      <% unless @assignment.new_record? %>
-          <div id='marking_scheme_notice' class='warning'>
-            <%= t('assignment.notice.change_marking_scheme_type') %>
-          </div>
-      <% end %>
-
-      <div class='help assignment_marking_scheme_help'>
-        <p class='help-message-box assignment_marking_scheme_help'>
-          <%= t('assignment.help.assignment_form.marking_scheme') %>
-        </p>
-      </div>
-
-      <% Assignment::MARKING_SCHEME_TYPE.each do |key, value| %>
-          <%= f.radio_button :marking_scheme_type, value %>
-          <%= f.label :marking_scheme_type,
-                      t("assignment.marking_scheme.#{value}"),
-                      value: value %>
-      <% end %>
-    </fieldset>
-
     <%# Group properties %>
     <fieldset>
       <legend>

@@ -2,11 +2,6 @@ require 'csv_invalid_line_error'
 
 class Assignment < ActiveRecord::Base
   include RepositoryHelper
-  MARKING_SCHEME_TYPE = {
-    flexible: 'flexible',
-    rubric: 'rubric',
-    checkbox: 'checkbox'
-  }
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
@@ -90,7 +85,6 @@ class Assignment < ActiveRecord::Base
   validates_presence_of :description
   validates_presence_of :repository_folder
   validates_presence_of :due_date
-  validates_presence_of :marking_scheme_type
   validates_presence_of :group_min
   validates_presence_of :group_max
   validates_presence_of :notes_count
@@ -648,17 +642,6 @@ class Assignment < ActiveRecord::Base
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
     get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
-  end
-
-  # Returns the class of the criteria that belong to this assignment.
-  def criterion_class
-    if marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-      FlexibleCriterion
-    elsif marking_scheme_type == MARKING_SCHEME_TYPE[:rubric]
-      RubricCriterion
-    else
-      nil
-    end
   end
 
   # Returns a filtered list of criteria.

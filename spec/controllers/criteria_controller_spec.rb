@@ -118,7 +118,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a GET' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -256,7 +256,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a POST' do
       before(:each) do
         @admin = create(:admin, user_name: 'olm_admin')
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -418,7 +418,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a DELETE' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment)
       end
@@ -556,7 +556,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a GET' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -691,7 +691,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a POST' do
       before(:each) do
         @admin = create(:admin, user_name: 'olm_admin')
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -850,7 +850,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a DELETE' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment)
       end

@@ -33,7 +33,6 @@ module AutomatedTestsHelper
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params, assignment_params,
                         new_script, new_support_file)
-
     updated_script_files = {}
     updated_support_files = {}
 
@@ -89,8 +88,10 @@ module AutomatedTestsHelper
           end
         end
       end
-      # always make sure the criterion type is correct
-      updated_script_files[file_num][:criterion_type] = @assignment.criterion_class
+      # Always make sure the criterion type is correct. The :criterion_id parameter contains a list
+      # of the following form [criterion_id, criterion_type]
+      updated_script_files[file_num][:criterion_type] =
+        testscripts[file_num][:criterion_id].nil? ? testscripts[file_num][:criterion_id] : testscripts[file_num][:criterion_id][1]
     end
 
     # Create/Update test support files
