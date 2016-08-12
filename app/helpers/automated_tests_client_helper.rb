@@ -169,7 +169,7 @@ module AutomatedTestsClientHelper
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def export_group_repo(group, repo_dir)
+  def self.export_group_repo(group, repo_dir)
 
     # Create the automated test repository
     unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
@@ -186,7 +186,7 @@ module AutomatedTestsClientHelper
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
   # source files are successfully exported.
-  def files_available?(assignment, repo_dir)
+  def self.files_available?(assignment, repo_dir)
 
     # TODO: show the errors to the user instead of raising a runtime error
     # No test files or test directory
@@ -206,7 +206,7 @@ module AutomatedTestsClientHelper
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def has_permission?(user, grouping, assignment)
+  def self.has_permission?(user, grouping, assignment)
 
     # TODO: show the errors to the user instead of raising a runtime error
     if user.admin? || user.ta?
@@ -229,7 +229,7 @@ module AutomatedTestsClientHelper
     return true
   end
 
-  def request_a_test_run(grouping_id, call_on, current_user, submission_id = nil)
+  def self.request_a_test_run(host_with_port, grouping_id, call_on, current_user, submission_id = nil)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -240,11 +240,11 @@ module AutomatedTestsClientHelper
     export_group_repo(group, repo_dir)
     if files_available?(assignment, repo_dir) &&
        (call_on == 'collection' || has_permission?(current_user, grouping, assignment))
-      Resque.enqueue(AutomatedTestsClientHelper, grouping_id, call_on, submission_id)
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, submission_id)
     end
   end
 
-  def copy_test_files(assignment, repo_dir)
+  def self.copy_test_files(assignment, repo_dir)
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
@@ -252,10 +252,6 @@ module AutomatedTestsClientHelper
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
     # TODO test_box_path must be relative, to construct it in different paths locally and remotely
-    # TODO then, the whole path needs to be passed to perform
-    # TODO perform must always create a directory with the results, even if unsuccessful
-    # TODO it's process_result that possibly logs the error
-    # TODO perform must either invoke the api directly or pass parameters down to the test script (group_id, assignment_id, markus url)
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
       stdout, stderr, status = Open3.capture3("
@@ -282,7 +278,7 @@ module AutomatedTestsClientHelper
 
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
-  def get_scripts_to_run(assignment, call_on)
+  def self.get_scripts_to_run(assignment, call_on)
 
     all_scripts = TestScript.where(assignment_id: assignment.id)
     # If the test run is requested at collection (by Admin or TA),
@@ -302,11 +298,12 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def perform(grouping_id, call_on, submission_id = nil)
+  def self.perform(host_with_port, grouping_id, call_on, api_key, submission_id = nil)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
+    markus_address = host_with_port # TODO add protocol + remove port if production
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
     # TODO handle errors from copy_test_files
@@ -317,11 +314,12 @@ module AutomatedTestsClientHelper
       script.script_name
     end
 
-    # TODO verify queue used + do it on remote redis
-    Resque.enqueue(AutomatedTestsServerHelper, test_scripts, test_path, test_results_path, grouping_id, submission_id)
+    # TODO enqueue on remote redis, probably need to use resque-cli with ssh
+    # TODO If it's a student, should I upload the results?
+    Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
   end
 
-  def process_result(raw_result, call_on, assignment, grouping, submission = nil)
+  def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
 
     # TODO handle errors
     # m_logger = MarkusLogger.instance
