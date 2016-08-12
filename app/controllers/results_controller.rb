@@ -246,7 +246,10 @@ class ResultsController < ApplicationController
       @old_result.save
     end
     @result.released_to_students = released_to_students
-    @result.save
+    if @result.save
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      @result.submission.assignment.update_results_stats
+    end
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'
