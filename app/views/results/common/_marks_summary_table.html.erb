@@ -16,7 +16,7 @@
     %>
     <tr id='mark_<%= mark.id %>_summary'>
       <td class='left'><%= criterion.name %></td>
-      <td class='right'><span id='mark_<%= mark.id %>_summary_mark_after_weight'><%= (mark_value * criterion.weight) %></span> / <%= criterion.max_mark %></td>
+      <td class='right'><span id='mark_<%= mark.id %>_summary_mark_after_weight'><%= (mark_value * criterion.weight).round(2) %></span> / <%= criterion.max_mark %></td>
     </tr>
   <% end -%>
 </table>  <!-- Summary Criteria Pane List -->
