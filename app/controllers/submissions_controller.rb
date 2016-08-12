@@ -247,6 +247,7 @@ class SubmissionsController < ApplicationController
                        assignment_identifier: assignment.short_identifier)
       partition[0].each do |g|
         AutomatedTestsClientHelper.request_a_test_run(
+          request.host_with_port,
           g.id,
           'submission',
           current_user,

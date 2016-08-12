@@ -105,7 +105,7 @@ class AutomatedTestsController < ApplicationController
 
   def run_tests(grouping_id)
     begin
-      AutomatedTestsClientHelper.request_a_test_run(grouping_id, 'request', @current_user)
+      AutomatedTestsClientHelper.request_a_test_run(request.host_with_port, grouping_id, 'request', @current_user)
       return nil
     rescue Exception => e
       #TODO: really shouldn't be leaking error if student.
