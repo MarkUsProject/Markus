@@ -88,10 +88,16 @@ module AutomatedTestsHelper
           end
         end
       end
-      # Always make sure the criterion type is correct. The :criterion_id parameter contains a list
-      # of the following form [criterion_id, criterion_type]
-      updated_script_files[file_num][:criterion_type] =
-        testscripts[file_num][:criterion_id].nil? ? testscripts[file_num][:criterion_id] : testscripts[file_num][:criterion_id][1]
+      # Always make sure the criterion type is correct.
+      # The :criterion_id parameter contains a list of the form
+      # [criterion_id, criterion_type]
+      if testscripts[file_num][:criterion_id].nil?
+        updated_script_files[file_num][:criterion_type]
+      else
+        crit_id, crit_type = JSON.parse testscripts[file_num][:criterion_id]
+        updated_script_files[file_num][:criterion_id] = crit_id
+        updated_script_files[file_num][:criterion_type] = crit_type
+      end
     end
 
     # Create/Update test support files
