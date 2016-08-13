@@ -31,21 +31,19 @@ module CriteriaHelper
           # Set assignment and position
           criterion.assignment_id = assignment.id
           criterion.position = pos
-          pos += 1
 
-          parsed_criteria << criterion
-          parsed_criteria_names << criterion_yml[0]
+          # Save criterion
+          if criterion.save
+            parsed_criteria << criterion
+            parsed_criteria_names << criterion_yml[0]
+            pos += 1
+          else # An error occurred. Eg: Both visibility options are false
+            raise RuntimeError
+          end
+
         rescue RuntimeError
           crit_format_errors << criterion_yml[0]
         end
-      end
-    end
-
-    # Save the criteria
-    parsed_criteria.each do |criterion|
-      unless criterion.save
-        # Collect the names of the criteria that have format errors in them.
-        crit_format_errors << criterion.name
       end
     end
 
