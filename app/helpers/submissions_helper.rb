@@ -175,7 +175,7 @@ module SubmissionsHelper
                   id: result.id, reviewer_grouping_id: grouping.id))
     elsif grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
-                  grouping.assignment, result.submission, result))
+                  grouping.assignment, result.submission_id, result))
     else
       ''
     end

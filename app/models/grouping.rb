@@ -689,6 +689,7 @@ class Grouping < ActiveRecord::Base
                     :group,
                     :grace_period_deductions,
                     :tags,
+                    :peer_reviews_to_others,
                     { current_submission_used: [:results,
                                                 :submission_files,
                                                 :submitted_remark,
