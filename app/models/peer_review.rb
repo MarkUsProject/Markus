@@ -44,7 +44,10 @@ class PeerReview < ActiveRecord::Base
     if can_assign_peer_review_to?(reviewer, reviewee)
       result = Result.create!(submission: reviewee.current_submission_used,
                               marking_state: Result::MARKING_STATES[:incomplete])
-      return PeerReview.create!(reviewer: reviewer, result: result)
+      peer_review = PeerReview.create!(reviewer: reviewer, result: result)
+      result.peer_review_id = peer_review.id
+      result.save!
+      return peer_review
     end
   end
 end
