@@ -15,84 +15,60 @@
           <% @assignments.each do |assignment| %>
             <% # makes sure assignment ID of peer review action is the
                # original assignment ID
-               original_aid = assignment.is_peer_review? ?
-                assignment.parent_assignment.id : assignment.id %>
-            <tr>
-              <td>
-                <% if assignment.is_peer_review? %>
-                  <%=
-                    # assignment name
-                    link_to assignment.short_identifier + ': ' + assignment.description,
-                            controller: controller,
-                            action: 'peer_review',
-                            id: original_aid %>
-                <% else %>
+               original_aid = assignment.id
+               if assignment.has_peer_review?
+                peer_review_aid = assignment.pr_assignment.id
+               end %>
+            <% unless assignment.is_peer_review? %>
+              <tr>
+                <td>
                   <%=
                     # assignment name
                     link_to assignment.short_identifier + ': ' + assignment.description,
                     controller: controller,
                     action: action,
                     id: original_aid %>
+                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+                      <%=
+                        # assignment name
+                        link_to t('results.review_for') + assignment.short_identifier,
+                                {controller: controller,
+                                action: 'peer_review',
+                                id: peer_review_aid},
+                                class: 'pr_assignment_list' %>
                   <% end %>
-              </td>
-              <td>
-                <% if !assignment.section_due_dates_type %>
-                  <% if assignment.due_date < Time.zone.now %>
-                    <strong><%= l(assignment.due_date, format: :long_date) %></strong>
-                  <% else %>
-                    <strong><%= l(assignment.due_date, format: :long_date) %></strong>
+                </td>
+                <td>
+                  <%= render partial: 'assignments/assignment_date',
+                             locals: { assignment: assignment} %>
+
+                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+                    <%= render partial: 'assignments/assignment_date',
+                               locals: { assignment: assignment.pr_assignment } %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
+                    <strong><%= t(:your_mark) %></strong>
+                    <%= # show results
+                        ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark)).to_s + "% (#{t('assignment_average')} " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
                     <p>
-                      <% if assignment.due_date <= Time.zone.now + 2.days %>
-                        <%= t(:hours_and_minutes_left,
-                              hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 48).floor,
-                              minutes: ((assignment.due_date - Time.zone.now)/ 60).floor % 60) %>
-                      <% else %>
-                        <%= t(:days_and_hours_left,
-                              days: ((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor,
-                              hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 24).floor) %>
-                      <% end %>
+                      <strong><%= t('assignment.overall_comment') %></strong>
                     </p>
-                  <% end %>
-                <% else %>
-                  <% if assignment.section_due_date(@section) < Time.zone.now %>
-                    <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
-                  <% else %>
-                    <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
                     <p>
-                    <% if assignment.section_due_date(@section) <= Time.zone.now + 2.days %>
-                      <%= t(:hours_and_minutes_left,
-                            hours: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60) % 48).floor,
-                            minutes: ((assignment.section_due_date(@section) - Time.zone.now)/ 60).floor % 60) %>
-                    <% else %>
-                      <%= t(:days_and_hours_left,
-                            days: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60 * 24)).floor,
-                            hours: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60) % 24).floor) %>
+                      <%= markdown(@a_id_results[assignment.id].overall_comment) %>
                     </p>
-                    <% end %>
+                    <%= link_to t('results.results_name'),
+                                view_marks_assignment_submission_result_path(
+                                  assignment_id: assignment.id,
+                                  submission_id: @a_id_results[assignment.id].submission_id,
+                                  id: @a_id_results[assignment.id].id) %>
+                  <% elsif assignment.due_date < Time.zone.now %>
+                    <%= t(:no_result) %>
                   <% end %>
-                <% end %>
-              </td>
-              <td>
-                <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
-                  <strong><%= t(:your_mark) %></strong>
-                  <%= # show results
-                      ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark)).to_s + "% (#{t('assignment_average')} " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
-                  <p>
-                    <strong><%= t('assignment.overall_comment') %></strong>
-                  </p>
-                  <p>
-                    <%= markdown(@a_id_results[assignment.id].overall_comment) %>
-                  </p>
-                  <%= link_to t('results.results_name'),
-                              view_marks_assignment_submission_result_path(
-                                assignment_id: assignment.id,
-                                submission_id: @a_id_results[assignment.id].submission_id,
-                                id: @a_id_results[assignment.id].id) %>
-                <% elsif assignment.due_date < Time.zone.now %>
-                  <%= t(:no_result) %>
-                <% end %>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            <% end %>
           <% end %>
         </tbody>
       </table>

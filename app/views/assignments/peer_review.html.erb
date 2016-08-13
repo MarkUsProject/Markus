@@ -1,7 +1,9 @@
 <div class='title_bar'>
   <h1>
-    <%= t('student.peer_assignment',
-          short_identifier: @assignment.short_identifier) %>
+    <%= @assignment.is_peer_review? ?
+            t('student.peer_assignment',
+              short_identifier: 'for ' + @assignment.parent_assignment.short_identifier) :
+            t('student.peer_assignment', short_identifier: @assignment.short_identifier) %>
   </h1>
 </div>
 
