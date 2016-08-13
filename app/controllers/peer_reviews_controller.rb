@@ -10,6 +10,12 @@ class PeerReviewsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    
+    unless @assignment.is_peer_review?
+      redirect_to edit_assignment_path(@assignment)
+      return
+    end
+
     @section_column = ''
     if Section.all.size > 0
       @section_column = "{
