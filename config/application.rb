@@ -54,7 +54,7 @@ module Markus
 
     # Validate passed locales
     I18n.enforce_available_locales = true
-    I18n.available_locales = [:en, :fr, :pt]
+    I18n.available_locales = [:en, :es, :fr, :pt]
 
     config.active_job.queue_adapter = :resque
     config.generators do |g|

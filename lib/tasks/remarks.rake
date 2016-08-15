@@ -3,15 +3,6 @@ namespace :db do
   task :remarks => :environment do
     puts 'Create remark requests'
 
-    #Function used to create marks for both criterias
-    def create_mark(result_id, markable_type, markable)
-      Mark.create(
-        result_id: result_id,
-        mark: rand(0..4),
-        markable_type: markable_type,
-        markable: markable)
-    end
-
     # Create remark requests for assignments that allow them
     Assignment.where(allow_remarks: true).each do |assignment|
       # Create remark request for first two groups in each assignment
@@ -46,12 +37,18 @@ namespace :db do
     result = remark_submission.results.first
 
     #Automate remarks for assignment using appropriate criteria
-    remark_group.assignment.get_criteria.each do |criterion|
-      criterion_class = criterion.class == RubricCriterion ? 'rubric' : 'flexible'
-      mark = create_mark(remark_submission.remark_result.id,
-                         criterion_class,
-                         criterion)
-      result.marks.push(mark)
+    remark_group.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
+      if criterion.class == RubricCriterion
+        random_mark = criterion.max_mark / 4 * rand(0..4)
+      elsif criterion.class == FlexibleCriterion
+        random_mark = rand(0..criterion.max_mark.to_i)
+      else
+        random_mark = rand(0..1)
+      end
+      mark = Mark.find_by(result_id:     remark_submission.remark_result.id,
+                          markable_id:   criterion.id,
+                          markable_type: criterion.class.to_s)
+      mark.update_attribute(:mark, random_mark)
       result.save
     end
 

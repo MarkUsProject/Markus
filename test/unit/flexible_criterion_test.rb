@@ -41,7 +41,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
   context 'With non-existent criteria' do
     setup do
-      @assignment = Assignment.make(marking_scheme_type: 'flexible')
+      @assignment = Assignment.make
     end
 
     should 'raise en error message on an empty row' do
@@ -68,7 +68,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       # Capture exception in variable 'e'
       e = assert_raise CSVInvalidLineError do
         # That should fail because the assignment doesn't yet exists (in the DB)
-        FlexibleCriterion.create_or_update_from_csv_row(['name', 10], Assignment.new(marking_scheme_type: 'flexible'))
+        FlexibleCriterion.create_or_update_from_csv_row(['name', 10], Assignment.new)
       end
       assert_instance_of CSVInvalidLineError, e
     end
@@ -77,7 +77,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
   context 'An assignment, of type flexible criteria' do
     setup do
-      @assignment = Assignment.make(marking_scheme_type: 'flexible')
+      @assignment = Assignment.make
     end
 
 

@@ -200,8 +200,6 @@ fr:
             title: "Barème"
             rubric: "Rubrique (barème pré-défini)"
             flexible: "Flexible (barème à définir par le correcteur)"
-        notice:
-            change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web"
         vcs_submit: "permettre soumet à travers le contrôle de version"
         is_hidden: "Cacher le projet aux étudiants"

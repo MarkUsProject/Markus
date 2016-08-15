@@ -1,7 +1,6 @@
 require 'encoding'
 
-# Represents a flexible criterion used to mark an assignment that
-# has the marking_scheme_type attribute set to 'flexible'.
+# Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
   self.table_name = 'flexible_criteria' # set table name correctly
 

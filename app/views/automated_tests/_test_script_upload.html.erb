@@ -8,11 +8,11 @@
   <% criterion_options = { '-' => nil }
     if !@assignment.rubric_criteria_count.nil?
        @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = criterion.id
+         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
        end
      else
        @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = criterion.id
+         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
        end
      end
   %>
@@ -113,7 +113,9 @@
           <% end %>
 
           <%= f.label :criterion_id, t('automated_tests.script_option.associated_criterion') %>
-          <% selected = f.object.criterion.nil? ? nil : f.object.criterion.id.to_s %>
+          <% selected = f.object.criterion.nil? ?
+                          nil :
+                          [f.object.criterion_id, f.object.criterion_type].to_s %>
           <%= f.select :criterion_id, options_for_select(criterion_options, selected) %>
 
           <br/><br/>
