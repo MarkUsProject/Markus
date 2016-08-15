@@ -1,0 +1,12 @@
+.pr_link {
+  float: right !important;
+}
+
+.active {
+  .pr_link {
+    padding-top: 0px !important;
+    float: right;
+    padding-left: 25px !important;
+  }
+}
+

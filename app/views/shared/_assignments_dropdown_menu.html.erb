@@ -34,11 +34,22 @@
         <li>
           <% # Don't show hidden assignments to students
             if !assignment.is_hidden %>
+
+            <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+                <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
+                            { controller: 'assignments',
+                              action: 'peer_review',
+                              id: assignment.pr_assignment.id },
+                            title: assignment.description,
+                            class: 'pr_link' %>
+            <% end %>
+
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'student_interface',
                           id: assignment.id },
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% end %>
         </li>
       <% elsif @current_user.ta? %>
@@ -113,18 +124,37 @@
         <% # student user, so show only non-hidden assignments
            else %>
           <% if !assignment.is_hidden %>
+            <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+              <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
+                          { controller: 'assignments',
+                            action: 'peer_review',
+                            id: assignment.pr_assignment.id },
+                          title: assignment.description,
+                          class: 'pr_link' %>
+            <% end %>
+
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'student_interface',
                           id: assignment.id },
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% end %>
         <% end %>
       </li>
     <% end %>
   <% else %>
     <li class='active'>
-      <span title='<%= assignment.description %>'>
+      <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+        <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
+                    { controller: 'assignments',
+                      action: 'peer_review',
+                      id: assignment.pr_assignment.id },
+                    title: assignment.description,
+                    class: 'pr_link' %>
+      <% end %>
+
+      <span class='title' title='<%= assignment.description %>'>
         <% # Appends hidden to the active link, if hidden.
            if assignment.is_hidden %>
           <%= t('assignment.hidden',
