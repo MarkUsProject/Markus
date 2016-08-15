@@ -27,7 +27,7 @@ module RandomAssignHelper
 
   def initialize_data_structures(num_groups, reviewer_ids, reviewee_ids)
     # A dictionary mapping reviewer id to a set of reviewee ids.
-    @reviewer_to_reviewee_sets = Hash.new { Set.new }
+    @reviewer_to_reviewee_sets = Hash.new { |h, k| h[k] = Set.new }
 
     # A list of reviewers ids, containing num_groups occurrences for each one.
     @reviewers = reviewer_ids * num_groups
@@ -47,6 +47,9 @@ module RandomAssignHelper
 
     # Remove reviewer ids if there are existing peer reviews already assigned
     process_existing_peer_reviews(reviewer_ids)
+
+    # Shuffle the reviewers to emulate randomness.
+    @reviewees = @reviewees.shuffle
   end
 
   # Remove reviewer id occurrences from @reviewers
