@@ -83,7 +83,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     setup do
       @admin = Admin.make
-      @assignment = Assignment.make(marking_scheme_type: 'rubric')
+      @assignment = Assignment.make
     end
 
     should 'doing a GET on :index(graders_controller)' do
@@ -221,7 +221,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with rubric criteria' do
         setup do
-          @assignment = Assignment.make(marking_scheme_type: 'rubric', assign_graders_to_criteria: true)
+          @assignment = Assignment.make(assign_graders_to_criteria: true)
         end
 
         should 'and all graders and criteria are valid' do
@@ -288,7 +288,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with flexible criteria' do
         setup do
-          @assignment = Assignment.make(marking_scheme_type: 'flexible', assign_graders_to_criteria: true)
+          @assignment = Assignment.make(assign_graders_to_criteria: true)
         end
 
         should 'and all graders and criteria are valid' do
@@ -379,7 +379,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     context 'doing a GET on :download_grader_groupings_mapping' do
       setup do
-        @assignment = Assignment.make(marking_scheme_type: 'rubric', assign_graders_to_criteria: true)
+        @assignment = Assignment.make(assign_graders_to_criteria: true)
       end
 
       should 'routing properly' do
@@ -393,7 +393,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     context 'doing a GET on :download_grader_criteria_mapping' do
       setup do
-        @assignment = Assignment.make(marking_scheme_type: 'rubric', assign_graders_to_criteria: true)
+        @assignment = Assignment.make(assign_graders_to_criteria: true)
       end
 
       should 'routing properly' do
@@ -1161,7 +1161,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with flexible marking scheme doing a' do
         setup do
-          @assignment = Assignment.make(marking_scheme_type: 'flexible')
+          @assignment = Assignment.make
         end
 
         context 'POST on :global_actions on random_assign' do

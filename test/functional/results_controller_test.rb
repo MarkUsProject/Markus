@@ -138,12 +138,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
   context 'A student' do
 
     {setup_student_flexible: 'flexible',
-     setup_student_rubric: 'rubric'}.each do |setup_method, scheme_type|
+     setup_student_rubric: 'rubric'}.each do |setup_method, criterion_type|
 
-      context "in an assignment with #{scheme_type} scheme doing a" do
+      context "Using #{criterion_type} and doing a" do
         setup do
           @student = Student.make
-          @assignment = Assignment.make(marking_scheme_type: scheme_type)
+          @assignment = Assignment.make
           @grouping = Grouping.make(assignment: @assignment)
           StudentMembership.make(
               grouping: @grouping,
@@ -466,7 +466,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'and the result is available' do
             SubmissionFile.make(submission: @submission)
-            Mark.make(@assignment.criterion_class.symbol, result: @result)
+            Mark.make(criterion_type.to_sym, result: @result)
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -522,12 +522,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
   context 'An admin' do
 
     {setup_admin_flexible: 'flexible',
-     setup_admin_rubric: 'rubric'}.each do |setup_method, scheme_type|
+     setup_admin_rubric: 'rubric'}.each do |setup_method, criterion_type|
 
-      context "in an assignment with #{scheme_type} scheme doing a" do
+      context "using #{criterion_type} and doing a" do
         setup do
           @admin = Admin.make
-          @assignment = Assignment.make(marking_scheme_type: scheme_type)
+          @assignment = Assignment.make
         end
 
         context 'GET on :edit' do
@@ -698,7 +698,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             s = Submission.make(grouping: g)
             @result = s.get_latest_result
-            Mark.make(@assignment.criterion_class.symbol, result: @result)
+            Mark.make(criterion_type.to_sym, result: @result)
 
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
@@ -710,7 +710,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # will be marked as complete, a result which will be in the same grade range
             # therefore we must increment the number of groupings at the given range for
             # each marking scheme type
-            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+            if criterion_type == 'rubric'
               @grade_distribution[4] += 1
             else
               @grade_distribution[1] += 1
@@ -947,7 +947,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
-            @mark =  Mark.make(@assignment.criterion_class.symbol, result: @submission.get_latest_result)
+            @mark =  Mark.make(criterion_type.to_sym, result: @submission.get_latest_result)
             @result = @mark.result
           end
 
@@ -1099,12 +1099,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
   context 'A TA' do
 
     {setup_ta_flexible: 'flexible',
-     setup_ta_rubric: 'rubric'}.each do |setup_method, scheme_type|
+     setup_ta_rubric: 'rubric'}.each do |setup_method, criterion_type|
 
-      context "in an assignment with #{scheme_type} scheme doing a" do
+      context "Using #{criterion_type} and doing a" do
         setup do
           @ta = Ta.make
-          @assignment = Assignment.make(marking_scheme_type: scheme_type)
+          @assignment = Assignment.make
           @grouping = Grouping.make(assignment: @assignment)
           @submission = Submission.make(grouping: @grouping)
           @result = @grouping.submissions.first.get_latest_result

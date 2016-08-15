@@ -118,7 +118,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a GET' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -256,7 +256,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a POST' do
       before(:each) do
         @admin = create(:admin, user_name: 'olm_admin')
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -418,7 +418,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a DELETE' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:flexible_criterion,
                             assignment: @assignment)
       end
@@ -431,14 +431,14 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(@criterion.id) }
             .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
-  end # Tests using Flexible Criteria
+  end # Tests using Flexible Criteria only
 
   describe 'Using Rubric Criteria' do
 
@@ -556,7 +556,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a GET' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -691,7 +691,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a POST' do
       before(:each) do
         @admin = create(:admin, user_name: 'olm_admin')
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment,
                             position: 1,
@@ -850,7 +850,7 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An authenticated and authorized admin doing a DELETE' do
       before(:each) do
         @admin = create(:admin)
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         @criterion = create(:rubric_criterion,
                             assignment: @assignment)
       end
@@ -862,13 +862,260 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect(I18n.t('criterion_deleted_success')).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
         is_expected.to respond_with(:success)
 
         expect { RubricCriterion.find(@criterion.id) }
-            .to raise_error(ActiveRecord::RecordNotFound)
+          .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
-  end # Tests using Rubric Criteria
+  end # Tests using Rubric Criteria only
+
+  describe 'An authenticated and authorized admin performing yml actions' do
+    context 'When a file containing a mixture of entries is uploaded' do
+      before :each do
+        @admin              = create(:admin)
+        @assignment         = create(:assignment)
+        @rubric_criterion   = create(:rubric_criterion,
+                                     assignment: @assignment,
+                                     position: 1,
+                                     name: 'Rubric criterion')
+        @flexible_criterion = create(:flexible_criterion,
+                                     assignment: @assignment,
+                                     position: 2,
+                                     name: 'Flexible criterion')
+        @checkbox_criterion = create(:checkbox_criterion,
+                                     assignment: @assignment,
+                                     position: 3,
+                                     name: 'Checkbox criterion')
+
+        @invalid_file = fixture_file_upload(
+            'files/bad_csv.csv', 'text/xls')
+        allow(@invalid_file).to receive(:read).and_return(
+            File.read(fixture_file_upload(
+                          'files/bad_csv.csv', 'text/csv')))
+
+        @empty_file = fixture_file_upload(
+          'files/empty_file', 'text/yaml')
+        allow(@empty_file).to receive(:read).and_return(
+          File.read(fixture_file_upload(
+            'files/empty_file', 'text/yaml')))
+
+        @uploaded_file = fixture_file_upload(
+          'files/criteria/upload_yml_mixed.yaml', 'text/yaml')
+        allow(@uploaded_file).to receive(:read).and_return(
+          File.read(fixture_file_upload(
+          'files/criteria/upload_yml_mixed.yaml', 'text/yaml')))
+
+        @download_expected_output = fixture_file_upload(
+          'files/criteria/download_yml_output.yaml', 'text/yaml')
+        allow(@download_expected_output).to receive(:read).and_return(
+          File.read(fixture_file_upload(
+          'files/criteria/download_yml_output.yaml', 'text/yaml')))
+      end
+
+      it 'raises an error if the file does not have properly formatted entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @invalid_file }
+
+        expect(flash[:error])
+            .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
+                    'There is an error in the file you uploaded: (<unknown>): invalid trailing UTF-8 octet at line 1 column 1'])
+      end
+
+      it 'raises an error if the file does not include any criteria' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @empty_file }
+
+        expect(flash[:error])
+          .to eq([I18n.t('criteria.upload.error.invalid_format') +
+                  '  ' + I18n.t('criteria.upload.empty_error')])
+      end
+
+      it 'deletes all criteria previously created' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:id))
+          .not_to include(@rubric_criterion.id, @flexible_criterion.id, @checkbox_criterion.id)
+      end
+
+      it 'maintains the order between entries and positions for criteria' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
+          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5]])
+      end
+
+      it 'creates all criteria with properly formatted entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:name))
+            .to contain_exactly('cr30', 'cr20', 'cr100', 'cr80', 'cr60')
+        expect(flash[:success])
+          .to eq([I18n.t('criteria.upload.success', num_loaded: 5)])
+      end
+
+      it 'creates rubric criteria with properly formatted entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria(:all, :rubric).pluck(:name))
+          .to include('cr30')
+        @assignment.reload
+        cr1 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr30')
+        expect(@assignment.get_criteria(:all, :rubric).size).to eq(1)
+        expect(cr1.level_0_name).to eq('What?')
+        expect(cr1.level_0_description).to eq('Fail')
+        expect(cr1.level_1_name).to eq('Hmm')
+        expect(cr1.level_1_description).to eq('Almost fail')
+        expect(cr1.level_2_name).to eq('Average')
+        expect(cr1.level_2_description).to eq('Not bad')
+        expect(cr1.level_3_name).to eq('Good')
+        expect(cr1.level_3_description).to eq('Alright')
+        expect(cr1.level_4_name).to eq('Excellent')
+        expect(cr1.level_4_description).to eq('Impressive')
+        expect(cr1.ta_visible).to be false
+        expect(cr1.peer_visible).to be true
+      end
+
+      it 'creates flexible criteria with properly formatted entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
+          .to include('cr20', 'cr80', 'cr60')
+        cr1 = @assignment.get_criteria(:all, :flexible).find_by(name: 'cr80')
+        expect(@assignment.get_criteria(:all, :flexible).size).to eq(3)
+        expect(cr1.max_mark).to eq(10.0)
+        expect(cr1.description).to eq('')
+        expect(cr1.ta_visible).to be true
+        expect(cr1.peer_visible).to be true
+      end
+
+      it 'creates checkbox criteria with properly formatted entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria(:all, :checkbox).pluck(:name))
+          .to include('cr100')
+        cr1 = @assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100')
+        expect(@assignment.get_criteria(:all, :checkbox).size).to eq(1)
+        expect(cr1.max_mark).to eq(5.0)
+        expect(cr1.description).to eq('I am checkbox')
+        expect(cr1.ta_visible).to be true
+        expect(cr1.peer_visible).to be false
+      end
+
+      it 'creates criteria; being case insensitive with the type given' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
+          .to include('cr20', 'cr80')
+      end
+
+      it 'creates criteria that lack a description' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria(:all, :flexible).map(&:name)).to include('cr80')
+        expect(FlexibleCriterion.find_by(name: 'cr80').description).to eq('')
+      end
+
+      it 'creates criteria with the default visibility options if these are not given in the entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
+        expect(CheckboxCriterion.find_by(name: 'cr100').ta_visible).to be true
+        expect(CheckboxCriterion.find_by(name: 'cr100').peer_visible).to be false
+        expect(FlexibleCriterion.find_by(name: 'cr60').ta_visible).to be true
+        expect(FlexibleCriterion.find_by(name: 'cr60').peer_visible).to be false
+      end
+
+      it 'does not create criteria with format errors in entries' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:name))
+          .not_to include('cr40', 'cr50', 'cr70')
+        expect(flash[:error])
+          .to eq([I18n.t('criteria.upload.error.invalid_format') + ' cr40, cr70, cr50'])
+      end
+
+      it 'does not create criteria with an invalid mark' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:name))
+          .not_to include('cr40', 'cr50')
+      end
+
+      it 'does not create criteria that have both visibility options set to false' do
+        post_as @admin,
+                :upload_yml,
+                assignment_id: @assignment.id,
+                yml_upload:    { rubric: @uploaded_file }
+
+        expect(@assignment.get_criteria.map(&:name))
+          .not_to include('cr70')
+      end
+
+      context 'When some criteria have been previously uploaded and and admin performs a download' do
+        it 'responds with appropriate status' do
+          post_as @admin,
+                  :upload_yml,
+                  assignment_id: @assignment.id,
+                  yml_upload:    { rubric: @uploaded_file }
+
+          get :download_yml,
+              assignment_id: @assignment.id
+
+          expect(response.status).to eq(200)
+        end
+
+        it 'sends the correct information' do
+          post_as @admin,
+                  :upload_yml,
+                  assignment_id: @assignment.id,
+                  yml_upload:    { rubric: @uploaded_file }
+
+          get :download_yml,
+              assignment_id: @assignment.id
+
+          expect(response.body).to eq(@download_expected_output.read)
+        end
+      end
+    end
+  end
 end
 

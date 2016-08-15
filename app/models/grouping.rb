@@ -689,6 +689,7 @@ class Grouping < ActiveRecord::Base
                     :group,
                     :grace_period_deductions,
                     :tags,
+                    :peer_reviews_to_others,
                     { current_submission_used: [:results,
                                                 :submission_files,
                                                 :submitted_remark,
@@ -740,7 +741,7 @@ class Grouping < ActiveRecord::Base
   def marking_state(result, assignment, user)
     if !user.student? && assignment.is_peer_review?
       # if an admin or TA is viewing peer review submissions
-      pr_results = peer_reviews_to_others.map {|pr| Result.find(pr.result_id)}
+      pr_results = peer_reviews_to_others.map &:result
       if pr_results.empty?
         return 'partial'
       end

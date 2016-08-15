@@ -71,8 +71,9 @@
         <%= t('results.review_for') + sanitize(@assignment.short_identifier) %>
       <% else %>
         <%= t('results.review_title',
-              { assignment_name: @assignment.short_identifier,
-                group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
+              assignment_name: @assignment.short_identifier,
+              group_name: @current_group_name,
+              reviewer_name: @reviewer.group.group_name) %>
       <% end %>
     <% else %>
       <%= t('results.results_for') + sanitize(@assignment.short_identifier) %>

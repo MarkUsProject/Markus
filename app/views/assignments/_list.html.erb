@@ -66,9 +66,29 @@
                   <% elsif assignment.due_date < Time.zone.now %>
                     <%= t(:no_result) %>
                   <% end %>
-                </td>
-              </tr>
-            <% end %>
+                <% end %>
+              </td>
+              <td>
+                <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
+                  <strong><%= t(:your_mark) %></strong>
+                  <%= # show results
+                      ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark)).to_s + "% (#{t('assignment_average')} " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
+                  <p>
+                    <strong><%= t('assignment.overall_comment') %></strong>
+                  </p>
+                  <p>
+                    <%= markdown(@a_id_results[assignment.id].overall_comment) %>
+                  </p>
+                  <%= link_to t('results.results_name'),
+                              view_marks_assignment_submission_result_path(
+                                assignment_id: assignment.id,
+                                submission_id: @a_id_results[assignment.id].submission_id,
+                                id: @a_id_results[assignment.id].id) %>
+                <% elsif assignment.due_date < Time.zone.now %>
+                  <%= t(:no_result) %>
+                <% end %>
+              </td>
+            </tr>
           <% end %>
         </tbody>
       </table>

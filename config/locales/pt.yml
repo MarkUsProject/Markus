@@ -198,8 +198,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             title: "Esquema de avalição"
             rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
-        notice:
-            change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
         allow_web_submits: "Permitir envio pelo web"
         vcs_submit: "Permitir que sustenta através de controle de versão"
         is_hidden: "Ocultar este projeto dos alunos"
@@ -1089,27 +1087,36 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
         syntax_error:    "Existe um erro no arquivo carregado : %{error}"
         format_yml_html: "
-          <p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;weight: weight<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>
-          <p>A seguir um critério flexível:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
+          <ul>
+            <li><p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;level_0:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                &nbsp;&nbsp;level_1:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+                <p>As opções de visibilidade são opcionais.</p>
+            </p></li>
+            <li><p>A seguir um critério flexível:</p>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;type: flexible<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;description: description<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+              <p>As opções de descrição e visibilidade são opcionais.</p></li>
+            <li><p>E o seguinte para um critério de seleção:</p>
+              <code>criterion_name:<br>
+              &nbsp;&nbsp;type: checkbox<br>
               &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br></code>
-            <p>A descrição é opcional.</p>
-          <p>E o seguinte para um critério de seleção:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br></code>
-          <p>A descrição é opcional.</p>"
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>As opções de descrição e visibilidade são opcionais.</p></li>
+          </ul>"
       errors:
         messages:
           name_taken:             "Nome de critério já utilizado."

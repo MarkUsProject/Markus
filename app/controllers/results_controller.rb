@@ -246,7 +246,10 @@ class ResultsController < ApplicationController
       @old_result.save
     end
     @result.released_to_students = released_to_students
-    @result.save
+    if @result.save
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      @result.submission.assignment.update_results_stats
+    end
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'
@@ -495,15 +498,15 @@ class ResultsController < ApplicationController
 
     if is_review
       if @current_user.student?
-        @prs = @grouping.peer_reviews.find_all {|pr| Result.find(pr.result_id).released_to_students}
+        @prs = @grouping.peer_reviews.where(results: { released_to_students: true })
       else
         @reviewer = Grouping.find(params[:reviewer_grouping_id])
         @prs = @reviewer.peer_reviews_to_others
       end
 
       @current_pr = PeerReview.find_by(result_id: @result.id)
-      @current_pr_result = Result.find(@current_pr.result_id)
-      @current_group_name = Group.find(@current_pr_result.submission.grouping.group_id).group_name
+      @current_pr_result = @current_pr.result
+      @current_group_name = @current_pr_result.submission.grouping.group.group_name
     end
 
     unless is_review || @submission.has_result?
