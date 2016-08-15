@@ -68,7 +68,7 @@ class Submission < ActiveRecord::Base
   end
 
   def remark_result
-    if remark_request_timestamp.nil? || results.length < 2
+    if remark_request_timestamp.nil? || non_pr_results.length < 2
       nil
     else
       non_pr_results.last

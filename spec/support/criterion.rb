@@ -1,6 +1,6 @@
 shared_examples 'a criterion' do
   describe 'assigning and unassigning TAs' do
-    let(:assignment) { create(assignment_factory_name) }
+    let(:assignment) { FactoryGirl.create(:assignment) }
     let(:criteria) do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end

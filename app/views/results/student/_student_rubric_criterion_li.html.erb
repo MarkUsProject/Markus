@@ -3,7 +3,6 @@
              locals: { mark_criterion: mark_criterion,
                        mark: mark,
                        old_mark: old_mark } %>
-
   <div id='<%= "criterion_info_#{mark_criterion.id}" %>'>
     <div class='mark_criterion_level_released_container' data-id='<%= mark_criterion.id %>'>
       <div class='cursor_hand'>
@@ -27,7 +26,7 @@
                         <strong> <%= level_name %></strong>
                         &nbsp;<%= level_desc %>
                       </div>
-                      <div class='mark'><%= num_levels * mark_criterion.weight %> / <%= mark_criterion.max_mark %></div>
+                      <div class='mark'><%= (num_levels * mark_criterion.weight).round(2) %> / <%= mark_criterion.max_mark %></div>
                     </td>
                   </tr>
               <% end -%>

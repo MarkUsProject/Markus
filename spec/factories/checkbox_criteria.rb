@@ -1,6 +1,6 @@
 FactoryGirl.define do
-  factory :flexible_criterion do
-    sequence(:name) { |n| "Flexible criterion #{n}" }
+  factory :checkbox_criterion do
+    sequence(:name) { |n| "Checkbox criterion #{n}" }
     association :assignment, factory: :assignment
     max_mark 1.0
     ta_visible true

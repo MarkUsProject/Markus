@@ -126,7 +126,7 @@ class Result < ActiveRecord::Base
   end
 
   def is_a_review?
-    PeerReview.exists?(result_id: id)
+    !peer_review_id.nil?
   end
 
   def is_review_for?(user, assignment)
