@@ -35,14 +35,9 @@
           <% # Don't show hidden assignments to students
             if !assignment.is_hidden %>
 
-            <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
-                <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
-                            { controller: 'assignments',
-                              action: 'peer_review',
-                              id: assignment.pr_assignment.id },
-                            title: assignment.description,
-                            class: 'pr_link' %>
-            <% end %>
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
 
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
@@ -54,32 +49,44 @@
         </li>
       <% elsif @current_user.ta? %>
         <li>
+          <%= render partial: 'shared/pr_dropdown_menu_li',
+                     locals: { assignment: assignment,
+                               current_user: @current_user} %>
+
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
                         browse_assignment_submissions_path(assignment),
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         browse_assignment_submissions_path(assignment),
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% end %>
         </li>
       <% else %>
         <li>
+          <%= render partial: 'shared/pr_dropdown_menu_li',
+                     locals: { assignment: assignment,
+                               current_user: @current_user} %>
+
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
                         { controller: 'assignments',
                           action: 'edit',
                           id: assignment.id },
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'edit',
                           id: assignment.id },
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% end %>
         </li>
       <% end %>
@@ -109,29 +116,31 @@
         <% # Don't show hidden assignments in the dropdown menu for students
            # either. Append '(hidden)' for TAs and Admins.
            if !@current_user.student? %>
-          <% if assignment.is_hidden %>
+
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
+
+            <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
                         polymorphic_url([assignment, target_controller],
                                         action: target_action),
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         polymorphic_url([assignment, target_controller],
                                         action: target_action),
-                        title: assignment.description %>
+                        title: assignment.description,
+                        class: 'title' %>
           <% end %>
         <% # student user, so show only non-hidden assignments
            else %>
           <% if !assignment.is_hidden %>
-            <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
-              <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
-                          { controller: 'assignments',
-                            action: 'peer_review',
-                            id: assignment.pr_assignment.id },
-                          title: assignment.description,
-                          class: 'pr_link' %>
-            <% end %>
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
 
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
@@ -145,14 +154,9 @@
     <% end %>
   <% else %>
     <li class='active'>
-      <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
-        <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
-                    { controller: 'assignments',
-                      action: 'peer_review',
-                      id: assignment.pr_assignment.id },
-                    title: assignment.description,
-                    class: 'pr_link' %>
-      <% end %>
+      <%= render partial: 'shared/pr_dropdown_menu_li',
+                 locals: { assignment: assignment,
+                           current_user: @current_user} %>
 
       <span class='title' title='<%= assignment.description %>'>
         <% # Appends hidden to the active link, if hidden.
