@@ -4,6 +4,12 @@
   float: right;
 }
 
+*:not(.active) {
+  .pr_link {
+    padding-right: 9px !important;
+  }
+}
+
 .active {
   padding-right: 0px !important;
 
