@@ -43,8 +43,7 @@
                         { controller: 'assignments',
                           action: 'student_interface',
                           id: assignment.id },
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% end %>
         </li>
       <% elsif @current_user.ta? %>
@@ -57,13 +56,11 @@
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
                         browse_assignment_submissions_path(assignment),
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         browse_assignment_submissions_path(assignment),
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% end %>
         </li>
       <% else %>
@@ -78,15 +75,13 @@
                         { controller: 'assignments',
                           action: 'edit',
                           id: assignment.id },
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'edit',
                           id: assignment.id },
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% end %>
         </li>
       <% end %>
@@ -126,14 +121,12 @@
                           assignment_text: h(assignment.short_identifier)),
                         polymorphic_url([assignment, target_controller],
                                         action: target_action),
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% else %>
             <%= link_to h(assignment.short_identifier),
                         polymorphic_url([assignment, target_controller],
                                         action: target_action),
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% end %>
         <% # student user, so show only non-hidden assignments
            else %>
@@ -146,8 +139,7 @@
                         { controller: 'assignments',
                           action: 'student_interface',
                           id: assignment.id },
-                        title: assignment.description,
-                        class: 'title' %>
+                        title: assignment.description %>
           <% end %>
         <% end %>
       </li>
