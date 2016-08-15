@@ -48,7 +48,7 @@ module RandomAssignHelper
     # Remove reviewer ids if there are existing peer reviews already assigned
     process_existing_peer_reviews(reviewer_ids)
 
-    # Shuffle the reviewers to emulate randomness.
+    # Shuffle the reviewees to emulate randomness.
     @reviewees = @reviewees.shuffle
   end
 
