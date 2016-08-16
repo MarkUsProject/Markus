@@ -158,7 +158,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
-        edit:           "Editar projeto:"
+        edit:           "Editar projeto: "
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"

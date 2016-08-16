@@ -202,7 +202,7 @@ es:
         error:                     "No se pudo asignar la Regla de Entrega: %{message}"
         not_valid_submission_rule: "%{type} no es una Regla de Entrega válida"
         rules:                     "Reglas del Proyecto"
-        edit:                      "Editar Proyecto:"
+        edit:                      "Editar Proyecto: "
         required_files:            "Archivos requeridos"
         submission_rules:          "Reglas de Entrega"
         required_files_read:       "Archivos requeridos"
