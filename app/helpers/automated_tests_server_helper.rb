@@ -40,6 +40,7 @@ module AutomatedTestsServerHelper
         </test_script>"
     end
     output += "\n</testrun>"
+    FileUtils.rm_rf(test_path)
 
     # store results and send them back to markus through its api
     test_results_path = File.join(test_results_path, "test_run_#{Time.now.to_i}")
@@ -48,9 +49,9 @@ module AutomatedTestsServerHelper
     File.write("#{test_results_path}/error.txt", errors)
     # TODO What about UTORid auth, how do I get the cookie?
     api_url = "#{markus_address}/api/assignments/#{assignment_id}/groups/#{group_id}/test_script_results"
-    puts api_url
     options = {:headers => {
-                   :Authorization => "MarkUsAuth #{api_key}"},
+                   :Authorization => "MarkUsAuth #{api_key}",
+                   :Accept => 'application/json'},
                :body => {
                    :assignment_id => assignment_id,
                    :group_id => group_id,

@@ -238,6 +238,7 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
     # TODO export the right repo revision using submission_id
+    # TODO Restore call to run tests when collecting submission
     export_group_repo(group, repo_dir)
     if files_available?(assignment, repo_dir) &&
        (call_on == 'collection' || has_permission?(current_user, grouping, assignment))
@@ -249,11 +250,12 @@ module AutomatedTestsClientHelper
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    test_box_path = MarkusConfigurator.markus_ate_test_run_directory
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
+    test_box_path = ''
 
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
+      test_box_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
       stdout, stderr, status = Open3.capture3("
         rm -rf '#{test_box_path}' &&
         mkdir '#{test_box_path}' &&
@@ -268,12 +270,11 @@ module AutomatedTestsClientHelper
     else
       # tests executed on a test server: copy the student's submission and all necessary files through ssh
       test_server_username = MarkusConfigurator.markus_ate_test_server_username
-      # TODO make it non-blocking? (needs something on the worker side to wait if the job is enqueued before the transfer is completed)
-      # TODO Use ssh.forward here to enqueue rather than a permanent ssh tunnel to Redis?
       Net::SSH::start(test_server_host, test_server_username) do |ssh|
         test_box_path = ssh.exec!('mktemp -d')
-        ssh.scp.upload!(test_server_host, test_server_username, submission_path, test_box_path, :recursive => true)
-        ssh.scp.upload!(test_server_host, test_server_username, assignment_tests_path, test_box_path, :recursive => true)
+        # TODO Fix upload with wildcard which seem not to work
+        ssh.scp.upload!("#{submission_path}/*", test_box_path, :recursive => true)
+        ssh.scp.upload!("#{assignment_tests_path}/*", test_box_path)
       end
     end
 
@@ -308,19 +309,14 @@ module AutomatedTestsClientHelper
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
-    # TODO Make it a bit more configurable?
-    if host_with_port.start_with?('localhost')
-      markus_address = host_with_port
-    else
-      markus_address = "https://#{host_with_port}"
-    end
+    markus_address = host_with_port.start_with?('localhost') ? "http://#{host_with_port}" : "https://#{host_with_port}"
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
     test_path = copy_test_files(assignment, repo_dir)
     if test_path.nil?
       return
     end
-    # TODO different test_results_path for remote execution?
+    # TODO Add a different test_results_path for remote execution?
     test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test_runs')
     test_scripts = get_scripts_to_run(assignment, call_on)
     test_scripts.map! do |script|

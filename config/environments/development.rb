@@ -260,13 +260,6 @@ Markus::Application.configure do
   # The name of the queue on the test server where tests wait to be executed.
   ATE_TEST_QUEUE_NAME = 'test_queue'
 
-  # The name and the path of the directory where the test runs.
-  # This directory will be destroyed and recreated in every test run.
-  # Then the test runner script along with all test files and source
-  # files will be copied to this directory, and the test runner
-  # script is executed.
-  ATE_TEST_RUN_DIRECTORY = "#{::Rails.root.to_s}/data/dev/automated_tests/test"
-
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
   ###################################################################
