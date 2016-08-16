@@ -713,7 +713,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error:   "Falha ao atualizar aluno."
 
       assignment: "Projeto %{short_identifier}"
-      peer_assignment: "Projeto de Revisão de Pares %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Projeto de Revisão de Pares"
       group_information: "Informação do Grupo"
       group_not_valid: "Seu grupo não é válido. Você não pode enviar nada."
       overview: "Visão global"

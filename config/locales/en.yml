@@ -778,7 +778,7 @@ en:
         error:   "Failed to update student."
 
       assignment: "Assignment %{short_identifier}"
-      peer_assignment: "Peer Review Assignment %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Peer Review Assignment"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"

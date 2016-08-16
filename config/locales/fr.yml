@@ -745,7 +745,7 @@ fr:
     #Sutdent's View (student)
     student:
       assignment: "Projet %{short_identifier}"
-      peer_assignment: "Projet d'examen par les pairs %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"

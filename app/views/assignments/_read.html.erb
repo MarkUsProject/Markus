@@ -3,7 +3,9 @@
 <div class='block_content'>
   <div class='sub_block'>
     <span class='prop_label'><%= t('name') %>:</span>
-    <span class="prop_paragraph"><%= @assignment.short_identifier %></span>
+    <span class="prop_paragraph">
+      <%= @assignment.is_peer_review? ? t('results.review_for') + @assignment.parent_assignment.short_identifier :
+                                        @assignment.short_identifier %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('description') %>:</span>
