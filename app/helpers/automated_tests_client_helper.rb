@@ -231,6 +231,7 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, grouping_id, call_on, current_user, submission_id = nil)
 
+    # TODO Show errors to the user rather than just logging them?
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
@@ -240,7 +241,7 @@ module AutomatedTestsClientHelper
     export_group_repo(group, repo_dir)
     if files_available?(assignment, repo_dir) &&
        (call_on == 'collection' || has_permission?(current_user, grouping, assignment))
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, submission_id)
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, current_user.api_key, submission_id)
     end
   end
 
@@ -251,7 +252,6 @@ module AutomatedTestsClientHelper
     test_box_path = MarkusConfigurator.markus_ate_test_run_directory
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
-    # TODO test_box_path must be relative, to construct it in different paths locally and remotely
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
       stdout, stderr, status = Open3.capture3("
@@ -260,7 +260,11 @@ module AutomatedTestsClientHelper
         cp -r '#{submission_path}'/* '#{test_box_path}' &&
         cp -r '#{assignment_tests_path}'/* '#{test_box_path}'
       ")
-      return [stdout, stderr, status]
+      unless status.success?
+        MarkusLogger.instance.log("ATE test copy error for assignment #{assignment}, group #{grouping}:\n
+                                  out: #{stdout}\nerr: #{stderr}", MarkusLogger::ERROR)
+        test_box_path = nil
+      end
     else
       # tests executed on a test server: copy the student's submission and all necessary files through ssh
       test_server_username = MarkusConfigurator.markus_ate_test_server_username
@@ -300,14 +304,23 @@ module AutomatedTestsClientHelper
   # the Resque workers - it should not be called from other functions.
   def self.perform(host_with_port, grouping_id, call_on, api_key, submission_id = nil)
 
+    # TODO is submission_id needed?
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
-    markus_address = host_with_port # TODO add protocol + remove port if production
+    # TODO Make it a bit more configurable?
+    if host_with_port.start_with?('localhost')
+      markus_address = host_with_port
+    else
+      markus_address = "https://#{host_with_port}"
+    end
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
-    # TODO handle errors from copy_test_files
     test_path = copy_test_files(assignment, repo_dir)
+    if test_path.nil?
+      return
+    end
+    # TODO different test_results_path for remote execution?
     test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test_runs')
     test_scripts = get_scripts_to_run(assignment, call_on)
     test_scripts.map! do |script|
@@ -315,56 +328,47 @@ module AutomatedTestsClientHelper
     end
 
     # TODO enqueue on remote redis, probably need to use resque-cli with ssh
-    # TODO If it's a student, should I upload the results?
     Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
   end
 
   def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
 
-    # TODO handle errors
-    # m_logger = MarkusLogger.instance
-    # src_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository,
-    #                     group.repo_name,
-    #                     assignment.repository_folder)
-    # m_logger.log("
-    #     Error launching test in directory #{src_dir}.\n
-    #     stdout:\n#{stdout};\n
-    #     stderr:\n#{stderr}
-    #              ", MarkusLogger::ERROR)
-    # # TODO: handle this error better
-    # raise 'error'
+    # TODO need to pass call_on through the api
     result = Hash.from_xml(raw_result)
     repo = grouping.group.repo
     revision = repo.get_latest_revision
     revision_number = revision.revision_number
-    raw_test_scripts = result['testrun']['test_script']
-
-    # Hash.from_xml will yield a hash if only one test script
-    # and an array otherwise
-    if raw_test_scripts.nil?
-      return
-    elsif raw_test_scripts.is_a?(Array)
-      test_scripts = raw_test_scripts
-    else
-      test_scripts = [raw_test_scripts]
-    end
-
     submission_id = submission ? submission.id : nil
+
+    # Hash.from_xml will yield a hash with only one test script and an array otherwise
+    test_scripts = result['testrun']['test_script']
+    if test_scripts.nil?
+      MarkusLogger.instance.log("ATE test run framework error for assignment #{assignment}, group #{grouping}:\n
+                                 #{raw_result}", MarkusLogger::ERROR)
+      return
+    end
+    unless test_scripts.is_a?(Array)
+      test_scripts = [test_scripts]
+    end
 
     test_scripts.each do |script|
       marks_earned = 0
       script_name = script['script_name']
       test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
-
       new_test_script_result = grouping.test_script_results.create!(
         test_script_id: test_script.id,
         submission_id: submission_id,
         marks_earned: 0,
         repo_revision: revision_number)
 
-      tests = script['test'] || []  # there may not be any test results
       # same workaround as above, Hash.from_xml produces a hash if it's a single test
+      tests = script['test']
+      if tests.nil?
+        MarkusLogger.instance.log("ATE test run error for script #{script_name}, assignment #{assignment},
+                                   group #{grouping}:\n#{script}", MarkusLogger::ERROR)
+        tests = []
+      end
       unless tests.is_a?(Array)
         tests = [tests]
       end
@@ -384,7 +388,7 @@ module AutomatedTestsClientHelper
       new_test_script_result.save!
     end
 
-    if (call_on == 'collection' || call_on == 'submission')
+    if call_on == 'collection' || call_on == 'submission'
       grouping.current_submission_used.set_marks_for_tests
     end
 
