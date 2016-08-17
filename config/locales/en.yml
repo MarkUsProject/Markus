@@ -235,6 +235,7 @@ en:
         your_reviews: "Your Reviews"
         review: "Peer Review"
     peer_review:
+        assign: "Assign Peer Reviews"
         review: "Review "
         reviews: "Reviews"
         problem: "An unexpected problem occured"

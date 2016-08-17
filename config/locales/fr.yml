@@ -214,6 +214,7 @@ fr:
         your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
+        assign: "Attribuer examen par les pairs"
         review: "Avis "
         reviews: "Avis"
         problem: "Un problème inattendu est survenue"
@@ -277,7 +278,6 @@ fr:
     submissions:        "Envois"
     summaries:          "Récapitulatif"
     peer_reviews:       "Examens par le pairs"
-    peer_review:        "Examen par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"

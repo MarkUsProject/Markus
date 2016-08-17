@@ -212,6 +212,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         your_reviews: "Os seus comentários"
         review: "Revisãos"
     peer_review:
+        assign: "Atribuir avaliações pelos pares"
         review: "Revisão "
         reviews: "Revisões"
         problem: "Um problema inesperado ocorreu"
@@ -275,7 +276,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     submissions:        "Submissões"
     summaries:          "Resumos"
     peer_reviews:       "Avaliações pelos pares"
-    peer_review:        "Avaliaçõ pelos pares"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"

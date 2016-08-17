@@ -360,6 +360,7 @@ es:
         your_reviews:                     "Sus Revisiones"
         review:                           "Revisión"
     peer_review:
+        assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"
         reviews:                              "Revisiones"
         problem:                              "Un problema inesperado ha ocurrido"
