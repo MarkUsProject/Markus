@@ -5,7 +5,9 @@ namespace :db do
     puts 'Assign Groups/Students for Assignments'
     students = Student.all
     Assignment.all.each do |assignment|
-      15.times do |time|
+      num_groups = (assignment.short_identifier == 'A1' && ENV['A1_GROUP_AMOUNT']) ? ENV['A1_GROUP_AMOUNT'].to_i : 15
+      puts "Populating #{assignment.short_identifier} with #{num_groups} groups"
+      num_groups.times do |time|
         student = students[time]
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           group = Group.create(

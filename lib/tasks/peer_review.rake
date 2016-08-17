@@ -11,11 +11,10 @@ namespace :db do
     a1pr = a1.pr_assignment
     a1pr.clone_groupings_from(a1.id)
 
-    a1pr.groupings.each do |pr_grouping|
-      random_group = a1.groupings[Random.rand(a1.groupings.size)]
-      if pr_grouping.does_not_share_any_students?(random_group)
-        PeerReview.create_peer_review_between(pr_grouping, random_group)
-      end
-    end
+    selected_reviewer_group_ids = a1pr.groupings.map { |g| g.id }
+    selected_reviewee_group_ids = a1.groupings.map { |g| g.id }
+
+    PeerReviewsController.new.perform_random_assignment(
+        a1pr, 3, selected_reviewer_group_ids, selected_reviewee_group_ids)
   end
 end

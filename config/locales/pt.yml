@@ -158,7 +158,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "Não foi possível atribuir a regra de submissão: #%{message}"
         not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
-        edit:           "Editar projeto:"
+        edit:           "Editar projeto: "
         required_files:  "Arquivos exigidos"
         submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
@@ -212,6 +212,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         your_reviews: "Os seus comentários"
         review: "Revisãos"
     peer_review:
+        assign: "Atribuir avaliações pelos pares"
         review: "Revisão "
         reviews: "Revisões"
         problem: "Um problema inesperado ocorreu"
@@ -275,7 +276,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     submissions:        "Submissões"
     summaries:          "Resumos"
     peer_reviews:       "Avaliações pelos pares"
-    peer_review:        "Avaliaçõ pelos pares"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
@@ -713,7 +713,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error:   "Falha ao atualizar aluno."
 
       assignment: "Projeto %{short_identifier}"
-      peer_assignment: "Projeto de Revisão de Pares %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Projeto de Revisão de Pares"
       group_information: "Informação do Grupo"
       group_not_valid: "Seu grupo não é válido. Você não pode enviar nada."
       overview: "Visão global"

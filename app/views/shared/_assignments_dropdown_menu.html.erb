@@ -34,6 +34,11 @@
         <li>
           <% # Don't show hidden assignments to students
             if !assignment.is_hidden %>
+
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
+
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'student_interface',
@@ -43,6 +48,10 @@
         </li>
       <% elsif @current_user.ta? %>
         <li>
+          <%= render partial: 'shared/pr_dropdown_menu_li',
+                     locals: { assignment: assignment,
+                               current_user: @current_user} %>
+
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
@@ -56,6 +65,10 @@
         </li>
       <% else %>
         <li>
+          <%= render partial: 'shared/pr_dropdown_menu_li',
+                     locals: { assignment: assignment,
+                               current_user: @current_user} %>
+
           <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
@@ -98,7 +111,12 @@
         <% # Don't show hidden assignments in the dropdown menu for students
            # either. Append '(hidden)' for TAs and Admins.
            if !@current_user.student? %>
-          <% if assignment.is_hidden %>
+
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
+
+            <% if assignment.is_hidden %>
             <%= link_to t('assignment.hidden',
                           assignment_text: h(assignment.short_identifier)),
                         polymorphic_url([assignment, target_controller],
@@ -113,6 +131,10 @@
         <% # student user, so show only non-hidden assignments
            else %>
           <% if !assignment.is_hidden %>
+            <%= render partial: 'shared/pr_dropdown_menu_li',
+                       locals: { assignment: assignment,
+                                 current_user: @current_user} %>
+
             <%= link_to h(assignment.short_identifier),
                         { controller: 'assignments',
                           action: 'student_interface',
@@ -124,7 +146,11 @@
     <% end %>
   <% else %>
     <li class='active'>
-      <span title='<%= assignment.description %>'>
+      <%= render partial: 'shared/pr_dropdown_menu_li',
+                 locals: { assignment: assignment,
+                           current_user: @current_user} %>
+
+      <span class='title' title='<%= assignment.description %>'>
         <% # Appends hidden to the active link, if hidden.
            if assignment.is_hidden %>
           <%= t('assignment.hidden',

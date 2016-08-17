@@ -8,7 +8,9 @@
 
 <% content_for :title do %>
   <%= t('annotations.title',
-        assignment_short_identifier: @assignment.short_identifier) %>
+        assignment_short_identifier: @assignment.is_peer_review? ?
+            @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+            @assignment.short_identifier) %>
 <% end %>
 
 <% path = new_assignment_annotation_category_path %>

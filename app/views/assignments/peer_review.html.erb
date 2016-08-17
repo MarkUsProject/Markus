@@ -2,7 +2,7 @@
   <h1>
     <%= @assignment.is_peer_review? ?
             t('student.peer_assignment',
-              short_identifier: 'for ' + @assignment.parent_assignment.short_identifier) :
+              short_identifier: @assignment.parent_assignment.short_identifier) :
             t('student.peer_assignment', short_identifier: @assignment.short_identifier) %>
   </h1>
 </div>
@@ -99,7 +99,7 @@
                 <li><%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
                             view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
             <% end %>
-          <ul>
+          </ul>
         <% end %>
       </div>
     </div>

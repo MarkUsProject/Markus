@@ -168,7 +168,7 @@ en:
         error: "Could not assign SubmissionRule: %{message}"
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
-        edit:           "Edit Assignment:"
+        edit:           "Edit Assignment: "
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
@@ -233,8 +233,9 @@ en:
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
-        review: "Review"
+        review: "Peer Review"
     peer_review:
+        assign: "Assign Peer Reviews"
         review: "Review "
         reviews: "Reviews"
         problem: "An unexpected problem occured"
@@ -719,7 +720,7 @@ en:
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
       results_for: "Results for "
-      review_for: "Review for "
+      review_for: "Peer reviews for "
 
     mark:
       error:
@@ -778,7 +779,7 @@ en:
         error:   "Failed to update student."
 
       assignment: "Assignment %{short_identifier}"
-      peer_assignment: "Peer Review Assignment %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Peer Reviews"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
