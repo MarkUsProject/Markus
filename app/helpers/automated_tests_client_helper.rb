@@ -1,5 +1,6 @@
 require 'net/ssh'
 require 'net/scp'
+require 'json'
 
 module AutomatedTestsClientHelper
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
@@ -186,7 +187,7 @@ module AutomatedTestsClientHelper
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
   # source files are successfully exported.
-  def self.files_available?(assignment, repo_dir)
+  def self.test_files_available?(assignment, repo_dir)
 
     # TODO: show the errors to the user instead of raising a runtime error
     # No test files or test directory
@@ -206,7 +207,7 @@ module AutomatedTestsClientHelper
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def self.has_permission?(user, grouping, assignment)
+  def self.user_has_permission?(user, grouping, assignment)
 
     # TODO: show the errors to the user instead of raising a runtime error
     if user.admin? || user.ta?
@@ -231,7 +232,7 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, grouping_id, call_on, current_user, submission_id = nil)
 
-    # TODO Show errors to the user rather than just logging them?
+    # TODO Show errors to the user rather than just logging them? (and where is the logger logging?)
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
@@ -240,50 +241,15 @@ module AutomatedTestsClientHelper
     # TODO export the right repo revision using submission_id
     # TODO Restore call to run tests when collecting submission
     export_group_repo(group, repo_dir)
-    if files_available?(assignment, repo_dir) &&
-       (call_on == 'collection' || has_permission?(current_user, grouping, assignment))
+    if test_files_available?(assignment, repo_dir) &&
+       (call_on == 'collection' || user_has_permission?(current_user, grouping, assignment))
       Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, current_user.api_key, submission_id)
     end
   end
 
-  def self.copy_test_files(assignment, repo_dir)
-
-    submission_path = File.join(repo_dir, assignment.repository_folder)
-    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    test_server_host = MarkusConfigurator.markus_ate_test_server_host
-    test_box_path = ''
-
-    if test_server_host == 'localhost'
-      # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
-      test_box_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
-      stdout, stderr, status = Open3.capture3("
-        rm -rf '#{test_box_path}' &&
-        mkdir '#{test_box_path}' &&
-        cp -r '#{submission_path}'/* '#{test_box_path}' &&
-        cp -r '#{assignment_tests_path}'/* '#{test_box_path}'
-      ")
-      unless status.success?
-        MarkusLogger.instance.log("ATE test copy error for assignment #{assignment}, group #{grouping}:\n
-                                  out: #{stdout}\nerr: #{stderr}", MarkusLogger::ERROR)
-        test_box_path = nil
-      end
-    else
-      # tests executed on a test server: copy the student's submission and all necessary files through ssh
-      test_server_username = MarkusConfigurator.markus_ate_test_server_username
-      Net::SSH::start(test_server_host, test_server_username) do |ssh|
-        test_box_path = ssh.exec!('mktemp -d')
-        # TODO Fix upload with wildcard which seem not to work
-        ssh.scp.upload!("#{submission_path}/*", test_box_path, :recursive => true)
-        ssh.scp.upload!("#{assignment_tests_path}/*", test_box_path)
-      end
-    end
-
-    return test_box_path
-  end
-
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
-  def self.get_scripts_to_run(assignment, call_on)
+  def self.get_test_scripts_to_run(assignment, call_on)
 
     all_scripts = TestScript.where(assignment_id: assignment.id)
     # If the test run is requested at collection (by Admin or TA),
@@ -309,25 +275,68 @@ module AutomatedTestsClientHelper
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
-    markus_address = host_with_port.start_with?('localhost') ? "http://#{host_with_port}" : "https://#{host_with_port}"
-    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
-
-    test_path = copy_test_files(assignment, repo_dir)
-    if test_path.nil?
-      return
-    end
+    submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
+    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
     # TODO Add a different test_results_path for remote execution?
     test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test_runs')
-    test_scripts = get_scripts_to_run(assignment, call_on)
+    markus_address = host_with_port.start_with?('localhost') ? "http://#{host_with_port}" : "https://#{host_with_port}"
+    test_server_host = MarkusConfigurator.markus_ate_test_server_host
+
+    test_scripts = get_test_scripts_to_run(assignment, call_on)
     test_scripts.map! do |script|
       script.script_name
     end
 
-    # TODO enqueue on remote redis, probably need to use resque-cli with ssh
-    Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
+    if test_server_host == 'localhost'
+      # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
+      test_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
+      stdout, stderr, status = Open3.capture3("
+        rm -rf '#{test_path}' &&
+        mkdir '#{test_path}' &&
+        cp -r '#{submission_path}'/* '#{test_path}' &&
+        cp -r '#{assignment_tests_path}'/* '#{test_path}'
+      ")
+      unless status.success?
+        MarkusLogger.instance.log("ATE local test copy error for assignment #{assignment}, group #{grouping}:\n
+                                  out: #{stdout}\nerr: #{stderr}", MarkusLogger::ERROR)
+        return
+      end
+      # enqueue locally using api
+      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
+    else
+      # tests executed on a test server: copy the student's submission and all necessary files through ssh
+      test_server_username = MarkusConfigurator.markus_ate_test_server_username
+      queue = MarkusConfigurator.markus_ate_test_queue_name
+      begin
+        Net::SSH::start(test_server_host, test_server_username) do |ssh|
+          test_path = ssh.exec!('mktemp -d').strip
+          Dir.foreach(submission_path) do |file_name| # workaround scp not supporting wildcard *
+            next if file_name == '.' or file_name == '..'
+            file_path = File.join(submission_path, file_name)
+            options = File.directory?(file_path) ? {:recursive => true} : {}
+            ssh.scp.upload!(file_path, test_path, options)
+          end
+          Dir.foreach(assignment_tests_path) do |file_name| # workaround scp not supporting wildcard *
+            next if file_name == '.' or file_name == '..'
+            file_path = File.join(assignment_tests_path, file_name)
+            ssh.scp.upload!(file_path, test_path)
+          end
+          # enqueue remotely directly in redis, resque does not allow for multiple redis servers
+          resque_params = {:class => 'AutomatedTestsServerHelper',
+                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
+                                     group.id]}
+          puts JSON.generate(resque_params)
+          ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
+        end
+      rescue Exception => e
+        MarkusLogger.instance.log("ATE remote ssh error for assignment #{assignment}, group #{grouping}:\n
+                                  #{e.message}", MarkusLogger::ERROR)
+        puts e.message
+      end
+    end
   end
 
-  def self.process_result(raw_result, call_on, assignment, grouping, submission = nil)
+  def self.process_test_result(raw_result, call_on, assignment, grouping, submission = nil)
 
     # TODO need to pass call_on through the api
     result = Hash.from_xml(raw_result)

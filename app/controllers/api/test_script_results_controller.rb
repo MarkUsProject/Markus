@@ -67,11 +67,11 @@ module Api
       assignment = submission.assignment
 
       # TODO pass call_on through the api or not?
-      if AutomatedTestsClientHelper.process_result(params[:file_content],
-                                                   'submission',
-                                                   assignment,
-                                                   grouping,
-                                                   submission)
+      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
+                                                        'submission',
+                                                        assignment,
+                                                        grouping,
+                                                        submission)
         render 'shared/http_status', locals: {code: '201', message:
           HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       else
@@ -128,11 +128,11 @@ module Api
       grouping = submission.grouping
       assignment = submission.assignment
 
-      if AutomatedTestsClientHelper.process_result(params[:file_content],
-                                                   'submission',
-                                                   assignment,
-                                                   grouping,
-                                                   submission) &&
+      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
+                                                        'submission',
+                                                        assignment,
+                                                        grouping,
+                                                        submission) &&
           test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
