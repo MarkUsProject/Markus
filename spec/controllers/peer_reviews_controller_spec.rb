@@ -23,6 +23,10 @@ describe PeerReviewsController do
     it 'random assigns properly' do
       expect(PeerReview.all.size).to eq 3
       expect(PeerReview.where(result: Result.all).size).to eq 3
+      PeerReview.all.each do |pr|
+        expect(pr.reviewer.id).not_to eq pr.reviewee.id
+        expect(pr.reviewer.does_not_share_any_students?(pr.reviewee)).to be_truthy
+      end
     end
 
     it 'download and upload CSV properly' do
