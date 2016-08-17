@@ -168,7 +168,7 @@ en:
         error: "Could not assign SubmissionRule: %{message}"
         not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
-        edit:           "Edit Assignment:"
+        edit:           "Edit Assignment: "
         required_files:  "Required files"
         submission_rules:  "Submission Rules"
         required_files_read:  "Required files"
@@ -233,7 +233,7 @@ en:
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
-        review: "Review"
+        review: "Peer Review"
     peer_review:
         review: "Review "
         reviews: "Reviews"
@@ -778,7 +778,7 @@ en:
         error:   "Failed to update student."
 
       assignment: "Assignment %{short_identifier}"
-      peer_assignment: "Peer Review Assignment %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Peer Reviews"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"

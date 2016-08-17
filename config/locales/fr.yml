@@ -160,7 +160,7 @@ fr:
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
-        edit:           "Édition du projet :"
+        edit:           "Édition du projet: "
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
@@ -745,7 +745,7 @@ fr:
     #Sutdent's View (student)
     student:
       assignment: "Projet %{short_identifier}"
-      peer_assignment: "Projet d'examen par les pairs %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"

@@ -202,7 +202,7 @@ es:
         error:                     "No se pudo asignar la Regla de Entrega: %{message}"
         not_valid_submission_rule: "%{type} no es una Regla de Entrega válida"
         rules:                     "Reglas del Proyecto"
-        edit:                      "Editar Proyecto:"
+        edit:                      "Editar Proyecto: "
         required_files:            "Archivos requeridos"
         submission_rules:          "Reglas de Entrega"
         required_files_read:       "Archivos requeridos"
@@ -954,7 +954,7 @@ es:
         error:   "La información del estudiante no ha podido ser actualizada."
 
       assignment:                         "Proyecto %{short_identifier}"
-      peer_assignment:                    "Proyecto de Revisión entre Compañeros %{short_identifier}"
+      peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
       group_information:                  "Información del Grupo"
       group_not_valid:                    "Su grupo no es válido. Usted no puede enviar ningún documento."
       overview:                           "Vista General"
