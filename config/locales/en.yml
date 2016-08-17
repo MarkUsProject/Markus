@@ -719,7 +719,7 @@ en:
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
       results_for: "Results for "
-      review_for: "Review for "
+      review_for: "Peer reviews for "
 
     mark:
       error:
