@@ -1,0 +1,20 @@
+.pr_link {
+  text-align: right;
+  min-width: 80px;
+  float: right;
+}
+
+*:not(.active) {
+  .pr_link {
+    padding-right: 9px !important;
+  }
+}
+
+.active {
+  padding-right: 0px !important;
+
+  .pr_link {
+    padding-top: 0px !important;
+    padding-left: 30px !important;
+  }
+}

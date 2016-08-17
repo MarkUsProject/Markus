@@ -34,22 +34,24 @@
       <div>
         <%= f.label :short_identifier,
                     t('assignment.short_identifier'),
-                    class: 'required' %>
+                    class: @assignment.is_peer_review? ? '' : 'required' %>
         <%= f.text_field :short_identifier,
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          maxlength: 30,
-                         required: true %>
+                         required: @assignment.is_peer_review? ? false : true,
+                         disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <div>
         <%= f.label :description,
                     t('assignment.name'),
-                    class: 'required' %>
+                    class: @assignment.is_peer_review? ? '' : 'required' %>
         <%= f.text_field :description,
                          onchange: 'set_onbeforeunload(true);',
                          size: 35,
-                         required: true %>
+                         required: @assignment.is_peer_review? ? false : true,
+                         disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <div>
@@ -57,7 +59,8 @@
         <%= f.text_area :message,
                         cols: 65,
                         rows: 8,
-                        onchange: 'set_onbeforeunload(true);' %>
+                        onchange: 'set_onbeforeunload(true);',
+                        disabled: @assignment.is_peer_review? ? 'true' : 'false' %>
       </div>
 
       <% unless @sections.empty? %>
@@ -322,42 +325,44 @@
     </fieldset>
 
     <%# Remark request rules %>
-    <fieldset>
-      <legend>
-        <span><%= t('assignment.remark.rules')%></span>
-      </legend>
+    <% unless @assignment.is_peer_review? %>
+      <fieldset>
+        <legend>
+          <span><%= t('assignment.remark.rules')%></span>
+        </legend>
 
-      <div class='help assignment_remark_request_rules_help'>
-        <p class='help-message-box assignment_remark_request_rules_help'>
-          <%= t('assignment.help.assignment_form.remark_request_rules') %>
-        </p>
-      </div>
+        <div class='help assignment_remark_request_rules_help'>
+          <p class='help-message-box assignment_remark_request_rules_help'>
+            <%= t('assignment.help.assignment_form.remark_request_rules') %>
+          </p>
+        </div>
 
-      <p id='allow_remark_requests'>
-        <%= f.check_box :allow_remarks,
-                        onchange: 'set_onbeforeunload(true);' %>
-        <%= f.label :allow_remarks, t('assignment.remark.allow') %>
-      </p>
-
-      <div id='remark_properties'>
-        <p>
-          <%= f.label :remark_due_date, t('assignment.remark.due_date') %>
-          <%= f.text_field :remark_due_date,
-                           onchange: 'set_onbeforeunload(true);',
-                           value: @assignment.remark_due_date.nil? ? '' :
-                               @assignment.remark_due_date.strftime(
-                                   '%Y-%m-%d %l:%M %p'),
-                           size: 35 %>
-        </p>
-        <p>
-          <%= f.label :remark_message, t('assignment.remark.message') %>
-          <%= f.text_area :remark_message,
-                          rows: 8,
-                          cols: 65,
+        <p id='allow_remark_requests'>
+          <%= f.check_box :allow_remarks,
                           onchange: 'set_onbeforeunload(true);' %>
+          <%= f.label :allow_remarks, t('assignment.remark.allow') %>
         </p>
-      </div>
-    </fieldset>
+
+        <div id='remark_properties'>
+          <p>
+            <%= f.label :remark_due_date, t('assignment.remark.due_date') %>
+            <%= f.text_field :remark_due_date,
+                             onchange: 'set_onbeforeunload(true);',
+                             value: @assignment.remark_due_date.nil? ? '' :
+                                 @assignment.remark_due_date.strftime(
+                                     '%Y-%m-%d %l:%M %p'),
+                             size: 35 %>
+          </p>
+          <p>
+            <%= f.label :remark_message, t('assignment.remark.message') %>
+            <%= f.text_area :remark_message,
+                            rows: 8,
+                            cols: 65,
+                            onchange: 'set_onbeforeunload(true);' %>
+          </p>
+        </div>
+      </fieldset>
+    <% end %>
 
     <%= f.submit t(:submit),
                  data: { disable_with: t('working') },
