@@ -13,8 +13,7 @@ class PeerReview < ActiveRecord::Base
   validate :no_students_should_be_reviewer_and_reviewee
 
   def reviewee
-    # TODO - Research optimizing or see if rails can do better
-    Grouping.joins({ submissions: { results: :peer_reviews }}).where('peer_reviews.id = ?', self.id).first
+    result.submission.grouping
   end
 
   def no_students_should_be_reviewer_and_reviewee

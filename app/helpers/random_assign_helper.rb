@@ -59,7 +59,8 @@ module RandomAssignHelper
   #
   # Also add existing peer reviews to @reviewer_to_reviewee_sets.
   def process_existing_peer_reviews(reviewer_ids)
-    PeerReview.includes(:reviewer)
+    PeerReview.includes(:reviewer,
+                        { result: { submission: :grouping } })
               .where(reviewer_id: reviewer_ids)
               .each do |peer_review|
       reviewer_id = peer_review.reviewer_id

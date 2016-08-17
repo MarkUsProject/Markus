@@ -30,7 +30,8 @@ module GroupsHelper
     groupings = target_assignment.groupings
                            .includes(:group,
                                      :non_rejected_student_memberships,
-                                     :students)
+                                     :students,
+                                     :inviter)
     groupings.map do |grouping|
       g = grouping.attributes
       g[:name] = grouping.group.group_name
