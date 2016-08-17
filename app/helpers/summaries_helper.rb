@@ -42,7 +42,7 @@ module SummariesHelper
       end
       final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
       g = grouping.attributes
-      g[:class_name] = get_tr_class(grouping)
+      g[:class_name] = get_tr_class(grouping, assignment)
       g[:name] = grouping.get_group_name
       g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
