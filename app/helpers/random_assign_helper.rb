@@ -187,5 +187,12 @@ module RandomAssignHelper
     end
 
     PeerReview.import peer_reviews, validate: false
+
+    # Now that peer review IDs have been made, update results with peer review ID
+    peer_reviews_and_results.each do |data|
+      result = data[1]
+      peer_review = data[0]
+      result.update(peer_review_id: peer_review.id)
+    end
   end
 end
