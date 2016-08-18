@@ -154,6 +154,7 @@ module RandomAssignHelper
 
   def save_peer_reviews(pr_assignment)
     peer_reviews_reviewer_result = []
+    peer_reviews_and_results = []
     peer_reviews = []
     results = []
     marks = []
@@ -184,6 +185,7 @@ module RandomAssignHelper
     peer_reviews_reviewer_result.each do |prdata|
       peer_review = PeerReview.new(reviewer_id: prdata[0], result: prdata[1])
       peer_reviews << peer_review
+      peer_reviews_and_results << [peer_review, prdata[1]]
     end
 
     PeerReview.import peer_reviews, validate: false
