@@ -320,18 +320,19 @@ module AutomatedTestsClientHelper
             next if file_name == '.' or file_name == '..'
             file_path = File.join(assignment_tests_path, file_name)
             ssh.scp.upload!(file_path, test_path)
+            test_file_path = File.join(test_path, file_name)
+            ssh.exec!("chmod o+x #{test_file_path}")
           end
+          ssh.exec!("chmod o+rwx #{test_path}")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
                            :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
                                      group.id]}
-          puts JSON.generate(resque_params)
           ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
         MarkusLogger.instance.log("ATE remote ssh error for assignment #{assignment}, group #{grouping}:\n
                                   #{e.message}", MarkusLogger::ERROR)
-        puts e.message
       end
     end
   end
