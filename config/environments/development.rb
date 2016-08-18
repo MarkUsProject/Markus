@@ -255,6 +255,9 @@ Markus::Application.configure do
   ATE_TEST_SERVER_HOST = 'localhost'
   ATE_TEST_SERVER_USERNAME = 'localhost'
 
+  # The directory where to store test results on the test server.
+  ATE_TEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/test_runs"
+
   # The name of the queue on the test client where submission files wait to be copied.
   ATE_FILE_QUEUE_NAME = 'CSC108_file_queue'
   # The name of the queue on the test server where tests wait to be executed.
