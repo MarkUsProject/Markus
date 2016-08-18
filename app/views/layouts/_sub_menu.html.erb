@@ -14,6 +14,8 @@
         controller.controller_name == 'tags' ||
         controller.controller_name == 'peer_reviews' %>
 
+    <% viewing_a_review = (!@result.nil? && @result.is_a_review?) %>
+
     <ul class='sub'>
       <li id='dropdown'>
         <div class='dropdown'>
@@ -87,31 +89,38 @@
             <%= link_to t('settings'),
                         controller: 'assignments',
                         action: 'edit',
-                        id: @assignment.id %>
+                        id: viewing_a_review ? @assignment.pr_assignment.id :
+                            @assignment.id %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'groups' %>'>
             <%= link_to t('groups.groups'),
-                        assignment_groups_path(@assignment) %>
+                        assignment_groups_path(viewing_a_review ? @assignment.pr_assignment :
+                                                 @assignment) %>
           </li>
-          <% unless @assignment.is_peer_review? %>
+          <% unless @assignment.is_peer_review? || viewing_a_review %>
             <li class='<%= "active" if controller.controller_name == 'graders' %>'>
               <%= link_to t('graders.graders'),
                           assignment_graders_path(@assignment) %>
             </li>
           <% end %>
-          <% if @assignment.is_peer_review? %>
+          <% if @assignment.is_peer_review? || viewing_a_review %>
             <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
-              <%= link_to t('peer_review.assign'), assignment_peer_reviews_path(@assignment) %>
+              <%= link_to t('peer_review.assign'), assignment_peer_reviews_path(
+                  viewing_a_review ? @assignment.pr_assignment.id :
+                    @assignment.id) %>
             </li>
           <% end %>
           <li <% if controller.controller_name == 'submissions' ||
                     controller.controller_name == 'results' %>
                 class='active'
               <% end %>>
-             <%= link_to @assignment.is_peer_review? ? t('peer_review.reviews') : t(:submissions),
-                         browse_assignment_submissions_path(@assignment) %>
+             <%= link_to @assignment.is_peer_review? || viewing_a_review ?
+                             t('peer_review.reviews') : t(:submissions),
+                         browse_assignment_submissions_path(viewing_a_review ?
+                                                              @assignment.pr_assignment :
+                                                              @assignment) %>
           </li>
-          <% unless @assignment.is_peer_review? %>
+          <% unless @assignment.is_peer_review? || viewing_a_review %>
             <li class='<%= "active" if controller.controller_name == 'summaries' %>'>
               <%= link_to t(:summaries),
                           assignment_summaries_path(@assignment) %>
