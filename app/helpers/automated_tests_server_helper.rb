@@ -18,7 +18,7 @@ module AutomatedTestsServerHelper
         Timeout.timeout(TIME_LIMIT) do
           stdout, stderr, status = Open3.capture3("
             cd '#{test_path}' &&
-            ./#{script}
+            ./'#{script}'
           ")
           errors += stderr
         end
@@ -37,13 +37,13 @@ module AutomatedTestsServerHelper
         </test_script>"
     end
     output += "\n</testrun>"
-    FileUtils.rm_rf(test_path)
 
     # store results and send them back to markus through its api
     test_results_path = File.join(test_results_path, "test_run_#{Time.now.to_i}")
     FileUtils.mkdir_p(test_results_path)
     File.write("#{test_results_path}/output.txt", output)
     File.write("#{test_results_path}/error.txt", errors)
+    FileUtils.rm_rf(test_path)
     # TODO What about UTORid auth, how do I get the cookie?
     api_url = "#{markus_address}/api/assignments/#{assignment_id}/groups/#{group_id}/test_script_results"
     options = {:headers => {

@@ -277,8 +277,7 @@ module AutomatedTestsClientHelper
     group = grouping.group
     submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    # TODO Add a different test_results_path for remote execution?
-    test_results_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test_runs')
+    test_results_path = MarkusConfigurator.markus_ate_test_server_results_dir
     markus_address = host_with_port.start_with?('localhost') ? "http://#{host_with_port}" : "https://#{host_with_port}"
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
@@ -290,11 +289,15 @@ module AutomatedTestsClientHelper
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
       test_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
+      test_scripts_expansion = test_scripts.length == 1 ?
+          "'#{test_scripts[0]}'" : # escape name with quotes
+          "{#{test_scripts.map {|s| "'#{s}'"}.join(',')}}" # escape names with quotes and surround by braces for shell expansion
       stdout, stderr, status = Open3.capture3("
         rm -rf '#{test_path}' &&
         mkdir '#{test_path}' &&
         cp -r '#{submission_path}'/* '#{test_path}' &&
-        cp -r '#{assignment_tests_path}'/* '#{test_path}'
+        cp -r '#{assignment_tests_path}'/* '#{test_path}' &&
+        chmod u+x '#{test_path}'/#{test_scripts_expansion}
       ")
       unless status.success?
         MarkusLogger.instance.log("ATE local test copy error for assignment #{assignment}, group #{grouping}:\n
@@ -320,14 +323,13 @@ module AutomatedTestsClientHelper
             next if file_name == '.' or file_name == '..'
             file_path = File.join(assignment_tests_path, file_name)
             ssh.scp.upload!(file_path, test_path)
-            test_file_path = File.join(test_path, file_name)
-            ssh.exec!("chmod o+x #{test_file_path}")
           end
-          ssh.exec!("chmod o+rwx #{test_path}")
+          ssh.exec!("chmod -R o+rwx '#{test_path}'")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
                            :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
                                      group.id]}
+          puts resque_params
           ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e

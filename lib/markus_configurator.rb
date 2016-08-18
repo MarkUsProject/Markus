@@ -262,6 +262,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_ate_test_server_results_dir
+    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_RESULTS_DIR)
+      return ATE_TEST_SERVER_RESULTS_DIR
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
   def markus_ate_file_queue_name
     if automated_testing_engine_on? && (defined? ATE_FILE_QUEUE_NAME)
       return ATE_FILE_QUEUE_NAME
