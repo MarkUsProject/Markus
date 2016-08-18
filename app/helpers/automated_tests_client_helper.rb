@@ -289,15 +289,13 @@ module AutomatedTestsClientHelper
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
       test_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
-      test_scripts_expansion = test_scripts.length == 1 ?
-          "'#{test_scripts[0]}'" : # escape name with quotes
-          "{#{test_scripts.map {|s| "'#{s}'"}.join(',')}}" # escape names with quotes and surround by braces for shell expansion
+      test_scripts_executables = test_scripts.map {|s| "chmod u+x '#{test_path}/#{s}'"}.join(' && ')
       stdout, stderr, status = Open3.capture3("
         rm -rf '#{test_path}' &&
         mkdir '#{test_path}' &&
         cp -r '#{submission_path}'/* '#{test_path}' &&
         cp -r '#{assignment_tests_path}'/* '#{test_path}' &&
-        chmod u+x '#{test_path}'/#{test_scripts_expansion}
+        #{test_scripts_executables}
       ")
       unless status.success?
         MarkusLogger.instance.log("ATE local test copy error for assignment #{assignment}, group #{grouping}:\n
@@ -324,12 +322,12 @@ module AutomatedTestsClientHelper
             file_path = File.join(assignment_tests_path, file_name)
             ssh.scp.upload!(file_path, test_path)
           end
+          # TODO brutal, think about sandboxing
           ssh.exec!("chmod -R o+rwx '#{test_path}'")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
                            :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
                                      group.id]}
-          puts resque_params
           ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e

@@ -103,13 +103,13 @@ class PAMWrapper:
             env['PYTHONPATH'] = self.path_to_uam  # some needed libs are here
             subprocess.run(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=shell,
                            env=env)
-            # use the following if you have Python < 3.5
+            # use the following with Python < 3.5
             # subprocess.check_call(shell_command, shell=shell, env=env)
             results = self.collect_results()
             self.print_results(results)
         except subprocess.CalledProcessError as e:
             print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr))
-            # use the following if you have Python < 3.5
+            # use the following with Python < 3.5
             # print('Test framework error')
             exit(1)
         except Exception as e:
@@ -153,9 +153,13 @@ class MarkusPAMWrapper(PAMWrapper):
 
 
 if __name__ == '__main__':
-    # TODO set pam timeout other than the default?
     # Modify uppercase variables with your settings
+    # The path to the UAM root folder
+    PATH_TO_UAM = '/path/to/uam'
+    # The path to a Python virtualenv that has UAM's dependencies (if None, dependencies must be installed system-wide)
+    PATH_TO_VIRTUALENV = None
+    # A list of test files uploaded as support files to be executed against the student submission
     MARKUS_TEST_FILES = ['test.py']
-    wrapper = MarkusPAMWrapper(path_to_uam='/media/Dati/alessio/Lavoro/UofT/Software/uam', test_files=MARKUS_TEST_FILES,
-                               path_to_virtualenv='/home/alessio/Code/Workspaces/uam-virtualenv')
+    wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES,
+                               path_to_virtualenv=PATH_TO_VIRTUALENV)
     wrapper.run()
