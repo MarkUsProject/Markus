@@ -34,13 +34,21 @@
             <%# Display the assignment's short identifier %>
             <%# Check to see if the assignment is hidden %>
             <% if @assignment.is_hidden %>
-              <%= @assignment.is_peer_review? ?
-                      @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') + " (hidden)" :
-                      @assignment.short_identifier + " (hidden)"%>
+              <% if !@assignment.is_peer_review? && viewing_a_review %>
+                  <%= @assignment.short_identifier + ' ' + t('assignment.review') + " (hidden)" %>
+              <% else %>
+                <%= @assignment.is_peer_review? ?
+                        @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') + " (hidden)" :
+                        @assignment.short_identifier + " (hidden)"%>
+              <% end %>
             <% else %>
-              <%= @assignment.is_peer_review? ?
-                      @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
-                      @assignment.short_identifier %>
+              <% if !@assignment.is_peer_review? && viewing_a_review %>
+                <%= @assignment.short_identifier + ' ' + t('assignment.review') %>
+              <% else %>
+                <%= @assignment.is_peer_review? ?
+                        @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                        @assignment.short_identifier %>
+              <% end %>
             <% end %>
           <% elsif !@grade_entry_form.nil? %>
             <%# Display the grade entry form's short identifier %>
