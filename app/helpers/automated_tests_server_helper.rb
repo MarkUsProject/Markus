@@ -15,9 +15,6 @@ module AutomatedTestsServerHelper
     test_scripts.each do |script|
       begin
         stdout = ''
-        File.open(File.join(test_path, script)) do |file|
-          file.chmod(0766)
-        end
         Timeout.timeout(TIME_LIMIT) do
           stdout, stderr, status = Open3.capture3("
             cd '#{test_path}' &&

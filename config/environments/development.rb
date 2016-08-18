@@ -258,7 +258,7 @@ Markus::Application.configure do
   # The name of the queue on the test client where submission files wait to be copied.
   ATE_FILE_QUEUE_NAME = 'CSC108_file_queue'
   # The name of the queue on the test server where tests wait to be executed.
-  ATE_TEST_QUEUE_NAME = 'test_queue'
+  ATE_TEST_QUEUE_NAME = 'CSC108_test_queue'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
