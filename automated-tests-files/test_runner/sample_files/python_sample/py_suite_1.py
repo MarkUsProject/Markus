@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # Note: currently this data is hard-coded, but should be passed in
     API_KEY = 'ZTEwY2VlNmM4Nzk3NjM2N2QxYjk0YWM0MjU0M2NlMDQ='
     ROOT_URL = 'http://localhost:3000/'
-    api = markusapi.Markus(API_KEY, ROOT_URL, protocol='http')
+    api = markusapi.Markus(API_KEY, ROOT_URL)
     api.upload_test_script_result(6, '77',
         '<testrun><test_script><script_name>py_suite_1.py</script_name>' +
         test_1() + test_2() + test_3() +

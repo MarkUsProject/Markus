@@ -1529,7 +1529,6 @@ fr:
         update_description: "UPDATE ME"
         seq_num: "UPDATE ME"
         max_marks: "UPDATE ME"
-        run_on_submission: "UPDATE ME"
         run_on_request: "UPDATE ME"
         halts_testing: "UPDATE ME"
         display_description: "UPDATE ME"

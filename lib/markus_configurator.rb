@@ -101,16 +101,6 @@ module MarkusConfigurator
     end
   end
 
-  #Repository for the test framework
-  #Students file will be copied into this repository before sending to the test server
-  def markus_config_automated_tests_repository
-    if defined? AUTOMATED_TESTS_REPOSITORY
-      return AUTOMATED_TESTS_REPOSITORY
-    else
-      return File.join(::Rails.root.to_s, "test-framework")
-    end
-  end
-
   ###########################################
   # Markus Session cookie configuration
   ###########################################
@@ -234,47 +224,65 @@ module MarkusConfigurator
   # Automated Testing Engine Configuration
   ##########################################
 
-  def automated_testing_engine_on?
-    return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
+  #Repository for the test framework
+  #Students file will be copied into this repository before sending to the test server
+  def markus_config_automated_tests_repository
+    if defined? AUTOMATED_TESTS_REPOSITORY
+      return AUTOMATED_TESTS_REPOSITORY
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests')
+    end
   end
 
-  def markus_ate_num_test_servers
-    if automated_testing_engine_on? && (defined? ATE_NUMBER_TEST_SERVERS)
-      return ATE_NUMBER_TEST_SERVERS
-    else
-      return 0
-    end
+  def automated_testing_engine_on?
+    return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
 
   def markus_ate_max_num_of_running_tests
     if automated_testing_engine_on? && (defined? ATE_MAX_NUMBER_OF_RUNNING_TESTS)
       return ATE_MAX_NUMBER_OF_RUNNING_TESTS
     else
-      return 0
+      return 1
     end
   end
 
-  def markus_ate_test_server_hosts
-    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_HOSTS)
-      return ATE_TEST_SERVER_HOSTS
+  def markus_ate_test_server_host
+    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_HOST)
+      return ATE_TEST_SERVER_HOST
     else
-      return 'username@testing.example.com'
+      return 'localhost'
     end
   end
 
-  def markus_ate_test_runner_script_name
-    if automated_testing_engine_on? && (defined? ATE_TEST_RUNNER_NAME)
-      return ATE_TEST_RUNNER_NAME
+  def markus_ate_test_server_username
+    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_USERNAME)
+      return ATE_TEST_SERVER_USERNAME
     else
-      return '~/testrunner/testrunner.rb'
+      return 'localhost'
     end
   end
 
-  def markus_ate_test_run_directory
-    if automated_testing_engine_on? && (defined? ATE_TEST_RUN_DIRECTORY)
-      return ATE_TEST_RUN_DIRECTORY
+  def markus_ate_test_server_results_dir
+    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_RESULTS_DIR)
+      return ATE_TEST_SERVER_RESULTS_DIR
     else
-      return '~/testrunner/test/'
+      return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
+  def markus_ate_file_queue_name
+    if automated_testing_engine_on? && (defined? ATE_FILE_QUEUE_NAME)
+      return ATE_FILE_QUEUE_NAME
+    else
+      return 'file_queue'
+    end
+  end
+
+  def markus_ate_test_queue_name
+    if automated_testing_engine_on? && (defined? ATE_TEST_QUEUE_NAME)
+      return ATE_TEST_QUEUE_NAME
+    else
+      return 'test_queue'
     end
   end
 end

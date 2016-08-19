@@ -297,7 +297,6 @@ TestScript.blueprint do
   script_name {Sham.filename}
   description {Sham.description}
   max_marks {0}
-  run_on_submission {true}
   run_on_request {true}
   halts_testing {false}
   display_description {'do_not_display'}
