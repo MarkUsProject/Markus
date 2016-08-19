@@ -249,7 +249,7 @@ class SubmissionsController < ApplicationController
         AutomatedTestsClientHelper.request_a_test_run(
           request.host_with_port,
           g.id,
-          'submission',
+          'after_collection',
           current_user,
           g.current_submission_used.id)
       end

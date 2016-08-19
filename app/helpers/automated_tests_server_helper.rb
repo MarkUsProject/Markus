@@ -7,7 +7,7 @@ module AutomatedTestsServerHelper
   @queue = MarkusConfigurator.markus_ate_test_queue_name
   TIME_LIMIT = 600
 
-  def self.perform(markus_address, api_key, test_scripts, test_path, test_results_path, assignment_id, group_id)
+  def self.perform(markus_address, api_key, test_scripts, test_path, test_results_path, call_on, assignment_id, group_id)
 
     # run tests
     output = '<testrun>'
@@ -53,6 +53,7 @@ module AutomatedTestsServerHelper
                :body => {
                    'assignment_id' => assignment_id,
                    'group_id' => group_id,
+                   'call_on' => call_on,
                    'file_content' => output}}
     HTTParty.post(api_url, options)
   end

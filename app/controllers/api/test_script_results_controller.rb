@@ -52,6 +52,7 @@ module Api
     #  - assignment_id
     #  - group_id
     #  - file_content: Contents of the test results file to be uploaded
+    #  - call_on: either 'after_collection' or 'student_request'
     def create
       if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
@@ -66,9 +67,8 @@ module Api
       grouping = submission.grouping
       assignment = submission.assignment
 
-      # TODO pass call_on through the api or not?
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        'submission',
+                                                        params[:call_on],
                                                         assignment,
                                                         grouping,
                                                         submission)
@@ -112,6 +112,7 @@ module Api
     # Requires: assignment_id, group_id, id
     # Optional:
     #  - file_content: New contents of the test results file
+    #  - call_on: either 'after_collection' or 'student_request'
     def update
       if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
@@ -129,7 +130,7 @@ module Api
       assignment = submission.assignment
 
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        'submission',
+                                                        params[:call_on],
                                                         assignment,
                                                         grouping,
                                                         submission) &&

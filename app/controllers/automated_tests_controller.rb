@@ -99,7 +99,7 @@ class AutomatedTestsController < ApplicationController
 
   def run_tests(grouping_id)
     begin
-      AutomatedTestsClientHelper.request_a_test_run(request.host_with_port, grouping_id, 'request', @current_user)
+      AutomatedTestsClientHelper.request_a_test_run(request.host_with_port, grouping_id, 'student_request', @current_user)
       return nil
     rescue Exception => e
       #TODO: really shouldn't be leaking error if student.
@@ -166,7 +166,7 @@ class AutomatedTestsController < ApplicationController
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
                     [:id, :assignment_id, :seq_num, :script_name, :description,
-                     :max_marks, :run_on_submission, :run_on_request,
+                     :max_marks, :run_on_request,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,

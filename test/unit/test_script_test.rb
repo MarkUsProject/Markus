@@ -17,8 +17,6 @@ class TestScriptTest < ActiveSupport::TestCase
   # (Model validations)
   # should validate_presence_of does not work for boolean value false.
   # Using should allow_value instead
-  should allow_value(true).for(:run_on_submission)
-  should allow_value(false).for(:run_on_submission)
   should allow_value(true).for(:run_on_request)
   should allow_value(false).for(:run_on_request)
   should allow_value(true).for(:halts_testing)
@@ -44,7 +42,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                     script_name:                'script.sh',
                                     description:                'This is a bash script file',
                                     max_marks:                  5,
-                                    run_on_submission:          true,
                                     run_on_request:             true,
                                     halts_testing:              false,
                                     display_description:        'do_not_display',
@@ -86,7 +83,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                          script_name:                 'validscript.sh',
                                          description:                 'This is a bash script file',
                                          max_marks:                   5,
-                                         run_on_submission:           true,
                                          run_on_request:              true,
                                          halts_testing:               false,
                                          display_description:         display_option[0],
@@ -101,7 +97,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                            script_name:               'invalidscript.sh',
                                            description:               'This is a bash script file',
                                            max_marks:                 5,
-                                           run_on_submission:         true,
                                            run_on_request:            true,
                                            halts_testing:             false,
                                            display_description:       display_option[2],
@@ -184,7 +179,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                     script_name:                 'script.sh',
                                     description:                 'This is a bash script file',
                                     max_marks:                   5,
-                                    run_on_submission:           true,
                                     run_on_request:              true,
                                     halts_testing:               false,
                                     display_description:         'do_not_display',

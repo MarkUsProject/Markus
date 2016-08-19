@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810184655) do
+ActiveRecord::Schema.define(version: 20160819195243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -507,7 +507,6 @@ ActiveRecord::Schema.define(version: 20160810184655) do
     t.string  "script_name",             null: false
     t.text    "description",             null: false
     t.integer "max_marks",               null: false
-    t.boolean "run_on_submission"
     t.boolean "run_on_request"
     t.boolean "halts_testing"
     t.string  "display_description",     null: false

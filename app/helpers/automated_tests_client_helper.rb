@@ -82,9 +82,9 @@ module AutomatedTestsClientHelper
 
           # Deleting old script
           old_script_path = File.join(
-                    MarkusConfigurator.markus_config_automated_tests_repository,
-                    @assignment.repository_folder,
-                    old_script_name)
+            MarkusConfigurator.markus_config_automated_tests_repository,
+            @assignment.repository_folder,
+            old_script_name)
           if File.exist?(old_script_path)
             File.delete(old_script_path)
           end
@@ -164,7 +164,7 @@ module AutomatedTestsClientHelper
       assignment.tokens_per_period = num_tokens
     end
 
-    assignment
+    return assignment
   end
 
   # Export group repository for testing. Students' submitted files
@@ -239,10 +239,9 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
     # TODO export the right repo revision using submission_id
-    # TODO Restore call to run tests when collecting submission
     export_group_repo(group, repo_dir)
     if test_files_available?(assignment, repo_dir) &&
-       (call_on == 'collection' || user_has_permission?(current_user, grouping, assignment))
+       (call_on == 'after_collection' || user_has_permission?(current_user, grouping, assignment))
       Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, current_user.api_key, submission_id)
     end
   end
@@ -252,13 +251,11 @@ module AutomatedTestsClientHelper
   def self.get_test_scripts_to_run(assignment, call_on)
 
     all_scripts = TestScript.where(assignment_id: assignment.id)
-    # If the test run is requested at collection (by Admin or TA),
+    # If the test run is requested after collection (by Admin or TA),
     # All of the test scripts should be run.
-    if call_on == 'collection'
+    if call_on == 'after_collection'
       test_scripts = all_scripts
-    elsif call_on == 'submission'
-      test_scripts = all_scripts.select(&:run_on_submission)
-    elsif call_on == 'request'
+    elsif call_on == 'student_request'
       test_scripts = all_scripts.select(&:run_on_request)
     else
       test_scripts = []
@@ -305,7 +302,8 @@ module AutomatedTestsClientHelper
         return
       end
       # enqueue locally using api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
+      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path,
+                     call_on, assignment.id, group.id)
     else
       # tests executed on a test server: copy the student's submission and all necessary files through ssh
       test_server_username = MarkusConfigurator.markus_ate_test_server_username
@@ -328,8 +326,8 @@ module AutomatedTestsClientHelper
           ssh.exec!("chmod -R o+rwx '#{test_path}'")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
-                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
-                                     group.id]}
+                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, call_on,
+                                     assignment.id, group.id]}
           ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
@@ -341,7 +339,6 @@ module AutomatedTestsClientHelper
 
   def self.process_test_result(raw_result, call_on, assignment, grouping, submission = nil)
 
-    # TODO need to pass call_on through the api
     result = Hash.from_xml(raw_result)
     repo = grouping.group.repo
     revision = repo.get_latest_revision
@@ -396,7 +393,7 @@ module AutomatedTestsClientHelper
       new_test_script_result.save!
     end
 
-    if call_on == 'collection' || call_on == 'submission'
+    if call_on == 'after_collection'
       grouping.current_submission_used.set_marks_for_tests
     end
 
