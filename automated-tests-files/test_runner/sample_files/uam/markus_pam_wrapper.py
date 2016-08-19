@@ -104,7 +104,8 @@ class PAMWrapper:
             subprocess.run(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=shell,
                            env=env)
             # use the following with Python < 3.5
-            # subprocess.check_call(shell_command, shell=shell, env=env)
+            # subprocess.check_call(shell_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=shell,
+            #                       env=env)
             results = self.collect_results()
             self.print_results(results)
         except subprocess.CalledProcessError as e:

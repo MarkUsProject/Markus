@@ -278,7 +278,9 @@ module AutomatedTestsClientHelper
     submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
     test_results_path = MarkusConfigurator.markus_ate_test_server_results_dir
-    markus_address = host_with_port.start_with?('localhost') ? "http://#{host_with_port}" : "https://#{host_with_port}"
+    markus_address = host_with_port.start_with?('localhost') ?
+        "http://#{host_with_port}" :
+        "https://#{host_with_port}/#{MarkusConfigurator.markus_config_course_name}" # TODO just a convention?
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
     test_scripts = get_test_scripts_to_run(assignment, call_on)
