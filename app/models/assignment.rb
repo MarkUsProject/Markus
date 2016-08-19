@@ -865,6 +865,7 @@ class Assignment < ActiveRecord::Base
       peerreview_assignment.description = description
       peerreview_assignment.repository_folder = repository_folder
       peerreview_assignment.due_date = due_date
+      peerreview_assignment.is_hidden = true
 
       # We do not want to have the database in an inconsistent state, so we
       # need to have the database rollback the 'has_peer_review' column to
