@@ -46,13 +46,14 @@ module AutomatedTestsServerHelper
     FileUtils.rm_rf(test_path)
     # TODO What about UTORid auth, how do I get the cookie?
     api_url = "#{markus_address}/api/assignments/#{assignment_id}/groups/#{group_id}/test_script_results"
+    # HTTParty needs strings as hash keys, or it chokes
     options = {:headers => {
-                   :Authorization => "MarkUsAuth #{api_key}",
-                   :Accept => 'application/json'},
+                   'Authorization' => "MarkUsAuth #{api_key}",
+                   'Accept' => 'application/json'},
                :body => {
-                   :assignment_id => assignment_id,
-                   :group_id => group_id,
-                   :file_content => output}}
+                   'assignment_id' => assignment_id,
+                   'group_id' => group_id,
+                   'file_content' => output}}
     HTTParty.post(api_url, options)
   end
 
