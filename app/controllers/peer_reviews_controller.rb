@@ -133,7 +133,9 @@ class PeerReviewsController < ApplicationController
       end
     end
 
-    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
+    PeerReview.joins(result: :submission)
+      .where(submissions: { grouping_id: selected_reviewee_group_ids })
+      .delete_all
   end
 
   # Create a mapping of reviewer grouping -> set(reviewee groupings)

@@ -1,4 +1,5 @@
 require 'set'
+require 'upsert/active_record_upsert'
 
 class UnableToRandomlyAssignGroupException < Exception
 end
@@ -187,5 +188,11 @@ module RandomAssignHelper
     end
 
     PeerReview.import peer_reviews, validate: false
+
+    Upsert.batch(Result.connection, Result.table_name) do |upsert|
+      results.zip(peer_reviews).each do |result, pr|
+        upsert.row({ id: result.id }, peer_review_id: pr.id)
+      end
+    end
   end
 end
