@@ -515,7 +515,7 @@ class ResultsController < ApplicationController
     end
 
     @old_result = nil
-    if @submission.remark_submitted?
+    if @submission.remark_submitted? && !is_review
       @old_result = @result
       @result = @submission.remark_result
       # Check if remark request has been submitted but not released yet
