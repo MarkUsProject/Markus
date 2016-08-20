@@ -244,7 +244,7 @@
                         id: @assignment.id %>
           </li>
         <% end %>
-        <% if @assignment.has_peer_review? || @assignment.is_peer_review? %>
+        <% if @assignment.has_peer_review? && !@assignment.pr_assignment.is_hidden %>
           <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
             <%= link_to t('assignment.start_peer_review'),
                         controller: 'assignments',
