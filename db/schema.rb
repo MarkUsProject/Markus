@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810184655) do
+ActiveRecord::Schema.define(version: 20160819150903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -568,7 +568,7 @@ ActiveRecord::Schema.define(version: 20160810184655) do
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
   add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
   add_foreign_key "peer_reviews", "results"
-  add_foreign_key "results", "peer_reviews"
+  add_foreign_key "results", "peer_reviews", name: "fk_results_peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
