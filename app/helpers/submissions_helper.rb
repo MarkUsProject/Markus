@@ -115,7 +115,13 @@ module SubmissionsHelper
           g[:tags] = grouping.tags
           g[:commit_date] = grouping.last_commit_date
           g[:has_files] = grouping.has_files_in_submission?
-          g[:late_commit] = grouping.past_due_date?
+          g[:late_commit] =
+            # TODO: Enable this check for Git backend. See issue #1866.
+            if MarkusConfigurator.markus_config_repository_type == 'git'
+              false
+            else
+              grouping.past_due_date?
+            end
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
