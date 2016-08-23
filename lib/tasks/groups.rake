@@ -86,6 +86,8 @@ namespace :db do
       end
     end
     # This really should be done in a more generic way
-    Repository::SubversionRepository.__generate_authz_file
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    repo.__set_all_permissions
+    #Repository::SubversionRepository.__generate_authz_file
   end
 end

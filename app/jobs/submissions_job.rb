@@ -25,7 +25,6 @@ class SubmissionsJob < ActiveJob::Base
       groupings.each do |grouping|
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
-
         if options[:revision_number].nil?
           time = assignment.submission_rule.calculate_collection_time.localtime
           new_submission = Submission.create_by_timestamp(grouping, time)

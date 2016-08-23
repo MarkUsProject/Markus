@@ -918,8 +918,7 @@ class Assignment < ActiveRecord::Base
     # only create if we can add starter code
     return true unless can_upload_starter_code?
     begin
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type,
-                           repository_config)
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type)
                 .create(File.join(MarkusConfigurator.markus_config_repository_storage,
                                   repository_name))
     rescue Repository::RepositoryCollision => e
@@ -933,19 +932,19 @@ class Assignment < ActiveRecord::Base
     true
   end
 
-  def repository_config
-    conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
-    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
-    conf
-  end
+  # def repository_config
+  #   conf = Hash.new
+  #   conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+  #   conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
+  #   conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
+  #   conf
+  # end
 
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, repository_config).repository_exists?(repo_loc)
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type, repository_config).open(repo_loc)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type).repository_exists?(repo_loc)
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type).open(repo_loc)
     else
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end

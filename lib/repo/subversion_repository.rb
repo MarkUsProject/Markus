@@ -206,7 +206,7 @@ module Repository
     alias download_as_string stringify_files # create alias
 
     # Generate and write the SVN authorization file for the repo.
-    def self.__generate_authz_file
+    def self.__set_all_permissions
       return true if !MarkusConfigurator.markus_config_repository_admin?
       valid_groupings_and_members = {}
       assignments = Assignment.all

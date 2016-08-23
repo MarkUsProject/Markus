@@ -224,16 +224,16 @@ class User < ActiveRecord::Base
 
   # Convenience method which returns a configuration Hash for the
   # repository lib
-  def self.repo_config
-    {
-      'IS_REPOSITORY_ADMIN' =>
-          MarkusConfigurator.markus_config_repository_admin?,
-      'REPOSITORY_STORAGE' =>
-          MarkusConfigurator.markus_config_repository_storage,
-      'REPOSITORY_PERMISSION_FILE' =>
-          MarkusConfigurator.markus_config_repository_permission_file
-    }
-  end
+  # def self.repo_config
+  #   {
+  #     'IS_REPOSITORY_ADMIN' =>
+  #         MarkusConfigurator.markus_config_repository_admin?,
+  #     'REPOSITORY_STORAGE' =>
+  #         MarkusConfigurator.markus_config_repository_storage,
+  #     'REPOSITORY_PERMISSION_FILE' =>
+  #         MarkusConfigurator.markus_config_repository_permission_file
+  #   }
+  # end
 
   # Set API key for user model. The key is a
   # SHA2 512 bit long digest, which is in turn
@@ -296,9 +296,8 @@ class User < ActiveRecord::Base
     # If we're not the repository admin, bail out
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
 
-    conf = User.repo_config
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type,
-                                conf)
+    #conf = User.repo_config
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo_names = Group.all.collect do |group|
                    File.join(MarkusConfigurator.markus_config_repository_storage,
                              group.repository_name)
@@ -310,8 +309,8 @@ class User < ActiveRecord::Base
   def revoke_repository_permissions
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
 
-    conf = User.repo_config
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
+    #conf = User.repo_config
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
     repo.delete_bulk_permissions(repo_names, [self.user_name])
   end
@@ -320,7 +319,7 @@ class User < ActiveRecord::Base
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
     if self.user_name_changed?
       conf = User.repo_config
-      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
+      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
       repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
       repo.delete_bulk_permissions(repo_names, [self.user_name_was])
       repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})

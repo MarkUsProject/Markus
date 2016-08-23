@@ -484,7 +484,7 @@ module Repository
     # This is done as a single operation to mirror the SVN repo code.  We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
 
-    def self.set_all_permissions
+    def self.__set_all_permissions
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
@@ -512,6 +512,7 @@ module Repository
       valid_groupings_and_members = {}
       assignments = Assignment.all
       assignments.each do |assignment|
+
         valid_groupings = assignment.valid_groupings
         valid_groupings.each do |gr|
           accepted_students = gr.accepted_students
@@ -526,7 +527,7 @@ module Repository
         users = students + tas + admins
 
         # Grab the repo from gitolite
-        repo = ga_repo.config.get_repo(grouping.group.repo_name)
+        repo = ga_repo.config.get_repo(repo_name)
 
         if repo.nil?
           repo = Gitolite::Config::Repo.new(repo_name)
