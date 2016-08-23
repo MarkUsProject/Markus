@@ -17,8 +17,7 @@ module RepositoryHelper
   def repository_already_exists?(repository_name)
     repo_path = File.join(
         MarkusConfigurator.markus_config_repository_storage, repository_name)
-    if Repository.get_class(MarkusConfigurator.markus_config_repository_type,
-                            repository_config).repository_exists?(repo_path)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type).repository_exists?(repo_path)
       errors.add(:repo_name, repo_path)
       true
     else
