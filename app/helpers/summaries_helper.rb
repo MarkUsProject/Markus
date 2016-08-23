@@ -42,7 +42,7 @@ module SummariesHelper
       end
       final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
       g = grouping.attributes
-      g[:class_name] = get_tr_class(grouping)
+      g[:class_name] = get_tr_class(grouping, assignment)
       g[:name] = grouping.get_group_name
       g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
@@ -51,7 +51,7 @@ module SummariesHelper
                                                              grouping)
       g[:commit_date] = grouping.last_commit_date
       g[:late_commit] = grouping.past_due_date?
-      g[:state] = grouping.marking_state(result)
+      g[:state] = grouping.marking_state(result, assignment, current_user)
       g[:grace_credits_used] = grouping.grace_period_deduction_single
       g[:final_grade] = grouping.final_grade(result)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
@@ -64,9 +64,9 @@ module SummariesHelper
     criteria_hash = Hash.new
     criteria = assignment.get_criteria
     criteria.each do |criterion|
-      key = 'criterion_' + criterion.id.to_s
+      key = 'criterion_' + criterion.class.to_s + '_' + criterion.id.to_s
       if grouping.has_submission?
-        mark = grouping.current_submission_used.get_latest_result.marks.find_by_markable_id(criterion.id)
+        mark = grouping.current_submission_used.get_latest_result.marks.find_by(markable: criterion)
         if mark.nil? || mark.mark.nil?
           criteria_hash[key] = '-'
         else

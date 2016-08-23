@@ -1,0 +1,13 @@
+<li id='<%= "checkbox_criterion_#{mark_criterion.id}" %>' class='checkbox_criterion'>
+  <%= render partial: 'results/common/checkbox_criterion',
+             locals: { mark_criterion: mark_criterion,
+                       mark: mark,
+                       old_mark: old_mark,
+                       view: 'student'} %>
+
+  <% unless mark_criterion.description.blank? %>
+    <div id='<%="criterion_info_#{mark_criterion.id}"%>' class='criterion_info mark-checkbox'>
+      <%= mark_criterion.description %>
+    </div>
+  <% end %>
+</li>

@@ -1,7 +1,6 @@
 require 'encoding'
 
-# Represents a flexible criterion used to mark an assignment that
-# has the marking_scheme_type attribute set to 'flexible'.
+# Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
   self.table_name = 'flexible_criteria' # set table name correctly
 
@@ -72,7 +71,11 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria.find_or_create_by(name: name)
+    begin
+      criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
+    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
+      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
+    end
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
@@ -93,6 +96,52 @@ class FlexibleCriterion < Criterion
       raise CSVInvalidLineError
     end
     criterion
+  end
+
+  # Instantiate a FlexibleCriterion from a YML entry
+  #
+  # ===Params:
+  #
+  # criterion_yml:: Information corresponding to a single FlexibleCriterion
+  #                 in the following format:
+  #                 criterion_name:
+  #                   type: criterion_type
+  #                   max_mark: #
+  #                   description: level_description
+  def self.load_from_yml(criterion_yml)
+    name = criterion_yml[0]
+    # Create a new RubricCriterion
+    criterion = FlexibleCriterion.new
+    criterion.name = name
+    # Check max_mark is not a string.
+    begin
+      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
+    rescue ArgumentError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue TypeError
+      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
+    rescue NoMethodError
+      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
+    end
+    # Set the description to the one given, or to an empty string if
+    # a description is not given.
+    criterion.description =
+      criterion_yml[1]['description'].nil? ? '' : criterion_yml[1]['description']
+    # Visibility options
+    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    criterion
+  end
+
+  # Returns a hash containing the information of a single flexible criterion.
+  def self.to_yml(criterion)
+    { "#{criterion.name}" =>
+      { 'type'         => 'flexible',
+        'max_mark'     => criterion.max_mark.to_f,
+        'description'  => criterion.description.blank? ? '' : criterion.description,
+        'ta_visible'   => criterion.ta_visible,
+        'peer_visible' => criterion.peer_visible }
+    }
   end
 
   def weight
@@ -143,7 +192,7 @@ class FlexibleCriterion < Criterion
 
   def add_tas_by_user_name_array(ta_user_name_array)
     result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
+      Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
   end
@@ -151,7 +200,7 @@ class FlexibleCriterion < Criterion
   # Checks if the criterion is visible to either the ta or the peer reviewer.
   def visible?
     unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('flexible_criteria.visibility_error'))
+      errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
       false
     end
     true

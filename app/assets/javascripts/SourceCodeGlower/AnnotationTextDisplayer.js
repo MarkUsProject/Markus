@@ -38,12 +38,11 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
 
   // Each element is an AnnotationText object
   collection.forEach(function(element, index, array) {
-    final_string += '<p>' + marked(element.getContent()) + '</p>';
+    final_string += marked(element.getContent());
   });
 
   // Update the Display node (a div, in this case) to be in the right
   // position, and to have the right contents
-  final_string = final_string.replace(/\n/g, '<br>');
   this.updateDisplayNode(final_string, x, y);
 
   // Show the Displayer

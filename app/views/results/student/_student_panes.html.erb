@@ -8,7 +8,7 @@
           <% if can_show_feedback_files_tab?(submission) %>
             <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
-          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission, result) %>
             <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
           <% end %>
         </ul>
@@ -57,7 +57,7 @@
           </div>
         <% end %>
 
-        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission, result) %>
           <div id='remark_request_tab'>
             <% if @current_user.student? and assignment.allow_remarks%>
               <%= render partial: 'results/student/remark_request',
@@ -90,11 +90,11 @@
             <ul id='mark_criteria_pane_list'>
               <%# Also need to render the mark per criteria (if exist) %>
               <% @mark_criteria.each do |mark_criterion| -%>
-                <%= render partial: "results/student/student_#{@assignment.marking_scheme_type}_criterion_li",
+                <%= render partial: "results/student/student_#{mark_criterion.class.to_s.underscore}_li",
                            locals: { mark_criterion: mark_criterion,
                                      result: result,
-                                     mark: marks_map[mark_criterion.id],
-                                     old_mark: @old_marks_map[mark_criterion.id] } %>
+                                     mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                     old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
               <% end -%>
             </ul>
           </div>
@@ -104,7 +104,7 @@
           <%= render partial: 'results/student/student_summary',
                      locals: { mark_criteria: @mark_criteria,
                                marks_map: marks_map,
-                               old_marks_map: @old_marks_map,
+                               old_marks_map: old_marks_map,
                                assignment: assignment,
                                result: result,
                                old_result: @old_result,

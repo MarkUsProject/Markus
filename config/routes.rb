@@ -5,8 +5,7 @@ Markus::Application.routes.draw do
   root controller: 'main', action: 'login', via: [:post, :get]
 
   # optional path scope (denoted by the parentheses)
-  scope "(:locale)", locale: /en|fr|pt/  do
-
+  scope '(:locale)', locale: /en|es|fr|pt/  do
     # API routes
     namespace :api do
       resources :users, except: [:new, :edit]
@@ -75,25 +74,11 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :criteria, except: [:index] do
+      resources :criteria do
         collection do
           post 'update_positions'
-        end
-      end
-
-      resources :rubric_criteria, only: [:index] do
-        collection do
-          post 'csv_upload'
-          post 'yml_upload'
-          get 'download_csv'
-          get 'download_yml'
-        end
-      end
-
-      resources :flexible_criteria, only: [:index] do
-        collection do
-          post 'upload'
-          get 'download'
+          post 'upload_yml'
+          get  'download_yml'
         end
       end
 
@@ -143,6 +128,7 @@ Markus::Application.routes.draw do
           post 'populate_file_manager'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
+          post 'run_tests'
           get 'download_simple_csv_report'
           get 'download_detailed_csv_report'
           get 'download_svn_export_list'
@@ -207,12 +193,36 @@ Markus::Application.routes.draw do
         end
       end
 
+      resources :results, only: [:edit], path: '/peer_reviews' do
+        collection do
+          get 'download'
+          post 'update_mark'
+        end
+
+        member do
+          get 'view_marks'
+          post 'add_extra_mark'
+          get 'codeviewer'
+          post 'codeviewer'
+          get 'next_grouping'
+          post 'toggle_marking_state'
+          post 'update_mark'
+          post 'update_overall_comment'
+          patch 'update_remark_request'
+        end
+      end
+
       resources :peer_reviews, only: :index do
         collection do
           get 'populate'
           post 'assign_groups'
           get 'download_reviewer_reviewee_mapping'
           post 'csv_upload_handler'
+          get 'show_reviews'
+        end
+
+        member do
+          get 'show_result'
         end
       end
 

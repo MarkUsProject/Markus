@@ -121,6 +121,17 @@ class Markus:
         path = self.get_path(assignment_id, group_id) + 'feedback_files'
         return self.submit_request(params, path, 'POST')
 
+    def upload_test_script_result(self, assignment_id, group_id, results):
+        """ (Markus, int, str, dict) -> list of str """
+        print(results)
+        params = {
+            'assignment_id': assignment_id,
+            'group_id': group_id,
+            'file_content': results
+        }
+        path = self.get_path(assignment_id, group_id) + 'test_script_results'
+        return self.submit_request(params, path, 'POST')
+
     def update_marks_single_group(self, criteria_mark_map, assignment_id, group_id):
         """ (Markus, dict, int, int) -> list of str
         Update the marks of a single group. 
@@ -193,5 +204,3 @@ class Markus:
     def decode_response(resp):
         """Converts response from submit_request into python dict."""
         return json.loads(resp[2].decode('utf-8'))
-
-

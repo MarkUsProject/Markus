@@ -632,6 +632,17 @@ nav {
     }
   }
 
+  .arrow_down {
+    width: 0;
+    height: 0;
+    margin-top: 3px;
+    margin-right: 3px;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+    border-top: 7.5px solid $dark-blue;
+    float: right;
+  }
+
   ul {
     background: $white;
     border: 1px solid $dark-blue;

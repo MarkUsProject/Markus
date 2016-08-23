@@ -46,8 +46,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                         'allow_remarks' =>'true',
                                         'submission_rule_attributes' =>
                                           { 'type' =>'NoLateSubmissionRule' },
-                                        'group_min' =>'1',
-                                        'marking_scheme_type' =>'rubric'
+                                        'group_min' =>'1'
                        }
         }
       end

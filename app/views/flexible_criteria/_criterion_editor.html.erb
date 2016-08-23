@@ -19,7 +19,6 @@
 </h2>
 
 <%= form_for criterion,
-             as: :flexible_criterion,
              url: assignment_criterion_path(id: criterion.id,
                                             criterion_type: criterion.class.to_s),
              method: :patch,
@@ -29,18 +28,18 @@
 
   <div class='main_flexible_criteria_edit'>
 
-    <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-      <%= f.label :name, t(:criterion)%>
+    <span id='<%= "criterion_inputs_#{criterion.id}" %>'>
+      <%= f.label :name, t(:criterion), class: 'bold_inline_label' %>
       <%= f.text_field :name %>
     </span>
     <br>
     <span id='criterion_max_mark_edit_<%= criterion.id %>' class='criterion_max_mark_edit'>
-      <%= f.label :max_mark, t('flexible_criteria.max_mark')%>
+      <%= f.label :max_mark, t('flexible_criteria.max_mark'), class: 'bold_inline_label' %>
       <%= f.text_field :max_mark %>
     </span>
     <br>
     <span id='criterion_description_edit_<%= criterion.id %>' class='criterion_description_edit'>
-      <%= f.label :description, t('flexible_criteria.description') %>
+      <%= f.label :description, t('flexible_criteria.description'), class: 'bold_inline_label' %>
       <%= f.text_area :description, size: '50x6' %>
     </span>
     <br>
@@ -48,15 +47,16 @@
     <br>
     <br>
     <h4><span><%= t('visibility') %></span></h4>
-    <h5>
+    <div>
       <%= f.check_box :ta_visible %>
       <%= f.label :ta_visible,
-                  t('flexible_criteria.ta_visible') %>
-      <br>
+                  t('criteria.ta_visible') %>
+    </div>
+    <div>
       <%= f.check_box :peer_visible %>
       <%= f.label :peer_visible,
-                  t('flexible_criteria.peer_visible') %>
-    </h5>
+                  t('criteria.peer_visible') %>
+    </div>
     <%= f.submit t('criteria.save'), data: { disable_with: t('working') } %>
   </div>
 <% end %>

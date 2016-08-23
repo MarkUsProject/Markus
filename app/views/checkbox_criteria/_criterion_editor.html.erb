@@ -1,0 +1,70 @@
+<%= render 'shared/flash_message' %>
+
+<div class='float_right'>
+  <%= button_to t(:delete),
+                assignment_criterion_path(assignment_id: criterion.assignment.id,
+                                          id: criterion.id,
+                                          criterion_type: criterion.class.to_s),
+                data: { confirm: t(:remove_criteria_message) },
+                method: :delete,
+                class: 'delete',
+                title: t(:remove_criteria_title),
+                remote: true %>
+</div>
+
+<h2>
+  <span id='selected_criterion_name'>
+    <%= criterion.name %>
+  </span>
+</h2>
+
+<%= form_for criterion,
+             url: assignment_criterion_path(id: criterion.id,
+                                            criterion_type: criterion.class.to_s),
+             method: :patch,
+             remote: true do |f| %>
+
+  <div class='error' id='criterion_<%= criterion.id %>_error' style='display:none;'></div>
+
+  <div class='main_checkbox_criteria_edit'>
+
+    <span id='<%= "criterion_inputs_#{criterion.id}" %>'>
+      <%= f.label :name, t(:criterion), class: 'bold_inline_label' %>
+      <%= f.text_field :name %>
+    </span>
+    <br>
+    <span id='criterion_max_mark_edit_<%= criterion.id %>' class='criterion_max_mark_edit'>
+      <%= f.label :max_mark, t('checkbox_criteria.max_mark'), class: 'bold_inline_label' %>
+      <%= f.text_field :max_mark %>
+    </span>
+    <br>
+    <span id='criterion_description_edit_<%= criterion.id %>' class='criterion_description_edit'>
+      <%= f.label :description, t('checkbox_criteria.description'), class: 'bold_inline_label' %>
+      <%= f.text_area :description, size: '50x6' %>
+    </span>
+    <br>
+    <span><%= t('checkbox_criteria.description_hint') %></span>
+    <br>
+    <br>
+    <h4><span><%= t('visibility') %></span></h4>
+    <div>
+      <%= f.check_box :ta_visible %>
+      <%= f.label :ta_visible,
+                  t('criteria.ta_visible') %>
+      <br>
+      <%= f.check_box :peer_visible %>
+      <%= f.label :peer_visible,
+                  t('criteria.peer_visible') %>
+    </div>
+    <%= f.submit t('criteria.save'), data: { disable_with: t('working') } %>
+  </div>
+<% end %>
+
+<% if !criterion.description.nil? && !criterion.description.empty? %>
+  <div id='checkbox_criteria_preview'>
+    <h3><%= t(:preview) %></h3>
+    <div id='criterion_description_preview_<%= criterion.id %>' class='criterion_description_preview'>
+      <%= sanitize(criterion.description) %>
+    </div>
+  </div>
+<% end %>

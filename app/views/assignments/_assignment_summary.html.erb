@@ -2,8 +2,8 @@
   <div class='assignment_summary'>
     <h2 class='title'>
       <%= link_to I18n.t(:assignment_link,
-                         short_id: assignment.short_identifier,
-                         description: assignment.description),
+                         short_id: assignment.is_peer_review? ? assignment.parent_assignment.short_identifier : assignment.short_identifier,
+                         description: assignment.is_peer_review? ? t('assignment.review') : assignment.description),
                   browse_assignment_submissions_path(assignment.id),
                   class: 'title' %>
     </h2>

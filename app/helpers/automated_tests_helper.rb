@@ -33,7 +33,6 @@ module AutomatedTestsHelper
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params, assignment_params,
                         new_script, new_support_file)
-
     updated_script_files = {}
     updated_support_files = {}
 
@@ -75,7 +74,9 @@ module AutomatedTestsHelper
                     MarkusConfigurator.markus_config_automated_tests_repository,
                     @assignment.repository_folder,
                     new_script_name)
-          File.open(assignment_tests_path, 'w') { |f| f.write new_update_script.read }
+          # Replace bad line endings from windows
+          contents = new_update_script.read.tr("\r", '')
+          File.open(assignment_tests_path, 'w') { |f| f.write contents }
 
           # Deleting old script
           old_script_path = File.join(
@@ -87,8 +88,16 @@ module AutomatedTestsHelper
           end
         end
       end
-      # always make sure the criterion type is correct
-      updated_script_files[file_num][:criterion_type] = @assignment.criterion_class
+      # Always make sure the criterion type is correct.
+      # The :criterion_id parameter contains a list of the form
+      # [criterion_id, criterion_type]
+      if testscripts[file_num][:criterion_id].nil?
+        updated_script_files[file_num][:criterion_type]
+      else
+        crit_id, crit_type = JSON.parse testscripts[file_num][:criterion_id]
+        updated_script_files[file_num][:criterion_id] = crit_id
+        updated_script_files[file_num][:criterion_type] = crit_type
+      end
     end
 
     # Create/Update test support files
@@ -317,7 +326,8 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise 'error'
     else
-      process_result(result, call_on, @assignment, @grouping, @submission)
+      # Test scripts must now use calls to the MarkUs API to process results.
+      # process_result(result, call_on, @assignment, @grouping, @submission)
     end
 
   end

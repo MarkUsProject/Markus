@@ -36,6 +36,7 @@
       <%= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), class: "checkbox_label" %>
     </p>
 
+    <div style="display:none">
     <div id='testing_framework_tokens'>
       <p id='tokens'>
         <%= label_tag :tokens_per_period,
@@ -65,7 +66,7 @@
                         onchange: "toggle_tests_tokens(jQuery('#assignment_unlimited_tokens').is(':checked'))" %>
       </p>
     </div>
-
+    </div>
     <fieldset>
       <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
       <p>

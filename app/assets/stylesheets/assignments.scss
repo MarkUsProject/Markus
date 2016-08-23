@@ -1,5 +1,5 @@
 @import 'common/core';
-
+@import 'common/assignment_dropdown';
 
 .section {
   margin-top: 1.5em;
@@ -257,4 +257,20 @@ span.info_date {
   }
 }
 
+/* Table Styles */
 
+.pr_assignment_list {
+  padding-left: 15px;
+  display: block;
+  padding-top: 11px;
+}
+
+.pr_date {
+  padding-top: 11px;
+}
+
+.time_left {
+  display: inline-block;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}

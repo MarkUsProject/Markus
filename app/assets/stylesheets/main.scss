@@ -1,6 +1,6 @@
 @import 'common/core';
-
 @import 'common/login';
+@import 'common/assignment_dropdown';
 
 
 /* Dashboard */
@@ -131,6 +131,15 @@
   }
 }
 
+.pr_assignment_list {
+  padding-left: 15px;
+  display: block;
+  padding-top: 5px;
+}
+
+.pr_date {
+  padding-top: 5px;
+}
 
 /* Error status page (e.g. 404) */
 

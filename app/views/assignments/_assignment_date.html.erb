@@ -1,0 +1,37 @@
+<div class=<%= assignment.is_peer_review? ? 'pr_date' : 'date' %>>
+  <% if !assignment.section_due_dates_type %>
+      <% if assignment.due_date < Time.zone.now %>
+          <strong><%= l(assignment.due_date, format: :long_date) %></strong>
+      <% else %>
+          <strong><%= l(assignment.due_date, format: :long_date) %></strong>
+          <p class='time_left'>
+            <% if assignment.due_date <= Time.zone.now + 2.days %>
+                <%= t(:hours_and_minutes_left,
+                      hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 48).floor,
+                      minutes: ((assignment.due_date - Time.zone.now)/ 60).floor % 60) %>
+            <% else %>
+                <%= t(:days_and_hours_left,
+                      days: ((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor,
+                      hours: ((assignment.due_date - Time.zone.now)/(60 * 60) % 24).floor) %>
+            <% end %>
+          </p>
+      <% end %>
+  <% else %>
+      <% if assignment.section_due_date(@section) < Time.zone.now %>
+          <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
+      <% else %>
+          <strong><%= l(assignment.section_due_date(@section), format: :long_date) %></strong>
+          <p class='time_left'>
+            <% if assignment.section_due_date(@section) <= Time.zone.now + 2.days %>
+                <%= t(:hours_and_minutes_left,
+                      hours: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60) % 48).floor,
+                      minutes: ((assignment.section_due_date(@section) - Time.zone.now)/ 60).floor % 60) %>
+            <% else %>
+                <%= t(:days_and_hours_left,
+                      days: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60 * 24)).floor,
+                      hours: ((assignment.section_due_date(@section) - Time.zone.now)/(60 * 60) % 24).floor) %>
+          </p>
+            <% end %>
+      <% end %>
+  <% end %>
+</div>

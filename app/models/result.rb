@@ -59,7 +59,7 @@ class Result < ActiveRecord::Base
     unless marks.empty?
       assignment = submission.grouping.assignment
       assignment.get_criteria(user_visibility).each do |criterion|
-        mark = marks.find_by(markable_id: criterion.id)
+        mark = marks.find_by(markable: criterion)
         unless mark.nil?
           new_marks += mark.mark.to_f
         end
@@ -126,15 +126,23 @@ class Result < ActiveRecord::Base
   end
 
   def is_a_review?
-    PeerReview.exists?(result_id: id)
+    !peer_review_id.nil?
+  end
+
+  def is_review_for?(user, assignment)
+    grouping = user.grouping_for(assignment.id)
+    pr = PeerReview.find_by(result_id: self.id)
+    !pr.nil? && submission.grouping == grouping
   end
 
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
   def unrelease_partial_results
-    if marking_state != MARKING_STATES[:complete]
-      self.released_to_students = false
+    unless is_a_review?
+      if marking_state != MARKING_STATES[:complete]
+        self.released_to_students = false
+      end
     end
     true
   end

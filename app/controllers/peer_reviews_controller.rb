@@ -4,10 +4,18 @@ class PeerReviewsController < ApplicationController
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize_only_for_admin
+
+  before_filter :authorize_only_for_admin, except: [:show_reviews, :show_result]
+  before_filter :authorize_for_user, only: [:show_reviews, :show_result]
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    
+    unless @assignment.is_peer_review?
+      redirect_to edit_assignment_path(@assignment)
+      return
+    end
+
     @section_column = ''
     if Section.all.size > 0
       @section_column = "{
@@ -26,10 +34,32 @@ class PeerReviewsController < ApplicationController
 
     reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
-    num_reviews_map = create_map_number_of_reviews_for_reviewer(reviewer_groups)
+    num_reviews_map = PeerReview.group(:reviewer_id).having(reviewer_id: reviewer_groups.map { |g| g['id'] }).count
 
     render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
                   id_to_group_names_map, num_reviews_map]
+  end
+
+  def show_reviews
+    assignment = Assignment.find(params[:assignment_id])
+    # grab the first peer review of the reviewee group
+    pr = @current_user.grouping_for(assignment.id).peer_reviews.first
+
+    if !pr.nil?
+      redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
+    else
+      render 'shared/http_status', formats: [:html],
+             locals: { code: '404',
+                       message: HttpStatusHelper::ERROR_CODE[
+                           'message']['404'] }, status: 404,
+             layout: false
+    end
+  end
+
+  def show_result
+    pr = PeerReview.find(params[:id])
+
+    redirect_to view_marks_assignment_result_path(params[:assignment_id], pr.result_id)
   end
 
   def assign_groups
@@ -103,7 +133,9 @@ class PeerReviewsController < ApplicationController
       end
     end
 
-    selected_reviewee_group_ids.each { |reviewee_id| Grouping.find(reviewee_id).peer_reviews.map(&:destroy) }
+    PeerReview.joins(result: :submission)
+      .where(submissions: { grouping_id: selected_reviewee_group_ids })
+      .delete_all
   end
 
   # Create a mapping of reviewer grouping -> set(reviewee groupings)

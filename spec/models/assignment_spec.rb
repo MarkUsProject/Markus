@@ -47,7 +47,6 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:description) }
     it { is_expected.to validate_presence_of(:repository_folder) }
     it { is_expected.to validate_presence_of(:due_date) }
-    it { is_expected.to validate_presence_of(:marking_scheme_type) }
     it { is_expected.to validate_presence_of(:group_min) }
     it { is_expected.to validate_presence_of(:group_max) }
     it { is_expected.to validate_presence_of(:notes_count) }
@@ -214,38 +213,6 @@ describe Assignment do
         it 'returns all TAs' do
           expect(@assignment.tas).to match_array [@ta, @other_ta]
         end
-      end
-    end
-  end
-
-  describe '#criterion_class' do
-    context 'when the marking_scheme_type is rubric' do
-      before :each do
-        @assignment = build(:assignment, marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:rubric])
-      end
-
-      it 'returns RubricCriterion' do
-        expect(@assignment.criterion_class).to equal(RubricCriterion)
-      end
-    end
-
-    context 'when the marking_scheme_type is flexible' do
-      before :each do
-        @assignment = build(:assignment, marking_scheme_type: Assignment::MARKING_SCHEME_TYPE[:flexible])
-      end
-
-      it 'returns FlexibleCriterion' do
-        expect(@assignment.criterion_class).to equal(FlexibleCriterion)
-      end
-    end
-
-    context 'when the marking_scheme_type is nil' do
-      before :each do
-        @assignment = build(:assignment, marking_scheme_type: nil)
-      end
-
-      it 'returns nil' do
-        expect(@assignment.criterion_class).to be_nil
       end
     end
   end
@@ -1138,9 +1105,9 @@ describe Assignment do
   end
 
   describe '#get_detailed_csv_report' do
-    context 'when rubric marking was used' do
+    context 'when rubric criteria were used' do
       before :each do
-        @assignment = create(:rubric_assignment)
+        @assignment = create(:assignment)
         create(:assignment_file, filename: 'test1', assignment: @assignment)
         create(:assignment_file, filename: 'test2', assignment: @assignment)
         criteria =
@@ -1167,7 +1134,7 @@ describe Assignment do
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :rubric).each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
                                                        'RubricCriterion')
@@ -1182,7 +1149,7 @@ describe Assignment do
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :rubric).each do |criterion|
               fields.push('', criterion.max_mark)
             end
             fields.push('', '')
@@ -1198,9 +1165,9 @@ describe Assignment do
       end
     end
 
-    context 'when flexible marking was used' do
+    context 'when flexible criteria were used' do
       before :each do
-        @assignment = create(:flexible_assignment)
+        @assignment = create(:assignment)
         create(:assignment_file, filename: 'test3', assignment: @assignment)
         create(:assignment_file, filename: 'test4', assignment: @assignment)
         criteria =
@@ -1227,7 +1194,7 @@ describe Assignment do
             result = grouping.current_submission_used.get_latest_result
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :flexible).each do |criterion|
               mark = result.marks
                 .find_by_markable_id_and_markable_type(criterion.id,
                                                        'FlexibleCriterion')
@@ -1242,7 +1209,7 @@ describe Assignment do
             fields.push(result.get_total_extra_percentage)
           else
             fields.push('')
-            @assignment.get_criteria.each do |criterion|
+            @assignment.get_criteria(:all, :flexible).each do |criterion|
               fields.push('', criterion.max_mark)
             end
             fields.push('', '')

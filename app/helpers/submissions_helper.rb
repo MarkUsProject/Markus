@@ -9,6 +9,27 @@ module SubmissionsHelper
     end
   end
 
+  def set_pr_release_on_results(groupings, release)
+    changed = 0
+    groupings.each do |grouping|
+      name = grouping.group.group_name
+
+      result_prs = grouping.peer_reviews_to_others
+      results = result_prs.map &:result
+      results.each do |result|
+        result.released_to_students = release
+        unless result.save!
+          raise t('marking_state.result_not_saved', group_name: name)
+        end
+
+        #TODO: no error is thrown, but result.released_to_students is suddenly false
+
+        changed += 1
+      end
+    end
+    changed
+  end
+
   # Release or unrelease the submissions of a set of groupings.
   # TODO: Note that this terminates the first time an error is encountered,
   # and displays an error message to the user, even though some groupings
@@ -59,6 +80,18 @@ module SubmissionsHelper
           # Get the respective reviewee's result from grouping
           result_pr = current_user.grouping_for(assignment.id).review_for(grouping)
           result = Result.find(result_pr.result_id)
+
+        elsif assignment.is_peer_review? && !current_user.student?
+          # if an admin is viewing reviews a grouping made
+          result_pr = grouping.peer_reviews_to_others.first
+          if !result_pr.nil?
+            # this means they have atleast one group to review
+            result = Result.find(result_pr.result_id)
+          else
+            # this grouping is not assigned to do any reviews
+            result = nil
+          end
+
         else
           submission = grouping.current_submission_used
           if submission.nil?
@@ -82,13 +115,35 @@ module SubmissionsHelper
           g[:tags] = grouping.tags
           g[:commit_date] = grouping.last_commit_date
           g[:has_files] = grouping.has_files_in_submission?
-          g[:late_commit] = grouping.past_due_date?
+          g[:late_commit] =
+            # TODO: Enable this check for Git backend. See issue #1866.
+            if MarkusConfigurator.markus_config_repository_type == 'git'
+              false
+            else
+              grouping.past_due_date?
+            end
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
         end
-        g[:name_url] = get_grouping_name_url(grouping, result)
-        g[:class_name] = get_tr_class(grouping)
-        g[:state] = grouping.marking_state(result)
+        if assignment.is_peer_review?
+          # create a array of hashes, where each hash represents a reviewee with the reviewee grouping's
+          # name and URL to view marks
+          g[:reviewees] = grouping.peer_reviews_to_others.map do |pr|
+            reviewee_result = pr.result
+            reviewee_grouping = reviewee_result.submission.grouping
+            { reviewee_url: url_for(view_marks_assignment_submission_result_path(
+                                      assignment.parent_assignment,
+                                      reviewee_result.submission,
+                                      reviewee_result,
+                                      reviewer_grouping_id: grouping.id)),
+              reviewee_name: reviewee_grouping.group.group_name }
+          end
+        end
+        g[:name_url] = assignment.is_peer_review? && current_user.is_a_reviewer?(assignment) ?
+            edit_assignment_result_path(assignment.parent_assignment.id, result_pr.result_id) :
+            get_grouping_name_url(grouping, result)
+        g[:class_name] = get_tr_class(grouping, assignment)
+        g[:state] = grouping.marking_state(result, assignment, current_user)
         g[:anonymous_id] = i + 1
         g[:error] = ''
       rescue => e
@@ -107,8 +162,10 @@ module SubmissionsHelper
   # style the table row green or red respectively.
   # Classname will be applied to the table row
   # and actually styled in CSS.
-  def get_tr_class(grouping)
-    if grouping.is_collected?
+  def get_tr_class(grouping, assignment)
+    if assignment.is_peer_review?
+      nil
+    elsif grouping.is_collected?
       'submission_collected'
     elsif grouping.error_collecting
       'submission_error'
@@ -118,9 +175,13 @@ module SubmissionsHelper
   end
 
   def get_grouping_name_url(grouping, result)
-    if grouping.is_collected?
+    if !grouping.peer_reviews_to_others.empty? && result.is_a_review?
+      url_for(view_marks_assignment_submission_result_path(
+                  assignment_id: grouping.assignment.parent_assignment.id, submission_id: result.submission.id,
+                  id: result.id, reviewer_grouping_id: grouping.id))
+    elsif grouping.is_collected?
       url_for(edit_assignment_submission_result_path(
-                  grouping.assignment, grouping, result))
+                  grouping.assignment, result.submission_id, result))
     else
       ''
     end

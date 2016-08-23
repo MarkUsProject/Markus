@@ -13,8 +13,7 @@ class PeerReview < ActiveRecord::Base
   validate :no_students_should_be_reviewer_and_reviewee
 
   def reviewee
-    # TODO - Research optimizing or see if rails can do better
-    Grouping.joins({ submissions: { results: :peer_reviews }}).where('peer_reviews.id = ?', self.id).first
+    result.submission.grouping
   end
 
   def no_students_should_be_reviewer_and_reviewee
@@ -44,7 +43,10 @@ class PeerReview < ActiveRecord::Base
     if can_assign_peer_review_to?(reviewer, reviewee)
       result = Result.create!(submission: reviewee.current_submission_used,
                               marking_state: Result::MARKING_STATES[:incomplete])
-      return PeerReview.create!(reviewer: reviewer, result: result)
+      peer_review = PeerReview.create!(reviewer: reviewer, result: result)
+      result.peer_review_id = peer_review.id
+      result.save!
+      return peer_review
     end
   end
 end

@@ -11,7 +11,9 @@
 <div class='title_bar'>
   <h1>
     <%= t('tags.title',
-          assignment_short_identifier: @assignment.short_identifier) %>
+          assignment_short_identifier: @assignment.is_peer_review? ?
+               @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+               @assignment.short_identifier) %>
   </h1>
 
   <!--The buttons for creating tags, uploading and downloading-->

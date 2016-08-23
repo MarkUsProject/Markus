@@ -111,7 +111,6 @@ class Grouping < ActiveRecord::Base
   # The groupings must belong to the given assignment +assignment+.
   def self.assign_tas(grouping_ids, ta_ids, assignment)
     grouping_ids, ta_ids = Array(grouping_ids), Array(ta_ids)
-
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
@@ -690,6 +689,7 @@ class Grouping < ActiveRecord::Base
                     :group,
                     :grace_period_deductions,
                     :tags,
+                    :peer_reviews_to_others,
                     { current_submission_used: [:results,
                                                 :submission_files,
                                                 :submitted_remark,
@@ -738,19 +738,33 @@ class Grouping < ActiveRecord::Base
   # It would be nice to use Result::MARKING_STATES, but that doesn't have
   # states for released or remark requested.
   # result is the current result, if it exists
-  def marking_state(result)
-    if !has_submission?
-      'unmarked'
-    elsif result.marking_state != Result::MARKING_STATES[:complete]
-      if current_submission_used.has_remark?
-        'remark'
+  def marking_state(result, assignment, user)
+    if !user.student? && assignment.is_peer_review?
+      # if an admin or TA is viewing peer review submissions
+      pr_results = peer_reviews_to_others.map &:result
+      if pr_results.empty?
+        return 'partial'
+      end
+      unreleased_results = pr_results.find_all {|r| !r.released_to_students}
+      if unreleased_results.size == 0
+        'released'
       else
         'partial'
       end
-    elsif result.released_to_students
-      'released'
     else
-      'completed'
+      if !has_submission?
+        'unmarked'
+      elsif result.released_to_students
+        'released'
+      elsif result.marking_state != Result::MARKING_STATES[:complete]
+        if current_submission_used.has_remark?
+          'remark'
+        else
+          'partial'
+        end
+      else
+        'completed'
+      end
     end
   end
 

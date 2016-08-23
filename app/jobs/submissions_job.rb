@@ -47,9 +47,6 @@ class SubmissionsJob < ActiveJob::Base
         end
 
         grouping.save
-
-        # Request a test run for the grouping
-        request_a_test_run(grouping, new_submission)
       end
       m_logger.log('Submission collection process done')
     rescue => e
@@ -63,18 +60,6 @@ class SubmissionsJob < ActiveJob::Base
     unless job_messenger.nil?
       job_messenger.update(status: :succeeded)
       PopulateCache.populate_for_job(job_messenger, job_id)
-    end
-  end
-
-  def request_a_test_run(grouping, new_submission)
-    m_logger = MarkusLogger.instance
-    if grouping.assignment.enable_test
-      m_logger.log("Now requesting test run for #{grouping.assignment.short_identifier} \
-                    on grouping: '#{grouping.id}'")
-      AutomatedTestsHelper.request_a_test_run(new_submission.grouping.id,
-                                              'collection',
-                                              @current_user,
-                                              new_submission.id)
     end
   end
 end

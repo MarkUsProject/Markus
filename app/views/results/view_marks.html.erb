@@ -65,7 +65,20 @@
 </aside>
 
 <div class='title_bar'>
-  <h1>Results for <%= sanitize(@assignment.short_identifier) %></h1>
+  <h1>
+    <% if @result.is_a_review? %>
+      <% if @current_user.student? %>
+        <%= t('results.review_for') + sanitize(@assignment.short_identifier) %>
+      <% else %>
+        <%= t('results.review_title',
+              assignment_name: @assignment.short_identifier,
+              group_name: @current_group_name,
+              reviewer_name: @reviewer.group.group_name) %>
+      <% end %>
+    <% else %>
+      <%= t('results.results_for') + sanitize(@assignment.short_identifier) %>
+    <% end %>
+  </h1>
 
   <div class='heading_buttons'>
     <%= link_to t(:download),
@@ -77,12 +90,36 @@
 <div class='wrapLeft'>
   <%= render partial: 'results/common/errors' %>
 
+  <% if @result.is_a_review? && !@current_user.student? %>
+    <%= render partial: 'results/common/submission_selector',
+               locals: { group: @group,
+                         result: @result,
+                         assignment: @assignment,
+                         previous_grouping: @previous_grouping,
+                         next_grouping: @next_grouping } %>
+  <% end %>
+
+  <% if @result.is_review_for?(@current_user, @assignment) ||
+      (@result.is_a_review? && !@current_user.student?) %>
+    <%= render partial: 'results/common/peer_reviews',
+               locals: { current_user: @current_user,
+                         assignment: @assignment,
+                         result: @result,
+                         submission: @submission,
+                         grouping: @grouping,
+                         reviewer: @reviewer,
+                         current_group_name: @current_group_name,
+                         prs: @prs,
+                         current_pr: @current_pr} %>
+  <% end %>
+
   <%= render partial: 'results/student/student_panes',
              locals: { extra_marks_points: @extra_marks_points,
                        extra_marks_percentage: @extra_marks_percentage,
                        result: @result,
                        mark_criteria: @mark_criteria,
                        marks_map: @marks_map,
+                       old_marks_map: @old_marks_map,
                        assignment: @assignment,
                        submission: @submission,
                        old_result: @old_result,

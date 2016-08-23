@@ -1,0 +1,54 @@
+<%
+  if view == 'marker'
+    onclick = "focus_mark_criterion_type(#{mark_criterion.id}, '#{mark_criterion.class.to_s}')"
+    criterion_name_class = 'title_div_level unreleased'
+    old_mark_class = 'old_mark old_mark_unreleased'
+  else
+    onclick = ''
+    criterion_name_class = 'title_div_level released'
+    old_mark_class = 'old_mark old_mark_released' -%>
+<% end -%>
+
+
+<strong class="title_div_level" onclick="<%= onclick %>">
+  <%= link_to mark_criterion.name, 'javascript:void(0);', onclick: 'return false;' %>
+</strong>
+
+<div class='mark_checkbox'>
+  <% if view == 'marker' %>
+      <%= t('answer_yes') %>
+      <%= radio_button_tag('mark_' + mark.id.to_s,
+                               'yes',
+                               !mark.mark.nil? && mark.mark > 0.0,
+                               class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
+                               data: { id: mark_criterion.id,
+                                       oldmark: old_mark.nil? ? 'none' : old_mark.mark,
+                                       mark: mark.id.to_s },
+                               'data-action' => url_for(action: :update_mark, mark_id: mark.id, radio_type: 'yes')) %>
+      &nbsp;
+      <%= t('answer_no') %>
+      <%= radio_button_tag('mark_' + mark.id.to_s,
+                              'no',
+                              !mark.mark.nil? && mark.mark == 0.0,
+                              class: 'mark_grade_input_checkbox' + (!old_mark.nil? && (mark.mark != old_mark.mark) ? ' remarked' : ' not_remarked'),
+                              data: { id: mark_criterion.id,
+                                      oldmark: old_mark.nil? ? 'none' : old_mark.mark,
+                                      mark: mark.id.to_s },
+                              'data-action' => url_for(action: :update_mark, mark_id: mark.id, radio_type: 'no')) %>
+  <% end %>
+  <span class="checkbox_radio_button_container">
+  <% if view == 'marker' %>
+    <span id="checkbox_radio_button_container_<%= mark.id %>"><%= mark.mark.nil? ? '-' : mark.mark %></span>
+      / <%= mark_criterion.max_mark.to_s %>
+    </span>
+  <% else %>
+    <%= mark.mark %> / <%= mark_criterion.max_mark.to_s %>
+  <% end %>
+  </span>
+</div>
+
+<div id='<%="checkbox_#{mark_criterion.id}_old_mark"%>' class='<%= old_mark_class %>'>
+  <% if !old_mark.nil? && (mark.mark != old_mark.mark) %>
+      (Old Mark: <%= old_mark.mark %>)
+  <% end %>
+</div>

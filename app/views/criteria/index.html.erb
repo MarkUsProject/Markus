@@ -1,0 +1,101 @@
+<% content_for :head do %>
+  <%= render partial: 'boot',
+             formats: [:js],
+             handlers: [:erb] %>
+<% end %>
+
+<div class='title_bar'>
+  <h1>
+    <%= t('criteria.marking_scheme', identifier: @assignment.is_peer_review? ?
+        @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
+        @assignment.short_identifier) %>
+  </h1>
+  <div class='heading_buttons'>
+    <%= link_to t('criteria.add_criterion'),
+      'javascript:void(0);',
+      onclick: "if(document.getElementById('new_criterion') != null) {
+        document.getElementById('new_criterion_prompt').focus();
+      } else {
+        jQuery.ajax({
+          url: '" + new_assignment_criterion_path(@assignment) + "',
+          type: 'GET'
+        });
+      } "%>
+    <span class='menu_bar'></span>
+    <%= link_to t('criteria.download.yml'),
+                'javascript:void(0);',
+                onclick: 'modal_download_yml.open()' %>
+    <span class='menu_bar'></span>
+    <%= link_to t('criteria.upload.yml'),
+                'javascript:void(0);',
+                onclick: 'modal_upload_yml.open()' %>
+  </div>
+</div>
+
+<div class='wrapper'>
+  <%= render 'shared/flash_message' %>
+
+  <p id='new_criterion_error' class='warning' style='display: none;'></p>
+</div>
+
+<div class='pane_wrapper'>
+  <div id='criteria_pane'>
+    <%= render partial: 'criteria_pane' %>
+  </div>
+
+  <div id='editing_pane'>
+    <div id='editing_pane_menu'>
+      <%= render partial: 'manager_help' %>
+      <div id='criteria_pane_list'></div>
+    </div>
+  </div>
+</div>
+
+<aside class='dialog' id='upload_yml_dialog'>
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script_yml',
+                             upload_id: 'yml_upload_rubric',
+                             button_id: 'upload_yml' %>
+
+  <h1><%= t('criteria.upload.yml_title') %></h1>
+  <p><%= t('criteria.upload.yml_prompt') %></p>
+  <%= form_for :yml_upload,
+               url: upload_yml_assignment_criteria_path(@assignment),
+               html: { multipart: true, size: 1 } do |f| %>
+    <div>
+      <p><%= f.file_field :rubric %></p>
+      <%= t('criteria.upload.format_yml_html') %>
+    </div>
+    <div>
+      <%= t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload),
+                   data: { disable_with: t(:uploading_please_wait) },
+                   id: 'upload_yml',
+                   disabled: true %>
+      <input type='reset'
+             value='<%= t(:cancel) %>'
+             onclick='modal_upload_yml.close();'>
+    </section>
+  <% end %>
+</aside>
+
+<aside class='dialog' id='download_yml_dialog'>
+  <h2><%= t('criteria.download.file') %></h2>
+  <p><%= t('criteria.download.prompt') %></p>
+  <section class='dialog-actions'>
+    <form action='<%= download_yml_assignment_criteria_path(@assignment) %>' method='get'>
+      <button type='submit'
+              onclick='modal_download_yml.close();'>
+        <%= t('criteria.download.title') %>
+      </button>
+      <input type='reset'
+             value='<%= t('cancel') %>'
+             onclick='modal_download_yml.close();'>
+    </form>
+  </section>
+</aside>

@@ -18,7 +18,9 @@
                  document.getElementById('add_extra_mark_prompt').down('input').focus();
                } else {
                  jQuery.ajax({
-                   url: '" + add_extra_mark_assignment_submission_result_path + "',
+                   url: '" + (@current_user.student? ?
+                                add_extra_mark_assignment_result_path :
+                                add_extra_mark_assignment_submission_result_path) + "',
                    type: 'GET'
                  });
                }"%>

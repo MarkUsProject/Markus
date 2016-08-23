@@ -52,15 +52,15 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
     <% unless @result.released_to_students %>
-      <% if @assignment.marking_scheme_type == 'rubric' %>
-        jQuery('.mark_criterion_level_container').each(function() {
-          expand_unmarked(this, 'rubric');
-        });
-      <% else %>
-        jQuery('.mark_grade_input').each(function() {
-          expand_unmarked(this, 'flexible');
-        });
-      <% end %>
+      jQuery('.mark_criterion_level_container').each(function() {
+        expand_unmarked(this, 'RubricCriterion');
+      });
+      jQuery('.mark_grade_input').each(function() {
+        expand_unmarked(this, 'FlexibleCriterion');
+      });
+      jQuery('.mark_grade_input_checkbox_container').each(function() {
+        expand_unmarked(this, 'CheckboxCriterion');
+      });
     <% end %>
   });
 
@@ -153,7 +153,7 @@
   <h1>
     <%= t('results.title',
           { assignment_name: @assignment.short_identifier,
-            group_name: @grouping.get_group_name }) %>
+            group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
   </h1>
 
   <div class='heading_buttons'>
@@ -201,6 +201,7 @@
                          result: @result,
                          assignment: @assignment,
                          marks_map: @marks_map,
+                         old_marks_map: @old_marks_map,
                          mark_criteria:@mark_criteria,
                          submission: @submission,
                          old_result: @old_result,

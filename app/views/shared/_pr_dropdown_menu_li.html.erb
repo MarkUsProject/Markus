@@ -1,0 +1,27 @@
+<% if current_user.student? %>
+  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+    <%= link_to '(' + t('results.review_for') + h(assignment.short_identifier) + ')',
+                { controller: 'assignments',
+                  action: 'peer_review',
+                  id: assignment.pr_assignment.id },
+                class: 'pr_link' %>
+  <% end %>
+<% else %>
+  <% if assignment.has_peer_review? %>
+    <% if assignment.pr_assignment.is_hidden %>
+      <%= link_to t('assignment.hidden',
+                    assignment_text: t('peer_review.review')),
+                  { controller: 'assignments',
+                    action: 'edit',
+                    id: assignment.pr_assignment.id },
+                  class: 'pr_link' %>
+    <% else %>
+      <%= link_to t('peer_review.peer_review'),
+                  { controller: 'assignments',
+                    action: 'edit',
+                    id: assignment.pr_assignment.id },
+                  class: 'pr_link' %>
+    <% end %>
+  <% end %>
+<% end %>
+

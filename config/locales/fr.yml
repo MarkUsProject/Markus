@@ -160,7 +160,7 @@ fr:
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
         not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
-        edit:           "Édition du projet :"
+        edit:           "Édition du projet: "
         required_files:  "Fichiers requis"
         submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
@@ -177,6 +177,7 @@ fr:
             select_a_group: "Sélectionner un groupe"
             select_a_student: "Sélectionner un(e) étudiant(e)"
             select_a_grader: "Sélectionner un correcteur"
+            select_a_criterion: "Sélectionnez au moins un critère"
             group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"
@@ -199,8 +200,6 @@ fr:
             title: "Barème"
             rubric: "Rubrique (barème pré-défini)"
             flexible: "Flexible (barème à définir par le correcteur)"
-        notice:
-            change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web"
         vcs_submit: "permettre soumet à travers le contrôle de version"
         is_hidden: "Cacher le projet aux étudiants"
@@ -212,8 +211,12 @@ fr:
         peer_review_record_missing: "Erreur: Examen par les pairs cession manquant dans la base de données"
         start_peer_review: "Examen par les pairs"
         peer_review_results: "Examen par les pairs Résultats"
+        your_reviews: "Vos avis"
         review: "Avis"
     peer_review:
+        assign: "Attribuer examen par les pairs"
+        review: "Avis "
+        reviews: "Avis"
         problem: "Un problème inattendu est survenue"
         submission_nil_failure: "Les soumissions pour l'affectation d'origine doivent être collectées première"
         random_assign_failure: "Impossible d'attribuer au hasard, trop de commentaires demandés par évaluateur / CONTRÔLER sélectionnés"
@@ -221,10 +224,14 @@ fr:
         assigned_reviewers_header: "Assigned examinateurs"
         reviewer_group: "Groupe avis"
         reviewee_group: "Groupe pays examin"
+        reviews_made_on_submission: "Avis faites sur votre soumission: "
+        reviewers_reviews: "Les avis de ce réviseur: "
+        view_ta_result: "Voir TA Résultat"
         empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
         empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide de CONTRÔLER"
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
         number_per_group: "Nombre d'examens par les pairs par groupe"
+        number_assigned_reviewers: "Numéro attribué examinateurs"
         download:
             assigned_reviewers_header: "Télécharger Peer Review missions"
             assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"
@@ -431,14 +438,15 @@ fr:
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
-      repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
+      repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
-      group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
-      student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
-      invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
+      group_to_grader:         "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
+      student_to_grader:       "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
+      invalid_csv:             "Le format du fichier CSV n'a pas été reconnu"
+      no_assignment:           "L'affectation que vous essayez de créer des critères pour n'existe pas encore"
       invalid_row:
               duplicate_entry: "Double entrée"
-              invalid_format: "Invalid format de ligne"
+              invalid_format:  "Invalid format de ligne"
       upload:
         malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
         non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
@@ -463,8 +471,12 @@ fr:
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
       release_marks:        "Montrer les notes"
       unrelease_marks:      "Cacher les notes"
+      release_prs:          "Examens par les pairs de sortie"
+      unrelease_prs:        "Un libération examens par les pairs"
       run_tests:            "UPDATE ME"
       group_name:           "Nom du groupe"
+      reviewer_name:        "Critique"
+      reviewee_name:        "Pays examiné"
       repository:           "Répertoire"
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
@@ -680,12 +692,15 @@ fr:
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
+      review_title: "Avis %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour."
       must_select_a_group_to_collect:  "Vous devez sélectionner au moins un groupe pour recueillir."
       editing_after_release_fail: "Les notes ont été dévoilées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
+      results_for: "Résultats pour "
+      review_for: "Avis pour "
 
     mark:
       error:
@@ -730,7 +745,7 @@ fr:
     #Sutdent's View (student)
     student:
       assignment: "Projet %{short_identifier}"
-      peer_assignment: "Projet d'examen par les pairs %{short_identifier}"
+      peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       overview: "Vue d'ensemble"
@@ -739,6 +754,7 @@ fr:
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
       no_peer_submission_yet: "Vous avez aucune observation à révision."
+      no_reviews: "Personne ne vous a encore de commentaires."
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
@@ -1075,22 +1091,76 @@ fr:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria:
-      title: "Critères"
-      name: "Nom du critère"
+      title:          "Critères"
+      name:           "Nom du critère"
+      type:           "Type de critère."
+      rubric:         "Rubrique"
+      flexible:       "Flexible"
+      checkbox:       "Checkbox"
       marking_scheme: "Barème: %{identifier}"
-      save: "Sauvegarder les modifications"
-      add_criterion: "Ajouter Critère"
+      save:           "Sauvegarder les modifications"
+      add_criterion:  "Ajouter Critère"
+      move_up:        "Monter"
+      move_down:      "Descendre"
+      download:
+        title:    "Télécharger"
+        file:     "Télécharger le fichier de Critères"
+        prompt:   "Tous les types de critères seront téléchargés au format YAML."
+        link_yml: "Télécharger critères au format YAML"
+        yml:      "Télécharger YML"
+      upload:
+        yml:             "Envoyer YML"
+        yml_title:       "Envoyer le fichier XML"
+        yml_prompt:      "Choisissez un fichier YML à envoyer"
+        success:         "Le fichier contenant le barème a bien été envoyé : %{num_loaded}."
+        error:
+          invalid_format: "Les critères suivants a un format non valide:"
+          names_taken:    "Les noms des critères suivants sont déjà prises:"
+        empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
+        syntax_error:    "Il y a une erreur dans le fichier que vous avez téléchargé: %{error}"
+        format_yml_html: "
+          <ul>
+            <li><p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;level_0:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+                &nbsp;&nbsp;level_1:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+                <p>Les options de visibilité sont en option.</p>
+            </p></li>
+            <li><p>Ci-dessous un critère souple:</p>
+              <code>criterion_name:<br>
+                &nbsp;&nbsp;type: flexible<br>
+                &nbsp;&nbsp;max_mark: max_mark<br>
+                &nbsp;&nbsp;description: description<br>
+                &nbsp;&nbsp;ta_visible: true<br>
+                &nbsp;&nbsp;peer_visible: false<br></code>
+              <p>La description et la visibilité options sont facultatives.</p></li>
+            <li><p>Pour un critère de case à cocher et ce qui suit:</p>
+              <code>criterion_name:<br>
+              &nbsp;&nbsp;type: checkbox<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>La description et la visibilité options sont facultatives.</p></li>
+          </ul>"
       errors:
         messages:
-          name_taken: "Nom du critère déjà utilisé."
+          name_taken:             "Nom du critère déjà utilisé."
           assignment_association: "Association est pas forte avec une mission."
-          assignment_id: "Ne peut être un nombre entier supérieur à 0."
-          input_number: "Doit être un nombre supérieur à 0.0."
+          assignment_id:          "Ne peut être un nombre entier supérieur à 0."
+          input_number:           "Doit être un nombre supérieur à 0.0."
+      ta_visible:       "Rendre visible aux assistants d'enseignement"
+      peer_visible:     "Rendre visible à leurs auteurs pairs"
+      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
     flexible_criteria:
       title: "Critères souples"
-      move_up: "Monter"
-      move_down: "Descendre"
       name: "Nom du critère"
       max_mark: "Note maximale"
       description: "Description"
@@ -1111,15 +1181,33 @@ fr:
         success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
+
+    checkbox_criteria:
+      title: "Critères d' Checkbox"
+      name: "Nom du critère"
+      max_mark: "Note maximale"
+      description: "Description"
+      description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
+      download:
+        title: "Télécharger le fichier de barème"
+        prompt: "Critères de Checkbox sont actuellement disponibles au format CSV"
+        link: "Télécharger critères Checkbox au format CSV"
+      upload:
+        title: "Télécharger Checkbox Critères Fichier"
+        prompt: "Choisissez un fichier CSV à envoyer"
+        format_html: "
+        <p>Le fichier devra être au format suivant : </p>
+        <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
+        <code>criteria_name,max_value,description</code>
+        <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
+        pas apparaître.</p>"
+        success: "critères de Checkbox téléchargés avec succès: %{nb_updates} mise à jour."
+      move_criterion:
+        error: "Impossible de déplacer les critères de case à cocher."
 
     rubric_criteria:
       title: "Critères rubrique"
       name: "Nom du critère"
-      move_up: "Monter"
-      move_down: "Descendre"
       level:
         levels: "Niveaux"
         level_index: "Niveau %{index}"
@@ -1131,11 +1219,7 @@ fr:
       upload:
         csv:       "Envoyer CSV"
         csv_title: "Envoyer un fichier de barème (rubrique) CSV"
-        yml:       "Envoyer YML"
-        yml_title: "Envoyer un fichier de barème (rubrique) YML"
         csv_prompt: "Choisissez un fichier CSV à envoyer"
-        yml_prompt: "Choisissez un fichier YML à envoyer"
-        success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         format_csv_html: "
         <p>Le fichier devra être au format suivant : </p>
         <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
@@ -1143,16 +1227,6 @@ fr:
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
-        format_yml_html: "
-          <p>Le fichier devra être au format suivant : br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
       defaults:
         level_0: "Très insuffisant"
         level_1: "Insuffisant"
@@ -1166,18 +1240,11 @@ fr:
         description_4: "Ce critère a été parfaitement compris."
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
-      ta_visible: "Rendre visible aux assistants d'enseignement"
-      peer_visible: "Rendre visible à leurs auteurs pairs"
-      visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
 
 
     summary_table:
       title: "Titre"
-      max_value: "Valeur maximale"
       grade: "Note intermédiaire"
-      mark: "Note"
-      weight: "Coefficient"
-      test_script_title: "Scripts de test"
 
     course_summaries:
       title: "Sommaire"
@@ -1410,6 +1477,7 @@ fr:
       test_run: "L'exécution du test"
       tests_running: "Tests en cours. S'il vous plaît rafraîchir la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
+      need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les groupes sélectionnés avaient non tests exécutés."
       collect_and_test: "Récupérer et préparer test"
       date_run: "Lancement des tests le :"
       revision_used: "Révision utilisée :"

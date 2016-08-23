@@ -9,7 +9,7 @@ class AutomatedTestsController < ApplicationController
   before_filter      :authorize_for_student,
                      only: [:student_interface]
 
-  # Update is called when files are added to the assigment
+  # Update is called when files are added to the assignment
   def update
     @assignment = Assignment.find(params[:assignment_id])
     create_test_repo(@assignment)
@@ -28,14 +28,16 @@ class AutomatedTestsController < ApplicationController
                                       new_support_file)
       # Save assignment and associated test files
       if @assignment.save
-        flash[:success] = I18n.t("assignment.update_success")
+        flash[:success] = I18n.t('assignment.update_success')
         unless new_script.nil?
           assignment_tests_path = File.join(
               MarkusConfigurator.markus_config_automated_tests_repository,
               @assignment.repository_folder,
               new_script.original_filename)
+          # Replace bad line endings from windows
+          contents = new_script.read.tr("\r", '')
           File.open(
-              assignment_tests_path, 'w') { |f| f.write new_script.read }
+              assignment_tests_path, 'w') { |f| f.write contents }
         end
 
         unless new_support_file.nil?
@@ -43,8 +45,10 @@ class AutomatedTestsController < ApplicationController
               MarkusConfigurator.markus_config_automated_tests_repository,
               @assignment.repository_folder,
               new_support_file.original_filename)
+          # Replace bad line endings from windows
+          contents = new_support_file.read.tr("\r", '')
           File.open(
-              assignment_tests_path, 'w') { |f| f.write new_support_file.read }
+              assignment_tests_path, 'w') { |f| f.write contents }
         end
 
         redirect_to action: 'manage',
@@ -59,7 +63,13 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_scripts.build
+    @assignment.test_scripts.build(
+      # TODO: make these default values
+      run_on_submission: true,
+      display_input: :do_not_display,
+      display_expected_output: :do_not_display,
+      display_actual_output: :do_not_display
+    )
     @assignment.test_support_files.build
   end
 

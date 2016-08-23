@@ -1,0 +1,22 @@
+<table class='summary_criteria_pane_list'>
+  <thead>
+    <tr>
+      <th><%=t('summary_table.title')%></th>
+      <th><%=t('summary_table.grade')%></th>
+    </tr>
+  </thead>
+  <% @mark_criteria.each do |criterion| -%>
+    <%
+      mark = marks_map[[criterion.class.to_s, criterion.id]]
+      if mark.nil? or mark.mark.nil?
+        mark_value = 0
+      else
+        mark_value = mark.mark / criterion.weight
+      end
+    %>
+    <tr id='mark_<%= mark.id %>_summary'>
+      <td class='left'><%= criterion.name %></td>
+      <td class='right'><span id='mark_<%= mark.id %>_summary_mark_after_weight'><%= (mark_value * criterion.weight).round(2) %></span> / <%= criterion.max_mark %></td>
+    </tr>
+  <% end -%>
+</table>  <!-- Summary Criteria Pane List -->
