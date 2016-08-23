@@ -222,18 +222,6 @@ class User < ActiveRecord::Base
     current_user
   end
 
-  # Convenience method which returns a configuration Hash for the
-  # repository lib
-  # def self.repo_config
-  #   {
-  #     'IS_REPOSITORY_ADMIN' =>
-  #         MarkusConfigurator.markus_config_repository_admin?,
-  #     'REPOSITORY_STORAGE' =>
-  #         MarkusConfigurator.markus_config_repository_storage,
-  #     'REPOSITORY_PERMISSION_FILE' =>
-  #         MarkusConfigurator.markus_config_repository_permission_file
-  #   }
-  # end
 
   # Set API key for user model. The key is a
   # SHA2 512 bit long digest, which is in turn

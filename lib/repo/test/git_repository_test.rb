@@ -86,9 +86,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
 
       # create repository first
-      Repository.get_class("git", conf_admin).create(TEST_REPO)
+      Repository.get_class("git").create(TEST_REPO)
       # open the repository
-      @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)
+      @repo = Repository.get_class("git").open(TEST_REPO)
 
     end
 
@@ -433,17 +433,17 @@ class GitRepositoryTest < ActiveSupport::TestCase
       conf_admin["IS_REPOSITORY_ADMIN"] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
-      Repository.get_class("git", conf_admin).create(repo1)
-      Repository.get_class("git", conf_admin).create(repo2)
-      Repository.get_class("git", conf_admin).create(TEST_REPO)
+      Repository.get_class("git").create(repo1)
+      Repository.get_class("git").create(repo2)
+      Repository.get_class("git").create(TEST_REPO)
       # open the repository
       conf_non_admin = Hash.new
       conf_non_admin["IS_REPOSITORY_ADMIN"] = false
       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
-      @repo1 = Repository.get_class("git", conf_non_admin).open(repo1) # non-admin repository
-      @repo2 = Repository.get_class("git", conf_non_admin).open(repo2) # again, a non-admin repo
-      @repo = Repository.get_class("git", conf_admin).open(TEST_REPO)     # repo with admin-privs
+      @repo1 = Repository.get_class("git").open(repo1) # non-admin repository
+      @repo2 = Repository.get_class("git").open(repo2) # again, a non-admin repo
+      @repo = Repository.get_class("git").open(TEST_REPO)     # repo with admin-privs
 
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -614,7 +614,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY).sort
       assert_not_nil(users_with_any_perm, "There are some users with some permissions")
-      assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
+      assert_equal(another_user, users_with_any_perm.shift, another_user + " still has some perms")
       users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
       assert_not_nil(users_with_read_perm, "Some user has read permissions")
       assert_equal(another_user, users_with_read_perm.shift, another_user + " should have read permissions")
@@ -668,8 +668,8 @@ class GitRepositoryTest < ActiveSupport::TestCase
       conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
 
       repository_names.each do |repo_name|
-        Repository.get_class("git", conf_admin).create(repo_name)
-        repo = Repository.get_class("git", conf_admin).open(repo_name)
+        Repository.get_class("git").create(repo_name)
+        repo = Repository.get_class("git").open(repo_name)
         repo.add_user("some_user", Repository::Permission::READ_WRITE)
         repo.add_user("another_user", Repository::Permission::READ_WRITE)
         repositories.push(repo)
@@ -702,7 +702,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       conf = Hash.new
       conf["REPOSITORY_PERMISSION_FILE"] = 'something'
       assert_raise(ConfigurationError) do
-        Repository.get_class("git", conf) # missing a required constant
+        Repository.get_class("git") # missing a required constant
       end
     end
   end # end context
@@ -728,8 +728,8 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
       @repositories = []
       @repository_names.each do |repo_name|
-        Repository.get_class("git", @conf_admin).create(GIT_TEST_REPOS_DIR + "/" + repo_name)
-        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        Repository.get_class("git").create(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git").open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         @repositories.push(repo)
       end
     end
@@ -764,7 +764,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git").open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
         repo.close()
@@ -774,7 +774,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       assert GitRepository.delete_bulk_permissions(@repository_names, ['test_user'])
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("git", @conf_admin).open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("git").open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         assert_raises Repository::UserNotFound do
           repo.get_permissions("test_user")
         end

@@ -338,37 +338,8 @@ module Repository
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
 
-  # get_class takes a hash as a second argument. This hash must contain the following
-  # keys with corresponding values (other configuration is ignored):
-  #  REPOSITORY_IS_ADMIN:  This flag indicates if we have admin privileges.
-  #                        If set to false, the repository relies on a third party
-  #                        to create repositories and manage its permissions.
-  #  REPOSITORY_PERMISSION_FILE: This is the absolute path to the permission file
-  #                              of repositories.
-  # TODO: Get rid of second argument
-  def Repository.get_class(repo_type)
-    # TODO: Remove from here
-    # if conf_hash.nil?
-    #   raise ConfigurationError.new("Configuration must not be nil")
-    # end
-    # # configure Repository module first; as of now, we require the following constants
-    # # to be defined
-    # config_keys = ['REPOSITORY_PERMISSION_FILE', 'REPOSITORY_STORAGE', 'IS_REPOSITORY_ADMIN']
-    # @CONF = Hash.new # important(!) reset config
-    # conf_hash.each do |k,v|
-    #   if config_keys.include?(k)
-    #     @CONF[k.to_sym] = v
-    #   end
-    # end
-    # # Check if configuration is in order
-    # config_keys.each do |c|
-    #   if Repository.conf[c.to_sym].nil?
-    #     raise ConfigurationError.new('get_class: ' \
-    #                                  "Required config '#{c}' not set")
-    #   end
-    # end
-    # TODO: Remove above
 
+  def Repository.get_class(repo_type)
     case repo_type
       when "svn"
         return SubversionRepository
