@@ -63,7 +63,13 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_scripts.build
+    @assignment.test_scripts.build(
+      # TODO: make these default values
+      run_on_submission: true,
+      display_input: :do_not_display,
+      display_expected_output: :do_not_display,
+      display_actual_output: :do_not_display
+    )
     @assignment.test_support_files.build
   end
 
