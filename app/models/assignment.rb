@@ -902,14 +902,6 @@ class Assignment < ActiveRecord::Base
     true
   end
 
-  # def repository_config
-  #   conf = Hash.new
-  #   conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
-  #   conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-  #   conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
-  #   conf
-  # end
-
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
