@@ -57,7 +57,6 @@ class Group < ActiveRecord::Base
     MarkusConfigurator.markus_config_repository_admin?
   end
 
-
   def build_repository
     # create repositories if and only if we are admin
     return true if !MarkusConfigurator.markus_config_repository_admin?

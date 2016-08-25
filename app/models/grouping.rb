@@ -242,7 +242,8 @@ class Grouping < ActiveRecord::Base
   # be part of the group are skipped.
   def invite(members,
              set_membership_status=StudentMembership::STATUSES[:pending],
-             invoked_by_admin=false)
+             invoked_by_admin=false,
+             update_permissions=true)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
@@ -253,7 +254,8 @@ class Grouping < ActiveRecord::Base
       m_logger = MarkusLogger.instance
       if user
         if invoked_by_admin || self.can_invite?(user)
-          member = self.add_member(user, set_membership_status)
+          member = self.add_member(user, set_membership_status,
+                                   update_permissions=update_permissions)
           if member
             m_logger.log("Student invited '#{user.user_name}'.")
           else
@@ -271,15 +273,19 @@ class Grouping < ActiveRecord::Base
   end
 
   # Add a new member to base
- def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
+ def add_member(user,
+                set_membership_status=StudentMembership::STATUSES[:accepted],
+                update_permissions=true)
     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
       nil
     else
       member = StudentMembership.new(user: user, membership_status:
       set_membership_status, grouping: self)
       member.save
-      # adjust repo permissions
-      update_repository_permissions
+
+      if update_permissions
+        update_repository_permissions
+      end
 
       # remove any old deduction for this assignment
       remove_grace_period_deduction(member)

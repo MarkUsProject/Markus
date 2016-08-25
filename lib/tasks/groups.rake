@@ -19,7 +19,8 @@ namespace :db do
             )
           grouping.invite([student.user_name],
             StudentMembership::STATUSES[:inviter],
-            invoked_by_admin=true)
+            invoked_by_admin=true,
+            update_permissions=false)
         elsif assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
@@ -32,9 +33,9 @@ namespace :db do
             grouping.invite(
               [students[time + count * 15].user_name],
               StudentMembership::STATUSES[:inviter],
-              invoked_by_admin = true)
+              invoked_by_admin=true,
+              update_permissions=false)
           end
-          group.set_repo_permissions
         end
 
         group.access_repo do |repo|
@@ -90,6 +91,5 @@ namespace :db do
     # This really should be done in a more generic way
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo.__set_all_permissions
-    #Repository::SubversionRepository.__generate_authz_file
   end
 end

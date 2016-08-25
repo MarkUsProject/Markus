@@ -901,8 +901,7 @@ class Assignment < ActiveRecord::Base
     end
     true
   end
-
-
+  
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
