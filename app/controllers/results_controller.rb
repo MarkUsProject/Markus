@@ -176,7 +176,7 @@ class ResultsController < ApplicationController
     submission_id = Result.find(params[:id]).submission.id
 
     begin
-      AutomatedTestsClientHelper.request_a_test_run(request.host_with_port,
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port,
                                                     grouping_id,
                                                     @current_user,
                                                     submission_id)

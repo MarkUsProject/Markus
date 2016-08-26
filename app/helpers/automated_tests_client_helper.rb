@@ -283,9 +283,9 @@ module AutomatedTestsClientHelper
     submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
     test_results_path = MarkusConfigurator.markus_ate_test_server_results_dir
-    markus_address = host_with_port.start_with?('localhost') ?
-        "http://#{host_with_port}" :
-        "https://#{host_with_port}/#{MarkusConfigurator.markus_config_course_name}" # TODO just a convention?
+    markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
+        host_with_port :
+        host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
 
     if test_server_host == 'localhost'
