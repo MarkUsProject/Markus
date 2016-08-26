@@ -16,7 +16,8 @@ class PAMResult:
         FAIL = 2
         ERROR = 3
 
-    def __init__(self, name, status, description='', message=''):
+    def __init__(self, class_name, name, status, description='', message=''):
+        self.class_name = class_name
         self.name = name
         self.status = status
         self.description = description
@@ -56,21 +57,24 @@ class PAMWrapper:
             with open(self.result_filename) as result_file:
                 results = []
                 result = json.load(result_file)
-                for test_class_result in result['results'].values():
+                for test_class_name, test_class_result in result['results'].items():
                     if 'passes' in test_class_result:
                         for test_name, test_desc in test_class_result['passes'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.PASS, description=test_desc))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.PASS, description=test_desc))
                     if 'failures' in test_class_result:
                         for test_name, test_stack in test_class_result['failures'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.FAIL,
-                                          description=test_stack['description'], message=test_stack['message']))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.FAIL, description=test_stack['description'],
+                                          message=test_stack['message']))
                     if 'errors' in test_class_result:
                         for test_name, test_stack in test_class_result['errors'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.ERROR,
-                                          description=test_stack['description'], message=test_stack['message']))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.ERROR, description=test_stack['description'],
+                                          message=test_stack['message']))
         except OSError:
             if not os.path.isfile(self.timeout_filename):
                 print('Test framework error: no result or time out generated')
@@ -99,8 +103,12 @@ class PAMWrapper:
             '''.format(cmd=self, files=' '.join(self.test_files))
             shell = True
         try:
-            env = os.environ.copy()
-            env['PYTHONPATH'] = self.path_to_uam  # some needed libs are here
+            env = os.environ.copy()  # need to add path to uam libs
+            if 'PYTHONPATH' in env:
+                env['PYTHONPATH'] = "{systempath}:{pampath}".format(systempath=env['PYTHONPATH'],
+                                                                    pampath=self.path_to_uam)
+            else:
+                env['PYTHONPATH'] = self.path_to_uam
             subprocess.run(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=shell,
                            env=env)
             # use the following with Python < 3.5

@@ -141,19 +141,20 @@ function change_submission_rule() {
 function toggle_automated_tests(is_testing_framework_enabled) {
   jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
 
-  if (is_testing_framework_enabled) {
-    if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
-      jQuery('#assignment_tokens_per_period').attr('disabled', false);
-      jQuery('#assignment_token_period').attr('disabled', false);
-    }
-    jQuery('#assignment_unlimited_tokens').attr('disabled', false);
-    jQuery('#assignment_token_start_date').attr('disabled', false);
-  } else {
+  // TODO re-enable when student requests are enabled
+  // if (is_testing_framework_enabled) {
+  //   if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
+  //     jQuery('#assignment_tokens_per_period').attr('disabled', false);
+  //     jQuery('#assignment_token_period').attr('disabled', false);
+  //   }
+  //   jQuery('#assignment_unlimited_tokens').attr('disabled', false);
+  //   jQuery('#assignment_token_start_date').attr('disabled', false);
+  // } else {
     jQuery('#assignment_tokens_per_period').attr('disabled', true);
     jQuery('#assignment_unlimited_tokens').attr('disabled', true);
     jQuery('#assignment_token_period').attr('disabled', true);
     jQuery('#assignment_token_start_date').attr('disabled', true);
-  }
+  // }
 }
 
 function toggle_tests_tokens(is_unlimited) {

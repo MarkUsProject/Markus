@@ -20,10 +20,12 @@
 #                       can be shown to the students. (optionally)
 #   max_marks:          maximum point a test can get for this
 #                       test. It can be any non-negative integer.
-#   run_on_submission:  a boolean indicates if this script is run
-#                       when student submits the assignment
-#   run_on_request:     a boolean indicates if this script is run
-#                       when a user sends a test request
+#   run_by_instructors: a boolean indicates if this script will run
+#                       when testing is initiated by admins and tas
+#                       (e.g. after collection)
+#   run_by_students:    a boolean indicates if this script will run
+#                       when testing is initiated by students
+#                       (e.g. on request)
 #   halts_testing:      a boolean indicates if this script halts
 #                       the test run when error occurs
 #   display_description

@@ -178,7 +178,6 @@ class ResultsController < ApplicationController
     begin
       AutomatedTestsClientHelper.request_a_test_run(request.host_with_port,
                                                     grouping_id,
-                                                    'submission',
                                                     @current_user,
                                                     submission_id)
     rescue => e

@@ -99,7 +99,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
   validates_inclusion_of :unlimited_tokens, in: [true, false]
 
-  with_options unless: :unlimited_tokens do |assignment|
+  with_options if: ->{ :enable_test && !:unlimited_tokens } do |assignment|
     assignment.validates :tokens_per_period,
                          presence: true,
                          numericality: { only_integer: true,
@@ -109,7 +109,8 @@ class Assignment < ActiveRecord::Base
                          numericality: { greater_than: 0 }
   end
 
-  validates_presence_of :token_start_date, if: :enable_test
+  # TODO re-enable when student requests are enabled
+  #validates_presence_of :token_start_date, if: :enable_test
   validate :minimum_number_of_groups
 
   after_create :build_repository
@@ -308,9 +309,9 @@ class Assignment < ActiveRecord::Base
     return test_scripts.sum("max_marks")
   end
 
-  #total marks for scripts that are run on request
+  #total marks for scripts that are run on student request
   def total_ror_script_marks
-    return test_scripts.where("run_on_request" => true).sum("max_marks")
+    return test_scripts.where("run_by_students" => true).sum("max_marks")
   end
 
   def add_group(new_group_name=nil)

@@ -82,9 +82,9 @@ module AutomatedTestsClientHelper
 
           # Deleting old script
           old_script_path = File.join(
-                    MarkusConfigurator.markus_config_automated_tests_repository,
-                    @assignment.repository_folder,
-                    old_script_name)
+            MarkusConfigurator.markus_config_automated_tests_repository,
+            @assignment.repository_folder,
+            old_script_name)
           if File.exist?(old_script_path)
             File.delete(old_script_path)
           end
@@ -164,7 +164,7 @@ module AutomatedTestsClientHelper
       assignment.tokens_per_period = num_tokens
     end
 
-    assignment
+    return assignment
   end
 
   # Export group repository for testing. Students' submitted files
@@ -230,7 +230,7 @@ module AutomatedTestsClientHelper
     return true
   end
 
-  def self.request_a_test_run(host_with_port, grouping_id, call_on, current_user, submission_id = nil)
+  def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
 
     # TODO Show errors to the user rather than just logging them? (and where is the logger logging?)
     grouping = Grouping.find(grouping_id)
@@ -241,25 +241,21 @@ module AutomatedTestsClientHelper
     # TODO export the right repo revision using submission_id
     # TODO Restore call to run tests when collecting submission
     export_group_repo(group, repo_dir)
-    if test_files_available?(assignment, repo_dir) &&
-       (call_on == 'collection' || user_has_permission?(current_user, grouping, assignment))
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_on, current_user.api_key, submission_id)
+    if test_files_available?(assignment, repo_dir) && user_has_permission?(current_user, grouping, assignment)
+      call_by = (current_user.admin? || current_user.ta?) ? 'instructor' : 'student'
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_by, current_user.api_key, submission_id)
     end
   end
 
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
-  def self.get_test_scripts_to_run(assignment, call_on)
+  def self.get_test_scripts_to_run(assignment, call_by)
 
     all_scripts = TestScript.where(assignment_id: assignment.id)
-    # If the test run is requested at collection (by Admin or TA),
-    # All of the test scripts should be run.
-    if call_on == 'collection'
-      test_scripts = all_scripts
-    elsif call_on == 'submission'
-      test_scripts = all_scripts.select(&:run_on_submission)
-    elsif call_on == 'request'
-      test_scripts = all_scripts.select(&:run_on_request)
+    if call_by == 'instructor'
+      test_scripts = all_scripts.select(&:run_by_instructors)
+    elsif call_by == 'student'
+      test_scripts = all_scripts.select(&:run_by_students)
     else
       test_scripts = []
     end
@@ -269,12 +265,21 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, grouping_id, call_on, api_key, submission_id = nil)
+  def self.perform(host_with_port, grouping_id, call_by, api_key, submission_id = nil)
 
     # TODO is submission_id needed?
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
+
+    test_scripts = get_test_scripts_to_run(assignment, call_by)
+    if test_scripts.empty?
+      return
+    end
+    test_scripts.map! do |script|
+      script.script_name
+    end
+
     submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
     test_results_path = MarkusConfigurator.markus_ate_test_server_results_dir
@@ -282,11 +287,6 @@ module AutomatedTestsClientHelper
         "http://#{host_with_port}" :
         "https://#{host_with_port}/#{MarkusConfigurator.markus_config_course_name}" # TODO just a convention?
     test_server_host = MarkusConfigurator.markus_ate_test_server_host
-
-    test_scripts = get_test_scripts_to_run(assignment, call_on)
-    test_scripts.map! do |script|
-      script.script_name
-    end
 
     if test_server_host == 'localhost'
       # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
@@ -305,7 +305,8 @@ module AutomatedTestsClientHelper
         return
       end
       # enqueue locally using api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id, group.id)
+      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path,
+                     call_by, assignment.id, group.id)
     else
       # tests executed on a test server: copy the student's submission and all necessary files through ssh
       test_server_username = MarkusConfigurator.markus_ate_test_server_username
@@ -328,8 +329,8 @@ module AutomatedTestsClientHelper
           ssh.exec!("chmod -R o+rwx '#{test_path}'")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
-                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
-                                     group.id]}
+                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, call_by,
+                                     assignment.id, group.id]}
           ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
@@ -339,9 +340,8 @@ module AutomatedTestsClientHelper
     end
   end
 
-  def self.process_test_result(raw_result, call_on, assignment, grouping, submission = nil)
+  def self.process_test_result(raw_result, call_by, assignment, grouping, submission = nil)
 
-    # TODO need to pass call_on through the api
     result = Hash.from_xml(raw_result)
     repo = grouping.group.repo
     revision = repo.get_latest_revision
@@ -396,7 +396,7 @@ module AutomatedTestsClientHelper
       new_test_script_result.save!
     end
 
-    if call_on == 'collection' || call_on == 'submission'
+    if call_by == 'instructor'
       grouping.current_submission_used.set_marks_for_tests
     end
 
