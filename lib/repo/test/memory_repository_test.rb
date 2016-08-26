@@ -384,7 +384,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       assert_equal([TEST_USER, another_user].sort, users_with_any_perm.sort, "There are some missing users")
       users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
       assert_not_nil(users_with_read_perm, "Some user has read permissions")
-      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user + " should have read permissions")
       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
       assert_not_nil(users_with_read_write_perm, "There are some users with read and write permissions")
       assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
@@ -394,10 +394,10 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
       assert_not_nil(users_with_any_perm, "There are some users with some permissions")
-      assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
+      assert_equal(another_user, users_with_any_perm.shift, another_user + " still has some perms")
       users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
       assert_not_nil(users_with_read_perm, "Some user has read permissions")
-      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user + " should have read permissions")
       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
       assert_nil(users_with_read_write_perm, "There are NO users with read and write permissions")
 
@@ -437,10 +437,8 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
     end
 
     should "raise an exception if not properly configured" do
-      conf = Hash.new
-      conf["IS_REPOSITORY_ADMIN"] = true
       assert_raise(ConfigurationError) do
-        Repository.get_class("memory", conf) # missing required REPOSITORY_PERMISSION_FILE
+        Repository.get_class("memory") # missing required REPOSITORY_PERMISSION_FILE
       end
     end
 

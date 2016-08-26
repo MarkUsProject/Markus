@@ -57,17 +57,6 @@ class Group < ActiveRecord::Base
     MarkusConfigurator.markus_config_repository_admin?
   end
 
-  # TODO: Get rid of this funcion and re-write Repository.get_class
-  # Returns configuration for repository
-  # configuration
-  def repository_config
-    conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
-    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
-    conf
-  end
-
   def build_repository
     # create repositories if and only if we are admin
     return true if !MarkusConfigurator.markus_config_repository_admin?
@@ -84,7 +73,7 @@ class Group < ActiveRecord::Base
     # For more info about the exception
     # See 'self.create' of lib/repo/subversion_repository.rb.
     begin
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
       errors.add(:base, self.repo_name)
@@ -108,7 +97,7 @@ class Group < ActiveRecord::Base
     Ta.all.each do |ta|
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
-    group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)
+    group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
     true
   end
@@ -116,8 +105,8 @@ class Group < ActiveRecord::Base
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
-    if Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).repository_exists?(repo_loc)
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).open(repo_loc)
+    if Repository.get_class(MarkusConfigurator.markus_config_repository_type).repository_exists?(repo_loc)
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type).open(repo_loc)
     else
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end

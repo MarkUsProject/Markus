@@ -480,8 +480,79 @@ module Repository
       end
     end
 
+    # Generate all the permissions for students for all groupings in all assignments.
+    # This is done as a single operation to mirror the SVN repo code.  We found
+    # a substantial performance improvement by writing the auth file only once in the SVN case.
+
+    def self.__set_all_permissions
+      # Check if configuration is in order
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
+        raise ConfigurationError.new(
+            "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
+      end
+      # If we're not in authoritative mode, bail out
+      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
+        raise NotAuthorityError.new(
+            'Unable to set bulk permissions: Not in authoritative mode!')
+      end
+
+      ga_repo = Gitolite::GitoliteAdmin.new(
+          MarkusConfigurator.markus_config_repository_storage +
+              '/gitolite-admin', GITOLITE_SETTINGS)
+
+      # Sync gitolite admin repo
+      ga_repo.update
+
+      # Build the list of TAs and Admins
+      tas = Ta.all
+      tas = tas.map(&:user_name)
+      admins = Admin.all
+      admins = admins.map(&:user_name)
+
+      valid_groupings_and_members = {}
+      assignments = Assignment.all
+      assignments.each do |assignment|
+
+        valid_groupings = assignment.valid_groupings
+        valid_groupings.each do |gr|
+          accepted_students = gr.accepted_students
+          accepted_students = accepted_students.map(&:user_name)
+          valid_groupings_and_members[gr.group.repo_name] = accepted_students
+        end
+      end
+
+      valid_groupings_and_members.each do |repo_name, students|
+        # Build the list of users that need permissions for this grouping's repo
+
+        users = students + tas + admins
+
+        # Grab the repo from gitolite
+        repo = ga_repo.config.get_repo(repo_name)
+
+        if repo.nil?
+          repo = Gitolite::Config::Repo.new(repo_name)
+          ga_repo.config.add_repo(repo)
+        end
+
+        git_permission = GitRepository.__translate_to_git_perms(Repository::Permission::READ_WRITE)
+        repo.add_permission(git_permission, '', *users)
+      end
+
+
+
+      # Reload the 'git' public key to the gitolite admin repo after changes
+      admin_key = Gitolite::SSHKey.from_file(
+          GITOLITE_SETTINGS[:public_key])
+      ga_repo.add_key(admin_key)
+
+      # update Gitolite repo
+      ga_repo.save_and_apply
+
+    end
+
+    # I don't think this is used anywhere
     def set_permissions(user_id, permissions)
-      # Set permissions for a single given user
+      # Set permissions for a single given user for a given repo_name
       if @repos_admin # Are we admin?
 
         remove_user(user_id)
@@ -626,13 +697,7 @@ module Repository
       git_permission = GitRepository.__translate_to_git_perms(permissions)
       repo.add_permission(git_permission, '', user_id)
 
-      # Readd the 'git' public key to the gitolite admin repo after changes
-      admin_key = Gitolite::SSHKey.from_file(
-        GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(admin_key)
 
-      # update Gitolite repo
-      ga_repo.save_and_apply
     end
 
     # Sets permissions over several repositories. Use set_permissions to set

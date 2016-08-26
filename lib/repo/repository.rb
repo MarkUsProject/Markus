@@ -3,10 +3,10 @@ module Repository
   # Configuration for the repository library,
   # which is set via Repository.get_class
   # TODO: Get rid of Repository.conf
-  @CONF = {}
-  def Repository.conf
-    return @CONF
-  end
+ # @CONF = {}
+#  def Repository.conf
+ #   return @CONF
+#  end
 
   # Permission constants for repositories
   class Permission
@@ -166,8 +166,8 @@ module Repository
       raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
     end
 
-    # Generate and write the SVN authorization file for the repo.
-    def self.__generate_authz_file
+    # Generate and write the the authorization file for all repos.
+    def self.__set_all_permissions
       raise NotImplementedError, "Repository.__generate_authz_file: Not yet implemented"
     end
 
@@ -335,40 +335,10 @@ module Repository
   require_dependency File.join(File.dirname(__FILE__), 'memory_repository')
   require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
   require_dependency File.join(File.dirname(__FILE__), 'git_repository')
+
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
-
-  # get_class takes a hash as a second argument. This hash must contain the following
-  # keys with corresponding values (other configuration is ignored):
-  #  REPOSITORY_IS_ADMIN:  This flag indicates if we have admin privileges.
-  #                        If set to false, the repository relies on a third party
-  #                        to create repositories and manage its permissions.
-  #  REPOSITORY_PERMISSION_FILE: This is the absolute path to the permission file
-  #                              of repositories.
-  # TODO: Get rid of second argument
-  def Repository.get_class(repo_type, conf_hash)
-    # TODO: Remove from here
-    if conf_hash.nil?
-      raise ConfigurationError.new("Configuration must not be nil")
-    end
-    # configure Repository module first; as of now, we require the following constants
-    # to be defined
-    config_keys = ['REPOSITORY_PERMISSION_FILE', 'REPOSITORY_STORAGE', 'IS_REPOSITORY_ADMIN']
-    @CONF = Hash.new # important(!) reset config
-    conf_hash.each do |k,v|
-      if config_keys.include?(k)
-        @CONF[k.to_sym] = v
-      end
-    end
-    # Check if configuration is in order
-    config_keys.each do |c|
-      if Repository.conf[c.to_sym].nil?
-        raise ConfigurationError.new('get_class: ' \
-                                     "Required config '#{c}' not set")
-      end
-    end
-    # TODO: Remove above
-
+  def Repository.get_class(repo_type)
     case repo_type
       when "svn"
         return SubversionRepository
@@ -380,5 +350,4 @@ module Repository
         raise "Repository implementation not found: #{repo_type}"
     end
   end
-
 end # end module Repository
