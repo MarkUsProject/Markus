@@ -1,8 +1,10 @@
 <% if @grade_saved %>
   <%# Highlight the cell on update %>
-  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()
-      .css({ "background-color": "#FFFFFF" })
-      .effect('highlight', { color: '#99CCFF' }, 1000);
+  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>')
+    .css('background-color', '')
+    .addClass('updated')
+    .delay(600)
+    .queue(function () {jQuery(this).removeClass('updated')});
 
   <%
     # This code calls the javascript function 'update_cell(cell, value)' in 
@@ -22,6 +24,6 @@
   update_cell('<%= "grade_#{@student_id}_total_marks" %>', <%= value %>);
 <% else %>
   <%# Show Error %>
-  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>').parent()
+  jQuery('<%= "#grade_#{@student_id}_#{@grade_entry_item_id}" %>')
     .animate({ 'background-color': '#FF9999' }, 500);
 <% end %>
