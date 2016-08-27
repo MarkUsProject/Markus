@@ -70,11 +70,27 @@
       });
       this.props.value = parseFloat(event.target.value);
     },
+
+    // TODO: Make this nicer by not using raw Javascript and jQuery
+    handleKeyPress: function(event) {
+      if (event.key === 'Enter') {
+        var input = this.getDOMNode();
+        var td = input.parentNode;
+        var tr = td.parentNode;
+        var tdIndex = jQuery(tr).children().index(td);
+        if (tr.nextSibling !== null) {
+          var nextInput = tr.nextSibling.childNodes[tdIndex].firstChild;
+          jQuery(nextInput).select()
+        }
+      }
+    },
+
     render: function() {
       return (
         <input id={this.props.grade_id} type="text" size="4"
           className="grade-input" defaultValue={this.props.default_value}
-          onChange={this.handleChange}/>
+          onChange={this.handleChange}
+          onKeyPress={this.handleKeyPress} />
         );
     }
   });
