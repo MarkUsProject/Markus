@@ -170,7 +170,7 @@ module AutomatedTestsClientHelper
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def self.export_group_repo(group, repo_dir)
+  def self.export_group_repo(group, repo_dir, submission = nil)
 
     # Create the automated test repository
     unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
@@ -180,7 +180,25 @@ module AutomatedTestsClientHelper
     if File.exists?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
-    group.repo.export(repo_dir)
+    # Export the correct repo revision
+    if submission.nil?
+      group.repo.export(repo_dir)
+    else
+      files = submission.submission_files
+      FileUtils.mkdir(repo_dir)
+      files.each do |file|
+        begin
+          file_content = file.retrieve_file
+        rescue Exception => e
+          flash[:error] = e.message
+          return
+        end
+        FileUtils.mkdir_p(File.join(repo_dir, file.path))
+        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+          f.write(file_content)
+        end
+      end
+    end
   end
 
   # Verify that MarkUs has some files to run the test.
@@ -238,12 +256,11 @@ module AutomatedTestsClientHelper
     group = grouping.group
     repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
 
-    # TODO export the right repo revision using submission_id
-    # TODO Restore call to run tests when collecting submission
-    export_group_repo(group, repo_dir)
+    submission = submission_id.nil? ? nil : Submission.find(submission_id)
+    export_group_repo(group, repo_dir, submission)
     if test_files_available?(assignment, repo_dir) && user_has_permission?(current_user, grouping, assignment)
       call_by = (current_user.admin? || current_user.ta?) ? 'instructor' : 'student'
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_by, current_user.api_key, submission_id)
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_by, current_user.api_key)
     end
   end
 
@@ -265,9 +282,8 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, grouping_id, call_by, api_key, submission_id = nil)
+  def self.perform(host_with_port, grouping_id, call_by, api_key)
 
-    # TODO is submission_id needed?
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group

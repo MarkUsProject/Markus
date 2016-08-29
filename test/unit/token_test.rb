@@ -81,7 +81,7 @@ class TokenTest < ActiveSupport::TestCase
     setup do
       @token = Token.make(remaining: '2')
       a = @token.grouping.assignment
-      a.tokens_per_period = nil
+      a.tokens_per_period = 0
       a.save
       @token.reassign_tokens
     end
