@@ -70,3 +70,22 @@ input + label {
 .grade-total {
   float: right;
 }
+
+// Styling of marks table
+.grade-input {
+  width: calc(100% + 2.5em);
+  text-align: right;
+  margin: -0.5em -1.5em -0.5em -1em;
+  height: 2.5em;
+  border-radius: 0;
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+}
+
+.updated,
+.updated:focus,
+.updated:hover {
+  background-color: #81d881;
+}
