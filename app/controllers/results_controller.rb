@@ -176,10 +176,10 @@ class ResultsController < ApplicationController
     submission_id = Result.find(params[:id]).submission.id
 
     begin
-      AutomatedTestsHelper.request_a_test_run(grouping_id,
-                                              'submission',
-                                              @current_user,
-                                              submission_id)
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port,
+                                                    grouping_id,
+                                                    @current_user,
+                                                    submission_id)
     rescue => e
       # TODO: really shouldn't be leaking error if student.
       if current_user.admin?

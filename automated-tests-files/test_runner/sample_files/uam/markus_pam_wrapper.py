@@ -3,7 +3,7 @@
 import json
 import os
 import subprocess
-from enum import Enum
+import enum
 
 
 class PAMResult:
@@ -11,12 +11,13 @@ class PAMResult:
     A test result from pam.
     """
 
-    class Status(Enum):
+    class Status(enum.Enum):
         PASS = 1
         FAIL = 2
         ERROR = 3
 
-    def __init__(self, name, status, description='', message=''):
+    def __init__(self, class_name, name, status, description='', message=''):
+        self.class_name = class_name
         self.name = name
         self.status = status
         self.description = description
@@ -56,21 +57,24 @@ class PAMWrapper:
             with open(self.result_filename) as result_file:
                 results = []
                 result = json.load(result_file)
-                for test_class_result in result['results'].values():
+                for test_class_name, test_class_result in result['results'].items():
                     if 'passes' in test_class_result:
                         for test_name, test_desc in test_class_result['passes'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.PASS, description=test_desc))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.PASS, description=test_desc))
                     if 'failures' in test_class_result:
                         for test_name, test_stack in test_class_result['failures'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.FAIL,
-                                          description=test_stack['description'], message=test_stack['message']))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.FAIL, description=test_stack['description'],
+                                          message=test_stack['message']))
                     if 'errors' in test_class_result:
                         for test_name, test_stack in test_class_result['errors'].items():
                             results.append(
-                                PAMResult(name=test_name, status=PAMResult.Status.ERROR,
-                                          description=test_stack['description'], message=test_stack['message']))
+                                PAMResult(class_name=test_class_name.partition('.')[2], name=test_name,
+                                          status=PAMResult.Status.ERROR, description=test_stack['description'],
+                                          message=test_stack['message']))
         except OSError:
             if not os.path.isfile(self.timeout_filename):
                 print('Test framework error: no result or time out generated')
@@ -99,14 +103,23 @@ class PAMWrapper:
             '''.format(cmd=self, files=' '.join(self.test_files))
             shell = True
         try:
-            env = os.environ.copy()
-            env['PYTHONPATH'] = self.path_to_uam  # some needed libs are here
+            env = os.environ.copy()  # need to add path to uam libs
+            if 'PYTHONPATH' in env:
+                env['PYTHONPATH'] = "{systempath}:{pampath}".format(systempath=env['PYTHONPATH'],
+                                                                    pampath=self.path_to_uam)
+            else:
+                env['PYTHONPATH'] = self.path_to_uam
             subprocess.run(shell_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=shell,
                            env=env)
+            # use the following with Python < 3.5
+            # subprocess.check_call(shell_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=shell,
+            #                       env=env)
             results = self.collect_results()
             self.print_results(results)
         except subprocess.CalledProcessError as e:
             print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr))
+            # use the following with Python < 3.5
+            # print('Test framework error')
             exit(1)
         except Exception as e:
             print('Test framework error: {exception}'.format(exception=e))
@@ -149,8 +162,13 @@ class MarkusPAMWrapper(PAMWrapper):
 
 
 if __name__ == '__main__':
-    # TODO set pam timeout other than the default?
-    markus_test_files = ['test.py']
-    wrapper = MarkusPAMWrapper(path_to_uam='/home/adisandro/Desktop/uam', test_files=markus_test_files,
-                               path_to_virtualenv='/home/adisandro/Code/uam-virtualenv')
+    # Modify uppercase variables with your settings
+    # The path to the UAM root folder
+    PATH_TO_UAM = '/path/to/uam'
+    # The path to a Python virtualenv that has UAM's dependencies (if None, dependencies must be installed system-wide)
+    PATH_TO_VIRTUALENV = None
+    # A list of test files uploaded as support files to be executed against the student submission
+    MARKUS_TEST_FILES = ['test.py']
+    wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES,
+                               path_to_virtualenv=PATH_TO_VIRTUALENV)
     wrapper.run()

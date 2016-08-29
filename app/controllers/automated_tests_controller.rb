@@ -2,7 +2,7 @@
 require 'helpers/ensure_config_helper.rb'
 
 class AutomatedTestsController < ApplicationController
-  include AutomatedTestsHelper
+  include AutomatedTestsClientHelper
 
   before_filter      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
@@ -65,7 +65,7 @@ class AutomatedTestsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_scripts.build(
       # TODO: make these default values
-      run_on_submission: true,
+      run_by_instructors: true,
       display_input: :do_not_display,
       display_expected_output: :do_not_display,
       display_actual_output: :do_not_display
@@ -105,7 +105,7 @@ class AutomatedTestsController < ApplicationController
 
   def run_tests(grouping_id)
     begin
-      AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping_id, @current_user)
       return nil
     rescue Exception => e
       #TODO: really shouldn't be leaking error if student.
@@ -172,7 +172,7 @@ class AutomatedTestsController < ApplicationController
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
                     [:id, :assignment_id, :seq_num, :script_name, :description,
-                     :max_marks, :run_on_submission, :run_on_request,
+                     :max_marks, :run_by_instructors, :run_by_students,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,

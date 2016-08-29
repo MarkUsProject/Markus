@@ -58,10 +58,6 @@ describe Assignment do
     it do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
-    it do
-      is_expected.to validate_numericality_of(:tokens_per_period)
-        .is_greater_than_or_equal_to(0)
-    end
 
     it 'should require case sensitive unique value for short_identifier' do
       assignment = create(:assignment)

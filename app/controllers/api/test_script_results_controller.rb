@@ -2,12 +2,13 @@ module Api
 
   # Allows for pushing and downloading of TestResults
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
+  # TODO Shouldn't submission be specified instead of using current_submission_used?
   class TestScriptResultsController < MainApiController
 
     # Returns a list of TesResults associated with a group's assignment submission
     # Requires: assignment_id, group_id
     def index
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       test_script_results = submission.test_script_results.includes(:test_results)
@@ -26,7 +27,7 @@ module Api
     # Sends the contents of the specified Test Script Result
     # Requires: assignment_id, group_id, id
     def show
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       test_script_result = submission
@@ -50,8 +51,8 @@ module Api
     # Requires:
     #  - assignment_id
     #  - group_id
-    #  - filename: Name of the file to be uploaded
     #  - file_content: Contents of the test results file to be uploaded
+    #  - call_by: either 'instructor' or 'student'
     def create
       if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
@@ -60,17 +61,17 @@ module Api
         return
       end
 
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
       
       grouping = submission.grouping
       assignment = submission.assignment
 
-      if AutomatedTestsHelper.process_result(params[:file_content],
-                                          'submission',
-                                          assignment,
-                                          grouping,
-                                          submission)
+      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
+                                                        params[:call_by],
+                                                        assignment,
+                                                        grouping,
+                                                        submission)
         render 'shared/http_status', locals: {code: '201', message:
           HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       else
@@ -87,7 +88,7 @@ module Api
     # Deletes a Test Script Result instance
     # Requires: assignment_id, group_id, id
     def destroy
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       test_script_result = submission
@@ -111,6 +112,7 @@ module Api
     # Requires: assignment_id, group_id, id
     # Optional:
     #  - file_content: New contents of the test results file
+    #  - call_by: either 'instructor' or 'student'
     def update
       if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
@@ -119,7 +121,7 @@ module Api
         return
       end
 
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       test_script_result = submission.test_script_results.find(params[:id])
@@ -127,11 +129,11 @@ module Api
       grouping = submission.grouping
       assignment = submission.assignment
 
-      if AutomatedTestsHelper.process_result(params[:file_content],
-                                          'submission',
-                                          assignment,
-                                          grouping,
-                                          submission) &&
+      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
+                                                        params[:call_by],
+                                                        assignment,
+                                                        grouping,
+                                                        submission) &&
           test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

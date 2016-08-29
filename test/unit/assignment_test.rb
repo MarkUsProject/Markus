@@ -32,7 +32,6 @@ class AssignmentTest < ActiveSupport::TestCase
 
   should validate_numericality_of :group_min
   should validate_numericality_of :group_max
-  should validate_numericality_of :tokens_per_period
 
   should validate_presence_of :submission_rule
 
@@ -90,8 +89,9 @@ class AssignmentTest < ActiveSupport::TestCase
   end
 
   should 'catch a negative tokens_per_period value' do
-    a = Assignment.new(tokens_per_period: '-10')
-    assert !a.valid?, 'assignment expected to be invalid when tokens_per_period is < 0'
+    a = Assignment.new(enable_test: true, tokens_per_period: '-10', unlimited_tokens: false)
+    assert !a.valid?, 'assignment expected to be invalid when tests are enabled without unlimited tokens and
+                       tokens_per_period is < 0'
   end
 
   context 'A past due assignment w/ No Late submission rule' do

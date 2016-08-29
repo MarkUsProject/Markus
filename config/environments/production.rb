@@ -171,11 +171,6 @@ Markus::Application.configure do
                         host: 'localhost' }
 
   ###################################################################
-  # Directory where the Automated Testing Repositories will be created.
-  # Make sure MarkUs is allowed to write to this directory
-  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/prod/automated_tests"
-
-  ###################################################################
   # Max file size for submissions in Bytes
   MAX_FILE_SIZE = 5000000
 
@@ -276,34 +271,30 @@ Markus::Application.configure do
   ###################################################################
   # Automated Testing Engine settings
   ###################################################################
-  
-  # Automated Testing Engine(ATE) can only be used when this is set to true 
+
+  # Directory where the Automated Testing Repositories will be created.
+  # make sure MarkUs is allowed to write to this directory
+  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/prod/automated_tests"
+
+  # Automated Testing Engine(ATE) can only be used when this is set to true
   AUTOMATED_TESTING_ENGINE_ON = false
-  
-  # The number of test servers for running automated testing
-  ATE_NUMBER_TEST_SERVERS = 1
+
   # The maximum number of tests running in parallel on one test machine
   ATE_MAX_NUMBER_OF_RUNNING_TESTS = 1
-  
-  ###################################################################
-  # A list of space separated test servers, each has the format
-  # "#{server_account}@#{server_name}".
-  # The number of test servers in this string should match
-  # $NUMBER_TEST_SERVERS.
+
+  # The test server host and username.
   # SSH Login must be set up before running MarkUs, so that MarkUs
-  # can connect to all test servers without a password. 
-  ATE_TEST_SERVER_HOSTS = 'username@testing.example.com'
-  
-  # The name and the path of the test runner script on the test server.
-  ATE_TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
-  
-  ###################################################################
-  # The name and the path of the directory where the test runs.
-  # This directory will be destroyed and recreated in every test run.
-  # Then the test runner script along with all test files and source
-  # files will be copied to this directory, and the test runner
-  # script is executed.
-  ATE_TEST_RUN_DIRECTORY = 'testrunner/test/'
+  # can connect to the test dispatcher without a password.
+  ATE_TEST_SERVER_HOST = 'localhost'
+  ATE_TEST_SERVER_USERNAME = 'localhost'
+
+  # The directory where to store test results on the test server.
+  ATE_TEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
+
+  # The name of the queue on the test client where submission files wait to be copied.
+  ATE_FILE_QUEUE_NAME = 'CSC108_file_queue'
+  # The name of the queue on the test server where tests wait to be executed.
+  ATE_TEST_QUEUE_NAME = 'test_queue'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

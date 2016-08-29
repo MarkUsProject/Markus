@@ -67,7 +67,7 @@
             <%= raw maxmarks_section %>
         <% end %>
 
-        <div>
+        <div style="display:none">
           <%= f.label :display_settings, t('automated_tests.script_option.display_settings') %> <br/>
           <ul>
             <li>
@@ -119,12 +119,14 @@
           <%= f.select :criterion_id, options_for_select(criterion_options, selected) %>
 
           <br/><br/>
+
+          <%= f.label :run_by_instructors, t("automated_tests.script_option.run_by_instructors") %>
+          <%= f.check_box :run_by_instructors, value: f.object.run_by_instructors %><br/>
+
           <div style="display:none">
-          <%= f.label :run_on_request, t("automated_tests.script_option.run_on_request") %>
-          <%= f.check_box :run_on_request, value: f.object.run_on_request %><br/>
+          <%= f.label :run_by_students, t("automated_tests.script_option.run_by_students") %>
+          <%= f.check_box :run_by_students, value: f.object.run_by_students %><br/>
           </div>
-          <%= f.label :run_on_submission, t("automated_tests.script_option.run_on_submission") %>
-          <%= f.check_box :run_on_submission, value: f.object.run_on_submission %><br/>
 
           <div style="display:none">
           <%= f.label :halts_testing, t("automated_tests.script_option.halts_testing") %>

@@ -53,6 +53,3 @@
 
 # Ignore redis dump file
 .dump.rdb
-
-# Automated test files
-/automated-tests-files/test_runner/test/
