@@ -270,11 +270,15 @@ module MarkusConfigurator
     end
   end
 
+  ##########################################
+  # Resque Configuration
+  ##########################################
+
   def markus_ate_file_queue_name
     if automated_testing_engine_on? && (defined? ATE_FILE_QUEUE_NAME)
       return ATE_FILE_QUEUE_NAME
     else
-      return 'file_queue'
+      return 'ate_files'
     end
   end
 
@@ -282,7 +286,31 @@ module MarkusConfigurator
     if automated_testing_engine_on? && (defined? ATE_TEST_QUEUE_NAME)
       return ATE_TEST_QUEUE_NAME
     else
-      return 'test_queue'
+      return 'ate_tests'
+    end
+  end
+
+  def markus_job_create_individual_groups_queue_name
+    if defined? JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
+      return JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
+    else
+      return 'job_groups'
+    end
+  end
+
+  def markus_job_collect_submissions_queue_name
+    if defined? JOB_COLLECT_SUBMISSIONS_QUEUE_NAME
+      return JOB_COLLECT_SUBMISSIONS_QUEUE_NAME
+    else
+      return 'job_collect'
+    end
+  end
+
+  def markus_job_uncollect_submissions_queue_name
+    if defined? JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME
+      return JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME
+    else
+      return 'job_uncollect'
     end
   end
 end

@@ -1,5 +1,5 @@
 class SubmissionsJob < ActiveJob::Base
-  queue_as :submissions
+  queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
   before_enqueue do |_job|
     job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
