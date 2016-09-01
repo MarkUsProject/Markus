@@ -1,7 +1,5 @@
-# Need to create a resque worker to listen to default queue to perform the job
-# VVERBOSE=1 QUEUE=default rake environment resque:work
 class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
-  queue_as :default
+  queue_as MarkusConfigurator.markus_job_create_individual_groups_queue_name
 
   before_enqueue do |_job|
     job_messenger = JobMessenger.create(job_id: job_id, status: :queued)

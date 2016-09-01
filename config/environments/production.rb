@@ -272,10 +272,6 @@ Markus::Application.configure do
   # Automated Testing Engine settings
   ###################################################################
 
-  # Directory where the Automated Testing Repositories will be created.
-  # make sure MarkUs is allowed to write to this directory
-  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/prod/automated_tests"
-
   # Automated Testing Engine(ATE) can only be used when this is set to true
   AUTOMATED_TESTING_ENGINE_ON = false
 
@@ -288,13 +284,31 @@ Markus::Application.configure do
   ATE_TEST_SERVER_HOST = 'localhost'
   ATE_TEST_SERVER_USERNAME = 'localhost'
 
+  # Make sure these directories exist or can be created by MarkUs
+  # The directory where test scripts are stored and student repos are temporarily exported.
+  ATE_CLIENT_STORAGE_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
+  # The directory where to run tests on the test server.
+  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
   # The directory where to store test results on the test server.
-  ATE_TEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
+  ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
+
+  ###################################################################
+  # Resque queues
+  ###################################################################
+
+  # To run a resque worker to serve all queues:
+  # TERM_CHILD=1 QUEUE=* bundle exec rake environment resque:work
 
   # The name of the queue on the test client where submission files wait to be copied.
-  ATE_FILE_QUEUE_NAME = 'CSC108_file_queue'
+  ATE_FILE_QUEUE_NAME = 'CSC108_ate_files'
   # The name of the queue on the test server where tests wait to be executed.
-  ATE_TEST_QUEUE_NAME = 'test_queue'
+  ATE_TEST_QUEUE_NAME = 'CSC108_ate_tests'
+  # The name of the queue where jobs to create individal groups for all students wait to be executed.
+  JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108_job_groups'
+  # The name of the queue where jobs to collect submissions wait to be executed.
+  JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_collect'
+  # The name of the queue where jobs to uncollect submissions wait to be executed.
+  JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_uncollect'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
