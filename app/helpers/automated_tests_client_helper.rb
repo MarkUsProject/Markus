@@ -18,13 +18,13 @@ module AutomatedTestsClientHelper
   def create_test_repo(assignment)
     # Create the automated test repository
     unless File.exist?(MarkusConfigurator
-                           .markus_config_automated_tests_repository)
+                           .markus_ate_client_storage_dir)
       FileUtils.mkdir(MarkusConfigurator
-                          .markus_config_automated_tests_repository)
+                          .markus_ate_client_storage_dir)
     end
 
     test_dir = File.join(MarkusConfigurator
-                             .markus_config_automated_tests_repository,
+                             .markus_ate_client_storage_dir,
                          assignment.short_identifier)
     unless File.exist?(test_dir)
       FileUtils.mkdir(test_dir)
@@ -73,7 +73,7 @@ module AutomatedTestsClientHelper
 
           # Uploading new script
           assignment_tests_path = File.join(
-                    MarkusConfigurator.markus_config_automated_tests_repository,
+                    MarkusConfigurator.markus_ate_client_storage_dir,
                     @assignment.repository_folder,
                     new_script_name)
           # Replace bad line endings from windows
@@ -82,7 +82,7 @@ module AutomatedTestsClientHelper
 
           # Deleting old script
           old_script_path = File.join(
-            MarkusConfigurator.markus_config_automated_tests_repository,
+            MarkusConfigurator.markus_ate_client_storage_dir,
             @assignment.repository_folder,
             old_script_name)
           if File.exist?(old_script_path)
@@ -133,7 +133,7 @@ module AutomatedTestsClientHelper
 
           # Uploading new file
           assignment_tests_path = File.join(
-                   MarkusConfigurator.markus_config_automated_tests_repository,
+                   MarkusConfigurator.markus_ate_client_storage_dir,
                    @assignment.repository_folder,
                    new_file_name)
           File.open(
@@ -141,7 +141,7 @@ module AutomatedTestsClientHelper
 
           # Deleting old file
           old_file_path = File.join(
-                    MarkusConfigurator.markus_config_automated_tests_repository,
+                    MarkusConfigurator.markus_ate_client_storage_dir,
                     @assignment.repository_folder,
                     old_file_name)
           if File.exist?(old_file_path)
@@ -173,8 +173,8 @@ module AutomatedTestsClientHelper
   def self.export_group_repo(group, repo_dir, submission = nil)
 
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    unless File.exists?(MarkusConfigurator.markus_ate_client_storage_dir)
+      FileUtils.mkdir(MarkusConfigurator.markus_ate_client_storage_dir)
     end
     # Delete student's assignment repository if it already exists
     if File.exists?(repo_dir)
@@ -209,7 +209,7 @@ module AutomatedTestsClientHelper
 
     # TODO: show the errors to the user instead of raising a runtime error
     # No test files or test directory
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.markus_ate_client_storage_dir, assignment.short_identifier)
     if TestScript.find_by(assignment_id: assignment.id).nil? || !File.exist?(test_dir)
       raise I18n.t('automated_tests.test_files_unavailable')
     end
@@ -254,7 +254,7 @@ module AutomatedTestsClientHelper
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
-    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
+    repo_dir = File.join(MarkusConfigurator.markus_ate_client_storage_dir, group.repo_name)
 
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, submission)
@@ -280,6 +280,10 @@ module AutomatedTestsClientHelper
     return test_scripts.sort_by(&:seq_num)
   end
 
+  def self.get_test_scripts_chmod(test_scripts, test_path)
+    return test_scripts.map {|script| "chmod u+x '#{test_path}/#{script}'"}.join(' && ')
+  end
+
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
   def self.perform(host_with_port, grouping_id, call_by, api_key)
@@ -296,21 +300,22 @@ module AutomatedTestsClientHelper
       script.script_name
     end
 
-    submission_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name, assignment.repository_folder)
-    assignment_tests_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
-    test_results_path = MarkusConfigurator.markus_ate_test_server_results_dir
+    submission_path = File.join(MarkusConfigurator.markus_ate_client_storage_dir, group.repo_name, assignment.repository_folder)
+    assignment_tests_path = File.join(MarkusConfigurator.markus_ate_client_storage_dir, assignment.repository_folder)
+    test_results_path = MarkusConfigurator.markus_ate_server_results_dir
     markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
-    test_server_host = MarkusConfigurator.markus_ate_test_server_host
+    test_server_host = MarkusConfigurator.markus_ate_server_host
 
+    #TODO use mktemp -d --tmpdir=TESTS for local too and unify with remote
+    test_path = MarkusConfigurator.markus_ate_server_tests_dir
     if test_server_host == 'localhost'
-      # tests executed locally: create a clean folder, copying the student's submission and all necessary test files
-      test_path = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'test')
-      test_scripts_executables = test_scripts.map {|s| "chmod u+x '#{test_path}/#{s}'"}.join(' && ')
+      # tests executed locally: create a temp folder, copying the student's submission and all necessary test files
+      FileUtils.mkdir_p(test_path) # create base tests dir if not already existing..
+      test_path = Dir.mktmpdir(nil, test_path) # ..then create temp subfolder
+      test_scripts_executables = get_test_scripts_chmod(test_scripts, test_path)
       stdout, stderr, status = Open3.capture3("
-        rm -rf '#{test_path}' &&
-        mkdir '#{test_path}' &&
         cp -r '#{submission_path}'/* '#{test_path}' &&
         cp -r '#{assignment_tests_path}'/* '#{test_path}' &&
         #{test_scripts_executables}
@@ -320,34 +325,34 @@ module AutomatedTestsClientHelper
                                   out: #{stdout}\nerr: #{stderr}", MarkusLogger::ERROR)
         return
       end
-      # enqueue locally using api
+      # enqueue locally using resque api
       Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path,
                      call_by, assignment.id, group.id)
     else
-      # tests executed on a test server: copy the student's submission and all necessary files through ssh
-      test_server_username = MarkusConfigurator.markus_ate_test_server_username
-      queue = MarkusConfigurator.markus_ate_test_queue_name
+      # tests executed remotely: copy the student's submission and all necessary files through ssh in a temp folder
       begin
-        Net::SSH::start(test_server_host, test_server_username) do |ssh|
-          test_path = ssh.exec!('mktemp -d').strip
-          Dir.foreach(submission_path) do |file_name| # workaround scp not supporting wildcard *
+        Net::SSH::start(test_server_host, MarkusConfigurator.markus_ate_server_username) do |ssh|
+          ssh.exec!("mkdir -p #{test_path}") # create base tests dir if not already existing..
+          test_path = ssh.exec!("mktemp -d --tmpdir=#{test_path}").strip # ..then create temp subfolder
+          test_scripts_executables = get_test_scripts_chmod(test_scripts, test_path)
+          Dir.foreach(submission_path) do |file_name| # workaround scp gem not supporting wildcard *
             next if file_name == '.' or file_name == '..'
             file_path = File.join(submission_path, file_name)
             options = File.directory?(file_path) ? {:recursive => true} : {}
             ssh.scp.upload!(file_path, test_path, options)
           end
-          Dir.foreach(assignment_tests_path) do |file_name| # workaround scp not supporting wildcard *
+          Dir.foreach(assignment_tests_path) do |file_name| # workaround scp gem not supporting wildcard *
             next if file_name == '.' or file_name == '..'
             file_path = File.join(assignment_tests_path, file_name)
             ssh.scp.upload!(file_path, test_path)
           end
-          # TODO brutal, think about sandboxing
-          ssh.exec!("chmod -R o+rwx '#{test_path}'")
+          ssh.exec!("#{test_scripts_executables}")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
                            :args => [markus_address, api_key, test_scripts, test_path, test_results_path, call_by,
                                      assignment.id, group.id]}
-          ssh.exec!("redis-cli rpush \"resque:queue:#{queue}\" '#{JSON.generate(resque_params)}'")
+          ssh.exec!("redis-cli rpush \"resque:queue:#{MarkusConfigurator.markus_ate_test_queue_name}\"
+                     '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
         MarkusLogger.instance.log("ATE remote ssh error for assignment #{assignment}, group #{grouping}:\n

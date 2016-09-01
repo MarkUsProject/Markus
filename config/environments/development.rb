@@ -239,10 +239,6 @@ Markus::Application.configure do
   # Automated Testing Engine settings
   ###################################################################
 
-  # Directory where the Automated Testing Repositories will be created.
-  # make sure MarkUs is allowed to write to this directory
-  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
-
   # Automated Testing Engine(ATE) can only be used when this is set to true 
   AUTOMATED_TESTING_ENGINE_ON = true
   
@@ -252,11 +248,16 @@ Markus::Application.configure do
   # The test server host and username.
   # SSH Login must be set up before running MarkUs, so that MarkUs
   # can connect to the test dispatcher without a password.
-  ATE_TEST_SERVER_HOST = 'localhost'
-  ATE_TEST_SERVER_USERNAME = 'localhost'
+  ATE_SERVER_HOST = 'localhost'
+  ATE_SERVER_USERNAME = 'localhost'
 
+  # Make sure these directories exist or can be created by MarkUs
+  # The directory where test scripts are stored and student repos are temporarily exported.
+  ATE_CLIENT_STORAGE_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests"
+  # The directory where to run tests on the test server.
+  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/tests"
   # The directory where to store test results on the test server.
-  ATE_TEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/test_runs"
+  ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/test_runs"
 
   ###################################################################
   # Resque queues

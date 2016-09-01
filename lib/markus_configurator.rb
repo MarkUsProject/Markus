@@ -224,16 +224,6 @@ module MarkusConfigurator
   # Automated Testing Engine Configuration
   ##########################################
 
-  #Repository for the test framework
-  #Students file will be copied into this repository before sending to the test server
-  def markus_config_automated_tests_repository
-    if defined? AUTOMATED_TESTS_REPOSITORY
-      return AUTOMATED_TESTS_REPOSITORY
-    else
-      return File.join(::Rails.root.to_s, 'automated_tests')
-    end
-  end
-
   def automated_testing_engine_on?
     return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
@@ -246,27 +236,43 @@ module MarkusConfigurator
     end
   end
 
-  def markus_ate_test_server_host
-    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_HOST)
-      return ATE_TEST_SERVER_HOST
+  def markus_ate_server_host
+    if automated_testing_engine_on? && (defined? ATE_SERVER_HOST)
+      return ATE_SERVER_HOST
     else
       return 'localhost'
     end
   end
 
-  def markus_ate_test_server_username
-    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_USERNAME)
-      return ATE_TEST_SERVER_USERNAME
+  def markus_ate_server_username
+    if automated_testing_engine_on? && (defined? ATE_SERVER_USERNAME)
+      return ATE_SERVER_USERNAME
     else
       return 'localhost'
     end
   end
 
-  def markus_ate_test_server_results_dir
-    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_RESULTS_DIR)
-      return ATE_TEST_SERVER_RESULTS_DIR
+  def markus_ate_client_storage_dir
+    if automated_testing_engine_on? && (defined? ATE_CLIENT_STORAGE_DIR)
+      return ATE_CLIENT_STORAGE_DIR
     else
       return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
+  def markus_ate_server_tests_dir
+    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS_DIR)
+      return ATE_SERVER_TESTS_DIR
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests', 'tests')
+    end
+  end
+
+  def markus_ate_server_results_dir
+    if automated_testing_engine_on? && (defined? ATE_SERVER_RESULTS_DIR)
+      return ATE_SERVER_RESULTS_DIR
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests', 'test_runs')
     end
   end
 
