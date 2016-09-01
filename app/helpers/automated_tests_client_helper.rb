@@ -281,7 +281,7 @@ module AutomatedTestsClientHelper
   end
 
   def self.get_test_scripts_chmod(test_scripts, test_path)
-    return test_scripts.map {|script| "chmod u+x '#{test_path}/#{script}'"}.join(' && ')
+    return test_scripts.map {|script| "chmod ug+x '#{test_path}/#{script}'"}.join(' && ')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -307,9 +307,8 @@ module AutomatedTestsClientHelper
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_server_host
-
-    #TODO use mktemp -d --tmpdir=TESTS for local too and unify with remote
     test_path = MarkusConfigurator.markus_ate_server_tests_dir
+
     if test_server_host == 'localhost'
       # tests executed locally: create a temp folder, copying the student's submission and all necessary test files
       FileUtils.mkdir_p(test_path) # create base tests dir if not already existing..
@@ -351,8 +350,8 @@ module AutomatedTestsClientHelper
           resque_params = {:class => 'AutomatedTestsServerHelper',
                            :args => [markus_address, api_key, test_scripts, test_path, test_results_path, call_by,
                                      assignment.id, group.id]}
-          ssh.exec!("redis-cli rpush \"resque:queue:#{MarkusConfigurator.markus_ate_test_queue_name}\"
-                     '#{JSON.generate(resque_params)}'")
+          server_queue = MarkusConfigurator.markus_ate_test_queue_name
+          ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
         MarkusLogger.instance.log("ATE remote ssh error for assignment #{assignment}, group #{grouping}:\n
