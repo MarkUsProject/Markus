@@ -255,11 +255,13 @@ module AutomatedTestsClientHelper
     group = grouping.group
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_storage_dir, group.repo_name)
 
+    # if current_user is an instructor, then a submission exists and we use that repo revision
+    # if current_user is a student, then we use the latest repo revision
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, submission)
     if test_files_available?(assignment, repo_dir) && user_has_permission?(current_user, grouping, assignment)
-      call_by = (current_user.admin? || current_user.ta?) ? 'instructor' : 'student'
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, grouping_id, call_by, current_user.api_key)
+      call_by = current_user.class.name.demodulize
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, current_user.api_key, grouping_id, submission_id)
     end
   end
 
@@ -268,9 +270,9 @@ module AutomatedTestsClientHelper
   def self.get_test_scripts_to_run(assignment, call_by)
 
     all_scripts = TestScript.where(assignment_id: assignment.id)
-    if call_by == 'instructor'
+    if call_by == 'Admin' || call_by == 'Ta'
       test_scripts = all_scripts.select(&:run_by_instructors)
-    elsif call_by == 'student'
+    elsif call_by == 'Student'
       test_scripts = all_scripts.select(&:run_by_students)
     else
       test_scripts = []
@@ -285,7 +287,7 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, grouping_id, call_by, api_key)
+  def self.perform(host_with_port, call_by, api_key, grouping_id, submission_id)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -325,7 +327,7 @@ module AutomatedTestsClientHelper
       end
       # enqueue locally using resque api
       Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path,
-                     call_by, assignment.id, group.id)
+                     assignment.id, group.id, submission_id)
     else
       # tests executed remotely: copy the student's submission and all necessary files through ssh in a temp folder
       begin
@@ -347,8 +349,8 @@ module AutomatedTestsClientHelper
           ssh.exec!("#{test_scripts_executables}")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
-                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, call_by,
-                                     assignment.id, group.id]}
+                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
+                                     group.id, submission_id]}
           server_queue = MarkusConfigurator.markus_ate_test_queue_name
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
@@ -359,13 +361,12 @@ module AutomatedTestsClientHelper
     end
   end
 
-  def self.process_test_result(raw_result, call_by, assignment, grouping, submission = nil)
+  def self.process_test_result(raw_result, assignment, grouping, submission)
 
     result = Hash.from_xml(raw_result)
-    repo = grouping.group.repo
-    revision = repo.get_latest_revision
-    revision_number = revision.revision_number
-    submission_id = submission ? submission.id : nil
+    revision_number = submission.nil? ?
+        grouping.group.repo.get_latest_revision.revision_number : submission.revision_number
+    submission_id = submission.nil? ? nil : submission.id
 
     # Hash.from_xml will yield a hash with only one test script and an array otherwise
     test_scripts = result['testrun']['test_script']
@@ -404,7 +405,6 @@ module AutomatedTestsClientHelper
         marks_earned += test['marks_earned'].to_i
         new_test_script_result.test_results.create(
           name: test['name'],
-          repo_revision: revision_number,
           input: (test['input'].nil? ? '' : test['input']),
           actual_output: (test['actual'].nil? ? '' : test['actual']),
           expected_output: (test['expected'].nil? ? '' : test['expected']),         
@@ -415,8 +415,8 @@ module AutomatedTestsClientHelper
       new_test_script_result.save!
     end
 
-    if call_by == 'instructor'
-      grouping.current_submission_used.set_marks_for_tests
+    unless submission.nil?
+      submission.set_marks_for_tests
     end
 
   end

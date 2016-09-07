@@ -5,11 +5,16 @@ module Api
   class TestScriptResultsController < MainApiController
 
     # Returns a list of TesResults associated with a group's assignment submission
-    # Requires: assignment_id, group_id
+    # Requires: submission_id
     def index
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
+      if has_missing_params?([:submission_id])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: {code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        return
+      end
 
+      submission = Submission.find(params[:submission_id])
       test_script_results = submission.test_script_results.includes(:test_results)
 
       respond_to do |format|
@@ -24,15 +29,10 @@ module Api
     end
 
     # Sends the contents of the specified Test Script Result
-    # Requires: assignment_id, group_id, id
+    # Requires: id
     def show
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
 
-      test_script_result = submission
-                          .test_script_results
-                          .includes(:test_results)
-                          .find(params[:id])
+      test_script_result = TestScriptResult.find(params[:id])
 
       respond_to do |format|
         format.xml{render xml: test_script_result.to_xml(root:
@@ -51,7 +51,8 @@ module Api
     #  - assignment_id
     #  - group_id
     #  - file_content: Contents of the test results file to be uploaded
-    #  - call_by: either 'instructor' or 'student'
+    # Optional:
+    #  - submission_id
     def create
       if has_missing_params?([:file_content])
         # incomplete/invalid HTTP params
@@ -60,13 +61,18 @@ module Api
         return
       end
 
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
-      grouping = submission.grouping
-      assignment = submission.assignment
+      if params[:submission_id].nil?
+        submission = nil
+        group = Group.find(params[:group_id])
+        grouping = group.grouping_for_assignment(params[:assignment_id])
+        assignment = Assignment.find(params[:assignment_id])
+      else
+        submission = Submission.find(params[:submission_id])
+        grouping = submission.grouping
+        assignment = submission.assignment
+      end
 
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        params[:call_by],
                                                         assignment,
                                                         grouping,
                                                         submission)
@@ -84,14 +90,10 @@ module Api
     end
 
     # Deletes a Test Script Result instance
-    # Requires: assignment_id, group_id, id
+    # Requires: id
     def destroy
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
 
-      test_script_result = submission
-                           .test_script_results
-                           .find(params[:id])
+      test_script_result = TestScriptResult.find(params[:id])
 
       if test_script_result.destroy
         # Successfully deleted the TestResult; render success
@@ -108,27 +110,29 @@ module Api
     #  result and its test results and reprocess the xml test harness file. 
     # This is basically a delete followed by a create
     # Requires: assignment_id, group_id, id
-    # Optional:
     #  - file_content: New contents of the test results file
-    #  - call_by: either 'instructor' or 'student'
+    # Optional: submission_id
     def update
-      if has_missing_params?([:file_content])
+      if has_missing_params?([:id, :file_content])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
         return
       end
 
-      submission = Submission.get_submission_by_group_id_and_assignment_id(
-        params[:group_id], params[:assignment_id])
-
-      test_script_result = submission.test_script_results.find(params[:id])
-
-      grouping = submission.grouping
-      assignment = submission.assignment
+      test_script_result = TestScriptResult.find(params[:id])
+      if params[:submission_id].nil?
+        submission = nil
+        group = Group.find(params[:group_id])
+        grouping = group.grouping_for_assignment(params[:assignment_id])
+        assignment = Assignment.find(params[:assignment_id])
+      else
+        submission = Submission.find(params[:submission_id])
+        grouping = submission.grouping
+        assignment = submission.assignment
+      end
 
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        params[:call_by],
                                                         assignment,
                                                         grouping,
                                                         submission) &&
