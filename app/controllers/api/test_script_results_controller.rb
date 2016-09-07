@@ -2,7 +2,6 @@ module Api
 
   # Allows for pushing and downloading of TestResults
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
-  # TODO Shouldn't submission be specified instead of using current_submission_used?
   class TestScriptResultsController < MainApiController
 
     # Returns a list of TesResults associated with a group's assignment submission
@@ -63,7 +62,6 @@ module Api
 
       submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
-      
       grouping = submission.grouping
       assignment = submission.assignment
 

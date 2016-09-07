@@ -7,7 +7,7 @@
 
 <%= render partial: 'shared/flash_message' %>
 
-<% if @assignment.enable_test && !@grouping.nil? %>
+<% if @assignment.enable_student_tests && !@grouping.nil? %>
   <div class='block'>
     <div class='block_content'>
       <h3><%= t('automated_tests.information') %></h3>

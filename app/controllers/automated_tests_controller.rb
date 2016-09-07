@@ -66,11 +66,13 @@ class AutomatedTestsController < ApplicationController
     @assignment.test_scripts.build(
       # TODO: make these default values
       run_by_instructors: true,
+      run_by_students: false,
       display_input: :do_not_display,
       display_expected_output: :do_not_display,
       display_actual_output: :do_not_display
     )
     @assignment.test_support_files.build
+    @student_tests_on = MarkusConfigurator.markus_ate_experimental_student_tests_on
   end
 
   def student_interface
@@ -163,6 +165,7 @@ class AutomatedTestsController < ApplicationController
   def assignment_params
     params.require(:assignment)
         .permit(:enable_test,
+                :enable_student_tests,
                 :assignment_id,
                 :tokens_per_period,
                 :token_period,

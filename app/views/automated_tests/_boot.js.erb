@@ -8,7 +8,8 @@ function check_start_of_availability_date(new_start_date) {
 jQuery(window).load(function() {
   <% if @assignment %>
     toggle_tests_tokens(<%= @assignment.unlimited_tokens %>);
-    toggle_automated_tests(<%= @assignment.enable_test %>);
+    toggle_student_tests(<%= @assignment.enable_student_tests %>);
+    toggle_tests(<%= @assignment.enable_test %>);
   <% end %>
 
   jQuery('#assignment_token_start_date').datetimepicker({

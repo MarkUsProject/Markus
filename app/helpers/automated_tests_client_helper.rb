@@ -156,13 +156,12 @@ module AutomatedTestsClientHelper
     assignment.test_support_files_attributes = updated_support_files
 
     assignment.enable_test = assignment_params[:enable_test]
+    assignment.enable_student_tests = assignment_params[:enable_student_tests]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
     assignment.token_start_date = assignment_params[:token_start_date]
     assignment.token_period = assignment_params[:token_period]
-    num_tokens = assignment_params[:tokens_per_period]
-    if num_tokens
-      assignment.tokens_per_period = num_tokens
-    end
+    assignment.tokens_per_period = assignment_params[:tokens_per_period].nil? ?
+        0 : assignment_params[:tokens_per_period]
 
     return assignment
   end
@@ -368,6 +367,7 @@ module AutomatedTestsClientHelper
     revision_number = revision.revision_number
     submission_id = submission ? submission.id : nil
 
+    print 'DEH'
     # Hash.from_xml will yield a hash with only one test script and an array otherwise
     test_scripts = result['testrun']['test_script']
     if test_scripts.nil?
@@ -382,6 +382,7 @@ module AutomatedTestsClientHelper
     test_scripts.each do |script|
       marks_earned = 0
       script_name = script['script_name']
+      print 'DEH' + script_name
       test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
       new_test_script_result = grouping.test_script_results.create!(

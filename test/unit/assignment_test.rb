@@ -89,8 +89,8 @@ class AssignmentTest < ActiveSupport::TestCase
   end
 
   should 'catch a negative tokens_per_period value' do
-    a = Assignment.new(enable_test: true, tokens_per_period: '-10', unlimited_tokens: false)
-    assert !a.valid?, 'assignment expected to be invalid when tests are enabled without unlimited tokens and
+    a = Assignment.new(enable_test: true, enable_student_tests: true, tokens_per_period: '-10', unlimited_tokens: false)
+    assert !a.valid?, 'assignment expected to be invalid when student tests are enabled without unlimited tokens and
                        tokens_per_period is < 0'
   end
 
