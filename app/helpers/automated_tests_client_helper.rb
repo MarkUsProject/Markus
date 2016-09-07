@@ -367,7 +367,6 @@ module AutomatedTestsClientHelper
     revision_number = revision.revision_number
     submission_id = submission ? submission.id : nil
 
-    print 'DEH'
     # Hash.from_xml will yield a hash with only one test script and an array otherwise
     test_scripts = result['testrun']['test_script']
     if test_scripts.nil?
@@ -382,7 +381,6 @@ module AutomatedTestsClientHelper
     test_scripts.each do |script|
       marks_earned = 0
       script_name = script['script_name']
-      print 'DEH' + script_name
       test_script = TestScript.find_by(assignment_id: assignment.id,
                                        script_name: script_name)
       new_test_script_result = grouping.test_script_results.create!(
