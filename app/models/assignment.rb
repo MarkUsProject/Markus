@@ -94,12 +94,14 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :vcs_submit, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
   validates_inclusion_of :is_hidden, in: [true, false]
-  validates_inclusion_of :enable_test, in: [true, false]
   validates_inclusion_of :has_peer_review, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
-  validates_inclusion_of :unlimited_tokens, in: [true, false]
 
-  with_options if: ->{ :enable_test && !:unlimited_tokens } do |assignment|
+  validates_inclusion_of :enable_test, in: [true, false]
+  validates_inclusion_of :enable_student_tests, in: [true, false], if: :enable_test
+  validates_inclusion_of :unlimited_tokens, in: [true, false], if: :enable_student_tests
+  validates_presence_of :token_start_date, if: :enable_student_tests
+  with_options if: ->{ :enable_student_tests && !:unlimited_tokens } do |assignment|
     assignment.validates :tokens_per_period,
                          presence: true,
                          numericality: { only_integer: true,
@@ -109,8 +111,6 @@ class Assignment < ActiveRecord::Base
                          numericality: { greater_than: 0 }
   end
 
-  # TODO re-enable when student requests are enabled
-  #validates_presence_of :token_start_date, if: :enable_test
   validate :minimum_number_of_groups
 
   after_create :build_repository

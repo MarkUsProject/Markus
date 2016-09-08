@@ -123,7 +123,7 @@
           <%= f.label :run_by_instructors, t("automated_tests.script_option.run_by_instructors") %>
           <%= f.check_box :run_by_instructors, value: f.object.run_by_instructors %><br/>
 
-          <div style="display:none">
+          <div style="<%= 'display:none;' unless @student_tests_on %>">
           <%= f.label :run_by_students, t("automated_tests.script_option.run_by_students") %>
           <%= f.check_box :run_by_students, value: f.object.run_by_students %><br/>
           </div>

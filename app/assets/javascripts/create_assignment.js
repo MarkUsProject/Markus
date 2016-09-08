@@ -138,33 +138,59 @@ function change_submission_rule() {
   }
 }
 
-function toggle_automated_tests(is_testing_framework_enabled) {
-  jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
+function toggle_fields1(is_disabled) {
+  jQuery('#are_student_tests_enabled').attr('disabled', is_disabled);
+}
 
-  // TODO re-enable when student requests are enabled
-  // if (is_testing_framework_enabled) {
-  //   if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
-  //     jQuery('#assignment_tokens_per_period').attr('disabled', false);
-  //     jQuery('#assignment_token_period').attr('disabled', false);
-  //   }
-  //   jQuery('#assignment_unlimited_tokens').attr('disabled', false);
-  //   jQuery('#assignment_token_start_date').attr('disabled', false);
-  // } else {
-    jQuery('#assignment_tokens_per_period').attr('disabled', true);
-    jQuery('#assignment_unlimited_tokens').attr('disabled', true);
-    jQuery('#assignment_token_period').attr('disabled', true);
-    jQuery('#assignment_token_start_date').attr('disabled', true);
-  // }
+function toggle_fields2(is_disabled) {
+  jQuery('#assignment_unlimited_tokens').attr('disabled', is_disabled);
+  jQuery('#assignment_token_start_date').attr('disabled', is_disabled);
+}
+
+function toggle_fields3(is_disabled) {
+  jQuery('#assignment_tokens_per_period').attr('disabled', is_disabled);
+  jQuery('#assignment_token_period').attr('disabled', is_disabled);
+}
+
+function toggle_tests(is_testing_framework_enabled) {
+
+  jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
+  if (is_testing_framework_enabled) {
+    toggle_fields1(false);
+    if (jQuery('#are_student_tests_enabled').is(':checked')) {
+      toggle_fields2(false);
+      if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
+        toggle_fields3(false);
+      }
+    }
+  }
+  else {
+    toggle_fields1(true);
+    toggle_fields2(true);
+    toggle_fields3(true);
+  }
+}
+
+function toggle_student_tests(are_student_tests_enabled) {
+
+  jQuery('#are_student_tests_enabled').val(are_student_tests_enabled);
+  if (are_student_tests_enabled) {
+    toggle_fields2(false);
+    if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
+      toggle_fields3(false);
+    }
+  } else {
+    toggle_fields2(true);
+    toggle_fields3(true);
+  }
 }
 
 function toggle_tests_tokens(is_unlimited) {
-  jQuery('#assignment_unlimited_tokens').val(is_unlimited);
 
+  jQuery('#assignment_unlimited_tokens').val(is_unlimited);
   if (is_unlimited) {
-    jQuery('#assignment_tokens_per_period').attr('disabled', true);
-    jQuery('#assignment_token_period').attr('disabled', true);
+    toggle_fields3(true);
   } else {
-    jQuery('#assignment_tokens_per_period').attr('disabled', false);
-    jQuery('#assignment_token_period').attr('disabled', false);
+    toggle_fields3(false);
   }
 }

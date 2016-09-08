@@ -228,11 +228,11 @@ module MarkusConfigurator
     return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
 
-  def markus_ate_max_num_of_running_tests
-    if automated_testing_engine_on? && (defined? ATE_MAX_NUMBER_OF_RUNNING_TESTS)
-      return ATE_MAX_NUMBER_OF_RUNNING_TESTS
+  def markus_ate_experimental_student_tests_on
+    if automated_testing_engine_on? && (defined? ATE_EXPERIMENTAL_STUDENT_TESTS_ON)
+      return ATE_EXPERIMENTAL_STUDENT_TESTS_ON
     else
-      return 1
+      return false
     end
   end
 

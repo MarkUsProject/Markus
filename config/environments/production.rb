@@ -275,8 +275,8 @@ Markus::Application.configure do
   # Automated Testing Engine(ATE) can only be used when this is set to true
   AUTOMATED_TESTING_ENGINE_ON = false
 
-  # The maximum number of tests running in parallel on one test machine
-  ATE_MAX_NUMBER_OF_RUNNING_TESTS = 1
+  # Allows the instructor to allow students to run tests
+  ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
 
   # The test server host and username.
   # SSH Login must be set up before running MarkUs, so that MarkUs

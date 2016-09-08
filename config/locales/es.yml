@@ -1878,6 +1878,8 @@ es:
       expand_all:                         "Expandir Todos"
       collapse_all:                       "Reducir Todos"
       enable_test:                        "Habilitar pruebas para este proyecto"
+      student_tests:                      "UPDATE ME"
+      enable_student_tests:               "UPDATE ME"
       required_test_files:                "Archivos requeridos para aplicar prueba"
       need_group_for_test:                "Usted debe tener un grupo para lanzar la prueba"
       test:                               "Prueba"

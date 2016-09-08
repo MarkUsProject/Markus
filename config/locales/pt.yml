@@ -1439,7 +1439,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     #Test Framework
     automated_tests:
       automated_tests: "Test Framework"
-      enable_test:    "Permitir testes para esse projeto"
+      enable_test: "Permitir testes para esse projeto"
+      student_tests: "UPDATE ME"
+      enable_student_tests: "UPDATE ME"
       required_files_ant: "Arquivos exigidos para Ant"
       need_group_for_test: "Você precisa possuir um grupo para executar os testes"
       test: "Teste"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160826161005) do
+ActiveRecord::Schema.define(version: 20160907214406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 20160826161005) do
     t.integer  "parent_assignment_id"
     t.boolean  "has_peer_review",                  default: false, null: false
     t.integer  "checkbox_criteria_count"
+    t.boolean  "enable_student_tests",             default: false, null: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -483,7 +484,6 @@ ActiveRecord::Schema.define(version: 20160826161005) do
     t.string   "name"
     t.string   "completion_status",                  null: false
     t.integer  "marks_earned",                       null: false
-    t.integer  "repo_revision"
     t.text     "input",                 default: "", null: false
     t.text     "actual_output",         default: "", null: false
     t.text     "expected_output",       default: "", null: false
@@ -495,10 +495,10 @@ ActiveRecord::Schema.define(version: 20160826161005) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
-    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
+    t.integer  "repo_revision"
   end
 
   create_table "test_scripts", force: :cascade do |t|

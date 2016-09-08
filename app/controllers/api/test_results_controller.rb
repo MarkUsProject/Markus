@@ -103,7 +103,7 @@ module Api
 
     # Updates a TestResult instance
     # Requires: assignment_id, group_id, test_script_result_id, id,
-    # Optional: name, completion_status, marks_earned, repo_revision,
+    # Optional: name, completion_status, marks_earned,
     # input, actual_output, expected_output, created_at, updated_at
     def update
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
@@ -134,7 +134,7 @@ module Api
 
     # User params for create & update
     def test_result_params
-      params.permit(:name, :completion_status, :marks_earned, :repo_revision,
+      params.permit(:name, :completion_status, :marks_earned,
                     :input, :actual_output, :expected_output, :created_at,
                     :updated_at)
     end
