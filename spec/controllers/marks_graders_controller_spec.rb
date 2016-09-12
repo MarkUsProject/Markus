@@ -11,10 +11,7 @@ describe MarksGradersController do
     # to align with grader_student_form_good.csv)
     @student_user_names = %w(c8shosta c5bennet)
     @student_user_names.each do |name|
-      user = create(:user, user_name: name, type: 'Student')
-      create(:grade_entry_student,
-             user: user,
-             grade_entry_form: grade_entry_form_with_data)
+      create(:user, user_name: name, type: 'Student')
     end
     @ta_user_name = 'c6conley'
     user = create(:user, user_name: @ta_user_name, type: 'Ta')
@@ -140,7 +137,7 @@ describe MarksGradersController do
       @grade_entry_form = create(:grade_entry_form)
       @student = create(:student, user_name: 'c8shosta')
       @ta = create(:ta, user_name: 'c5bennet')
-      @grade_entry_student = create(:grade_entry_student, user: @student, grade_entry_form: @grade_entry_form)
+      @grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: @student)
       @grade_entry_student.add_tas_by_user_name_array([@ta.user_name])
     end
 

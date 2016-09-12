@@ -41,7 +41,6 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
 
       5.times do
         s = Student.make
-        GradeEntryStudent.make(user: s, grade_entry_form: @grade_entry_form)
         @students << s
         @graders << Ta.make
       end

@@ -17,7 +17,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @student = Student.make
       @grade_entry_form = GradeEntryForm.make
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
-      @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(user: @student)
+      @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: @student)
       @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
         @grade_entry_student.grades.make(grade_entry_item: grade_entry_item, grade: 5)
       end
@@ -78,10 +78,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
     should "GET on :student_interface when the student's mark has been released and it is a blank mark" do
       student1 = Student.make
-      grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(user: student1)
-      grade_entry_student1.released_to_student=true
+      grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: student1)
+      grade_entry_student1.released_to_student = true
       grade_entry_student1.save
-      grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
       get_as student1, :student_interface, id: @grade_entry_form_with_grade_entry_items.id
       assert_not_nil assigns :grade_entry_form
       assert_not_nil assigns :student
@@ -616,7 +615,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on :update_grade when the Grade has an existing value - ' do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student_with_some_grades = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
+        student = Student.make
+        @grade_entry_student_with_some_grades = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: student)
         @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[0],
                                                           grade: 3)
         @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[1],
@@ -682,7 +682,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on :update_grade when the Grade does not have an existing value and the GradeEntryStudent does exist - ' do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
+        student = Student.make
+        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: student)
       end
 
       should 'set an empty grade to a valid value' do
@@ -755,7 +756,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :grade
         assert render_template :update_grade
         assert_response :success
-        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: @student)
         assert_not_nil grade_entry_student
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id,
                                                                               @grade_entry_items[0].id)
@@ -774,7 +775,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :grade
         assert render_template :update_grade
         assert_response :success
-        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: @student)
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
         assert_nil grade.grade
       end
@@ -791,7 +792,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :grade
         assert render_template :update_grade
         assert_response :success
-        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.find_by(user: @student)
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
         assert_nil grade.grade
       end
@@ -808,7 +809,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         (0..11).each do |i|
           student = Student.make(user_name: 's' + i.to_s, last_name: last_names[i], first_name: 'Bob')
           @students << student
-          @grade_entry_form1.grade_entry_students.make(user: student)
         end
       end
 
@@ -821,12 +821,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        id: @grade_entry_form1.id}
         assert_response :success
         (0..2).each do |i|
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          grade_entry_student = @grade_entry_form1.grade_entry_students.find_by(user: @students[i])
           assert_equal true, grade_entry_student.released_to_student
         end
 
         (3..(@students.size-1)).each do |i|
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          grade_entry_student = @grade_entry_form1.grade_entry_students.find_by(user: @students[i])
           assert_equal false, grade_entry_student.released_to_student
         end
       end
@@ -842,7 +842,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        id: @grade_entry_form1.id}
         assert_response :success
         (0..(@specific_students.size-1)).each do |i|
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          grade_entry_student = @grade_entry_form1.grade_entry_students.find_by(user: @students[i])
           assert_equal true, grade_entry_student.released_to_student
         end
       end
@@ -856,7 +856,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        id: @grade_entry_form1.id}
         assert_response :success
         (0..2).each do |i|
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          grade_entry_student = @grade_entry_form1.grade_entry_students.find_by(user: @students[i])
           assert_equal false, grade_entry_student.released_to_student
         end
       end
@@ -872,7 +872,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        id: @grade_entry_form1.id}
         assert_response :success
         (0..(@specific_students.size-1)).each do |i|
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          grade_entry_student = @grade_entry_form1.grade_entry_students.find_by(user: @students[i])
           assert_equal false, grade_entry_student.released_to_student
         end
       end
@@ -882,7 +882,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         @student = Student.make(user_name: 'c2ÈrÉØrr', last_name: 'Last', first_name: 'First')
         @grade_entry_form = GradeEntryForm.make
-        @grade_entry_student = @grade_entry_form.grade_entry_students.make(user: @student)
+        @grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: @student)
         @grade_entry_item = @grade_entry_form.grade_entry_items.make(name: 'something', position: 1)
         @current_grade = 5.0
         @grade_entry_student.grades.make(grade_entry_item: @grade_entry_item, grade: @current_grade)

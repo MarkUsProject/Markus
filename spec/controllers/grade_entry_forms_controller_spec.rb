@@ -8,10 +8,7 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
 
     # initialize student DB entries
-    user = create(:user, user_name: 'c8shosta', type: 'Student')
-    create(:grade_entry_student,
-           user: user,
-           grade_entry_form: grade_entry_form_with_data)
+    create(:user, user_name: 'c8shosta', type: 'Student')
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }

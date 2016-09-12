@@ -25,6 +25,8 @@ class GradeEntryForm < ActiveRecord::Base
   validates                 :is_hidden, inclusion: { in: [true, false] }
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
+  after_create :create_all_grade_entry_students
+
   BLANK_MARK = ''
 
   # The total number of marks for this grade entry form
@@ -74,5 +76,13 @@ class GradeEntryForm < ActiveRecord::Base
     # Watch out for division by 0
     return 0 if num_released.zero?
     ((total_marks / num_released) / out_of_total) * 100
+  end
+
+  # Create grade_entry_student for each student in the course
+  def create_all_grade_entry_students
+    new_students = Student.all.map do |student|
+      grade_entry_students.build(user_id: student.id, released_to_student: false)
+    end
+    GradeEntryStudent.import new_students, validate: false
   end
 end
