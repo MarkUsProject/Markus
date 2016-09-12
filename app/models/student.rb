@@ -29,6 +29,8 @@ class Student < User
                             only_integer: true,
                             greater_than_or_equal_to: 0
 
+  after_create :create_all_grade_entry_students
+
   CSV_UPLOAD_ORDER = USER_STUDENT_CSV_UPLOAD_ORDER
   SESSION_TIMEOUT = USER_STUDENT_SESSION_TIMEOUT
 
@@ -310,6 +312,15 @@ class Student < User
   def self.update_section(students_ids, nsection)
     students_ids.each do |sid|
       Student.update(sid, {section_id: nsection})
+    end
+  end
+
+  # Creates grade_entry_student for every marks spreadsheet
+  def create_all_grade_entry_students
+    GradeEntryForm.all.each do |form|
+      unless form.grade_entry_students.exists?(user_id: id)
+        form.grade_entry_students.create(user_id: id)
+      end
     end
   end
 
