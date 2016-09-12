@@ -319,7 +319,7 @@ class Student < User
   def create_all_grade_entry_students
     GradeEntryForm.all.each do |form|
       unless form.grade_entry_students.exists?(user_id: id)
-        form.grade_entry_students.create(user_id: id)
+        form.grade_entry_students.create(user_id: id, released_to_student: false)
       end
     end
   end

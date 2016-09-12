@@ -81,7 +81,7 @@ class GradeEntryForm < ActiveRecord::Base
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
     new_students = Student.all.map do |student|
-      grade_entry_students.build(user_id: student.id)
+      grade_entry_students.build(user_id: student.id, released_to_student: false)
     end
     GradeEntryStudent.import new_students, validate: false
   end

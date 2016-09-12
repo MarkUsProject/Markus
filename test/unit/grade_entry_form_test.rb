@@ -75,7 +75,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     setup do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
       @grade_entry_items = @grade_entry_form.grade_entry_items
-      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.make
+      student = Student.make
+      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[0],
                                                         grade: 0.4)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[1],
@@ -83,12 +84,14 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should 'verify the correct value is returned when the student has grades for none of the questions' do
-      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.make
+      student1 = Student.make
+      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
       assert_equal(nil, grade_entry_student_with_no_grades.total_grade)
     end
 
     should 'verify the correct value is returned when the student has zero for all of the questions' do
-      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.make
+      student1 = Student.make
+      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student1)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.make(grade_entry_item: grade_entry_item)
       end
@@ -112,7 +115,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     setup do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
       @grade_entry_items = @grade_entry_form.grade_entry_items
-      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.make
+      student = Student.make
+      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[0],
                                                         grade: 3)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[1],
@@ -120,12 +124,14 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should 'verify the correct percentage is returned when the student has grades for none of the questions' do
-      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.make
+      student = Student.make
+      grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       assert_equal('', @grade_entry_form.calculate_total_percent(grade_entry_student_with_no_grades))
     end
 
     should 'verify the correct percentage is returned when the student has zero for all of the questions' do
-      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.make
+      student = Student.make
+      grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.make(grade_entry_item: grade_entry_item)
       end
@@ -149,7 +155,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     setup do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
       @grade_entry_items = @grade_entry_form.grade_entry_items
-      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.make
+      student = Student.make
+      @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[0],
                                                         grade: 3)
       @grade_entry_student_with_some_grades.grades.make(grade_entry_item: @grade_entry_items[1],
@@ -157,7 +164,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should 'verify the correct value is returned when the student has grades for none of the questions' do
-      student_with_no_grades = @grade_entry_form.grade_entry_students.make
+      student1 = Student.make
+      student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
       assert_equal(true, student_with_no_grades.all_blank_grades?)
     end
 
@@ -181,7 +189,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
 
       # Set up 5 GradeEntryStudents
       (0..4).each do |i|
-        grade_entry_student = @grade_entry_form.grade_entry_students.make
+        student = Student.make
+        grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: student)
         # Give the student a grade for all three questions for the grade entry form
         (0..2).each do |j|
           grade_entry_student.grades.make(grade_entry_item: @grade_entry_items[j],
@@ -209,7 +218,8 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     should 'verify the correct value is returned when multiple marks have been released and there are blank marks' do
       # Blank marks for students
       (0..2).each do
-        grade_entry_student = @grade_entry_form.grade_entry_students.make(released_to_student: true)
+        student = Student.make
+        @grade_entry_form.grade_entry_students.find_by(user: student).update(released_to_student: true)
       end
 
       assert_equal(70.00, @grade_entry_form.calculate_released_average())
