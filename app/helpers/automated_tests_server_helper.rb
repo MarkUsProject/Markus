@@ -13,13 +13,13 @@ module AutomatedTestsServerHelper
     output = '<testrun>'
     errors = ''
     test_scripts.each do |script|
+      stdout = ''
       begin
-        stdout = ''
         Timeout.timeout(TIME_LIMIT) do
-          stdout, stderr, status = Open3.capture3("
-            cd '#{test_path}' &&
-            ./'#{script}'
-          ")
+          stdout, stderr, status = Open3.capture3(
+            {'MARKUS_ADDRESS' => "#{markus_address}", 'API_KEY' => "#{api_key}", 'ASSIGNMENT_ID' => "#{assignment_id}",
+             'GROUP_ID' => "#{group_id}"}, # needs strings as hash keys and values for env variables
+            "cd '#{test_path}' && ./'#{script}'")
           errors += stderr
         end
       rescue Timeout::Error
