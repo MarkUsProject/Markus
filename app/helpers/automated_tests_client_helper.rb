@@ -250,6 +250,11 @@ module AutomatedTestsClientHelper
   def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
 
     # TODO Show errors to the user rather than just logging them? (and where is the logger logging?)
+    test_server_user = User.find_by_user_name(MarkusConfigurator.markus_ate_server_host)
+    if test_server_user.nil? || !test_server_user.test_server?
+      return
+    end
+    test_server_user.set_api_key
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
@@ -261,7 +266,7 @@ module AutomatedTestsClientHelper
     export_group_repo(group, repo_dir, submission)
     if test_files_available?(assignment, repo_dir) && user_has_permission?(current_user, grouping, assignment)
       call_by = current_user.class.name.demodulize
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, current_user.api_key, grouping_id, submission_id)
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, test_server_user.api_key, grouping_id, submission_id)
     end
   end
 
@@ -308,6 +313,10 @@ module AutomatedTestsClientHelper
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_server_host
+    test_server_user = User.find_by_user_name(test_server_host)
+    if test_server_user.nil?
+      return
+    end
     test_path = MarkusConfigurator.markus_ate_server_tests_dir
 
     if test_server_host == 'localhost'
@@ -373,7 +382,7 @@ module AutomatedTestsClientHelper
     if test_scripts.nil?
       MarkusLogger.instance.log("ATE test run framework error for assignment #{assignment}, group #{grouping}:\n
                                  #{raw_result}", MarkusLogger::ERROR)
-      return
+      return false
     end
     unless test_scripts.is_a?(Array)
       test_scripts = [test_scripts]
@@ -419,6 +428,7 @@ module AutomatedTestsClientHelper
       submission.set_marks_for_tests
     end
 
+    return true
   end
 
 end
