@@ -1521,7 +1521,7 @@ fr:
       test_files_unavailable: "UPDATE ME"
       source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
-      marks_obtained: "Points obtenus :"
+      marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:

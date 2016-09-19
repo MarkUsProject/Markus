@@ -1927,7 +1927,7 @@ es:
       test_files_unavailable:             "No hay un script para lanzar la prueba"
       source_files_unavailable:           "No se encontró ningún archivo para probar"
       dir_not_exist:                      "El directorio %{dir} requerido para Ant no existe"
-      marks_obtained:                     "<span class=\"prop_label\">Notas Obtenidas:</span> %{marking}"
+      marks_obtained:                     "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
                                            leído."
       download_not_in_db:                 "El archivo solicitado no se encuentra en la base de datos."
@@ -1937,7 +1937,7 @@ es:
         description:                      "Descripción"
         update_description:               "Ingrese su Descripción Aquí"
         seq_num:                          "ACTUALIZAME: seq_num"
-        max_marks:                        "Notas Máximas <span class='required_field'>*</span>"
+        max_marks:                        "UPDATE ME <span class='required_field'>*</span>"
         run_by_instructors:               "Ejecutable por los Instructores"
         run_by_students:                  "Ejecutable por los Estudiantes"
         halts_testing:                    "Parar si existe un error"
