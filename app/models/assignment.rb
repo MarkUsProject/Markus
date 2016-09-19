@@ -305,13 +305,13 @@ class Assignment < ActiveRecord::Base
     self.save
   end
 
-  def total_test_script_marks
-    return test_scripts.sum("max_marks")
+  def total_instructor_test_script_marks
+    return test_scripts.where('run_by_instructors' => true).sum('max_marks')
   end
 
   #total marks for scripts that are run on student request
-  def total_ror_script_marks
-    return test_scripts.where("run_by_students" => true).sum("max_marks")
+  def total_student_test_script_marks
+    return test_scripts.where('run_by_students' => true).sum('max_marks')
   end
 
   def add_group(new_group_name=nil)
