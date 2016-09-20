@@ -40,8 +40,8 @@ module AutomatedTestsServerHelper
     output += "\n</testrun>"
 
     # store results and send them back to markus through its api
-    test_results_path = File.join(test_results_path, markus_address.gsub('/', '_'), assignment_id.to_s, group_id.to_s,
-                                  submission_id.to_s, "run_#{Time.now.to_i}")
+    test_results_path = File.join(test_results_path, markus_address.gsub('/', '_'), "a#{assignment_id}", "g#{group_id}",
+                                  "s#{submission_id}", "run_#{Time.now.to_i}")
     FileUtils.mkdir_p(test_results_path)
     File.write("#{test_results_path}/output.txt", output)
     File.write("#{test_results_path}/error.txt", errors)
