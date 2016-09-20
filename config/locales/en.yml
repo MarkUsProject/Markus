@@ -1658,7 +1658,7 @@ en:
       test_files_unavailable: "There is no test script to run test"
       source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
-      marks_obtained: "<span class=\"prop_label\">Marks Obtained:</span> %{marking}"
+      marks_obtained: "<span class=\"prop_label\">Tests Passed:</span> %{marking}"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:
@@ -1667,7 +1667,7 @@ en:
         description: "Description"
         update_description: "Enter Description Here"
         seq_num: "UPDATE ME: seq_num"
-        max_marks: "Maximum marks <span class='required_field'>*</span>"
+        max_marks: "Number of Tests <span class='required_field'>*</span>"
         run_by_instructors: "Runnable by Instructors"
         run_by_students: "Runnable by Students"
         halts_testing: "Halt On Failure"

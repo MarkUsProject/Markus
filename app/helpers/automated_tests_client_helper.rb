@@ -266,7 +266,8 @@ module AutomatedTestsClientHelper
     export_group_repo(group, repo_dir, submission)
     if test_files_available?(assignment, repo_dir) && user_has_permission?(current_user, grouping, assignment)
       call_by = current_user.class.name.demodulize
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, test_server_user.api_key, grouping_id, submission_id)
+      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, current_user.api_key,
+                     test_server_user.api_key, grouping_id, submission_id)
     end
   end
 
@@ -292,7 +293,7 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, call_by, api_key, grouping_id, submission_id)
+  def self.perform(host_with_port, call_by, user_api_key, server_api_key, grouping_id, submission_id)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -335,8 +336,8 @@ module AutomatedTestsClientHelper
         return
       end
       # enqueue locally using resque api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, api_key, test_scripts, test_path, test_results_path,
-                     assignment.id, group.id, submission_id)
+      Resque.enqueue(AutomatedTestsServerHelper, markus_address, user_api_key, server_api_key, test_scripts, test_path,
+                     test_results_path, assignment.id, group.id, submission_id)
     else
       # tests executed remotely: copy the student's submission and all necessary files through ssh in a temp folder
       begin
@@ -358,8 +359,8 @@ module AutomatedTestsClientHelper
           ssh.exec!("#{test_scripts_executables}")
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServerHelper',
-                           :args => [markus_address, api_key, test_scripts, test_path, test_results_path, assignment.id,
-                                     group.id, submission_id]}
+                           :args => [markus_address, user_api_key, server_api_key, test_scripts, test_path,
+                                     test_results_path, assignment.id, group.id, submission_id]}
           server_queue = MarkusConfigurator.markus_ate_test_queue_name
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end

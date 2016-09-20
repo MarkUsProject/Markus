@@ -157,8 +157,9 @@ class MarkusPAMWrapper(PAMWrapper):
             for result in results:
                 marks = 1 if result.status == PAMResult.Status.PASS else 0
                 status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
-                self.print_result(name=result.name, input=result.description, expected='', actual=result.message,
-                                  marks=marks, status=status)
+                name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
+                                                                                           desc=result.description)
+                self.print_result(name=name, input='', expected='', actual=result.message, marks=marks, status=status)
 
 
 if __name__ == '__main__':

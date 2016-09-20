@@ -7,7 +7,8 @@ module AutomatedTestsServerHelper
   @queue = MarkusConfigurator.markus_ate_test_queue_name
   TIME_LIMIT = 600
 
-  def self.perform(markus_address, api_key, test_scripts, test_path, test_results_path, assignment_id, group_id, submission_id)
+  def self.perform(markus_address, user_api_key, server_api_key, test_scripts, test_path, test_results_path,
+                   assignment_id, group_id, submission_id)
 
     # run tests
     output = '<testrun>'
@@ -17,8 +18,8 @@ module AutomatedTestsServerHelper
       begin
         Timeout.timeout(TIME_LIMIT) do
           stdout, stderr, status = Open3.capture3(
-            {'MARKUS_ADDRESS' => "#{markus_address}", 'API_KEY' => "#{api_key}", 'ASSIGNMENT_ID' => "#{assignment_id}",
-             'GROUP_ID' => "#{group_id}"}, # needs strings as hash keys and values for env variables
+            {'MARKUS_ADDRESS' => "#{markus_address}", 'API_KEY' => "#{user_api_key}",
+             'ASSIGNMENT_ID' => "#{assignment_id}", 'GROUP_ID' => "#{group_id}"}, # needs strings as hash keys and values for env variables
             "cd '#{test_path}' && ./'#{script}'")
           errors += stderr
         end
@@ -48,7 +49,7 @@ module AutomatedTestsServerHelper
     api_url = "#{markus_address}/api/assignments/#{assignment_id}/groups/#{group_id}/test_script_results"
     # HTTParty needs strings as hash keys, or it chokes
     options = {:headers => {
-                   'Authorization' => "MarkUsAuth #{api_key}",
+                   'Authorization' => "MarkUsAuth #{server_api_key}",
                    'Accept' => 'application/json'},
                :body => {
                    'assignment_id' => assignment_id,
