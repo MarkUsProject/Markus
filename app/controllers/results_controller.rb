@@ -465,34 +465,50 @@ class ResultsController < ApplicationController
 
   def view_marks
     @assignment = Assignment.find(params[:assignment_id])
+    result_from_id = Result.find(params[:id])
+    is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(@current_user, @assignment)
 
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
+      if @grouping.nil?
+        redirect_to controller: 'assignments',
+                    action: 'student_interface',
+                    id: params[:id]
+        return
+      end
+      unless is_review || @grouping.has_submission?
+        render 'results/student/no_submission'
+        return
+      end
       @submission = @grouping.current_submission_used
-      result_from_id = Result.find(params[:id])
+      unless is_review || @submission.has_result?
+        render 'results/student/no_result'
+        return
+      end
       if result_from_id.is_a_review?
         @result = result_from_id
       else
         @result = @submission.get_original_result
       end
     else
-      @result = Result.find(params[:id])
+      @result = result_from_id
       @submission = @result.submission
       @grouping = @submission.grouping
     end
 
-    is_review = @result.is_review_for?(@current_user, @assignment) ||
-        @result.is_a_review?
-
+    # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
       redirect_to controller: 'assignments',
                   action: 'student_interface',
                   id: params[:id]
       return
     end
-
     unless is_review || @grouping.has_submission?
       render 'results/student/no_submission'
+      return
+    end
+    unless is_review || @submission.has_result?
+      render 'results/student/no_result'
       return
     end
 
@@ -509,13 +525,8 @@ class ResultsController < ApplicationController
       @current_group_name = @current_pr_result.submission.grouping.group.group_name
     end
 
-    unless is_review || @submission.has_result?
-      render 'results/student/no_result'
-      return
-    end
-
     @old_result = nil
-    if @submission.remark_submitted? && !is_review
+    if !is_review && @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
       # Check if remark request has been submitted but not released yet
@@ -524,8 +535,7 @@ class ResultsController < ApplicationController
         return
       end
     end
-
-    unless @result.released_to_students || is_review
+    unless is_review || @result.released_to_students
       render 'results/student/no_result'
       return
     end
