@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.1.3
+  - 2.3.1
 
 before_install:
   - sudo echo host localhost >> ~/.ssh/config
@@ -45,7 +45,7 @@ install:
   - unzip sqlite-amalgamation-3071501.zip
   - mv sqlite-amalgamation-3071501 subversion-1.9.4/sqlite-amalgamation
   - cd subversion-1.9.4
-  - LDFLAGS="-L/home/travis/.rvm/rubies/ruby-2.1.3/lib/" ./configure --prefix=/home/travis/.rvm/rubies/ruby-2.1.3/
+  - LDFLAGS="-L/home/travis/.rvm/rubies/ruby-2.3.1/lib/" ./configure --prefix=/home/travis/.rvm/rubies/ruby-2.3.1/
   - make
   - make swig-rb
   - make install
