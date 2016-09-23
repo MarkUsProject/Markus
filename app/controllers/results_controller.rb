@@ -473,6 +473,10 @@ class ResultsController < ApplicationController
       if result_from_id.is_a_review?
         @result = result_from_id
       else
+        unless @submission
+          render 'results/student/no_result'
+          return
+        end
         @result = @submission.get_original_result
       end
     else
