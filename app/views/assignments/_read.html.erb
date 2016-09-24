@@ -53,7 +53,8 @@
       <% end %>
     </div>
 
-    <% if !@grouping.nil? %>
+    <%#Cannot assign Grace Period without first assigning a group.%>
+    <% unless @grouping.nil? && @penalty.type == "GracePeriodSubmissionRule" %>
       <div class='sub_block'>
         <span class='prop_label'><%= t('additional_information') %>:</span>
         <% if @penalty.type == "GracePeriodSubmissionRule" %>
@@ -63,7 +64,7 @@
                           @grouping.available_grace_credits)) %>
           <% end %>
         <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
-          <ul><br>
+          <br><ul>
           <% @enum_penalty.each do |p| %>
             <% if p == @enum_penalty.first %>
               <li><%= t('penalty_decay_message_first',
@@ -77,7 +78,7 @@
           <% end %>
           </ul>
         <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
-          <ul><br>
+          <br><ul>
           <% deduction = hours = 0 %>
           <% @enum_penalty.each do |p| %>
             <% deduction += p.deduction %>
