@@ -14,9 +14,28 @@
 
 /** Modal windows, powered by jQuery.easyModal. */
 
+
 function ModalMarkus(elem) {
   this.modal_dialog = jQuery(elem).easyModal({
-    updateZIndexOnOpen: false
+      onOpen: function(myModal){
+          setTimeout(function() {
+              // wait for the modal to load
+
+              // search for the first text area or input in the modal
+              var textAreas = myModal.getElementsByTagName("textArea");
+              var inputs = myModal.getElementsByTagName("input");
+
+              if (textAreas == null) {
+                  if(inputs != null) {
+                      inputs[0].focus();
+                  }
+              } else {
+                  textAreas[0].focus();
+              }
+
+          }, 200); 
+      }, 
+      updateZIndexOnOpen: false
   });
 }
 
