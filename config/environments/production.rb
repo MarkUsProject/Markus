@@ -278,18 +278,29 @@ Markus::Application.configure do
   # Allows the instructor to allow students to run tests
   ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
 
-  # The test server host and username.
-  # SSH Login must be set up before running MarkUs, so that MarkUs
-  # can connect to the test dispatcher without a password.
-  ATE_TEST_SERVER_HOST = 'localhost'
-  ATE_TEST_SERVER_USERNAME = 'localhost'
+  # The test server host. Use 'localhost' for a local server without authentication.
+  ATE_SERVER_HOST = 'localhost'
+  # The test server username used to copy the test files over and to run the Resque server worker.
+  # SSH Login must be set up for this username to connect without a password from MarkUs.
+  # Ignored if ATE_SERVER_HOST is 'localhost'.
+  ATE_SERVER_FILES_USERNAME = 'localhost'
+  # The test server username used to run the tests.
+  # Can be the same as ATE_SERVER_FILE_USERNAME, or ATE_SERVER_FILES_USERNAME must be able to sudo -u to it.
+  # Ignored if ATE_SERVER_HOST is 'localhost'.
+  ATE_SERVER_TESTS_USERNAME = 'localhost'
 
-  # Make sure these directories exist or can be created by MarkUs
-  # The directory where test scripts are stored and student repos are temporarily exported.
-  ATE_CLIENT_STORAGE_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
-  # The directory where to run tests on the test server.
+  # Make sure these directories exist and the appropriate users can write into them
+  # The directory on the client where test scripts are stored and student repos are temporarily exported.
+  # MarkUs writes here.
+  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
+  # The directory on the test server where to copy test files.
+  # ATE_SERVER_FILES_USERNAME writes here.
+  ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/files"
+  # The directory on the test server where to run tests. Can be the same as ATE_SERVER_FILES_DIR.
+  # ATE_SERVER_TESTS_USERNAME writes here.
   ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
-  # The directory where to store test results on the test server.
+  # The directory on the test server where to store test results.
+  # ATE_SERVER_FILES_USERNAME writes here.
   ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
 
   ###################################################################
@@ -300,9 +311,9 @@ Markus::Application.configure do
   # TERM_CHILD=1 QUEUE=* bundle exec rake environment resque:work
 
   # The name of the queue on the test client where submission files wait to be copied.
-  ATE_FILE_QUEUE_NAME = 'CSC108_ate_files'
+  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
   # The name of the queue on the test server where tests wait to be executed.
-  ATE_TEST_QUEUE_NAME = 'CSC108_ate_tests'
+  ATE_TESTS_QUEUE_NAME = 'ate_tests'
   # The name of the queue where jobs to create individal groups for all students wait to be executed.
   JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108_job_groups'
   # The name of the queue where jobs to collect submissions wait to be executed.

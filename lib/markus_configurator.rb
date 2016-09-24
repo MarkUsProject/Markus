@@ -244,19 +244,35 @@ module MarkusConfigurator
     end
   end
 
-  def markus_ate_server_username
-    if automated_testing_engine_on? && (defined? ATE_SERVER_USERNAME)
-      return ATE_SERVER_USERNAME
+  def markus_ate_server_files_username
+    if automated_testing_engine_on? && (defined? ATE_SERVER_FILES_USERNAME)
+      return ATE_SERVER_FILES_USERNAME
     else
       return 'localhost'
     end
   end
 
-  def markus_ate_client_storage_dir
-    if automated_testing_engine_on? && (defined? ATE_CLIENT_STORAGE_DIR)
-      return ATE_CLIENT_STORAGE_DIR
+  def markus_ate_server_tests_username
+    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS_USERNAME)
+      return ATE_SERVER_TESTS_USERNAME
+    else
+      return 'localhost'
+    end
+  end
+
+  def markus_ate_client_dir
+    if automated_testing_engine_on? && (defined? ATE_CLIENT_DIR)
+      return ATE_CLIENT_DIR
     else
       return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
+  def markus_ate_server_files_dir
+    if automated_testing_engine_on? && (defined? ATE_SERVER_FILES_DIR)
+      return ATE_SERVER_FILES_DIR
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests', 'files')
     end
   end
 
@@ -280,17 +296,17 @@ module MarkusConfigurator
   # Resque Configuration
   ##########################################
 
-  def markus_ate_file_queue_name
-    if automated_testing_engine_on? && (defined? ATE_FILE_QUEUE_NAME)
-      return ATE_FILE_QUEUE_NAME
+  def markus_ate_files_queue_name
+    if automated_testing_engine_on? && (defined? ATE_FILES_QUEUE_NAME)
+      return ATE_FILES_QUEUE_NAME
     else
       return 'ate_files'
     end
   end
 
-  def markus_ate_test_queue_name
-    if automated_testing_engine_on? && (defined? ATE_TEST_QUEUE_NAME)
-      return ATE_TEST_QUEUE_NAME
+  def markus_ate_tests_queue_name
+    if automated_testing_engine_on? && (defined? ATE_TESTS_QUEUE_NAME)
+      return ATE_TESTS_QUEUE_NAME
     else
       return 'ate_tests'
     end
