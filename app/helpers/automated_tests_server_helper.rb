@@ -40,7 +40,7 @@ module AutomatedTestsServerHelper
     output = '<testrun>'
     errors = ''
     test_scripts.each do |script|
-      run_command = "cd '#{tests_path}'; ./'#{script}'"
+      run_command = "cd '#{tests_path}'; ./'#{script}' #{markus_address} #{user_api_key} #{assignment_id} #{group_id}"
       unless test_username.nil?
         run_command = "sudo -u #{test_username} -- bash -c \"#{run_command}\""
       end
@@ -48,10 +48,7 @@ module AutomatedTestsServerHelper
       status = nil
       begin
         Timeout.timeout(TIME_LIMIT) do
-          stdout, stderr, status = Open3.capture3(
-            {'MARKUS_ADDRESS' => "#{markus_address}", 'API_KEY' => "#{user_api_key}",
-             'ASSIGNMENT_ID' => "#{assignment_id}", 'GROUP_ID' => "#{group_id}"}, # needs strings as hash keys and values for env variables
-            run_command)
+          stdout, stderr, status = Open3.capture3(run_command)
           errors += stderr
         end
       rescue Timeout::Error

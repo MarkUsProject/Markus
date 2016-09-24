@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import enum
+import sys
 
 
 class PAMResult:
@@ -173,3 +174,8 @@ if __name__ == '__main__':
     wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES,
                                path_to_virtualenv=PATH_TO_VIRTUALENV)
     wrapper.run()
+    # use with markusapi.py if needed
+    ROOT_URL = sys.argv[1]
+    API_KEY = sys.argv[2]
+    ASSIGNMENT_ID = sys.argv[3]
+    GROUP_ID = sys.argv[4]
