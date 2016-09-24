@@ -48,7 +48,7 @@
     var input_id = 'assignment_assignment_files_attributes_' + new_id +
                    '_filename';
     var assignment_file = '<p id="' + input_id + '_holder">' +
-      '<label for="' + input_id + '"><%= t(:filename) %></label>' +
+      '<label class="required" for="' + input_id + '"><%= t(:filename) %></label>' +
       '<input type="text" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
