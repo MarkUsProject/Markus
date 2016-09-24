@@ -53,11 +53,9 @@ namespace :db do
                      grade: random_grade)
         grade_entry_form_total += random_grade
       end
-      # Create grade entry student row with total mark
-      GradeEntryStudent.create(user_id: student.id,
-                               grade_entry_form_id: grade_entry_form.id,
-                               released_to_student: true,
-                               total_grade: grade_entry_form_total)
     end
+
+    # Release spreadsheet grades
+    grade_entry_form.grade_entry_students.update_all(released_to_student: true)
   end
 end
