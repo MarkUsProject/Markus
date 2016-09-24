@@ -53,6 +53,7 @@
               <input id='random_assign'
                 className='image_input'
                 src='<%= image_path 'random_arrow.png' %>'
+                title='<%= j raw I18n.t('groups.randomly_assign_graders') %>'
                 alt='<%= j raw I18n.t('groups.randomly_assign_graders') %>'
                 onClick={this.performAction}
                 type='image'
@@ -62,6 +63,7 @@
               <input id='assign'
                 className='image_input'
                 src='<%= image_path 'add_arrow.png' %>'
+                title='<%= j raw I18n.t('add_graders') %>'
                 alt='<%= j raw I18n.t('add_graders') %>'
                 onClick={this.performAction}
                 type='image'
@@ -71,6 +73,7 @@
               <input id='unassign'
                 className='image_input'
                 src='<%= image_path 'remove_arrow.png' %>'
+                title='<%= j raw I18n.t('remove_graders') %>'
                 alt='<%= j raw I18n.t('remove_graders') %>'
                 onClick={this.performAction}
                 type='image'
