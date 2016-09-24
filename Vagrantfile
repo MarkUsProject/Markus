@@ -3,6 +3,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "markusproject/ubuntu"
+  config.ssh.private_key_path = "/home/.ssh/id_rsa"
   
   # Allow instance to see project folder.
   # Warning: This may cause problems with your Vagrant box!
