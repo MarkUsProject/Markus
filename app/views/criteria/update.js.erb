@@ -1,7 +1,7 @@
 // Update criterion information in the pane that contains the list of criteria
-document.getElementById('criterion_title_<%= @criterion.id %>').innerHTML = '<%= @criterion.name %>';
-document.getElementById('criterion_max_mark_<%= @criterion.id %>').innerHTML = '<%= @criterion.max_mark %>';
-document.getElementById('visibility_indicator_<%= @criterion.id %>').innerHTML =
+document.getElementById('criterion_title_<%= @criterion.class %><%= @criterion.id %>').innerHTML = '<%= @criterion.name %>';
+document.getElementById('criterion_max_mark_<%= @criterion.class %><%= @criterion.id %>').innerHTML = '<%= @criterion.max_mark %>';
+document.getElementById('visibility_indicator_<%= @criterion.class %><%= @criterion.id %>').innerHTML =
   <% if @criterion.ta_visible && @criterion.peer_visible %>
     '<%= image_tag 'icons/user_suit.png' %><%= image_tag 'icons/group.png' %>'
   <% elsif @criterion.ta_visible %>
