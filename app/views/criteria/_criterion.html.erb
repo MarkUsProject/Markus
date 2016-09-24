@@ -1,5 +1,12 @@
 <li id='criterion_<%= criterion.class %><%= criterion.id %>'>
   <span class='left'>
+    <% if criterion.class.to_s == 'RubricCriterion' %>
+      <%= image_tag 'icons/table.png'%> &nbsp
+    <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
+      <span class="flexible_criteria_icon"> ⅔ &nbsp </span>
+    <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
+      <%= image_tag 'icons/check_box.png' %> &nbsp
+    <% end %>
     <%= link_to truncate(criterion.name,
                          length: 27,
                          omission: '...'),
@@ -22,3 +29,5 @@
     <% end %>
   </span>
 </li>
+
+<!--"check_box.png" designed by interactivemania, used under Creative Comments BY-ND 3.0-->
