@@ -34,13 +34,25 @@
   }
 
   function check_required_fields() {
-    var empty = false;
+    var invalid = false;
     jQuery('input[required]:not([disabled])').each(function() {
       if (this.value === '') {
-        empty = true;
+        invalid = true;
       }
     });
-    jQuery('input[type="submit"]').prop('disabled', empty);
+
+    var filename_re = /^[-_\.a-zA-Z0-9]+$/;
+    jQuery('.assignment_file').each(function() {
+      if (!filename_re.exec(this.value)) {
+        invalid = true;
+        // _constants.scss $red
+        jQuery(this).css('background-color', '#fe2a2a');
+      } else {
+        jQuery(this).css('background-color', '');
+      }
+    });
+
+    jQuery('input[type="submit"]').prop('disabled', invalid);
   }
 
   function add_assignment_file() {
@@ -48,8 +60,8 @@
     var input_id = 'assignment_assignment_files_attributes_' + new_id +
                    '_filename';
     var assignment_file = '<p id="' + input_id + '_holder">' +
-      '<label for="' + input_id + '"><%= t(:filename) %></label>' +
-      '<input type="text" name="assignment[assignment_files_attributes][' +
+      '<label class="required" for="' + input_id + '"><%= t(:filename) %></label>' +
+      '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
       '<%= t(:remove) %></a></p>';
@@ -123,8 +135,9 @@
 
     // Handle required fields
     check_required_fields();
-    jQuery('input[required]').change(check_required_fields)
-                             .keyup(check_required_fields);
+    jQuery(document).on("change", jQuery('input[required]'), check_required_fields)
+                    .on("keyup", jQuery('input[required]'), check_required_fields)
+                    .on("click", jQuery('#assignment_file_add_link'), check_required_fields);
 
     // Handle date/time pickers
     jQuery('.section_due_date_input').each(function() {
