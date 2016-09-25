@@ -21,18 +21,12 @@ function ModalMarkus(elem) {
           setTimeout(function() {
               // wait for the modal to load
 
-              // search for the first text area or input in the modal
-              var textAreas = myModal.getElementsByTagName("textArea");
-              var inputs = myModal.getElementsByTagName("input");
-
-              if (textAreas == null) {
-                  if(inputs != null) {
-                      inputs[0].focus();
-                  }
-              } else {
-                  textAreas[0].focus();
+              // search for elements that can receive text as input
+              var input = jQuery(myModal).find("textArea, input:text");
+              if(input[0] != null) {
+                  input[0].focus();
               }
-
+              
           }, 200); 
       }, 
       updateZIndexOnOpen: false
