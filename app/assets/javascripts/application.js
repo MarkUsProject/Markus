@@ -14,19 +14,16 @@
 
 /** Modal windows, powered by jQuery.easyModal. */
 
-
 function ModalMarkus(elem) {
   this.modal_dialog = jQuery(elem).easyModal({
-      onOpen: function(myModal){
+      onOpen: function(myModal) {
+          // wait for the modal to load
           setTimeout(function() {
-              // wait for the modal to load
-
               // search for elements that can receive text as input
-              var input = jQuery(myModal).find("textArea, input:text");
-              if(input[0] != null) {
-                  input[0].focus();
+              var inputs = jQuery(myModal).find("textarea, input:text");
+              if (inputs[0] != null && inputs.length > 0) {
+                  inputs[0].focus();
               }
-              
           }, 200); 
       }, 
       updateZIndexOnOpen: false
