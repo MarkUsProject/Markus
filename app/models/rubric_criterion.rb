@@ -132,7 +132,7 @@ class RubricCriterion < Criterion
     end
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.max_mark = Float(working_row.shift) #* MAX_LEVEL
+      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
     rescue ArgumentError
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
@@ -296,7 +296,7 @@ class RubricCriterion < Criterion
     if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = mark_value.to_f * weight
+      mark_to_change.mark = mark_value.to_f
     end
     mark_to_change.save
   end
