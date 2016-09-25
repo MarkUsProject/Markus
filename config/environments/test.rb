@@ -238,6 +238,14 @@ Markus::Application.configure do
   # Automated Testing Engine settings
   ###################################################################
 
+  # Examples of architectures:
+  # 1) local development:
+  #    1 Resque worker to serve all queues
+  # 2) 1 client with 1 dedicated server, on the same machine with authentication or on separate machines:
+  #    1 Resque client worker + 1 Resque server worker
+  # 3) N clients with 1 shared server FIFO, on the same machine with authentication or on separate machines:
+  #    N Resque client workers + 1 Resque server worker
+
   # Automated Testing Engine(ATE) can only be used when this is set to true
   AUTOMATED_TESTING_ENGINE_ON = false
 
@@ -257,12 +265,13 @@ Markus::Application.configure do
 
   # Make sure these directories exist and the appropriate users can write into them
   # The directory on the client where test scripts are stored and student repos are temporarily exported.
-  # MarkUs writes here.
+  # The user running MarkUs writes here.
   ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/test/automated_tests"
-  # The directory on the test server where to copy test files.
+  # The directory on the test server where to copy test files. Multiple clients can write here at the same time.
   # ATE_SERVER_FILES_USERNAME writes here.
   ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/test/automated_tests/files"
-  # The directory on the test server where to run tests. Can be the same as ATE_SERVER_FILES_DIR.
+  # The directory on the test server where to run tests. Only one test at at time must be executed to avoid interference.
+  # Can be the same as ATE_SERVER_FILES_DIR.
   # ATE_SERVER_TESTS_USERNAME writes here.
   ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/test/automated_tests/tests"
   # The directory on the test server where to store test results.
@@ -273,8 +282,11 @@ Markus::Application.configure do
   # Resque queues
   ###################################################################
 
-  # To run a resque worker to serve all queues:
+  # Run a Resque worker to serve all queues:
   # TERM_CHILD=1 QUEUE=* bundle exec rake environment resque:work
+  # Run a Resque client worker and a Resque server worker:
+  # TERM_CHILD=1 QUEUE=CSC108_ate_files,CSC108_job_groups,CSC108_job_collect,CSC108_job_uncollect bundle exec rake environment resque:work
+  # TERM_CHILD=1 QUEUE=CSC108_ate_tests bundle exec rake environment resque:work
 
   # The name of the queue on the test client where submission files wait to be copied.
   ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
