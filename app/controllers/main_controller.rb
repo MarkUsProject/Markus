@@ -152,6 +152,7 @@ class MainController < ApplicationController
     end
     @assignments = Assignment.unscoped.includes([
       :assignment_stat, :groupings, :ta_memberships,
+      :pr_assignment,
       groupings: :current_submission_used,
       submission_rule: :assignment
     ]).order('due_date ASC')

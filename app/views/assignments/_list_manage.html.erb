@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @assignments.includes(:section_due_dates).each do |assignment| %>
+          <% @assignments.includes(:section_due_dates, :pr_assignment).each do |assignment| %>
             <% unless assignment.is_peer_review? %>
               <tr>
                 <td>
