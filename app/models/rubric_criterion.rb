@@ -132,7 +132,7 @@ class RubricCriterion < Criterion
     end
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
-      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
+      criterion.max_mark = Float(working_row.shift) #* MAX_LEVEL
     rescue ArgumentError
       raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
     end
@@ -221,8 +221,10 @@ class RubricCriterion < Criterion
   end
 
   def round_max_mark
-    factor = 10.0 ** 3
-    self.max_mark = (max_mark * factor).round.to_f / factor
+    # (this was being done in a weird way, leaving the original in case there are problems)
+    # factor = 10.0 ** 3
+    # self.max_mark = (max_mark * factor).round.to_f / factor
+    self.max_mark = self.max_mark.round(3)
   end
 
   def all_assigned_groups
