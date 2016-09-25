@@ -177,6 +177,8 @@ input#assignment_repository_folder[readonly] {
 
 .sub_block {
   margin-bottom: 1em;
+  overflow: hidden;
+  width: 100%;
 
   .prop_label {
     display: inline-block;
