@@ -1,11 +1,11 @@
 <li id='criterion_<%= criterion.class %><%= criterion.id %>'>
   <span class='left'>
     <% if criterion.class.to_s == 'RubricCriterion' %>
-      <%= image_tag('icons/table.png', title: 'Rubric Criterion')%> &nbsp
+      <%= image_tag('icons/table.png', title: t('criteria.rubric'))%> &nbsp
     <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
-      <span class="flexible_criteria_icon" title="Flexible Criterion"> ⅔ &nbsp </span>
+      <span class="flexible_criteria_icon" title=<%= t('criteria.flexible') %>> ⅔ &nbsp </span>
     <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
-      <%= image_tag('icons/check_box.png', title: 'Checkbox Criterion') %> &nbsp
+      <%= image_tag('icons/check_box.png', title: t('criteria.checkbox')) %> &nbsp
     <% end %>
     <%= link_to truncate(criterion.name,
                          length: 27,
