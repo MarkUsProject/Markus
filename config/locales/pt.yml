@@ -1062,6 +1062,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       title:          "Critério"
       name:           "Nome do critério"
       type:           "Tipo de critério"
+      max_mark:       "Nota máxima"
       rubric:         "Rubrica"
       flexible:       "Flexível"
       checkbox:       "Caixa de seleção"
@@ -1130,7 +1131,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     flexible_criteria:
       title: "Critérios flexíveis"
       name: "Nome do critério flexível"
-      max_mark: "Nota máxima"
       description: "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:
@@ -1152,7 +1152,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     checkbox_criteria:
       title:            "Critérios de caixa de seleção"
       name:             "Nome do critério flexível"
-      max_mark:         "Nota máxima"
       description:      "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:

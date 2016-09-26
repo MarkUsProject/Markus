@@ -22,7 +22,7 @@ class CriteriaController < ApplicationController
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
     unless @criterion.update(name: params[:new_criterion_prompt],
                              assignment_id: @assignment.id,
-                             max_mark: criterion_class::DEFAULT_MAX_MARK,
+                             max_mark: params[:max_mark_prompt],
                              position: @assignment.next_criterion_position)
       @errors = @criterion.errors
       render :add_criterion_error
