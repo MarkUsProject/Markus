@@ -306,7 +306,7 @@ Markus::Application.configure do
   ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/files"
   # The directory on the test server where to run tests. Only one test at at time must be executed to avoid interference.
   # Can be the same as ATE_SERVER_FILES_DIR.
-  # ATE_SERVER_TESTS_USERNAME writes here.
+  # ATE_SERVER_FILES_USERNAME and ATE_SERVER_TESTS_USERNAME write here.
   ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
   # The directory on the test server where to store test results.
   # ATE_SERVER_FILES_USERNAME writes here.

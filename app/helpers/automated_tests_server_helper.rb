@@ -8,7 +8,7 @@ module AutomatedTestsServerHelper
   TIME_LIMIT = 600
 
   def self.get_test_scripts_chmod(test_scripts, tests_path)
-    return test_scripts.map {|script| "chmod ug+x '#{tests_path}/#{script}'"}.join('; ')
+    return test_scripts.map {|script| "chmod ugo+x '#{tests_path}/#{script}'"}.join('; ')
   end
 
   # the user running this Resque worker should be:
@@ -20,20 +20,11 @@ module AutomatedTestsServerHelper
     # move files to the test location (if needed)
     test_scripts_executables = get_test_scripts_chmod(test_scripts, tests_path)
     if files_path != tests_path
-      if test_username.nil? # no auth or same user
-        FileUtils.mkdir_p(tests_path, {mode: 0700}) # create tests dir if not already existing..
-        FileUtils.cp_r("#{files_path}/.", tests_path) # == cp -r '#{files_path}'/* '#{tests_path}'
-        Open3.capture3(test_scripts_executables)
-      else # need sudo
-        Open3.capture3("sudo -u #{test_username} -- bash -c \"\\
-                          mkdir -m 700 -p '#{tests_path}';\\
-                          cp -r '#{files_path}'/* '#{tests_path}';\\
-                          #{test_scripts_executables}\"")
-      end
+      FileUtils.mkdir_p(tests_path, {mode: 0777}) # create tests dir if not already existing..
+      FileUtils.cp_r("#{files_path}/.", tests_path) # == cp -r '#{files_path}'/* '#{tests_path}'
       FileUtils.rm_rf(files_path)
-    else
-      Open3.capture3(test_scripts_executables)
     end
+    Open3.capture3(test_scripts_executables)
 
     # run tests
     output = '<testrun>'
@@ -83,7 +74,6 @@ module AutomatedTestsServerHelper
     else
       Open3.capture3("sudo -u #{test_username} -- bash -c \"\\
                         rm -rf '#{tests_path}';\\
-                        rm -rf /home/#{test_username}/*;\\
                         killall -9 -u #{test_username}\"")
     end
 
