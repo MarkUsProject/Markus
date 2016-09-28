@@ -192,11 +192,9 @@
           s[key] = summary.criteria[key];
           console.log(key);
         <% end %>
-        console.log(summary);
         return s;
       }.bind(this));
 
-      console.log(summaries_data);
         return (
         <Table data={summaries_data}
           columns={this.props.columns}
