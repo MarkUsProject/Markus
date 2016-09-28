@@ -289,9 +289,12 @@ class ResultsController < ApplicationController
     end
     #Ensure student doesn't download a file not submitted by his own grouping
 
+    file = SubmissionFile.find(params[:select_file_id])
+    @result = file.submission.non_pr_results.first
+
     unless authorized_to_download?(file_id: params[:select_file_id],
                                    assignment_id: params[:assignment_id],
-                                   result_id: params[:id],
+                                   result_id: @result.id,
                                    from_codeviewer: params[:from_codeviewer])
       render 'shared/http_status', formats: [:html],
              locals: { code: '404',
@@ -300,7 +303,7 @@ class ResultsController < ApplicationController
              layout: false
       return
     end
-    file = SubmissionFile.find(params[:select_file_id])
+
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
         file_contents = file.retrieve_file(true)

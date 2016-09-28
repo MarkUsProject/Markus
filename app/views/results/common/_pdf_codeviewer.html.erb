@@ -167,10 +167,7 @@
   };
 
   <% if @current_user.student? %>
-    <% submission = SubmissionFile.find(submission_file_id).submission %>
-    webViewerLoad("<%= download_assignment_submission_result_path(select_file_id: submission_file_id,
-                                                        submission_id: submission.id,
-                                                        id: submission.non_pr_results.first.id,
+    webViewerLoad("<%= download_assignment_results_path(select_file_id: submission_file_id,
                                                         show_in_browser: true ) %>"); // PDF
   <% else %>
     webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,
