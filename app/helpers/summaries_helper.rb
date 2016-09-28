@@ -55,6 +55,7 @@ module SummariesHelper
       g[:grace_credits_used] = grouping.grace_period_deduction_single
       g[:final_grade] = grouping.final_grade(result)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
+      g[:total_extra_points] = grouping.total_extra_points(result)
       g
     end
   end

@@ -740,6 +740,16 @@ class Grouping < ActiveRecord::Base
   end
 
   # Helper for populate_submissions_table.
+  # Returns the total bonus/deductions for this grouping other than late penalty.
+  def total_extra_points(result)
+    if !result.nil? && result.marking_state == Result::MARKING_STATES[:complete]
+      result.get_total_extra_points
+    else
+      '-'
+    end
+  end
+
+  # Helper for populate_submissions_table.
   # Returns the current marking state for the submission.
   # It would be nice to use Result::MARKING_STATES, but that doesn't have
   # states for released or remark requested.
