@@ -394,7 +394,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
     @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
     @file = SubmissionFile.find(@submission_file_id)
-    @result = Result.find(params[:id])
+    @result = Result.find(@file.submission.non_pr_results.first.id)
 
     #Is the current user a student?
     if current_user.student?
