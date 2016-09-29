@@ -190,7 +190,6 @@
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
           s[key] = summary.criteria[key];
-          console.log(key);
         <% end %>
         return s;
       }.bind(this));
