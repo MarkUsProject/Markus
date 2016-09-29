@@ -245,12 +245,14 @@
         <li class='<%= "active" if controller.controller_name == 'results' &&
             (!@result.nil? && !@result.is_a_review?) %>'>
           <%# FIXME should add the real submission %>
+          <% @grouping = @current_user.accepted_grouping_for(@assignment.id) %>
+          <% @submission = @grouping.current_submission_used %>
           <%= link_to t('results.results_name'),
                       view_marks_assignment_submission_result_path(@assignment.is_peer_review? ?
                                                                        @assignment.parent_assignment :
                                                                        @assignment,
-                                                                   1,
-                                                                   1) %>
+                                                                   @submission,
+                                                                   @submission.get_original_result) %>
         </li>
         <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
                                           @assignment.tokens_per_period > 0) %>
