@@ -300,7 +300,9 @@ class ResultsController < ApplicationController
              layout: false
       return
     end
+
     file = SubmissionFile.find(params[:select_file_id])
+    
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
         file_contents = file.retrieve_file(true)
