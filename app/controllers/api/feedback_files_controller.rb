@@ -10,7 +10,7 @@ module Api
     # Requires: assignment_id, group_id
     # Optional: filter, fields
     def index
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       collection = submission.feedback_files
@@ -32,7 +32,7 @@ module Api
     # Sends the contents of the specified Feedback File
     # Requires: assignment_id, group_id, id
     def show
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       feedback_file = submission.feedback_files.find(params[:id])
@@ -63,7 +63,7 @@ module Api
         return
       end
 
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       # Render error if there's an existing feedback file with that filename
@@ -92,7 +92,7 @@ module Api
     # Deletes a Feedback File instance
     # Requires: assignment_id, group_id, id
     def destroy
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       feedback_file = submission.feedback_files.find(params[:id])
@@ -118,7 +118,7 @@ module Api
     #  - filename: New name for the file
     #  - file_content: New contents of the feedback file file
     def update
-      submission = Submission.get_submission_by_grouping_id_and_assignment_id(
+      submission = Submission.get_submission_by_group_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
       feedback_file = submission.feedback_files.find(params[:id])
