@@ -35,7 +35,7 @@ class FlexibleCriterion < Criterion
 
   validate :visible?
 
-  DEFAULT_MAX_MARK = 2
+  DEFAULT_MAX_MARK = 1
 
   def self.symbol
     :flexible
