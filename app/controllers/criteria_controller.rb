@@ -149,8 +149,7 @@ class CriteriaController < ApplicationController
                                              :level_4_description,
                                              :ta_visible,
                                              :peer_visible).deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark)
-                                                                           .transform_values { |x|  (x.to_f * 4).to_s })
+                                                                           .permit(:max_mark))
   end
 
   def checkbox_criterion_params
