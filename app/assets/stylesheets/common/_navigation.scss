@@ -229,7 +229,9 @@ footer {
   }
 }
 
-#menus {
+#menus  {
+  background: $lighter-blue;
+
   @include breakpoint(mobile) {
     background: #000;
     height: 100%;
