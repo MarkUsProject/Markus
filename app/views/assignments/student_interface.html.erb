@@ -210,7 +210,7 @@
 
           <%# For each member of this group, display name and status %>
           <ul>
-            <% @studentmemberships.includes([:user]).each do |member|%>
+            <% @studentmemberships.includes(:user).each do |member|%>
               <%= render partial: 'assignments/member',
                          locals: { member: member,
                                    grouping: @grouping } %>
