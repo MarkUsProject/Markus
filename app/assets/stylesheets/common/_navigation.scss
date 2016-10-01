@@ -88,6 +88,7 @@ footer {
   font-size: 0.95em;
   padding: 2em $dimen-horizontal;
   text-align: center;
+  border-top: 1px solid $blue;
 
   @include breakpoint(mobile) {
     display: none;
@@ -229,6 +230,8 @@ footer {
 }
 
 #menus {
+  background: $lighter-blue;
+
   @include breakpoint(mobile) {
     background: #000;
     height: 100%;
