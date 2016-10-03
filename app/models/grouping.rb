@@ -732,7 +732,7 @@ class Grouping < ActiveRecord::Base
   # Helper for populate_submissions_table.
   # Returns the final grade for this grouping.
   def final_grade(result)
-    if !result.nil? && result.marking_state == Result::MARKING_STATES[:complete]
+    if !result.nil?
       result.total_mark
     else
       '-'
@@ -740,10 +740,15 @@ class Grouping < ActiveRecord::Base
   end
 
   # Helper for populate_submissions_table.
-  # Returns the total bonus/deductions for this grouping other than late penalty.
+  # Returns the total bonus/deductions for this grouping including late penalty.
   def total_extra_points(result)
-    if !result.nil? && result.marking_state == Result::MARKING_STATES[:complete]
-      result.get_total_extra_points
+    if !result.nil?
+      total_extra = result.get_total_extra_points + result.get_total_extra_percentage_as_points
+      if result.get_total_extra_percentage_as_points == 0
+        total_extra
+      else
+        total_extra.to_s + " (Late Penalty: " + result.get_total_extra_percentage.to_s + "%)"
+      end
     else
       '-'
     end
