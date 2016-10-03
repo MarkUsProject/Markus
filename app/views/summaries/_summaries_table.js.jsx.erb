@@ -161,7 +161,6 @@
     },
 
     render: function() {
-
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;
@@ -193,7 +192,7 @@
         <% end %>
         return s;
       }.bind(this));
-    
+
       return (
         <Table data={summaries_data}
           columns={this.props.columns}
