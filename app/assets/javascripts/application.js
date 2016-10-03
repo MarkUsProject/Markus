@@ -21,7 +21,7 @@ function ModalMarkus(elem) {
           setTimeout(function() {
               // search for elements that can receive text as input
               var inputs = jQuery(myModal).find("textarea, input:text");
-              if (inputs[0] != null && inputs.length > 0) {
+              if (inputs.length > 0) {
                   inputs[0].focus();
               }
           }, 200); 
