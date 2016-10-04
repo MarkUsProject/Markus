@@ -415,7 +415,7 @@ module AutomatedTestsClientHelper
         new_test_script_result.test_results.create(
           name: test['name'],
           input: (test['input'].nil? ? '' : test['input']),
-          actual_output: (test['actual'].nil? ? '' : test['actual']),
+          actual_output: (test['actual'].nil? ? '' : CGI.unescapeHTML(test['actual'])),
           expected_output: (test['expected'].nil? ? '' : test['expected']),         
           marks_earned: test['marks_earned'].to_i,
           completion_status: test['status'])

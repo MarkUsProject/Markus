@@ -5,6 +5,7 @@ import os
 import subprocess
 import enum
 import sys
+from xml.sax import saxutils
 
 
 class PAMResult:
@@ -167,7 +168,8 @@ class MarkusPAMWrapper(PAMWrapper):
                 status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
                 name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
                                                                                            desc=result.description)
-                self.print_result(name=name, input='', expected='', actual=result.message, marks=marks, status=status)
+                self.print_result(name=name, input='', expected='', actual=saxutils.escape(result.message), marks=marks,
+                                  status=status)
 
 
 if __name__ == '__main__':
@@ -180,7 +182,8 @@ if __name__ == '__main__':
     TEST_TIMEOUT = 5
     # The max time to run all tests on the student submission.
     GLOBAL_TIMEOUT = 20
-    # The path to a Python virtualenv that has UAM's dependencies (if None, dependencies must be installed system-wide)
+    # The path to a Python virtualenv that has the test dependencies
+    # (if None, dependencies must be installed system-wide)
     PATH_TO_VIRTUALENV = None
     wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES, test_timeout=TEST_TIMEOUT,
                                global_timeout=GLOBAL_TIMEOUT, path_to_virtualenv=PATH_TO_VIRTUALENV)

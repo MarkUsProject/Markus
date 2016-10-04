@@ -59,7 +59,8 @@
       marks field will be in the right side %>
 
         <% maxmarks_section  = '<div class="maxmarks">'
-           maxmarks_section += f.label :max_marks, raw(t 'automated_tests.script_option.max_marks')
+           maxmarks_section += f.label :max_marks, raw(t 'automated_tests.script_option.max_marks'),
+                                                   title: t('automated_tests.script_option.max_marks_tooltip')
            maxmarks_section += "\n"
            maxmarks_section += f.text_field :max_marks, value: f.object.max_marks, size: 10, maxlength: 8
            maxmarks_section += '</div>' %>
