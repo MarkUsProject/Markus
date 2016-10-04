@@ -622,7 +622,7 @@ class Assignment < ActiveRecord::Base
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
     get_criteria.map do |criterion|
-      mark = submission.get_latest_result.marks.find_by(markable_id: criterion.id)
+      mark = submission.get_latest_result.marks.find_by(markable: criterion)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
        criterion.max_mark]
     end
