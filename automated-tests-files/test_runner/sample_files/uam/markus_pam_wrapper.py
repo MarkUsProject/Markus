@@ -161,7 +161,7 @@ class MarkusPAMWrapper(PAMWrapper):
         :param results: A list of results (possibly empty), or None if the tests timed out.
         """
         if results is None:
-            self.print_result(name='All tests', input='', expected='', actual='Timeout', marks=0, status='fail')
+            self.print_result(name='All tests', input='', expected='', actual='Timeout', marks=0, status='error')
         else:
             for result in results:
                 marks = 1 if result.status == PAMResult.Status.PASS else 0
