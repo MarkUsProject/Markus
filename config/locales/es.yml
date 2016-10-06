@@ -1921,10 +1921,7 @@ es:
       replace:                            "Actualizar"
       filename_exists:                    "ya ha sido tomado"
       duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
-      missing_tokens:                     "No se encontraron fichas para este estudiante y para este proyecto"
       tokens_available_on:                "Las fichas disponibles iniciaron en"
-      not_belong_to_group:                "Usted no pertenece al grupo"
-      test_files_unavailable:             "No hay un script para lanzar la prueba"
       source_files_unavailable:           "No se encontró ningún archivo para probar"
       dir_not_exist:                      "El directorio %{dir} requerido para Ant no existe"
       marks_obtained:                     "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
@@ -1973,6 +1970,11 @@ es:
         status:       "Estado"
         passed:       "Pasó"
         failed:       "Falló"
+      error:
+        no_test_server_user:    "UPDATE ME"
+        not_belong_to_group:    "Usted no pertenece al grupo"
+        missing_tokens:         "No se encontraron fichas para este estudiante y para este proyecto"
+        test_files_unavailable: "No hay un script para lanzar la prueba"
 
 #Missing Activerecord Translations for english
     datetime:

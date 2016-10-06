@@ -1516,9 +1516,6 @@ fr:
       replace: "Remplacer"
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
-      missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
-      not_belong_to_group: "UPDATE ME"
-      test_files_unavailable: "UPDATE ME"
       source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
@@ -1561,6 +1558,11 @@ fr:
         status: "Statut"
         passed: "Passé"
         failed: "Échoué"
+      error:
+        no_test_server_user: "UPDATE ME"
+        not_belong_to_group: "UPDATE ME"
+        missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
+        test_files_unavailable: "UPDATE ME"
 
 #Missing Activerecord Translations for french
     datetime:
