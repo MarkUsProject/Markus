@@ -83,7 +83,7 @@ class PAMWrapper:
                                           message=test_stack['message']))
         except OSError:
             if not os.path.isfile(self.timeout_filename):
-                print('Test framework error: no result or time out generated')
+                print('Test framework error: no result or time out generated', file=sys.stderr)
                 exit(1)
         return results
 
@@ -126,12 +126,13 @@ class PAMWrapper:
             self.print_results(None)
             exit(1)
         except subprocess.CalledProcessError as e:
-            print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr))
+            print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr),
+                  file=sys.stderr)
             # use the following with Python < 3.5
-            # print('Test framework error')
+            # print('Test framework error', file=sys.stderr)
             exit(1)
         except Exception as e:
-            print('Test framework error: {exception}'.format(exception=e))
+            print('Test framework error: {exception}'.format(exception=e), file=sys.stderr)
             exit(1)
 
 
@@ -168,8 +169,9 @@ class MarkusPAMWrapper(PAMWrapper):
                 status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
                 name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
                                                                                            desc=result.description)
-                self.print_result(name=name, input='', expected='', actual=saxutils.escape(result.message), marks=marks,
-                                  status=status)
+                self.print_result(name=name, input='', expected='',
+                                  actual=saxutils.escape(result.message, entities={"'": '&apos;'}),
+                                  marks=marks, status=status)
 
 
 if __name__ == '__main__':

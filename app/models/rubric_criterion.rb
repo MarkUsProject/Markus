@@ -57,7 +57,7 @@ class RubricCriterion < Criterion
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
   DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = 4
+  MAX_LEVEL = RUBRIC_LEVELS - 1
   DEFAULT_LEVELS = [
     {'name' => I18n.t('rubric_criteria.defaults.level_0'),
      'description' => I18n.t('rubric_criteria.defaults.description_0')},
@@ -217,7 +217,7 @@ class RubricCriterion < Criterion
   end
 
   def weight
-    max_mark / 4
+    max_mark / MAX_LEVEL
   end
 
   def round_max_mark

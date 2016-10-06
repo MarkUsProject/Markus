@@ -118,7 +118,12 @@ class Submission < ActiveRecord::Base
         mark_total += test_script.max_marks
       end
       if mark_total > 0
-        mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+        real_mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+        if mark.markable.instance_of? RubricCriterion
+          nearest_up_mark = (real_mark / mark.markable.weight.to_f).round * mark.markable.weight
+          real_mark = nearest_up_mark
+        end
+        mark.mark = real_mark
         mark.save
       end
     end

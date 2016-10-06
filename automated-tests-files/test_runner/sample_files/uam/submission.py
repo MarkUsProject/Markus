@@ -12,4 +12,4 @@ def loop():
 
 
 def return_xml():
-    return '<escapeme></escapeme>'
+    return '<escapeme>\'"&</escapeme>'

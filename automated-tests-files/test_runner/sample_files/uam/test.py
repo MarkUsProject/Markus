@@ -26,9 +26,14 @@ class Test2(unittest.TestCase):
         submission.loop()
 
     def test_fails_and_outputs_xml(self):
-        """This test should fail and print unescaped xml."""
+        """This test should fail and print xml."""
 
         self.fail(submission.return_xml())
+
+    def test_fails_again(self):
+        """This test should fail and make the mark calculation more complicated."""
+
+        self.fail(submission.not_there())
 
 
 if __name__ == '__main__':
