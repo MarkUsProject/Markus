@@ -93,8 +93,7 @@ module AutomatedTestsServerHelper
                    'Authorization' => "MarkUsAuth #{server_api_key}",
                    'Accept' => 'application/json'},
                :body => {
-                   'assignment_id' => assignment_id,
-                   'group_id' => group_id,
+                   'test_scripts' => test_scripts,
                    'file_content' => all_output}}
     unless submission_id.nil?
       options[:body]['submission_id'] = submission_id

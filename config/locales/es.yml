@@ -1974,10 +1974,12 @@ es:
         not_belong_to_group:  "Usted no pertenece al grupo"
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
         no_test_files:        "No hay un script para lanzar la prueba"
-        no_server_connection: "UPDATE ME"
       test_result:
         all_tests: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
+        no_server_connection: "UPDATE ME"
+        bad_results: "UPDATE ME"
+        no_tests: "UPDATE ME"
 
 #Missing Activerecord Translations for english
     datetime:

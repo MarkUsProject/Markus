@@ -1562,10 +1562,12 @@ fr:
         not_belong_to_group: "UPDATE ME"
         no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
         no_test_files: "UPDATE ME"
-        no_server_connection: "UPDATE ME"
       test_result:
         all_tests: "UPDATE ME"
         no_source_files: "UPDATE ME"
+        no_server_connection: "UPDATE ME"
+        bad_results: "UPDATE ME"
+        no_tests: "UPDATE ME"
 
 #Missing Activerecord Translations for french
     datetime:

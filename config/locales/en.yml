@@ -1704,10 +1704,12 @@ en:
         not_belong_to_group: "You do not belong to the group"
         no_tokens: "You do not have tokens to run the tests"
         no_test_files: "There are no test scripts to run the tests"
-        no_server_connection: "Server connection error with %{hostname}: %{error}"
       test_result:
         all_tests: "All tests"
         no_source_files: "There are no student files to run the tests"
+        no_server_connection: "Server connection error with %{hostname}: %{error}"
+        bad_results: "The test results are malformed: %{xml}"
+        no_tests: "The test results are empty"
 
 #Missing Activerecord Translations for english
     datetime:

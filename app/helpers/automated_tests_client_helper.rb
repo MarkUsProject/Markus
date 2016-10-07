@@ -176,6 +176,7 @@ module AutomatedTestsClientHelper
       FileUtils.mkdir(MarkusConfigurator.markus_ate_client_dir)
     end
     # Delete student's assignment repository if it already exists
+    # TODO clean up in client worker, or try to optimize if revision is the same?
     if File.exists?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
@@ -186,12 +187,7 @@ module AutomatedTestsClientHelper
       files = submission.submission_files
       FileUtils.mkdir(repo_dir)
       files.each do |file|
-        begin
-          file_content = file.retrieve_file
-        rescue Exception => e
-          flash[:error] = e.message
-          return
-        end
+        file_content = file.retrieve_file
         FileUtils.mkdir_p(File.join(repo_dir, file.path))
         File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
           f.write(file_content)
@@ -217,7 +213,7 @@ module AutomatedTestsClientHelper
   def self.check_user_permission(user, grouping, assignment)
 
     if user.admin? || user.ta?
-      return true
+      return
     end
     # Make sure student belongs to this group
     unless user.accepted_groupings.include?(grouping)
@@ -225,15 +221,13 @@ module AutomatedTestsClientHelper
     end
     # can skip checking tokens if we have unlimited
     if assignment.unlimited_tokens
-      return true
+      return
     end
     t = grouping.token
     if t.nil? || t.remaining <= 0
       raise I18n.t('automated_tests.error.no_tokens')
     end
     t.decrease_tokens
-
-    return true
   end
 
   # Verify that MarkUs has test scripts to run the test and get them.
@@ -298,6 +292,45 @@ module AutomatedTestsClientHelper
     return true
   end
 
+  def self.create_test_script_result(script_name, assignment, grouping, submission)
+    revision_number = submission.nil? ?
+        grouping.group.repo.get_latest_revision.revision_number :
+        submission.revision_number
+    submission_id = submission.nil? ? nil : submission.id
+    test_script = TestScript.find_by(assignment_id: assignment.id, script_name: script_name)
+
+    return grouping.test_script_results.create(
+        test_script_id: test_script.id,
+        submission_id: submission_id,
+        marks_earned: 0,
+        repo_revision: revision_number)
+  end
+
+  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
+    test_script_result.test_results.create(
+        name: (name.nil? ? '' : name),
+        input: (input.nil? ? '' : CGI.unescapeHTML(input)),
+        actual_output: (actual.nil? ? '' : CGI.unescapeHTML(actual)),
+        expected_output: (expected.nil? ? '' : CGI.unescapeHTML(expected)),
+        marks_earned: marks_earned,
+        completion_status: (status.nil? ? 'error' : status))
+  end
+
+  def self.create_test_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
+    test_scripts.each do |script_name|
+      test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+      add_test_error_result(test_script_result, result_name, result_message)
+      test_script_result.save
+    end
+    unless submission.nil?
+      submission.set_marks_for_tests
+    end
+  end
+
+  def self.add_test_error_result(test_script_result, result_name, result_message)
+    add_test_result(test_script_result, result_name, nil, result_message, nil, 0, 'error')
+  end
+
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
   def self.perform(host_with_port, test_scripts, user_api_key, server_api_key, grouping_id, submission_id)
@@ -310,15 +343,9 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
-      test_scripts.each do |script_name|
-        test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
-        add_test_result(test_script_result, I18n.t('automated_tests.test_result.all_tests'), nil,
-                        I18n.t('automated_tests.test_result.no_source_files'), nil, 0, 'error')
-        test_script_result.save
-      end
-      unless submission.nil?
-        submission.set_marks_for_tests
-      end
+      create_test_error_result(test_scripts, assignment, grouping, submission,
+                               I18n.t('automated_tests.test_result.all_tests'),
+                               I18n.t('automated_tests.test_result.no_source_files'))
       return
     end
 
@@ -356,7 +383,7 @@ module AutomatedTestsClientHelper
       # copy the student's submission and all necessary files through ssh in a temp folder
       begin
         file_username = MarkusConfigurator.markus_ate_server_files_username
-        Net::SSH::start(test_server_host, file_username) do |ssh|
+        Net::SSH::start(test_server_host, file_username, auth_methods: ['publickey']) do |ssh|
           ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing..
           files_path = ssh.exec!("mktemp -d --tmpdir='#{files_path}'").strip # ..then create temp subfolder
           Dir.foreach(submission_path) do |file_name| # workaround scp gem not supporting wildcard *
@@ -383,74 +410,62 @@ module AutomatedTestsClientHelper
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
-        raise I18n.t('automated_tests.error.no_server_connection', {hostname: test_server_host, error: e.message})
+        submission = submission_id.nil? ? nil : Submission.find(submission_id)
+        create_test_error_result(test_scripts, assignment, grouping, submission,
+                                 I18n.t('automated_tests.test_result.all_tests'),
+                                 I18n.t('automated_tests.test_result.no_server_connection',
+                                        {hostname: test_server_host, error: e.message}))
       end
     end
   end
 
-  def self.create_test_script_result(script_name, assignment, grouping, submission)
-    revision_number = submission.nil? ?
-        grouping.group.repo.get_latest_revision.revision_number :
-        submission.revision_number
-    submission_id = submission.nil? ? nil : submission.id
-    test_script = TestScript.find_by(assignment_id: assignment.id, script_name: script_name)
+  def self.process_test_result(raw_result, test_scripts_ran, assignment, grouping, submission)
 
-    return grouping.test_script_results.create(
-        test_script_id: test_script.id,
-        submission_id: submission_id,
-        marks_earned: 0,
-        repo_revision: revision_number)
-  end
-
-  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
-    test_script_result.test_results.create(
-        name: name,
-        input: (input.nil? ? '' : input),
-        actual_output: (actual.nil? ? '' : CGI.unescapeHTML(actual)),
-        expected_output: (expected.nil? ? '' : expected),
-        marks_earned: marks_earned,
-        completion_status: status)
-  end
-
-  def self.process_test_result(raw_result, assignment, grouping, submission)
-
-    result = Hash.from_xml(raw_result)
-    revision_number = submission.nil? ?
-        grouping.group.repo.get_latest_revision.revision_number : submission.revision_number
-    submission_id = submission.nil? ? nil : submission.id
-
-    # Hash.from_xml will yield a hash with only one test script and an array otherwise
-    test_scripts = result['testrun']['test_script']
-    if test_scripts.nil?
-      MarkusLogger.instance.log("ATE test run framework error for assignment #{assignment}, group #{grouping}:\n
-                                 #{raw_result}", MarkusLogger::ERROR)
-      return false
+    result = nil
+    begin
+      result = Hash.from_xml(raw_result)
+    rescue => e
+      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
+                               I18n.t('automated_tests.test_result.all_tests'),
+                               I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+      return
     end
+    test_run = result['testrun']
+    test_scripts = test_run.nil? ? nil : test_run['test_script']
+    if test_run.nil? || test_scripts.nil?
+      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
+                               I18n.t('automated_tests.test_result.all_tests'),
+                               I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      return
+    end
+
+    # Hash.from_xml will return a hash with only one test script and an array otherwise
     unless test_scripts.is_a?(Array)
       test_scripts = [test_scripts]
     end
-
-    test_scripts.each do |script|
-      marks_earned = 0
-      new_test_script_result = create_test_script_result(script['script_name'], assignment, grouping, submission)
-
-      # same workaround as above, Hash.from_xml produces a hash if it's a single test
-      tests = script['test']
+    test_scripts.each do |test_script|
+      total_marks = 0
+      new_test_script_result = create_test_script_result(test_script['script_name'], assignment, grouping, submission)
+      tests = test_script['test']
       if tests.nil?
-        MarkusLogger.instance.log("ATE test run error for script #{script_name}, assignment #{assignment},
-                                   group #{grouping}:\n#{script}", MarkusLogger::ERROR)
-        tests = []
+        add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
+                              I18n.t('automated_tests.test_result.no_tests'))
+        return
       end
+      # same workaround as above, Hash.from_xml produces a hash if it's a single test
       unless tests.is_a?(Array)
         tests = [tests]
       end
-
       tests.each do |test|
-        marks_earned += test['marks_earned'].to_i
+        marks_earned = test['marks_earned']
+        if marks_earned.nil?
+          marks_earned = '0'
+        end
+        total_marks += marks_earned.to_i
         add_test_result(new_test_script_result, test['name'], test['input'], test['actual'], test['expected'],
-                        test['marks_earned'].to_i, test['status'])
+                        marks_earned.to_i, test['status'])
       end
-      new_test_script_result.marks_earned = marks_earned
+      new_test_script_result.marks_earned = total_marks
       new_test_script_result.save!
     end
 
@@ -458,7 +473,7 @@ module AutomatedTestsClientHelper
       submission.set_marks_for_tests
     end
 
-    return true
+    return
   end
 
 end

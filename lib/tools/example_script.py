@@ -46,7 +46,7 @@ def process_marks(file_contents):
     in the assignment's marking scheme (punctuation included).
     Marks need to be valid numerics, or 'nil'.
     If the criterion is a Rubric, the mark just needs to be the
-    rubric level, and will then be multiplied by the weight automatically.
+    rubric level, and will be multiplied by the weight automatically.
     """
     d = {'My Criterion 1.': 1.0, 'My Criterion 2.': 'nil'}
     return d
@@ -75,6 +75,8 @@ for group in groups:
                 results = process_marks(file_contents)
                 response = api.update_marks_single_group(results, ASSIGNMENT_ID, group_id)
                 print('Uploaded marks for {}, Markus responded: {}'.format(group_name, response))
+                response = api.update_marking_state(ASSIGNMENT_ID, group_id, 'complete')
+                print('Updated marking state for  {}, Markus responded: {}'.format(group_name, response))
             except:
                 print('Error: uploading marks for {} failed'.format(group_name))
     except:
