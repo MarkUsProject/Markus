@@ -181,13 +181,7 @@ class ResultsController < ApplicationController
                                                     @current_user,
                                                     submission_id)
     rescue => e
-      # TODO: really shouldn't be leaking error if student.
-      if current_user.admin?
-        flash_message(:error, e.message)
-      else
-        # TODO: Better error handling for students
-        flash_message(:error, 'Error running tests')
-      end
+      flash_message(:error, e.message)
     end
     redirect_to :back
   end

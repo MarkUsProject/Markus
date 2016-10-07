@@ -109,9 +109,8 @@ class AutomatedTestsController < ApplicationController
     begin
       AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping_id, @current_user)
       return nil
-    rescue Exception => e
-      #TODO: really shouldn't be leaking error if student.
-      return e.message
+    rescue => e
+      flash_message(:error, e.message)
     end
   end
 

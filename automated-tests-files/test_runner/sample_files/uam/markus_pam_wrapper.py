@@ -5,6 +5,7 @@ import os
 import subprocess
 import enum
 import sys
+from xml.sax import saxutils
 
 
 class PAMResult:
@@ -82,7 +83,7 @@ class PAMWrapper:
                                           message=test_stack['message']))
         except OSError:
             if not os.path.isfile(self.timeout_filename):
-                print('Test framework error: no result or time out generated')
+                print('Test framework error: no result or time out generated', file=sys.stderr)
                 exit(1)
         return results
 
@@ -125,12 +126,13 @@ class PAMWrapper:
             self.print_results(None)
             exit(1)
         except subprocess.CalledProcessError as e:
-            print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr))
+            print('Test framework error: stdout: {stdout}, stderr: {stderr}'.format(stdout=e.stdout, stderr=e.stderr),
+                  file=sys.stderr)
             # use the following with Python < 3.5
-            # print('Test framework error')
+            # print('Test framework error', file=sys.stderr)
             exit(1)
         except Exception as e:
-            print('Test framework error: {exception}'.format(exception=e))
+            print('Test framework error: {exception}'.format(exception=e), file=sys.stderr)
             exit(1)
 
 
@@ -160,14 +162,16 @@ class MarkusPAMWrapper(PAMWrapper):
         :param results: A list of results (possibly empty), or None if the tests timed out.
         """
         if results is None:
-            self.print_result(name='All tests', input='', expected='', actual='Timeout', marks=0, status='fail')
+            self.print_result(name='All tests', input='', expected='', actual='Timeout', marks=0, status='error')
         else:
             for result in results:
                 marks = 1 if result.status == PAMResult.Status.PASS else 0
                 status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
                 name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
                                                                                            desc=result.description)
-                self.print_result(name=name, input='', expected='', actual=result.message, marks=marks, status=status)
+                self.print_result(name=name, input='', expected='',
+                                  actual=saxutils.escape(result.message, entities={"'": '&apos;'}),
+                                  marks=marks, status=status)
 
 
 if __name__ == '__main__':
@@ -180,7 +184,8 @@ if __name__ == '__main__':
     TEST_TIMEOUT = 5
     # The max time to run all tests on the student submission.
     GLOBAL_TIMEOUT = 20
-    # The path to a Python virtualenv that has UAM's dependencies (if None, dependencies must be installed system-wide)
+    # The path to a Python virtualenv that has the test dependencies
+    # (if None, dependencies must be installed system-wide)
     PATH_TO_VIRTUALENV = None
     wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES, test_timeout=TEST_TIMEOUT,
                                global_timeout=GLOBAL_TIMEOUT, path_to_virtualenv=PATH_TO_VIRTUALENV)

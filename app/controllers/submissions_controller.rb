@@ -245,12 +245,17 @@ class SubmissionsController < ApplicationController
     if partition[0].count > 0
       success = I18n.t('automated_tests.tests_running',
                        assignment_identifier: assignment.short_identifier)
+      error = ''
       partition[0].each do |g|
-        AutomatedTestsClientHelper.request_a_test_run(
-          request.protocol + request.host_with_port,
-          g.id,
-          current_user,
-          g.current_submission_used.id)
+        begin
+          AutomatedTestsClientHelper.request_a_test_run(
+            request.protocol + request.host_with_port,
+            g.id,
+            current_user,
+            g.current_submission_used.id)
+        rescue => e
+          error += "#{g.group.group_name}: #{e.message}. "
+        end
       end
     end
     if partition[1].count > 0
