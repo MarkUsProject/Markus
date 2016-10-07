@@ -1491,8 +1491,12 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       error:
         no_test_server_user: "UPDATE ME"
         not_belong_to_group: "UPDATE ME"
-        missing_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
-        test_files_unavailable: "UPDATE ME"
+        no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
+        no_test_files: "UPDATE ME"
+        no_server_connection: "UPDATE ME"
+      test_result:
+        all_tests: "UPDATE ME"
+        no_source_files: "UPDATE ME"
 
 #Missing Activerecord Translations for english
     datetime:

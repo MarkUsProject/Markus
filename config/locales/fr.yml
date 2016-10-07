@@ -1516,7 +1516,6 @@ fr:
       replace: "Remplacer"
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
-      source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "UPDATE ME"
@@ -1561,8 +1560,12 @@ fr:
       error:
         no_test_server_user: "UPDATE ME"
         not_belong_to_group: "UPDATE ME"
-        missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
-        test_files_unavailable: "UPDATE ME"
+        no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
+        no_test_files: "UPDATE ME"
+        no_server_connection: "UPDATE ME"
+      test_result:
+        all_tests: "UPDATE ME"
+        no_source_files: "UPDATE ME"
 
 #Missing Activerecord Translations for french
     datetime:

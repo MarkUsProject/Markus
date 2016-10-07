@@ -43,8 +43,10 @@ def process_marks(file_contents):
     returning a map from criteria title to mark.
 
     Criteria titles need to be properly formatted, as they appear
-    in the assignment's rubric (punctuation included).
+    in the assignment's marking scheme (punctuation included).
     Marks need to be valid numerics, or 'nil'.
+    If the criterion is a Rubric, the mark just needs to be the
+    rubric level, and will then be multiplied by the weight automatically.
     """
     d = {'My Criterion 1.': 1.0, 'My Criterion 2.': 'nil'}
     return d
@@ -53,10 +55,6 @@ def process_marks(file_contents):
 
 # Initialize an instance of the API class
 api = Markus(API_KEY, ROOT_URL)
-# If Markus uses UTORid authentication, the instance should be initialized with your session cookie too
-# Open Markus in your browser, authenticate, then copy your cookie that starts with '_shibsession_' and don't log out
-# COOKIE = '_shibsession_64656661756c7468747470733a2f2f6d61726b75732e6364662e746f726f6e746f2e656475'
-# api = Markus(API_KEY, ROOT_URL, COOKIE)
 print('Initialized Markus object successfully.')
 groups = api.get_groups(ASSIGNMENT_ID)
 

@@ -204,39 +204,24 @@ module AutomatedTestsClientHelper
     test_server_host = MarkusConfigurator.markus_ate_server_host
     test_server_user = User.find_by_user_name(test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
-      flash[:error] = I18n.t('automated_tests.error.no_test_server_user', hostname: test_server_host)
-      return nil
+      raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
     test_server_user.set_api_key
 
     return test_server_user
   end
 
-  # Verify that MarkUs has test scripts to run the test.
-  def self.test_files_available?(assignment)
-
-    # No test files or test directory
-    test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
-    if TestScript.find_by(assignment_id: assignment.id).nil? || !File.exist?(test_dir)
-      flash[:error] = I18n.t('automated_tests.error.test_files_unavailable')
-      return false
-    end
-
-    return true
-  end
-
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def self.user_has_permission?(user, grouping, assignment)
+  def self.check_user_permission(user, grouping, assignment)
 
     if user.admin? || user.ta?
       return true
     end
     # Make sure student belongs to this group
     unless user.accepted_groupings.include?(grouping)
-      flash[:error] = I18n.t('automated_tests.error.not_belong_to_group')
-      return false
+      raise I18n.t('automated_tests.error.not_belong_to_group')
     end
     # can skip checking tokens if we have unlimited
     if assignment.unlimited_tokens
@@ -244,54 +229,60 @@ module AutomatedTestsClientHelper
     end
     t = grouping.token
     if t.nil? || t.remaining <= 0
-      flash[:error] = I18n.t('automated_tests.error.missing_tokens')
-      return false
+      raise I18n.t('automated_tests.error.no_tokens')
     end
     t.decrease_tokens
 
     return true
   end
 
-  def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
+  # Verify that MarkUs has test scripts to run the test and get them.
+  def self.get_test_scripts(assignment, user)
 
-    test_server_user = get_test_server_user
-    if test_server_user.nil?
-      return
+    # No test directory or test files
+    test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
+    unless File.exist?(test_dir)
+      raise I18n.t('automated_tests.error.no_test_files')
     end
-
-    grouping = Grouping.find(grouping_id)
-    assignment = grouping.assignment
-    group = grouping.group
-    repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
-
-    # if current_user is an instructor, then a submission exists and we use that repo revision
-    # if current_user is a student, then we use the latest repo revision
-    submission = submission_id.nil? ? nil : Submission.find(submission_id)
-    export_group_repo(group, repo_dir, submission)
-    if test_files_available?(assignment) && user_has_permission?(current_user, grouping, assignment)
-      call_by = current_user.class.name.demodulize
-      Resque.enqueue(AutomatedTestsClientHelper, host_with_port, call_by, current_user.api_key,
-                     test_server_user.api_key, grouping_id, submission_id)
-    end
-  end
-
-  # Find the list of test scripts to run the test. Return the list of
-  # test scripts in the order specified by seq_num (running order)
-  def self.get_test_scripts_to_run(assignment, call_by)
-
     all_scripts = TestScript.where(assignment_id: assignment.id)
-    if call_by == 'Admin' || call_by == 'Ta'
+    if all_scripts.empty?
+      raise I18n.t('automated_tests.error.no_test_files')
+    end
+
+    # Select a subset of test scripts
+    if user.admin? || user.ta?
       test_scripts = all_scripts.select(&:run_by_instructors)
-    elsif call_by == 'Student'
+    elsif user.student?
       test_scripts = all_scripts.select(&:run_by_students)
     else
       test_scripts = []
     end
     if test_scripts.empty?
-      flash[:error] = I18n.t('automated_tests.error.test_files_unavailable')
+      raise I18n.t('automated_tests.error.no_test_files')
     end
 
     return test_scripts.sort_by(&:seq_num)
+  end
+
+  def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
+
+    test_server_user = get_test_server_user
+    grouping = Grouping.find(grouping_id)
+    assignment = grouping.assignment
+    check_user_permission(current_user, grouping, assignment)
+
+    # if current_user is an instructor, then a submission exists and we use that repo revision
+    # if current_user is a student, then we use the latest repo revision
+    test_scripts = get_test_scripts(assignment, current_user)
+    test_scripts.map! do |script|
+      script.script_name
+    end
+    group = grouping.group
+    repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
+    submission = submission_id.nil? ? nil : Submission.find(submission_id)
+    export_group_repo(group, repo_dir, submission)
+    Resque.enqueue(AutomatedTestsClientHelper, host_with_port, test_scripts, current_user.api_key,
+                   test_server_user.api_key, grouping_id, submission_id)
   end
 
   # Verify that MarkUs has student files to run the test.
@@ -309,31 +300,28 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, call_by, user_api_key, server_api_key, grouping_id, submission_id)
+  def self.perform(host_with_port, test_scripts, user_api_key, server_api_key, grouping_id, submission_id)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     group = grouping.group
 
-    test_scripts = get_test_scripts_to_run(assignment, call_by)
-    if test_scripts.empty?
-      return
-    end
-    test_scripts.map! do |script|
-      script.script_name
-    end
-
+    # create emtpy test results for no submission files
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
-      test_scripts.each do |script|
-        submission = nil #TODO get me
-        test_script_result = create_test_script_result(script, assignment, grouping, submission)
-        add_test_result(test_script_result, 'All tests', nil, I18n.t('automated_tests.source_files_unavailable'), nil,
-                        0, 'error')
+      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+      test_scripts.each do |script_name|
+        test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+        add_test_result(test_script_result, I18n.t('automated_tests.test_result.all_tests'), nil,
+                        I18n.t('automated_tests.test_result.no_source_files'), nil, 0, 'error')
         test_script_result.save
+      end
+      unless submission.nil?
+        submission.set_marks_for_tests
       end
       return
     end
+
     submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder)
     markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
@@ -395,8 +383,7 @@ module AutomatedTestsClientHelper
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
-        MarkusLogger.instance.log("ATE remote ssh error for assignment #{assignment}, group #{grouping}:\n
-                                  #{e.message}", MarkusLogger::ERROR)
+        raise I18n.t('automated_tests.error.no_server_connection', {hostname: test_server_host, error: e.message})
       end
     end
   end
