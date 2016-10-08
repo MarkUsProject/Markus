@@ -108,8 +108,9 @@ class Submission < ActiveRecord::Base
   def set_marks_for_tests
     return if test_script_results.empty?
 
-    # Assumes marks already exist
-    get_latest_result.marks.each do |mark|
+    result = get_latest_result
+    all_marks_by_tests = true
+    result.marks.each do |mark| # Assumes marks already exist
       marks_earned = 0
       mark_total = 0
       mark.markable.test_scripts.each do |test_script|
@@ -118,8 +119,29 @@ class Submission < ActiveRecord::Base
         mark_total += test_script.max_marks
       end
       if mark_total > 0
-        mark.mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+        real_mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+        if mark.markable.instance_of? RubricCriterion
+          # find the nearest mark associated to a level
+          nearest_mark = (real_mark / mark.markable.weight.to_f).round * mark.markable.weight
+          real_mark = nearest_mark
+        end
+        mark.mark = real_mark
         mark.save
+      else
+        all_marks_by_tests = false
+      end
+    end
+
+    # marking state was already complete, tests are overwriting some marks
+    if result.marking_state == Result::MARKING_STATES[:complete]
+      result.submission.assignment.assignment_stat.refresh_grade_distribution
+      result.submission.assignment.update_results_stats
+    # all marks are set by tests, can set the marking state to complete
+    elsif all_marks_by_tests
+      result.marking_state = Result::MARKING_STATES[:complete]
+      if result.save
+        result.submission.assignment.assignment_stat.refresh_grade_distribution
+        result.submission.assignment.update_results_stats
       end
     end
   end
@@ -224,6 +246,12 @@ class Submission < ActiveRecord::Base
       grouping = group.grouping_for_assignment(assignment.id)
       grouping.current_submission_used if !grouping.nil?
     end
+  end
+
+  def self.get_submission_by_group_id_and_assignment_id(group_id, assignment_id)
+    group = Group.find(group_id)
+    grouping = group.grouping_for_assignment(assignment_id)
+    grouping.current_submission_used
   end
 
   def self.get_submission_by_grouping_id_and_assignment_id(grouping_id,

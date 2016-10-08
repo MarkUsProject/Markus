@@ -1471,7 +1471,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalid_buildxml: "Arquivo Ant build.xml deve ser nomeado build.xml"
       invalid_buildproperties: "Arquivo Ant build.properties deve ser nomeado build.properties"
       invalid_filename: "Arquivos de testes, bibliotecas e interpretadores não pode ser nomeado build.xml ou build.properties"
-      missing_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       token:
         tokens_form: "Tokens disponíveis por grupo por dia"
@@ -1488,6 +1487,17 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         status: "Estado"
         passed: "Passou"
         failed: "Fracassado"
+      error:
+        no_test_server_user: "UPDATE ME"
+        not_belong_to_group: "UPDATE ME"
+        no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
+        no_test_files: "UPDATE ME"
+      test_result:
+        all_tests: "UPDATE ME"
+        no_source_files: "UPDATE ME"
+        no_server_connection: "UPDATE ME"
+        bad_results: "UPDATE ME"
+        no_tests: "UPDATE ME"
 
 #Missing Activerecord Translations for english
     datetime:
