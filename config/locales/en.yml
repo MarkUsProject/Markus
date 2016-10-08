@@ -1223,6 +1223,7 @@ en:
       title:          "Criteria"
       name:           "Criterion name"
       type:           "Criterion type"
+      max_mark: "Maximum mark"
       rubric:         "Rubric"
       flexible:       "Flexible"
       checkbox:       "Checkbox"
@@ -1290,7 +1291,6 @@ en:
 
     flexible_criteria:
       title: "Flexible Criteria"
-      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1310,7 +1310,6 @@ en:
 
     checkbox_criteria:
       title: "Checkbox Criteria"
-      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:

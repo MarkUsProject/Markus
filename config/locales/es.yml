@@ -1463,6 +1463,7 @@ es:
       title:          "Criterios de calificación"
       name:           "Nombre del criterio"
       type:           "Tipo de Criterio"
+      max_mark:       "Nota Máxima"
       rubric:         "Rúbrica"
       flexible:       "Flexible"
       checkbox:       "Caja de Selección"
@@ -1530,7 +1531,6 @@ es:
 
     flexible_criteria:
       title:            "Criterios de Calificación Flexibles"
-      max_mark:         "Nota Máxima"
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."
@@ -1550,7 +1550,6 @@ es:
 
     checkbox_criteria:
       title:            "Criterio de Calificación tipo Caja de Selección"
-      max_mark:         "Nota Máxima"
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."

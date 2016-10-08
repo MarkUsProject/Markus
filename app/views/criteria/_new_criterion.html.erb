@@ -7,9 +7,12 @@
 		              t('criteria.name') %><br>
     <%= text_field_tag(:new_criterion_prompt,
                        '',
-                       size: 15) %><br>
-    <%= label_tag 'new_criterion_type_prompt',
-                  t('criteria.type') %><br><br>
+                       size: 5) %><br>
+    <%= label_tag 'max_mark_prompt',
+                  t('criteria.max_mark')%><br>
+    <%= number_field_tag(:max_mark_prompt,
+                       RubricCriterion::DEFAULT_MAX_MARK,
+                       size: 4)%><br>
     <%= radio_button_tag(:criterion_type,
                          'RubricCriterion',
                          checked = true) %>
