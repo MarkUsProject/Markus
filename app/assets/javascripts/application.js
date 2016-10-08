@@ -16,7 +16,17 @@
 
 function ModalMarkus(elem) {
   this.modal_dialog = jQuery(elem).easyModal({
-    updateZIndexOnOpen: false
+      onOpen: function(myModal) {
+          // wait for the modal to load
+          setTimeout(function() {
+              // search for elements that can receive text as input
+              var inputs = jQuery(myModal).find("textarea, input:text");
+              if (inputs.length > 0) {
+                  inputs[0].focus();
+              }
+          }, 200); 
+      }, 
+      updateZIndexOnOpen: false
   });
 }
 
