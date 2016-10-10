@@ -69,13 +69,21 @@ label.required::after {
 
 #content {
   background: $white;
-  border-bottom: 1px solid $blue;
   padding: $dimen-vertical $dimen-horizontal;
 
   @include breakpoint(mobile) {
     margin-top: 3.5em;
     padding: $dimen-vertical $dimen-hor-mobile;
   }
+}
+
+#loggedIn {
+  height: 100%;
+}
+
+#wrapper {
+  background: $white;
+  min-height: 90%;
 }
 
 
