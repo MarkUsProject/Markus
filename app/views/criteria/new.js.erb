@@ -3,3 +3,16 @@ jQuery('#criteria_pane_list').prepend(
                                   locals: { assignment: @assignment }) %>");
 
 document.getElementById('new_criterion_prompt').focus();
+
+jQuery(document).ready(function() {
+  jQuery('input[name=criterion_type]:radio').change(function () {
+
+    if (this.value === 'RubricCriterion') {
+      document.getElementById('max_mark_prompt').value = <%= RubricCriterion::DEFAULT_MAX_MARK -%>;
+    } else if (this.value === 'FlexibleCriterion') {
+      document.getElementById('max_mark_prompt').value = <%= FlexibleCriterion::DEFAULT_MAX_MARK -%>;
+    } else if (this.value === 'CheckboxCriterion') {
+      document.getElementById('max_mark_prompt').value = <%= CheckboxCriterion::DEFAULT_MAX_MARK -%>;
+    }
+  });
+});

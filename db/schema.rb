@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160907214406) do
+ActiveRecord::Schema.define(version: 20160925144240) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,8 @@ ActiveRecord::Schema.define(version: 20160907214406) do
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "assignment_id",            null: false
+    t.integer  "assignment_id",                        null: false
+    t.integer  "annotation_texts_count",   default: 0
   end
 
   add_index "annotation_categories", ["assignment_id"], name: "index_annotation_categories_on_assignment_id", using: :btree
@@ -495,10 +496,10 @@ ActiveRecord::Schema.define(version: 20160907214406) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
-    t.integer  "repo_revision"
   end
 
   create_table "test_scripts", force: :cascade do |t|

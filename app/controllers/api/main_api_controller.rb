@@ -58,7 +58,7 @@ module Api
 
       # Student's aren't allowed yet
       if @current_user.student?
-        # API is available for TAs and Admins only
+        # API is available for TAs, Admins and TestServers only
         render 'shared/http_status', locals: {code: '403', message:
           HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
       end

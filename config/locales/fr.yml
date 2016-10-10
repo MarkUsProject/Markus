@@ -1094,6 +1094,7 @@ fr:
       title:          "Critères"
       name:           "Nom du critère"
       type:           "Type de critère."
+      max_mark: "Note maximale"
       rubric:         "Rubrique"
       flexible:       "Flexible"
       checkbox:       "Checkbox"
@@ -1162,7 +1163,6 @@ fr:
     flexible_criteria:
       title: "Critères souples"
       name: "Nom du critère"
-      max_mark: "Note maximale"
       description: "Description"
       description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
       download:
@@ -1185,7 +1185,6 @@ fr:
     checkbox_criteria:
       title: "Critères d' Checkbox"
       name: "Nom du critère"
-      max_mark: "Note maximale"
       description: "Description"
       description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
       download:
@@ -1516,12 +1515,8 @@ fr:
       replace: "Remplacer"
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
-      missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
-      not_belong_to_group: "UPDATE ME"
-      test_files_unavailable: "UPDATE ME"
-      source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
-      marks_obtained: "Points obtenus :"
+      marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:
@@ -1561,6 +1556,17 @@ fr:
         status: "Statut"
         passed: "Passé"
         failed: "Échoué"
+      error:
+        no_test_server_user: "UPDATE ME"
+        not_belong_to_group: "UPDATE ME"
+        no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
+        no_test_files: "UPDATE ME"
+      test_result:
+        all_tests: "UPDATE ME"
+        no_source_files: "UPDATE ME"
+        no_server_connection: "UPDATE ME"
+        bad_results: "UPDATE ME"
+        no_tests: "UPDATE ME"
 
 #Missing Activerecord Translations for french
     datetime:
