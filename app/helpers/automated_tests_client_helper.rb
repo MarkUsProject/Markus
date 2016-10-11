@@ -198,7 +198,7 @@ module AutomatedTestsClientHelper
 
   def self.get_test_server_user
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
       raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
@@ -355,7 +355,7 @@ module AutomatedTestsClientHelper
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil?
       return
     end

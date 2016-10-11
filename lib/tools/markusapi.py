@@ -100,6 +100,15 @@ class Markus:
         response = self.submit_request(params, path, 'GET')
         return Markus.decode_response(response)
 
+    def get_group(self, assignment_id, group_id):
+        """ (Markus, int, int) -> dict
+        Return the group info associated with the given id and assignment.
+        """
+        params = None
+        path = self.get_path(assignment_id, group_id)[:-1] + '.json'
+        response = self.submit_request(params, path, 'GET')
+        return Markus.decode_response(response)
+
     def upload_feedback_file(self, assignment_id, group_id, title, contents):
         """ (Markus, int, str, str, str) -> list of str
         Upload a feedback file to Markus.
@@ -121,7 +130,7 @@ class Markus:
         return self.submit_request(params, path, 'POST')
 
     def upload_test_script_results(self, assignment_id, group_id, results, test_script_names):
-        """ (Markus, int, str, str, array) """
+        """ (Markus, int, str, str, list) -> list of str"""
         params = {
             'file_content': results,
             'test_scripts': test_script_names
@@ -130,7 +139,7 @@ class Markus:
         return self.submit_request(params, path, 'POST')
 
     def update_marks_single_group(self, criteria_mark_map, assignment_id, group_id):
-        """ (Markus, dict, int, int)
+        """ (Markus, dict, int, int) -> list of str
         Update the marks of a single group. 
         Only the marks specified in criteria_mark_map will be changed.
         To set a mark to unmarked, use 'nil' as it's value.
@@ -150,7 +159,7 @@ class Markus:
         return self.submit_request(params, path, 'PUT')
 
     def update_marking_state(self, assignment_id, group_id, new_marking_state):
-        """ (Markus, int, str, str,) """
+        """ (Markus, int, str, str) -> list of str """
         params = {
             'marking_state': new_marking_state
         }

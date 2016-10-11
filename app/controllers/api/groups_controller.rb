@@ -12,7 +12,7 @@ module Api
     # Requires: assignment_id
     # Optional: filter, fields
     def index
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       if assignment.nil?
         # No assignment with that id
         render 'shared/http_status', locals: {code: '404', message:
@@ -40,7 +40,7 @@ module Api
     # Optional: fields
     def show
       # Error if no assignment exists with that id
-      assignment = Assignment.find_by_id(params[:assignment_id])
+      assignment = Assignment.find_by(id: params[:assignment_id])
       if assignment.nil?
         render 'shared/http_status', locals: {code: '404', message:
           'No assignment exists with that id'}, status: 404
@@ -48,7 +48,7 @@ module Api
       end
 
       # Error if no group exists with that id
-      group = Group.find_by_id(params[:id])
+      group = Group.find_by(id: params[:id])
       if group.nil?
         render 'shared/http_status', locals: {code: '404', message:
           'No group exists with that id'}, status: 404
