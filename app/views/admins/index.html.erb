@@ -2,22 +2,23 @@
   <%= render partial: 'admins_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('admins.manage_admins') %>
-    <span class='title-help users_admins_help'>
-      <p class='help-message-title users_admins_help'>
-        <%= t('admins.help.manage_admins') %>
-      </p>
-    </span>
-  </h1>
+<% content_for :title do %>
+  <%= t('admins.manage_admins') %>
+  <span class='title-help users_admins_help'>
+    <p class='help-message-title users_admins_help'>
+      <%= t('admins.help.manage_admins') %>
+    </p>
+  </span>
+<% end %>
 
-  <div class='heading_buttons'>
-    <%= link_to t(:add_new_admin), new_admin_path %>
-  </div>
-</div>
+<% @heading_buttons =
+[
+  {
+    link_text: t(:add_new_admin),
+    link_path: new_admin_path
+  }
+] %>
 
-<div class="colsLeftHeavy">
-  <%= render 'shared/flash_message' %>
+<% content_for :wrap_left_content do %>
   <div id='admins_table'></div>
-</div>
+<% end %>

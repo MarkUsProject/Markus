@@ -2,6 +2,7 @@ class AdminsController < ApplicationController
   include AdminsHelper
   before_filter  :authorize_only_for_admin
   def index
+      render layout: 'assignment_content'
   end
 
   def populate
