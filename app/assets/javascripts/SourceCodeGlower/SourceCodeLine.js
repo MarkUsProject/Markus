@@ -114,8 +114,12 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
   }
 
   if (startNode === null || endNode === null) {
-    console.error('Bad annotation with start ' + start + ' and end ' + end);
-    return;
+    if (endNode === null && startNode !== null) {
+      endNode = startNode;
+    } else {
+      console.error('Bad annotation with start ' + start + ' and end ' + end);
+      return;
+    }
   }
 
   // If only a single node, change text and insert two new spans before it
