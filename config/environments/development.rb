@@ -292,7 +292,7 @@ Markus::Application.configure do
   # The name of the queue on the test client where submission files wait to be copied.
   ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
   # The name of the queue on the test server where tests wait to be executed.
-  ATE_TESTS_QUEUE_NAME = 'CSC108_ate_tests'
+  ATE_TESTS_QUEUE_NAME = 'ate_tests'
   # The name of the queue where jobs to create individal groups for all students wait to be executed.
   JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108_job_groups'
   # The name of the queue where jobs to collect submissions wait to be executed.

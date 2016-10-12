@@ -363,6 +363,7 @@ module AutomatedTestsClientHelper
     tests_path = MarkusConfigurator.markus_ate_server_tests_dir
     same_path = (MarkusConfigurator.markus_ate_server_files_dir == MarkusConfigurator.markus_ate_server_tests_dir)
     results_path = MarkusConfigurator.markus_ate_server_results_dir
+    server_queue = MarkusConfigurator.markus_ate_tests_queue_name
 
     if test_server_host == 'localhost'
       # tests executed locally with no authentication:
@@ -376,8 +377,8 @@ module AutomatedTestsClientHelper
       end
       test_username = nil
       # enqueue locally using resque api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, user_api_key, server_api_key, test_username,
-                     test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
+      Resque.enqueue_to(server_queue, AutomatedTestsServer, markus_address, user_api_key, server_api_key, test_username,
+                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
     else
       # tests executed locally or remotely with authentication:
       # copy the student's submission and all necessary files through ssh in a temp folder
@@ -403,10 +404,9 @@ module AutomatedTestsClientHelper
           test_username = (file_username == MarkusConfigurator.markus_ate_server_tests_username) ?
               nil : MarkusConfigurator.markus_ate_server_tests_username
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
-          resque_params = {:class => 'AutomatedTestsServerHelper',
+          resque_params = {:class => 'AutomatedTestsServer',
                            :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
                                      files_path, tests_path, results_path, assignment.id, group.id, submission_id]}
-          server_queue = MarkusConfigurator.markus_ate_tests_queue_name
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
