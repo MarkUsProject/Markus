@@ -82,10 +82,10 @@ module CourseSummariesHelper
       if current_user.admin?
         gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
       else
-        if ges.released_to_student.nil?
-          gef_marks[form_id] = 0
-        else
+        if ges.released_to_student
           gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
+        else
+          gef_marks[form_id] = 0
         end
       end
     end

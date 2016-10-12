@@ -23,10 +23,20 @@ namespace :db do
     end
   end
 
+  desc 'Add a local TestServer account'
+  # this task depends on :environment and :seed
+  task(:test_servers => :environment) do
+    puts 'Populate database with TestServers'
+    [['localhost', 'Test', 'Server1']]
+        .each do |server|
+      TestServer.create(user_name: server[0], first_name: server[1], last_name: server[2], hidden: true)
+    end
+  end
+
   desc 'Add student users to the database'
   # this task depends on :environment and :seed
   task(:users => :environment) do
-    puts 'Populate database with students'
+    puts 'Populate database with Students'
     STUDENT_CSV = 'db/data/students.csv'
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)

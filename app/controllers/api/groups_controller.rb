@@ -151,19 +151,32 @@ module Api
 
     # Allow user to set marking state to complete
     def update_marking_state
+      if has_missing_params?([:marking_state])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: {code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        return
+      end
       group = Group.find(params[:id])
-      result = group.grouping_for_assignment(params[:assignment_id])
-                    .current_submission_used
-                    .get_latest_result
-      result.marking_state = params[:marking_state]
-      if result.save
-        result.submission.assignment.assignment_stat.refresh_grade_distribution
-        result.submission.assignment.update_results_stats
-        render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      if group.grouping_for_assignment(params[:assignment_id])
+             .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+        result.marking_state = params[:marking_state]
+        if result.save
+          result.submission.assignment.assignment_stat.refresh_grade_distribution
+          result.submission.assignment.update_results_stats
+          render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        else
+          render 'shared/http_status', locals: { code: '500', message:
+            result.errors.full_messages.first }, status: 500
+        end
       else
-        render 'shared/http_status', locals: { code: '500', message:
-          result.errors.full_messages.first }, status: 500
+        render 'shared/http_status', locals: { code: '404', message:
+            'No submissions exist for that group' }, status: 404
+        return
       end
     end
   end # end GroupsController

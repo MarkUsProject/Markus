@@ -7,28 +7,34 @@ except ImportError:
 
 class Test1(unittest.TestCase):
 
-    def test1a(self):
-        """Test 1A."""
+    def test_passes(self):
+        """This test should pass."""
 
         self.assertTrue(submission.return_true())
 
-    def test1b(self):
-        """Test 1B."""
+    def test_fails(self):
+        """This test should fail."""
 
-        self.assertFalse(submission.return_false())
+        self.assertTrue(submission.not_return_true())
 
 
 class Test2(unittest.TestCase):
 
-    def test2a(self):
-        """Test 2A."""
+    def test_loops(self):
+        """This test should timeout."""
 
-        self.assertTrue(submission.return_true())
+        submission.loop()
 
-    def test2b(self):
-        """Test 2B."""
+    def test_fails_and_outputs_xml(self):
+        """This test should fail and print xml."""
 
-        self.assertFalse(submission.return_false())
+        self.fail(submission.return_xml())
+
+    def test_fails_again(self):
+        """This test should fail and make the mark calculation more complicated."""
+
+        self.fail(submission.not_there())
+
 
 if __name__ == '__main__':
     unittest.main()
