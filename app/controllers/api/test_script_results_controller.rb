@@ -54,7 +54,8 @@ module Api
     # Optional:
     #  - submission_id
     def create
-      if has_missing_params?([:file_content])
+      # TODO This code should really be in test_results
+      if has_missing_params?([:file_content, :test_scripts])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -72,13 +73,12 @@ module Api
         assignment = submission.assignment
       end
 
-      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        assignment,
-                                                        grouping,
-                                                        submission)
+      begin
+        AutomatedTestsClientHelper.process_test_result(params[:file_content], params[:test_scripts], assignment,
+                                                       grouping, submission)
         render 'shared/http_status', locals: {code: '201', message:
-          HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
-      else
+            HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
+      rescue
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
           HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500

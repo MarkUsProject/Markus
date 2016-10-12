@@ -333,10 +333,10 @@ RSpec.describe CriteriaController, type: :controller do
                     :create,
                     format:               :js,
                     assignment_id:        @assignment.id,
-                    flexible_criterion:   { name: 'first',
-                                            max_mark: 10 },
+                    flexible_criterion:   { name: 'first'},
                     new_criterion_prompt: 'first',
-                    criterion_type:       'FlexibleCriterion'
+                    criterion_type:       'FlexibleCriterion',
+                    max_mark_prompt:      10
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -357,10 +357,10 @@ RSpec.describe CriteriaController, type: :controller do
                     :create,
                     format:               :js,
                     assignment_id:        @assignment.id,
-                    flexible_criterion:   { name: 'first',
-                                            max_mark: 10 },
+                    flexible_criterion:   { name: 'first'},
                     new_criterion_prompt: 'first',
-                    criterion_type:       'FlexibleCriterion'
+                    criterion_type:       'FlexibleCriterion',
+                    max_mark_prompt:      10
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -765,10 +765,10 @@ RSpec.describe CriteriaController, type: :controller do
                     :create,
                     format:               :js,
                     assignment_id:        @assignment.id,
-                    rubric_criterion:     { name: 'first',
-                                            max_mark: 10 },
+                    rubric_criterion:     { name: 'first'},
                     new_criterion_prompt: 'first',
-                    criterion_type:       'RubricCriterion'
+                    criterion_type:       'RubricCriterion',
+                    max_mark_prompt:      10
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -789,10 +789,10 @@ RSpec.describe CriteriaController, type: :controller do
                     :create,
                     format:               :js,
                     assignment_id:        @assignment.id,
-                    rubric_criterion:     { name: 'first',
-                                            max_mark: 10 },
+                    rubric_criterion:     { name: 'first'},
                     new_criterion_prompt: 'first',
-                    criterion_type:       'RubricCriterion'
+                    criterion_type:       'RubricCriterion',
+                    max_mark_prompt:      10
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy

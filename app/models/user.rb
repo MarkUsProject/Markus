@@ -23,11 +23,12 @@ class User < ActiveRecord::Base
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
 
-  validates_format_of       :type,          with: /Student|Admin|Ta/
+  validates_format_of       :type,          with: /Student|Admin|Ta|TestServer/
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
   TA = 'Ta'
+  TEST_SERVER = 'TestServer'
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
@@ -118,6 +119,10 @@ class User < ActiveRecord::Base
 
   def student?
     self.class == Student
+  end
+
+  def test_server?
+    self.class == TestServer
   end
 
   # Submission helper methods -------------------------------------------------

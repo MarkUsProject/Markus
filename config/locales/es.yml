@@ -1463,6 +1463,7 @@ es:
       title:          "Criterios de calificación"
       name:           "Nombre del criterio"
       type:           "Tipo de Criterio"
+      max_mark:       "Nota Máxima"
       rubric:         "Rúbrica"
       flexible:       "Flexible"
       checkbox:       "Caja de Selección"
@@ -1530,7 +1531,6 @@ es:
 
     flexible_criteria:
       title:            "Criterios de Calificación Flexibles"
-      max_mark:         "Nota Máxima"
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."
@@ -1550,7 +1550,6 @@ es:
 
     checkbox_criteria:
       title:            "Criterio de Calificación tipo Caja de Selección"
-      max_mark:         "Nota Máxima"
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."
@@ -1921,13 +1920,9 @@ es:
       replace:                            "Actualizar"
       filename_exists:                    "ya ha sido tomado"
       duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
-      missing_tokens:                     "No se encontraron fichas para este estudiante y para este proyecto"
       tokens_available_on:                "Las fichas disponibles iniciaron en"
-      not_belong_to_group:                "Usted no pertenece al grupo"
-      test_files_unavailable:             "No hay un script para lanzar la prueba"
-      source_files_unavailable:           "No se encontró ningún archivo para probar"
       dir_not_exist:                      "El directorio %{dir} requerido para Ant no existe"
-      marks_obtained:                     "<span class=\"prop_label\">Notas Obtenidas:</span> %{marking}"
+      marks_obtained:                     "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
                                            leído."
       download_not_in_db:                 "El archivo solicitado no se encuentra en la base de datos."
@@ -1937,7 +1932,7 @@ es:
         description:                      "Descripción"
         update_description:               "Ingrese su Descripción Aquí"
         seq_num:                          "ACTUALIZAME: seq_num"
-        max_marks:                        "Notas Máximas <span class='required_field'>*</span>"
+        max_marks:                        "UPDATE ME <span class='required_field'>*</span>"
         run_by_instructors:               "Ejecutable por los Instructores"
         run_by_students:                  "Ejecutable por los Estudiantes"
         halts_testing:                    "Parar si existe un error"
@@ -1973,6 +1968,17 @@ es:
         status:       "Estado"
         passed:       "Pasó"
         failed:       "Falló"
+      error:
+        no_test_server_user:  "UPDATE ME"
+        not_belong_to_group:  "Usted no pertenece al grupo"
+        no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
+        no_test_files:        "No hay un script para lanzar la prueba"
+      test_result:
+        all_tests: "UPDATE ME"
+        no_source_files: "No se encontró ningún archivo para probar"
+        no_server_connection: "UPDATE ME"
+        bad_results: "UPDATE ME"
+        no_tests: "UPDATE ME"
 
 #Missing Activerecord Translations for english
     datetime:

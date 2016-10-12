@@ -120,24 +120,25 @@ class Markus:
         path = self.get_path(assignment_id, group_id) + 'feedback_files'
         return self.submit_request(params, path, 'POST')
 
-    def upload_test_script_result(self, assignment_id, group_id, results):
-        """ (Markus, int, str, dict) -> list of str """
+    def upload_test_script_results(self, assignment_id, group_id, results, test_script_names):
+        """ (Markus, int, str, str, array) """
         params = {
-            'assignment_id': assignment_id,
-            'group_id': group_id,
-            'file_content': results
+            'file_content': results,
+            'test_scripts': test_script_names
         }
         path = self.get_path(assignment_id, group_id) + 'test_script_results'
         return self.submit_request(params, path, 'POST')
 
     def update_marks_single_group(self, criteria_mark_map, assignment_id, group_id):
-        """ (Markus, dict, int, int) -> list of str
+        """ (Markus, dict, int, int)
         Update the marks of a single group. 
         Only the marks specified in criteria_mark_map will be changed.
         To set a mark to unmarked, use 'nil' as it's value.
         Otherwise, marks must have valid numeric types (floats or ints).
         Criteria are specified by their title. Titles must be formatted
         exactly as they appear in the MarkUs GUI, punctuation included.
+        If the criterion is a Rubric, the mark just needs to be the
+        rubric level, and will be multiplied by the weight automatically.
 
         Keyword arguments:
         criteria_mark_map -- maps criteria to the desired grade
@@ -147,6 +148,14 @@ class Markus:
         params = criteria_mark_map
         path = self.get_path(assignment_id, group_id) + 'update_marks'
         return self.submit_request(params, path, 'PUT')
+
+    def update_marking_state(self, assignment_id, group_id, new_marking_state):
+        """ (Markus, int, str, str,) """
+        params = {
+            'marking_state': new_marking_state
+        }
+        path = self.get_path(assignment_id, group_id) + 'update_marking_state'
+        return self.submit_request(params, path, 'POST')
 
     def submit_request(self, params, path, request_type):
         """ (Markus, dict, str, str) -> list of str
