@@ -747,7 +747,7 @@ class Grouping < ActiveRecord::Base
       if result.get_total_extra_percentage_as_points == 0
         total_extra
       else
-        total_extra.to_s + " (Late Penalty: " + result.get_total_extra_percentage.to_s + "%)"
+        total_extra.to_s + " (" + I18n.t('lateness_penalty') + ": " + result.get_total_extra_percentage.to_s + "%)"
       end
     else
       '-'
