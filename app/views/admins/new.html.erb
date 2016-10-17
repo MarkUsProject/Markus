@@ -1,6 +1,6 @@
-<div class='title_bar'>
+<% content_for :title do %>
   <h1><%= t('admins.create_new_admin') %></h1>
-</div>
+<% end %>
 
 <div class='wrapper'>
   <%= render partial: 'layouts/userform',

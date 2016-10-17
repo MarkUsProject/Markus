@@ -12,13 +12,11 @@
 <% end %>
 
 <% @heading_buttons =
-[
-  {
-    link_text: t(:add_new_admin),
-    link_path: new_admin_path
-  }
-] %>
+     [
+         {
+             link_text: t(:add_new_admin),
+             link_path: new_admin_path
+         }
+     ] %>
 
-<% content_for :wrap_left_content do %>
-  <div id='admins_table'></div>
-<% end %>
+<div id='admins_table'></div>
