@@ -7,7 +7,7 @@
 <% end %>
 
 <div id='summary_criteria_pane'>
-
+  <%= render partial: 'shared/flash_message' %>
   <%= render partial: 'results/common/marks_summary_table',
              locals: { mark_criteria: mark_criteria,
                        marks_map: marks_map } %>
@@ -32,6 +32,7 @@
     </div>
 
     <div class='extra_marks_pane'>
+
       <div class='bonus_deduction'>
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
       </div>
