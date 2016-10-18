@@ -36,7 +36,6 @@ module Markus
                                 #{::Rails.root}/controllers/api
                                 #{::Rails.root}/lib/classes
                                 #{::Rails.root}/lib/validators
-                                #{::Rails.root}/lib/automated_tests/server
                                 )
     # Load any local configuration that is kept out of source control
     # (e.g. gems, patches).

@@ -44,6 +44,7 @@ gem 'autoprefixer-rails'
 gem 'resque'
 gem 'net-ssh'
 gem 'net-scp'
+gem 'httparty'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'
@@ -107,7 +108,6 @@ end
 group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21]
   gem "rspec-rails", '~> 3.0'
-  gem 'httparty'
 end
 
 # Gems needed (wanted) for development, test and production_test

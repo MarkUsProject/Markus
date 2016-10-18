@@ -1,6 +1,4 @@
-require 'net/ssh'
-require 'net/scp'
-require 'json'
+require File.join(Rails.root, 'lib', 'automated_tests', 'server', 'automated_tests_server')
 
 module AutomatedTestsClientHelper
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
@@ -472,8 +470,6 @@ module AutomatedTestsClientHelper
     unless submission.nil?
       submission.set_marks_for_tests
     end
-
-    return
   end
 
 end

@@ -32,7 +32,6 @@ Markus::Application.configure do
   # FIXME: The following lines can be commented
   # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
-  config.cache_classes                                 = true
 
   # Send emails in case of error
   # (see config/initializers/07_exception_notifier for email addresses configuration)
