@@ -1,4 +1,5 @@
 <li id='add_annotation_text'>
+  <%= render partial: 'shared/flash_message' %>
   <%= form_for :annotation_text,
                url: { action: 'add_annotation_text',
                       id: annotation_category_id },
