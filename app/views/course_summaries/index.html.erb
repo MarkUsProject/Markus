@@ -2,20 +2,26 @@
   <%= render partial: 'course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
+<%= content_for :title do %>
     <%= t('course_summaries.title') %>
-  </h1>
-  <div class='heading_buttons'>
-    <%= link_to t('marking_schemes.title'), marking_schemes_path %>
-    <% if @current_user.admin? %>
-        <span class='menu_bar'></span>
-        <%= link_to t(:download_csv_grade_report),
-                    download_csv_grades_report_course_summaries_path%>
-    <% end %>
-  </div>
-</div>
+<% end %>
 
-<div class='wrapLeft'>
-    <div id='course_summaries_table'></div>
-</div>
+<% @heading_buttons =
+       [
+           {
+               link_text: t('marking_schemes.title'),
+               link_path: marking_schemes_path
+           }
+       ]
+   if @current_user.admin?
+     @heading_buttons +=
+         [
+             {
+                 link_text: t(:download_csv_grade_report),
+                 link_path: download_csv_grades_report_course_summaries_path
+             }
+         ]
+   end
+%>
+
+<div id='course_summaries_table'></div>

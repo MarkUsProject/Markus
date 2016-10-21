@@ -4,17 +4,24 @@
     <%= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t('peer_reviews') %></h1>
+<% content_for :title do %>
+  <%= t('peer_reviews') %>
+<% end %>
 
-  <div class='heading_buttons'>
-    <%= link_to t('download'), '#', onclick: 'modal_download.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to t('upload'), '#', onclick: 'modal_upload.open();' %>
-  </div>
-</div>
+<% @heading_buttons =
+     [
+         {
+             link_text: t('download'),
+             link_path: '#',
+             html_options: { onclick: 'modal_download.open();' }
+         },
+         {
+             link_text: t('upload'),
+             link_path: '#',
+             html_options: { onclick: 'modal_upload.open();' }
+         }
+     ] %>
 
-<div class="wrapLeft"></div>
 <div class="clear"></div>
 
 <div id='notice'>

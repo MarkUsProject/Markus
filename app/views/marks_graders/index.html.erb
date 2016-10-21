@@ -20,16 +20,24 @@
   </script>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t('graders.manage_graders') %></h1>
-  <div class='heading_buttons'>
-    <%= link_to t('download'), 'javascript:void(0);', onclick: 'modalDownload.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to t('upload'), 'javascript:void(0);', onclick: 'modalUpload.open();' %>
-  </div>
-</div>
+<% content_for :title do %>
+  <%= t('graders.manage_graders') %>
+<% end %>
 
-<div class="wrapLeft"></div>
+<% @heading_buttons =
+       [
+           {
+               link_text: t('download'),
+               link_path:  'javascript:void(0);',
+               html_options: { onclick: 'modalDownload.open();' }
+           },
+           {
+               link_text: t('upload'),
+               link_path:  'javascript:void(0);',
+               html_options: { onclick: 'modalUpload.open();' }
+           }
+       ] %>
+
 <div class="clear"></div>
 
 
@@ -48,8 +56,6 @@
     <div id='global_action_warning_msg'></div>
   </div>
 
-  <%# All other flash messages %>
-  <%= render 'shared/flash_message' %>
 </div>
 
 <div id='marks_graders_manager'></div>

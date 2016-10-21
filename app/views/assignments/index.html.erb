@@ -7,33 +7,32 @@
 <% end%>
 
 <% @heading_buttons =
-       [
-           {
-               link_text: t('download'),
-               link_path: '#',
-               html_options: { onclick: 'modal_download.open()' }
-           },
-           {
-               link_text: t('upload'),
-               link_path: '#',
-               html_options: { onclick: 'modal_upload.open()' }
-           }
-       ] %>
+     [
+         {
+             link_text: t('download'),
+             link_path: '#',
+             html_options: { onclick: 'modal_download.open()' }
+         },
+         {
+             link_text: t('upload'),
+             link_path: '#',
+             html_options: { onclick: 'modal_upload.open()' }
+         }
+     ] %>
 
-<% content_for :wrap_left_content do %>
+<% content_for :additional_headings do %>
+  <%= link_to t(:create_new_assignment),
+              { controller: 'assignments',
+                action: 'new' },
+              class: 'button' %>
+  <%= link_to t(:create_new_grade_entry_form),
+              { controller: 'grade_entry_forms',
+                action: 'new' },
+              class: 'button' %>
 
-    <%= link_to t(:create_new_assignment),
-                { controller: 'assignments',
-                  action: 'new' },
-                class: 'button' %>
-    <%= link_to t(:create_new_grade_entry_form),
-                { controller: 'grade_entry_forms',
-                  action: 'new' },
-                class: 'button' %>
-
-    <%= render partial: 'assignments/list_manage',
-               locals: { controller: 'assignments',
-                         action: 'edit' } -%>
+  <%= render partial: 'assignments/list_manage',
+             locals: { controller: 'assignments',
+                       action: 'edit' } -%>
 <% end %>
 
 <% # For now, only allow instructors to manage grade entry forms %>

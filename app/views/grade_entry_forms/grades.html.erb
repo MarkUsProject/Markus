@@ -8,26 +8,25 @@
 <% end%>
 
 <% @heading_buttons =
-[
-  {
-    link_text: t('upload'),
-    link_path: 'javascript:void(0);',
-    html_options: { onclick: 'modal_upload.open();' }
-  },
-  {
-    link_text: t('download'),
-    link_path: csv_download_grade_entry_form_path(@grade_entry_form)
-  }
-] %>
+     [
+        {
+          link_text: t('upload'),
+          link_path: 'javascript:void(0);',
+          html_options: { onclick: 'modal_upload.open();' }
+        },
+        {
+          link_text: t('download'),
+          link_path: csv_download_grade_entry_form_path(@grade_entry_form)
+        }
+     ] %>
 
-<% content_for :wrap_left_content do %>
-  <% if @grade_entry_form.grade_entry_items.empty? %>
-    <p><%= t('grade_entry_forms.grades.no_grade_entry_items_message') %></p>
-  <% else %>
-    <%= render partial: 'react_grades_table', formats: [:'js.jsx'], handlers: [:erb] %>
-    <div id="react_grades_table"></div>
-  <% end %>
+<% if @grade_entry_form.grade_entry_items.empty? %>
+  <p><%= t('grade_entry_forms.grades.no_grade_entry_items_message') %></p>
+<% else %>
+  <%= render partial: 'react_grades_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <div id="react_grades_table"></div>
 <% end %>
+
 
 <aside class='dialog' id='upload_dialog'>
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
@@ -51,7 +50,7 @@
 
     <section class='dialog-actions'>
       <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-      <input type='reset' value='<%= t(:close) %>' onclick='modal_upload.close();' />      
+      <input type='reset' value='<%= t(:close) %>' onclick='modal_upload.close();' />
 
     </section>
   <% end %>

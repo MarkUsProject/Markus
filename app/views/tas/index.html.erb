@@ -5,54 +5,57 @@
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('graders.manage_graders') %>
-    <span class='title-help users_graders_help'>
-      <p class='help-message-title users_graders_help'>
-        <%= t('students.help.manage_graders') %>
-      </p>
-    </span>
-  </h1>
+<% content_for :title do %>
+  <%= t('graders.manage_graders') %>
+  <span class='title-help users_graders_help'>
+    <p class='help-message-title users_graders_help'>
+      <%= t('students.help.manage_graders') %>
+    </p>
+  </span>
+<% end %>
 
-  <div class='heading_buttons'>
-    <%= link_to t(:add_new_grader), new_ta_path %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:upload), 'javascript:void(0);', onclick:'modal_upload.open()' %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:download), 'javascript:void(0);', onclick:'modal_download.open()' %>
+<% @heading_buttons =
+     [
+         {
+             link_text: t(:add_new_grader),
+             link_path: new_ta_path
+         },
+         {
+             link_text: t(:download),
+             link_path: '#',
+             html_options: { onclick: 'modal_download.open()' }
+         },
+         {
+             link_text: t('upload'),
+             link_path: '#',
+             html_options: { onclick: 'modal_upload.open()' }
+         }
+     ] %>
+
+<% content_for :wrap_left_content do %>
+  <div id='list'>
+    <% # Display lines in csv file that has not been successfully processed %>
+    <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+      <div class='errorExplanation' id='errorExplanation'>
+        <p><%= I18n.t('graders.not_added') %></p>
+        <ul>
+          <% for line in flash[:invalid_lines] -%>
+            <li><%= line %></li>
+          <% end -%>
+        </ul>
+        <p><%= I18n.t('graders.make_sure') %></p>
+        <ul>
+          <li><%= I18n.t('graders.ta_names') %></li>
+          <li><%= I18n.t('graders.each_field') %></li>
+          <li><%= I18n.t('graders.each_line') %></li>
+        </ul>
+      </div>
+    <% end %>
+
+    <div id='tas_table'></div>
+
   </div>
-</div>
-
-<div class='colsLeftHeavy'>
-  <div class='wrapLeft'>
-    <div id='list'>
-
-      <%= render 'shared/flash_message' %>
-
-      <% # Display lines in csv file that has not been successfully processed %>
-      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
-        <div class='errorExplanation' id='errorExplanation'>
-          <p><%= I18n.t('graders.not_added') %></p>
-          <ul>
-            <% for line in flash[:invalid_lines] -%>
-              <li><%= line %></li>
-            <% end -%>
-          </ul>
-          <p><%= I18n.t('graders.make_sure') %></p>
-          <ul>
-            <li><%= I18n.t('graders.ta_names') %></li>
-            <li><%= I18n.t('graders.each_field') %></li>
-            <li><%= I18n.t('graders.each_line') %></li>
-          </ul>
-        </div>
-      <% end -%>
-
-      <div id='tas_table'></div>
-
-    </div>
-  </div>
-</div> <!-- colsLeftHeavy -->
+<% end %>
 
 <!-- Modal Windows -->
 <aside class='dialog' id='upload_dialog'>

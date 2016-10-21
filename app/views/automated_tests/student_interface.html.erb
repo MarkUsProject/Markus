@@ -1,11 +1,6 @@
-<div class='title_bar'>
-  <h1>
+<% content_for :title do %>
     <%= t('automated_tests.title') %>
-  </h1>
-</div>
-
-
-<%= render partial: 'shared/flash_message' %>
+<% end %>
 
 <% if @assignment.enable_student_tests && !@grouping.nil? %>
   <div class='block'>
@@ -89,3 +84,4 @@
     </div>
   </div>
 <% end %>
+
