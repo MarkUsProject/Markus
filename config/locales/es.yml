@@ -1970,6 +1970,7 @@ es:
         passed:       "Pasó"
         failed:       "Falló"
       error:
+        not_enabled:          "UPDATE ME"
         no_test_server_user:  "UPDATE ME"
         not_belong_to_group:  "Usted no pertenece al grupo"
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"

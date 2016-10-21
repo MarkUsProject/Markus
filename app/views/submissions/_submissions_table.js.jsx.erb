@@ -480,10 +480,12 @@
                 <%= j raw I18n.t('collect_submissions.uncollect_all') %>
               </button>
               <% end %>
-              <button onClick={this.runTests}
-                      data-remote='true'>
-                <%= j raw t('browse_submissions.run_tests') %>
-              </button>
+              <% if @assignment.enable_test %>
+                <button onClick={this.runTests}
+                        data-remote='true'>
+                  <%= j raw t('browse_submissions.run_tests') %>
+                </button>
+              <% end %>
             <% end %>
           <% end %>
           <% if @assignment.has_a_collected_submission? %>

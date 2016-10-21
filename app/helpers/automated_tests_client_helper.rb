@@ -258,9 +258,12 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
 
-    test_server_user = get_test_server_user
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
+    unless assignment.enable_test
+      raise I18n.t('automated_tests.error.not_enabled')
+    end
+    test_server_user = get_test_server_user
     check_user_permission(current_user, grouping, assignment)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision

@@ -1,10 +1,10 @@
 Automated Testing Engine (ATE)
 ==============================
 
-The Automated Testing Engine (ATE) allows instructors to run tests on students submissions and automatically create
-marks for them. It consists of a client component integrated into MarkUs, and a server component that can be deployed
-together with MarkUs or standalone. Testing jobs are queued and served using a first in first out strategy, managed by
-the gem Resque on the client and server side.
+The Automated Testing Engine (ATE) allows instructors and tas to run tests on students submissions and automatically
+create marks for them. It consists of a client component integrated into MarkUs, and a server component that can be
+deployed together with MarkUs or standalone. Testing jobs are queued and served using a first in first out strategy,
+managed by the gem Resque on the client and server side.
 
 ## 1. Requirements and Installation
 
@@ -82,3 +82,19 @@ The directory on the test server where to log test results.
 The name of the queue on the test client where submission files wait to be copied.
 ##### ATE_TESTS_QUEUE_NAME
 The name of the queue on the test server where tests wait to be executed.
+
+## 4. Test scripts output format
+
+The test scripts the instructors upload and run on the test server must print the following output on stdout for each
+test:
+
+```
+<test>
+    <name>REQUIRED (STRING)</name>
+    <input>OPTIONAL (STRING, NOT DISPLAYED YET)</input>
+    <expected>OPTIONAL (STRING, NOT DISPLAYED YET)</expected>
+    <actual>OPTIONAL (STRING, DISPLAYED AS OUTPUT)</actual>
+    <marks_earned>REQUIRED (INTEGER)</marks_earned>
+    <status>REQUIRED (ONE OF pass,fail,error)</status>
+</test>
+```

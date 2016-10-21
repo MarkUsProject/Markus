@@ -1700,6 +1700,7 @@ en:
         passed: "Passed"
         failed: "Failed"
       error:
+        not_enabled: "Tests are not enabled for this assignment"
         no_test_server_user: "There is no test server user for %{hostname}"
         not_belong_to_group: "You do not belong to the group"
         no_tokens: "You do not have tokens to run the tests"
