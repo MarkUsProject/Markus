@@ -20,20 +20,19 @@
          }
      ] %>
 
-<% content_for :additional_headings do %>
-  <%= link_to t(:create_new_assignment),
-              { controller: 'assignments',
-                action: 'new' },
-              class: 'button' %>
-  <%= link_to t(:create_new_grade_entry_form),
-              { controller: 'grade_entry_forms',
-                action: 'new' },
-              class: 'button' %>
 
-  <%= render partial: 'assignments/list_manage',
-             locals: { controller: 'assignments',
-                       action: 'edit' } -%>
-<% end %>
+<%= link_to t(:create_new_assignment),
+            { controller: 'assignments',
+              action: 'new' },
+            class: 'button' %>
+<%= link_to t(:create_new_grade_entry_form),
+            { controller: 'grade_entry_forms',
+              action: 'new' },
+            class: 'button' %>
+
+<%= render partial: 'assignments/list_manage',
+           locals: { controller: 'assignments',
+                     action: 'edit' } -%>
 
 <% # For now, only allow instructors to manage grade entry forms %>
 <% if @current_user.admin? %>
@@ -42,6 +41,7 @@
                    locals: { action: 'edit' } %>
     <% end %>
 <% end %>
+
 
 
 <aside class='dialog' id='download_dialog'>
