@@ -53,5 +53,4 @@
 
 # Ignore redis dump file
 .dump.rdb
-markus_rsa
-markus_rsa.pub
+
