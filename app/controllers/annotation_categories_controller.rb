@@ -68,6 +68,7 @@ class AnnotationCategoriesController < ApplicationController
         render :new_annotation_text_error
         return
       end
+      flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
       @assignment = Assignment.find(params[:assignment_id])
       render :insert_new_annotation_text
     end
