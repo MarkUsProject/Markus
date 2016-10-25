@@ -93,28 +93,26 @@
   <% end %>
 </aside>
 
-<% content_for :modal_download_title do %>
-  <%= t('annotations.download.download_annotations') %>
-<% end %>
-<% content_for :modal_download_content do %>
-<ul>
-  <li>
-    <%= link_to t('annotations.download.download_csv'),
-                { action: 'download',
-                  id: @assignment.id,
-                  format: 'csv' },
-                onclick: 'modal_download.close();' %>
-  </li>
-  <li>
-    <%= link_to t('annotations.download.download_yml'),
-                { action: 'download',
-                  id: @assignment.id,
-                  format: 'yml' },
-                onclick: 'modal_download.close();' %>
-  </li>
-</ul>
-<% end %>
-<% content_for :modal_download_actions do %>
-  <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
-<% end %>
-<%= render 'layouts/modal_download_dialog'%>
+<aside class='dialog' id='download_dialog'>
+  <h1><%= t('annotations.download.download_annotations') %></h1>
+  <ul>
+    <li>
+      <%= link_to t('annotations.download.download_csv'),
+                   { action: 'download',
+                     id: @assignment.id,
+                     format: 'csv' },
+                   onclick: 'modal_download.close();' %>
+    </li>
+    <li>
+      <%= link_to t('annotations.download.download_yml'),
+                    { action: 'download',
+                      id: @assignment.id,
+                      format: 'yml' },
+                    onclick: 'modal_download.close();' %>
+    </li>
+  </ul>
+
+  <section class='dialog-actions'>
+    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
+  </section>
+</aside>
