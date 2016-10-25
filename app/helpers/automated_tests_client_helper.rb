@@ -93,7 +93,7 @@ module AutomatedTestsClientHelper
       # Always make sure the criterion type is correct.
       # The :criterion_id parameter contains a list of the form
       # [criterion_id, criterion_type]
-      if testscripts[file_num][:criterion_id].nil?
+      if testscripts[file_num][:criterion_id].nil? || testscripts[file_num][:criterion_id][0].nil? || testscripts[file_num][:criterion_id][1].nil?
         updated_script_files[file_num][:criterion_type]
       else
         crit_id, crit_type = JSON.parse testscripts[file_num][:criterion_id]
