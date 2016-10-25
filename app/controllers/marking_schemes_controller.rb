@@ -3,6 +3,8 @@ class MarkingSchemesController < ApplicationController
 
   respond_to :html, :js
 
+  layout 'assignment_content'
+
   def index
     @assignments = Assignment.all
     @grade_entry_forms = GradeEntryForm.all
