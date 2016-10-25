@@ -14,23 +14,16 @@
   </span>
 <% end %>
 
-<% @heading_buttons =
-     [
-         {
-             link_text: t(:add_new_grader),
-             link_path: new_ta_path
-         },
-         {
-             link_text: t(:download),
-             link_path: '#',
-             html_options: { onclick: 'modal_download.open()' }
-         },
-         {
-             link_text: t('upload'),
-             link_path: '#',
-             html_options: { onclick: 'modal_upload.open()' }
-         }
-     ] %>
+<% @heading_buttons = [
+  { link_text: t(:add_new_grader),
+    link_path: new_ta_path },
+  { link_text: t(:download),
+    link_path: '#',
+    html_options: { onclick: 'modal_download.open()' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload.open()' } }
+] %>
 
 <% content_for :wrap_left_content do %>
   <div id='list'>

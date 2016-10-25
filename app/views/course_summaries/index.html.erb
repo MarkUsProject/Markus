@@ -4,22 +4,17 @@
 
 <%= content_for :title, t('course_summaries.title') %>
 
-<% @heading_buttons =
-       [
-           {
-               link_text: t('marking_schemes.title'),
-               link_path: marking_schemes_path
-           }
-       ]
-   if @current_user.admin?
-     @heading_buttons +=
-         [
-             {
-                 link_text: t(:download_csv_grade_report),
-                 link_path: download_csv_grades_report_course_summaries_path
-             }
-         ]
-   end
+<%
+  @heading_buttons = [
+    { link_text: t('marking_schemes.title'),
+      link_path: marking_schemes_path }
+  ]
+  if @current_user.admin?
+    @heading_buttons += [
+      { link_text: t(:download_csv_grade_report),
+        link_path: download_csv_grades_report_course_summaries_path }
+    ]
+  end
 %>
 
 <div id='course_summaries_table'></div>

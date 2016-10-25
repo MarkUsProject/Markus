@@ -11,12 +11,9 @@
   </span>
 <% end %>
 
-<% @heading_buttons =
-     [
-         {
-             link_text: t(:add_new_admin),
-             link_path: new_admin_path
-         }
-     ] %>
+<% @heading_buttons = [
+  { link_text: t(:add_new_admin),
+    link_path: new_admin_path }
+] %>
 
 <div id='admins_table'></div>

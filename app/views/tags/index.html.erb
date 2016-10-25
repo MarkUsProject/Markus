@@ -13,29 +13,20 @@
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
     @assignment.short_identifier) %>
 
-<% @heading_buttons =
-     [
-         {
-             link_text: t('tags.create.create_new'),
-             link_path: '#',
-             html_options: { onclick:'modal_create_new.open()' }
-         },
-         {
-             link_text: t('tags.download.download'),
-             link_path: '#',
-             html_options: { onclick: 'modal_download.open()' }
-         },
-         {
-             link_text: t('tags.upload.upload_csv'),
-             link_path: '#',
-             html_options: { onclick: 'modal_upload_csv.open()' }
-         },
-         {
-             link_text: t('tags.upload.upload_yml'),
-             link_path: '#',
-             html_options: { onclick: 'modal_upload_yml.open()' }
-         }
-     ] %>
+<% @heading_buttons = [
+  { link_text: t('tags.create.create_new'),
+    link_path: '#',
+    html_options: { onclick:'modal_create_new.open()' } },
+  { link_text: t('tags.download.download'),
+    link_path: '#',
+    html_options: { onclick: 'modal_download.open()' } },
+  { link_text: t('tags.upload.upload_csv'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload_csv.open()' } },
+  { link_text: t('tags.upload.upload_yml'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload_yml.open()' } }
+] %>
 
 <% content_for :wrap_left_content do %>
   <!--The table that contains all the tags.-->

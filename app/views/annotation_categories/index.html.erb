@@ -13,23 +13,17 @@
 
 <% path = new_assignment_annotation_category_path %>
 
-<% @heading_buttons =
-     [
-       { link_text: t('annotations.add_annotation_category'),
-         link_path: '#',
-         html_options: { onclick: "add_annotation_category('#{path}')" }
-       },
-       {
-           link_text: t('download'),
-           link_path: '#',
-           html_options: { onclick: 'modal_download.open()' }
-       },
-       {
-           link_text: t('upload'),
-           link_path: '#',
-           html_options: { onclick: 'modal_upload.open()' }
-       }
-     ] %>
+<% @heading_buttons = [
+  { link_text: t('annotations.add_annotation_category'),
+    link_path: '#',
+    html_options: { onclick: "add_annotation_category('#{path}')" } },
+  { link_text: t('download'),
+    link_path: '#',
+    html_options: { onclick: 'modal_download.open()' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload.open()' } }
+] %>
 
 
 <p id='criterion_error' class='warning' style='display: none;'></p>

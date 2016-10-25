@@ -9,32 +9,25 @@
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
     @assignment.short_identifier) %>
 
-<% @heading_buttons =
-      [
-           {
-               link_text: t('criteria.add_criterion'),
-               link_path: 'javascript:void(0);',
-               html_options: { onclick:
-                   "if(document.getElementById('new_criterion') != null) {
-                        document.getElementById('new_criterion_prompt').focus();
-                      } else {
-                        jQuery.ajax({
-                          url: '" + new_assignment_criterion_path(@assignment) + "',
-                          type: 'GET'
-                        });
-                      } " }
-           },
-           {
-               link_text: t('criteria.download.yml'),
-               link_path: 'javascript:void(0);',
-               html_options: { onclick: 'modal_download_yml.open()' }
-           },
-           {
-               link_text: t('criteria.upload.yml'),
-               link_path: 'javascript:void(0);',
-               html_options: { onclick: 'modal_upload_yml.open()' }
-           }
-       ] %>
+<% @heading_buttons = [
+  { link_text: t('criteria.add_criterion'),
+    link_path: 'javascript:void(0);',
+    html_options: { onclick:
+      "if(document.getElementById('new_criterion') != null) {
+        document.getElementById('new_criterion_prompt').focus();
+      } else {
+        jQuery.ajax({
+          url: '" + new_assignment_criterion_path(@assignment) + "',
+          type: 'GET'
+        });
+      } "} },
+  { link_text: t('criteria.download.yml'),
+    link_path: 'javascript:void(0);',
+    html_options: {onclick: 'modal_download_yml.open()'} },
+  { link_text: t('criteria.upload.yml'),
+    link_path: 'javascript:void(0);',
+    html_options: {onclick: 'modal_upload_yml.open()' } }
+] %>
 
 <div class='wrapper'>
   <%= render 'shared/flash_message' %>

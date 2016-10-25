@@ -22,19 +22,14 @@
 
 <% content_for :title, t('graders.manage_graders') %>
 
-<% @heading_buttons =
-       [
-           {
-               link_text: t('download'),
-               link_path:  'javascript:void(0);',
-               html_options: { onclick: 'modalDownload.open();' }
-           },
-           {
-               link_text: t('upload'),
-               link_path:  'javascript:void(0);',
-               html_options: { onclick: 'modalUpload.open();' }
-           }
-       ] %>
+<% @heading_buttons = [
+  { link_text: t('download'),
+    link_path:  'javascript:void(0);',
+    html_options: { onclick: 'modalDownload.open();' } },
+  { link_text: t('upload'),
+    link_path:  'javascript:void(0);',
+    html_options: { onclick: 'modalUpload.open();' } }
+] %>
 
 <div class="clear"></div>
 
