@@ -123,9 +123,9 @@ class AutomatedTestsController < ApplicationController
   def download
     filedb = nil
     if params[:type] == 'script'
-      filedb = TestScript.find_by_assignment_id_and_script_name(params[:assignment_id], params[:filename])
+      filedb = TestScript.find_by(assignment_id: params[:assignment_id], script_name: params[:filename])
     elsif params[:type] == 'support'
-      filedb = TestSupportFile.find_by_assignment_id_and_file_name(params[:assignment_id], params[:filename])
+      filedb = TestSupportFile.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
     end
 
     if filedb

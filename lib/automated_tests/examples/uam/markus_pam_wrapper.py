@@ -32,7 +32,7 @@ class PAMWrapper:
     """
 
     def __init__(self, path_to_uam, test_files, test_timeout=5, global_timeout=20, path_to_virtualenv=None,
-                 result_filename='result.json', timeout_filename='timedout'):
+                 result_filename='result.json'):
         """
         Initializes the various parameters to run pam.
         :param path_to_uam: The path to the uam installation.
@@ -41,7 +41,6 @@ class PAMWrapper:
         :param global_timeout: The max time to run all tests on the student submission.
         :param path_to_virtualenv: The path to the virtualenv to be used to run pam, can be None if all necessary.
         :param result_filename: The file name of pam's json output.
-        :param timeout_filename: The file name of pam's output when a test times out.
         dependencies are installed system-wide.
         """
         self.path_to_uam = path_to_uam
@@ -51,7 +50,6 @@ class PAMWrapper:
         self.global_timeout = global_timeout
         self.path_to_virtualenv = path_to_virtualenv
         self.result_filename = result_filename
-        self.timeout_filename = timeout_filename
 
     def collect_results(self):
         """
@@ -82,9 +80,8 @@ class PAMWrapper:
                                           status=PAMResult.Status.ERROR, description=test_stack['description'],
                                           message=test_stack['message']))
         except OSError:
-            if not os.path.isfile(self.timeout_filename):
-                print('Test framework error: no result or time out generated', file=sys.stderr)
-                exit(1)
+            print('Test framework error: no result generated', file=sys.stderr)
+            exit(1)
         return results
 
     def print_results(self, results):

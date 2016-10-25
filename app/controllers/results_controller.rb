@@ -686,7 +686,7 @@ class ResultsController < ApplicationController
     end
 
     submission = if map[:file_id]
-                   sub_file = SubmissionFile.find_by_id(map[:file_id])
+                   sub_file = SubmissionFile.find_by(id: map[:file_id])
                    sub_file.submission unless sub_file.nil?
                  elsif map[:submission_id]
                    Submission.find(map[:submission_id])

@@ -32,7 +32,6 @@ Markus::Application.configure do
   # FIXME: The following lines can be commented
   # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
-  config.cache_classes                                 = true
 
   # Send emails in case of error
   # (see config/initializers/07_exception_notifier for email addresses configuration)
@@ -269,69 +268,32 @@ Markus::Application.configure do
   SESSION_COOKIE_SECURE = false
 
   ###################################################################
-  # Automated Testing Engine settings
-  ###################################################################
-
-  # Examples of architectures:
-  # 1) local development:
-  #    1 Resque worker to serve all queues
-  # 2) 1 client with 1 dedicated server, on the same machine with authentication or on separate machines:
-  #    1 Resque client worker + 1 Resque server worker
-  # 3) N clients with 1 shared server FIFO, on the same machine with authentication or on separate machines:
-  #    N Resque client workers + 1 Resque server worker
-
-  # Automated Testing Engine(ATE) can only be used when this is set to true
-  AUTOMATED_TESTING_ENGINE_ON = false
-
-  # Allows the instructor to allow students to run tests
-  ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
-
-  # The test server host. Use 'localhost' for a local server without authentication.
-  ATE_SERVER_HOST = 'localhost'
-  # The test server username used to copy the test files over and to run the Resque server worker.
-  # SSH Login must be set up for this username to connect without a password from MarkUs.
-  # Ignored if ATE_SERVER_HOST is 'localhost'.
-  ATE_SERVER_FILES_USERNAME = 'localhost'
-  # The test server username used to run the tests.
-  # Can be the same as ATE_SERVER_FILE_USERNAME, or ATE_SERVER_FILES_USERNAME must be able to sudo -u to it.
-  # Ignored if ATE_SERVER_HOST is 'localhost'.
-  ATE_SERVER_TESTS_USERNAME = 'localhost'
-
-  # Make sure these directories exist and the appropriate users can write into them
-  # The directory on the client where test scripts are stored and student repos are temporarily exported.
-  # The user running MarkUs writes here.
-  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
-  # The directory on the test server where to copy test files. Multiple clients can write here at the same time.
-  # ATE_SERVER_FILES_USERNAME writes here.
-  ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/files"
-  # The directory on the test server where to run tests. Only one test at at time must be executed to avoid interference.
-  # Can be the same as ATE_SERVER_FILES_DIR.
-  # ATE_SERVER_FILES_USERNAME and ATE_SERVER_TESTS_USERNAME write here.
-  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
-  # The directory on the test server where to store test results.
-  # ATE_SERVER_FILES_USERNAME writes here.
-  ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
-
-  ###################################################################
   # Resque queues
   ###################################################################
 
-  # Run a Resque worker to serve all queues:
-  # TERM_CHILD=1 QUEUE=* bundle exec rake environment resque:work
-  # Run a Resque client worker and a Resque server worker:
-  # TERM_CHILD=1 QUEUE=CSC108_ate_files,CSC108_job_groups,CSC108_job_collect,CSC108_job_uncollect bundle exec rake environment resque:work
-  # TERM_CHILD=1 QUEUE=ate_tests bundle exec rake environment resque:work
-
-  # The name of the queue on the test client where submission files wait to be copied.
-  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
-  # The name of the queue on the test server where tests wait to be executed.
-  ATE_TESTS_QUEUE_NAME = 'ate_tests'
   # The name of the queue where jobs to create individal groups for all students wait to be executed.
   JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108_job_groups'
   # The name of the queue where jobs to collect submissions wait to be executed.
   JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_collect'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
   JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_uncollect'
+
+  ###################################################################
+  # Automated Testing Engine settings
+  ###################################################################
+
+  # Look at lib/automated_tests/README.md for the documentation
+  AUTOMATED_TESTING_ENGINE_ON = false
+  ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
+  ATE_SERVER_HOST = 'localhost'
+  ATE_SERVER_FILES_USERNAME = 'localhost'
+  ATE_SERVER_TESTS_USERNAME = 'localhost'
+  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
+  ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/files"
+  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
+  ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
+  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
+  ATE_TESTS_QUEUE_NAME = 'ate_tests'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

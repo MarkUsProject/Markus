@@ -1,10 +1,7 @@
-require 'timeout'
 require 'httparty'
+require 'open3'
 
-module AutomatedTestsServerHelper
-  # This is the waiting list for automated testing on the test server. Once a test is requested, it is enqueued
-  # and it is waiting for execution. Resque manages this queue.
-  @queue = MarkusConfigurator.markus_ate_tests_queue_name
+class AutomatedTestsServer
   TIME_LIMIT = 600
 
   def self.get_test_scripts_chmod(test_scripts, tests_path)

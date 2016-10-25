@@ -1,6 +1,4 @@
-require 'net/ssh'
-require 'net/scp'
-require 'json'
+require File.join(Rails.root, 'lib', 'automated_tests', 'server', 'automated_tests_server')
 
 module AutomatedTestsClientHelper
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
@@ -198,7 +196,7 @@ module AutomatedTestsClientHelper
 
   def self.get_test_server_user
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
       raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
@@ -260,9 +258,12 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
 
-    test_server_user = get_test_server_user
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
+    unless assignment.enable_test
+      raise I18n.t('automated_tests.error.not_enabled')
+    end
+    test_server_user = get_test_server_user
     check_user_permission(current_user, grouping, assignment)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
@@ -355,7 +356,7 @@ module AutomatedTestsClientHelper
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil?
       return
     end
@@ -363,6 +364,7 @@ module AutomatedTestsClientHelper
     tests_path = MarkusConfigurator.markus_ate_server_tests_dir
     same_path = (MarkusConfigurator.markus_ate_server_files_dir == MarkusConfigurator.markus_ate_server_tests_dir)
     results_path = MarkusConfigurator.markus_ate_server_results_dir
+    server_queue = MarkusConfigurator.markus_ate_tests_queue_name
 
     if test_server_host == 'localhost'
       # tests executed locally with no authentication:
@@ -376,8 +378,8 @@ module AutomatedTestsClientHelper
       end
       test_username = nil
       # enqueue locally using resque api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, user_api_key, server_api_key, test_username,
-                     test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
+      Resque.enqueue_to(server_queue, AutomatedTestsServer, markus_address, user_api_key, server_api_key, test_username,
+                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
     else
       # tests executed locally or remotely with authentication:
       # copy the student's submission and all necessary files through ssh in a temp folder
@@ -403,10 +405,9 @@ module AutomatedTestsClientHelper
           test_username = (file_username == MarkusConfigurator.markus_ate_server_tests_username) ?
               nil : MarkusConfigurator.markus_ate_server_tests_username
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
-          resque_params = {:class => 'AutomatedTestsServerHelper',
+          resque_params = {:class => 'AutomatedTestsServer',
                            :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
                                      files_path, tests_path, results_path, assignment.id, group.id, submission_id]}
-          server_queue = MarkusConfigurator.markus_ate_tests_queue_name
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
@@ -472,8 +473,6 @@ module AutomatedTestsClientHelper
     unless submission.nil?
       submission.set_marks_for_tests
     end
-
-    return
   end
 
 end

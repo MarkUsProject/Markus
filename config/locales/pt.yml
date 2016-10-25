@@ -1489,6 +1489,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         passed: "Passou"
         failed: "Fracassado"
       error:
+        not_enabled: "UPDATE ME"
         no_test_server_user: "UPDATE ME"
         not_belong_to_group: "UPDATE ME"
         no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
