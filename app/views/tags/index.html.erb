@@ -8,8 +8,8 @@
 <% end %>
 
 <!--The title bar for the page-->
-<% content_for :title, t('tags.title',
-  assignment_short_identifier: @assignment.is_peer_review? ?
+<% content_for :title,
+  t('tags.title', assignment_short_identifier: @assignment.is_peer_review? ?
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
     @assignment.short_identifier) %>
 

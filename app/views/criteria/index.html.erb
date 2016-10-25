@@ -4,8 +4,8 @@
              handlers: [:erb] %>
 <% end %>
 
-<% content_for :title, t('criteria.marking_scheme',
-  identifier: @assignment.is_peer_review? ?
+<% content_for :title,
+  t('criteria.marking_scheme', identifier: @assignment.is_peer_review? ?
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
     @assignment.short_identifier) %>
 
