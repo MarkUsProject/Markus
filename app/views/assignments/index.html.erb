@@ -2,9 +2,7 @@
     <%= javascript_include_tag 'Assignments/index' %>
 <% end %>
 
-<% content_for :title do %>
-    <%= t(:manage_course_work) %>
-<% end%>
+<% content_for :title, t(:manage_course_work) %>
 
 <% @heading_buttons = [
   {  link_text: t('download'),

@@ -4,11 +4,10 @@
              handlers: [:erb] %>
 <% end %>
 
-<% content_for :title do %>
-    <%= t('criteria.marking_scheme', identifier: @assignment.is_peer_review? ?
-        @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
-        @assignment.short_identifier) %>
-<% end %>
+<% content_for :title, t('criteria.marking_scheme',
+  identifier: @assignment.is_peer_review? ?
+    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
+    @assignment.short_identifier) %>
 
 <% @heading_buttons =
       [

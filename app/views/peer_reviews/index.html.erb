@@ -4,9 +4,7 @@
     <%= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<% content_for :title do %>
-  <%= t('peer_reviews') %>
-<% end %>
+<% content_for :title, t('peer_reviews') %>
 
 <% @heading_buttons =
      [

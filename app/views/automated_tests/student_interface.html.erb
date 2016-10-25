@@ -1,6 +1,4 @@
-<% content_for :title do %>
-    <%= t('automated_tests.title') %>
-<% end %>
+<% content_for :title, t('automated_tests.title') %>
 
 <% if @assignment.enable_student_tests && !@grouping.nil? %>
   <div class='block'>

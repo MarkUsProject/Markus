@@ -3,9 +3,7 @@
   <%= javascript_include_tag 'GradeEntryForms/grades' %>
 <% end %>
 
-<% content_for :title do %>
-  <%= t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
-<% end%>
+<% content_for :title, t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
 
 <% @heading_buttons =
      [

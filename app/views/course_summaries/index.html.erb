@@ -2,9 +2,7 @@
   <%= render partial: 'course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<%= content_for :title do %>
-    <%= t('course_summaries.title') %>
-<% end %>
+<%= content_for :title, t('course_summaries.title') %>
 
 <% @heading_buttons =
        [
