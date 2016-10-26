@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-
 import json
 import os
 import subprocess
 import enum
 import sys
-from xml.sax import saxutils
 
 
 class PAMResult:
@@ -119,7 +116,7 @@ class PAMWrapper:
             #                       env=env, timeout=self.global_timeout)
             results = self.collect_results()
             self.print_results(results)
-        except subprocess.TimeoutExpired as e:
+        except subprocess.TimeoutExpired:
             self.print_results(None)
             exit(1)
         except subprocess.CalledProcessError as e:
@@ -131,68 +128,3 @@ class PAMWrapper:
         except Exception as e:
             print('Test framework error: {exception}'.format(exception=e), file=sys.stderr)
             exit(1)
-
-
-class MarkusPAMWrapper(PAMWrapper):
-    """
-    A wrapper to run the Python AutoMarker (pam - https://github.com/ProjectAT/uam) within Markus' test framework.
-    """
-
-    def print_result(self, name, input, expected, actual, marks, status):
-        """
-        Prints one pam result in the format expected by Markus' test framework.
-        """
-        print('''
-            <test>
-                <name>{name}</name>
-                <input>{input}</input>
-                <expected>{expected}</expected>
-                <actual>{actual}</actual>
-                <marks_earned>{marks}</marks_earned>
-                <status>{status}</status>
-            </test>
-        '''.format(name=name, input=input, expected=expected, actual=actual, marks=marks, status=status))
-
-    def print_results(self, results):
-        """
-        Prints pam results.
-        :param results: A list of results (possibly empty), or None if the tests timed out.
-        """
-        if results is None:
-            self.print_result(name='All tests', input='', expected='', actual='Timeout', marks=0, status='error')
-        else:
-            for result in results:
-                marks = 1 if result.status == PAMResult.Status.PASS else 0
-                status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
-                name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
-                                                                                           desc=result.description)
-                self.print_result(name=name, input='', expected='',
-                                  actual=saxutils.escape(result.message, entities={"'": '&apos;'}),
-                                  marks=marks, status=status)
-
-
-if __name__ == '__main__':
-    # Modify uppercase variables with your settings
-    # The path to the UAM root folder
-    PATH_TO_UAM = '/path/to/uam'
-    # A list of test files uploaded as support files to be executed against the student submission
-    MARKUS_TEST_FILES = ['test.py']
-    # The max time to run a single test on the student submission.
-    TEST_TIMEOUT = 5
-    # The max time to run all tests on the student submission.
-    GLOBAL_TIMEOUT = 20
-    # The path to a Python virtualenv that has the test dependencies
-    # (if None, dependencies must be installed system-wide)
-    PATH_TO_VIRTUALENV = None
-    wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES, test_timeout=TEST_TIMEOUT,
-                               global_timeout=GLOBAL_TIMEOUT, path_to_virtualenv=PATH_TO_VIRTUALENV)
-    wrapper.run()
-    # use with markusapi.py if needed (import markusapi)
-    ROOT_URL = sys.argv[1]
-    API_KEY = sys.argv[2]
-    ASSIGNMENT_ID = sys.argv[3]
-    GROUP_ID = sys.argv[4]
-    # FILE_NAME = 'result.json'
-    # api = markusapi.Markus(API_KEY, ROOT_URL)
-    # with open(FILE_NAME) as open_file:
-    #     api.upload_feedback_file(ASSIGNMENT_ID, GROUP_ID, FILE_NAME, open_file.read())
