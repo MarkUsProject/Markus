@@ -1,5 +1,10 @@
 <aside class='dialog' id='<%= modal_id %>' >
   <h2>
+    <%= image_tag('favicon.ico',
+                  height: '32',
+                  width: '32',
+                  alt: "MarkUs",
+                  title: "MarkUs Modal") %>
     <%= yield(:modal_title) %>
   </h2>
   <%= yield(:modal_content) %>
