@@ -21,12 +21,12 @@ if __name__ == '__main__':
     wrapper = MarkusPAMWrapper(path_to_uam=PATH_TO_UAM, test_files=MARKUS_TEST_FILES, test_timeout=TEST_TIMEOUT,
                                global_timeout=GLOBAL_TIMEOUT, path_to_virtualenv=PATH_TO_VIRTUALENV)
     wrapper.run()
-    # use with markusapi.py if needed (uncomment import markusapi)
-    ROOT_URL = sys.argv[1]
-    API_KEY = sys.argv[2]
-    ASSIGNMENT_ID = sys.argv[3]
-    GROUP_ID = sys.argv[4]
-    # FILE_NAME = 'result.json'
-    # api = Markus(API_KEY, ROOT_URL)
-    # with open(FILE_NAME) as open_file:
-    #     api.upload_feedback_file(ASSIGNMENT_ID, GROUP_ID, FILE_NAME, open_file.read())
+    # use markus apis if needed (uncomment import markusapi)
+    root_url = sys.argv[1]
+    api_key = sys.argv[2]
+    assignment_id = sys.argv[3]
+    group_id = sys.argv[4]
+    # file_name = 'result.json'
+    # api = Markus(api_key, root_url)
+    # with open(file_name) as open_file:
+    #     api.upload_feedback_file(assignment_id, group_id, file_name, open_file.read())
