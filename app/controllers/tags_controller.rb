@@ -43,6 +43,19 @@ class TagsController < ApplicationController
     Tag.all
   end
 
+  # Update a particular tag.
+  def update_tag
+    @tag = Tag.find(params[:id])
+    @tag.name = params[:update_tag][:name]
+    @tag.description = params[:update_tag][:description]
+    if @tag.save
+      flash[:success] = I18n.t('tags.create.successful')
+      redirect_to :back
+    else
+      flash[:error] = I18n.t('tags.create.error')
+    end
+  end
+
   # Destroys a particular tag.
   def destroy
     @tag = Tag.find(params[:id])
