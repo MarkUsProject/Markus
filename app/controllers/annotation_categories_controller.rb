@@ -52,7 +52,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(annotation_text_params)
     @annotation_text.last_editor_id = current_user.id
-    @annotation_text.save
+    if @annotation_text.save
+      flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
+    end
   end
 
   def add_annotation_text
