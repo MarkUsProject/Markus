@@ -71,9 +71,7 @@ class GroupsController < ApplicationController
     unless existing
       # We update the group_name
       @group.group_name = params[:new_groupname]
-      if @group.save
-        flash[:success] = I18n.t('groups.rename_group.success')
-      end
+      @group.save
     else
 
       # We link the grouping to the group already existing
