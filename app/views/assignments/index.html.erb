@@ -29,10 +29,8 @@
 
   <% # For now, only allow instructors to manage grade entry forms %>
   <% if @current_user.admin? %>
-      <% content_for :wrap_left_content do %>
-          <%= render partial: 'grade_entry_forms/list_manage',
-                     locals: { action: 'edit' } %>
-      <% end %>
+    <%= render partial: 'grade_entry_forms/list_manage',
+               locals: { action: 'edit' } %>
   <% end %>
 <% end %>
 
