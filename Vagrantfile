@@ -3,7 +3,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "markusproject/ubuntu"
-
+  config.ssh.private_key_path = "/Users/leeseunghoon/.ssh/id_rsa"
   # Set this to your private key if you're having trouble
   # ssh-ing into Vagrant (it's requiring a password)
   # config.ssh.private_key_path = "/home/.ssh/id_rsa"
