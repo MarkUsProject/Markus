@@ -105,7 +105,7 @@
                         assignment_groups_path(viewing_a_review ? @assignment.pr_assignment :
                                                  @assignment) %>
           </li>
-          <% unless @assignment.is_peer_review? || viewing_a_review %>
+          <% unless viewing_a_review %>
             <li class='<%= "active" if controller.controller_name == 'graders' %>'>
               <%= link_to t('graders.graders'),
                           assignment_graders_path(@assignment) %>
