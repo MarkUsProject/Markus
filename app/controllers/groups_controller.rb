@@ -12,6 +12,8 @@ class GroupsController < ApplicationController
   auto_complete_for :student, :user_name
   auto_complete_for :assignment, :name
 
+  layout 'assignment_content'
+
   def note_message
     @assignment = Assignment.find(params[:id])
     if params[:success]
@@ -109,7 +111,6 @@ class GroupsController < ApplicationController
     @clone_assignments = Assignment.where(allow_web_submits: false)
                                    .where.not(id: @assignment.id)
                                    .order(:id)
-    render 'index'
   end
 
   def populate

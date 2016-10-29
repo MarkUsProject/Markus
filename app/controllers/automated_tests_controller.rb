@@ -86,6 +86,7 @@ class AutomatedTestsController < ApplicationController
                                              .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def execute_test_run

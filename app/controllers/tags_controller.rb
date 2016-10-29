@@ -3,6 +3,8 @@ class TagsController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
 
