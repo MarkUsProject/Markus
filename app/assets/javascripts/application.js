@@ -61,3 +61,14 @@ Element.prototype.hasClass = function(className) {
   else
     return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }
+
+jQuery(document).ajaxComplete(function(event, request) {
+    var keys = ["notice", "warning", "success", "error"];
+    var keysLength = keys.length;
+    for (var i = 0; i < keysLength; i++){
+        if (request.getResponseHeader('X-Message-'+keys[i])) {
+            jQuery(".flash-"+keys[i]).show();
+            jQuery(".flash-"+keys[i]).text(request.getResponseHeader('X-Message-'+keys[i]));
+        }
+    }
+});
