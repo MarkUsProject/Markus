@@ -140,16 +140,16 @@ function change_submission_rule() {
   }
 }
 
-function toggle_fields1(is_disabled) {
+function toggle_field_student_tests(is_disabled) {
   jQuery('#are_student_tests_enabled').attr('disabled', is_disabled);
 }
 
-function toggle_fields2(is_disabled) {
+function toggle_field_token_config(is_disabled) {
   jQuery('#assignment_unlimited_tokens').attr('disabled', is_disabled);
   jQuery('#assignment_token_start_date').attr('disabled', is_disabled);
 }
 
-function toggle_fields3(is_disabled) {
+function toggle_field_token_limits(is_disabled) {
   jQuery('#assignment_tokens_per_period').attr('disabled', is_disabled);
   jQuery('#assignment_token_period').attr('disabled', is_disabled);
 }
@@ -158,18 +158,18 @@ function toggle_tests(is_testing_framework_enabled) {
 
   jQuery('#is_testing_framework_enabled').val(is_testing_framework_enabled);
   if (is_testing_framework_enabled) {
-    toggle_fields1(false);
+    toggle_field_student_tests(false);
     if (jQuery('#are_student_tests_enabled').is(':checked')) {
-      toggle_fields2(false);
+      toggle_field_token_config(false);
       if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
-        toggle_fields3(false);
+        toggle_field_token_limits(false);
       }
     }
   }
   else {
-    toggle_fields1(true);
-    toggle_fields2(true);
-    toggle_fields3(true);
+    toggle_field_student_tests(true);
+    toggle_field_token_config(true);
+    toggle_field_token_limits(true);
   }
 }
 
@@ -177,13 +177,13 @@ function toggle_student_tests(are_student_tests_enabled) {
 
   jQuery('#are_student_tests_enabled').val(are_student_tests_enabled);
   if (are_student_tests_enabled) {
-    toggle_fields2(false);
+    toggle_field_token_config(false);
     if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
-      toggle_fields3(false);
+      toggle_field_token_limits(false);
     }
   } else {
-    toggle_fields2(true);
-    toggle_fields3(true);
+    toggle_field_token_config(true);
+    toggle_field_token_limits(true);
   }
 }
 
@@ -191,8 +191,8 @@ function toggle_tests_tokens(is_unlimited) {
 
   jQuery('#assignment_unlimited_tokens').val(is_unlimited);
   if (is_unlimited) {
-    toggle_fields3(true);
+    toggle_field_token_limits(true);
   } else {
-    toggle_fields3(false);
+    toggle_field_token_limits(false);
   }
 }
