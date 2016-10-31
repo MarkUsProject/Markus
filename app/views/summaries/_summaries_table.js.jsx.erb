@@ -39,6 +39,13 @@
           compare: compare_numeric_values,
           searchable: true
         },
+        {
+          id: 'total_extra_points',
+          content: '<%= j raw I18n.t('marker.marks.bonus_deductions') %>',
+          sortable: true,
+          compare: compare_numeric_values,
+          searchable: true
+        },
         <%= raw @section_column  %>
       ];
 
@@ -176,8 +183,9 @@
         s['repository'] = <a href={summary.repo_url}>{summary.repo_name}</a>;
         s['marking_state'] = this.renderMarkingState(summary.state);
         s['final_grade'] = summary.final_grade;
-        s['section'] = summary.section
+        s['section'] = summary.section;
         s['state'] = summary.state;
+        s['total_extra_points'] = summary.total_extra_points;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
           s[key] = summary.criteria[key];

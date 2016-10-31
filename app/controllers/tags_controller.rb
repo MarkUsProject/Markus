@@ -3,6 +3,8 @@ class TagsController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
 
@@ -41,6 +43,19 @@ class TagsController < ApplicationController
 
   def get_all_tags
     Tag.all
+  end
+
+  # Update a particular tag.
+  def update_tag
+    @tag = Tag.find(params[:id])
+    @tag.name = params[:update_tag][:name]
+    @tag.description = params[:update_tag][:description]
+    if @tag.save
+      flash[:success] = I18n.t('tags.create.successful')
+      redirect_to :back
+    else
+      flash[:error] = I18n.t('tags.create.error')
+    end
   end
 
   # Destroys a particular tag.

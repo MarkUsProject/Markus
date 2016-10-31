@@ -6,50 +6,43 @@
   <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 <% end %>
 
-<% content_for :title do %>
-  <%= t('annotations.title',
-        assignment_short_identifier: @assignment.is_peer_review? ?
-            @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
-            @assignment.short_identifier) %>
-<% end %>
+<% content_for :title, t('annotations.title',
+  assignment_short_identifier: @assignment.is_peer_review? ?
+    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+    @assignment.short_identifier) %>
 
 <% path = new_assignment_annotation_category_path %>
 
 <% @heading_buttons = [
-       { link_text: t('annotations.add_annotation_category'),
-         link_path: '#',
-         html_options: { onclick: "add_annotation_category('#{path}')" }
-       },
-       {
-           link_text: t('download'),
-           link_path: '#',
-           html_options: { onclick: 'modal_download.open()' }
-       },
-       {
-           link_text: t('upload'),
-           link_path: '#',
-           html_options: { onclick: 'modal_upload.open()' }
-       }
-   ] %>
+  { link_text: t('annotations.add_annotation_category'),
+    link_path: '#',
+    html_options: { onclick: "add_annotation_category('#{path}')" } },
+  { link_text: t('download'),
+    link_path: '#',
+    html_options: { onclick: 'modal_download.open()' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload.open()' } }
+] %>
 
-<% content_for :wrap_left_content do %>
-  <p id='criterion_error' class='warning' style='display: none;'></p>
-  <div id='annotation_category_pane'>
-    <%= render partial: 'annotation_categories/annotation_category_pane' %>
-  </div>
 
-  <div id='annotations_pane'>
-    <div id='annotation_list_holder'>
-      <div id='annotations_help'>
-        <h2><%= t(:help) %></h2>
-        <p><%= t('annotations.help_message') %></p>
-      </div>
+<p id='criterion_error' class='warning' style='display: none;'></p>
+<div id='annotation_category_pane'>
+  <%= render partial: 'annotation_categories/annotation_category_pane' %>
+</div>
+
+<div id='annotations_pane'>
+  <div id='annotation_list_holder'>
+    <div id='annotations_help'>
+      <h2><%= t(:help) %></h2>
+      <p><%= t('annotations.help_message') %></p>
     </div>
   </div>
-<% end %>
+</div>
+
 
 <aside class='dialog' id='upload_dialog'>
-  <h1><%= t('annotations.upload.upload_annotations') %></h1>
+  <h2><%= t('annotations.upload.upload_annotations') %></h2>
   <%= t('annotations.upload.upload_message_csv').html_safe %>
   <%= form_tag({ action: 'csv_upload',
                  id: @assignment.id },
@@ -105,17 +98,17 @@
   <ul>
     <li>
       <%= link_to t('annotations.download.download_csv'),
-                  { action: 'download',
-                    id: @assignment.id,
-                    format: 'csv' },
-                  onclick: 'modal_download.close();' %>
+                   { action: 'download',
+                     id: @assignment.id,
+                     format: 'csv' },
+                   onclick: 'modal_download.close();' %>
     </li>
     <li>
       <%= link_to t('annotations.download.download_yml'),
-                  { action: 'download',
-                    id: @assignment.id,
-                    format: 'yml' },
-                  onclick: 'modal_download.close();' %>
+                    { action: 'download',
+                      id: @assignment.id,
+                      format: 'yml' },
+                    onclick: 'modal_download.close();' %>
     </li>
   </ul>
 

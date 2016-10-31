@@ -8,6 +8,8 @@ class PeerReviewsController < ApplicationController
   before_filter :authorize_only_for_admin, except: [:show_reviews, :show_result]
   before_filter :authorize_for_user, only: [:show_reviews, :show_result]
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     

@@ -2,6 +2,8 @@ class TasController < ApplicationController
   include TasHelper
   before_filter  :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
   end
 
