@@ -2,15 +2,15 @@
   <%= render partial: 'marking_schemes_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t('marking_schemes.title') %></h1>
+<% content_for :title, t('marking_schemes.title') %>
 
-  <div class='heading_buttons'>
-    <%= link_to t('marking_schemes.add_new'), new_marking_scheme_path, remote: true %>
-    <span class="menu_bar"></span>
-    <%= link_to t('course_summaries.title'), course_summaries_path %>
-  </div>
-</div>
+<% @heading_buttons = [
+    { link_text: t('marking_schemes.add_new'),
+      link_path: new_marking_scheme_path,
+      html_options: { remote: true } },
+    { link_text: t('course_summaries.title'),
+      link_path: course_summaries_path }
+] %>
 
 <div class='wrapper'>
   <div id='marking_schemes_table'></div>

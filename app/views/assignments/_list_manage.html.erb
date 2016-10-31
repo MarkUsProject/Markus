@@ -52,20 +52,34 @@
                     <% end %>
                   <% end %>
                   <% if assignment.has_peer_review? %>
-                    <% if assignment.pr_assignment.is_hidden %>
-                      <%= link_to t('assignment.hidden',
-                                    assignment_text: t('results.review_for') + assignment.short_identifier),
-                                  { controller: controller,
-                                    action: action,
-                                    id: assignment.pr_assignment },
-                                  class: 'pr_assignment_list' %>
-                    <% else %>
-                      <%= link_to t('results.review_for') + assignment.short_identifier,
-                                  { controller: controller,
-                                    action: action,
-                                    id: assignment.pr_assignment },
-                                  class: 'pr_assignment_list' %>
-                    <% end %>
+                      <!--temporary conditional until submissions_controller.browse() is updated to handle pr_assignments-->
+                      <% if @current_user.admin? %>
+                        <% if assignment.pr_assignment.is_hidden %>
+                          <%= link_to t('assignment.hidden',
+                                        assignment_text: t('results.review_for') + assignment.short_identifier),
+                                      { controller: controller,
+                                        action: action,
+                                        id: assignment.pr_assignment },
+                                      class: 'pr_assignment_list' %>
+                        <% else %>
+                          <%= link_to t('results.review_for') + assignment.short_identifier,
+                                      {  controller: controller,
+                                         action: action,
+                                         id: assignment.pr_assignment },
+                                      class: 'pr_assignment_list' %>
+                        <% end %>
+                      <% else %>
+                          <% if assignment.pr_assignment.is_hidden %>
+                              <%= link_to t('assignment.hidden',
+                                            assignment_text: t('results.review_for') + assignment.short_identifier),
+                                          { },
+                                          class: 'pr_assignment_list' %>
+                          <% else %>
+                              <%= link_to t('results.review_for') + assignment.short_identifier,
+                                          { },
+                                          class: 'pr_assignment_list' %>
+                          <% end %>
+                      <% end %>
                   <% end %>
                 </td>
 

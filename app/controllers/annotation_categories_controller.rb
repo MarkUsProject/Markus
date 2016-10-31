@@ -5,10 +5,11 @@ class AnnotationCategoriesController < ApplicationController
 
   before_filter      :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories(order: 'position')
-    render layout: 'assignment_content'
   end
 
   def new

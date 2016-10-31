@@ -6,24 +6,25 @@
   <%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
+<% content_for :title do %>
     <%= t('graders.manage_graders') %>
     <span class='title-help assignment_graders_help'>
       <p class='help-message-title assignment_graders_help'>
         <%= t('assignment.help.graders') %>
       </p>
     </span>
-  </h1>
+<% end %>
 
-  <div class='heading_buttons'>
-    <%= link_to t('download'), '#', onclick:'modal_download.open();' %>
-    <span class='menu_bar'></span>
-    <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
-  </div>
-</div>
+<% @heading_buttons = [
+  { link_text: t('download'),
+    link_path: '#',
+    html_options: { onclick: 'modal_download.open();' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { onclick: 'modal_upload.open();' } },
+] %>
 
-<div class="wrapLeft"></div>
+
 <div class="clear"></div>
 
 
@@ -41,9 +42,6 @@
     <h3><%= t('groups.warning') %></h3>
     <div id='global_action_warning_msg'></div>
   </div>
-
-  <%# All other flash messages %>
-  <%= render 'shared/flash_message' %>
 </div>
 
 <div id='graders_manager'></div>
@@ -66,7 +64,7 @@
   </ul>
 
   <section class='dialog-actions'>
-    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />    
+    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />
   </section>
 </aside>
 
