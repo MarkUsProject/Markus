@@ -1545,6 +1545,7 @@ fr:
         tokens_not_given_yet: "<span class=\"prop_label\">Jetons disponibles :</span> jetons pas encore donnés"
         tokens_no_more_available: "<span class=\"prop_label\">Jetons disponibles:</span >pas de jetons disponibles"
         tokens_available: "<span class=\"prop_label\">Jetons disponibles:</span> %{tokens}"
+        no_regeneration: "Pas de régénération"
         unlimited_tokens: "<span class=\"prop_label\">Jetons disponibles :</span> ∞"
         unlimited: "infinis"
       test_results_table:

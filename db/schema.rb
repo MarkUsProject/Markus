@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 20160925144240) do
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
     t.boolean  "unlimited_tokens",                 default: false
+    t.boolean  "non_regenerating_tokens",          default: false
     t.boolean  "is_hidden",                        default: false
     t.boolean  "only_required_files"
     t.boolean  "vcs_submit",                       default: false
