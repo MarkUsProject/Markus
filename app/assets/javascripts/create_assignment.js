@@ -185,7 +185,7 @@ function toggle_student_tests(are_student_tests_enabled) {
     toggle_field_token_config(false);
     if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
       toggle_field_token_limits(false);
-        toggle_field_token_regen(false);
+      toggle_field_token_regen(false);
     }
   } else {
     toggle_field_token_config(true);
