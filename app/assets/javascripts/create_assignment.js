@@ -149,7 +149,10 @@ function toggle_field_token_config(is_disabled) {
 
 function toggle_field_token_limits(is_disabled) {
   jQuery('#assignment_tokens_per_period').attr('disabled', is_disabled);
-  jQuery('#assignment_token_period').attr('disabled', is_disabled);
+}
+
+function toggle_field_token_regen(is_disabled) {
+    jQuery('#assignment_token_period').attr('disabled', is_disabled);
 }
 
 function toggle_tests(is_testing_framework_enabled) {
@@ -161,6 +164,7 @@ function toggle_tests(is_testing_framework_enabled) {
       toggle_field_token_config(false);
       if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
         toggle_field_token_limits(false);
+        toggle_field_token_regen(false);
       }
     }
   }
@@ -168,6 +172,7 @@ function toggle_tests(is_testing_framework_enabled) {
     toggle_field_student_tests(true);
     toggle_field_token_config(true);
     toggle_field_token_limits(true);
+    toggle_field_token_regen(true);
   }
 }
 
@@ -178,10 +183,12 @@ function toggle_student_tests(are_student_tests_enabled) {
     toggle_field_token_config(false);
     if (!jQuery('#assignment_unlimited_tokens').is(':checked')) {
       toggle_field_token_limits(false);
+        toggle_field_token_regen(false);
     }
   } else {
     toggle_field_token_config(true);
     toggle_field_token_limits(true);
+    toggle_field_token_regen(true);
   }
 }
 
@@ -190,7 +197,18 @@ function toggle_tests_tokens(is_unlimited) {
   jQuery('#assignment_unlimited_tokens').val(is_unlimited);
   if (is_unlimited) {
     toggle_field_token_limits(true);
+    toggle_field_token_regen(true);
   } else {
     toggle_field_token_limits(false);
+    toggle_field_token_regen(false);
   }
+}
+
+function toggle_token_regeneration(does_not_regenerate) {
+    jQuery('#assignment_non_regenerating_tokens').val(does_not_regenerate);
+    if (does_not_regenerate) {
+        toggle_field_token_regen(true);
+    } else {
+        toggle_field_token_regen(false);
+    }
 }

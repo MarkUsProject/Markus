@@ -158,6 +158,7 @@ module AutomatedTestsClientHelper
 
     assignment.enable_test = assignment_params[:enable_test]
     assignment.enable_student_tests = assignment_params[:enable_student_tests]
+    assignment.non_regenerating_tokens = assignment_params[:non_regenerating_tokens]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
     assignment.token_start_date = assignment_params[:token_start_date]
     assignment.token_period = assignment_params[:token_period]

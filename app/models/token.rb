@@ -36,9 +36,9 @@ class Token < ActiveRecord::Base
     elsif assignment.unlimited_tokens
       # grouping has  1 token that is never consumed
       self.remaining = 1
-    elsif last_used.nil? ||
+    elsif (last_used.nil? ||
           (last_used.to_time.to_i + assignment.token_period * 60 * 60 <=
-            DateTime.now.to_time.to_i)
+            DateTime.now.to_time.to_i)) && !assignment.non_regenerating_tokens
       self.remaining = assignment.tokens_per_period
     end
     self.save
