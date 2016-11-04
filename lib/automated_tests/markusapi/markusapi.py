@@ -164,7 +164,7 @@ class Markus:
             'marking_state': new_marking_state
         }
         path = self.get_path(assignment_id, group_id) + 'update_marking_state'
-        return self.submit_request(params, path, 'POST')
+        return self.submit_request(params, path, 'PUT')
 
     def submit_request(self, params, path, request_type):
         """ (Markus, dict, str, str) -> list of str
