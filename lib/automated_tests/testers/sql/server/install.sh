@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
-if [ $# -ne 3 ]; then
-    echo usage: $0 server_user server_host server_install_dir
+if [ $# -ne 4 ]; then
+    echo usage: $0 server_user server_host server_install_dir server_pythonpath_dir
     exit 1
 fi
+
 USER=$1
 SERVER=$2
 INSTALLDIR=$3
-SERVERPWD=YOUR_PASSWORD1
-TESTPWD=YOUR_PASSWORD2
+PYTHONPATHDIR=$4
+SERVERPWD=YOUR_SERVER_PASSWORD
+TESTPWD=YOUR_TEST_PASSWORD
 scp schema.ddl data.sql ${USER}@${SERVER}:${INSTALLDIR}
+scp markus_sql_config.py ${USER}@${SERVER}:${PYTHONPATHDIR}
 ssh ${USER}@${SERVER} bash -c "'
     cd ${INSTALLDIR}
     sudo -u postgres psql <<-EOF

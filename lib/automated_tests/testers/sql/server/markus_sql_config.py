@@ -1,0 +1,5 @@
+DATABASE = 'tests'
+USER = 'ate_test'
+PASSWORD = 'YOUR_TEST_PASSWORD'
+PATH_TO_SCHEMA = '/path/to/schema'
+SCHEMA_NAME = ''
