@@ -11,7 +11,15 @@
   padding-right: 1em;
 
   #new_criterion_prompt {
-    margin: 1em 0;
+    margin: 0.5em 0;
+    width: 100%;
+  }
+  #max_mark_prompt {
+    margin: 0.5em 0;
+    width: 100%;
+  }
+  #new_criterion_type_prompt {
+    margin: 0.5em 0;
     width: 100%;
   }
 }
@@ -24,6 +32,11 @@
 
 #criteria_pane {
   width: 37%;
+}
+
+.flexible_criteria_icon {
+  font-weight: bolder;
+  font-size: 11.3pt;
 }
 
 #editing_pane {

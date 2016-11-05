@@ -1,9 +1,7 @@
 <%# Grades page for students %>
 <%= render partial: 'marks_table', formats: [:'js.jsx'], handlers: [:erb] %>
 
-<div class='title_bar'>
-  <h1><%= t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %></h1>
-</div>
+<% content_for :title, t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %>
 
 <div class='wrapper'>
   <% if @grade_entry_form.grade_entry_items.empty? %>
@@ -17,4 +15,3 @@
     <% end %>
   <% end %>
 </div>
-

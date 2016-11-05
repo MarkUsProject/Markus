@@ -4,6 +4,8 @@ class MarksGradersController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @students = students_with_assoc

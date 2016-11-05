@@ -8,7 +8,7 @@
         onclick='add_existing_annotation(<%= annotation_text.id %>, <%= result_id %>); return false;'
         onMouseDown='return false;'
         title='<%= annotation_text.content %>'>
-      <%= truncate(annotation_text.content, length: 40) %>
+      <%= truncate(annotation_text.content, length: 70) %>
     </li>
   <% end %>
 </ul>

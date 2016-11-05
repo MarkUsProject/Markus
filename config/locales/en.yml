@@ -1223,6 +1223,7 @@ en:
       title:          "Criteria"
       name:           "Criterion name"
       type:           "Criterion type"
+      max_mark: "Maximum mark"
       rubric:         "Rubric"
       flexible:       "Flexible"
       checkbox:       "Checkbox"
@@ -1290,7 +1291,6 @@ en:
 
     flexible_criteria:
       title: "Flexible Criteria"
-      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1310,7 +1310,6 @@ en:
 
     checkbox_criteria:
       title: "Checkbox Criteria"
-      max_mark: "Maximum mark"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
@@ -1652,13 +1651,9 @@ en:
       replace: "Update"
       filename_exists: "has already been taken"
       duplicate_filename: "Attempted to upload the following filename more than once: "
-      missing_tokens: "No tokens were found for this student and for this assignment"
       tokens_available_on: "Tokens available starting on"
-      not_belong_to_group: "You do not belong to the group"
-      test_files_unavailable: "There is no test script to run test"
-      source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
-      marks_obtained: "<span class=\"prop_label\">Marks Obtained:</span> %{marking}"
+      marks_obtained: "<span class=\"prop_label\">Points from Tests (latest run only):</span> %{marking}"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:
@@ -1667,7 +1662,8 @@ en:
         description: "Description"
         update_description: "Enter Description Here"
         seq_num: "UPDATE ME: seq_num"
-        max_marks: "Maximum marks <span class='required_field'>*</span>"
+        max_marks: "Max Test Points <span class='required_field'>*</span>"
+        max_marks_tooltip: "Mark = Actual Test Points / Max Test Points * Max Criterion Mark (rounded to the nearest level for Rubric Criteria)"
         run_by_instructors: "Runnable by Instructors"
         run_by_students: "Runnable by Students"
         halts_testing: "Halt On Failure"
@@ -1702,6 +1698,17 @@ en:
         status: "Status"
         passed: "Passed"
         failed: "Failed"
+      error:
+        no_test_server_user: "There is no test server user for %{hostname}"
+        not_belong_to_group: "You do not belong to the group"
+        no_tokens: "You do not have tokens to run the tests"
+        no_test_files: "There are no test scripts to run the tests"
+      test_result:
+        all_tests: "All tests"
+        no_source_files: "There are no student files to run the tests"
+        no_server_connection: "Server connection error with %{hostname}: %{error}"
+        bad_results: "The test results are malformed: %{xml}"
+        no_tests: "The test results are empty"
 
 #Missing Activerecord Translations for english
     datetime:

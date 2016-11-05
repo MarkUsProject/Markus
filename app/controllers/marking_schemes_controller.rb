@@ -2,6 +2,9 @@ class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
 
   respond_to :html, :js
+  before_filter  :authorize_only_for_admin
+
+  layout 'assignment_content'
 
   def index
     @assignments = Assignment.all

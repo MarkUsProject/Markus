@@ -2,6 +2,8 @@ class SectionsController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   # Controller corresponding to the users management part
 
   # Displays sections, and allows to create them

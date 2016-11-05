@@ -5,15 +5,12 @@
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
-
           <% if can_show_test_results_tab?(assignment) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
-
           <% if can_show_feedback_files_tab?(submission) %>
               <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
-
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
            <% end %>
@@ -69,12 +66,13 @@
                   <div class="block_content">
                   <br />
                     <div class="sub_block">
-                      <%= raw (t("automated_tests.marks_obtained",
-                                    :marking => "#{@grouping.get_total_test_script_marks *
-                                    1.0} / #{@assignment.total_ror_script_marks * 1.0}" )) %>
+                      <%= raw t("automated_tests.marks_obtained",
+                                :marking => "#{@grouping.get_total_test_script_marks} /
+                                             #{@assignment.total_instructor_test_script_marks}" ) %>
                     </div>
                     <div id="test_results" class="sub_block">
                       <%= render partial: 'automated_tests/test_script_result',
+                                 locals: {show_output: true},
                                  collection: submission.test_script_results %>
                     </div>
                   </div>

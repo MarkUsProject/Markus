@@ -31,7 +31,7 @@ class AutomatedTestsController < ApplicationController
         flash[:success] = I18n.t('assignment.update_success')
         unless new_script.nil?
           assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_storage_dir,
+              MarkusConfigurator.markus_ate_client_dir,
               @assignment.repository_folder,
               new_script.original_filename)
           # Replace bad line endings from windows
@@ -42,7 +42,7 @@ class AutomatedTestsController < ApplicationController
 
         unless new_support_file.nil?
           assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_storage_dir,
+              MarkusConfigurator.markus_ate_client_dir,
               @assignment.repository_folder,
               new_support_file.original_filename)
           # Replace bad line endings from windows
@@ -86,6 +86,7 @@ class AutomatedTestsController < ApplicationController
                                              .order(created_at: :desc)
       @token = fetch_latest_tokens_for_grouping(@grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def execute_test_run
@@ -109,9 +110,8 @@ class AutomatedTestsController < ApplicationController
     begin
       AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping_id, @current_user)
       return nil
-    rescue Exception => e
-      #TODO: really shouldn't be leaking error if student.
-      return e.message
+    rescue => e
+      flash_message(:error, e.message)
     end
   end
 
@@ -138,7 +138,7 @@ class AutomatedTestsController < ApplicationController
       assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
 
       # the given file should be in this directory
-      should_be_in = File.join(MarkusConfigurator.markus_ate_client_storage_dir, assn_short_id)
+      should_be_in = File.join(MarkusConfigurator.markus_ate_client_dir, assn_short_id)
       should_be_in = File.expand_path(should_be_in)
       filename = File.expand_path(File.join(should_be_in, filename))
 

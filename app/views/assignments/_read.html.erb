@@ -2,21 +2,21 @@
 
 <div class='block_content'>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('name') %>:</span>
+    <span class='prop_label'><%= t('name') %></span>
     <span class="prop_paragraph">
       <%= @assignment.is_peer_review? ? t('results.review_for') + @assignment.parent_assignment.short_identifier :
                                         @assignment.short_identifier %></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('description') %>:</span>
+    <span class='prop_label'><%= t('description') %></span>
     <span class="prop_paragraph"><%= @assignment.description %></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('message') %>:</span>
-    <span class="prop_paragraph"><%= @assignment.message %></span>
+    <span class='prop_label'><%= t('message') %></span>
+    <span class="prop_paragraph"><%= @assignment.message %><br></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('due_date') %>:</span>
+    <span class='prop_label'><%= t('due_date') %></span>
     <span class="prop_paragraph"><%= I18n.l(@due_date, format: :long_date ) %></span>
   </div>
 
@@ -24,7 +24,7 @@
     <div class ='sub_block'>
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
-        <span class='prop_label'><%= raw(t('deadline_grace_tokens')) %>:</span>
+        <span class='prop_label'><%= raw(t('deadline_grace_tokens')) %></span>
         <%# Relative remaining grace credits for the grouping %>
         <% if !@grouping.nil? %>
           <% remaining_credits = @grouping.available_grace_credits %>
@@ -36,53 +36,54 @@
           <% end %>
         <% end %>
       <% else %>
-        <span class='prop_label'><%= raw(t('deadline_max_penalty')) %>:</span>
+        <span class='prop_label'><%= raw(t('deadline_max_penalty')) %></span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
       <% end %>
       <%= I18n.l(@assignment.due_date + acc.hours, format: :long_date ) %>
     </div>
-  
+
     <div class='sub_block'>
-      <span class='prop_label'><%= t('lateness_penalty') %>:</span>
+      <span class='prop_label'><%= t('lateness_penalty') %></span>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
-        <%= t('grace_period') %> 
+        <%= t('grace_period') %>
       <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
         <%= t('penalty_decay') %>
       <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
-        <%= t('penalty_period') %> 
+        <%= t('penalty_period') %>
       <% end %>
     </div>
 
-    <% if !@grouping.nil? %>
+    <%#Cannot assign Grace Period without first assigning a group.%>
+    <% unless @grouping.nil? && @penalty.type == "GracePeriodSubmissionRule" %>
       <div class='sub_block'>
-        <span class='prop_label'><%= t('additional_information') %>:</span>
+        <span class='prop_label'><%= t('additional_information') %></span>
         <% if @penalty.type == "GracePeriodSubmissionRule" %>
           <% if !@grouping.nil? %>
               <%= raw(t('student.group_credits',
-                          available_grace_credits: 
+                          available_grace_credits:
                           @grouping.available_grace_credits)) %>
           <% end %>
         <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
-          <ul>
+          <br><ul>
           <% @enum_penalty.each do |p| %>
             <% if p == @enum_penalty.first %>
-              <li><%= t('penalty_decay_message_first', 
-              deduction: p.deduction, interval: p.interval, 
+              <li><%= t('penalty_decay_message_first',
+              deduction: p.deduction, interval: p.interval,
               hours: p.hours) %> </li>
             <% else %>
-              <li><%= t('penalty_decay_message_other', 
-              deduction: p.deduction, interval: p.interval, 
+              <li><%= t('penalty_decay_message_other',
+              deduction: p.deduction, interval: p.interval,
               hours: p.hours) %> </li>
             <% end %>
           <% end %>
           </ul>
         <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
-          <ul>
+          <br><ul>
           <% deduction = hours = 0 %>
           <% @enum_penalty.each do |p| %>
-            <% deduction += p.deduction %> 
+            <% deduction += p.deduction %>
             <% hours += p.hours %>
-            <li> <%= t('penalty_period_message', hours: hours, 
+            <li><%= t('penalty_period_message', hours: hours,
             deduction: deduction) %> </li>
           <% end %>
           </ul>
@@ -93,7 +94,7 @@
 
   <% if @assignment.display_grader_names_to_students %>
     <div class='sub_block'>
-      <span class='prop_label'><%= t('graders.assigned_graders') %>:</span>
+      <span class='prop_label'><%= t('graders.assigned_graders') %></span>
       <% if !@grouping.nil?%>
         <% @grouping.ta_memberships.each do |ta| %>
           <%= ta.user.last_name%>

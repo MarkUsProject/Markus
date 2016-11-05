@@ -1,18 +1,25 @@
-<li id='criterion_<%= criterion.class %> <%= criterion.id %>'>
+<li id='criterion_<%= criterion.class %><%= criterion.id %>'>
   <span class='left'>
+    <% if criterion.class.to_s == 'RubricCriterion' %>
+      <%= image_tag('icons/table.png', title: t('criteria.rubric'))%> &nbsp
+    <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
+      <span class="flexible_criteria_icon" title=<%= t('criteria.flexible') %>> ⅔ &nbsp </span>
+    <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
+      <%= image_tag('icons/check_box.png', title: t('criteria.checkbox')) %> &nbsp
+    <% end %>
     <%= link_to truncate(criterion.name,
-                         length: 30,
+                         length: 27,
                          omission: '...'),
-                edit_assignment_criterion_url(assignment_id: @assignment.id,
-                                              id: criterion.id,
-                                              criterion_type: criterion.class.to_s),
-                id: "criterion_title_#{criterion.id}",
+                edit_assignment_criterion_path(assignment_id: @assignment.id,
+                                               id: criterion.id,
+                                               criterion_type: criterion.class.to_s),
+                id: "criterion_title_#{criterion.class}#{criterion.id}",
                 remote: true %>
   </span>
-  <span class='center' id='criterion_max_mark_<%= criterion.id %>'>
+  <span class='center' id='criterion_max_mark_<%= criterion.class %><%= criterion.id %>'>
     <%= criterion.max_mark %>
   </span>
-  <span class='right' id='visibility_indicator_<%= criterion.id %>'>
+  <span class='right' id='visibility_indicator_<%= criterion.class %><%= criterion.id %>'>
     <% if criterion.ta_visible && criterion.peer_visible %>
       <%= image_tag 'icons/user_suit.png' %><%= image_tag 'icons/group.png' %>
     <% elsif criterion.ta_visible %>
@@ -22,3 +29,5 @@
     <% end %>
   </span>
 </li>
+
+<!--"check_box.png" designed by interactivemania, used under Creative Commons BY-ND 3.0-->

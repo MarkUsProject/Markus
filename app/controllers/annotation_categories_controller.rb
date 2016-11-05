@@ -5,10 +5,11 @@ class AnnotationCategoriesController < ApplicationController
 
   before_filter      :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories(order: 'position')
-    render layout: 'assignment_content'
   end
 
   def new
@@ -68,6 +69,7 @@ class AnnotationCategoriesController < ApplicationController
         render :new_annotation_text_error
         return
       end
+      flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
       @assignment = Assignment.find(params[:assignment_id])
       render :insert_new_annotation_text
     end

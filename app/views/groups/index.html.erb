@@ -24,17 +24,16 @@
   </div>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
+<% content_for :title do %>
     <%= t('groups.manage_groups') %>
     <span class='title-help assignment_groups_help'>
       <p class='help-message-title assignment_groups_help'>
         <%= t('assignment.help.groups') %>
       </p>
     </span>
-  </h1>
+<% end %>
 
-  <div class='heading_buttons'>
+<% content_for :additional_headings do %>
     <% # Allow cloning groups forward only if its web submits are disallowed
        # for this assignment.
        unless @assignment.allow_web_submits %>
@@ -48,8 +47,7 @@
                   id: @assignment.id } %>
     <span class='menu_bar'></span>
     <%= link_to t('upload'), 'javascript:void(0);', onclick:'modal_upload.open();' %>
-  </div>
-</div>
+<% end %>
 
 <div id="notice">
   <div class="success" id="add_success" style="display: none;"></div>
@@ -77,8 +75,6 @@
   </div>
   <div id="job-messenger"></div>
 
-  <%# All other flash messages %>
-  <%= render 'shared/flash_message' %>
 </div>
 
 <div id='groups_manager'></div>

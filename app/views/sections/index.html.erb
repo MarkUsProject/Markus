@@ -1,13 +1,11 @@
-<div class='title_bar'>
-  <h1>
+<% content_for :title do %>
     <%= t('section.manage_users') %>
     <span class='title-help sections_manage_users_help'>
       <p class='help-message-title sections_manage_users_help'>
         <%= t('section.help.manage_users') %>
       </p>
     </span>
-  </h1>
-</div>
+<% end %>
 
 <div class='wrapper'>
   <%= render 'shared/flash_message' %>

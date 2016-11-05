@@ -16,6 +16,9 @@
   <span id='selected_criterion_name'>
     <%= criterion.name %>
   </span>
+  <span id='selected_criterion_type'>
+    (<%= t('criteria.flexible') %>)
+  </span>
 </h2>
 
 <%= form_for criterion,
@@ -34,7 +37,7 @@
     </span>
     <br>
     <span id='criterion_max_mark_edit_<%= criterion.id %>' class='criterion_max_mark_edit'>
-      <%= f.label :max_mark, t('flexible_criteria.max_mark'), class: 'bold_inline_label' %>
+      <%= f.label :max_mark, t('criteria.max_mark'), class: 'bold_inline_label' %>
       <%= f.text_field :max_mark %>
     </span>
     <br>

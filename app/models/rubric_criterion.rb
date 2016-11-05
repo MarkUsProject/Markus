@@ -57,7 +57,7 @@ class RubricCriterion < Criterion
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
   DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = 4
+  MAX_LEVEL = RUBRIC_LEVELS - 1
   DEFAULT_LEVELS = [
     {'name' => I18n.t('rubric_criteria.defaults.level_0'),
      'description' => I18n.t('rubric_criteria.defaults.description_0')},
@@ -217,12 +217,14 @@ class RubricCriterion < Criterion
   end
 
   def weight
-    max_mark / 4
+    max_mark / MAX_LEVEL
   end
 
   def round_max_mark
-    factor = 10.0 ** 3
-    self.max_mark = (max_mark * factor).round.to_f / factor
+    # (this was being done in a weird way, leaving the original in case there are problems)
+    # factor = 10.0 ** 3
+    # self.max_mark = (max_mark * factor).round.to_f / factor
+    self.max_mark = self.max_mark.round(3)
   end
 
   def all_assigned_groups
@@ -294,7 +296,7 @@ class RubricCriterion < Criterion
     if mark_value == 'nil'
       mark_to_change.mark = nil
     else
-      mark_to_change.mark = mark_value.to_f * weight
+      mark_to_change.mark = mark_value.to_f
     end
     mark_to_change.save
   end
