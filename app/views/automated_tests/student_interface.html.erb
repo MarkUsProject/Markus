@@ -13,7 +13,7 @@
           <div class='sub_block'>
             <%= raw t('automated_tests.token.unlimited_tokens') %>
           </div>
-        <% else if !@assignment.non_regenerating_tokens %>
+        <% elsif !@assignment.non_regenerating_tokens %>
           <div class='sub_block'>
             <%= raw t('automated_tests.token.tokens_per_period',
                       tokens: @assignment.tokens_per_period,
