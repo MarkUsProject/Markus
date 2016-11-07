@@ -6,3 +6,4 @@ PATH_TO_SCHEMA = '/path/to/schema'
 SCHEMA_FILE = 'schema.ddl'
 DATA_FILES = ['data1.sql', 'data2.sql']
 SCHEMA_NAME = 'ate'
+OUTPUT_FILE = 'output.txt'

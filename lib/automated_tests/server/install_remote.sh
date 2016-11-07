@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 if [ $# -ne 5 ]; then
-    echo usage: $0 server_user server_host server_install_dir server_pythonpath_dir server_queue_name
-    exit 1
+	echo usage: $0 server_user server_host server_install_dir server_pythonpath_dir server_queue_name
+	exit 1
 fi
 
 USER=$1

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 if [ $# -ne 2 ]; then
-    echo usage: $0 install_dir queue_name
-    exit 1
+	echo usage: $0 install_dir queue_name
+	exit 1
 fi
 
 INSTALLDIR=$1
