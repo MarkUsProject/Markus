@@ -63,12 +63,12 @@ Element.prototype.hasClass = function(className) {
 }
 
 jQuery(document).ajaxComplete(function(event, request) {
-    var keys = ["notice", "warning", "success", "error"];
+    var keys = ['notice', 'warning', 'success', 'error'];
     var keysLength = keys.length;
-    for (var i = 0; i < keysLength; i++){
-        if (request.getResponseHeader('X-Message-'+keys[i])) {
-            jQuery(".flash-"+keys[i]).show();
-            jQuery(".flash-"+keys[i]).text(request.getResponseHeader('X-Message-'+keys[i]));
+    for (var i = 0; i < keysLength; i++) {
+        if (request.getResponseHeader('X-Message-' + keys[i])) {
+            jQuery('.flash-' + keys[i]).show();
+            jQuery('.flash-' + keys[i]).text(request.getResponseHeader('X-Message-' + keys[i]));
         }
     }
 });
