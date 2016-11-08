@@ -22,7 +22,6 @@ for datafile in solution/datasets/*; do
 		CREATE SCHEMA ${dataname};
 		GRANT USAGE ON SCHEMA ${dataname} TO ate_test;
 		GRANT SELECT ON ALL TABLES IN SCHEMA ${dataname} TO ate_test;
-		SET search_path TO ${dataname};
 	EOF
 	echo "SET search_path TO ${dataname};" | cat - solution/schema.ddl > /tmp/ate.sql
 	psql -U ate_server -d ate_oracle -f /tmp/ate.sql

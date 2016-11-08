@@ -53,7 +53,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
                             out = ''
                             marks = 1
                             status = 'pass'
-                            # TODO check 1: column names
+                            # TODO check 1: column names and types
                             # check 2: num rows
                             test_num_results = len(test_results)
                             oracle_num_results = len(oracle_results)
@@ -61,7 +61,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
                                 out = 'Expected {} results but got {}'.format(oracle_num_results, test_num_results)
                                 marks = 0
                                 status = 'fail'
-                            # TODO check 3: rows content
+                            # TODO check 3: rows content and order
                             self.print_result(name=test_name, input='', expected='', actual=out, marks=marks,
                                               status=status)
                             self.print_result_file(name=test_name, actual=out, oracle_results=oracle_results,
