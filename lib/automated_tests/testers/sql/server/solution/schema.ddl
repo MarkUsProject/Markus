@@ -5,6 +5,6 @@ CREATE TABLE table1 (
 
 CREATE TABLE table2 (
   id integer PRIMARY KEY,
-  number double NOT NULL,
+  number double precision NOT NULL,
   foreign_id integer NOT NULL REFERENCES table1
 );

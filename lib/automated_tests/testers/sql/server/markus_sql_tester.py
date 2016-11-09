@@ -1,75 +1,136 @@
 import os
+import pprint
 import psycopg2
-import markus_sql_config as cfg
 from markus_utils import MarkusUtilsMixin
 # from markusapi import Markus
 
 
 class MarkusSQLTester(MarkusUtilsMixin):
 
-    def print_result_file(self, name, actual, oracle_results, test_results, output_open):
-        output_open.write('{} - {}:\n'.format(name, actual))
-        output_open.write('Expected:\n{}'.format(oracle_results))
-        output_open.write('Actual:\n{}'.format(test_results))
+    SCHEMA_FILE = 'schema.ddl'
+    DATASET_DIR = 'datasets'
+
+    def __init__(self, oracle_database, test_database, user_name, user_password, data_files, schema_name,
+                 path_to_solution, output_filename='result.txt'):
+        self.oracle_database = oracle_database
+        self.test_database = test_database
+        self.user_name = user_name
+        self.user_password = user_password
+        self.data_files = data_files
+        self.schema_name = schema_name
+        self.path_to_solution = path_to_solution
+        self.output_filename = output_filename
+        self.oracle_connection = None
+        self.oracle_cursor = None
+        self.test_connection = None
+        self.test_cursor = None
+
+    def init_db(self):
+        self.oracle_connection = psycopg2.connect(database=self.oracle_database, user=self.user_name,
+                                                  password=self.user_password)
+        self.oracle_cursor = self.oracle_connection.cursor()
+        self.test_connection = psycopg2.connect(database=self.test_database, user=self.user_name,
+                                                password=self.user_password)
+        self.test_cursor = self.test_connection.cursor()
+
+    def close_db(self):
+        if self.test_cursor:
+            self.test_cursor.close()
+        if self.test_connection:
+            self.test_connection.close()
+        if self.oracle_cursor:
+            self.oracle_cursor.close()
+        if self.oracle_connection:
+            self.oracle_connection.close()
+
+    def get_oracle_results(self, data_name, test_name):
+        self.oracle_cursor.execute('SELECT * FROM %(table)s', {'table': '{}.oracle_{}'.format(data_name, test_name)})
+        oracle_results = self.oracle_cursor().fetchall()
+
+        return oracle_results
+
+    def get_test_results(self, sql_file, data_file):
+        self.test_cursor.execute('DROP SCHEMA IF EXISTS %(schema)s CASCADE',
+                                 {'schema': psycopg2.extensions.AsIs(self.schema_name)})
+        self.test_cursor.execute('CREATE SCHEMA %(schema)s', {'schema': psycopg2.extensions.AsIs(self.schema_name)})
+        self.test_cursor.execute('SET search_path TO %(schema)s, public',
+                                 {'schema': psycopg2.extensions.AsIs(self.schema_name)})
+        with open(os.path.join(self.path_to_solution, self.SCHEMA_FILE)) as schema_open:
+            schema = schema_open.read()
+            self.test_cursor.execute(schema)
+        with open(os.path.join(self.path_to_solution, self.DATASET_DIR, data_file)) as data_open:
+            data = data_open.read()
+            self.test_cursor.execute(data)
+        # run test sql
+        with open(sql_file) as sql_open:
+            sql = sql_open.read()
+            self.test_cursor.execute(sql)
+            self.test_connection.commit()
+            test_results = self.test_cursor.fetchall()
+
+        return test_results
+
+    def print_result_file(self, output_open, sql_file, message, oracle_results, test_results):
+        output_open.write('{} - {}:\n'.format(sql_file, message))
+        output_open.write('Expected Columns:\n{}'.format(pprint.pformat([column.name for column in
+                                                                         self.oracle_cursor.description])))
+        output_open.write('Actual Columns:\n{}'.format(pprint.pformat([column.name for column in
+                                                                       self.test_cursor.description])))
+        output_open.write('Expected Rows:\n{}'.format(pprint.pformat(oracle_results)))
+        output_open.write('Actual Rows:\n{}'.format(pprint.pformat(test_results)))
+
+    def check_results(self, oracle_results, test_results):
+        # check 1: column number, names/order and types
+        oracle_columns = self.oracle_cursor.description
+        test_columns = self.test_cursor.description
+        oracle_num_columns = len(oracle_columns)
+        test_num_columns = len(test_columns)
+        if oracle_num_columns != test_num_columns:
+            return 'Expected {} columns but got {}'.format(oracle_num_columns, test_num_columns), 0, 'fail'
+        for i, oracle_column in enumerate(oracle_columns):
+            if test_columns[i].name != oracle_column.name:
+                return 'Expected column {} to have name "{}" but got "{}"'.format(i, oracle_column.name,
+                                                                                  test_columns[i].name), 0, 'fail'
+            if test_columns[i].type_code != oracle_column.type_code:
+                return 'Column "{}" type does not match expected type'.format(test_columns[i].name), 0, 'fail'
+        # check 2: rows number and content/order
+        oracle_num_results = len(oracle_results)
+        test_num_results = len(test_results)
+        if oracle_num_results != test_num_results:
+            return 'Expected {} rows but got {}'.format(oracle_num_results, test_num_results), 0, 'fail'
+        for i, oracle_row in enumerate(oracle_results):
+            if oracle_row != test_results[i]:
+                return 'Expected row {} to be {} but got {}'.format(i, oracle_row, test_results[iz]), 0, 'fail'
+
+        # all good
+        return '', 1, 'pass'
 
     def run(self):
 
-        test_connection = psycopg2.connect(database=cfg.TEST_DATABASE, user=cfg.USER, password=cfg.PASSWORD)
-        test_cursor = test_connection.cursor()
-        oracle_connection = psycopg2.connect(database=cfg.ORACLE_DATABASE, user=cfg.USER, password=cfg.PASSWORD)
-        oracle_cursor = oracle_connection.cursor()
-        with open(cfg.OUTPUT_FILE) as output_open:
-            for sql_file in os.listdir():
-                if not sql_file.endswith('.sql'):
-                    continue
-                test_name = sql_file.partition('.')[0]
-                try:
-                    # fetch results from oracle
-                    for data_file in cfg.DATA_FILES:
-                        data_name = data_file.partition('.')[0]
-                        oracle_cursor.execute('SELECT * FROM %(view)s',
-                                              {'view': '{}.oracle_{}'.format(data_name, test_name)})
-                        oracle_results = oracle_cursor().fetchall()
-                        # drop and recreate test schema + dataset
-                        test_cursor.execute('DROP SCHEMA IF EXISTS %(schema)s CASCADE',
-                                            {'schema': psycopg2.extensions.AsIs(cfg.SCHEMA_NAME)})
-                        test_cursor.execute('CREATE SCHEMA %(schema)s',
-                                            {'schema': psycopg2.extensions.AsIs(cfg.SCHEMA_NAME)})
-                        test_cursor.execute('SET search_path TO %(schema)s, public',
-                                            {'schema': psycopg2.extensions.AsIs(cfg.SCHEMA_NAME)})
-                        with open(os.path.join(cfg.PATH_TO_SCHEMA, cfg.SCHEMA_FILE)) as schema_open:
-                            schema = schema_open.read()
-                            test_cursor.execute(schema)
-                        with open(os.path.join(cfg.PATH_TO_SCHEMA, data_file)) as data_open:
-                            data = data_open.read()
-                            test_cursor.execute(data)
-                        # run test sql
-                        with open(sql_file) as sql_open:
-                            sql = sql_open.read()
-                            test_cursor.execute(sql)
-                            test_connection.commit()
-                            test_results = test_cursor.fetchall()
-                            # compare results with oracle
-                            out = ''
-                            marks = 1
-                            status = 'pass'
-                            # TODO check 1: column names and types
-                            # check 2: num rows
-                            test_num_results = len(test_results)
-                            oracle_num_results = len(oracle_results)
-                            if test_num_results != oracle_num_results:
-                                out = 'Expected {} results but got {}'.format(oracle_num_results, test_num_results)
-                                marks = 0
-                                status = 'fail'
-                            # TODO check 3: rows content and order
-                            self.print_result(name=test_name, input='', expected='', actual=out, marks=marks,
-                                              status=status)
-                            self.print_result_file(name=test_name, actual=out, oracle_results=oracle_results,
-                                                   test_results=test_results)
-                except Exception as e:
-                    test_connection.commit()
-                    self.print_result(name=test_name, input='', expected='', actual=str(e), marks=0, status='error')
-            oracle_cursor.close()
-            oracle_connection.close()
-            test_cursor.close()
-            test_connection.close()
+        try:
+            self.init_db()
+            with open(self.output_filename) as output_open:
+                for sql_file in os.listdir():
+                    if sql_file not in self.data_files.keys():
+                        continue
+                    test_name = sql_file.partition('.')[0]
+                    try:
+                        for data_file in self.data_files[sql_file]:
+                            # fetch results from oracle
+                            data_name = data_file.partition('.')[0]
+                            oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)
+                            # drop + recreate test schema + dataset + fetch test results
+                            test_results = self.get_test_results(sql_file=sql_file, data_file=data_file)
+                            # compare test results with oracle
+                            result = self.check_results(oracle_results=oracle_results, test_results=test_results)
+                            self.print_result(name=test_name, input='', expected='', actual=result[0], marks=result[1],
+                                              status=result[2])
+                            self.print_result_file(output_open=output_open, sql_file=sql_file, message=result[0],
+                                                   oracle_results=oracle_results, test_results=test_results)
+                    except Exception as e:
+                        self.test_connection.commit()
+                        self.print_result(name=test_name, input='', expected='', actual=str(e), marks=0, status='error')
+        except Exception as e:
+            self.print_result(name='All tests', input='', expected='', actual=str(e), marks=0, status='error')
+        finally:
+            self.close_db()

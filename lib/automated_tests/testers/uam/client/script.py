@@ -6,6 +6,7 @@ from markus_pam_wrapper import MarkusPAMWrapper
 
 
 if __name__ == '__main__':
+
     # Modify uppercase variables with your settings
     # The path to the UAM root folder
     PATH_TO_UAM = '/path/to/uam'
