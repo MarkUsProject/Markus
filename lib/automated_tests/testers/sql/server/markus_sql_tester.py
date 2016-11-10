@@ -120,13 +120,15 @@ class MarkusSQLTester(MarkusUtilsMixin):
         try:
             self.init_db()
             with open(self.output_filename, 'w') as output_open:
-                for sql_file in os.listdir():
-                    if sql_file not in self.data_files.keys():
-                        continue
+                for sql_file in self.data_files.keys():
                     test_name = sql_file.partition('.')[0]
                     for data_file in self.data_files[sql_file]:
                         data_name = data_file.partition('.')[0]
                         test_data_name = '{} + {}'.format(test_name, data_name)
+                        if not os.path.isfile(sql_file):
+                            self.print_result(name=test_data_name, input='', expected='',
+                                              actual='File {} not found'.format(sql_file), marks=0, status='fail')
+                            continue
                         try:
                             # fetch results from oracle
                             oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)

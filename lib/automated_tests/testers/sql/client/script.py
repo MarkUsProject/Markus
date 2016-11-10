@@ -10,10 +10,11 @@ if __name__ == '__main__':
 
     # Modify uppercase variables with your settings
     # The dataset files to be used for testing each student sql file; the student sql file names are the keys, the lists
-    # of dataset files are the values.
-    DATA_FILES = {'correct.sql': cfg.ALL_DATA_FILES, 'badcolumnnames.sql': cfg.ALL_DATA_FILES,
-                  'badcolumntypes.sql': cfg.ALL_DATA_FILES, 'badnumrows.sql': cfg.ALL_DATA_FILES,
-                  'badrowscontent.sql': cfg.ALL_DATA_FILES, 'badrowsorder.sql': cfg.ALL_DATA_FILES}
+    # of dataset files to be used are the values.
+    DATA_FILES = {'correct.sql': cfg.ALL_DATA_FILES, 'badnumcolumns.sql': cfg.ALL_DATA_FILES,
+                  'badcolumnnames.sql': cfg.ALL_DATA_FILES, 'badcolumntypes.sql': cfg.ALL_DATA_FILES,
+                  'badnumrows.sql': cfg.ALL_DATA_FILES, 'badrowscontent.sql': cfg.ALL_DATA_FILES,
+                  'badrowsorder.sql': cfg.ALL_DATA_FILES}
     # The schema name
     SCHEMA_NAME = 'ate'
     tester = MarkusSQLTester(oracle_database=cfg.ORACLE_DATABASE, test_database=cfg.TEST_DATABASE, user_name=cfg.USER,
