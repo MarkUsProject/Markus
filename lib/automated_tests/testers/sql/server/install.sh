@@ -6,10 +6,8 @@ if [ $# -ne 1 ]; then
 fi
 
 INSTALLDIR=$1
-#SERVERPWD=YOUR_SERVER_PASSWORD
-#TESTPWD=YOUR_TEST_PASSWORD
-SERVERPWD=a
-TESTPWD=b
+SERVERPWD=YOUR_SERVER_PASSWORD
+TESTPWD=YOUR_TEST_PASSWORD
 SOLUTIONDIR=solution
 SCHEMAFILE=schema.ddl
 DATASETDIR=datasets
@@ -26,7 +24,6 @@ for datafile in ${SOLUTIONDIR}/${DATASETDIR}/*; do
 	psql -U ate_server -d ate_oracle <<-EOF
 		CREATE SCHEMA ${dataname};
 		GRANT USAGE ON SCHEMA ${dataname} TO ate_test;
-		GRANT SELECT ON ALL TABLES IN SCHEMA ${dataname} TO ate_test;
 	EOF
 	echo "SET search_path TO ${dataname};" | cat - ${SOLUTIONDIR}/${SCHEMAFILE} > /tmp/ate.sql
 	psql -U ate_server -d ate_oracle -f /tmp/ate.sql
@@ -36,5 +33,8 @@ for datafile in ${SOLUTIONDIR}/${DATASETDIR}/*; do
     	echo "SET search_path TO ${dataname};" | cat - ${queryfile} > /tmp/ate.sql
 		psql -U ate_server -d ate_oracle -f /tmp/ate.sql
 	done
+	psql -U ate_server -d ate_oracle <<-EOF
+		GRANT SELECT ON ALL TABLES IN SCHEMA ${dataname} TO ate_test;
+	EOF
 done
 rm /tmp/ate.sql

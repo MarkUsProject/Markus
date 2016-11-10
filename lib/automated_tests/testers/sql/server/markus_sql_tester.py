@@ -44,8 +44,11 @@ class MarkusSQLTester(MarkusUtilsMixin):
             self.oracle_connection.close()
 
     def get_oracle_results(self, data_name, test_name):
-        self.oracle_cursor.execute('SELECT * FROM %(table)s', {'table': '{}.oracle_{}'.format(data_name, test_name)})
-        oracle_results = self.oracle_cursor().fetchall()
+        self.oracle_cursor.execute('SELECT * FROM %(schema)s.%(table)s',
+                                   {'schema': psycopg2.extensions.AsIs(data_name),
+                                    'table': psycopg2.extensions.AsIs('oracle_{}'.format(test_name))})
+        self.oracle_connection.commit()
+        oracle_results = self.oracle_cursor.fetchall()
 
         return oracle_results
 
@@ -53,7 +56,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
         self.test_cursor.execute('DROP SCHEMA IF EXISTS %(schema)s CASCADE',
                                  {'schema': psycopg2.extensions.AsIs(self.schema_name)})
         self.test_cursor.execute('CREATE SCHEMA %(schema)s', {'schema': psycopg2.extensions.AsIs(self.schema_name)})
-        self.test_cursor.execute('SET search_path TO %(schema)s, public',
+        self.test_cursor.execute('SET search_path TO %(schema)s',
                                  {'schema': psycopg2.extensions.AsIs(self.schema_name)})
         with open(os.path.join(self.path_to_solution, self.SCHEMA_FILE)) as schema_open:
             schema = schema_open.read()
@@ -70,15 +73,6 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
         return test_results
 
-    def print_result_file(self, output_open, sql_file, message, oracle_results, test_results):
-        output_open.write('{} - {}:\n'.format(sql_file, message))
-        output_open.write('Expected Columns:\n{}'.format(pprint.pformat([column.name for column in
-                                                                         self.oracle_cursor.description])))
-        output_open.write('Actual Columns:\n{}'.format(pprint.pformat([column.name for column in
-                                                                       self.test_cursor.description])))
-        output_open.write('Expected Rows:\n{}'.format(pprint.pformat(oracle_results)))
-        output_open.write('Actual Rows:\n{}'.format(pprint.pformat(test_results)))
-
     def check_results(self, oracle_results, test_results):
         # check 1: column number, names/order and types
         oracle_columns = self.oracle_cursor.description
@@ -86,50 +80,70 @@ class MarkusSQLTester(MarkusUtilsMixin):
         oracle_num_columns = len(oracle_columns)
         test_num_columns = len(test_columns)
         if oracle_num_columns != test_num_columns:
-            return 'Expected {} columns but got {}'.format(oracle_num_columns, test_num_columns), 0, 'fail'
+            return 'Expected {} columns instead of {}'.format(oracle_num_columns, test_num_columns), 0, 'fail'
         for i, oracle_column in enumerate(oracle_columns):
             if test_columns[i].name != oracle_column.name:
-                return 'Expected column {} to have name "{}" but got "{}"'.format(i, oracle_column.name,
-                                                                                  test_columns[i].name), 0, 'fail'
-            if test_columns[i].type_code != oracle_column.type_code:
-                return 'Column "{}" type does not match expected type'.format(test_columns[i].name), 0, 'fail'
+                return "Expected column {} to have name '{}' instead of '{}'".format(i, oracle_column.name,
+                                                                                     test_columns[i].name), 0, 'fail'
+            if test_columns[i].type_code != oracle_column.type_code:  # strict type checking + compatible type checking
+                if not oracle_results or not test_results or type(test_results[0][i]) is not type(oracle_results[0][i]):
+                    return "The type of column '{}' does not match the expected type".format(test_columns[i].name), 0,\
+                           'fail'
         # check 2: rows number and content/order
         oracle_num_results = len(oracle_results)
         test_num_results = len(test_results)
         if oracle_num_results != test_num_results:
-            return 'Expected {} rows but got {}'.format(oracle_num_results, test_num_results), 0, 'fail'
+            return 'Expected {} rows instead of {}'.format(oracle_num_results, test_num_results), 0, 'fail'
         for i, oracle_row in enumerate(oracle_results):
             if oracle_row != test_results[i]:
-                return 'Expected row {} to be {} but got {}'.format(i, oracle_row, test_results[iz]), 0, 'fail'
+                return 'Expected row {} to be {} instead of {}'.format(i, oracle_row, test_results[i]), 0, 'fail'
 
         # all good
         return '', 1, 'pass'
+
+    def print_result_file(self, output_open, test_name, message, oracle_results, test_results):
+        output_open.write('{} - {}\n'.format(test_name, message))
+        output_open.write(' Expected Columns:\n  {}\n'.format(pprint.pformat([column.name for column in
+                                                                              self.oracle_cursor.description])))
+        output_open.write(' Actual Columns:\n  {}\n'.format(pprint.pformat([column.name for column in
+                                                                            self.test_cursor.description])))
+        output_open.write(' Expected Rows:\n')
+        for oracle_result in oracle_results:
+            output_open.write('  {}\n'.format(pprint.pformat(oracle_result)))
+        output_open.write(' Actual Rows:\n')
+        for test_result in test_results:
+            output_open.write('  {}\n'.format(pprint.pformat(test_result)))
+        output_open.write('\n')
 
     def run(self):
 
         try:
             self.init_db()
-            with open(self.output_filename) as output_open:
+            with open(self.output_filename, 'w') as output_open:
                 for sql_file in os.listdir():
                     if sql_file not in self.data_files.keys():
                         continue
                     test_name = sql_file.partition('.')[0]
-                    try:
-                        for data_file in self.data_files[sql_file]:
+                    for data_file in self.data_files[sql_file]:
+                        data_name = data_file.partition('.')[0]
+                        test_data_name = '{} + {}'.format(test_name, data_name)
+                        try:
                             # fetch results from oracle
-                            data_name = data_file.partition('.')[0]
                             oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)
                             # drop + recreate test schema + dataset + fetch test results
                             test_results = self.get_test_results(sql_file=sql_file, data_file=data_file)
                             # compare test results with oracle
                             result = self.check_results(oracle_results=oracle_results, test_results=test_results)
-                            self.print_result(name=test_name, input='', expected='', actual=result[0], marks=result[1],
-                                              status=result[2])
-                            self.print_result_file(output_open=output_open, sql_file=sql_file, message=result[0],
+                            self.print_result(name=test_data_name, input='', expected='', actual=result[0],
+                                              marks=result[1], status=result[2])
+                            self.print_result_file(output_open=output_open, test_name=test_data_name,
+                                                   message=(result[0] if result[0] else 'All good'),
                                                    oracle_results=oracle_results, test_results=test_results)
-                    except Exception as e:
-                        self.test_connection.commit()
-                        self.print_result(name=test_name, input='', expected='', actual=str(e), marks=0, status='error')
+                        except Exception as e:
+                            self.oracle_connection.commit()
+                            self.test_connection.commit()
+                            self.print_result(name=test_data_name, input='', expected='', actual=str(e), marks=0,
+                                              status='error')
         except Exception as e:
             self.print_result(name='All tests', input='', expected='', actual=str(e), marks=0, status='error')
         finally:
