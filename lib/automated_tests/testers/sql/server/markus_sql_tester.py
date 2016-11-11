@@ -52,7 +52,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
         return oracle_results
 
-    def get_test_results(self, sql_file, data_file):
+    def get_test_results(self, data_file, sql_file):
         self.test_cursor.execute('DROP SCHEMA IF EXISTS %(schema)s CASCADE',
                                  {'schema': psycopg2.extensions.AsIs(self.schema_name)})
         self.test_cursor.execute('CREATE SCHEMA %(schema)s', {'schema': psycopg2.extensions.AsIs(self.schema_name)})
@@ -130,10 +130,10 @@ class MarkusSQLTester(MarkusUtilsMixin):
                                               actual='File {} not found'.format(sql_file), marks=0, status='fail')
                             continue
                         try:
+                            # drop + recreate test schema + dataset + fetch test results
+                            test_results = self.get_test_results(data_file=data_file, sql_file=sql_file)
                             # fetch results from oracle
                             oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)
-                            # drop + recreate test schema + dataset + fetch test results
-                            test_results = self.get_test_results(sql_file=sql_file, data_file=data_file)
                             # compare test results with oracle
                             result = self.check_results(oracle_results=oracle_results, test_results=test_results)
                             self.print_result(name=test_data_name, input='', expected='', actual=result[0],
@@ -147,6 +147,6 @@ class MarkusSQLTester(MarkusUtilsMixin):
                             self.print_result(name=test_data_name, input='', expected='', actual=str(e), marks=0,
                                               status='error')
         except Exception as e:
-            self.print_result(name='All tests', input='', expected='', actual=str(e), marks=0, status='error')
+            self.print_result(name='All SQL tests', input='', expected='', actual=str(e), marks=0, status='error')
         finally:
             self.close_db()
