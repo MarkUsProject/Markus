@@ -94,38 +94,3 @@ ul#annotation_list {
     margin-left: 0.25em;
   }
 }
-
-.clickable_links{
-  position: relative;
-  width: 300px;
-  text-align: left;
-  padding: 8px;
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
-.clickable_image{
-  display: inline-block;
-  vertical-align: middle;
-}
-.clickable_text{
-  padding-left: 15px;
-  display: inline-block;
-  vertical-align: middle;
-  font-weight: bold;
-}
-.make_div_clickable:hover {
-  background: $light-blue;
-  opacity: .5;
-}
-
-.make_div_clickable{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  border-bottom: 2px solid $disabled-grey;
-
-  z-index: 1;
-}
