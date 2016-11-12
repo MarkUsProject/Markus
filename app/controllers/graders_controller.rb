@@ -117,30 +117,33 @@ class GradersController < ApplicationController
     redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
-  def download_grader_groupings_mapping
+  def download
     assignment = Assignment.find(params[:assignment_id])
-    groupings = groupings_with_assoc(assignment, includes: [:group, :tas])
+    case params[:format]
+      when 'groupings'
+        groupings = groupings_with_assoc(assignment, includes: [:group, :tas])
 
-    file_out = MarkusCSV.generate(groupings) do |grouping|
-      [grouping.group.group_name] + grouping.tas.map(&:user_name)
+        file_out = MarkusCSV.generate(groupings) do |grouping|
+          [grouping.group.group_name] + grouping.tas.map(&:user_name)
+        end
+        send_data(file_out,
+                  type: 'text/csv', disposition: 'inline',
+                  filename: 'grader_groupings_mapping.csv')
+      when 'criteria'
+        criteria = criteria_with_assoc(assignment,
+                                       includes: [criterion_ta_associations: :ta])
+
+        file_out = MarkusCSV.generate(criteria) do |criterion|
+          [criterion.name] + criterion.tas.map(&:user_name)
+        end
+        send_data(file_out,
+                  type: 'text/csv', disposition: 'inline',
+                  filename: 'grader_criteria_mapping.csv')
+      else
+        flash_message(:error, result[:invalid_lines])
+        redirect_to action: 'index',
+                    id: params[:id]
     end
-    send_data(file_out,
-              type: 'text/csv', disposition: 'inline',
-              filename: 'grader_groupings_mapping.csv')
-  end
-
-  def download_grader_criteria_mapping
-    assignment = Assignment.find(params[:assignment_id])
-    criteria = criteria_with_assoc(assignment,
-                                   includes: [criterion_ta_associations: :ta])
-
-    file_out = MarkusCSV.generate(criteria) do |criterion|
-      [criterion.name] + criterion.tas.map(&:user_name)
-    end
-
-    send_data(file_out,
-              type: 'text/csv', disposition: 'inline',
-              filename: 'grader_criteria_mapping.csv')
   end
 
   def add_grader_to_grouping
