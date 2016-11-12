@@ -43,92 +43,71 @@
 <%# Upload modal %>
 <% content_for :modal_title, t('annotations.upload.upload_annotations') %>
 <% content_for :modal_content do %>
-    <%= t('annotations.upload.upload_message_csv').html_safe %>
-    <%= form_tag({ action: 'csv_upload',
-                   id: @assignment.id },
-                 { multipart: true }) do %>
-        <!-- Script for disabling upload buttons. -->
-        <%= javascript_include_tag 'upload_button_control.js',
-                                   id: 'upload_csv_script',
-                                   upload_id: 'annotation_category_list_csv',
-                                   button_id: 'upload_csv' %>
-        <p><%= file_field_tag :annotation_category_list_csv, size: 0 %></p>
-        <div>
-          <%= t('encoding') %>
-          <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        </div>
-    <% end %>
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload_csv',
-                     disabled: true %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
-    </section>
 
-    <%= t('annotations.upload.upload_message_yml').html_safe %>
-    <%= form_tag({ action: 'yml_upload',
-                   id: @assignment.id },
-                 { multipart: true }) do %>
-
-        <!-- Script for disabling upload buttons. -->
-        <%= javascript_include_tag 'upload_button_control.js',
-                                   id: 'upload_yml_script',
-                                   upload_id: 'annotation_category_list_yml',
-                                   button_id: 'upload_yml' %>
-        <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
-        <div>
-          <%= t('encoding') %>
-          <%= select_tag(:encoding, options_for_select(@encodings)) %>
-        </div>
+    <!-- Script for switching content on radio buttons. -->
+    <%= javascript_include_tag 'switch_content_control.js' %>
+    <%= javascript_tag do %>
+      LIB.init(["#annotation_upload_csv", "#annotation_upload_yml"]);
     <% end %>
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload_yml',
-                     disabled: true %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
-    </section>
+
+    <p>CSV
+      <%= radio_button_tag :upload_file_type, "csv", checked: true;  %>
+      <%= radio_button_tag :upload_file_type, "yml" %>
+      YML</p>
+
+    <div id="annotation_upload_csv">
+      <%= t('annotations.upload.upload_message_csv').html_safe %>
+      <%= form_tag({ action: 'csv_upload',
+                     id: @assignment.id },
+                   { multipart: true }) do %>
+          <!-- Script for disabling upload buttons. -->
+          <%= javascript_include_tag 'upload_button_control.js',
+                                     id: 'upload_csv_script',
+                                     upload_id: 'annotation_category_list_csv',
+                                     button_id: 'upload_csv' %>
+          <p><%= file_field_tag :annotation_category_list_csv, size: 0 %></p>
+          <div>
+            <%= t('encoding') %>
+            <%= select_tag(:encoding, options_for_select(@encodings)) %>
+          </div>
+      <% end %>
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       id: 'upload_csv',
+                       disabled: true %>
+        <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
+      </section>
+    </div>
+    <div id="annotation_upload_yml">
+      <%= t('annotations.upload.upload_message_yml').html_safe %>
+      <%= form_tag({ action: 'yml_upload',
+                     id: @assignment.id },
+                   { multipart: true }) do %>
+
+          <!-- Script for disabling upload buttons. -->
+          <%= javascript_include_tag 'upload_button_control.js',
+                                     id: 'upload_yml_script',
+                                     upload_id: 'annotation_category_list_yml',
+                                     button_id: 'upload_yml' %>
+          <p><%= file_field_tag :annotation_category_list_yml, size: 0 %></p>
+          <div>
+            <%= t('encoding') %>
+            <%= select_tag(:encoding, options_for_select(@encodings)) %>
+          </div>
+      <% end %>
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       id: 'upload_yml',
+                       disabled: true %>
+        <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();' />
+      </section>
+    </div>
 <% end %>
 <%= render 'layouts/modal_dialog', modal_id:  'upload_dialog' %>
 
 <%# Download modal %>
 <% content_for :modal_title, t('annotations.download.download_annotations') %>
-<% content_for :modal_content do %>
-  <div class="clickable_links">
-    <div class="clickable_image">
-      <%= image_tag('icons/download-cloud.png',
-                      height: '20',
-                      width: '20',
-                      alt: "MarkUs",
-                      title: "MarkUs Modal") %>
-    </div>
-    <div class="clickable_text"><%= t('annotations.download.download_csv') %></div>
-    <%= link_to '',
-                { action: 'download',
-                  id: @assignment.id,
-                  format: 'csv' },
-                onclick: 'modal_download.close();',
-                class: 'make_div_clickable' %>
-  </div>
-  <div class="clickable_links">
-    <div class="clickable_image">
-      <%= image_tag('icons/download-file.png',
-                       height: '20',
-                       width: '20',
-                       alt: "MarkUs",
-                       title: "MarkUs Modal") %>
-      </div>
-      <div class="clickable_text"><%= t('annotations.download.download_yml') %></div>
-    <%= link_to '',
-                { action: 'download',
-                  id: @assignment.id,
-                  format: 'yml' },
-                onclick: 'modal_download.close();',
-                class: 'make_div_clickable' %>
-  </div>
-<% end %>
-<% content_for :modal_actions do %>
-    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_download.close();'>
-<% end %>
-<%= render 'layouts/modal_dialog', modal_id: 'download_dialog' %>
+<%= render 'layouts/modal_dialog_download',
+           class_name: 'annotations', items: ['csv', 'yml'] %>
