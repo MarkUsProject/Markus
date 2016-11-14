@@ -74,15 +74,15 @@ function toggle_persist_groups(persist_groups) {
 }
 
 function toggle_group_assignment(is_group_assignment) {
-  jQuery('.group_properties').toggle(is_group_assignment);
+    jQuery('.group_properties').toggle(is_group_assignment);
+    if (!is_group_assignment) {
+        // Toggle the min/max fields depending on if students form their own groups
+        var student_groups = document.getElementById('assignment_student_form_groups').checked;
+        toggle_student_form_groups(student_groups);
 
-  // Toggle the min/max fields depending on if students form their own groups
-  var student_groups = document.getElementById('assignment_student_form_groups')
-                               .checked;
-  toggle_student_form_groups(student_groups);
-
-  jQuery('#persist_groups').prop('disabled', is_group_assignment);
-  jQuery('#persist_groups_assignment_style').toggleClass('disable', is_group_assignment);
+        jQuery('#persist_groups').prop('disabled', is_group_assignment);
+        jQuery('#persist_groups_assignment_style').toggleClass('disable', is_group_assignment);
+    }
 }
 
 function toggle_student_form_groups(student_form_groups) {
