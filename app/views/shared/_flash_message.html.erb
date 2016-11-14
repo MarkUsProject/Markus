@@ -1,17 +1,19 @@
-<% [:error, :success, :warning, :notice].each do |key| -%>
-  <% if flash[key].is_a?(Array) -%>
-    <% flash[key].each do |msg| -%>
-      <% unless msg -%>
-        <%= content_tag :div, msg, class: "#{key} flash-#{key}", style: "display: none" %>
-      <% else -%>
-        <%= content_tag :div, msg, class: "#{key} flash-#{key}" %>
-      <% end -%>
-    <% end -%>
-  <% else -%>
+<% [:error, :success, :warning, :notice].each do |key| %>
+  <% if flash[key].is_a?(Array) %>
     <% unless flash[key] -%>
-      <%= content_tag :div, flash[key], class: "#{key} flash-#{key}", style: "display: none" %>
-    <% else -%>
-      <%= content_tag :div, flash[key], class: "#{key} flash-#{key}" %>
-    <% end -%>
-  <% end -%>
-<% end -%>
+      <%= content_tag :div, class: "#{key}", style: "display: none" %>
+    <% else %>
+      <%= content_tag :div, class: "#{key}" do
+        flash[key].each do |msg|
+          concat content_tag(:p, msg)
+        end
+      end %>
+    <% end %>
+  <% else %>
+    <% unless flash[key] %>
+      <%= content_tag :div, class: "#{key}", style: "display: none" %>
+    <% else %>
+      <%= content_tag :div, flash[key], class: "#{key}" %>
+    <% end %>
+  <% end %>
+<% end %>
