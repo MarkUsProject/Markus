@@ -3,7 +3,8 @@
   <%= javascript_include_tag 'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
                              'moment-with-langs.min',
-                             'localize_date' %>
+                             'localize_date',
+                             'collapse_toggle'%>
 
   <script>
     <%= render partial: 'boot',
@@ -64,6 +65,10 @@
                            size: 5, maxlength: 3,
                            style: "margin-left: -25px" %>
           <%= I18n.t("automated_tests.token.hours")%>
+          <%= label_tag :non_regenerating_tokens, t('automated_tests.token.no_regeneration'),
+                        class: 'checkbox_label', style: 'text-align: right;' %>
+          <%= f.check_box :non_regenerating_tokens,
+                          onchange: "toggle_token_regeneration(jQuery('#assignment_non_regenerating_tokens').is(':checked'))" %>
           <%= label_tag :unlimited_tokens, t('automated_tests.token.unlimited'),
                         class: 'checkbox_label', style: 'text-align: right;' %>
           <%= f.check_box :unlimited_tokens,
@@ -75,10 +80,8 @@
     <fieldset>
       <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
       <p>
-        <%= button_tag t('marker.marks.expand_all'), type: 'button',
-                       onclick: "change_all('expand');" %>
-        <%= button_tag t('marker.marks.collapse_all'), type: 'button',
-                       onclick: "change_all('collapse');" %>
+        <%= button_tag t('marker.marks.expand_all'), type: 'button', id: 'expand_all' %>
+        <%= button_tag t('marker.marks.collapse_all'), type: 'button', id: 'collapse_all'%>
       </p>
       <p><%= raw t("assignment.required_fields") %><span class='required_field'>*</span></p>
 

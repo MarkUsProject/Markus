@@ -76,6 +76,7 @@ Assignment.blueprint do
   tokens_per_period {10}
   token_period {24}
   token_start_date {1.days.from_now}
+  non_regenerating_tokens {false}
   unlimited_tokens {false}
   assign_graders_to_criteria {false}
   assignment_stat

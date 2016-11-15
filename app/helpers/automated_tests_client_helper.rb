@@ -92,8 +92,9 @@ module AutomatedTestsClientHelper
       end
       # Always make sure the criterion type is correct.
       # The :criterion_id parameter contains a list of the form
-      # [criterion_id, criterion_type]
-      if testscripts[file_num][:criterion_id].nil?
+      # [criterion_id, criterion_type], which JSON.parse cannot parse unless
+      # neither element is nil
+      if testscripts[file_num][:criterion_id].nil? || testscripts[file_num][:criterion_id][0].nil? || testscripts[file_num][:criterion_id][1].nil?
         updated_script_files[file_num][:criterion_type]
       else
         crit_id, crit_type = JSON.parse testscripts[file_num][:criterion_id]
@@ -157,6 +158,7 @@ module AutomatedTestsClientHelper
 
     assignment.enable_test = assignment_params[:enable_test]
     assignment.enable_student_tests = assignment_params[:enable_student_tests]
+    assignment.non_regenerating_tokens = assignment_params[:non_regenerating_tokens]
     assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
     assignment.token_start_date = assignment_params[:token_start_date]
     assignment.token_period = assignment_params[:token_period]
