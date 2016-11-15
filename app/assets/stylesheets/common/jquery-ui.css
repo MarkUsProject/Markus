@@ -798,7 +798,7 @@ body .ui-tooltip {
 }
 .ui-widget-content {
   border: 1px solid #aaaaaa;
-  background: #ffffff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
+  background: #ffffff url(../images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
   color: #222222;
 }
 .ui-widget-content a {
@@ -809,7 +809,7 @@ body .ui-tooltip {
 }
 .ui-widget-header {
   border: 1px solid #aaaaaa;
-  background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
+  background: #cccccc url(../images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
   color: #222222;
   font-weight: bold;
 }
@@ -823,7 +823,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
   border: 1px solid #d3d3d3;
-  background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+  background: #e6e6e6 url(../images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
   font-weight: normal;
   color: #555555;
 }
@@ -872,7 +872,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
   border: 1px solid #fcefa1;
-  background: #fbf9ee url(images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x;
+  background: #fbf9ee url(../images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x;
   color: #363636;
 }
 .ui-state-highlight a,
@@ -884,7 +884,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
   border: 1px solid #cd0a0a;
-  background: #fef1ec url(images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x;
+  background: #fef1ec url(../images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x;
   color: #cd0a0a;
 }
 .ui-state-error a,
@@ -1163,14 +1163,14 @@ body .ui-tooltip {
 
 /* Overlays */
 .ui-widget-overlay {
-  background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x;
+  background: #aaaaaa url(../images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x;
   opacity: .3;
   filter: Alpha(Opacity=30);
 }
 .ui-widget-shadow {
   margin: -8px 0 0 -8px;
   padding: 8px;
-  background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x;
+  background: #aaaaaa url(../images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x;
   opacity: .3;
   filter: Alpha(Opacity=30);
   border-radius: 8px;

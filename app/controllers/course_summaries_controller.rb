@@ -4,6 +4,8 @@ class CourseSummariesController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:populate]
 
+  layout 'assignment_content'
+
   def index
     @assignments = Assignment.all
     @marking_schemes = MarkingScheme.all

@@ -2,7 +2,10 @@
     Future work can be done to restore this view, but will need
     a lot of work. %>
 <% content_for :head do %>
-  <%= javascript_include_tag 'create_assignment' %>
+  <%= javascript_include_tag 'create_assignment',
+                             'collapse_toggle',
+                             'testframework_config' %>
+
 <% end %>
 
 <div class='title_bar'>

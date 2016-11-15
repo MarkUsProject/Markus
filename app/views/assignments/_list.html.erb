@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @assignments.each do |assignment| %>
+          <% @assignments.includes(:pr_assignment).each do |assignment| %>
             <% # makes sure assignment ID of peer review action is the
                # original assignment ID
                original_aid = assignment.id

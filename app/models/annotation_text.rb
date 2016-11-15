@@ -6,7 +6,7 @@ class AnnotationText < ActiveRecord::Base
   # AnnotationText is destroyed.
   has_many :annotations, dependent: :destroy
 
-  belongs_to :annotation_category
+  belongs_to :annotation_category, counter_cache: true
   validates_associated :annotation_category,
                        message: 'annotation_category associations failed'
 

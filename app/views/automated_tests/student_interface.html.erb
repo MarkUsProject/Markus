@@ -1,11 +1,4 @@
-<div class='title_bar'>
-  <h1>
-    <%= t('automated_tests.title') %>
-  </h1>
-</div>
-
-
-<%= render partial: 'shared/flash_message' %>
+<% content_for :title, t('automated_tests.title') %>
 
 <% if @assignment.enable_student_tests && !@grouping.nil? %>
   <div class='block'>
@@ -67,8 +60,8 @@
       <div class='block_content'>
         <div class='sub_block'>
           <%= raw t('automated_tests.marks_obtained',
-                    marking: "#{@grouping.get_total_test_script_marks * 1.0} /
-                              #{@assignment.total_ror_script_marks * 1.0}" ) %>
+                    marking: "#{@grouping.get_total_test_script_marks} /
+                              #{@assignment.total_student_test_script_marks}" ) %>
         </div>
         <div id='test_results' class='sub_block'>
           <%= render partial: 'test_script_result',
@@ -89,3 +82,4 @@
     </div>
   </div>
 <% end %>
+

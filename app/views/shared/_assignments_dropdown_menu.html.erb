@@ -13,7 +13,7 @@
 <% end %>
 
 
-<% @assignments = Assignment.order(short_identifier: :asc) %>
+<% @assignments = Assignment.includes(:pr_assignment).order(short_identifier: :asc) %>
 
 <% @assignments.each do |assignment| %>
   <% if assignment == @assignments.first %>

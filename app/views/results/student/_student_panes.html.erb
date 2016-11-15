@@ -5,6 +5,9 @@
         <ul>
           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <% if can_show_test_results_tab?(assignment) %>
+              <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+          <% end %>
           <% if can_show_feedback_files_tab?(submission) %>
             <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
@@ -40,6 +43,31 @@
 
           <ul id='annotation_summary_list'></ul>
         </div>
+
+        <% if can_show_test_results_tab?(assignment) %>
+            <div id='test_result_tab' style='display:none;'>
+              <div id='testviewer'>
+                <% unless submission.test_script_results.empty? %>
+                    <div class="block">
+                      <h2><%= t("automated_tests.test_results") %></h2>
+                      <div class="block_content">
+                        <br />
+                        <div class="sub_block">
+                          <%= raw t("automated_tests.marks_obtained",
+                                    :marking => "#{@grouping.get_total_test_script_marks} /
+                                             #{@assignment.total_instructor_test_script_marks}" ) %>
+                        </div>
+                        <div id="test_results" class="sub_block">
+                          <%= render partial: 'automated_tests/test_script_result',
+                                     locals: {show_output: !@current_user.student?},
+                                     collection: submission.test_script_results %>
+                        </div>
+                      </div>
+                    </div>
+                <% end %>
+              </div>
+            </div>
+        <% end %>
 
         <% if can_show_feedback_files_tab?(submission) %>
           <div id='feedback_file_tab' style='display:none;'>

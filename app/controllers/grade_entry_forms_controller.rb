@@ -22,6 +22,8 @@ class GradeEntryFormsController < ApplicationController
                 only: [:student_interface,
                        :populate_term_marks_table]
 
+  layout 'assignment_content'
+
   # Create a new grade entry form
   def new
     @grade_entry_form = GradeEntryForm.new
@@ -77,7 +79,6 @@ class GradeEntryFormsController < ApplicationController
   def grades
     @sections = Section.order(:name)
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    render layout: 'assignment_content'
   end
 
   # Update a grade in the table

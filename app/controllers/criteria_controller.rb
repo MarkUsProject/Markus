@@ -3,6 +3,8 @@ class CriteriaController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.past_all_due_dates?
@@ -22,7 +24,7 @@ class CriteriaController < ApplicationController
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
     unless @criterion.update(name: params[:new_criterion_prompt],
                              assignment_id: @assignment.id,
-                             max_mark: criterion_class::DEFAULT_MAX_MARK,
+                             max_mark: params[:max_mark_prompt],
                              position: @assignment.next_criterion_position)
       @errors = @criterion.errors
       render :add_criterion_error
@@ -149,8 +151,7 @@ class CriteriaController < ApplicationController
                                              :level_4_description,
                                              :ta_visible,
                                              :peer_visible).deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark)
-                                                                           .transform_values { |x|  (x.to_f * 4).to_s })
+                                                                           .permit(:max_mark))
   end
 
   def checkbox_criterion_params

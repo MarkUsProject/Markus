@@ -1,6 +1,8 @@
 class SummariesController < ApplicationController
   include SummariesHelper
 
+  before_filter  :authorize_only_for_admin
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @section_column = ''

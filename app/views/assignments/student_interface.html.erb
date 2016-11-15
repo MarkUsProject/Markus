@@ -94,7 +94,7 @@
                              inviter_last_name: grouping.inviter.last_name,
                              inviter_first_name: grouping.inviter.first_name)) %>
                 </p>
-                <% grouping.student_memberships.each do |member|%>
+                <% grouping.student_memberships.includes(:user).each do |member|%>
                   <ul>
                     <%= render partial: 'assignments/member',
                                locals: { member: member,
@@ -210,7 +210,7 @@
 
           <%# For each member of this group, display name and status %>
           <ul>
-            <% @studentmemberships.each do |member|%>
+            <% @studentmemberships.includes(:user).each do |member|%>
               <%= render partial: 'assignments/member',
                          locals: { member: member,
                                    grouping: @grouping } %>
