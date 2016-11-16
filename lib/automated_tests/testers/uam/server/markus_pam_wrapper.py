@@ -1,4 +1,3 @@
-from xml.sax import saxutils
 from pam_wrapper import PAMWrapper, PAMResult
 from markus_utils import MarkusUtilsMixin
 
@@ -21,6 +20,4 @@ class MarkusPAMWrapper(MarkusUtilsMixin, PAMWrapper):
                 status = 'pass' if result.status == PAMResult.Status.PASS else 'fail'
                 name = result.name if not result.description else '{name} ({desc})'.format(name=result.name,
                                                                                            desc=result.description)
-                self.print_result(name=name, input='', expected='',
-                                  actual=saxutils.escape(result.message, entities={"'": '&apos;'}),
-                                  marks=marks, status=status)
+                self.print_result(name=name, input='', expected='', actual=result.message, marks=marks, status=status)
