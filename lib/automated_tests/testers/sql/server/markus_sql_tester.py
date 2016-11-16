@@ -9,6 +9,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
     SCHEMA_FILE = 'schema.ddl'
     DATASET_DIR = 'datasets'
+    QUERY_DIR = 'queries'
 
     def __init__(self, oracle_database, test_database, user_name, user_password, data_files, schema_name,
                  path_to_solution, output_filename='result.txt'):
@@ -52,7 +53,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
         return oracle_results
 
-    def get_test_results(self, data_file, sql_file):
+    def set_test_schema(self, data_file):
         self.test_cursor.execute('DROP SCHEMA IF EXISTS %(schema)s CASCADE',
                                  {'schema': psycopg2.extensions.AsIs(self.schema_name)})
         self.test_cursor.execute('CREATE SCHEMA %(schema)s', {'schema': psycopg2.extensions.AsIs(self.schema_name)})
@@ -64,14 +65,16 @@ class MarkusSQLTester(MarkusUtilsMixin):
         with open(os.path.join(self.path_to_solution, self.DATASET_DIR, data_file)) as data_open:
             data = data_open.read()
             self.test_cursor.execute(data)
-        # run test sql
+        self.test_connection.commit()
+
+    def get_test_results(self, sql_file):
         with open(sql_file) as sql_open:
             sql = sql_open.read()
             self.test_cursor.execute(sql)
             self.test_connection.commit()
             test_results = self.test_cursor.fetchall()
 
-        return test_results
+            return test_results
 
     def check_results(self, oracle_results, test_results):
         # check 1: column number, names/order and types
@@ -87,8 +90,8 @@ class MarkusSQLTester(MarkusUtilsMixin):
                                                                                      test_columns[i].name), 0, 'fail'
             if test_columns[i].type_code != oracle_column.type_code:  # strict type checking + compatible type checking
                 if not oracle_results or not test_results or type(test_results[0][i]) is not type(oracle_results[0][i]):
-                    return "The type of column '{}' does not match the expected type".format(test_columns[i].name), 0,\
-                           'fail'
+                    return "The type of values in column '{}' does not match the expected type".format(
+                           test_columns[i].name), 0, 'fail'
         # check 2: rows number and content/order
         oracle_num_results = len(oracle_results)
         test_num_results = len(test_results)
@@ -131,7 +134,8 @@ class MarkusSQLTester(MarkusUtilsMixin):
                             continue
                         try:
                             # drop + recreate test schema + dataset + fetch test results
-                            test_results = self.get_test_results(data_file=data_file, sql_file=sql_file)
+                            self.set_test_schema(data_file=data_file)
+                            test_results = self.get_test_results(sql_file=sql_file)
                             # fetch results from oracle
                             oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)
                             # compare test results with oracle
