@@ -1,7 +1,7 @@
 class SummariesController < ApplicationController
   include SummariesHelper
 
-  before_filter  :authorize_only_for_admin
+  before_filter  :authorize_for_ta_and_admin
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
