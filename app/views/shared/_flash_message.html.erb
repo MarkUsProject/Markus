@@ -1,7 +1,7 @@
 <% [:error, :success, :warning, :notice].each do |key| %>
   <% if flash[key].is_a?(Array) %>
     <% unless flash[key] -%>
-      <%= content_tag :div, class: "#{key}", style: "display: none" %>
+      <%= content_tag :div, nil, class: "#{key}", style: "display: none" %>
     <% else %>
       <%= content_tag :div, class: "#{key}" do
         flash[key].each do |msg|
@@ -11,7 +11,7 @@
     <% end %>
   <% else %>
     <% unless flash[key] %>
-      <%= content_tag :div, class: "#{key}", style: "display: none" %>
+      <%= content_tag :div, nil, class: "#{key}", style: "display: none" %>
     <% else %>
       <%= content_tag :div, flash[key], class: "#{key}" %>
     <% end %>
