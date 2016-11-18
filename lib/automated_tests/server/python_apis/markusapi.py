@@ -109,6 +109,15 @@ class Markus:
         response = self.submit_request(params, path, 'GET')
         return Markus.decode_response(response)
 
+    def get_feedback_files(self, assignment_id, group_id):
+        """ (Markus, int, int) -> list of dict
+        Get the feedback file info associated with the assignment and group.
+        """
+        params = {}
+        path = self.get_path(assignment_id, group_id) + 'feedback_files.json'
+        response = self.submit_request(params, path, 'GET')
+        return Markus.decode_response(response)
+
     def upload_feedback_file(self, assignment_id, group_id, title, contents):
         """ (Markus, int, str, str, str) -> list of str
         Upload a feedback file to Markus.
@@ -119,6 +128,8 @@ class Markus:
         title         -- the file name that will be displayed
         contents      -- what will be in the file
         """
+        feedback_files = self.get_feedback_files(assignment_id, group_id)
+        feedback_file_id = next((ff['id'] for ff in feedback_files if ff['filename'] == title), None)
         params = {
             'assignment_id': assignment_id,
             'group_id': group_id,
@@ -127,7 +138,11 @@ class Markus:
             'mime_type': mimetypes.guess_type(title)[0]
         }
         path = self.get_path(assignment_id, group_id) + 'feedback_files'
-        return self.submit_request(params, path, 'POST')
+        request_type = 'POST'
+        if feedback_file_id:
+            path = '{}/{}'.format(path, feedback_file_id)
+            request_type = 'PUT'
+        return self.submit_request(params, path, request_type)
 
     def upload_test_script_results(self, assignment_id, group_id, results, test_script_names):
         """ (Markus, int, str, str, list) -> list of str"""

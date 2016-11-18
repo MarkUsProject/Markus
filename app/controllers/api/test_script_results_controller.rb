@@ -113,7 +113,7 @@ module Api
     #  - file_content: New contents of the test results file
     # Optional: submission_id
     def update
-      if has_missing_params?([:id, :file_content])
+      if has_missing_params?([:id, :file_content, :test_scripts])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -133,6 +133,7 @@ module Api
       end
 
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
+                                                        params[:test_scripts],
                                                         assignment,
                                                         grouping,
                                                         submission) &&
