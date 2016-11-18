@@ -8,10 +8,10 @@
         LIB.init(["#annotation_upload_csv", "#annotation_upload_yml"]);
     <% end %>
 
-    <p>CSV
+    <%= label_tag :csv, "CSV"  %>
       <%= radio_button_tag :upload_file_type, "csv", checked: true;  %>
       <%= radio_button_tag :upload_file_type, "yml" %>
-      YML</p>
+    <%= label_tag :yml, "YML" %>
 
     <div id="annotation_upload_csv">
       <%= t('annotations.upload.upload_message_csv').html_safe %>

@@ -47,32 +47,25 @@
 <div id='graders_manager'></div>
 
 <!-- Modal Windows -->
-<%# Download modal %>
-<% path = download_dialog_assignment_graders_path %>
-<% content_for :modal_title, t('groups.download.download_grader_maps') %>
-<%= render 'layouts/modal_dialog_download',
-           class_name: 'graders', items: ['groupings', 'criteria']
-           %>
-<%#
 <aside class='dialog' id="download_dialog">
-  <h2><%= t('groups.download.download_grader_maps') %#></h2>
+  <h2><%= t('groups.download.download_grader_maps') %></h2>
   <ul>
     <li>
       <%= link_to t('groups.download.download_grader_groups_csv'),
                   download_grader_groupings_mapping_assignment_graders_path(@assignment),
-                  onclick: 'modal_download.close();' %#>
+                  onclick: 'modal_download.close();' %>
     </li>
     <li>
       <%= link_to t('groups.download.download_grader_criteria_csv'),
                   download_grader_criteria_mapping_assignment_graders_path(@assignment),
-                  onclick: 'modal_download.close();' %#>
+                  onclick: 'modal_download.close();' %>
       </li>
   </ul>
 
   <section class='dialog-actions'>
-    <input type='reset' value='<%= I18n.t(:cancel) %#>' onclick='modal_download.close();' />
+    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />
   </section>
-</aside>%>
+</aside>
 
 <aside class='dialog' id="upload_dialog">
   <!-- Script for disabling upload buttons. -->
