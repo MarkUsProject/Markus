@@ -1,9 +1,9 @@
 <aside class='dialog' id=<%= content_for :modal_id %> >
   <h2>
-    <%= content_for :modal_title %>
+    <%= yield_content! :modal_title %>
   </h2>
   <br/>
-  <%= content_for :modal_content %>
+  <%= raw yield_content! :modal_content %>
 </aside>
 <%# Flush content from variables. Allows reuse of partials %>
 <% content_for :modal_id, '', flush: true %>
