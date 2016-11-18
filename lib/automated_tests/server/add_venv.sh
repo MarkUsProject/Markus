@@ -16,3 +16,5 @@ pip install wheel
 if [ -f requirements.txt ]; then
     pip install -r requirements.txt
 fi
+# TODO handle requirements better, e.g. assume there is a tester subdir and take them from there
+# TODO create links to tester files, e.g. assume there is a tester subdir and link them

@@ -28,10 +28,10 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
     def init_db(self):
         self.oracle_connection = psycopg2.connect(database=self.oracle_database, user=self.user_name,
-                                                  password=self.user_password)
+                                                  password=self.user_password, host='localhost')
         self.oracle_cursor = self.oracle_connection.cursor()
         self.test_connection = psycopg2.connect(database=self.test_database, user=self.user_name,
-                                                password=self.user_password)
+                                                password=self.user_password, host='localhost')
         self.test_cursor = self.test_connection.cursor()
 
     def close_db(self):

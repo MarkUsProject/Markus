@@ -25,20 +25,21 @@ sudo -u postgres psql <<-EOF
 EOF
 for datafile in ${SOLUTIONDIR}/${DATASETDIR}/*; do
 	dataname=$(basename -s .sql ${datafile})
-	psql -U ${SERVERUSER} -d ${SERVERDB} <<-EOF
+	psql -U ${SERVERUSER} -d ${SERVERDB} -h localhost <<-EOF
 		CREATE SCHEMA ${dataname};
 		GRANT USAGE ON SCHEMA ${dataname} TO ${TESTUSER};
 	EOF
 	echo "SET search_path TO ${dataname};" | cat - ${SOLUTIONDIR}/${SCHEMAFILE} > /tmp/ate.sql
-	psql -U ${SERVERUSER} -d ${SERVERDB} -f /tmp/ate.sql
+	psql -U ${SERVERUSER} -d ${SERVERDB} -h localhost -f /tmp/ate.sql
 	echo "SET search_path TO ${dataname};" | cat - ${datafile} > /tmp/ate.sql
-	psql -U ${SERVERUSER} -d ${SERVERDB} -f /tmp/ate.sql
+	psql -U ${SERVERUSER} -d ${SERVERDB} -h localhost -f /tmp/ate.sql
 	for queryfile in ${SOLUTIONDIR}/${QUERYDIR}/*; do
     	echo "SET search_path TO ${dataname};" | cat - ${queryfile} > /tmp/ate.sql
-		psql -U ${SERVERUSER} -d ${SERVERDB} -f /tmp/ate.sql
+		psql -U ${SERVERUSER} -d ${SERVERDB} -h localhost -f /tmp/ate.sql
 	done
-	psql -U ${SERVERUSER} -d ${SERVERDB} <<-EOF
+	psql -U ${SERVERUSER} -d ${SERVERDB} -h localhost <<-EOF
 		GRANT SELECT ON ALL TABLES IN SCHEMA ${dataname} TO ${TESTUSER};
 	EOF
 done
 rm /tmp/ate.sql
+chmod go-rwx ${SOLUTIONDIR}/${QUERYDIR}

@@ -12,3 +12,4 @@ PYTHONPATHDIR=$4
 scp -r solution ${USER}@${SERVER}:${INSTALLDIR}
 scp markus_sql_config.py markus_sql_tester.py ${USER}@${SERVER}:${PYTHONPATHDIR}
 ssh ${USER}@${SERVER} bash -s -- < install.sh ${INSTALLDIR}
+# TODO create sql root dir + venv subdir with files to be imported instead of pythonpath
