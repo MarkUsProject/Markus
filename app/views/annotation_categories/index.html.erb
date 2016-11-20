@@ -4,7 +4,7 @@
              handlers: [:erb] %>
   <%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-  <%= stylesheet_link_tag('clickable')%>
+  <%= stylesheet_link_tag('clickable') %>
 <% end %>
 
 <% content_for :title, t('annotations.title',
@@ -41,10 +41,8 @@
   </div>
 </div>
 
-<%# Download modal %>
+<%# Modals %>
 <%= render partial: 'annotation_download_modal', layout: 'layouts/modal_dialog'  %>
-
-<%# Upload modal %>
 <%= render partial: 'annotation_upload_modal', layout: 'layouts/modal_dialog'  %>
 
 
