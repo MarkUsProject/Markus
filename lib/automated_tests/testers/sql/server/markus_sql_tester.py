@@ -104,8 +104,10 @@ class MarkusSQLTester(MarkusUtilsMixin):
         # all good
         return '', 1, 'pass'
 
-    def print_result_file(self, output_open, test_name, message, oracle_results, test_results):
-        output_open.write('{} - {}\n'.format(test_name, message))
+    def print_result_file(self, output_open, test_name, actual, status, oracle_results, test_results):
+        output_open.write('========== {} - {} ==========\n'.format(test_name, status.upper()))
+        if actual:
+            output_open.write(' Problem: {}\n'.format(actual))
         output_open.write(' Expected Columns:\n  {}\n'.format(pprint.pformat([column.name for column in
                                                                               self.oracle_cursor.description])))
         output_open.write(' Actual Columns:\n  {}\n'.format(pprint.pformat([column.name for column in
@@ -143,8 +145,8 @@ class MarkusSQLTester(MarkusUtilsMixin):
                             self.print_result(name=test_data_name, input='', expected='', actual=result[0],
                                               marks=result[1], status=result[2])
                             self.print_result_file(output_open=output_open, test_name=test_data_name,
-                                                   message=(result[0] if result[0] else 'All good'),
-                                                   oracle_results=oracle_results, test_results=test_results)
+                                                   actual=result[0], status=result[2], oracle_results=oracle_results,
+                                                   test_results=test_results)
                         except Exception as e:
                             self.oracle_connection.commit()
                             self.test_connection.commit()
