@@ -98,23 +98,28 @@ class StudentsController < ApplicationController
      @section = Section.new
   end
 
-  #downloads users with the given role as a csv list
+  # downloads students as a csv list
   def download_student_list
-    #find all the users
-    students = Student.order(:user_name)
+    students = Student.order(:user_name).includes(:section)
     case params[:format]
-    when 'csv'
-      output = User.generate_csv_list(students)
-      format = 'text/csv'
-    when 'xml'
-      output = students.to_xml
-      format = 'text/xml'
-    else
-      # Raise exception?
-      output = students.to_xml
-      format = 'text/xml'
+      when 'csv'
+        output = MarkusCSV.generate(students) do |student|
+          info = [student.user_name, student.last_name, student.first_name]
+          unless student.section.nil?
+            info << student.section.name
+          end
+          info
+        end
+        format = 'text/csv'
+      when 'xml'
+        output = students.to_xml
+        format = 'text/xml'
+      else
+        # Raise exception?
+        output = students.to_xml
+        format = 'text/xml'
     end
-    send_data(output, type: format, disposition: 'inline')
+    send_data(output, type: format, disposition: 'attachment')
   end
 
   def upload_student_list
