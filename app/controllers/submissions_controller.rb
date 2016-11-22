@@ -497,7 +497,7 @@ class SubmissionsController < ApplicationController
           return
         end
         if repo.commit(txn)
-          flash[:success] = I18n.t('update_files.success')
+          flash_message(:success, I18n.t('update_files.success'))
           # flush log messages
           m_logger = MarkusLogger.instance
           log_messages.each do |msg|
@@ -600,7 +600,7 @@ class SubmissionsController < ApplicationController
           begin
             file_content = file.retrieve_file
           rescue Exception => e
-            flash[:error] = e.message
+            flash_message(:error, e.message)
             redirect_to :back
             return
           end

@@ -30,12 +30,12 @@ class TagsController < ApplicationController
       user: @current_user)
 
     if new_tag.save
-      flash[:success] = I18n.t('tags.create.successful')
+      flash_message(:success, I18n.t('tags.create.successful'))
       if params[:grouping_id]
         create_grouping_tag_association(params[:grouping_id], new_tag)
       end
     else
-      flash[:error] = I18n.t('tags.create.error')
+      flash_message(:error, I18n.t('tags.create.error'))
     end
 
     redirect_to :back
@@ -51,10 +51,10 @@ class TagsController < ApplicationController
     @tag.name = params[:update_tag][:name]
     @tag.description = params[:update_tag][:description]
     if @tag.save
-      flash[:success] = I18n.t('tags.create.successful')
+      flash_message(:success, I18n.t('tags.create.successful'))
       redirect_to :back
     else
-      flash[:error] = I18n.t('tags.create.error')
+      flash_message(:error, I18n.t('tags.create.error'))
     end
   end
 
@@ -176,15 +176,15 @@ class TagsController < ApplicationController
 
       # Handles errors associated with loads.
       rescue Psych::SyntaxError => e
-        flash[:error] = I18n.t('tags.upload.error') + '  ' +
-            I18n.t('tags.upload.syntax_error', error: "#{e}")
+        flash_message(:error, I18n.t('tags.upload.error') + '  ' +
+            I18n.t('tags.upload.syntax_error', error: "#{e}"))
         redirect_to :back
         return
       end
 
       unless tags
-        flash[:error] = I18n.t('tags.upload.error') +
-            '  ' + I18n.t('tags.upload.empty_error')
+        flash_message(:error, I18n.t('tags.upload.error') +
+            '  ' + I18n.t('tags.upload.empty_error'))
         redirect_to :back
         return
       end
@@ -217,12 +217,12 @@ class TagsController < ApplicationController
       end
 
       if successes < tags.length
-        flash[:error] = I18n.t('tags.upload.error') + bad_names
+        flash_message(:error, I18n.t('tags.upload.error') + bad_names)
       end
 
       # Displays the tags that are successful.
       if successes > 0
-        flash[:success] = I18n.t('tags.upload.upload_success', nb_updates: successes)
+        flash_message(:success, I18n.t('tags.upload.upload_success', nb_updates: successes))
       end
     end
 
