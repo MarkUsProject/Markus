@@ -106,7 +106,6 @@
     render: function() {
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <div className="peer-review-amount-spinner">
             <%= j raw t('peer_review.number_per_group') %>: <input type="number"
                    id="peer-review-spinner" min="<%= Assignment::MIN_PEER_REVIEWS_PER_GROUP %>" />

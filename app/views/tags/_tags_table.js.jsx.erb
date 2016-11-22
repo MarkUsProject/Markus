@@ -131,7 +131,6 @@
       }.bind(this));
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <Table data={tags_data}
             search_placeholder={'<%= j raw I18n.t(:'tags.search_tags') %>'}
             selectable={false}
