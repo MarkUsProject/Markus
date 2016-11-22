@@ -11,16 +11,17 @@ if __name__ == '__main__':
     # Modify uppercase variables with your settings
     # The dataset files to be used for testing each student sql file; the student sql file names are the keys, the lists
     # of dataset files to be used are the values.
-    ALL_DATA_FILES = ['data1.sql', 'data2.sql']
-    DATA_FILES = {'correct.sql': ALL_DATA_FILES, 'badnumcolumns.sql': ALL_DATA_FILES,
-                  'badcolumnnames.sql': ALL_DATA_FILES, 'badcolumntypes.sql': ALL_DATA_FILES,
-                  'badnumrows.sql': ALL_DATA_FILES, 'badrowscontent.sql': ALL_DATA_FILES,
-                  'badrowsorder.sql': ALL_DATA_FILES}
+    # The dataset files to be used for testing each student sql file, and the points assigned; the student sql file
+    # names are the keys, the dicts of dataset files and points are the values.
+    DATA_SPECS = {'data1.sql': 1, 'data2.sql': 2}
+    TEST_SPECS = {'correct.sql': DATA_SPECS, 'badnumcolumns.sql': DATA_SPECS, 'badcolumnnames.sql': DATA_SPECS,
+                  'badcolumntypes.sql': DATA_SPECS, 'badnumrows.sql': DATA_SPECS, 'badrowscontent.sql': DATA_SPECS,
+                  'badrowsorder.sql': DATA_SPECS}
     # The schema name
     SCHEMA_NAME = 'ate'
     tester = MarkusSQLTester(oracle_database=cfg.ORACLE_DATABASE, test_database=cfg.TEST_DATABASE, user_name=cfg.USER,
-                             user_password=cfg.PASSWORD, data_files=DATA_FILES, schema_name=SCHEMA_NAME,
-                             path_to_solution=cfg.PATH_TO_SOLUTION)
+                             user_password=cfg.PASSWORD, path_to_solution=cfg.PATH_TO_SOLUTION, schema_name=SCHEMA_NAME,
+                             specs=TEST_SPECS)
     tester.run()
     # use markus apis if needed (uncomment import markusapi)
     root_url = sys.argv[1]

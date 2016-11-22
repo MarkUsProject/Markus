@@ -11,15 +11,15 @@ class MarkusSQLTester(MarkusUtilsMixin):
     DATASET_DIR = 'datasets'
     QUERY_DIR = 'queries'
 
-    def __init__(self, oracle_database, test_database, user_name, user_password, data_files, schema_name,
-                 path_to_solution, output_filename='result.txt'):
+    def __init__(self, oracle_database, test_database, user_name, user_password, path_to_solution, schema_name, specs,
+                 output_filename='result.txt'):
         self.oracle_database = oracle_database
         self.test_database = test_database
         self.user_name = user_name
         self.user_password = user_password
-        self.data_files = data_files
-        self.schema_name = schema_name
         self.path_to_solution = path_to_solution
+        self.schema_name = schema_name
+        self.specs = specs
         self.output_filename = output_filename
         self.oracle_connection = None
         self.oracle_cursor = None
@@ -76,7 +76,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
             return test_results
 
-    def check_results(self, oracle_results, test_results):
+    def check_results(self, oracle_results, test_results, pass_points=1):
         # check 1: column number, names/order and types
         oracle_columns = self.oracle_cursor.description
         test_columns = self.test_cursor.description
@@ -102,7 +102,7 @@ class MarkusSQLTester(MarkusUtilsMixin):
                 return 'Expected row {} to be {} instead of {}'.format(i, oracle_row, test_results[i]), 0, 'fail'
 
         # all good
-        return '', 1, 'pass'
+        return '', pass_points, 'pass'
 
     def print_result_file(self, output_open, test_name, actual, status, oracle_results, test_results):
         output_open.write('========== {} - {} ==========\n'.format(test_name, status.upper()))
@@ -125,9 +125,9 @@ class MarkusSQLTester(MarkusUtilsMixin):
         try:
             self.init_db()
             with open(self.output_filename, 'w') as output_open:
-                for sql_file in self.data_files.keys():
+                for sql_file in self.specs.keys():
                     test_name = sql_file.partition('.')[0]
-                    for data_file in self.data_files[sql_file]:
+                    for data_file, test_points in self.specs[sql_file].items():
                         data_name = data_file.partition('.')[0]
                         test_data_name = '{} + {}'.format(test_name, data_name)
                         if not os.path.isfile(sql_file):
@@ -141,7 +141,8 @@ class MarkusSQLTester(MarkusUtilsMixin):
                             # fetch results from oracle
                             oracle_results = self.get_oracle_results(data_name=data_name, test_name=test_name)
                             # compare test results with oracle
-                            result = self.check_results(oracle_results=oracle_results, test_results=test_results)
+                            result = self.check_results(oracle_results=oracle_results, test_results=test_results,
+                                                        pass_points=test_points)
                             self.print_result(name=test_data_name, input='', expected='', actual=result[0],
                                               marks=result[1], status=result[2])
                             self.print_result_file(output_open=output_open, test_name=test_data_name,
