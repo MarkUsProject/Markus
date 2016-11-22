@@ -46,8 +46,8 @@ class MarkusSQLTester(MarkusUtilsMixin):
 
     def get_oracle_results(self, data_name, test_name):
         self.oracle_cursor.execute('SELECT * FROM %(schema)s.%(table)s',
-                                   {'schema': psycopg2.extensions.AsIs(data_name),
-                                    'table': psycopg2.extensions.AsIs('oracle_{}'.format(test_name))})
+                                   {'schema': psycopg2.extensions.AsIs(data_name.lower()),
+                                    'table': psycopg2.extensions.AsIs('oracle_{}'.format(test_name.lower()))})
         self.oracle_connection.commit()
         oracle_results = self.oracle_cursor.fetchall()
 
