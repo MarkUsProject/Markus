@@ -17,7 +17,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
   # check for active session on every page
   before_filter :authenticate, except: [:login, :page_not_found, :check_timeout]
-
+  # check for AJAX requests
+  after_filter :flash_to_headers
   # Define default URL options to include the locale
   def default_url_options(options={})
     { locale: I18n.locale }
@@ -72,5 +73,14 @@ class ApplicationController < ActionController::Base
 
   def get_file_encodings
     @encodings = [%w(Unicode UTF-8), %w(ISO-8859-1 ISO-8859-1)]
+  end
+
+  # add flash message to AJAX response headers
+  def flash_to_headers
+    return unless request.xhr?
+    [:error, :success, :warning, :notice].each do |key|
+      response.headers["X-message-#{key}"] = flash[key]  unless flash[key].blank?
+    end
+    flash.discard
   end
 end

@@ -58,11 +58,11 @@ jQuery(document).ready(function() {
   /* Update the script name in the legend when the admin uploads a file */
   jQuery('.upload_file').change(function () {
     jQuery(this).closest('.settings_box').find('.file_name').text(this.value);
-  })
+  });
 
   /* Existing files are collapsed by default */
   jQuery('.collapse').each(function (i) {
-    jQuery(this).data('collapsed', true);
+    toggleSettings(this);
   });
 
   /* Make the list of test script files sortable. */
@@ -104,6 +104,7 @@ jQuery(document).ready(function() {
       } 
     }
   });
+
 
   /* Disables form elements when Remove checkbox is checked */
   jQuery( ".remove_test_script_file" ).click(function() {
