@@ -34,9 +34,6 @@
     <%= render partial: 'layouts/redirect' %>
 
     <section id='content'>
-      <%= render partial: 'layouts/noscript'%>
-      <%= content_for?(:content) ? yield(:content) : yield %>
-
       <div class='title_bar'>
         <h1>
           <%= yield(:title) %>
@@ -49,6 +46,9 @@
           <%= yield(:additional_headings) %>
         </div>
       </div>
+
+      <%= render partial: 'layouts/noscript'%>
+      <%= content_for?(:content) ? yield(:content) : yield %>
 
       <div class='wrapLeft'>
         <%= render partial: 'shared/flash_message' %>

@@ -14,6 +14,8 @@ class GradersController < ApplicationController
   # -
   before_filter      :authorize_only_for_admin
 
+  layout 'assignment_content'
+
   def groups_coverage_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
