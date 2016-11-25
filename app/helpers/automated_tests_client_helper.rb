@@ -205,13 +205,16 @@ module AutomatedTestsClientHelper
     return test_server_user
   end
 
-  # Verify the user has the permission to run the tests - admin
-  # and graders always have the permission, while student has to
+  # Verify the user has the permission to run the tests - admins
+  # always have the permission, while student has to
   # belong to the group, and have at least one token.
   def self.check_user_permission(user, grouping, assignment)
 
-    if user.admin? || user.ta?
+    if user.admin?
       return
+    end
+    if user.ta?
+      raise I18n.t('automated_tests.error.ta_not_allowed')
     end
     # Make sure student belongs to this group
     unless user.accepted_groupings.include?(grouping)
@@ -242,7 +245,7 @@ module AutomatedTestsClientHelper
     end
 
     # Select a subset of test scripts
-    if user.admin? || user.ta?
+    if user.admin?
       test_scripts = all_scripts.select(&:run_by_instructors)
     elsif user.student?
       test_scripts = all_scripts.select(&:run_by_students)

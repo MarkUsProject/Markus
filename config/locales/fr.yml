@@ -1560,6 +1560,7 @@ fr:
       error:
         not_enabled: "UPDATE ME"
         no_test_server_user: "UPDATE ME"
+        ta_not_allowed: "UPDATE ME"
         not_belong_to_group: "UPDATE ME"
         no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
         no_test_files: "UPDATE ME"
