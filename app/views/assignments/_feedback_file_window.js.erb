@@ -19,11 +19,18 @@
       complete: function() {
         document.getElementById('working').style.display = 'none';
       },
-      success: function (data) {
-        var pars = data.split('\n').map(function(line) {
-          return jQuery('<p></p>').text(line);
-        });
-        jQuery('#feedback_file_content').empty().append(pars);
+      success: function (data, textStatus, jqXHR) {
+        var contentType = jqXHR.getResponseHeader('Content-Type');
+
+        if (contentType.startsWith('image')) {
+          jQuery('#feedback_file_content').html(
+          '<img src="data:' + contentType + ';base64,' + data + '" />');
+        } else {
+          var pars = data.split('\n').map(function(line) {
+            return jQuery('<p></p>').text(line);
+          });
+          jQuery('#feedback_file_content').empty().append(pars);
+        }
       },
       error: function () {
         jQuery('#feedback_file_content').html('Error retrieving feedback file');

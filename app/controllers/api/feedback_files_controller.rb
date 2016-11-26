@@ -75,9 +75,14 @@ module Api
       end
 
       # Try creating the Feedback file
+      if params[:mime_type] == 'text/plain'
+        content = params[:file_content]
+      else
+        content = params[:file_content].read
+      end
       if submission.feedback_files.create(filename: params[:filename],
                                           mime_type: params[:mime_type],
-                                          file_content: params[:file_content])
+                                          file_content: content)
                                           .valid?
         # It worked, render success
         render 'shared/http_status', locals: {code: '201', message:
