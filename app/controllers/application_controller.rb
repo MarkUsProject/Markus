@@ -79,7 +79,14 @@ class ApplicationController < ActionController::Base
   def flash_to_headers
     return unless request.xhr?
     [:error, :success, :warning, :notice].each do |key|
-      response.headers["X-message-#{key}"] = flash[key]  unless flash[key].blank?
+      unless flash[key].nil?
+        if flash[key].is_a?(Array)
+          str = flash[key].join(';')
+        else
+          str = flash[key]
+        end
+        response.headers["X-message-#{key}"] = str
+      end
     end
     flash.discard
   end
