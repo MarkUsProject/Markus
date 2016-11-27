@@ -175,6 +175,7 @@ en:
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
         add_required_file:  "Add a Required File"
+        download: "Download Assignments"
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
