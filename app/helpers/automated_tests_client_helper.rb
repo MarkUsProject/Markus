@@ -310,17 +310,7 @@ module AutomatedTestsClientHelper
         repo_revision: revision_number)
   end
 
-  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
-    test_script_result.test_results.create(
-        name: (name.nil? ? '' : name),
-        input: (input.nil? ? '' : CGI.unescapeHTML(input)),
-        actual_output: (actual.nil? ? '' : CGI.unescapeHTML(actual)),
-        expected_output: (expected.nil? ? '' : CGI.unescapeHTML(expected)),
-        marks_earned: marks_earned,
-        completion_status: (status.nil? ? 'error' : status))
-  end
-
-  def self.create_test_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
+  def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
     test_scripts.each do |script_name|
       test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
       add_test_error_result(test_script_result, result_name, result_message)
@@ -331,8 +321,18 @@ module AutomatedTestsClientHelper
     end
   end
 
+  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
+    test_script_result.test_results.create(
+        name: name,
+        input: CGI.unescapeHTML(input),
+        actual_output: CGI.unescapeHTML(actual),
+        expected_output: CGI.unescapeHTML(expected),
+        marks_earned: marks_earned,
+        completion_status: status)
+  end
+
   def self.add_test_error_result(test_script_result, result_name, result_message)
-    add_test_result(test_script_result, result_name, nil, result_message, nil, 0, 'error')
+    add_test_result(test_script_result, result_name, '', result_message, '', 0, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -347,9 +347,9 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
-      create_test_error_result(test_scripts, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.no_source_files'))
+      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.no_source_files'))
       return
     end
 
@@ -415,64 +415,97 @@ module AutomatedTestsClientHelper
         end
       rescue Exception => e
         submission = submission_id.nil? ? nil : Submission.find(submission_id)
-        create_test_error_result(test_scripts, assignment, grouping, submission,
-                                 I18n.t('automated_tests.test_result.all_tests'),
-                                 I18n.t('automated_tests.test_result.no_server_connection',
-                                        {hostname: test_server_host, error: e.message}))
+        create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                             I18n.t('automated_tests.test_result.all_tests'),
+                                             I18n.t('automated_tests.test_result.no_server_connection',
+                                                    {hostname: test_server_host, error: e.message}))
       end
     end
   end
 
   def self.process_test_result(raw_result, test_scripts_ran, assignment, grouping, submission)
 
+    # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
     result = nil
     begin
       result = Hash.from_xml(raw_result)
     rescue => e
-      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+      create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+      unless submission.nil?
+        submission.set_marks_for_tests
+      end
       return
     end
     test_run = result['testrun']
     test_scripts = test_run.nil? ? nil : test_run['test_script']
     if test_run.nil? || test_scripts.nil?
-      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      unless submission.nil?
+        submission.set_marks_for_tests
+      end
       return
     end
 
-    # Hash.from_xml will return a hash with only one test script and an array otherwise
-    unless test_scripts.is_a?(Array)
+    # process results
+    unless test_scripts.is_a?(Array) # Hash.from_xml returns a hash if it's a single test script and an array otherwise
       test_scripts = [test_scripts]
     end
+    new_test_script_results = {}
     test_scripts.each do |test_script|
+      script_name = test_script['script_name']
+      if script_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
+        next
+      end
       total_marks = 0
-      new_test_script_result = create_test_script_result(test_script['script_name'], assignment, grouping, submission)
+      new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+      new_test_script_results[script_name] = new_test_script_result
       tests = test_script['test']
       if tests.nil?
         add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
                               I18n.t('automated_tests.test_result.no_tests'))
-        return
+        next
       end
-      # same workaround as above, Hash.from_xml produces a hash if it's a single test
-      unless tests.is_a?(Array)
+      unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
         tests = [tests]
       end
       tests.each do |test|
-        marks_earned = test['marks_earned']
-        if marks_earned.nil?
-          marks_earned = '0'
+        test_name = test['name']
+        if test_name.nil? # with malformed xml, some test results could be valid and some won't
+          add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
+                                I18n.t('automated_tests.test_result.bad_results', {xml: test}))
+          next
         end
-        total_marks += marks_earned.to_i
-        add_test_result(new_test_script_result, test['name'], test['input'], test['actual'], test['expected'],
-                        marks_earned.to_i, test['status'])
+        marks_earned = test['marks_earned'].nil? ? 0 : test['marks_earned'].to_i
+        test_input = test['input'].nil? ? '' : test['input']
+        test_actual = test['actual'].nil? ? '' : test['actual']
+        test_expected = test['expected'].nil? ? '' : test['expected']
+        test_status = test['status']
+        if test_status.nil? or not test_status.in?(%w(pass fail error))
+          test_status = 'error'
+          marks_earned = 0
+        end
+        add_test_result(new_test_script_result, test_name, test_input, test_actual, test_expected, marks_earned,
+                        test_status)
+        total_marks += marks_earned
       end
       new_test_script_result.marks_earned = total_marks
       new_test_script_result.save!
     end
 
+    # try to recover from malformed xml at the test script level
+    test_scripts_ran.each do |script_name|
+      if new_test_script_results[script_name].nil?
+        new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+        add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
+                              I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      end
+    end
+
+    # set the marks assigned by the test
     unless submission.nil?
       submission.set_marks_for_tests
     end

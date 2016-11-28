@@ -1978,6 +1978,7 @@ es:
         no_test_files:        "No hay un script para lanzar la prueba"
       test_result:
         all_tests: "UPDATE ME"
+        unknown_test: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         no_server_connection: "UPDATE ME"
         bad_results: "UPDATE ME"
