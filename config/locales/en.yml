@@ -605,6 +605,8 @@ en:
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
+        download: "Download Grades"
+        download_prompt: "Download Grades in CSV format"
       is_hidden: "Hide Spreadsheet"
 
       students:
