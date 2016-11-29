@@ -1,5 +1,6 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'Graders/index' %>
+  <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
@@ -46,73 +47,9 @@
 
 <div id='graders_manager'></div>
 
-<!-- Modal Windows -->
-<aside class='dialog' id="download_dialog">
-  <h2><%= t('groups.download.download_grader_maps') %></h2>
-  <ul>
-    <li>
-      <%= link_to t('groups.download.download_grader_groups_csv'),
-                  download_grader_groupings_mapping_assignment_graders_path(@assignment),
-                  onclick: 'modal_download.close();' %>
-    </li>
-    <li>
-      <%= link_to t('groups.download.download_grader_criteria_csv'),
-                  download_grader_criteria_mapping_assignment_graders_path(@assignment),
-                  onclick: 'modal_download.close();' %>
-      </li>
-  </ul>
-
-  <section class='dialog-actions'>
-    <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_download.close();' />
-  </section>
-</aside>
-
-<aside class='dialog' id="upload_dialog">
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script',
-                             upload_id: 'grader_mapping',
-                             button_id: 'upload' %>
-
-  <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
-  <%= raw(I18n.t("groups.upload.description_grader_map")) %>
-  <%= form_tag({controller:"graders",
-    action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
-    {multipart: true}) do %>
-    <p>
-      <%= t("encoding") %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    </p>
-    <%= file_field_tag :grader_mapping, size: 2 %>
-
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
-                     disabled: true,
-                     id: 'upload'  %>
-      <input type='reset' value='<%= I18n.t(:cancel) %>' onclick='modal_upload.close();' />
-    </section>
-  <% end %>
-
-  <% if @assignment.assign_graders_to_criteria %>
-    <h2><%= t("groups.upload.upload_grader_criteria_map") %></h2>
-    <%= raw(t("groups.upload.description_grader_criteria_map")) %>
-    <%= form_tag({controller:"graders",
-      action: 'csv_upload_grader_criteria_mapping',id: @assignment.id},
-      {multipart: true}) do %>
-      <p>
-        <%= t("encoding") %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      </p>
-      <%= file_field_tag :grader_criteria_mapping, size: 2 %>
-
-      <section class='dialog-actions'>
-        <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-        <%= button_tag I18n.t('cancel'), onclick:'modal_upload.close();' %>
-      </section>
-    <% end %>
-  <% end %>
-</aside>
+<%# Modals %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
 
 <aside class='dialog' id="groups_coverage_dialog"></aside>
 <aside class='dialog' id="grader_criteria_dialog"></aside>

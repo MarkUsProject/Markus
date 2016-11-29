@@ -8,7 +8,8 @@
       <%= t('criteria.download.link_yml') %>
     </div>
     <%= link_to '',
-                download_yml_assignment_criteria_path(@assignment),
+                { action: 'download_yml',
+                  id: @criteria },
                 onclick: 'modal_download_yml.close();',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
