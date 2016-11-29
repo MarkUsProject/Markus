@@ -69,7 +69,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "set the flash's success message" do
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
-        assert_equal 'Successfully created the assignment', flash[:success]
+        assert_equal ['Successfully created the assignment'], flash[:success]
       end
 
       context 'with section due dates' do
@@ -339,7 +339,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         assert @assignment.submission_rule.is_a?(NoLateSubmissionRule)
-        assert_equal I18n.t('assignment.update_success'), flash[:success]
+        assert_equal [I18n.t('assignment.update_success')], flash[:success]
       end
 
       should 'be able to set instructor forms groups' do
@@ -386,7 +386,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         assert_redirected_to edit_assignment_path(@assignment)
-        assert_equal I18n.t('assignment.update_success'),
+        assert_equal [I18n.t('assignment.update_success')],
                flash[:success]
 
         assert_not_nil assigns(:assignment)
@@ -564,7 +564,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                 file_format: 'yml', encoding: 'UTF-8'
         assert_response :redirect
         assert_redirected_to(controller: 'assignments', action: 'index')
-        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:success], [I18n.t('assignment.create_success')]
         assert_equal flash[:error], nil
         test1 = Assignment.find_by_short_identifier('ATest3')
         assert_not_nil test1
@@ -779,7 +779,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                   :invite_member,
                   {id: @assignment.id,
                    invite_member: student.user_name})
-          assert_equal(I18n.t('invite_student.success'), flash[:success])
+          assert_equal([I18n.t('invite_student.success')], flash[:success])
           assert_redirected_to action: 'student_interface',
                                id: @assignment.id
         end
@@ -947,7 +947,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                    membership: sm.id}
 
           assert_response :found
-          assert_equal I18n.t('student.member_disinvited'),
+          assert_equal [I18n.t('student.member_disinvited')],
                        flash[:success]
           assert_equal 1,
                        @grouping.memberships.length
@@ -962,7 +962,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_redirected_to action: 'student_interface',
                                id: @assignment.id
 
-          assert_equal(I18n.t('assignment.group.deleted'), flash[:success])
+          assert_equal([I18n.t('assignment.group.deleted')], flash[:success])
           assert !@student.has_accepted_grouping_for?(@assignment.id)
         end
 
@@ -1204,7 +1204,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                   :invite_member,
                   {id: @assignment.id,
                    invite_member: student.user_name}
-          assert_equal(I18n.t('invite_student.success'), flash[:success])
+          assert_equal([I18n.t('invite_student.success')], flash[:success])
           assert_redirected_to action: 'student_interface',
                                id: @assignment.id
 
