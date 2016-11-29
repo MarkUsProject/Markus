@@ -42,7 +42,7 @@
 
             <section class='dialog-actions'>
               <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-              <%= button_tag I18n.t('cancel'), onclick:'modal_upload.close();' %>
+              <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
             </section>
         <% end %>
     <% end %>

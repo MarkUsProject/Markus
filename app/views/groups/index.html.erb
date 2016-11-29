@@ -4,19 +4,6 @@
 
   <%= render partial: 'layouts/head' %>
   <%= render partial: 'groups_manager', formats: [:'js.jsx'], handlers: [:erb] %>
-
-  <script>
-    var modalCreate     = null;
-    var modalAddMember  = null;
-    var modalNotesGroup = null;
-    var modalAssignmentGroupReUse = null;
-
-    jQuery(document).ready(function() {
-      modalCreate = new ModalMarkus('#create_group_dialog');
-      modalNotesGroup = new ModalMarkus('#notes_dialog');
-      modalAssignmentGroupReUse = new ModalMarkus('#assignment_group_use_dialog');
-    });
-  </script>
 <% end %>
 
 <% if @assignment.past_all_due_dates? %>

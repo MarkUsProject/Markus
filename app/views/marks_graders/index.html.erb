@@ -4,31 +4,19 @@
   <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 
-  <script>
-    var modalCreate = null;
-    var modalAssignmentGroupReUse = null;
-    var modalRenameGroup = null;
-    var modalAddMember = null;
-    var modalNotesGroup = null;
-    var modalUpload = null;
-    var modalDownload = null;
-
-    jQuery(document).ready(function() {
-      modalUpload   = new ModalMarkus('#upload_dialog');
-      modalDownload = new ModalMarkus('#download_dialog');
-    });
-  </script>
+  <%= javascript_include_tag 'MarksGraders/index' %>
+  <%= stylesheet_link_tag('clickable') %>
 <% end %>
 
 <% content_for :title, t('graders.manage_graders') %>
 
 <% @heading_buttons = [
   { link_text: t('download'),
-    link_path:  'javascript:void(0);',
-    html_options: { onclick: 'modalDownload.open();' } },
+    link_path:  '#',
+    html_options: { onclick: 'modal_download.open();' } },
   { link_text: t('upload'),
-    link_path:  'javascript:void(0);',
-    html_options: { onclick: 'modalUpload.open();' } }
+    link_path:  '#',
+    html_options: { onclick: 'modal_upload.open();' } }
 ] %>
 
 <div class="clear"></div>
@@ -53,43 +41,6 @@
 
 <div id='marks_graders_manager'></div>
 
-<!-- Modal Windows -->
-<aside class='dialog' id='download_dialog'>
-  <h2><%= t('groups.download.download_grader_maps') %></h2>
-
-  <%= button_to t('marks_graders.download.download_grader_students_csv'),
-                { controller: 'marks_graders',
-                  action: 'download_grader_students_mapping',
-                  id: @grade_entry_form.id },
-                method: :get,
-                onclick: 'modalDownload.close();' %>
-
-  <section class='dialog-actions'>
-    <%= button_tag t('cancel'), onclick: 'modalDownload.close();' %>
-  </section>
-</aside>
-
-<aside class='dialog' id='upload_dialog'>
-  <h2><%= t('marks_graders.upload.upload_grader_map') %></h2>
-  <%= raw(t('marks_graders.upload.description_grader_map')) %>
-
-  <%= form_tag({ controller: 'marks_graders',
-                 action: 'csv_upload_grader_groups_mapping',
-                 id: @grade_entry_form.id },
-               { multipart: true }) do %>
-    <p>
-      <%= t('encoding') %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    </p>
-
-    <p>
-      <%= file_field_tag :grader_mapping, size: 2 %>
-    </p>
-
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) } %>
-      <%= button_tag t('cancel'), onclick: 'modalUpload.close();' %>
-    </section>
-  <% end %>
-</aside>
+<%# Modals %>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
