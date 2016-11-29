@@ -30,6 +30,7 @@ class GroupsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     begin
       assignment.add_group(params[:new_group_name])
+      flash.now[:success] = I18n.t('groups.rename_group.success')
     rescue Exception => e
       flash[:error] = e.message
     ensure
@@ -54,6 +55,7 @@ class GroupsController < ApplicationController
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
+      flash[:success] = I18n.t('groups.delete')
     end
     head :ok
   end
@@ -73,7 +75,9 @@ class GroupsController < ApplicationController
     unless existing
       # We update the group_name
       @group.group_name = params[:new_groupname]
-      @group.save
+      if @group.save
+        flash[:success] = I18n.t('groups.rename_group.success')
+      end
     else
 
       # We link the grouping to the group already existing

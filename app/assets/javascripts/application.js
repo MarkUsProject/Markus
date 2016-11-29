@@ -61,3 +61,30 @@ Element.prototype.hasClass = function(className) {
   else
     return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }
+
+jQuery(document).ajaxComplete(function(event, request) {
+  var keys = ['notice', 'warning', 'success', 'error'];
+  var keysLength = keys.length;
+  var flashMessageList = [];
+  var receive = false;
+  for (var i = 0; i < keysLength; i++) {
+    flashMessageList.push(request.getResponseHeader('X-Message-' + keys[i]));
+    if (flashMessageList[i]) receive = true;
+  }
+  for (var i = 0; i < keysLength; i++) {
+    var flashMessage = flashMessageList[i];
+    if (flashMessage) {
+      var messages = flashMessage.split(';');
+      jQuery('.' + keys[i]).empty();
+      for (var j = 0; j < messages.length; j++) {
+        jQuery('.' + keys[i]).append('<p>' + messages[j] + '</p>');
+      }
+      jQuery('.' + keys[i]).show();
+    } else if (receive) {
+      jQuery('.' + keys[i]).empty();
+    }
+    if (jQuery('.' + keys[i]).is(':empty')) {
+      jQuery('.' + keys[i]).hide()
+    }
+  }
+});
