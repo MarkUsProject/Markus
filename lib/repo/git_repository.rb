@@ -1152,6 +1152,16 @@ module Repository
       end
     end
 
+    def changed_filenames_at_path(path)
+      files = files_at_path(path)
+
+      files.select do |_name, file|
+        file.changed
+      end
+      return files.keys
+    end
+
+
     def last_modified_date()
       return self.timestamp
     end
