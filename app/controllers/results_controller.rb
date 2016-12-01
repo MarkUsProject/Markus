@@ -27,6 +27,10 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  def peer_review_marking
+
+  end
+
   def note_message
     @result = Result.find(params[:id])
     if params[:success]
