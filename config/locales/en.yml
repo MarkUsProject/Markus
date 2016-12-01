@@ -900,7 +900,8 @@ en:
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       download:
-        download_list: "Download TA list in CSV format"
+        download_list_csv: "Download TA list in CSV format"
+        download_list_yml: "Download TA list in YML format"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
 
