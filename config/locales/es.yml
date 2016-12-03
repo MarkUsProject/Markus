@@ -1972,11 +1972,13 @@ es:
       error:
         not_enabled:          "UPDATE ME"
         no_test_server_user:  "UPDATE ME"
+        ta_not_allowed:       "UPDATE ME"
         not_belong_to_group:  "Usted no pertenece al grupo"
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
         no_test_files:        "No hay un script para lanzar la prueba"
       test_result:
         all_tests: "UPDATE ME"
+        unknown_test: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         no_server_connection: "UPDATE ME"
         bad_results: "UPDATE ME"
