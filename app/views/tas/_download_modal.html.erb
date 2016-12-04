@@ -1,10 +1,10 @@
 <%= content_for :modal_id, 'download_dialog' %>
-<%= content_for :modal_title, I18n.t('download') %>
+<%= content_for :modal_title, .t('download') %>
 <%= content_for :modal_content do %>
     <div class="clickable_links">
       <div class="clickable_text">
         <img class="clickable_image" src="<%= image_url("icons/download-file.png") %>">
-        <%= I18n.t('graders.download.download_list_csv') %>
+        <%= .t('graders.download.download_list_csv') %>
       </div>
       <%= link_to '',
                   { action: 'download_ta_list',
@@ -16,7 +16,7 @@
     <div class="clickable_links">
       <div class="clickable_text">
         <img class="clickable_image" src="<%= image_url("icons/download-file.png") %>">
-        <%= I18n.t('graders.download.download_list_yml') %>
+        <%= .t('graders.download.download_list_yml') %>
       </div>
       <%= link_to '',
                   { action: 'download_ta_list',
