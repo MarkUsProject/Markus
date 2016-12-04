@@ -24,7 +24,7 @@
 
         if (contentType.startsWith('image')) {
           jQuery('#feedback_file_content').html(
-          '<img src="data:' + contentType + ';base64,' + data + '" />');
+          '<img src="data:' + contentType + ';base64,' + data + '" style="max-width: 70%"/>');
         } else {
           var pars = data.split('\n').map(function(line) {
             return jQuery('<p></p>').text(line);
