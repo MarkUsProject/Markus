@@ -24,7 +24,7 @@
                    url: csv_upload_assignment_tags_path(@assignment),
                    html: { multipart: true, size: 1 } do |f| %>
           <div class='content'>
-            <p><input type='file' name='csv_tags' id='csv_tags'></p>
+            <%= file_field_tag 'csv_tags' %>
             <%= t('tags.upload.upload_csv_html') %>
             <%= t('csv_special_characters_html') %>
           </div>
@@ -53,7 +53,7 @@
                    url: yml_upload_assignment_tags_path(@assignment),
                    html: { multipart: true, size: 1 } do |f| %>
           <div class='content'>
-            <p><input type='file' name='yml_tags' id='yml_tags'></p>
+            <%= file_field_tag 'yml_tags' %>
             <%= t('tags.upload.upload_yml_html') %>
           </div>
 

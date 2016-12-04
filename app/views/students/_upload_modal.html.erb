@@ -14,8 +14,8 @@
     <%= form_tag upload_student_list_students_path(),
                  { multipart: true } do %>
       <div>
-        <label for='userlist'><%= t('students.upload.csv_file') %></label>
-        <input type='file' name='userlist' id='userlist'>
+        <%= label_tag 'userlist', t('students.upload.csv_file') %>
+        <%= file_field_tag 'userlist' %>
       </div>
 
       <div>

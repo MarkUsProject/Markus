@@ -26,7 +26,7 @@
           <%= select_tag(:encoding, options_for_select(@encodings)) %>
         </p>
 
-        <input type='file' name='assignment_list' id='assignment_list'>
+        <%= file_field_tag 'assignment_list' %>
 
         <section class='dialog-actions'>
           <%= hidden_field_tag :file_format, '', id: 'file_format' %>
