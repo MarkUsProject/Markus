@@ -28,7 +28,78 @@ class ResultsController < ApplicationController
                        :set_released_to_students]
 
   def peer_review_marking
+    #result for the peer review
+    @result = Result.find(params[:id]) #todo make this #@pr_result
+    @assignment = @result.submission.grouping.assignment #A1
+    @pr_assignment = @assignment.pr_assignment #A5
 
+    @pr = PeerReview.find_by(result_id: @result.id)
+    @submission = @result.submission
+
+    #todo get the @result for the original/actual assignment (A1)
+    # to display the marks given by TA
+
+    #copied from edit
+    @grouping = @result.submission.grouping
+    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
+    @files = @submission.submission_files.sort do |a, b|
+      File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
+    end
+    @feedback_files = @submission.feedback_files
+    @first_file = @files.first
+    @extra_marks_points = @result.extra_marks.points
+    @extra_marks_percentage = @result.extra_marks.percentage
+    @marks_map = Hash.new
+    @old_marks_map = Hash.new
+
+    #new
+    @pr_marks_map = Hash.new
+    @pr_old_marks_map = Hash.new
+
+    @mark_criteria = @assignment.get_criteria(:ta)
+    @pr_mark_criteria = @pr_assignment.get_criteria(:ta)
+
+    #todo how to get the reviewer's id?
+   @reviewer = Grouping.find(params[:reviewer_grouping_id])
+   @reviewer_group_name = @reviewer.group.group_name
+
+
+
+    #copied
+    @mark_criteria.each do |criterion|
+      mark = criterion.marks.find_or_create_by(result_id: @result.id)
+      # NOTE: Due to the way marks were set up, they originally assumed that
+      # there only would ever be unique criterion IDs. Now that we mix them
+      # together, multiple criteria could end up using the same ID due to the
+      # polymorphic nature of criteria. This led to old values getting written
+      # over by other ones with the same criteria ID, so the class String is
+      # used to allow the viewers to differentiate between them.
+      # TODO - An even better idea: create a 'table', or rather hash[key][key]
+      @marks_map[[criterion.class.to_s, criterion.id]] = mark
+
+      Mark.skip_callback(:save, :after, :update_result_mark)
+      mark.save(validate: false)
+      Mark.set_callback(:save, :after, :update_result_mark)
+    end
+
+    #pr_mark_criteria
+    #copied
+    # TODO NEED RESULT FOR PEER REVIEW ASSIGNMENT (A5)
+    @pr_mark_criteria.each do |criterion|
+      pr_mark = criterion.marks.find_or_create_by(result_id: @result.id)
+      # NOTE: Due to the way marks were set up, they originally assumed that
+      # there only would ever be unique criterion IDs. Now that we mix them
+      # together, multiple criteria could end up using the same ID due to the
+      # polymorphic nature of criteria. This led to old values getting written
+      # over by other ones with the same criteria ID, so the class String is
+      # used to allow the viewers to differentiate between them.
+      # TODO - An even better idea: create a 'table', or rather hash[key][key]
+      @pr_marks_map[[criterion.class.to_s, criterion.id]] = pr_mark
+
+      Mark.skip_callback(:save, :after, :update_result_mark)
+      pr_mark.save(validate: false)
+      Mark.set_callback(:save, :after, :update_result_mark)
+    end
   end
 
   def note_message
