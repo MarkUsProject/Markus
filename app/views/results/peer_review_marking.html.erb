@@ -2,7 +2,7 @@
 <!--<%= debug @result %>-->
 <!-- <%= debug @pr %> -->
 <!-- <%= debug @submission %> -->
-<!--<%= debug @pr_mark_criteria %>-->
+<!--<%= debug @pr_marks_map %>-->
 
 <% content_for :head do %>
     <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
@@ -207,8 +207,11 @@
                            result: @result,
                            assignment: @assignment,
                            marks_map: @marks_map,
+                           pr_marks_map: @pr_marks_map,
                            old_marks_map: @old_marks_map,
+                           pr_old_marks_map: @pr_old_marks_map,
                            mark_criteria:@mark_criteria,
+                           pr_mark_criteria:@pr_mark_criteria,
                            submission: @submission,
                            old_result: @old_result,
                            test_results: @test_results,

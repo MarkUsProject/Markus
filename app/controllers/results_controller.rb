@@ -60,8 +60,8 @@ class ResultsController < ApplicationController
     @pr_mark_criteria = @pr_assignment.get_criteria(:ta)
 
     #todo how to get the reviewer's id?
-   @reviewer = Grouping.find(params[:reviewer_grouping_id])
-   @reviewer_group_name = @reviewer.group.group_name
+    @reviewer = Grouping.find(params[:reviewer_grouping_id])
+    @reviewer_group_name = @reviewer.group.group_name
 
 
 

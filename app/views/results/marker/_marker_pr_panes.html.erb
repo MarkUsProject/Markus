@@ -28,7 +28,7 @@
                                      result_id: result.id } %>
             <% end %>
           </div>
-
+]
           <div id='codeviewer'></div>
         </div>
 
@@ -52,20 +52,6 @@
               <%# Also need to render the mark per criteria (if exist) %>
               <% @mark_criteria.each do |mark_criterion| -%>
                   <%= render partial: "results/student/student_#{mark_criterion.class.to_s.underscore}_li",
-                             locals: { mark_criterion: mark_criterion,
-                                       result: result,
-                                       mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
-                                       old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
-              <% end -%>
-            </ul>
-          </div>
-
-          <div id='mark_criteria'>
-            <ul id='mark_criteria_pane_list'>
-              <%# Also need to render the mark per criteria (if exist) %>
-              <% @mark_criteria.each do |mark_criterion| -%>
-                  <%= render partial: "results/student/student_#{mark_criterion.class.to_s.underscore}_li",
-
                              locals: { mark_criterion: mark_criterion,
                                        result: result,
                                        mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
@@ -160,13 +146,13 @@
           <div id='mark_criteria'>
             <ul id='mark_criteria_pane_list'>
               <%# Also need to render the mark per criteria (if exist) %>
-              <% @mark_criteria.each do |mark_criterion| -%>
+              <% @pr_mark_criteria.each do |mark_criterion| -%>
                   <%- # debug mark_criterion -%>
                   <%= render partial: "results/marker/marker_#{mark_criterion.class.to_s.underscore}_li",
                              locals: { mark_criterion: mark_criterion,
                                        result: result,
-                                       mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
-                                       old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
+                                       mark: pr_marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                       old_mark: pr_old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
               <% end -%>
             </ul>
           </div>
@@ -174,9 +160,9 @@
 
         <div id='summary_viewer' class='marks_summary_pane'>
           <%= render partial: 'results/marker/marker_summary',
-                     locals: { mark_criteria: mark_criteria,
-                               marks_map: marks_map,
-                               old_marks_map: old_marks_map,
+                     locals: { mark_criteria: pr_mark_criteria,
+                               marks_map: pr_marks_map,
+                               old_marks_map: pr_old_marks_map,
                                assignment: assignment,
                                old_result: @old_result,
                                result: result,
