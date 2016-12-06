@@ -166,12 +166,6 @@
             error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
         // Close working indicator.
         complete: function () {
           document.getElementById('working').style.display = 'none';
@@ -186,12 +180,6 @@
           this.setState({
             row_data: data,
             error: null
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
           });
         }.bind(this),
         // Close working indicator.
@@ -292,13 +280,9 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
-        success: function(data) {
-          this.props.refresh();
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
+//        success: function(data) {
+//          this.props.refresh();
+//        }.bind(this),
       });
     },
     unreleaseMarks: function() {
@@ -312,13 +296,9 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
-        success: function(data) {
-          this.props.refresh();
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
+//        success: function(data) {
+//          this.props.refresh();
+//        }.bind(this),
       });
     },
     render: function() {

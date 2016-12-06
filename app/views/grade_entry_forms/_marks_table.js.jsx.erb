@@ -51,12 +51,12 @@
             error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
+//        error: function(xhr, status, text) {
+//          var error = text + ': ' + xhr.responseText;
+//          this.setState({
+//            error: error
+//          });
+//        }.bind(this),
         // Close working indicator.
         complete: function () {
           document.getElementById('working').style.display = 'none';
