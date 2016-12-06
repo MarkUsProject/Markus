@@ -1015,6 +1015,7 @@ en:
         tag_prompt: "Please select tags below to delete them:"
 
       upload:
+        upload: "Upload"
         upload_csv: "Upload CSV"
         upload_csv_title: "Upload CSV File"
         upload_csv_prompt: "Select a CSV file to upload:"

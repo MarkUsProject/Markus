@@ -31,17 +31,17 @@
     <% # Display lines in csv file that has not been successfully processed %>
     <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class='errorExplanation' id='errorExplanation'>
-        <p><%= .t('graders.not_added') %></p>
+        <p><%=t('graders.not_added') %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
             <li><%= line %></li>
           <% end -%>
         </ul>
-        <p><%= .t('graders.make_sure') %></p>
+        <p><%=t('graders.make_sure') %></p>
         <ul>
-          <li><%= .t('graders.ta_names') %></li>
-          <li><%= .t('graders.each_field') %></li>
-          <li><%= .t('graders.each_line') %></li>
+          <li><%=t('graders.ta_names') %></li>
+          <li><%=t('graders.each_field') %></li>
+          <li><%=t('graders.each_line') %></li>
         </ul>
       </div>
     <% end %>
