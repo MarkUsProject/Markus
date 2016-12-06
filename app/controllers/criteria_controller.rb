@@ -62,7 +62,7 @@ class CriteriaController < ApplicationController
       render :errors
       return
     end
-    flash.now[:success] = t('criterion_saved_success')
+    flash_now(:success, t('criterion_saved_success'))
   end
 
   # Handles the drag/drop criteria sorting.

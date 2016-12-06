@@ -72,7 +72,7 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
         grade_entry_form_id: @grade_entry_form.id
       assert_response 302
       assert_redirected_to(action: 'index')
-      assert_equal I18n.t('csv.student_to_grader'), flash[:error]
+      assert_equal [I18n.t('csv.student_to_grader')], flash[:error]
     end
 
     should 'map graders on POST :csv_upload_grader_groups_mapping' do

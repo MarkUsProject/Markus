@@ -35,33 +35,6 @@
     <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
 <% end %>
 
-<div id="notice">
-  <div class="success" id="add_success" style="display: none;"></div>
-  <% # This is for error display injected by JavaScript %>
-
-  <div class="error" id="errors" style="display: none; ">
-    <h3><%= t("groups.problem") %></h3>
-    <div id="errors_title"></div>
-    <div id="errors_contents"></div>
-  </div>
-
-  <div class="warning" id="warnings_group" style="display: none; ">
-    <h3><%= t("groups.warning") %></h3>
-    <div id="warnings_group_msg"></div>
-  </div>
-
-  <div class="warning" id="warnings_grace" style="display: none; ">
-    <h3><%= t("groups.warning") %></h3>
-    <div id="warnings_grace_msg"></div>
-  </div>
-
-  <div class="warning" id="global_action_warning" style="display: none; ">
-    <h3><%= t("groups.warning") %></h3>
-    <div id="global_action_warning_msg"></div>
-  </div>
-  <div id="job-messenger"></div>
-
-</div>
 
 <div id='groups_manager'></div>
 

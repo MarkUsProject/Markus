@@ -34,7 +34,7 @@ class MarksGradersController < ApplicationController
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
     if params[:grader_mapping].nil?
-      flash[:error] = I18n.t('csv.student_to_grader')
+      flash_message(:error, I18n.t('csv.student_to_grader'))
     else
       result = MarkusCSV.parse(
           params[:grader_mapping].read,

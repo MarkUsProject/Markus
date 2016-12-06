@@ -51,12 +51,12 @@
             error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
+//        error: function(xhr, status, text) {
+//          var error = text + ': ' + xhr.responseText;
+//          this.setState({
+//            error: error
+//          });
+//        }.bind(this),
         // Close working indicator.
         complete: function () {
           document.getElementById('working').style.display = 'none';
@@ -108,7 +108,6 @@
 
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <Table data={data_array}
             columns={all_columns}
             filters={null} // Optional: pass null
