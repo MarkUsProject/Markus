@@ -1,0 +1,31 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('upload') %>
+<%= content_for :modal_content do %>
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'userlist',
+                             button_id: 'upload' %>
+
+  <p><%= t('graders.upload.select_csv_file').html_safe %></p>
+  <p><%= t('graders.upload.grader_same_user') %></p>
+
+  <%= form_tag upload_ta_list_tas_path, { multipart: true } do %>
+    <div>
+      <%= label_tag 'userlist', t('graders.upload.csv_file') %>
+      <%= file_field_tag 'userlist' %>
+    </div>
+    <div>
+      <%= label_tag t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload',
+                     disabled: true %>
+      <input type='reset' value='<%=t(:cancel) %>' onclick='modal_upload.close();' />
+    </section>
+  <% end %>
+<% end %>

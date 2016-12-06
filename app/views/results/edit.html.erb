@@ -37,7 +37,7 @@
 
   jQuery(document).ready(function() {
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
-    window.modalDownloadFiles = new ModalMarkus('#download_files_dialog');
+    window.modal_download = new ModalMarkus('#download_files_dialog');
 
     // Set up the 'working' notices
     jQuery('#working').ajaxStart(function() {
@@ -160,7 +160,7 @@
     <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       <%= link_to t(:download),
                   'javascript:void(0);',
-                  onclick:'modalDownloadFiles.open();' %>
+                  onclick:'modal_download.open();' %>
     <% end %>
   </div>
 </div>
