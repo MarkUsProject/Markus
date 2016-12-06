@@ -140,7 +140,6 @@
     },
     getInitialState: function() {
       return {
-        error: null,
         row_data: [],
         grade_columns:[],
         selected_students: [],
@@ -163,7 +162,6 @@
         success: function(data) {
           this.setState({
             grade_columns: data,
-            error: null
           });
         }.bind(this),
         // Close working indicator.
@@ -179,7 +177,6 @@
         success: function(data) {
           this.setState({
             row_data: data,
-            error: null
           });
         }.bind(this),
         // Close working indicator.
@@ -249,7 +246,6 @@
         <div>
           <GradesActionBox
             selected_students={this.state.selected_students}
-            onError={this.onError}
             refresh={this.refresh} />
           <Table data={rows}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
@@ -280,9 +276,6 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
-//        success: function(data) {
-//          this.props.refresh();
-//        }.bind(this),
       });
     },
     unreleaseMarks: function() {
@@ -296,9 +289,6 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
-//        success: function(data) {
-//          this.props.refresh();
-//        }.bind(this),
       });
     },
     render: function() {

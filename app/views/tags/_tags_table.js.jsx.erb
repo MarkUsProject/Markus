@@ -70,7 +70,6 @@
     },
     getInitialState: function() {
       return {
-        error: null,
         tags: [],
         selected_tags: []
       };
@@ -91,17 +90,11 @@
         success: function(data) {
           this.setState({
             tags: data,
-            error: null
           });
         }.bind(this),
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
-      });
-    },
-    onError: function(error) {
-      this.setState({
-        error: error
       });
     },
     render: function() {
