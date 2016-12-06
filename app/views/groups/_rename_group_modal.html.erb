@@ -1,0 +1,12 @@
+<%= content_for :modal_id, 'rename_group_dialog' %>
+<%= content_for :modal_title, t('groups.rename_group.title') %>
+<%= content_for :modal_content do %>
+    <%= form_tag '', remote: true do %>
+        <%= label_tag :new_groupname, t('groups.rename_group.group_name') %>
+        <%= text_field_tag :new_groupname, '', maxlength: 30 %>
+        <section class='dialog-actions'>
+          <%= submit_tag t('groups.rename_group.title') %>
+          <input type='reset' value='<%= t(:cancel) %>' onclick='modal_rename.close();' />
+        </section>
+    <% end %>
+<% end %>

@@ -2,7 +2,8 @@
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('pdfjs/viewer') %>
-
+  <%= stylesheet_link_tag('clickable') %>
+  <%= javascript_include_tag 'Results/index' %>
   <%= javascript_include_tag 'panes.js' %>
   <%= javascript_include_tag 'pdfjs' %>
   <%= javascript_tag do -%>
@@ -42,27 +43,8 @@
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>
 
-<script>
-  jQuery(document).ready(function() {
-    window.modalDownloadFiles = new ModalMarkus('#download_files_dialog');
-  });
-</script>
-
-<!-- Dialogs -->
-<aside class='dialog' id='download_files_dialog'>
-  <h1><%= 'Download Files' %></h1>
-
-  <%= render partial: 'results/common/download_file_selector',
-             locals: { files: @files,
-                       can_download: true } %>
-  <% if can_show_feedback_files_tab?(@submission) %>
-      <div id='feedback_files_controls'>
-        <%= render partial: 'results/common/feedback_file_selector',
-                   locals: { feedback_files: @feedback_files,
-                             submission_id: @submission.id } %>
-      </div>
-  <% end %>
-</aside>
+<!-- Modals -->
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
 <div class='title_bar'>
   <h1>
@@ -83,7 +65,7 @@
   <div class='heading_buttons'>
     <%= link_to t(:download),
                 'javascript:void(0);',
-                onclick:'modalDownloadFiles.open();' %>
+                onclick:'modal_download.open();' %>
   </div>
 </div>
 
