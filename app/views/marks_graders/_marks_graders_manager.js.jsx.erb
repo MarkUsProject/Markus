@@ -6,7 +6,6 @@
   var MarksGradersManager = React.createClass({
     getInitialState: function() {
       return {
-        error: null,
         current_table: 'groups_table',
         students: [],
         graders: [],
@@ -48,15 +47,8 @@
             graders_for_students: [].concat.apply([], data[0].map(function(student){
               return student.graders;
             })),
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
@@ -70,15 +62,8 @@
         success: function(data) {
           this.setState({
             graders: data,
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }

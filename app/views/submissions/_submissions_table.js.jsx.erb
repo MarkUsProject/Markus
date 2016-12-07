@@ -131,8 +131,6 @@
     },
     getInitialState: function() {
       return {
-        error: [],
-        success: [],
         submissions: [],
         selected_submissions: [],
       };
@@ -153,20 +151,8 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          this.setState({error: []});
-          jQuery.each(data, function (submission) {
-            if (submission.error !== undefined && submission.error !== '') {
-              this.setState({error: this.state.error.concat([submission.error])});
-            }
-          }.bind(this));
           this.setState({
             submissions: data,
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
           });
         }.bind(this),
         // Close working indicator.
@@ -174,12 +160,6 @@
           document.getElementById('working').style.display = 'none';
         }
       });
-    },
-    onError: function(error) {
-      this.setState({error: error});
-    },
-    onSuccess: function(success) {
-      this.setState({success: success});
     },
     renderRevieweeList: function(reviewees) {
       return (
@@ -291,8 +271,6 @@
         <div>
           <SubmissionsActionBox
             selected_submissions={this.state.selected_submissions}
-            onError={this.onError}
-            onSuccess={this.onSuccess}
             refresh={this.refresh}
           />
           <Table data={submissions_data}
@@ -327,10 +305,6 @@
         success: function(data) {
           this.props.refresh();
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     unreleasePeerReviews: function() {
@@ -346,10 +320,6 @@
         success: function(data) {
           this.props.refresh();
         }.bind(this),
-          error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     releaseMarks: function() {
@@ -365,10 +335,6 @@
         success: function(data) {
           this.props.refresh();
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     unreleaseMarks: function() {
@@ -384,10 +350,6 @@
         success: function(data) {
           this.props.refresh();
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     uncollectAllSubmissions: function() {
@@ -396,18 +358,6 @@
       jQuery.ajax({
         method: 'GET',
         url: 'uncollect_all_submissions',
-        success: function(data) {
-          if(data.message){
-            this.props.onSuccess(data.message);
-          }
-          if(data.error){
-            this.props.onError(data.error);
-          }
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     collectSubmissions: function() {
@@ -421,19 +371,6 @@
         method: 'POST',
         url: 'collect_submissions',
         data: dataLoad,
-        success: function(data) {
-          if (data.success) {
-            this.props.onSuccess(data.success);
-            window.setInterval(this.props.refresh, 30000);
-          }
-          if (data.error) {
-            this.props.onError(data.error);
-          }
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
     runTests: function () {
@@ -441,19 +378,6 @@
         method: 'POST',
         url: 'run_tests',
         data: {groupings: this.props.selected_submissions},
-        success: function(data) {
-          if (data.success) {
-            this.props.onSuccess(data.success);
-            window.setInterval(this.props.refresh, 30000);
-          }
-          if (data.error) {
-            this.props.onError(data.error);
-          }
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       })
     },
     render: function() {

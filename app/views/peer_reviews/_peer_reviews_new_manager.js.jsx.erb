@@ -16,7 +16,6 @@
         revieweeToReviewers: {},
         reviewerToNumReviews: {},
         groupIdToName: {},
-        error: null
       };
     },
 
@@ -36,9 +35,6 @@
       this.setState({selectedRevieweeGroups: revieweeGroups});
     },
 
-    setErrorMessage: function(msg) {
-      this.setState({error: msg});
-    },
 
     updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
       // If the reviewee is not in the dictionary, add a dictionary for the reviewee id.
@@ -120,8 +116,7 @@
               selectedReviewerGroups={this.state.selectedReviewerGroups}
               selectedRevieweeGroups={this.state.selectedRevieweeGroups}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
-              clearSelectedFields={this.clearSelectedFields}
-              setErrorMessage={this.setErrorMessage} />
+              clearSelectedFields={this.clearSelectedFields} />
             <RevieweeTable ref="revieweeTable"
               groups={this.state.revieweeGroups}
               revieweeToReviewersMap={this.state.revieweeToReviewers}
@@ -367,11 +362,6 @@
         numGroupsToAssign: numGroupsToAssignVal
       };
 
-      if ((numGroupsToAssignVal == null || numGroupsToAssignVal == '') && dataToSend.actionString == 'random_assign') {
-        this.props.setErrorMessage('Did not set the number of peer reviews (spinner is blank).');
-        return;
-      }
-
       document.getElementById('working').style.display = '';
 
       jQuery.ajax({
@@ -383,15 +373,7 @@
           document.getElementById('working').style.display = 'none';
           this.props.clearSelectedFields();
           this.props.refresh();
-          this.setState({ error: null });
-          this.props.setErrorMessage(null);
         }.bind(this),
-
-        error: function(xhr, status, text) {
-          document.getElementById('working').style.display = 'none';
-          var error = text + ': ' + xhr.responseText;
-          this.props.setErrorMessage(error);
-        }.bind(this)
       });
     },
 
