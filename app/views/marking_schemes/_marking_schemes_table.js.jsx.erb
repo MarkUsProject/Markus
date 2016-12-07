@@ -67,12 +67,6 @@
             markingSchemes: data,
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this),
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }

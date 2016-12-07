@@ -73,7 +73,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
                      first_name: 'John'}
       assert_response :success
       assert_nil Student.find_by_user_name('jdoe')
-      assert_equal I18n.t('student.create.error'), flash[:error]
+      assert_equal [I18n.t('student.create.error')], flash[:error]
     end
 
     should 'be able to create a student with a section' do
@@ -114,8 +114,8 @@ class StudentsControllerTest < AuthenticatedControllerTest
                user: {last_name: 'Doe',
                       first_name: 'John'}
         assert_response :redirect
-        assert_equal I18n.t('students.update.success',
-                            user_name: @student.user_name),
+        assert_equal [I18n.t('students.update.success',
+                            user_name: @student.user_name)],
                      flash[:success]
 
         @student.reload
@@ -134,8 +134,8 @@ class StudentsControllerTest < AuthenticatedControllerTest
                         first_name: 'John',
                         section_id: @section.id }
         assert_response :redirect
-        assert_equal I18n.t('students.update.success',
-                            user_name: @student.user_name),
+        assert_equal [I18n.t('students.update.success',
+                            user_name: @student.user_name)],
                      flash[:success]
 
         @student.reload

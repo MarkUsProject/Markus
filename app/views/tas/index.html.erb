@@ -1,6 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'users_manager',
                              'Graders/index' %>
+  <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
@@ -30,17 +31,17 @@
     <% # Display lines in csv file that has not been successfully processed %>
     <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class='errorExplanation' id='errorExplanation'>
-        <p><%= I18n.t('graders.not_added') %></p>
+        <p><%=t('graders.not_added') %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
             <li><%= line %></li>
           <% end -%>
         </ul>
-        <p><%= I18n.t('graders.make_sure') %></p>
+        <p><%=t('graders.make_sure') %></p>
         <ul>
-          <li><%= I18n.t('graders.ta_names') %></li>
-          <li><%= I18n.t('graders.each_field') %></li>
-          <li><%= I18n.t('graders.each_line') %></li>
+          <li><%=t('graders.ta_names') %></li>
+          <li><%=t('graders.each_field') %></li>
+          <li><%=t('graders.each_line') %></li>
         </ul>
       </div>
     <% end %>
@@ -50,50 +51,6 @@
   </div>
 <% end %>
 
-<!-- Modal Windows -->
-<aside class='dialog' id='upload_dialog'>
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script',
-                             upload_id: 'userlist',
-                             button_id: 'upload' %>
-
-  <h2><%= I18n.t('upload') %></h2>
-  <p><%= I18n.t('graders.upload.select_csv_file').html_safe %></p>
-  <p><%= I18n.t('graders.upload.grader_same_user') %></p>
-
-  <%= form_tag upload_ta_list_tas_path, { multipart: true } %>
-    <div>
-      <label for='userlist'><%= I18n.t('graders.upload.csv_file') %></label>
-      <input type='file' name='userlist' id='userlist'>
-    </div>
-    <div>
-      <%= I18n.t('encoding') %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    </div>
-
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload',
-                     disabled: true %>
-      <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_upload.close();' />      
-    </section>
-  </form>
-</aside>
-
-<aside class='dialog' id='download_dialog'>
-  <h2><%= I18n.t('download') %></h2>
-  <p>
-    <%= link_to I18n.t('graders.download.download_list'),
-                { controller: 'tas',
-                  action: 'download_ta_list',
-                  format: 'csv' },
-                { class: 'button',
-                  onclick: 'modalDownload.close();' } %>
-  </p>
-
-  <section class='dialog-actions'>
-     <input type='reset' value='<%= I18n.t(:close) %>' onclick='modal_download.close();' />    
-  </section>
-</aside>
+<!-- Modals -->
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>

@@ -34,7 +34,6 @@
 
     getInitialState: function() {
       return {
-        error: null,
         files: []
       };
     },
@@ -59,14 +58,7 @@
         dataType: 'json',
         success: function(data) {
           this.setState({
-            error: null,
             files: data
-          });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
           });
         }.bind(this),
         // Close working indicator.
@@ -74,10 +66,6 @@
           document.getElementById('working').style.display = 'none';
         }
       });
-    },
-
-    onError: function(error) {
-      this.setState({ error: error });
     },
 
     render: function() {
@@ -92,8 +80,6 @@
 
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
-
           <Table data={files_data}
             columns={this.props.columns}
           />

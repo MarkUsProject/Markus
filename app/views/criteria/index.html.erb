@@ -2,6 +2,7 @@
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
+  <%= stylesheet_link_tag('clickable') %>
 <% end %>
 
 <% content_for :title,
@@ -48,51 +49,6 @@
   </div>
 </div>
 
-<aside class='dialog' id='upload_yml_dialog'>
-  <!-- Script for disabling upload buttons. -->
-  <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script_yml',
-                             upload_id: 'yml_upload_rubric',
-                             button_id: 'upload_yml' %>
-
-  <h1><%= t('criteria.upload.yml_title') %></h1>
-  <p><%= t('criteria.upload.yml_prompt') %></p>
-  <%= form_for :yml_upload,
-               url: upload_yml_assignment_criteria_path(@assignment),
-               html: { multipart: true, size: 1 } do |f| %>
-    <div>
-      <p><%= f.file_field :rubric %></p>
-      <%= t('criteria.upload.format_yml_html') %>
-    </div>
-    <div>
-      <%= t('encoding') %>
-      <%= select_tag(:encoding, options_for_select(@encodings)) %>
-    </div>
-
-    <section class='dialog-actions'>
-      <%= f.submit t(:upload),
-                   data: { disable_with: t(:uploading_please_wait) },
-                   id: 'upload_yml',
-                   disabled: true %>
-      <input type='reset'
-             value='<%= t(:cancel) %>'
-             onclick='modal_upload_yml.close();'>
-    </section>
-  <% end %>
-</aside>
-
-<aside class='dialog' id='download_yml_dialog'>
-  <h2><%= t('criteria.download.file') %></h2>
-  <p><%= t('criteria.download.prompt') %></p>
-  <section class='dialog-actions'>
-    <form action='<%= download_yml_assignment_criteria_path(@assignment) %>' method='get'>
-      <button type='submit'
-              onclick='modal_download_yml.close();'>
-        <%= t('criteria.download.title') %>
-      </button>
-      <input type='reset'
-             value='<%= t('cancel') %>'
-             onclick='modal_download_yml.close();'>
-    </form>
-  </section>
-</aside>
+<!-- Modals -->
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>

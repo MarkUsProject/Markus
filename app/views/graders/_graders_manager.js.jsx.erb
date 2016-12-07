@@ -10,7 +10,6 @@
       return {
         assign_to_criteria: false,
         skip_empty_submissions: false,
-        error: null,
         current_table: 'groups_table',
         groups_and_criteria: {groups: [], criteria: []},
         graders: [],
@@ -39,9 +38,6 @@
     },
     updateSelectedGradersInCriteria: function(graders) {
       this.setState({selected_graders_in_criteria: graders});
-    },
-    setError: function(error_msg) {
-      this.setState({error: error_msg});
     },
     criteriaCheckboxClicked: function(event) {
       var dataLoad = {value: event.currentTarget.checked};
@@ -116,7 +112,6 @@
         updateSelectedGradersInGroups={this.updateSelectedGradersInGroups}
         updateSelectedGradersInCriteria={this.updateSelectedGradersInCriteria}
         skip_empty_submissions={this.state.skip_empty_submissions}
-        setError={this.setError}
       />);
       to_render.push(<GroupsTableManager
         assign_to_criteria={this.state.assign_to_criteria} 
@@ -136,7 +131,6 @@
       />);
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <div className='graders-to-criteria'>
             {graders_to_criteria}
           </div>

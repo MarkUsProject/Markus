@@ -28,13 +28,8 @@
           this.props.updateSelectedGraders([]);
           this.props.updateSelectedStudents([]);
           this.props.updateSelectedGradersForStudents([]);
-          this.props.setError(null);
           this.props.refresh();
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.setError(error);
-        }.bind(this)
       });
     },
     render: function() {

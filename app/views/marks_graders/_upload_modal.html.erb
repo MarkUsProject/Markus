@@ -1,0 +1,34 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('marks_graders.upload.upload_grader_map') %>
+<%= content_for :modal_content do %>
+
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'grader_mapping',
+                             button_id: 'upload' %>
+
+  <p><%= raw(t('marks_graders.upload.description_grader_map')) %></p>
+
+  <%= form_tag({ controller: 'marks_graders',
+                 action: 'csv_upload_grader_groups_mapping',
+                 id: @grade_entry_form.id },
+               { multipart: true }) do %>
+    <p>
+      <%= label_tag t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </p>
+
+    <p>
+      <%= file_field_tag :grader_mapping, size: 2 %>
+    </p>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     disabled: true,
+                     id: 'upload' %>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
+    </section>
+  <% end %>
+<% end %>

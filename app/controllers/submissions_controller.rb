@@ -213,7 +213,8 @@ class SubmissionsController < ApplicationController
 
   def collect_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      render text: t('results.must_select_a_group_to_collect'), status: 400
+      flash_now(:error, t('results.must_select_a_group_to_collect'))
+      head 400
       return
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -222,6 +223,8 @@ class SubmissionsController < ApplicationController
       section = grouping.inviter.present? ? grouping.inviter.section : nil
       assignment.submission_rule.can_collect_now?(section)
     end
+    success = ''
+    error = ''
     if partition[0].count > 0
       @current_job = SubmissionsJob.perform_later(partition[0])
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
@@ -231,12 +234,16 @@ class SubmissionsController < ApplicationController
       error = I18n.t('collect_submissions.could_not_collect_some',
                      assignment_identifier: assignment.short_identifier)
     end
+    flash_now(:success, success) unless success.empty?
+    flash_now(:error, error) unless error.empty?
+
     render json: { success: success, error: error }
   end
 
   def run_tests
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      render text: t('results.must_select_a_group'), status: 400
+      flash_now(:error, t('results.must_select_a_group'))
+      head 400
       return
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
@@ -259,7 +266,7 @@ class SubmissionsController < ApplicationController
       end
     end
     if partition[1].count > 0
-      error = I18n.t('automated_tests.need_submission')
+      flash_now(:error, I18n.t('automated_tests.need_submission'))
     end
     render json: { success: success, error: error }
   end
@@ -497,7 +504,7 @@ class SubmissionsController < ApplicationController
           return
         end
         if repo.commit(txn)
-          flash[:success] = I18n.t('update_files.success')
+          flash_message(:success, I18n.t('update_files.success'))
           # flush log messages
           m_logger = MarkusLogger.instance
           log_messages.each do |msg|
@@ -600,7 +607,7 @@ class SubmissionsController < ApplicationController
           begin
             file_content = file.retrieve_file
           rescue Exception => e
-            flash[:error] = e.message
+            flash_message(:error, e.message)
             redirect_to :back
             return
           end
@@ -728,7 +735,8 @@ class SubmissionsController < ApplicationController
   # Release or unrelease submissions
   def update_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      render text: t('results.must_select_a_group'), status: 400
+      flash_now(:error, t('results.must_select_a_group'))
+      head 400
       return
     end
     assignment = Assignment.find(params[:assignment_id])
@@ -761,7 +769,8 @@ class SubmissionsController < ApplicationController
 
       head :ok
     rescue => e
-      render text: e.message, status: 400
+      flash_now(:error, e.message)
+      head 400
     end
   end
 

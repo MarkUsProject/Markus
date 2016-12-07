@@ -28,7 +28,7 @@ class AutomatedTestsController < ApplicationController
                                       new_support_file)
       # Save assignment and associated test files
       if @assignment.save
-        flash[:success] = I18n.t('assignment.update_success')
+        flash_message(:success, I18n.t('assignment.update_success'))
         unless new_script.nil?
           assignment_tests_path = File.join(
               MarkusConfigurator.markus_ate_client_dir,
@@ -151,11 +151,11 @@ class AutomatedTestsController < ApplicationController
 
         # print flash error messages
       else
-        flash[:error] = I18n.t('automated_tests.download_wrong_place_or_unreadable');
+        flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))
         redirect_to action: 'manage'
       end
     else
-      flash[:error] = I18n.t('automated_tests.download_not_in_db');
+      flash_message(:error, I18n.t('automated_tests.download_not_in_db'))
       redirect_to action: 'manage'
     end
   end
