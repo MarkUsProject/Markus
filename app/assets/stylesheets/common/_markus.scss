@@ -113,9 +113,8 @@ strong a {
 
 .notice {
   @extend .alert;
-  background: $light-grey;
+  background: $light-grey url(icons/information.png) no-repeat 5px center;
   border: 1px solid $grey;
-  padding: 0.25em 0.5em;
 }
 
 

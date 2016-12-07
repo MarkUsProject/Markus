@@ -411,8 +411,6 @@ describe SubmissionsController do
                  assignment_id: 1,
                  groupings: []
 
-          expect(response.body).to eql(
-            I18n.t('results.must_select_a_group_to_collect'))
           is_expected.to respond_with(:bad_request)
         end
 
@@ -440,7 +438,7 @@ describe SubmissionsController do
             expect(response_body['error']).to eql(
               I18n.t('collect_submissions.could_not_collect_some',
                      assignment_identifier: 'a1'))
-            expect(response_body['success']).to be_nil
+            expect(response_body['success']).to be_empty
             is_expected.to respond_with(:ok)
           end
 
@@ -461,7 +459,7 @@ describe SubmissionsController do
             expect(response_body['success']).to eql(
               I18n.t('collect_submissions.collection_job_started_for_groups',
                      assignment_identifier: 'a1'))
-            expect(response_body['error']).to be_nil
+            expect(response_body['error']).to be_empty
             is_expected.to respond_with(:ok)
           end
         end
@@ -484,7 +482,7 @@ describe SubmissionsController do
             expect(response_body['error']).to eql(
               I18n.t('collect_submissions.could_not_collect_some',
                      assignment_identifier: 'a1'))
-            expect(response_body['success']).to be_nil
+            expect(response_body['success']).to be_empty
             is_expected.to respond_with(:ok)
           end
 
@@ -505,7 +503,7 @@ describe SubmissionsController do
             expect(response_body['success']).to eql(
               I18n.t('collect_submissions.collection_job_started_for_groups',
                      assignment_identifier: 'a1'))
-            expect(response_body['error']).to be_nil
+            expect(response_body['error']).to be_empty
             is_expected.to respond_with(:ok)
           end
         end

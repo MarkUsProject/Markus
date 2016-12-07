@@ -59,7 +59,7 @@ class NotesController < ApplicationController
     @note.creator_id = @current_user.id
 
     if @note.save
-      flash[:success] = I18n.t('notes.create.success')
+      flash_message(:success, I18n.t('notes.create.success'))
       redirect_to action: 'index'
     else
       new_retrieve
@@ -85,7 +85,7 @@ class NotesController < ApplicationController
       else
         # default to groupings if all else fails.
         params[:noteable_type] = 'Grouping'
-        flash[:error] = I18n.t('notes.new.invalid_selector')
+        flash_message(:error, I18n.t('notes.new.invalid_selector'))
         new_retrieve
     end
 		render 'noteable_object_selector', formats: [:js], handlers: [:erb]
@@ -97,7 +97,7 @@ class NotesController < ApplicationController
 
   def update
     if @note.update_attributes(notes_params)
-      flash[:success] = I18n.t('notes.update.success')
+      flash_message(:success, I18n.t('notes.update.success'))
       redirect_to action: 'index'
     else
       render 'edit', formats: [:html], handlers: [:erb]
@@ -108,9 +108,9 @@ class NotesController < ApplicationController
     @note = Note.find(params[:id])
     if @note.user_can_modify?(current_user)
       @note.destroy
-      flash[:success] = I18n.t('notes.delete.success')
+      flash_message(:success, I18n.t('notes.delete.success'))
     else
-      flash[:error] = I18n.t('notes.delete.error_permissions')
+      flash_message(:error, I18n.t('notes.delete.error_permissions'))
     end
 	  render 'destroy', formats: [:js], handlers: [:erb]
   end

@@ -10,8 +10,7 @@
         selected_students: [],
         groups: [],
         selected_groups: [],
-        selected_students_in_groups: [],
-        error: null
+        selected_students_in_groups: []
       };
     },
     componentWillMount: function() {
@@ -50,15 +49,8 @@
             selected_students: [],
             selected_groups: [],
             selected_students_in_groups: [],
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        }.bind(this)
       });
     },
     componentDidMount: function () {
@@ -90,7 +82,6 @@
     render: function() {
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <div className='columns'>
             <GroupsStudentsTable ref="groupsStudentsTable"
               students={this.state.students}
@@ -344,9 +335,6 @@
         jQuery.ajax({
           method: 'GET',
           url: '<%= new_assignment_group_path(@assignment) %>',
-          success: function(data) {
-            this.props.refresh();
-          }.bind(this)
         });
       },
     <% else %>

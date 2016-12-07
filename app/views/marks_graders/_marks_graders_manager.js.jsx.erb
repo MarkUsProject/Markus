@@ -6,7 +6,6 @@
   var MarksGradersManager = React.createClass({
     getInitialState: function() {
       return {
-        error: null,
         current_table: 'groups_table',
         students: [],
         graders: [],
@@ -29,9 +28,6 @@
     updateSelectedGradersForStudents: function(graders) {
       this.setState({selected_graders_for_students: graders});
     },
-    setError: function(error_msg) {
-      this.setState({error: error_msg});
-    },
     componentWillMount: function() {
       this.refresh();
     },
@@ -47,16 +43,9 @@
             students: data[0],
             graders_for_students: [].concat.apply([], data[0].map(function(student){
               return student.graders;
-            })),
-            error: null
+            }))
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
@@ -70,15 +59,8 @@
         success: function(data) {
           this.setState({
             graders: data,
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
@@ -98,8 +80,7 @@
         selected_graders_for_students={this.state.selected_graders_for_students}
         updateSelectedGraders={this.updateSelectedGraders}
         updateSelectedStudents={this.updateSelectedStudents}
-        updateSelectedGradersForStudents={this.updateSelectedGradersForStudents}
-        setError={this.setError} />);
+        updateSelectedGradersForStudents={this.updateSelectedGradersForStudents} />);
 
       to_render.push(<StudentsTableManager
         students={this.state.students}
@@ -116,7 +97,6 @@
         onTableChange={this.updateCurrentTable} />);
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <div className='columns'>{to_render}</div>
         </div>
       );

@@ -38,7 +38,7 @@ class GradeEntryFormsController < ApplicationController
       new_params = update_grade_entry_form_params(params)
       if @grade_entry_form.update_attributes(new_params)
         # Success message
-        flash[:success] = I18n.t('grade_entry_forms.create.success')
+        flash_message(:success, I18n.t('grade_entry_forms.create.success'))
         redirect_to action: 'edit', id: @grade_entry_form.id
       else
         render 'new'
@@ -67,7 +67,7 @@ class GradeEntryFormsController < ApplicationController
 
       if @grade_entry_form.update_attributes(new_params)
         # Success message
-        flash[:success] = I18n.t('grade_entry_forms.edit.success')
+        flash_message(:success, I18n.t('grade_entry_forms.edit.success'))
         redirect_to action: 'edit', id: @grade_entry_form.id
       else
         render 'edit', id: @grade_entry_form.id
@@ -272,12 +272,12 @@ class GradeEntryFormsController < ApplicationController
 
     # Display success message
     if numGradeEntryStudentsChanged > 0
-      flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed',
-                               {numGradeEntryStudentsChanged: numGradeEntryStudentsChanged})
+      flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
+                                     {numGradeEntryStudentsChanged: numGradeEntryStudentsChanged}))
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
-    flash[:error] = errors
+    flash_message(:error, errors)
 
     head :ok
   end

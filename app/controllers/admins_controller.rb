@@ -23,11 +23,11 @@ class AdminsController < ApplicationController
     @user = Admin.find(params[:id])
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(user_params).nil?
-      flash[:error] = I18n.t('admins.update.error')
+      flash_message(:error, I18n.t('admins.update.error'))
       render :edit
     else
-      flash[:success] = I18n.t('admins.update.success',
-        user_name: @user.user_name)
+      flash_message(:success, I18n.t('admins.update.success',
+                                     user_name: @user.user_name))
       redirect_to action: 'index'
     end
   end
@@ -42,12 +42,11 @@ class AdminsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     if @user.save
-      flash[:success] = I18n.t('admins.create.success',
-        user_name: @user.user_name)
-
+      flash_message(:success, I18n.t('admins.create.success',
+                                     user_name: @user.user_name))
       redirect_to action: 'index'
     else
-      flash[:error] = I18n.t('admins.create.error')
+      flash_message(:error, I18n.t('admins.create.error'))
       render 'new'
     end
   end
