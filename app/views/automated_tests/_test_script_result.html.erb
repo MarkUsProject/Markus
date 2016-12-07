@@ -13,7 +13,7 @@
         <tr>
           <th><%= t('automated_tests.test_results_table.test_name') %></th>
           <% if false %><th><%= t('automated_tests.test_results_table.input') %></th><% end %>
-          <% if @show_output %><th><%= t('automated_tests.test_results_table.output') %></th><% end %>
+          <% if show_output %><th><%= t('automated_tests.test_results_table.output') %></th><% end %>
           <% if false %>
           <th><%= t('automated_tests.test_results_table.expected') %></th>
           <th><%= t('automated_tests.test_results_table.marks_earned') %></th>
@@ -27,7 +27,7 @@
           'test-result-success' : 'test-result-failure' %>">
             <td><%= test.name %></td>
             <% if false %><td><%= test.input %></td><% end %>
-            <% if @show_output %><td><%= test.actual_output %></td><% end %>
+            <% if show_output %><td><%= test.actual_output %></td><% end %>
             <% if false %>
             <td><%= test.expected_output %></td>
             <td><%= test.marks_earned %></td>
