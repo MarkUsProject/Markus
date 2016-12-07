@@ -175,6 +175,7 @@ en:
         no_required_files_read:  "There are no required files for this assignment."
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
         add_required_file:  "Add a Required File"
+        download: "Download Assignments"
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
@@ -604,6 +605,8 @@ en:
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
+        download: "Download Grades"
+        download_prompt: "Download Grades in CSV format"
       is_hidden: "Hide Spreadsheet"
 
       students:
@@ -897,7 +900,8 @@ en:
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       download:
-        download_list: "Download TA list in CSV format"
+        download_list_csv: "Download TA list in CSV format"
+        download_list_yml: "Download TA list in YML format"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
 
@@ -1011,6 +1015,7 @@ en:
         tag_prompt: "Please select tags below to delete them:"
 
       upload:
+        upload: "Upload"
         upload_csv: "Upload CSV"
         upload_csv_title: "Upload CSV File"
         upload_csv_prompt: "Select a CSV file to upload:"

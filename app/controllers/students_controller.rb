@@ -6,9 +6,9 @@ class StudentsController < ApplicationController
   def note_message
     @student = Student.find(params[:id])
     if params[:success]
-      flash[:success] = I18n.t('notes.create.success')
+      flash_message(:success, I18n.t('notes.create.success'))
     else
-      flash[:error] = I18n.t('notes.error')
+      flash_message(:error, I18n.t('notes.error'))
     end
   end
 
@@ -37,11 +37,11 @@ class StudentsController < ApplicationController
     @user = Student.find_by_id(params[:id])
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(user_params)
-      flash[:success] = I18n.t('students.update.success',
-                               user_name: @user.user_name)
+      flash_message(:success, I18n.t('students.update.success',
+                                     user_name: @user.user_name))
       redirect_to action: 'index'
     else
-      flash[:error] = I18n.t('students.update.error')
+      flash_message(:error, I18n.t('students.update.error'))
       @sections = Section.order(:name)
       render :edit
     end
@@ -66,7 +66,8 @@ class StudentsController < ApplicationController
       end
       head :ok
     rescue RuntimeError => e
-      render text: e.message, status: 500
+      flash_now(:error, e.message)
+      head 500
     end
   end
 
@@ -81,12 +82,12 @@ class StudentsController < ApplicationController
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(user_params)
     if @user.save
-      flash[:success] = I18n.t('students.create.success',
-                               user_name: @user.user_name)
+      flash_message(:success, I18n.t('students.create.success',
+                                     user_name: @user.user_name))
       redirect_to action: 'index' # Redirect
     else
       @sections = Section.order(:name)
-      flash[:error] = I18n.t('students.create.error')
+      flash_message(:error, I18n.t('students.create.error'))
       render :new
     end
   end

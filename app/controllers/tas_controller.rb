@@ -22,10 +22,10 @@ class TasController < ApplicationController
   def destroy
     @user = Ta.find(params[:id])
     if @user && @user.destroy
-      flash[:success] = I18n.t('tas.delete.success',
-                               user_name: @user.user_name)
+      flash_message(:success, I18n.t('tas.delete.success',
+                                     user_name: @user.user_name))
     else
-      flash[:error] = I18n.t('tas.delete.error')
+      flash_message(:error, I18n.t('tas.delete.error'))
     end
       redirect_to action: :index
   end
@@ -34,12 +34,11 @@ class TasController < ApplicationController
     @user = Ta.find_by_id(params[:user][:id])
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(user_params)
-      flash[:success] = I18n.t('tas.update.success',
-                               user_name: @user.user_name)
-
+      flash(:success, I18n.t('tas.update.success',
+                             user_name: @user.user_name))
       redirect_to action: :index
     else
-      flash[:error] = I18n.t('tas.update.error')
+      flash_message(:error, I18n.t('tas.update.error'))
       render :edit
     end
   end
@@ -53,11 +52,11 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     if @user.save
-      flash[:success] = I18n.t('tas.create.success',
-                               user_name: @user.user_name)
+      flash_message(:success, I18n.t('tas.create.success',
+                                     user_name: @user.user_name))
       redirect_to action: 'index' # Redirect
     else
-      flash[:error] = I18n.t('tas.create.error')
+      flash_message(:error, I18n.t('tas.create.error'))
       render :new
     end
   end

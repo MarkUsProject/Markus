@@ -1,0 +1,32 @@
+<%= content_for :modal_id, 'download_dialog' %>
+<%= content_for :modal_title, t('tags.download.download_title') %>
+<%= content_for :modal_content do %>
+
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('tags.download.button_message', file_format: 'CSV') %>
+    </div>
+    <%= link_to '',
+                { action: 'download_tag_list',
+                  id: @tags,
+                  format: 'csv' },
+                onclick: 'modal_download.close();',
+                class: 'make_div_clickable' %>
+  </div>
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('tags.download.button_message', file_format: 'YAML') %>
+    </div>
+    <%= link_to '',
+                { action: 'download_tag_list',
+                  id: @tags,
+                  format: 'yaml' },
+                onclick: 'modal_download.close();',
+                class: 'make_div_clickable' %>
+  </div>
+  <section class='dialog-actions'>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
+  </section>
+<% end %>

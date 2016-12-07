@@ -15,8 +15,7 @@
         selectedReviewerInRevieweeGroups: {},  // Dict of [reviewee][reviewer]
         revieweeToReviewers: {},
         reviewerToNumReviews: {},
-        groupIdToName: {},
-        error: null
+        groupIdToName: {}
       };
     },
 
@@ -34,10 +33,6 @@
 
     updateSelectedRevieweeGroups: function(revieweeGroups) {
       this.setState({selectedRevieweeGroups: revieweeGroups});
-    },
-
-    setErrorMessage: function(msg) {
-      this.setState({error: msg});
     },
 
     updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
@@ -106,7 +101,6 @@
     render: function() {
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <div className="peer-review-amount-spinner">
             <%= j raw t('peer_review.number_per_group') %>: <input type="number"
                    id="peer-review-spinner" min="<%= Assignment::MIN_PEER_REVIEWS_PER_GROUP %>" />
@@ -121,8 +115,7 @@
               selectedReviewerGroups={this.state.selectedReviewerGroups}
               selectedRevieweeGroups={this.state.selectedRevieweeGroups}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
-              clearSelectedFields={this.clearSelectedFields}
-              setErrorMessage={this.setErrorMessage} />
+              clearSelectedFields={this.clearSelectedFields} />
             <RevieweeTable ref="revieweeTable"
               groups={this.state.revieweeGroups}
               revieweeToReviewersMap={this.state.revieweeToReviewers}
@@ -369,7 +362,9 @@
       };
 
       if ((numGroupsToAssignVal == null || numGroupsToAssignVal == '') && dataToSend.actionString == 'random_assign') {
-        this.props.setErrorMessage('Did not set the number of peer reviews (spinner is blank).');
+        // TODO: Display this like any other flash message, and internationalize the message.
+        // this.props.setErrorMessage('Did not set the number of peer reviews (spinner is blank).');
+        alert('Did not set the number of peer reviews (spinner is blank).');
         return;
       }
 
@@ -384,15 +379,7 @@
           document.getElementById('working').style.display = 'none';
           this.props.clearSelectedFields();
           this.props.refresh();
-          this.setState({ error: null });
-          this.props.setErrorMessage(null);
         }.bind(this),
-
-        error: function(xhr, status, text) {
-          document.getElementById('working').style.display = 'none';
-          var error = text + ': ' + xhr.responseText;
-          this.props.setErrorMessage(error);
-        }.bind(this)
       });
     },
 

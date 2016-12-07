@@ -1,0 +1,38 @@
+<%= content_for :modal_id, 'create_new_dialog' %>
+<%= content_for :modal_title, t('tags.create.create_new') %>
+<%= content_for :modal_content do %>
+
+    <%= javascript_include_tag 'Tags/text_updater.js',
+                               id: 'text_script' %>
+    <%= t('tags.create.tag_prompt') %>
+    <%= form_for :create_new,
+                 url: assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+        <div>
+          <p>
+            <%= f.text_field :name,
+                             placeholder: t('tags.create.name_prompt'),
+                             maxlength: 30 %>
+          </p>
+        </div>
+        <div>
+          <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+          <p id='descript_amount' class='alignright'>0/120</p>
+          <p class="clear-alignment">
+            <%= f.text_area :description,
+                            id: 'description',
+                            cols: 30,
+                            rows: 3,
+                            maxlength: 120,
+                            placeholder: t('tags.create.descript_prompt') %>
+          </p>
+        </div>
+        <section class='dialog-actions'>
+          <%= f.submit t('tags.create.button_text'),
+                       name: 'submit',
+                       data: { disable_with: t('working') },
+                       class: 'button' %>
+          <input type='reset' value='<%= t(:cancel) %>' onclick='modal_create_new.close();'/>
+        </section>
+    <% end %>
+<% end %>

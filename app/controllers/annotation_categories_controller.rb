@@ -21,6 +21,7 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_category = @assignment.annotation_categories
                                       .new(annotation_category_params)
     if @annotation_category.save
+      flash_message(:success, I18n.t('annotations.update.annotation_category_success'))
       render :insert_new_annotation_category
     else
       render :new_annotation_category_error
@@ -34,7 +35,9 @@ class AnnotationCategoriesController < ApplicationController
 
   def destroy
     @annotation_category = AnnotationCategory.find(params[:id])
-    @annotation_category.destroy
+    if @annotation_category.destroy
+      flash_message(:success, I18n.t('annotations.delete.delete_message'))
+    end
   end
 
   def update
@@ -53,7 +56,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(annotation_text_params)
     @annotation_text.last_editor_id = current_user.id
-    @annotation_text.save
+    if @annotation_text.save
+      flash_now(:success, I18n.t('annotations.update.annotation_category_success'))
+    end
   end
 
   def add_annotation_text
@@ -69,7 +74,7 @@ class AnnotationCategoriesController < ApplicationController
         render :new_annotation_text_error
         return
       end
-      flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
+      flash_now(:success, I18n.t('annotations.update.annotation_category_success'))
       @assignment = Assignment.find(params[:assignment_id])
       render :insert_new_annotation_text
     end
@@ -78,7 +83,9 @@ class AnnotationCategoriesController < ApplicationController
   def delete_annotation_text
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_text = AnnotationText.find(params[:id])
-    @annotation_text.destroy
+    if @annotation_text.destroy
+      flash_now(:success, I18n.t('annotations.delete.delete_message'))
+    end
   end
 
   def find_annotation_text
@@ -160,7 +167,7 @@ class AnnotationCategoriesController < ApplicationController
         flash_message(:success, result[:valid_lines])
       end
     else
-      flash[:error] = I18n.t('csv.invalid_csv')
+      flash_message(:error, I18n.t('csv.invalid_csv'))
     end
     redirect_to action: 'index', id: @assignment.id
   end
@@ -179,15 +186,15 @@ class AnnotationCategoriesController < ApplicationController
       begin
         annotations = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
-        flash[:error] = I18n.t('annotations.upload.syntax_error',
-          error: "#{e}")
+        flash_message(:error, I18n.t('annotations.upload.syntax_error',
+                                     error: "#{e}"))
         redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
 
       # YAML::load returns a hash if successful
       unless annotations.is_a? Hash
-        flash[:error] = I18n.t('annotations.upload.unparseable_yaml')
+        flash_message(:error, I18n.t('annotations.upload.unparseable_yaml'))
         redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
@@ -196,16 +203,16 @@ class AnnotationCategoriesController < ApplicationController
       result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
-        flash[:error] = I18n.t('annotations.upload.error',
-          annotation_category: key, annotation_line: annotation_line)
+        flash_message(:error, I18n.t('annotations.upload.error',
+                                     annotation_category: key, annotation_line: annotation_line))
         break
       else
         annotation_category_number += 1
       end
      end
      if annotation_category_number > 0
-        flash[:success] = I18n.t('annotations.upload.success',
-          annotation_category_number: annotation_category_number)
+       flash_message(:success, I18n.t('annotations.upload.success',
+                                      annotation_category_number: annotation_category_number))
      end
     end
     redirect_to action: 'index', assignment_id: @assignment.id

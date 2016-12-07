@@ -216,7 +216,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                     date: @grade_entry_form.date,
                     is_hidden: @grade_entry_form.is_hidden } }
       assert_not_nil assigns :grade_entry_form
-      assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+      assert_equal flash[:success], [I18n.t('grade_entry_forms.create.success')]
       assert_response :redirect
     end
 
@@ -256,7 +256,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                  message: NEW_MESSAGE,
                                                  date: @grade_entry_form.date}}
       assert_not_nil assigns :grade_entry_form
-      assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+      assert_equal flash[:success], [I18n.t('grade_entry_forms.edit.success')]
       assert_response :redirect
 
       g = GradeEntryForm.find(@grade_entry_form.id)
@@ -326,7 +326,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       is_hidden: @grade_entry_form.is_hidden,
                                                       grade_entry_items_attributes: {'1' => @q1}} }
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.create.success')]
         assert_response :redirect
       end
 
@@ -340,7 +340,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                                                     '2' => @q2,
                                                                                     '3' => @q3}}}
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.create.success')]
         assert_response :redirect
       end
 
@@ -358,7 +358,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                                                     '2' => @q2,
                                                                                     '3' => @q3}}}
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.create.success')]
         assert_response :redirect
 
         g = GradeEntryForm.find_by_short_identifier('NT')
@@ -418,7 +418,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                     grade_entry_items_attributes: { '1' => @q1, '2' => @q2 },
                     is_hidden: false } }
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.create.success')]
         assert_response :redirect
       end
 
@@ -434,7 +434,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                    grade_entry_items_attributes: { '1' => @q1 },
                    is_hidden: false }
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.edit.success')]
         assert_response :redirect
 
         g = GradeEntryForm.find(@grade_entry_form.id)
@@ -463,7 +463,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      '3' => @q3 },
                    is_hidden: false }
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.edit.success')]
         assert_response :redirect
 
         g = GradeEntryForm.find(@grade_entry_form.id)
@@ -496,7 +496,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                                    '2' => @q3 },
                                    is_hidden: false }
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.edit.success')]
         assert_response :redirect
 
         g = GradeEntryForm.find(@grade_entry_form.id)
@@ -567,7 +567,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                    is_hidden: false,
                    grade_entry_items_attributes: {'1' => @q1, '2' => @q2}}
         assert_not_nil assigns :grade_entry_form
-        assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+        assert_equal flash[:success], [I18n.t('grade_entry_forms.edit.success')]
         assert_response :redirect
 
         g = GradeEntryForm.find(@grade_entry_form.id)

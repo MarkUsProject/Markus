@@ -1,0 +1,28 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('grade_entry_forms.csv.upload_title') %>
+<%= content_for :modal_content do %>
+
+  <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
+
+  <%= form_for :upload, url: { controller:'grade_entry_forms',
+                               action: 'csv_upload',
+                               id: @grade_entry_form.id },
+               html: { multipart: true, size: 1 } do |f| %>
+
+    <p><%= f.file_field :grades_file %></p>
+      <%= t('grade_entry_forms.csv.upload_format_html') %>
+    <p>
+      <%= label_tag t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </p>
+    <span>
+      <%= t('grade_entry_forms.csv.overwrite') %>
+      <%= check_box_tag(:overwrite)%>
+    </span>
+
+    <section class='dialog-actions'>
+      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <input type='reset' value='<%= t(:close) %>' onclick='modal_upload.close();' />
+    </section>
+  <% end %>
+<% end %>

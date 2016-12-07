@@ -1,0 +1,21 @@
+<%= content_for :modal_id, 'download_yml_dialog' %>
+<%= content_for :modal_title, t('criteria.download.file') %>
+<%= content_for :modal_content do %>
+
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('criteria.download.link_yml') %>
+    </div>
+    <%= link_to '',
+                { action: 'download_yml',
+                  id: @criteria },
+                onclick: 'modal_download_yml.close();',
+                class: 'make_div_clickable' if @current_user.admin? %>
+  </div>
+  <section class='dialog-actions'>
+    <input type='reset'
+           value='<%= t('cancel') %>'
+           onclick='modal_download_yml.close();'>
+  </section>
+<% end %>
