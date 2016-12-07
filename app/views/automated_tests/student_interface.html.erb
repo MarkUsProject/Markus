@@ -65,6 +65,7 @@
         </div>
         <div id='test_results' class='sub_block'>
           <%= render partial: 'test_script_result',
+                     locals: {show_output: false},
                      collection: @test_script_results.where(submission_id: nil) %>
         </div>
       </div>

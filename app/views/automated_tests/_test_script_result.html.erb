@@ -1,7 +1,7 @@
 <div class='test-result'>
   <% test_script_name = test_script_result.test_script.script_name %>
 
-  <h3><%= "#{t('automated_tests.test_run')} - #{test_script_name}" %>
+  <h3><%= "#{test_script_name}" %>
     <span class='right'>
       <%= l(test_script_result.created_at, format: :long) %>
     </span>

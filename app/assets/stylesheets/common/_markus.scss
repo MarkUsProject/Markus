@@ -327,6 +327,13 @@ fieldset {
     }
 
     tbody {
+      .test-result-success {
+        background-color: #bdffbc !important;
+      }
+
+      .test-result-failure {
+        background-color: #ff9b99 !important;
+      }
       tr {
         transition: background-color $time-quick;
 
