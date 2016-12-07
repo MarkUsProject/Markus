@@ -1,0 +1,34 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('students.upload.upload_a_class_list') %>
+<%= content_for :modal_content do %>
+
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script',
+                             upload_id: 'userlist',
+                             button_id: 'upload' %>
+
+  <p><%= t('students.upload.select_csv_file').html_safe %></p>
+  <p><%= t('students.upload.student_same_number') %></p>
+
+  <%= form_tag upload_student_list_students_path(),
+               { multipart: true } do %>
+    <div>
+      <%= label_tag 'userlist', t('students.upload.csv_file') %>
+      <%= file_field_tag 'userlist' %>
+    </div>
+
+    <div>
+      <%= label_tag t('encoding') %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    </div>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'upload',
+                     disabled: true %>
+      <%= button_to t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
+    </section>
+  <% end %>
+<% end %>

@@ -1,0 +1,74 @@
+<%= content_for :modal_id, 'upload_dialog' %>
+<%= content_for :modal_title, t('annotations.upload.upload_annotations') %>
+<%= content_for :modal_content do %>
+
+  <!-- Script for switching content on radio buttons. -->
+  <%= javascript_include_tag 'switch_content_control.js' %>
+  <%= javascript_tag do %>
+    LIB.init(['#upload_csv', '#upload_yml']);
+  <% end %>
+
+  <%= label_tag :csv, 'CSV'  %>
+  <%= radio_button_tag :upload_file_type, 'csv', checked: true  %>
+  <%= radio_button_tag :upload_file_type, 'yml' %>
+  <%= label_tag :yml, 'YML' %>
+
+  <div id='upload_csv'>
+    <!-- Script for disabling upload buttons. -->
+    <%= javascript_include_tag 'upload_button_control.js',
+                               id: 'upload_csv_script',
+                               upload_id: 'upload_csv',
+                               button_id: 'button_upload_csv' %>
+    <p><%= t('tags.upload.upload_csv_prompt') %></p>
+    <%= form_for :upload_csv,
+                 url: csv_upload_assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+      <div class='content'>
+        <%= file_field_tag 'csv_tags' %>
+        <%= t('tags.upload.upload_csv_html') %>
+        <%= t('csv_special_characters_html') %>
+      </div>
+      <div class='encoding_type'>
+        <%= label_tag t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </div>
+
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       disabled: true,
+                       id: 'button_upload_csv' %>
+        <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
+      </section>
+    <% end %>
+  </div>
+  <div id='upload_yml'>
+    <!-- Script for disabling upload buttons. -->
+    <%= javascript_include_tag 'upload_button_control.js',
+                               id: 'upload_yml_script',
+                               upload_id: 'upload_yml',
+                               button_id: 'button_upload_yml' %>
+    <p><%= t('tags.upload.upload_yml_prompt') %></p>
+    <%= form_for :upload_yml,
+                 url: yml_upload_assignment_tags_path(@assignment),
+                 html: { multipart: true, size: 1 } do |f| %>
+      <div class='content'>
+        <%= file_field_tag 'yml_tags' %>
+        <%= t('tags.upload.upload_yml_html') %>
+      </div>
+
+      <div class='encoding_type'>
+        <%= label_tag t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </div>
+
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       disabled: true,
+                       id: 'button_upload_yml' %>
+        <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
+      </section>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,19 @@
+<%= content_for :modal_id, 'download_dialog' %>
+<%= content_for :modal_title, t('groups.download.download_grader_maps') %>
+<%= content_for :modal_content do %>
+
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('marks_graders.download.download_grader_students_csv') %>
+    </div>
+    <%= link_to '',
+                { action: 'download_grader_students_mapping',
+                  id: @grade_entry_form.id },
+                onclick: 'modal_download.close();',
+                class: 'make_div_clickable' if @current_user.admin? %>
+  </div>
+  <section class='dialog-actions'>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
+  </section>
+<% end %>
