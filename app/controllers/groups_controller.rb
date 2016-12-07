@@ -254,7 +254,8 @@ class GroupsController < ApplicationController
       end
       head :ok
     rescue => e
-      render text: e.message, status: 400
+      flash_now(:error, e.message)
+      head 400
     end
   end
 

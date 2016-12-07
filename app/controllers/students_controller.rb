@@ -66,7 +66,8 @@ class StudentsController < ApplicationController
       end
       head :ok
     rescue RuntimeError => e
-      render text: e.message, status: 500
+      flash_now(:error, e.message)
+      head 500
     end
   end
 

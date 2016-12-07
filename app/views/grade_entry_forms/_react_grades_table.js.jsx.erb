@@ -276,6 +276,9 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this)
       });
     },
     unreleaseMarks: function() {
@@ -289,6 +292,9 @@
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
+        success: function(data) {
+          this.props.refresh();
+        }.bind(this)
       });
     },
     render: function() {

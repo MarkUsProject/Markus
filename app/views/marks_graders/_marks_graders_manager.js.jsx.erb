@@ -28,9 +28,6 @@
     updateSelectedGradersForStudents: function(graders) {
       this.setState({selected_graders_for_students: graders});
     },
-    setError: function(error_msg) {
-      this.setState({error: error_msg});
-    },
     componentWillMount: function() {
       this.refresh();
     },
@@ -46,7 +43,7 @@
             students: data[0],
             graders_for_students: [].concat.apply([], data[0].map(function(student){
               return student.graders;
-            })),
+            }))
           });
         }.bind(this),
         complete: function() {
@@ -83,8 +80,7 @@
         selected_graders_for_students={this.state.selected_graders_for_students}
         updateSelectedGraders={this.updateSelectedGraders}
         updateSelectedStudents={this.updateSelectedStudents}
-        updateSelectedGradersForStudents={this.updateSelectedGradersForStudents}
-        setError={this.setError} />);
+        updateSelectedGradersForStudents={this.updateSelectedGradersForStudents} />);
 
       to_render.push(<StudentsTableManager
         students={this.state.students}

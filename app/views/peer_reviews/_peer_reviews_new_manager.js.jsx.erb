@@ -15,7 +15,7 @@
         selectedReviewerInRevieweeGroups: {},  // Dict of [reviewee][reviewer]
         revieweeToReviewers: {},
         reviewerToNumReviews: {},
-        groupIdToName: {},
+        groupIdToName: {}
       };
     },
 
@@ -34,7 +34,6 @@
     updateSelectedRevieweeGroups: function(revieweeGroups) {
       this.setState({selectedRevieweeGroups: revieweeGroups});
     },
-
 
     updatedSelectedReviewersInRevieweesTable: function(reviewerGroupId, revieweeGroupId, isChecked) {
       // If the reviewee is not in the dictionary, add a dictionary for the reviewee id.
@@ -361,6 +360,13 @@
         selectedReviewerInRevieweeGroups: this.props.selectedReviewerInRevieweeGroups,
         numGroupsToAssign: numGroupsToAssignVal
       };
+
+      if ((numGroupsToAssignVal == null || numGroupsToAssignVal == '') && dataToSend.actionString == 'random_assign') {
+        // TODO: Display this like any other flash message, and internationalize the message.
+        // this.props.setErrorMessage('Did not set the number of peer reviews (spinner is blank).');
+        alert('Did not set the number of peer reviews (spinner is blank).');
+        return;
+      }
 
       document.getElementById('working').style.display = '';
 

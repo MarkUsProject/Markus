@@ -299,7 +299,7 @@ RSpec.describe CriteriaController, type: :controller do
             @errors = ActiveModel::Errors.new(self)
             @errors['message'] = 'error message'
             expect_any_instance_of(FlexibleCriterion)
-                .to receive(:save).and_return(false)
+                .to receive(:update).and_return(false)
             expect_any_instance_of(FlexibleCriterion)
                 .to receive(:errors).and_return(@errors)
             post_as @admin,
@@ -731,7 +731,7 @@ RSpec.describe CriteriaController, type: :controller do
             @errors = ActiveModel::Errors.new(self)
             @errors['message'] = 'error message'
             expect_any_instance_of(RubricCriterion)
-                .to receive(:save).and_return(false)
+                .to receive(:update).and_return(false)
             expect_any_instance_of(RubricCriterion)
                 .to receive(:errors).and_return(@errors)
             post_as @admin,

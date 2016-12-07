@@ -304,7 +304,7 @@
         data: dataLoad,
         success: function(data) {
           this.props.refresh();
-        }.bind(this),
+        }.bind(this)
       });
     },
     unreleasePeerReviews: function() {
@@ -319,7 +319,7 @@
         data: dataLoad,
         success: function(data) {
           this.props.refresh();
-        }.bind(this),
+        }.bind(this)
       });
     },
     releaseMarks: function() {
@@ -334,7 +334,7 @@
         data: dataLoad,
         success: function(data) {
           this.props.refresh();
-        }.bind(this),
+        }.bind(this)
       });
     },
     unreleaseMarks: function() {
@@ -349,7 +349,7 @@
         data: dataLoad,
         success: function(data) {
           this.props.refresh();
-        }.bind(this),
+        }.bind(this)
       });
     },
     uncollectAllSubmissions: function() {
@@ -371,6 +371,11 @@
         method: 'POST',
         url: 'collect_submissions',
         data: dataLoad,
+        success: function(data) {
+          if (data.success) {
+            window.setInterval(this.props.refresh, 30000);
+          }
+        }.bind(this)
       });
     },
     runTests: function () {
@@ -378,6 +383,11 @@
         method: 'POST',
         url: 'run_tests',
         data: {groupings: this.props.selected_submissions},
+        success: function(data) {
+          if (data.success) {
+            window.setInterval(this.props.refresh, 30000);
+          }
+        }.bind(this)
       })
     },
     render: function() {
