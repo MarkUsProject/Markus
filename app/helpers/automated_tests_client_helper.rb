@@ -340,7 +340,7 @@ module AutomatedTestsClientHelper
     assignment = grouping.assignment
     group = grouping.group
 
-    # create emtpy test results for no submission files
+    # create empty test results for no submission files
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
