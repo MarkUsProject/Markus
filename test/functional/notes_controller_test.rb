@@ -158,7 +158,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                    note: {noteable_id: noteable.call().id,
                              notes_message: @message}}
           assert_not_nil assigns :note
-          assert_equal flash[:success], I18n.t('notes.create.success')
+          assert_equal flash[:success], [I18n.t('notes.create.success')]
           assert redirect_to(controller: 'note')
           assert_equal(@notes + 1,  Note.count )
         end
@@ -231,7 +231,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   {id: @note.id,
                    note: {notes_message: @new_message}}
           assert_not_nil assigns :note
-          assert_equal flash[:success], I18n.t('notes.update.success')
+          assert_equal flash[:success], [I18n.t('notes.update.success')]
           assert redirect_to(controller: 'note')
         end
       end
@@ -252,7 +252,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         @note = Note.make( creator_id: @ta.id )
         delete_as @ta, :destroy, id: @note.id
         assert_not_nil assigns :note
-        assert_equal flash[:success], I18n.t('notes.delete.success')
+        assert_equal flash[:success], [I18n.t('notes.delete.success')]
       end
 
       should 'for a note belonging to someone else (delete as TA)' do
@@ -261,7 +261,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   :destroy,
                   id: @note.id
         assert_not_nil assigns :note
-        assert_equal flash[:error], I18n.t('notes.delete.error_permissions')
+        assert_equal flash[:error], [I18n.t('notes.delete.error_permissions')]
       end
     end
   end # TA context
@@ -304,7 +304,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     should 'for invalid type' do
       get_as @admin, :noteable_object_selector, noteable_type: 'gibberish'
-      assert_equal flash[:error], I18n.t('notes.new.invalid_selector')
+      assert_equal flash[:error], [I18n.t('notes.new.invalid_selector')]
       assert_not_nil assigns :assignments
       assert_not_nil assigns :groupings
       assert_nil assigns :students
@@ -380,7 +380,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                     note: {noteable_id: noteable.call().id,
                               notes_message: @message}}
           assert_not_nil assigns :note
-          assert_equal flash[:success], I18n.t('notes.create.success')
+          assert_equal flash[:success], [I18n.t('notes.create.success')]
           assert redirect_to(controller: 'note')
           assert_equal(@notes + 1,  Note.count )
         end
@@ -432,7 +432,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 {id: @note.id,
                   note: {notes_message: @new_message}}
         assert_not_nil assigns :note
-        assert_equal flash[:success], I18n.t('notes.update.success')
+        assert_equal flash[:success], [I18n.t('notes.update.success')]
         assert redirect_to(controller: 'note')
       end
 
@@ -443,7 +443,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 :update,
                 {id: @note.id, note: {notes_message: @new_message}}
         assert_not_nil assigns :note
-        assert_equal flash[:success], I18n.t('notes.update.success')
+        assert_equal flash[:success], [I18n.t('notes.update.success')]
         assert redirect_to(controller: 'note')
       end
 
@@ -451,14 +451,14 @@ class NotesControllerTest < AuthenticatedControllerTest
         @note = Note.make( creator_id: @admin.id  )
         delete_as @admin, :destroy, {id: @note.id}
         assert_not_nil assigns :note
-        assert_equal flash[:success], I18n.t('notes.delete.success')
+        assert_equal flash[:success], [I18n.t('notes.delete.success')]
       end
 
       should 'for a note belonging to someone else (delete as Admin)' do
         @note = Note.make(creator_id: Ta.make.id)
         delete_as @admin, :destroy, {id: @note.id}
         assert_not_nil assigns :note
-        assert_equal flash[:success], I18n.t('notes.delete.success')
+        assert_equal flash[:success], [I18n.t('notes.delete.success')]
       end
 
       should 'have noteable options for selection when viewing noteable_type Grouping' do

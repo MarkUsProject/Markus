@@ -421,7 +421,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal(flash[:error],
-                     I18n.t('annotations.upload.unparseable_yaml'))
+                     [I18n.t('annotations.upload.unparseable_yaml')])
       end
 
       should 'on :yml_upload route properly' do

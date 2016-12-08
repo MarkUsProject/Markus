@@ -34,7 +34,7 @@ class MarksGradersController < ApplicationController
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
     if params[:grader_mapping].nil?
-      flash[:error] = I18n.t('csv.student_to_grader')
+      flash_message(:error, I18n.t('csv.student_to_grader'))
     else
       result = MarkusCSV.parse(
           params[:grader_mapping].read,
@@ -90,9 +90,8 @@ class MarksGradersController < ApplicationController
         if params[:students].nil? || params[:students].size == 0
          # If there is a global action than there should be a student selected
           if params[:global_actions]
-            @global_action_warning = t('assignment.group.select_a_student')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
+            flash_now(:error, t('assignment.group.select_a_student'))
+            head 400
             return
           end
         end
@@ -100,9 +99,8 @@ class MarksGradersController < ApplicationController
         case params[:global_actions]
         when 'assign'
           if params[:graders].nil? || params[:graders].size == 0
-            @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
+            flash_now(:error, t('assignment.group.select_a_grader'))
+            head 400
             return
           end
           assign_all_graders(student_ids, grader_ids, @grade_entry_form)
@@ -112,9 +110,8 @@ class MarksGradersController < ApplicationController
           return
         when 'random_assign'
           if params[:graders].nil? or params[:graders].size ==  0
-            @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
+            flash_now(:error, t('assignment.group.select_a_grader'))
+            head 400
             return
           end
           randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)

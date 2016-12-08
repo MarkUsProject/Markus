@@ -4,7 +4,6 @@
   var GradersTable = React.createClass({
     getInitialState: function() {
       return {
-        error: null,
         graders: [],
         selected_graders: []
       };
@@ -46,24 +45,12 @@
         success: function(data) {
           this.setState({
             graders: data,
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
 
-      });
-    },
-    onError: function(error) {
-      this.setState({
-        error: error
       });
     },
     render: function() {
