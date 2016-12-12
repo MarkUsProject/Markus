@@ -13,6 +13,6 @@
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.trigger("closeModal")'/>
   </section>
 <% end %>
