@@ -27,6 +27,6 @@
                 class: 'make_div_clickable' %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='downloadModal("closeModal");'/>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.trigger("closeModal")'/>
   </section>
 <% end %>
