@@ -1,4 +1,4 @@
-<%= content_for :modal_id, 'download_yml_dialog' %>
+<%= content_for :modal_id, 'download_dialog' %>
 <%= content_for :modal_title, t('criteria.download.file') %>
 <%= content_for :modal_content do %>
 
@@ -14,8 +14,6 @@
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset'
-           value='<%= t('cancel') %>'
-           onclick='modal_download_yml.close();'>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.trigger("closeModal")'/>
   </section>
 <% end %>

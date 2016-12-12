@@ -12,7 +12,7 @@
 
 <% @heading_buttons = [
   { link_text: t('criteria.add_criterion'),
-    link_path: 'javascript:void(0);',
+    link_path: '#',
     html_options: { onclick:
       "if(document.getElementById('new_criterion') != null) {
         document.getElementById('new_criterion_prompt').focus();
@@ -22,12 +22,12 @@
           type: 'GET'
         });
       } "} },
-  { link_text: t('criteria.download.yml'),
-    link_path: 'javascript:void(0);',
-    html_options: {onclick: 'modal_download_yml.open()'} },
-  { link_text: t('criteria.upload.yml'),
-    link_path: 'javascript:void(0);',
-    html_options: {onclick: 'modal_upload_yml.open()' } }
+  { link_text: t('download'),
+    link_path: '#',
+    html_options: { onclick: "modal_download.trigger('openModal')" } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { onclick: "modal_upload.trigger('openModal')" } }
 ] %>
 
 <div class='wrapper'>
