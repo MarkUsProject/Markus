@@ -257,7 +257,7 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
 
     unless @past_date.nil? || @past_date.empty?
-      flash.now[:notice] = t('past_due_date_notice') + @past_date.join(', ')
+      flash_now(:notice, t('past_due_date_notice') + @past_date.join(', '))
     end
 
     # build section_due_dates for each section that doesn't already have a due date
@@ -285,13 +285,13 @@ class AssignmentsController < ApplicationController
       end
     rescue SubmissionRule::InvalidRuleType => e
       @assignment.errors.add(:base, t('assignment.error', message: e.message))
-      flash[:error] = t('assignment.error', message: e.message)
+      flash_message(:error, t('assignment.error', message: e.message))
       render :edit, id: @assignment.id
       return
     end
 
     if @assignment.save
-      flash[:success] = I18n.t('assignment.update_success')
+      flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
     else
       render :edit, id: @assignment.id
@@ -345,7 +345,7 @@ class AssignmentsController < ApplicationController
         @assignment.clone_groupings_from(params[:persist_groups_assignment])
       end
       if @assignment.save
-        flash[:success] = I18n.t('assignment.create_success')
+        flash_message(:success, I18n.t('assignment.create_success'))
       end
     end
     redirect_to action: 'edit', id: @assignment.id
@@ -448,7 +448,7 @@ class AssignmentsController < ApplicationController
       end
 
       @grouping.destroy
-      flash[:success] = I18n.t('assignment.group.deleted')
+      flash_message(:success, I18n.t('assignment.group.deleted'))
       m_logger.log("Student '#{current_user.user_name}' deleted group '" +
                    "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
 
@@ -484,7 +484,7 @@ class AssignmentsController < ApplicationController
     @grouping.invite(to_invite)
     flash[:fail_notice] = @grouping.errors['base']
     if flash[:fail_notice].blank?
-      flash[:success] = I18n.t('invite_student.success')
+      flash_message(:success, I18n.t('invite_student.success'))
     end
     redirect_to action: 'student_interface', id: @assignment.id
   end
@@ -503,7 +503,7 @@ class AssignmentsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
                  "'#{disinvited_student.user_name}'.")
-    flash[:success] = I18n.t('student.member_disinvited')
+    flash_message(:success, I18n.t('student.member_disinvited'))
     redirect_to action: :student_interface, id: assignment.id
   end
 
@@ -565,7 +565,7 @@ class AssignmentsController < ApplicationController
                   filename: 'assignment_list.csv')
         return
       else
-        flash[:error] = t(:incorrect_format)
+        flash_message(:error, t(:incorrect_format))
         redirect_to action: 'index'
         return
     end
@@ -580,7 +580,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
-      flash[:error] = I18n.t('csv.invalid_csv')
+      flash_message(:error, I18n.t('csv.invalid_csv'))
       redirect_to action: 'index'
       return
     end
@@ -620,7 +620,7 @@ class AssignmentsController < ApplicationController
             update_assignment!(row)
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
-          flash[:error] = e.message
+          flash_message(:error, e.message)
           redirect_to action: 'index'
           return
         end
@@ -898,7 +898,7 @@ class AssignmentsController < ApplicationController
         assignment.display_grader_names_to_students = false
       end
       assignment.update_attributes!(map)
-      flash[:success] = t('assignment.create_success')
+      flash_message(:success, t('assignment.create_success'))
     end
 
   def process_assignment_form(assignment)

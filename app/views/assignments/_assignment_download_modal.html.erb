@@ -1,0 +1,30 @@
+<%= content_for :modal_id, 'download_dialog' %>
+<%= content_for :modal_title, t('assignment.download') %>
+<%= content_for :modal_content do %>
+
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('annotations.download.download_csv') %>
+    </div>
+    <%= link_to '',
+                download_assignment_list_assignments_path(
+                  file_format: 'csv'),
+                onclick: 'modal_download.close();',
+                class: 'make_div_clickable' if @current_user.admin? %>
+  </div>
+  <div class='clickable_links'>
+    <div class='clickable_text'>
+      <img class='clickable_image' src='<%= image_url('icons/download-file.png') %>'>
+      <%= t('annotations.download.download_yml') %>
+    </div>
+    <%= link_to '',
+                download_assignment_list_assignments_path(
+                  file_format: 'yml'),
+                onclick: 'modal_download.close();',
+                class: 'make_div_clickable' if @current_user.admin? %>
+  </div>
+  <section class='dialog-actions'>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();'/>
+  </section>
+<% end %>

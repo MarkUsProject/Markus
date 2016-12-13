@@ -83,8 +83,8 @@ jQuery(document).ajaxComplete(function(event, request) {
     } else if (receive) {
       jQuery('.' + keys[i]).empty();
     }
+    if (jQuery('.' + keys[i]).is(':empty')) {
+      jQuery('.' + keys[i]).hide()
+    }
   }
-  jQuery(function() {
-    jQuery("div:empty").hide();
-  });
 });

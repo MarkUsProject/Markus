@@ -70,7 +70,6 @@
     },
     getInitialState: function() {
       return {
-        error: null,
         tags: [],
         selected_tags: []
       };
@@ -91,23 +90,11 @@
         success: function(data) {
           this.setState({
             tags: data,
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
-      });
-    },
-    onError: function(error) {
-      this.setState({
-        error: error
       });
     },
     render: function() {
@@ -131,7 +118,6 @@
       }.bind(this));
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <Table data={tags_data}
             search_placeholder={'<%= j raw I18n.t(:'tags.search_tags') %>'}
             selectable={false}

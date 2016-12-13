@@ -71,7 +71,6 @@
     },
     getInitialState: function() {
       return {
-        error: null,
         students: [],
         selected_students: []
       };
@@ -93,24 +92,12 @@
         success: function(data) {
           this.setState({
             students: data,
-            error: null
           });
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text;
-          this.setState({
-            error: error
-          });
-        },
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
 
-      });
-    },
-    onError: function(error) {
-      this.setState({
-        error: error
       });
     },
     render: function() {
@@ -140,11 +127,9 @@
 
       return (
         <div>
-          <ErrorDiv error={this.state.error} />
           <StudentsActionBox selected_students={this.state.selected_students}
             sections={this.props.sections}
-            refresh={this.refresh}
-            errorThrown={this.onError} />
+            refresh={this.refresh} />
           <Table data={students_data}
             search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
             selectable={true}
@@ -287,12 +272,7 @@
         url: 'students/bulk_modify',
         data: dataLoad,
         success: function(data) {
-          this.props.errorThrown(null);
           this.props.refresh();
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.errorThrown(error);
         }.bind(this)
       });
     }

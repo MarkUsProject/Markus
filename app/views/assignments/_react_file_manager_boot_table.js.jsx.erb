@@ -36,7 +36,6 @@
 
     getInitialState: function() {
       return {
-        error: null,
         files: [],
         selected_files: [],
         data_files: [],
@@ -65,22 +64,13 @@
         success: function(data) {
           this.setState({
             files: data,
-            errors: null
           });
-        }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ':' + xhr.responseText;
-          this.setState({ error: error });
         }.bind(this),
         // Close working indicator.
         complete: function() {
           document.getElementById('working').style.display = 'none';
         }
       });
-    },
-
-    onError: function(error) {
-      this.setState({ error: error });
     },
 
     resetTable: function() {
@@ -107,7 +97,6 @@
             <FileManagerActionBox
               selected_files={this.state.selected_files}
               data_file={files_data}
-              onError={this.onError}
               resetTable={this.resetTable} />
 
           <Table data={files_data}
@@ -116,8 +105,6 @@
             onSelectedRowsChange={this.updateSelectedFiles}
             search_placeholder={'<%= raw I18n.t("student.submission.search_files") %>'}
             ref='table' />
-
-          <ErrorDiv error={this.state.error} />
         </div>
       );
     }
@@ -171,10 +158,6 @@
         success: function(data) {
           this.props.resetTable();
         }.bind(this),
-        error: function(xhr, status, text) {
-          var error = text + ': ' + xhr.responseText;
-          this.props.onError(error);
-        }.bind(this)
       });
     },
 
