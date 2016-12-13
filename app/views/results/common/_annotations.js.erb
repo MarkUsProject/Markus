@@ -382,7 +382,7 @@
 
     jQuery.ajax({
       url: '<%= @current_user.student? ? codeviewer_assignment_result_path(uid: @uid) :
-                                         codeviewer_assignment_submission_result_path(uid: @uid) %>',
+                                         codeviewer_assignment_result_path(uid: @uid) %>',
       type: 'POST',
       data: 'submission_file_id=' + submission_file_id +
             '&focus_line=' + focus_line +

@@ -1,9 +1,3 @@
-
-<!--<%= debug @result %>-->
-<!-- <%= debug @pr %> -->
-<!-- <%= debug @submission %> -->
-<!--<%= debug @pr_marks_map %>-->
-
 <% content_for :head do %>
     <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
     <%= stylesheet_link_tag('grader') %>
@@ -188,12 +182,6 @@
       </p>
   <% end %>
 
-  <%= render partial: 'results/common/submission_selector',
-             locals: { group: @group,
-                       result: @result,
-                       assignment: @assignment,
-                       previous_grouping: @previous_grouping,
-                       next_grouping: @next_grouping } %>
 
   <%= render partial: 'results/common/errors' %>
 

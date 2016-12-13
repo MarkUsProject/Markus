@@ -29,18 +29,15 @@ class ResultsController < ApplicationController
 
   def peer_review_marking
     #result for the peer review
-    @result = Result.find(params[:id]) #todo make this #@pr_result
-    @assignment = @result.submission.grouping.assignment #A1
-    @pr_assignment = @assignment.pr_assignment #A5
+    @result = Result.find(params[:id])
+    @assignment = @result.submission.grouping.assignment
+    @pr_assignment = @assignment.pr_assignment
 
     @pr = PeerReview.find_by(result_id: @result.id)
-    @submission = @result.submission
+    @submission = @result.submission #A1
+    @original_result = @submission.get_latest_completed_result
 
-    #todo get the @result for the original/actual assignment (A1)
-    # to display the marks given by TA
-
-    #copied from edit
-    @grouping = @result.submission.grouping
+    @grouping = @result.submission.grouping #reviewee
     @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
@@ -52,22 +49,17 @@ class ResultsController < ApplicationController
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
-    #new
     @pr_marks_map = Hash.new
     @pr_old_marks_map = Hash.new
 
     @mark_criteria = @assignment.get_criteria(:ta)
     @pr_mark_criteria = @pr_assignment.get_criteria(:ta)
 
-    #todo how to get the reviewer's id?
-    @reviewer = Grouping.find(params[:reviewer_grouping_id])
+    @reviewer = @pr.reviewer; #grouping
     @reviewer_group_name = @reviewer.group.group_name
 
-
-
-    #copied
     @mark_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by(result_id: @result.id)
+      mark = criterion.marks.find_or_create_by(result_id: @original_result.id)
       # NOTE: Due to the way marks were set up, they originally assumed that
       # there only would ever be unique criterion IDs. Now that we mix them
       # together, multiple criteria could end up using the same ID due to the
@@ -83,8 +75,6 @@ class ResultsController < ApplicationController
     end
 
     #pr_mark_criteria
-    #copied
-    # TODO NEED RESULT FOR PEER REVIEW ASSIGNMENT (A5)
     @pr_mark_criteria.each do |criterion|
       pr_mark = criterion.marks.find_or_create_by(result_id: @result.id)
       # NOTE: Due to the way marks were set up, they originally assumed that
@@ -100,6 +90,9 @@ class ResultsController < ApplicationController
       pr_mark.save(validate: false)
       Mark.set_callback(:save, :after, :update_result_mark)
     end
+
+    @result.update_total_mark
+
   end
 
   def note_message
