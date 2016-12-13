@@ -1,6 +1,6 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'users_manager',
-                             'Graders/index' %>
+                             'Tas/index' %>
   <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
@@ -18,12 +18,12 @@
 <% @heading_buttons = [
   { link_text: t(:add_new_grader),
     link_path: new_ta_path },
-  { link_text: t(:download),
+  { link_text: t('download'),
     link_path: '#',
-    html_options: { onclick: 'modal_download.open()' } },
+    html_options: { id: 'downloadModal' } },
   { link_text: t('upload'),
     link_path: '#',
-    html_options: { onclick: 'modal_upload.open()' } }
+    html_options: { id: 'uploadModal' } }
 ] %>
 
 <% content_for :wrap_left_content do %>

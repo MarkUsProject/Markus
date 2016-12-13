@@ -10,10 +10,10 @@
     <%= link_to '',
                 { action: 'download_yml',
                   id: @criteria },
-                onclick: 'modal_download_yml.close();',
+                onclick: 'jQuery(this).closest(".dialog").trigger("closeModal");',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.trigger("closeModal")'/>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");'/>
   </section>
 <% end %>

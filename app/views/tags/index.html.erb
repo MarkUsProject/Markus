@@ -18,12 +18,12 @@
   { link_text: t('tags.create.create_new'),
     link_path: '#',
     html_options: { onclick:'modal_create_new.open()' } },
-  { link_text: t('tags.download.download'),
+  { link_text: t('download'),
     link_path: '#',
-    html_options: { onclick: 'modal_download.open()' } },
-  { link_text: t('tags.upload.upload'),
+    html_options: { id: 'downloadModal' } },
+  { link_text: t('upload'),
     link_path: '#',
-    html_options: { onclick: 'modal_upload.open()' } }
+    html_options: { id: 'uploadModal' } }
 ] %>
 
 <% content_for :wrap_left_content do %>

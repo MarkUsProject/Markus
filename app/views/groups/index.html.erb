@@ -30,9 +30,9 @@
                   onclick:'modalAssignmentGroupReUse.open();' %>
       <span class='menu_bar'></span>
     <% end %>
-    <%= link_to t('download'), '#', onclick:'modal_download.open();' %>
+    <%= link_to t('download'), '#', id: 'downloadModal' %>
     <span class='menu_bar'></span>
-    <%= link_to t('upload'), '#', onclick:'modal_upload.open();' %>
+    <%= link_to t('upload'), '#', id: 'uploadModal' %>
 <% end %>
 
 <div id="notice">

@@ -39,7 +39,7 @@
                          disabled: true,
                          id: 'csv_upload',
                          onclick: 'choose_upload("csv")' %>
-          <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.trigger("closeModal")' />
+          <input type='reset' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");' />
       <% end %>
     </section>
   <% end %>
