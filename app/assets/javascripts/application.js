@@ -15,12 +15,12 @@
 /** Modal windows, powered by jQuery.easyModal. */
 
 function ModalMarkus(elem) {
-  this.modal_dialog = jQuery(elem).easyModal({
+  this.modal_dialog = $(elem).easyModal({
     onOpen: function (myModal) {
      // wait for the modal to load
      setTimeout(function () {
        // search for elements that can receive text as input
-       var inputs = jQuery(myModal).find('textarea, input:text');
+       var inputs = $(myModal).find('textarea, input:text');
        if (inputs.length > 0) {
          inputs[0].focus();
        }
@@ -62,7 +62,7 @@ Element.prototype.hasClass = function(className) {
     return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }
 
-jQuery(document).ajaxComplete(function(event, request) {
+$(document).ajaxComplete(function(event, request) {
   var keys = ['notice', 'warning', 'success', 'error'];
   var keysLength = keys.length;
   var flashMessageList = [];
@@ -75,16 +75,16 @@ jQuery(document).ajaxComplete(function(event, request) {
     var flashMessage = flashMessageList[i];
     if (flashMessage) {
       var messages = flashMessage.split(';');
-      jQuery('.' + keys[i]).empty();
+      $('.' + keys[i]).empty();
       for (var j = 0; j < messages.length; j++) {
-        jQuery('.' + keys[i]).append('<p>' + messages[j] + '</p>');
+        $('.' + keys[i]).append('<p>' + messages[j] + '</p>');
       }
-      jQuery('.' + keys[i]).show();
+      $('.' + keys[i]).show();
     } else if (receive) {
-      jQuery('.' + keys[i]).empty();
+      $('.' + keys[i]).empty();
     }
-    if (jQuery('.' + keys[i]).is(':empty')) {
-      jQuery('.' + keys[i]).hide()
+    if ($('.' + keys[i]).is(':empty')) {
+      $('.' + keys[i]).hide()
     }
   }
 });

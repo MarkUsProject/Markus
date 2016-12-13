@@ -20,7 +20,7 @@
         students: this.props.selected_students,
         gests: this.props.selected_graders_for_students
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'marks_graders/global_actions',
         data: dataLoad,

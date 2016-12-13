@@ -61,15 +61,12 @@
 
 <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
 
-<%# Toggle jQuery's noConflict mode so it does not conflict with Prototype %>
 <script>
-  jQuery.noConflict();
-  jQuery(document).ready(
-      function($){
-        setInterval(function(){
-          jQuery.get('<%= check_timeout_main_index_path %>');
-        }, 120000);
-      });
+  $(document).ready(function($) {
+    setInterval(function() {
+      $.get('<%= check_timeout_main_index_path %>');
+    }, 120000);
+  });
 </script>
 </body>
 </html>

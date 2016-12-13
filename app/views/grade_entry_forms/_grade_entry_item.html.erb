@@ -24,7 +24,7 @@
       <%= form.check_box :_destroy %>
     <% else %>
       <%= link_to t(:delete), '#', onclick:
-        'jQuery(this).parentsUntil(".grade_entry_item").parent().remove();' +
+        '$(this).parentsUntil(".grade_entry_item").parent().remove();' +
         'return false;' %>
     <% end %>
   </div>

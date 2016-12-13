@@ -84,7 +84,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         method: 'GET',
         dataType: 'json',
         success: function(data) {

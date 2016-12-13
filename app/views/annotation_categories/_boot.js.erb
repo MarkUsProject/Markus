@@ -1,12 +1,12 @@
 <script>
   function add_annotation_prompt(path) {
-    var annotation_text = jQuery('#add_annotation_text #annotation_text_content');
+    var annotation_text = $('#add_annotation_text #annotation_text_content');
 
     if (annotation_text.size()) {
       annotation_text.select();
       annotation_text.focus();
     } else {
-      jQuery.ajax({
+      $.ajax({
         url:  path,
         type: 'GET'
       });
@@ -14,31 +14,31 @@
   }
 
   function add_annotation_category(path) {
-    var category_prompt = jQuery('#add_annotation_category_prompt');
+    var category_prompt = $('#add_annotation_category_prompt');
 
     if (category_prompt.size()) {
       category_prompt.select();
       category_prompt.focus();
     } else {
-      jQuery.ajax({
+      $.ajax({
         url:  path,
         type: 'GET'
       });
 
-      var info = jQuery('#no_annotation_categories_info');
+      var info = $('#no_annotation_categories_info');
       if (info.size()) {
         info.hide();
       }
     }
   }
 
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
     window.modal_upload   = new ModalMarkus('#upload_dialog');
     window.modal_download = new ModalMarkus('#download_dialog');
     bindSortable();
 
     function bindSortable() {
-      jQuery('.sortable ul').sortable({
+      $('.sortable ul').sortable({
         axis:   'y',
         cursor: 'move',
         update: function() {
@@ -47,10 +47,10 @@
             ajaxRequest.abort();
           }
 
-          ajaxRequest = jQuery.ajax({
+          ajaxRequest = $.ajax({
             url:  '<%= update_positions_assignment_annotation_categories_path(@assignment) %>',
             type: 'POST',
-            data: jQuery('.sortable ul').sortable('serialize'),
+            data: $('.sortable ul').sortable('serialize'),
             dataType: 'script',
             success: function(response) {
               ajaxRequest = undefined;

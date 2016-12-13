@@ -34,7 +34,7 @@
     refresh: function() {
       // Show working indicator.
       document.getElementById('working').style.display = '';
-      jQuery.ajax('<%= populate_peer_submissions_table_assignment_submissions_path(assignment_id) %>',
+      $.ajax('<%= populate_peer_submissions_table_assignment_submissions_path(assignment_id) %>',
                   { method: 'GET',
                     dataType: 'json',
                     success: function(data) {

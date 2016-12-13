@@ -58,13 +58,13 @@
   <div id='submissions_table'></div>
 <% end %>
 <script>
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
     var downloadGroupingsFiles = function() {
       window.location.href = "<%= download_groupings_files_assignment_submissions_path %>";
     };
 
-    jQuery('#download_all_submissions_link').on('click', function () {
-      jQuery.ajax({
+    $('#download_all_submissions_link').on('click', function () {
+      $.ajax({
         url: '<%= check_collect_status_assignment_submissions_path %>',
         type: 'GET',
         success: function (data) {

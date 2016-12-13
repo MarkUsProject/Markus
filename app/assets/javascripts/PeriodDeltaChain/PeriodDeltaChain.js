@@ -13,23 +13,23 @@ PeriodDeltaChain.prototype.refresh = function() {
   var period_selector = '#' + this.period_root_id + ' .' + this.period_class;
   var me = this;
 
-  jQuery(period_selector).each(function() {
+  $(period_selector).each(function() {
     var from_time_node = this.querySelector('.PeriodDeltaChain_FromTime');
     var to_time_node   = this.querySelector('.PeriodDeltaChain_ToTime');
     var hours_value    = this.querySelector('.PeriodDeltaChain_Hours').value;
     var from_time = moment(current_time, me.date_format);
     var to_time   = moment(current_time, me.date_format);
 
-    jQuery(from_time_node).html(from_time.format(format));
-    jQuery(to_time_node).html(to_time.add('hours', hours_value).format(format));
+    $(from_time_node).html(from_time.format(format));
+    $(to_time_node).html(to_time.add('hours', hours_value).format(format));
 
     current_time = to_time;
   });
 
-  if (jQuery(period_selector).length < 2) {
-    jQuery(period_selector + ' a').hide();
+  if ($(period_selector).length < 2) {
+    $(period_selector + ' a').hide();
   } else {
-    jQuery(period_selector + ' a').show();
+    $(period_selector + ' a').show();
   }
 }
 

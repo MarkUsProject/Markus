@@ -1,6 +1,6 @@
-jQuery(document).ready(function() {
+$(document).ready(function() {
   // Changing the marking status
-  jQuery('#marking_state').change(function() {
+  $('#marking_state').change(function() {
     update_status(this, this.value)
   });
 
@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
       'authenticity_token': AUTH_TOKEN
     }
 
-    jQuery.ajax({
+    $.ajax({
       url:  element.getAttribute('data-action'),
       type: 'POST',
       data: params
@@ -18,13 +18,13 @@ jQuery(document).ready(function() {
   }
 
   // Releasing the grades, only available on the admin page
-  jQuery('#released').change(function() {
+  $('#released').change(function() {
     var params = {
       'value': this.checked || '',
       'authenticity_token': AUTH_TOKEN
     }
 
-    jQuery.ajax({
+    $.ajax({
       url:  this.getAttribute('data-action'),
       type: 'POST',
       data: params
@@ -34,22 +34,22 @@ jQuery(document).ready(function() {
   });
 
   // Event handlers for the flexible criteria grades
-  jQuery('.mark_grade_input').each(function(index, input) {
+  $('.mark_grade_input').each(function(index, input) {
     var mark_id = input.id.substr(5);
 
     // Prevent clicks from hiding the grade
-    jQuery(this).click(function(event) {
+    $(this).click(function(event) {
       event.preventDefault();
       return false;
     });
 
-    jQuery(this).change(function() {
+    $(this).change(function() {
       var params = {
         'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
       };
 
-      jQuery.ajax({
+      $.ajax({
         url:  this.getAttribute('data-action'),
         type: 'POST',
         data: params,
@@ -77,18 +77,18 @@ jQuery(document).ready(function() {
     });
   });
 
-  jQuery('.mark_grade_input_checkbox').each(function(index, input) {
+  $('.mark_grade_input_checkbox').each(function(index, input) {
     var tokens = input.id.split('_');
     var mark_id = tokens[1];
     var yes_or_no_type = tokens[2];
 
-    jQuery(this).click(function(event) {
+    $(this).click(function(event) {
       var params = {
         'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
       };
 
-      jQuery.ajax({
+      $.ajax({
         url: this.getAttribute('data-action'),
         type: 'POST',
         data: params,
@@ -108,9 +108,9 @@ jQuery(document).ready(function() {
           update_total_mark(total);
           document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
           document.getElementById('current_subtotal_div').innerHTML = subtotal;
-          jQuery('#mark_' + mark_id + '_' + yes_or_no_type).prop('checked', true);
-          jQuery('#mark_' + mark_id + '_' + (yes_or_no_type === 'yes' ? 'no' : 'yes')).prop('checked', false);
-          jQuery('#checkbox_radio_button_container_' + mark_id).html(mark);
+          $('#mark_' + mark_id + '_' + yes_or_no_type).prop('checked', true);
+          $('#mark_' + mark_id + '_' + (yes_or_no_type === 'yes' ? 'no' : 'yes')).prop('checked', false);
+          $('#checkbox_radio_button_container_' + mark_id).html(mark);
         }
       });
 
@@ -120,7 +120,7 @@ jQuery(document).ready(function() {
   });
 
   // Handle indenting in the new annotation textarea (2 spaces)
-  jQuery('#new_annotation_content').keydown(function(e) {
+  $('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
 
     if (keyCode == 9) {
@@ -139,44 +139,44 @@ jQuery(document).ready(function() {
   })
 
   // Handle the expand/collapse buttons
-  jQuery('#expand_all').click(function() {
-    jQuery('.mark_criterion_level_container').each(function() {
+  $('#expand_all').click(function() {
+    $('.mark_criterion_level_container').each(function() {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    jQuery('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function () {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    jQuery('.mark_grade_input_checkbox').each(function () {
+    $('.mark_grade_input_checkbox').each(function () {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
 
-  jQuery('#collapse_all').click(function() {
-    jQuery('.mark_criterion_level_container').each(function() {
+  $('#collapse_all').click(function() {
+    $('.mark_criterion_level_container').each(function() {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    jQuery('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function () {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    jQuery('.mark_grade_input_checkbox').each(function () {
+    $('.mark_grade_input_checkbox').each(function () {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
 
-  jQuery('#expand_unmarked').click(function() {
-    jQuery('.mark_criterion_level_container').each(function () {
+  $('#expand_unmarked').click(function() {
+    $('.mark_criterion_level_container').each(function () {
       expand_unmarked(this, 'RubricCriterion');
     });
-    jQuery('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function () {
       expand_unmarked(this, 'FlexibleCriterion');
     });
-    jQuery('.mark_grade_input_checkbox_container').each(function () {
+    $('.mark_grade_input_checkbox_container').each(function () {
       expand_unmarked(this, 'CheckboxCriterion');
     });
   });
 
   // Handle showing old mark when mark is updated in remark
-  jQuery('.mark_grade_input').keypress(function() {
+  $('.mark_grade_input').keypress(function() {
     var criterion_id = parseInt(this.getAttribute('data-id'), 10);
     var mark_id = parseInt(this.getAttribute('data-mark'), 10);
     var old_mark_elem = document.getElementById('flexible_' + criterion_id + '_old_mark');
@@ -193,7 +193,7 @@ jQuery(document).ready(function() {
 
 function expand_unmarked(elem, criterion_class) {
   if (criterion_class == 'RubricCriterion') {
-    if (jQuery(elem).find('.rubric_criterion_level_selected').length == 0) {
+    if ($(elem).find('.rubric_criterion_level_selected').length == 0) {
       show_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     } else {
       hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
@@ -205,7 +205,7 @@ function expand_unmarked(elem, criterion_class) {
       hide_criterion(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
     }
   } else {
-    var anyRadioButtonSet = jQuery(elem).find('.mark_grade_input_checkbox:input:checked').length > 0;
+    var anyRadioButtonSet = $(elem).find('.mark_grade_input_checkbox:input:checked').length > 0;
     var hideOrShowCriterionFunc = anyRadioButtonSet ? hide_criterion : show_criterion;
     hideOrShowCriterionFunc(parseInt(elem.getAttribute('data-id'), 10), criterion_class);
   }
@@ -214,14 +214,14 @@ function expand_unmarked(elem, criterion_class) {
 // NOTE: This function is only called by rubric/flexible, not checkbox.
 // It should be upgraded to focus_mark_criterion_type() in the future.
 function focus_mark_criterion(id) {
-  if (jQuery('#mark_criterion_' + id).length != 0) {
-    if (jQuery('#mark_criterion_' + id).hasClass('expanded')) {
+  if ($('#mark_criterion_' + id).length != 0) {
+    if ($('#mark_criterion_' + id).hasClass('expanded')) {
       hide_criterion(id, 'RubricCriterion');
     } else {
       show_criterion(id, 'RubricCriterion');
     }
   } else {
-    if (jQuery('#flexible_criterion_' + id).hasClass('expanded')) {
+    if ($('#flexible_criterion_' + id).hasClass('expanded')) {
       hide_criterion(id, 'FlexibleCriterion');
     } else {
       show_criterion(id, 'FlexibleCriterion');
@@ -238,7 +238,7 @@ function focus_mark_criterion_type(id, class_name) {
         criterionClassPrefix = 'checkbox';
     }
 
-    var node = jQuery('#' + criterionClassPrefix + '_criterion_' + id);
+    var node = $('#' + criterionClassPrefix + '_criterion_' + id);
     if (node.length != 0) {
         var showOrHideCriterion = node.hasClass('expanded') ? hide_criterion : show_criterion;
         showOrHideCriterion(id, class_name);
@@ -283,7 +283,7 @@ function show_criterion(id, criterion_class) {
 }
 
 function select_mark(mark_id, mark) {
-  original_mark = jQuery('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first();
+  original_mark = $('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first();
 
   if (typeof(original_mark) !== 'undefined') {
     original_mark.removeClass('rubric_criterion_level_selected');
@@ -299,7 +299,7 @@ function select_mark(mark_id, mark) {
 
 // Function for AJAX request for rubric levels
 function update_rubric_mark(elem, mark_id, value) {
-  jQuery.ajax({
+  $.ajax({
     url:  elem.getAttribute('data-action'),
     type: 'POST',
     data: {'authenticity_token': AUTH_TOKEN},

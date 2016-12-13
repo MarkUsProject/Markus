@@ -8,7 +8,7 @@
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: $('#assignment_due_date').val()
       });
     }
   }
@@ -18,7 +18,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: $('#assignment_due_date').val()
       });
     }
   }
@@ -28,31 +28,31 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: '<%= t('date.formats.js_old_date') %>',
-        due_date: jQuery('#assignment_due_date').val()
+        due_date: $('#assignment_due_date').val()
       });
     }
   }
 
   function check_required_fields() {
     var invalid = false;
-    jQuery('input[required]:not([disabled])').each(function() {
+    $('input[required]:not([disabled])').each(function() {
       if (this.value === '') {
         invalid = true;
       }
     });
 
     var filename_re = /^[-_\.a-zA-Z0-9]+$/;
-    jQuery('.assignment_file').each(function() {
+    $('.assignment_file').each(function() {
       if (!filename_re.exec(this.value)) {
         invalid = true;
         // _constants.scss $red
-        jQuery(this).css('background-color', '#fe2a2a');
+        $(this).css('background-color', '#fe2a2a');
       } else {
-        jQuery(this).css('background-color', '');
+        $(this).css('background-color', '');
       }
     });
 
-    jQuery('input[type="submit"]').prop('disabled', invalid);
+    $('input[type="submit"]').prop('disabled', invalid);
   }
 
   function add_assignment_file() {
@@ -65,37 +65,37 @@
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
       '<%= t(:remove) %></a></p>';
-    jQuery('#assignment_files').append(jQuery(assignment_file));
+    $('#assignment_files').append($(assignment_file));
 
-    jQuery('#only_required_files_option').removeClass('disable');
+    $('#only_required_files_option').removeClass('disable');
   }
 
   function remove_assignment_file(input_id) {
-    jQuery('#' + input_id + '_holder').remove();
-    if (jQuery('.assignment_file').length === 0) {
-      jQuery('#only_required_files_option').addClass('disable');
+    $('#' + input_id + '_holder').remove();
+    if ($('.assignment_file').length === 0) {
+      $('#only_required_files_option').addClass('disable');
     }
   }
 
   function add_period(id, periods) {
-    var last_period = jQuery('#' + id + ' .period').last();
+    var last_period = $('#' + id + ' .period').last();
     var new_period = last_period.clone();
     var id_re = new RegExp(/([_\[])[0-9]+([_\]])/);
     var repl = '$1' + new Date().getTime() + '$2';
     new_period.find('input').each(function () {
-      if (jQuery(this).attr('id')) {
-        jQuery(this).attr('id', jQuery(this).attr('id').replace(id_re, repl));
+      if ($(this).attr('id')) {
+        $(this).attr('id', $(this).attr('id').replace(id_re, repl));
       }
-      if (jQuery(this).attr('name')) {
-        jQuery(this).attr('name',
-                          jQuery(this).attr('name').replace(id_re, repl));
+      if ($(this).attr('name')) {
+        $(this).attr('name',
+                          $(this).attr('name').replace(id_re, repl));
       }
-      jQuery(this).val('');
+      $(this).val('');
     });
     new_period.find('label').each(function () {
-      jQuery(this).attr('for', jQuery(this).attr('for').replace(id_re, repl));
+      $(this).attr('for', $(this).attr('for').replace(id_re, repl));
     });
-    jQuery('#' + id).append(new_period);
+    $('#' + id).append(new_period);
 
     if (periods) {
       periods.refresh();
@@ -103,7 +103,7 @@
   }
 
   function remove_period(elem, periods) {
-    jQuery(elem).parents('.period').remove();
+    $(elem).parents('.period').remove();
     if (periods) {
       periods.refresh();
     }
@@ -116,12 +116,12 @@
     }
   }
 
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
     // Set locale for language localisation with Moment.js
     moment.lang(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
-    if (jQuery('#assignment_due_date').val()) {
+    if ($('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
@@ -135,13 +135,13 @@
 
     // Handle required fields
     check_required_fields();
-    jQuery(document).on("change", jQuery('input[required]'), check_required_fields)
-                    .on("keyup", jQuery('input[required]'), check_required_fields)
-                    .on("click", jQuery('#assignment_file_add_link'), check_required_fields);
+    $(document).on("change", $('input[required]'), check_required_fields)
+                    .on("keyup", $('input[required]'), check_required_fields)
+                    .on("click", $('#assignment_file_add_link'), check_required_fields);
 
     // Handle date/time pickers
-    jQuery('.section_due_date_input').each(function() {
-      jQuery(this).datetimepicker({
+    $('.section_due_date_input').each(function() {
+      $(this).datetimepicker({
         controlType:      'select',
         showTime:         false,
         numberOfMonths:   2,
@@ -162,7 +162,7 @@
       });
     });
 
-    jQuery('#assignment_due_date').datetimepicker({
+    $('#assignment_due_date').datetimepicker({
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,
@@ -182,7 +182,7 @@
       closeText:        "<%= I18n.t('time.close') %>",
     });
 
-    jQuery('#assignment_remark_due_date').datetimepicker({
+    $('#assignment_remark_due_date').datetimepicker({
       controlType:      'select',
       showTime:         false,
       numberOfMonths:   2,

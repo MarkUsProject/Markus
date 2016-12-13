@@ -3,7 +3,7 @@
       window.location = "<%= root_url %>";
     }
 
-    jQuery(document).ajaxError(function(event, xhr, settings, exception) {
+    $(document).ajaxError(function(event, xhr, settings, exception) {
       if (xhr.status == 403) {
         redirect_modal.open();
       }

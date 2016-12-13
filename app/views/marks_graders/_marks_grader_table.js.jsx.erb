@@ -38,7 +38,7 @@
     // Asks for new info from backend and sets props accordingly.
     refresh: function() {
       document.getElementById('working').style.display = '';
-      jQuery.ajax({
+      $.ajax({
         url: '<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>',
         method: 'POST',
         dataType: 'json',

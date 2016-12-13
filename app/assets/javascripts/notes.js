@@ -1,7 +1,7 @@
 /** Page-specific event handlers for notes/new.html.erb */
 
-jQuery(document).ready(function() {
-  jQuery('#noteable_type select').change(function() {
+$(document).ready(function() {
+  $('#noteable_type select').change(function() {
     document.getElementById('working').style.display = '';
 
     var params = {
@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
       'authenticity_token': AUTH_TOKEN
     };
 
-    jQuery.ajax({
+    $.ajax({
       url:      'noteable_object_selector',
       data:     params,
       type:     'POST'

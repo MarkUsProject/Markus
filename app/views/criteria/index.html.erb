@@ -17,7 +17,7 @@
       "if(document.getElementById('new_criterion') != null) {
         document.getElementById('new_criterion_prompt').focus();
       } else {
-        jQuery.ajax({
+        $.ajax({
           url: '" + new_assignment_criterion_path(@assignment) + "',
           type: 'GET'
         });

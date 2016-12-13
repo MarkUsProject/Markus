@@ -66,7 +66,7 @@ module GroupsHelper
           title: I18n.t('groups.rename_group.link')),
         'javascript:void(0);',
         onclick:"modal_rename.open();"\
-                "jQuery('#rename_group_dialog form').attr('action', '#{rename_link}')")
+                "$('#rename_group_dialog form').attr('action', '#{rename_link}')")
 
       g[:note_link] = view_context.link_to(
         view_context.image_tag(

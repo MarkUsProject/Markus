@@ -40,7 +40,7 @@
       document.getElementById('working').style.display = '';
 
       // Getting additional grade entry item columns
-      jQuery.ajax({
+      $.ajax({
         url: 'get_mark_columns',
         method: 'GET',
         dataType: 'json',
@@ -55,7 +55,7 @@
         }
       });
       // Getting row data
-      jQuery.ajax({
+      $.ajax({
         url: 'populate_term_marks_table',
         method: 'GET',
         dataType: 'json',
@@ -70,7 +70,7 @@
         }
       });
     },
-      
+
     render: function() {
 
       // Add grade columns to array of table columns
@@ -82,13 +82,13 @@
       s['user_name'] = <span dangerouslySetInnerHTML={{__html: row.user_name}} />;
       s['first_name'] = <span dangerouslySetInnerHTML={{__html: row.first_name}} />;
       s['last_name'] = <span dangerouslySetInnerHTML={{__html: row.last_name}} />;
-      
+
       // Populate the marks for the custom columns
       this.state.grade_columns.map(function (grade_column){
         s[grade_column.id] = <span dangerouslySetInnerHTML={{__html: row[grade_column.id]}} />
       });
 
-      // Set 's' as the only row in the data array passed to the React Table 
+      // Set 's' as the only row in the data array passed to the React Table
       var data_array = [s];
 
       return (

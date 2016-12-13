@@ -11,7 +11,7 @@ function formatTag(type, tag_id, grouping_id) {
     t_space.style.display = 'none';
 
     // Performs an AJAX call to add the tag.
-    jQuery.ajax({
+    $.ajax({
       method: 'GET',
       data: {
               type: type,
@@ -41,19 +41,19 @@ function formatTag(type, tag_id, grouping_id) {
 
 function addTagToCurrent(tag_id) {
   // We get the old tag text.
-  var spanElement = jQuery('span#' + tag_id).html();
+  var spanElement = $('span#' + tag_id).html();
 
   // Finally, deletes the current element.
-  jQuery('span#' + tag_id).remove();
-  jQuery('span#' + tag_id + '-space').remove();
+  $('span#' + tag_id).remove();
+  $('span#' + tag_id + '-space').remove();
 
   // Replace 'add' with 'remove'
   spanElement = spanElement.replace(/add/g, 'remove');
 
   // Now goes to insert it.
-  jQuery("#active_tags").append(
+  $("#active_tags").append(
          '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
-  jQuery("#active_tags").append(
+  $("#active_tags").append(
          '<span id="' + tag_id + '-space">&nbsp;</span>');
 
   // Hides or displays messages
@@ -62,19 +62,19 @@ function addTagToCurrent(tag_id) {
 
 function addTagToAvailable(tag_id) {
   // We get the old tag text.
-  var spanElement = jQuery('span#' + tag_id).html();
+  var spanElement = $('span#' + tag_id).html();
 
   // Finally, deletes the current element.
-  jQuery('span#' + tag_id).remove();
-  jQuery('span#' + tag_id + '-space').remove();
+  $('span#' + tag_id).remove();
+  $('span#' + tag_id + '-space').remove();
 
    // Replace 'add' with 'remove'
   spanElement = spanElement.replace(/remove/g, 'add');
 
   // Now goes to insert it.
-  jQuery("#available_tags").append(
+  $("#available_tags").append(
           '<span id="' + tag_id + '" class="tag_element">' + spanElement + '</span>');
-  jQuery("#available_tags").append(
+  $("#available_tags").append(
           '<span id="' + tag_id + '-space">&nbsp;</span>');
 
   // Hides or displays messages.
@@ -83,14 +83,14 @@ function addTagToAvailable(tag_id) {
 
 function toggleMessages() {
   // Checks and sees if there are no tags in the available tags.
-  if (jQuery('#available_tags span').length === 1) {
+  if ($('#available_tags span').length === 1) {
       document.getElementById('available-none').style.display = 'inline';
   } else {
       document.getElementById('available-none').style.display = 'none';
   }
 
   // Checks and sees if there are no tags in the active tags.
-  if (jQuery('#active_tags span').length === 1) {
+  if ($('#active_tags span').length === 1) {
       document.getElementById('active-none').style.display = 'inline';
   } else {
       document.getElementById('active-none').style.display = 'none';

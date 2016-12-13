@@ -1,11 +1,11 @@
-jQuery(document).ready(function() {
+$(document).ready(function() {
 
-    jQuery("#expand_all").click(function () {
+    $("#expand_all").click(function () {
         change_all('expand');
     });
 
-    jQuery("#collapse_all").click(function () {
+    $("#collapse_all").click(function () {
         change_all('collapse');
     });
-    
+
 });

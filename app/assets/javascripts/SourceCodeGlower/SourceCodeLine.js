@@ -122,7 +122,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
   if (startNode === endNode) {
     if (startNodeOffset > 0) {
       // Insert a plain node before where the glow should start
-      var startSpanPlain = jQuery(startNode).clone(false)[0];
+      var startSpanPlain = $(startNode).clone(false)[0];
       startSpanPlain.textContent = startNode.textContent.substr(0, startNodeOffset);
       startNode.textContent = startNode.textContent.substr(startNodeOffset);
 
@@ -153,7 +153,7 @@ SourceCodeLine.prototype.glow = function(annotationId, start, end,
 // If glow_end is true, the glow will be after the original span
 SourceCodeLine.prototype.splitAndGlowSpan = function(spanNode, nodeOffset,
   glowEnd, annotationId, hoverOnFunction, hoverOffFunction) {
-  var spanGlow = jQuery(spanNode).clone(false)[0];
+  var spanGlow = $(spanNode).clone(false)[0];
 
   var glowDepth = spanGlow.getAttribute('data-annotationDepth');
   var newGlowDepth;
@@ -205,7 +205,7 @@ SourceCodeLine.prototype.unGlow = function(annotationId) {
         // Remove mouse listeners if no longer glowing
         if (parseInt(glowDepth, 10) === 1) {
           parent.parentNode.replaceChild(
-            jQuery(parent).clone(true)[0], parent);
+            $(parent).clone(true)[0], parent);
         }
       }
     }

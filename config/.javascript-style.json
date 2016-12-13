@@ -12,7 +12,7 @@
   "noarg": true,
   "noempty": true,
   "nonew": true,
-  "predef": ["$", "jQuery", ],
+  "predef": ["$", "jQuery"],
   "quotmark": true,
   "trailing": true,
   "undef": false,

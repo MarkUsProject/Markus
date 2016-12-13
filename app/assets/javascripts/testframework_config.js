@@ -1,11 +1,11 @@
 /* Removes a newly created test script */
 function removeNewTestScript ( remove_check_box ) {
-  jQuery(remove_check_box).closest('.test_script').remove();
+  $(remove_check_box).closest('.test_script').remove();
 }
 
 /* Expands/Collapses the settings box for a test script */
 function toggleSettings ( collapse_lnk ) {
-  collapse_lnk = jQuery(collapse_lnk);
+  collapse_lnk = $(collapse_lnk);
 
   // find the needed DOM elements
   box = collapse_lnk.closest('.settings_box')
@@ -42,8 +42,8 @@ function toggleSettings ( collapse_lnk ) {
 
 /* Expands/Collapses all the settings boxes for the test scripts */
 function change_all(which) {
-  jQuery('.collapse').each(function (i) {
-    if(jQuery(this).data('collapsed')) {
+  $('.collapse').each(function (i) {
+    if($(this).data('collapsed')) {
       // This box is collapsed. Can be expanded.
       if(which == 'expand') { toggleSettings(this); }
     } else {
@@ -54,19 +54,19 @@ function change_all(which) {
 }
 
 
-jQuery(document).ready(function() {
+$(document).ready(function() {
   /* Update the script name in the legend when the admin uploads a file */
-  jQuery('.upload_file').change(function () {
-    jQuery(this).closest('.settings_box').find('.file_name').text(this.value);
+  $('.upload_file').change(function () {
+    $(this).closest('.settings_box').find('.file_name').text(this.value);
   });
 
   /* Existing files are collapsed by default */
-  jQuery('.collapse').each(function (i) {
+  $('.collapse').each(function (i) {
     toggleSettings(this);
   });
 
   /* Make the list of test script files sortable. */
-  jQuery( "#test_scripts" ).sortable({
+  $( "#test_scripts" ).sortable({
     cancel: ".settings_box",
     stop: function( event, ui) {
       var moved_seqnum_elem = ui.item.find('.seqnum');
@@ -101,17 +101,17 @@ jQuery(document).ready(function() {
         if( moved_seqnum >= next_seqnum) {
           moved_seqnum_elem.val(next_seqnum - 16);
         }
-      } 
+      }
     }
   });
 
 
   /* Disables form elements when Remove checkbox is checked */
-  jQuery( ".remove_test_script_file" ).click(function() {
+  $( ".remove_test_script_file" ).click(function() {
     if(this.checked) {
-      jQuery(this).closest(".settings_box").find(":input").not(this).attr('disabled', true);
+      $(this).closest(".settings_box").find(":input").not(this).attr('disabled', true);
     } else {
-      jQuery(this).closest(".settings_box").find(":input").attr('disabled', false);
+      $(this).closest(".settings_box").find(":input").attr('disabled', false);
     }
   });
 });

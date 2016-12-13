@@ -21,7 +21,7 @@
   <% else %>
     <%= link_to I18n.t(:remove),
                 'javascript:void(0);',
-                onclick: "jQuery(this).parents(\".test_file\").remove()" %>
+                onclick: "$(this).parents(\".test_file\").remove()" %>
   <% end %>
 
   <% if file_type == "test" %>

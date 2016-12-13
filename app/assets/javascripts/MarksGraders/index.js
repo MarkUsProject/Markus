@@ -5,7 +5,7 @@ var modalCreate,
     modalNotesGroup,
     modal_download,
     modal_download = null;
-jQuery(document).ready(function() {
+$(document).ready(function() {
     modal_upload   = new ModalMarkus('#upload_dialog');
     modal_download = new ModalMarkus('#download_dialog');
 });

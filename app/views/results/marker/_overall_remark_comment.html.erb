@@ -10,7 +10,7 @@
 		    cols: 50,
 		    rows: 5,
 		    id: 'overall_remark_comment_text_area',
-		    onkeypress: "jQuery('#overall_remark_comment_submit').prop('disabled',false);" %>
+		    onkeypress: "$('#overall_remark_comment_submit').prop('disabled',false);" %>
     <div>
       <%= f.submit t(:save_changes),
                    disabled: "disabled",

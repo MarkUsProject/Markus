@@ -85,7 +85,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: 'students/populate',
         method: 'GET',
         dataType: 'json',
@@ -114,14 +114,14 @@
         s['notes'] = <span>
           <a key={student.edit_link}
             href={student.edit_link}><%= j raw I18n.t(:'edit') %></a>
-          | 
+          |
           <a key={student.notes_link}
             href={student.notes_link}
             data-remote='true'
             id='notes_highlight_user_id'><%= j raw I18n.t(:'notes.title') %> ({student.num_notes})</a>
           </span>;
         s['hidden'] = student.hidden;
-    
+
         return s;
       }.bind(this));
 
@@ -151,7 +151,7 @@
     },
     render: function() {
       // Create apply button and secondary select input based on current state.
-      var applyButton = 
+      var applyButton =
         <button onClick={this.performAction}
           disabled={this.state.button_disabled}>
           <%= I18n.t(:apply) %>
@@ -165,7 +165,7 @@
           var section_options = [];
           for (var i = 0; i < this.props.sections.length; i++) {
             var section = this.props.sections[i];
-            var option = 
+            var option =
               <option value={section.id} onChange={this.sectionSelectChanged}>
                 {section.name}
               </option>
@@ -247,7 +247,7 @@
       var value = event.target.value;
       if (!isNaN(+value)) {
         this.setState({
-          grace_credits_input: value, 
+          grace_credits_input: value,
           button_disabled: false
         });
       } else {
@@ -267,7 +267,7 @@
         section: this.state.section_id
       };
 
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'students/bulk_modify',
         data: dataLoad,

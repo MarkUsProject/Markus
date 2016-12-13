@@ -58,7 +58,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: '<%= populate_marking_schemes_path %>',
         method: 'GET',
         dataType: 'json',

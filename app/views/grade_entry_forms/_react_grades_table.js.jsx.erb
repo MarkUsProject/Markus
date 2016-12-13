@@ -1,6 +1,6 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
   // Prevent the enter key from releasing grades
     preventEnterSubmit();
   });
@@ -9,7 +9,7 @@
     *  when the user presses "enter". As an Admin user, this would release the grades.
     */
   function preventEnterSubmit() {
-    jQuery(document).keypress(function(event) {
+    $(document).keypress(function(event) {
       if (event.which === 13) {
         event.preventDefault();
       }
@@ -62,7 +62,7 @@
         'grade_entry_item_id': this.props.grade_entry_column,
         'authenticity_token':  AUTH_TOKEN
       };
-      jQuery.ajax({
+      $.ajax({
         url:  this.props.data_action,
         data: params,
         type: 'POST',
@@ -77,10 +77,10 @@
         var input = this.getDOMNode();
         var td = input.parentNode;
         var tr = td.parentNode;
-        var tdIndex = jQuery(tr).children().index(td);
+        var tdIndex = $(tr).children().index(td);
         if (tr.nextSibling !== null) {
           var nextInput = tr.nextSibling.childNodes[tdIndex].firstChild;
-          jQuery(nextInput).select()
+          $(nextInput).select()
         }
       }
     },
@@ -155,7 +155,7 @@
       document.getElementById('working').style.display = '';
 
       // Getting additional grade entry item columns
-      jQuery.ajax({
+      $.ajax({
         url: 'get_mark_columns',
         method: 'GET',
         dataType: 'json',
@@ -170,7 +170,7 @@
         }
       });
       // Getting row data
-      jQuery.ajax({
+      $.ajax({
         url: 'populate_grades_table',
         method: 'GET',
         dataType: 'json',
@@ -272,7 +272,7 @@
         students: this.props.selected_students
       };
 
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,
@@ -288,7 +288,7 @@
         filter: 'none',
         students: this.props.selected_students
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_grade_entry_students',
         data: dataLoad,

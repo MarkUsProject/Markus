@@ -47,7 +47,7 @@
       // Show working indicator.
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: '<%= repo_browser_assignment_submission_path(
           @assignment,
           id: @grouping.id,
@@ -90,7 +90,7 @@
 
   React.renderComponent(<FilesTable />, document.getElementById('files_table'));
 
-  jQuery('.datetimepicker').datetimepicker({
+  $('.datetimepicker').datetimepicker({
     altField:         '#actual_revision_timestamp',
     altFieldTimeOnly: false,
     altFormat:        'yy-mm-dd',

@@ -113,7 +113,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: 'summaries/populate',
         method: 'GET',
         dataType: 'json',
