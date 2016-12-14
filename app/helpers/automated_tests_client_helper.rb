@@ -293,7 +293,7 @@ module AutomatedTestsClientHelper
     return true
   end
 
-  def self.create_test_script_result(script_name, test_run, assignment, grouping, submission)
+  def self.create_test_script_result(script_name, assignment, grouping, submission)
     revision_number = submission.nil? ?
         grouping.group.repo.get_latest_revision.revision_number :
         submission.revision_number
@@ -302,7 +302,6 @@ module AutomatedTestsClientHelper
 
     return grouping.test_script_results.create(
         test_script_id: test_script.id,
-        test_run: test_run,
         submission_id: submission_id,
         marks_earned: 0,
         repo_revision: revision_number)
@@ -320,7 +319,7 @@ module AutomatedTestsClientHelper
 
   def self.create_test_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
     test_scripts.each do |script_name|
-      test_script_result = create_test_script_result(script_name, nil, assignment, grouping, submission)
+      test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
       add_test_error_result(test_script_result, result_name, result_message)
       test_script_result.save
     end
@@ -447,7 +446,7 @@ module AutomatedTestsClientHelper
     end
     test_scripts.each do |test_script|
       total_marks = 0
-      new_test_script_result = create_test_script_result(test_script['script_name'], test_run, assignment, grouping, submission)
+      new_test_script_result = create_test_script_result(test_script['script_name'], assignment, grouping, submission)
       tests = test_script['test']
       if tests.nil?
         add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
