@@ -3,9 +3,10 @@
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('pdfjs/viewer') %>
 
-  <%= javascript_include_tag 'Results/file_selector' %>
-  <%= javascript_include_tag 'panes' %>
-  <%= javascript_include_tag 'pdfjs' %>
+  <%= javascript_include_tag 'Results/file_selector',
+                             'panes',
+                             'pdfjs',
+                             'testresults_config'%>
 
   <%= javascript_tag do -%>
     PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
