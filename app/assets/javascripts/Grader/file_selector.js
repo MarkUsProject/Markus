@@ -11,7 +11,9 @@ function open_file(id, path, downloading) {
 
 function open_submenu(dir_element) {
   dir_element.nextElementSibling.style.display = 'block';
-  // When opening a submenu, we want to close all currently open submenus 
+  dir_element.nextElementSibling.style.top = jQuery(dir_element).position().top + 'px';
+
+  // When opening a submenu, we want to close all currently open submenus
   // that aren't part of this submenu's path.
   close_submenu_recursive(dir_element.parentNode.parentNode,
       dir_element.parentNode);
