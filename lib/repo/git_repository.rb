@@ -500,27 +500,11 @@ module Repository
             'Unable to set bulk permissions: Not in authoritative mode!')
       end
 
-      # Build the list of TAs, Admins, and Students
-      tas = Ta.all
-      tas = tas.map(&:user_name)
-      admins = Admin.all
-      admins = admins.map(&:user_name)
-      valid_groupings_and_members = {}
-      assignments = Assignment.all
-      assignments.each do |assignment|
-        valid_groupings = assignment.valid_groupings
-        valid_groupings.each do |gr|
-          accepted_students = gr.accepted_students
-          accepted_students = accepted_students.map(&:user_name)
-          valid_groupings_and_members[gr.group.repo_name] = accepted_students
-        end
-      end
-
       # Create auth csv file
       CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
         csv.flock(File::LOCK_EX)
-        valid_groupings_and_members.each do |repo_name, students|
-          csv << [repo_name] + students + tas + admins
+        AbstractRepository.get_all_permissions.each do |repo_name, users|
+          csv << [repo_name] + users
         end
         csv.flock(File::LOCK_UN)
       end
