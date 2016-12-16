@@ -483,8 +483,53 @@ module Repository
     # Generate all the permissions for students for all groupings in all assignments.
     # This is done as a single operation to mirror the SVN repo code.  We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
-
     def self.__set_all_permissions
+
+      # Check if configuration is in order
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
+        raise ConfigurationError.new(
+            "Required config 'IS_REPOSITORY_ADMIN' not set")
+      end
+      if MarkusConfigurator.markus_config_repository_permission_file.nil?
+        raise ConfigurationError.new(
+            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+      end
+      # If we're not in authoritative mode, bail out
+      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
+        raise NotAuthorityError.new(
+            'Unable to set bulk permissions: Not in authoritative mode!')
+      end
+
+      # Build the list of TAs, Admins, and Students
+      tas = Ta.all
+      tas = tas.map(&:user_name)
+      admins = Admin.all
+      admins = admins.map(&:user_name)
+      valid_groupings_and_members = {}
+      assignments = Assignment.all
+      assignments.each do |assignment|
+        valid_groupings = assignment.valid_groupings
+        valid_groupings.each do |gr|
+          accepted_students = gr.accepted_students
+          accepted_students = accepted_students.map(&:user_name)
+          valid_groupings_and_members[gr.group.repo_name] = accepted_students
+        end
+      end
+
+      # Create auth csv file
+      CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
+        csv.flock(File::LOCK_EX)
+        valid_groupings_and_members.each do |repo_name, students|
+          csv << [repo_name] + students + tas + admins
+        end
+        csv.flock(File::LOCK_UN)
+      end
+
+      # TODO Remove with gitolite
+      GitRepository.__set_all_permissions_gitolite
+    end
+
+    def self.__set_all_permissions_gitolite
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
