@@ -24,7 +24,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
                      id: 'upload'  %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");'/>
+      <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
 
@@ -42,7 +42,7 @@
 
       <section class='dialog-actions'>
         <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-        <input type='reset' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");'/>
+        <input type='reset' value='<%= t(:cancel) %>'/>
       </section>
     <% end %>
   <% end %>

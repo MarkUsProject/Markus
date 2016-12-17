@@ -10,7 +10,6 @@
     <%= link_to '',
                 download_assignment_list_assignments_path(
                   file_format: 'csv'),
-                onclick: 'jQuery(this).closest(".dialog").trigger("closeModal");',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <div class='clickable_links'>
@@ -21,10 +20,9 @@
     <%= link_to '',
                 download_assignment_list_assignments_path(
                   file_format: 'yml'),
-                onclick: 'jQuery(this).closest(".dialog").trigger("closeModal");',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");'/>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' />
   </section>
 <% end %>

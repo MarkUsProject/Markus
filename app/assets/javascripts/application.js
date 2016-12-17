@@ -14,7 +14,7 @@
 
 /** Modal windows, powered by jQuery.easyModal. */
 
-function ModalMarkus(elem) {
+function ModalMarkus(elem, openLink) {
   this.modal_dialog = jQuery(elem).easyModal({
     onOpen: function (myModal) {
      // wait for the modal to load
@@ -28,6 +28,18 @@ function ModalMarkus(elem) {
     },
     updateZIndexOnOpen: false
   });
+
+  // If link is provided, bind its onclick to open this modal.
+  if (openLink !== undefined) {
+    jQuery(openLink).click(function () {
+      this.open();
+    }.bind(this))
+  }
+
+  // Set callbacks for buttons to close the modal.
+  this.modal_dialog.find('.make_div_clickable, [type=reset]').click(function () {
+    this.close();
+  }.bind(this));
 }
 
 ModalMarkus.prototype.open = function() {

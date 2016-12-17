@@ -4,14 +4,8 @@ var modalCreate,
     modalAssignmentGroupReUse = null;
 
 jQuery(document).ready(function () {
-  modal_upload   = jQuery('#upload_dialog').easyModal();
-  modal_download = jQuery('#download_dialog').easyModal();
-  jQuery('#uploadModal').on('click',function(){
-    modal_upload.trigger('openModal');
-  });
-  jQuery('#downloadModal').on('click',function(){
-    modal_download.trigger('openModal');
-  });
+  new ModalMarkus('#upload_dialog', '#uploadModal');
+  new ModalMarkus('#download_dialog', '#downloadModal');
   window.modal_rename   = new ModalMarkus('#rename_group_dialog');
   modalCreate               = new ModalMarkus('#create_group_dialog');
   modalNotesGroup           = new ModalMarkus('#notes_dialog');

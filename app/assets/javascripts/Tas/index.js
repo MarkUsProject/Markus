@@ -1,10 +1,4 @@
 jQuery(document).ready(function () {
-  modal_upload   = jQuery('#upload_dialog').easyModal();
-  modal_download = jQuery('#download_dialog').easyModal();
-  jQuery('#uploadModal').on('click',function(){
-    modal_upload.trigger('openModal');
-  });
-  jQuery('#downloadModal').on('click',function(){
-    modal_download.trigger('openModal');
-  });
+  new ModalMarkus('#upload_dialog', '#uploadModal');
+  new ModalMarkus('#download_dialog', '#downloadModal');
 });
