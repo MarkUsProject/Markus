@@ -145,6 +145,7 @@ function toggle_field_student_tests(is_disabled) {
 function toggle_field_token_config(is_disabled) {
   jQuery('#assignment_unlimited_tokens').attr('disabled', is_disabled);
   jQuery('#assignment_token_start_date').attr('disabled', is_disabled);
+  jQuery('#assignment_non_regenerating_tokens').attr('disabled', is_disabled);
 }
 
 function toggle_field_token_limits(is_disabled) {
