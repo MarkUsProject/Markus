@@ -10,7 +10,6 @@
     <%= link_to '',
                 download_assignment_list_assignments_path(
                   file_format: 'csv'),
-                onclick: 'modal_download.close();',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <div class='clickable_links'>
@@ -21,10 +20,9 @@
     <%= link_to '',
                 download_assignment_list_assignments_path(
                   file_format: 'yml'),
-                onclick: 'modal_download.close();',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();'/>
+    <input type='reset' id='download' value='<%= t(:cancel) %>' />
   </section>
 <% end %>

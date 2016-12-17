@@ -28,7 +28,7 @@
                      data: { disable_with: t(:uploading_please_wait) },
                      id: 'upload',
                      disabled: true %>
-      <%= button_to t(:close), '#', onclick: 'modal_upload.close(); return false;' %>
+      <input type='reset' id='upload' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
 <% end %>

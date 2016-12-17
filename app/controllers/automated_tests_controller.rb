@@ -170,6 +170,7 @@ class AutomatedTestsController < ApplicationController
                 :tokens_per_period,
                 :token_period,
                 :token_start_date,
+                :non_regenerating_tokens,
                 :unlimited_tokens,
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],

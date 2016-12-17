@@ -1,9 +1,9 @@
 <script>
   $(document).ready(function() {
     window.modal_create_new   = new ModalMarkus('#create_new_dialog');
-    window.modal_download     = new ModalMarkus('#download_dialog');
-    window.modal_upload       = new ModalMarkus('#upload_dialog');
     window.modal_edit         = new ModalMarkus('#edit_tags_dialog');
+    new ModalMarkus('#upload_dialog', '#uploadModal');
+    new ModalMarkus('#download_dialog', '#downloadModal');
 
     $('.sortable ul').sortable({
       axis:   'y',

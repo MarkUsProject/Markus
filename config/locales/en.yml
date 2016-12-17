@@ -1615,6 +1615,7 @@ en:
       testing_disabled: "Automated testing is not enabled for this assignment."
       automated_tests: "Test Framework"
       test_results: "Test Results"
+      no_results: "No test results to display"
       remove_file: "Remove"
       upload_required: "Upload<span class='required_field'>*</span>"
       expand_all: "Expand All"
@@ -1658,7 +1659,7 @@ en:
       duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
-      marks_obtained: "<span class=\"prop_label\">Points from Tests (latest run only):</span> %{marking}"
+      marks_obtained: "<span class=\"prop_label\">Points from Tests (latest run only):</span>&nbsp; %{marking}"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:
@@ -1686,6 +1687,7 @@ en:
       token:
         tokens_form: "Tokens available per group"
         tokens_regenerate: "and regenerate every"
+        tokens_no_regeneration: "No regeneration"
         token_start_date: "<span class=\"prop_label\">Tokens available starting on:</span> %{date}"
         tokens_per_period: "<span class=\"prop_label\">Tokens per %{regeneration_period} hour(s):</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens available:</span> No tokens given yet"

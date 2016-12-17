@@ -1,6 +1,6 @@
 @import 'common/core';
 @import 'common/assignment_dropdown';
-
+@import 'automated_tests';
 
 #remark_request {
   h3 + h3 {
@@ -21,4 +21,12 @@
 
 .no_tags {
   display: inline;
+}
+
+.run_tests {
+  margin-bottom: 5px !important;
+}
+
+.test_points {
+  font-size: large;
 }

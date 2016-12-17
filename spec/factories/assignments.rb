@@ -18,6 +18,7 @@ FactoryGirl.define do
     assignment_stat { AssignmentStat.new }
     token_period 1
     tokens_per_period 0
+    non_regenerating_tokens false
     unlimited_tokens false
     enable_test false
   end
