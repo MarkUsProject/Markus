@@ -4,12 +4,12 @@
     <span class='right'>
       <%= l(test_script_result.created_at, format: :long) %>
     </span>
-  </h3>
-  <% if test_script_result.created_at.to_s == latest_date.to_s %>
+  <% if test_script_result.created_at == latest_date %>
       <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
   <% else %>
       <%= link_to 'Show Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'expand' %>
   <% end %>
+  </h3>
   <div class='table'>
     <table class="results_table" id="<%=test_script_result.created_at.to_s.delete(' ')%>">
       <thead>

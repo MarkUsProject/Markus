@@ -9,7 +9,7 @@
 }
 
 .test-result {
-  margin: 25px;
+  margin: 0 0 15px 0;
 }
 
 div.dragarrows {
@@ -31,3 +31,6 @@ div.file_link {
   margin-left: -50px;
 }
 
+.test-result > h3 {
+  margin-bottom: 0;
+}
