@@ -1,4 +1,4 @@
-<%= content_for :modal_id, 'upload_yml_dialog' %>
+<%= content_for :modal_id, 'upload_dialog' %>
 <%= content_for :modal_title, t('criteria.upload.yml_title') %>
 <%= content_for :modal_content do %>
 
@@ -26,7 +26,7 @@
                    data: { disable_with: t(:uploading_please_wait) },
                    id: 'upload_yml',
                    disabled: true %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_upload.close();'/>
+      <input type='reset' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");' />
     </section>
   <% end %>
 <% end %>

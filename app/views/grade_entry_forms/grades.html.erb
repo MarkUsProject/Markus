@@ -7,12 +7,12 @@
 <% content_for :title, t('grade_entry_forms.grades.title') + ' ' + @grade_entry_form.short_identifier %>
 
 <% @heading_buttons = [
-  { link_text: t('upload'),
-    link_path: 'javascript:void(0);',
-    html_options: { onclick: 'modal_upload.open();' } },
   { link_text: t('download'),
-    link_path: 'javascript:void(0);',
-    html_options: { onclick: 'modal_download.open();' } },
+    link_path: '#',
+    html_options: { id: 'downloadModal' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { id: 'uploadModal' } }
 ] %>
 
 <% if @grade_entry_form.grade_entry_items.empty? %>

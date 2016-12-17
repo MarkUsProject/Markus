@@ -1,7 +1,13 @@
 var modalNotesGroup = null;
 
 jQuery(document).ready(function () {
-  window.modal_download = new ModalMarkus('#download_dialog');
-  window.modal_upload   = new ModalMarkus('#upload_dialog');
+  modal_upload   = jQuery('#upload_dialog').easyModal();
+  modal_download = jQuery('#download_dialog').easyModal();
+  jQuery('#uploadModal').on('click',function(){
+    modal_upload.trigger('openModal');
+  });
+  jQuery('#downloadModal').on('click',function(){
+    modal_download.trigger('openModal');
+  });
   modalNotesGroup = new ModalMarkus('#notes_dialog');
 });

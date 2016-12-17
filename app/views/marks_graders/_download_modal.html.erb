@@ -10,10 +10,10 @@
     <%= link_to '',
                 { action: 'download_grader_students_mapping',
                   id: @grade_entry_form.id },
-                onclick: 'modal_download.close();',
+                onclick: 'jQuery(this).closest(".dialog").trigger("closeModal");',
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>
-    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='modal_download.close();' />
+    <input type='reset' id='download' value='<%= t(:cancel) %>' onclick='jQuery(this).closest(".dialog").trigger("closeModal");'/>
   </section>
 <% end %>
