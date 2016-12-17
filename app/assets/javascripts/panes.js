@@ -75,8 +75,11 @@ jQuery(document).ready(function() {
 });
 
 /* Handle window resizing */
-window.onresize = function(event) {
+// NOTE: Don't manually override window.onresize. This will conflict with
+// other such uses, as we do in menu.js (TODO: change that one, too).
+window.addEventListener('resize', function(event) {
   panes_width = $panes.width();
+  panes_offset = $panes.offset();
   resize_col();
 
   // Update bounds
@@ -85,6 +88,6 @@ window.onresize = function(event) {
   make_draggable();
 
   // Make sure the drag bar stays in the right place
-  $drag.css('left', offset * panes_width + 'px');
+  $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   $drag.css('margin-left', '0');
-};
+});

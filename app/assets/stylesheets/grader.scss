@@ -1020,7 +1020,7 @@ ul.annotation_text_list {
   }
 
   #left-pane {
-    width: 60% !important;
+    width: 60%;
     padding-right: 0.5em;
 
     @include breakpoint(small) {
@@ -1030,7 +1030,7 @@ ul.annotation_text_list {
   }
 
   #right-pane {
-    width: 39.5% !important;
+    width: 39.5%;
     padding-left: 0.5em;
 
     @include breakpoint(small) {
