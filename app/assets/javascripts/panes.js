@@ -1,6 +1,6 @@
 /* Constants: change them to customize the columns */
 // Initial width percentage of left pane (e.g. 0.4 for 40%/60%)
-var offset = 0.65;
+var offset = 0.70;
 
 // Limit from left/right that you can drag to. Must be smaller than offset
 var limit = 0.25;
@@ -39,7 +39,6 @@ function make_draggable() {
       // Calculate offset and resize
       offset = (ui.offset.left - panes_offset.left) / panes_width;
       resize_col();
-      $drag.css('margin-left', '0');
     }
   });
 }
@@ -71,6 +70,7 @@ jQuery(document).ready(function() {
 
   // Initialize the drag bar and resize the columns
   make_draggable();
+  $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   resize_col();
 });
 
@@ -89,5 +89,4 @@ window.addEventListener('resize', function(event) {
 
   // Make sure the drag bar stays in the right place
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
-  $drag.css('margin-left', '0');
 });
