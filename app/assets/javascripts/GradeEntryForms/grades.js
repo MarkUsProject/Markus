@@ -1,4 +1,4 @@
 $(document).ready(function() {
-  window.modal_upload = new ModalMarkus('#upload_dialog');
-  window.modal_download = new ModalMarkus('#download_dialog');
+  new ModalMarkus('#upload_dialog', '#uploadModal');
+  new ModalMarkus('#download_dialog', '#downloadModal');
 });

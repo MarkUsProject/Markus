@@ -2,10 +2,9 @@ var modalCreate,
     modalAssignmentGroupReUse,
     modalRenameGroup,
     modalAddMember,
-    modalNotesGroup,
-    modal_download,
-    modal_download = null;
+    modalNotesGroup;
+
 $(document).ready(function() {
-    modal_upload   = new ModalMarkus('#upload_dialog');
-    modal_download = new ModalMarkus('#download_dialog');
+  new ModalMarkus('#upload_dialog', '#uploadModal');
+  new ModalMarkus('#download_dialog', '#downloadModal');
 });
