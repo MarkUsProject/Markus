@@ -152,22 +152,23 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def populate_grades_table
-    @grade_entry_form = GradeEntryForm.includes(grade_entry_students:
-                                                  [:grades, { user: :section }])
-                                      .find(params[:id])
+    grade_entry_form = GradeEntryForm.includes(grade_entry_students:
+                                                 [:grades, { user: :section }])
+                                     .find(params[:id])
     if current_user.admin?
-      @students = Student.all
+      students = grade_entry_form.grade_entry_students
     elsif current_user.ta?
-      @students = current_user.grade_entry_students.map(&:user)
+      students = current_user.grade_entry_students
+                             .where(grade_entry_form: grade_entry_form)
     end
 
     # TODO: Remove this hack by putting a computed column for the total_grade attribute
     totals = Grade.where(grade_entry_student_id:
-                           @grade_entry_form.grade_entry_students.pluck(:id))
+                           students.pluck(:id))
                   .group(:grade_entry_student_id)
                   .sum(:grade)
 
-    @student_grades = @grade_entry_form.grade_entry_students.map do |student_grade_entry|
+    student_grades = students.map do |student_grade_entry|
       student = student_grade_entry.user
       s = student.attributes
       s[:section] = student.section.try(:name) || '-'
@@ -181,7 +182,7 @@ class GradeEntryFormsController < ApplicationController
                               .asset_path('icons/email_go.png')
         end
         # Populate grade total
-        if @grade_entry_form.show_total
+        if grade_entry_form.show_total
           total = totals[student_grade_entry.id]
           if !total.nil?
             s[:total_marks] = total
@@ -192,7 +193,7 @@ class GradeEntryFormsController < ApplicationController
       end
       s
     end
-    render json: @student_grades
+    render json: student_grades
   end
 
   def populate_term_marks_table
