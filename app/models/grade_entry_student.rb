@@ -94,7 +94,7 @@ class GradeEntryStudent < ActiveRecord::Base
     end
 
     # Create non-existing grade entry student TA associations.
-    ges_ids = joins(:user).where(users: { id: student_ids }).pluck(:id)
+    ges_ids = form.grade_entry_students.where(user_id: student_ids).pluck(:id)
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 

@@ -83,41 +83,38 @@ class MarksGradersController < ApplicationController
     student_ids = params[:students]
     grader_ids = params[:graders]
 
-    case params[:current_table]
-      when 'groups_table'
-        if params[:students].nil? || params[:students].size == 0
-         # If there is a global action than there should be a student selected
-          if params[:global_actions]
-            @global_action_warning = t('assignment.group.select_a_student')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
-            return
-          end
-        end
+    if params[:students].nil? || params[:students].size == 0
+     # If there is a global action than there should be a student selected
+      if params[:global_actions]
+        @global_action_warning = t('assignment.group.select_a_student')
+        render partial: 'shared/global_action_warning', formats: [:js],
+               handlers: [:erb]
+        return
+      end
+    end
 
-        case params[:global_actions]
-        when 'assign'
-          if params[:graders].nil? || params[:graders].size == 0
-            @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
-            return
-          end
-          assign_all_graders(student_ids, grader_ids, @grade_entry_form)
-          return
-        when 'unassign'
-          unassign_graders(params[:gests])
-          return
-        when 'random_assign'
-          if params[:graders].nil? or params[:graders].size ==  0
-            @global_action_warning = t('assignment.group.select_a_grader')
-            render partial: 'shared/global_action_warning', formats: [:js],
-                   handlers: [:erb]
-            return
-          end
-          randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
-          return
-        end
+    case params[:global_actions]
+    when 'assign'
+      if params[:graders].nil? || params[:graders].size == 0
+        @global_action_warning = t('assignment.group.select_a_grader')
+        render partial: 'shared/global_action_warning', formats: [:js],
+               handlers: [:erb]
+        return
+      end
+      assign_all_graders(student_ids, grader_ids, @grade_entry_form)
+      return
+    when 'unassign'
+      unassign_graders(params[:gests])
+      return
+    when 'random_assign'
+      if params[:graders].nil? or params[:graders].size ==  0
+        @global_action_warning = t('assignment.group.select_a_grader')
+        render partial: 'shared/global_action_warning', formats: [:js],
+               handlers: [:erb]
+        return
+      end
+      randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
+      return
     end
   end
 
