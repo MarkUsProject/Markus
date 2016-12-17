@@ -57,22 +57,25 @@
         <% if can_show_test_results_tab?(assignment) %>
           <div id='test_result_tab' style='display:none;'>
             <div id='testviewer'>
-              <%= link_to t("automated_tests.run_tests"),
-                          run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
-                          class: 'button' %>  
-              <% unless submission.test_script_results.empty? %>
-                <div class="block">
-                  <h2><%= t("automated_tests.test_results") %></h2>
-                  <div class="block_content">
-                  <br />
-                    <div class="sub_block">
+              <h2><%= t("automated_tests.test_results") %>:</h2>
+              <div class="block_content">
+                <div class="sub_block test_points">
+                  <% if submission.test_script_results.empty? %>
+                    <% t("automated_tests.no_results") %>
+                  <% else %>
                       <%= raw t("automated_tests.marks_obtained",
                                 :marking => "#{@grouping.get_total_test_script_marks} /
-                                             #{@assignment.total_instructor_test_script_marks}" ) %>
-                    </div>
+                                                 #{@assignment.total_instructor_test_script_marks}" ) %>
+                  <% end %>
+                </div>
+              <%= link_to t("automated_tests.run_tests"),
+                          run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
+                          class: 'button run_tests' %>
+              <% unless submission.test_script_results.empty? %>
+                <div class="block">
                     <div id="test_results" class="sub_block">
                       <%= render partial: 'automated_tests/test_script_result',
-                                 locals: {show_output: true},
+                                 locals: {show_output: true, latest_date: submission.test_script_results[0].created_at},
                                  collection: submission.test_script_results %>
                     </div>
                   </div>

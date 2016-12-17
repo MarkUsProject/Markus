@@ -1,14 +1,17 @@
 <div class='test-result'>
   <% test_script_name = test_script_result.test_script.script_name %>
-
-  <h3><%= "#{t('automated_tests.test_run')} - #{test_script_name}" %>
+  <h3><%= "#{test_script_name}" %>
     <span class='right'>
       <%= l(test_script_result.created_at, format: :long) %>
     </span>
   </h3>
-
+  <% if test_script_result.created_at.to_s == latest_date.to_s %>
+      <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
+  <% else %>
+      <%= link_to 'Show Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'expand' %>
+  <% end %>
   <div class='table'>
-    <table>
+    <table class="results_table" id="<%=test_script_result.created_at.to_s.delete(' ')%>">
       <thead>
         <tr>
           <th><%= t('automated_tests.test_results_table.test_name') %></th>
@@ -41,4 +44,5 @@
       </tbody>
     </table>
   </div>
+  <script>hideIfNotLatest("<%=latest_date.to_s.delete(' ')%>", "<%=test_script_result.created_at.to_s.delete(' ')%>")</script>
 </div>

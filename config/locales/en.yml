@@ -1615,6 +1615,7 @@ en:
       testing_disabled: "Automated testing is not enabled for this assignment."
       automated_tests: "Test Framework"
       test_results: "Test Results"
+      no_results: "No test results to display"
       remove_file: "Remove"
       upload_required: "Upload<span class='required_field'>*</span>"
       expand_all: "Expand All"
