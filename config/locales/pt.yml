@@ -1476,6 +1476,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         tokens_form: "Tokens disponíveis por grupo por dia"
         tokens_per_day: "<span class=\"prop_label\">Tokens por dia:</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
+        no_regeneration: "Sem regeneração"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
         tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
       test_results_table:

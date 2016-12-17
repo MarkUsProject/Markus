@@ -5,23 +5,23 @@
     <div class='block_content'>
       <h3><%= t('automated_tests.information') %></h3>
       <div class='sub_block'>
+        <div class='sub_block'>
+          <%= raw t('automated_tests.token.token_start_date',
+                    date: l(@assignment.token_start_date, format: :long_date)) %>
+        </div>
         <% if @assignment.unlimited_tokens %>
-          <div class='sub_block'>
-            <%= raw t('automated_tests.token.token_start_date',
-                      date: l(@assignment.token_start_date, format: :long_date)) %>
-          </div>
           <div class='sub_block'>
             <%= raw t('automated_tests.token.unlimited_tokens') %>
           </div>
-        <% else %>
-          <div class='sub_block'>
-             <%= raw t('automated_tests.token.token_start_date',
-                       date: l(@assignment.token_start_date, format: :long_date)) %>
-          </div>
+        <% elsif !@assignment.non_regenerating_tokens %>
           <div class='sub_block'>
             <%= raw t('automated_tests.token.tokens_per_period',
                       tokens: @assignment.tokens_per_period,
                       regeneration_period: @assignment.token_period) %>
+          </div>
+        <% else %>
+          <div class='sub_block'>
+            <%= raw t('automated_tests.token.tokens_regenerate') %>
           </div>
           <div class='sub_block'>
             <% if DateTime.now < @assignment.token_start_date %>

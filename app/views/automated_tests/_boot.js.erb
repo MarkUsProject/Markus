@@ -7,6 +7,7 @@ function check_start_of_availability_date(new_start_date) {
 
 jQuery(window).load(function() {
   <% if @assignment %>
+    toggle_token_regeneration(<%= @assignment.non_regenerating_tokens %>);
     toggle_tests_tokens(<%= @assignment.unlimited_tokens %>);
     toggle_student_tests(<%= @assignment.enable_student_tests %>);
     toggle_tests(<%= @assignment.enable_test %>);
@@ -21,9 +22,9 @@ jQuery(window).load(function() {
     dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
     timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
     showTimezone:     false,
-    monthNames:       <%= raw I18n.t('date.months') %>,
-    dayNames:         <%= raw I18n.t('date.weekdays') %>,
-    dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
+    monthNames:       "<%= raw I18n.t('date.months') %>",
+    dayNames:         "<%= raw I18n.t('date.weekdays') %>",
+    dayNamesMin:      "<%= raw I18n.t('date.weekdays_min') %>",
     hourText:         "<%= I18n.t('time.hour') %>",
     minuteText:       "<%= I18n.t('time.minute') %>",
     timeText:         "<%= I18n.t('time.time') %>",

@@ -598,6 +598,7 @@ class AssignmentsController < ApplicationController
             assignment.submission_rule = NoLateSubmissionRule.new
             assignment.assignment_stat = AssignmentStat.new
             assignment.token_period = 1
+            assignment.non_regenerating_tokens = false
             assignment.unlimited_tokens = false
           end
           assignment.update(attrs)
@@ -616,6 +617,7 @@ class AssignmentsController < ApplicationController
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
             row[:token_period] = 1
+            row[:non_regenerating_tokens] = false
             row[:unlimited_tokens] = false
             update_assignment!(row)
           end

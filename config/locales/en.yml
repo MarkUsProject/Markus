@@ -1686,6 +1686,7 @@ en:
       token:
         tokens_form: "Tokens available per group"
         tokens_regenerate: "and regenerate every"
+        tokens_no_regeneration: "No regeneration"
         token_start_date: "<span class=\"prop_label\">Tokens available starting on:</span> %{date}"
         tokens_per_period: "<span class=\"prop_label\">Tokens per %{regeneration_period} hour(s):</span> %{tokens}"
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens available:</span> No tokens given yet"
