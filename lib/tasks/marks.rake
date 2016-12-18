@@ -36,7 +36,10 @@ namespace :db do
       result.save
     end
 
-    Assignment.where(short_identifier: %w(A1 A2)).each &:update_results_stats
+    Assignment.where(short_identifier: %w(A1 A2)).each do |a|
+      a.update_results_stats
+      a.assignment_stat.refresh_grade_distribution
+    end
 
     puts 'Assign Marks for Spreadsheets'
     grade_entry_form = GradeEntryForm.find(1)
