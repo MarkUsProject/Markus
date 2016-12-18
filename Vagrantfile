@@ -27,18 +27,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # MarkUs provisioned by puppet using the current directory as document root.
+  # Make sure to get all the puppet modules by running
+  #    git submodule update --init --recursive
   config.vm.define "pupkus", autostart: false do |pupkus|
     pupkus.vm.box = "puppetlabs/debian-8.2-64-puppet"
+
+    pupkus.vm.network :private_network, ip: '192.168.50.50'
+    pupkus.vm.synced_folder '.', '/vagrant', nfs: true, mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=1']
+    pupkus.vm.network "forwarded_port", guest: 3000, host: 3000
 
     # Configure VirtualBox
     pupkus.vm.provider "virtualbox" do |vb|
       vb.name = "markus-puppet"
       vb.memory = 2048
+      vb.cpus = 4
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
     end
 
     # Provision the server using puppet.
     pupkus.vm.provision "puppet" do |puppet|
       puppet.environment_path = "puppet/environments"
+      puppet.module_path = "puppet/modules"
       puppet.environment = "testenv"
     end
   end
