@@ -1,3 +1,6 @@
+require 'base64'
+
+
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      except: [:deletegroup,
@@ -55,7 +58,13 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    send_data @feedback_file.file_content, 
+    if @feedback_file.mime_type.start_with? 'image'
+      content = Base64.encode64(@feedback_file.file_content)
+    else
+      content = @feedback_file.file_content
+    end
+
+    send_data content,
               type: @feedback_file.mime_type,
               filename: @feedback_file.filename,
               disposition: 'inline'

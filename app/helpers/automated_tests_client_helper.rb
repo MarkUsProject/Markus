@@ -1,6 +1,4 @@
-require 'net/ssh'
-require 'net/scp'
-require 'json'
+require File.join(Rails.root, 'lib', 'automated_tests', 'server', 'automated_tests_server')
 
 module AutomatedTestsClientHelper
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
@@ -200,7 +198,7 @@ module AutomatedTestsClientHelper
 
   def self.get_test_server_user
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
       raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
@@ -209,13 +207,16 @@ module AutomatedTestsClientHelper
     return test_server_user
   end
 
-  # Verify the user has the permission to run the tests - admin
-  # and graders always have the permission, while student has to
+  # Verify the user has the permission to run the tests - admins
+  # always have the permission, while student has to
   # belong to the group, and have at least one token.
   def self.check_user_permission(user, grouping, assignment)
 
-    if user.admin? || user.ta?
+    if user.admin?
       return
+    end
+    if user.ta?
+      raise I18n.t('automated_tests.error.ta_not_allowed')
     end
     # Make sure student belongs to this group
     unless user.accepted_groupings.include?(grouping)
@@ -246,7 +247,7 @@ module AutomatedTestsClientHelper
     end
 
     # Select a subset of test scripts
-    if user.admin? || user.ta?
+    if user.admin?
       test_scripts = all_scripts.select(&:run_by_instructors)
     elsif user.student?
       test_scripts = all_scripts.select(&:run_by_students)
@@ -262,9 +263,12 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
 
-    test_server_user = get_test_server_user
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
+    unless assignment.enable_test
+      raise I18n.t('automated_tests.error.not_enabled')
+    end
+    test_server_user = get_test_server_user
     check_user_permission(current_user, grouping, assignment)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
@@ -308,17 +312,7 @@ module AutomatedTestsClientHelper
         repo_revision: revision_number)
   end
 
-  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
-    test_script_result.test_results.create(
-        name: (name.nil? ? '' : name),
-        input: (input.nil? ? '' : CGI.unescapeHTML(input)),
-        actual_output: (actual.nil? ? '' : CGI.unescapeHTML(actual)),
-        expected_output: (expected.nil? ? '' : CGI.unescapeHTML(expected)),
-        marks_earned: marks_earned,
-        completion_status: (status.nil? ? 'error' : status))
-  end
-
-  def self.create_test_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
+  def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, result_name, result_message)
     test_scripts.each do |script_name|
       test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
       add_test_error_result(test_script_result, result_name, result_message)
@@ -329,8 +323,18 @@ module AutomatedTestsClientHelper
     end
   end
 
+  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
+    test_script_result.test_results.create(
+        name: name,
+        input: CGI.unescapeHTML(input),
+        actual_output: CGI.unescapeHTML(actual),
+        expected_output: CGI.unescapeHTML(expected),
+        marks_earned: marks_earned,
+        completion_status: status)
+  end
+
   def self.add_test_error_result(test_script_result, result_name, result_message)
-    add_test_result(test_script_result, result_name, nil, result_message, nil, 0, 'error')
+    add_test_result(test_script_result, result_name, '', result_message, '', 0, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -345,9 +349,9 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
-      create_test_error_result(test_scripts, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.no_source_files'))
+      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.no_source_files'))
       return
     end
 
@@ -357,7 +361,7 @@ module AutomatedTestsClientHelper
         host_with_port :
         host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.markus_ate_server_host
-    test_server_user = User.find_by_user_name(test_server_host)
+    test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil?
       return
     end
@@ -365,6 +369,7 @@ module AutomatedTestsClientHelper
     tests_path = MarkusConfigurator.markus_ate_server_tests_dir
     same_path = (MarkusConfigurator.markus_ate_server_files_dir == MarkusConfigurator.markus_ate_server_tests_dir)
     results_path = MarkusConfigurator.markus_ate_server_results_dir
+    server_queue = MarkusConfigurator.markus_ate_tests_queue_name
 
     if test_server_host == 'localhost'
       # tests executed locally with no authentication:
@@ -378,8 +383,8 @@ module AutomatedTestsClientHelper
       end
       test_username = nil
       # enqueue locally using resque api
-      Resque.enqueue(AutomatedTestsServerHelper, markus_address, user_api_key, server_api_key, test_username,
-                     test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
+      Resque.enqueue_to(server_queue, AutomatedTestsServer, markus_address, user_api_key, server_api_key, test_username,
+                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
     else
       # tests executed locally or remotely with authentication:
       # copy the student's submission and all necessary files through ssh in a temp folder
@@ -405,77 +410,107 @@ module AutomatedTestsClientHelper
           test_username = (file_username == MarkusConfigurator.markus_ate_server_tests_username) ?
               nil : MarkusConfigurator.markus_ate_server_tests_username
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
-          resque_params = {:class => 'AutomatedTestsServerHelper',
+          resque_params = {:class => 'AutomatedTestsServer',
                            :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
                                      files_path, tests_path, results_path, assignment.id, group.id, submission_id]}
-          server_queue = MarkusConfigurator.markus_ate_tests_queue_name
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e
         submission = submission_id.nil? ? nil : Submission.find(submission_id)
-        create_test_error_result(test_scripts, assignment, grouping, submission,
-                                 I18n.t('automated_tests.test_result.all_tests'),
-                                 I18n.t('automated_tests.test_result.no_server_connection',
-                                        {hostname: test_server_host, error: e.message}))
+        create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                             I18n.t('automated_tests.test_result.all_tests'),
+                                             I18n.t('automated_tests.test_result.no_server_connection',
+                                                    {hostname: test_server_host, error: e.message}))
       end
     end
   end
 
   def self.process_test_result(raw_result, test_scripts_ran, assignment, grouping, submission)
 
+    # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
     result = nil
     begin
       result = Hash.from_xml(raw_result)
     rescue => e
-      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+      create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+      unless submission.nil?
+        submission.set_marks_for_tests
+      end
       return
     end
     test_run = result['testrun']
     test_scripts = test_run.nil? ? nil : test_run['test_script']
     if test_run.nil? || test_scripts.nil?
-      create_test_error_result(test_scripts_ran, assignment, grouping, submission,
-                               I18n.t('automated_tests.test_result.all_tests'),
-                               I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      unless submission.nil?
+        submission.set_marks_for_tests
+      end
       return
     end
 
-    # Hash.from_xml will return a hash with only one test script and an array otherwise
-    unless test_scripts.is_a?(Array)
+    # process results
+    unless test_scripts.is_a?(Array) # Hash.from_xml returns a hash if it's a single test script and an array otherwise
       test_scripts = [test_scripts]
     end
+    new_test_script_results = {}
     test_scripts.each do |test_script|
+      script_name = test_script['script_name']
+      if script_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
+        next
+      end
       total_marks = 0
-      new_test_script_result = create_test_script_result(test_script['script_name'], assignment, grouping, submission)
+      new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+      new_test_script_results[script_name] = new_test_script_result
       tests = test_script['test']
       if tests.nil?
         add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
                               I18n.t('automated_tests.test_result.no_tests'))
-        return
+        next
       end
-      # same workaround as above, Hash.from_xml produces a hash if it's a single test
-      unless tests.is_a?(Array)
+      unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
         tests = [tests]
       end
       tests.each do |test|
-        marks_earned = test['marks_earned']
-        if marks_earned.nil?
-          marks_earned = '0'
+        test_name = test['name']
+        if test_name.nil? # with malformed xml, some test results could be valid and some won't
+          add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
+                                I18n.t('automated_tests.test_result.bad_results', {xml: test}))
+          next
         end
-        total_marks += marks_earned.to_i
-        add_test_result(new_test_script_result, test['name'], test['input'], test['actual'], test['expected'],
-                        marks_earned.to_i, test['status'])
+        marks_earned = test['marks_earned'].nil? ? 0 : test['marks_earned'].to_i
+        test_input = test['input'].nil? ? '' : test['input']
+        test_actual = test['actual'].nil? ? '' : test['actual']
+        test_expected = test['expected'].nil? ? '' : test['expected']
+        test_status = test['status']
+        if test_status.nil? or not test_status.in?(%w(pass fail error))
+          test_status = 'error'
+          marks_earned = 0
+        end
+        add_test_result(new_test_script_result, test_name, test_input, test_actual, test_expected, marks_earned,
+                        test_status)
+        total_marks += marks_earned
       end
       new_test_script_result.marks_earned = total_marks
       new_test_script_result.save!
     end
 
+    # try to recover from malformed xml at the test script level
+    test_scripts_ran.each do |script_name|
+      if new_test_script_results[script_name].nil?
+        new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission)
+        add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
+                              I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+      end
+    end
+
+    # set the marks assigned by the test
     unless submission.nil?
       submission.set_marks_for_tests
     end
-
-    return
   end
 
 end

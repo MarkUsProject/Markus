@@ -406,8 +406,13 @@ class ResultsController < ApplicationController
     end
 
     @annots = @file.annotations.select{|a| a.result_id == @result.id}
-    @all_annots = @file.submission.annotations.select{|a| a.result_id == @result.id}
-    
+    @all_annots = @result.annotations
+    if @result.submission.remark_submitted?
+      original_result = @result.submission.get_original_result
+      @all_annots += original_result.annotations
+      @annots += @file.annotations.select{|a| a.result_id == original_result.id}
+    end
+
     begin
       @file_contents = @file.retrieve_file
     rescue Exception => e
@@ -685,7 +690,7 @@ class ResultsController < ApplicationController
     end
 
     submission = if map[:file_id]
-                   sub_file = SubmissionFile.find_by_id(map[:file_id])
+                   sub_file = SubmissionFile.find_by(id: map[:file_id])
                    sub_file.submission unless sub_file.nil?
                  elsif map[:submission_id]
                    Submission.find(map[:submission_id])

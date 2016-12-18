@@ -44,6 +44,7 @@ gem 'autoprefixer-rails'
 gem 'resque'
 gem 'net-ssh'
 gem 'net-scp'
+gem 'httparty'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'
@@ -115,7 +116,6 @@ end
 # but using a seeded database
 group :development, :test, :production_test do
   gem 'faker' # required for database seeding
-  gem 'httparty'
 end
 
 # Gems not needed at runtime should go here so that MarkUs does

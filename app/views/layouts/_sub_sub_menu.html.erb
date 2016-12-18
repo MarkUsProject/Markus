@@ -29,7 +29,7 @@
             <%= link_to t('annotations.annotations'),
                         assignment_annotation_categories_path(@assignment) %>
           </li>
-              <% unless @assignment.is_peer_review? %>
+          <% if MarkusConfigurator.automated_testing_engine_on? && !@assignment.is_peer_review? %>
             <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
               <%= link_to t('automated_tests.automated_tests'),
                           manage_assignment_automated_tests_path(@assignment) %>

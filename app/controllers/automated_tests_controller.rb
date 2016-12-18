@@ -96,12 +96,7 @@ class AutomatedTestsController < ApplicationController
 
     # For running tests
     if @assignment.unlimited_tokens || token.remaining > 0
-      test_errors = run_tests(grouping.id)
-      if test_errors.nil?
-        flash_message(:notice, I18n.t('automated_tests.tests_running'))
-      else
-        flash_message(:error, test_errors)
-      end
+      run_tests(grouping.id)
     end
     redirect_to action: :student_interface, id: params[:id]
   end
@@ -109,7 +104,7 @@ class AutomatedTestsController < ApplicationController
   def run_tests(grouping_id)
     begin
       AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping_id, @current_user)
-      return nil
+      flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
     end
@@ -124,9 +119,9 @@ class AutomatedTestsController < ApplicationController
   def download
     filedb = nil
     if params[:type] == 'script'
-      filedb = TestScript.find_by_assignment_id_and_script_name(params[:assignment_id], params[:filename])
+      filedb = TestScript.find_by(assignment_id: params[:assignment_id], script_name: params[:filename])
     elsif params[:type] == 'support'
-      filedb = TestSupportFile.find_by_assignment_id_and_file_name(params[:assignment_id], params[:filename])
+      filedb = TestSupportFile.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
     end
 
     if filedb
