@@ -311,6 +311,7 @@ module Repository
     end
 
     # Adds a user with given permissions to the repository
+    # TODO Fix/simplify it or just invoke __set_all_permissions
     def add_user(user_id, permissions)
       if @repos_admin # Are we admin?
         if !File.exist?(@repos_auth_file)
@@ -393,6 +394,7 @@ module Repository
     end
 
     # Set permissions for a given user
+    # TODO Fix/simplify it or just invoke __set_all_permissions
     def set_permissions(user_id, permissions)
       if @repos_admin # Are we admin?
         if !File.exist?(@repos_auth_file)
@@ -428,6 +430,7 @@ module Repository
     end
 
     # Delete user from access list
+    # TODO Fix/simplify it or just invoke __set_all_permissions
     def remove_user(user_id)
       if @repos_admin # Are we admin?
         if !File.exist?(@repos_auth_file)

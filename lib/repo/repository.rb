@@ -208,12 +208,9 @@ module Repository
     def self.get_all_permissions
 
       permissions = {}
-      admins = Admin.all
-      admins = admins.map(&:user_name)
-      tas = Ta.all
-      tas = tas.map(&:user_name)
-      non_student_repos = Group.all
-      non_student_repos = non_student_repos.map(&:repository_name)
+      admins = Admin.pluck(:user_name)
+      tas = Ta.pluck(:user_name)
+      non_student_repos = Group.pluck(:repository_name)
       # Permission subtleties:
       # 1) a repository is associated with a Group, but..
       # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
@@ -224,7 +221,8 @@ module Repository
       # valid for the last assignment due.
       # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
       # we may want to add or [more frequently] remove some students from it)
-      assignments = Assignment.order(due_date: :desc)
+      assignments = Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
+                              .order(due_date: :desc)
       assignments.each do |assignment|
         valid_groupings = assignment.valid_groupings
         valid_groupings.each do |valid_grouping|
@@ -242,7 +240,7 @@ module Repository
         permissions[repo_name] = admins + tas
       end
 
-      return permissions
+      permissions
     end
 
   end
