@@ -1499,7 +1499,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "UPDATE ME"
-        no_server_connection: "UPDATE ME"
+        bad_server: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
 

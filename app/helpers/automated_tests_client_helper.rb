@@ -371,29 +371,29 @@ module AutomatedTestsClientHelper
     test_username = (test_server_host == 'localhost' || MarkusConfigurator.markus_ate_server_files_username ==
                                                         MarkusConfigurator.markus_ate_server_tests_username) ?
         nil : MarkusConfigurator.markus_ate_server_tests_username
-    server_queue = "resque:queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
+    server_queue = "queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
     resque_params = {:class => 'AutomatedTestsServer',
                      :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
                                'files_path_placeholder', tests_path, results_path, assignment.id, group.id,
                                submission_id]}
 
-    if test_server_host == 'localhost'
-      # tests executed locally with no authentication:
-      # create a temp folder, copying the student's submission and all necessary test files
-      FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing..
-      files_path = Dir.mktmpdir(nil, files_path) # ..then create temp subfolder
-      FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
-      FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
-      # enqueue locally using redis api
-      resque_params[:args][5] = files_path
-      if same_path
-        resque_params[:args][6] = files_path
-      end
-      Resque.redis.rpush(server_queue, JSON.generate(resque_params))
-    else
-      # tests executed locally or remotely with authentication:
-      # copy the student's submission and all necessary files through ssh in a temp folder
-      begin
+    begin
+      if test_server_host == 'localhost'
+        # tests executed locally with no authentication:
+        # create a temp folder, copying the student's submission and all necessary test files
+        FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing..
+        files_path = Dir.mktmpdir(nil, files_path) # ..then create temp subfolder
+        FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
+        FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
+        # enqueue locally using redis api
+        resque_params[:args][5] = files_path
+        if same_path
+          resque_params[:args][6] = files_path
+        end
+        Resque.redis.rpush(server_queue, JSON.generate(resque_params))
+      else
+        # tests executed locally or remotely with authentication:
+        # copy the student's submission and all necessary files through ssh in a temp folder
         file_username = MarkusConfigurator.markus_ate_server_files_username
         Net::SSH::start(test_server_host, file_username, auth_methods: ['publickey']) do |ssh|
           ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing..
@@ -414,15 +414,15 @@ module AutomatedTestsClientHelper
           if same_path
             resque_params[:args][6] = files_path
           end
-          ssh.exec!("redis-cli rpush \"#{server_queue}\" '#{JSON.generate(resque_params)}'")
+          ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
-      rescue Exception => e
-        submission = submission_id.nil? ? nil : Submission.find(submission_id)
-        create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
-                                             I18n.t('automated_tests.test_result.all_tests'),
-                                             I18n.t('automated_tests.test_result.no_server_connection',
-                                                    {hostname: test_server_host, error: e.message}))
       end
+    rescue Exception => e
+      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_server',
+                                                  {hostname: test_server_host, error: e.message}))
     end
   end
 
