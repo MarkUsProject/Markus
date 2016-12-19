@@ -44,7 +44,6 @@ gem 'autoprefixer-rails'
 gem 'resque'
 gem 'net-ssh'
 gem 'net-scp'
-gem 'httparty'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'

@@ -1,3 +1,0 @@
-require 'rake'
-require 'resque/tasks'
-require_relative 'automated_tests_server'

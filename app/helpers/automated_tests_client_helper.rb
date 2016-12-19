@@ -1,4 +1,3 @@
-require File.join(Rails.root, 'lib', 'automated_tests', 'server', 'automated_tests_server')
 
 module AutomatedTestsClientHelper
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
@@ -369,26 +368,32 @@ module AutomatedTestsClientHelper
     tests_path = MarkusConfigurator.markus_ate_server_tests_dir
     same_path = (MarkusConfigurator.markus_ate_server_files_dir == MarkusConfigurator.markus_ate_server_tests_dir)
     results_path = MarkusConfigurator.markus_ate_server_results_dir
-    server_queue = MarkusConfigurator.markus_ate_tests_queue_name
+    test_username = (test_server_host == 'localhost' || MarkusConfigurator.markus_ate_server_files_username ==
+                                                        MarkusConfigurator.markus_ate_server_tests_username) ?
+        nil : MarkusConfigurator.markus_ate_server_tests_username
+    server_queue = "queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
+    resque_params = {:class => 'AutomatedTestsServer',
+                     :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
+                               'files_path_placeholder', tests_path, results_path, assignment.id, group.id,
+                               submission_id]}
 
-    if test_server_host == 'localhost'
-      # tests executed locally with no authentication:
-      # create a temp folder, copying the student's submission and all necessary test files
-      FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing..
-      files_path = Dir.mktmpdir(nil, files_path) # ..then create temp subfolder
-      FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
-      FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
-      if same_path
-        tests_path = files_path
-      end
-      test_username = nil
-      # enqueue locally using resque api
-      Resque.enqueue_to(server_queue, AutomatedTestsServer, markus_address, user_api_key, server_api_key, test_username,
-                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
-    else
-      # tests executed locally or remotely with authentication:
-      # copy the student's submission and all necessary files through ssh in a temp folder
-      begin
+    begin
+      if test_server_host == 'localhost'
+        # tests executed locally with no authentication:
+        # create a temp folder, copying the student's submission and all necessary test files
+        FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing..
+        files_path = Dir.mktmpdir(nil, files_path) # ..then create temp subfolder
+        FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
+        FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
+        # enqueue locally using redis api
+        resque_params[:args][5] = files_path
+        if same_path
+          resque_params[:args][6] = files_path
+        end
+        Resque.redis.rpush(server_queue, JSON.generate(resque_params))
+      else
+        # tests executed locally or remotely with authentication:
+        # copy the student's submission and all necessary files through ssh in a temp folder
         file_username = MarkusConfigurator.markus_ate_server_files_username
         Net::SSH::start(test_server_host, file_username, auth_methods: ['publickey']) do |ssh|
           ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing..
@@ -404,24 +409,20 @@ module AutomatedTestsClientHelper
             file_path = File.join(assignment_tests_path, file_name)
             ssh.scp.upload!(file_path, files_path)
           end
+          # enqueue remotely directly with redis-cli, resque does not allow for multiple redis servers
+          resque_params[:args][5] = files_path
           if same_path
-            tests_path = files_path
+            resque_params[:args][6] = files_path
           end
-          test_username = (file_username == MarkusConfigurator.markus_ate_server_tests_username) ?
-              nil : MarkusConfigurator.markus_ate_server_tests_username
-          # enqueue remotely directly in redis, resque does not allow for multiple redis servers
-          resque_params = {:class => 'AutomatedTestsServer',
-                           :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
-                                     files_path, tests_path, results_path, assignment.id, group.id, submission_id]}
-          ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
+          ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
-      rescue Exception => e
-        submission = submission_id.nil? ? nil : Submission.find(submission_id)
-        create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
-                                             I18n.t('automated_tests.test_result.all_tests'),
-                                             I18n.t('automated_tests.test_result.no_server_connection',
-                                                    {hostname: test_server_host, error: e.message}))
       end
+    rescue Exception => e
+      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_server',
+                                                  {hostname: test_server_host, error: e.message}))
     end
   end
 
