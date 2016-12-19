@@ -210,7 +210,7 @@ module Repository
       permissions = {}
       admins = Admin.pluck(:user_name)
       tas = Ta.pluck(:user_name)
-      non_student_repos = Group.pluck(:repository_name)
+      non_student_repos = Group.pluck(:repo_name)
       # Permission subtleties:
       # 1) a repository is associated with a Group, but..
       # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
