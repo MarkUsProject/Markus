@@ -204,6 +204,45 @@ module Repository
       raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"
     end
 
+    # Builds a hash of all repositories and users allowed to rw to them
+    def self.get_all_permissions
+
+      permissions = {}
+      admins = Admin.pluck(:user_name)
+      tas = Ta.pluck(:user_name)
+      non_student_repos = Group.pluck(:repo_name)
+      # Permission subtleties:
+      # 1) a repository is associated with a Group, but..
+      # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
+      # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+      # the assignment level, allowing the same Group repo to have different students according to the assignment.
+      # The two extremes to implement it are union (permissive) or intersection (restrictive), but we are going to take
+      # a last-deadline approach instead, where we assume that the valid students at any point in time are the ones
+      # valid for the last assignment due.
+      # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
+      # we may want to add or [more frequently] remove some students from it)
+      assignments = Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
+                              .order(due_date: :desc)
+      assignments.each do |assignment|
+        valid_groupings = assignment.valid_groupings
+        valid_groupings.each do |valid_grouping|
+          repo_name = valid_grouping.group.repo_name
+          if permissions.key?(repo_name)
+            next
+          end
+          accepted_students = valid_grouping.accepted_students
+          accepted_students = accepted_students.map(&:user_name)
+          permissions[repo_name] = admins + tas + accepted_students
+          non_student_repos.delete(repo_name)
+        end
+      end
+      non_student_repos.each do |repo_name|
+        permissions[repo_name] = admins + tas
+      end
+
+      permissions
+    end
+
   end
 
 

@@ -483,8 +483,37 @@ module Repository
     # Generate all the permissions for students for all groupings in all assignments.
     # This is done as a single operation to mirror the SVN repo code.  We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
-
     def self.__set_all_permissions
+
+      # Check if configuration is in order
+      if MarkusConfigurator.markus_config_repository_admin?.nil?
+        raise ConfigurationError.new(
+            "Required config 'IS_REPOSITORY_ADMIN' not set")
+      end
+      if MarkusConfigurator.markus_config_repository_permission_file.nil?
+        raise ConfigurationError.new(
+            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+      end
+      # If we're not in authoritative mode, bail out
+      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
+        raise NotAuthorityError.new(
+            'Unable to set bulk permissions: Not in authoritative mode!')
+      end
+
+      # Create auth csv file
+      CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
+        csv.flock(File::LOCK_EX)
+        AbstractRepository.get_all_permissions.each do |repo_name, users|
+          csv << [repo_name] + users
+        end
+        csv.flock(File::LOCK_UN)
+      end
+
+      # TODO Remove with gitolite
+      GitRepository.__set_all_permissions_gitolite
+    end
+
+    def self.__set_all_permissions_gitolite
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
