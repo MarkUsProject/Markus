@@ -125,12 +125,6 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root}/data/test/repos"
 
   ###################################################################
-  # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
-                        private_key: '/home/vagrant/.ssh/id_rsa',
-                        host: 'localhost' }
-
-  ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root}/data/test/keys"

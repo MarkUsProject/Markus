@@ -1,7 +1,5 @@
 require 'rugged'
-require 'gitolite'
 require 'digest/md5'
-require 'rubygems'
 require 'git'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
@@ -27,7 +25,7 @@ module Repository
 
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
-    # created using GitRespository.create(), if it is not yet existent
+    # created using GitRepository.create(), if it is not yet existent
     def initialize(connect_string)
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
@@ -72,43 +70,12 @@ module Repository
                           some directory with same name exists already")
       end
 
-      ga_repo = Gitolite::GitoliteAdmin.new(
-        MarkusConfigurator.markus_config_repository_storage +
-          '/gitolite-admin', GITOLITE_SETTINGS)
+      # TODO Check what connect_string is, and whether the bare or the clone should be in a subdir
+      Rugged::Repository.init_at(connect_string, :bare)
 
-      # Bring the repo up to date
-      ga_repo.reload!
-
-      # Grab the gitolite admin repo config
-      conf = ga_repo.config
-
+      # Repo is created bare, proceed to clone it in the repository storage location
       repo_name = File.basename(connect_string.split('/').last)
-
-      # Grab the repo in question, if it does not exist, create it
-      repo = ga_repo.config.get_repo(repo_name)
-      if repo.nil?
-        # Generate new repo since this repo hasn't been created yet
-        repo = Gitolite::Config::Repo.new(repo_name)
-      end
-
-      # Add permissions for git user
-      repo.add_permission('RW+', '', 'vagrant')
-
-      # Add the repo to the gitolite admin config
-      conf.add_repo(repo)
-
-      # Readd the 'git' public key to the gitolite admin repo after changes
-      admin_key = Gitolite::SSHKey.from_file(
-        GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(admin_key)
-
-      # Stage and push the changes to the gitolite admin repo
-      ga_repo.save_and_apply
-
-      # Repo is created by gitolite, proceed to clone it in
-      # the repository storage location
-      cloned_repo = Git.clone(
-        'git@localhost:' + repo_name, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
+      cloned_repo = Git.clone(connect_string, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
 
       # Lets make some sample files and the new master branch
       cloned_repo.reset
@@ -142,7 +109,7 @@ module Repository
       repo = GitRepository.new(connect_string)
     end
 
-    # static method that should yeild to a git repo and then close it
+    # static method that should yield to a git repo and then close it
     def self.access(connect_string)
       repo = self.open(connect_string)
       yield repo
@@ -508,75 +475,6 @@ module Repository
         end
         csv.flock(File::LOCK_UN)
       end
-
-      # TODO Remove with gitolite
-      GitRepository.__set_all_permissions_gitolite
-    end
-
-    def self.__set_all_permissions_gitolite
-      # Check if configuration is in order
-      if MarkusConfigurator.markus_config_repository_admin?.nil?
-        raise ConfigurationError.new(
-            "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
-      end
-      # If we're not in authoritative mode, bail out
-      unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
-        raise NotAuthorityError.new(
-            'Unable to set bulk permissions: Not in authoritative mode!')
-      end
-
-      ga_repo = Gitolite::GitoliteAdmin.new(
-          MarkusConfigurator.markus_config_repository_storage +
-              '/gitolite-admin', GITOLITE_SETTINGS)
-
-      # Sync gitolite admin repo
-      ga_repo.update
-
-      # Build the list of TAs and Admins
-      tas = Ta.all
-      tas = tas.map(&:user_name)
-      admins = Admin.all
-      admins = admins.map(&:user_name)
-
-      valid_groupings_and_members = {}
-      assignments = Assignment.all
-      assignments.each do |assignment|
-
-        valid_groupings = assignment.valid_groupings
-        valid_groupings.each do |gr|
-          accepted_students = gr.accepted_students
-          accepted_students = accepted_students.map(&:user_name)
-          valid_groupings_and_members[gr.group.repo_name] = accepted_students
-        end
-      end
-
-      valid_groupings_and_members.each do |repo_name, students|
-        # Build the list of users that need permissions for this grouping's repo
-
-        users = students + tas + admins
-
-        # Grab the repo from gitolite
-        repo = ga_repo.config.get_repo(repo_name)
-
-        if repo.nil?
-          repo = Gitolite::Config::Repo.new(repo_name)
-          ga_repo.config.add_repo(repo)
-        end
-
-        git_permission = GitRepository.__translate_to_git_perms(Repository::Permission::READ_WRITE)
-        repo.add_permission(git_permission, '', *users)
-      end
-
-
-
-      # Reload the 'git' public key to the gitolite admin repo after changes
-      admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
-      ga_repo.add_key(admin_key)
-
-      # update Gitolite repo
-      ga_repo.save_and_apply
-
     end
 
     # I don't think this is used anywhere

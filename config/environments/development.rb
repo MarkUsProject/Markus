@@ -135,12 +135,6 @@ Markus::Application.configure do
   KEY_STORAGE = "#{::Rails.root}/data/dev/keys"
 
   ###################################################################
-  # Location of the public and private key for the git user on the system
-  GITOLITE_SETTINGS = { public_key: '/home/git/vagrant.pub',
-                        private_key: '/home/vagrant/.ssh/id_rsa',
-                        host: 'localhost' }
-
-  ###################################################################
   # Max file size for submissions in Bytes
   MAX_FILE_SIZE = 5000000
 
