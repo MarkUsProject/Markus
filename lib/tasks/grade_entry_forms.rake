@@ -9,13 +9,14 @@ namespace :db do
       is_hidden: false
     )
 
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q1', out_of: 3, position: 1)
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q2', out_of: 4, position: 2)
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q3', out_of: 5, position: 3)
-    grade_entry_form.save
+    grade_entry_form.grade_entry_items.each { |item| item.save validate: false }
+    grade_entry_form.save validate: false
 
     puts 'Marks Spreadsheet 2: Marks Spreadsheet Hidden'
     grade_entry_form = GradeEntryForm.create(
@@ -26,12 +27,13 @@ namespace :db do
       is_hidden: true
     )
 
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q1', out_of: 6, position: 1)
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q2', out_of: 7, position: 2)
-    grade_entry_form.grade_entry_items << GradeEntryItem.create(
+    grade_entry_form.grade_entry_items << GradeEntryItem.new(
       name: 'Q3', out_of: 8, position: 3)
-    grade_entry_form.save
+    grade_entry_form.grade_entry_items.each { |item| item.save validate: false }
+    grade_entry_form.save validate: false
   end
 end
