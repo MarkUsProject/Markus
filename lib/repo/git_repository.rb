@@ -27,18 +27,19 @@ module Repository
     # repository, using Ruby bindings; Note: A repository has to be
     # created using GitRepository.create(), if it is not yet existent
     def initialize(connect_string)
+
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-                "Required config 'MarkusConfigurator.markus_config_repository_admin?' not set")
+            "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if MarkusConfigurator.markus_config_repository_storage.nil?
         raise ConfigurationError.new(
-                "Required config 'MarkusConfigurator.markus_config_repository_storage' not set")
+            "Required config 'REPOSITORY_STORAGE' not set")
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
         raise ConfigurationError.new(
-                "Required config 'MarkusConfigurator.markus_config_repository_permission_file' not set")
+            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
@@ -477,154 +478,38 @@ module Repository
       end
     end
 
-    # I don't think this is used anywhere
+    # TODO I don't think this is used anywhere
+    # Set permissions for a single given user for a given repo_name
     def set_permissions(user_id, permissions)
-      # Set permissions for a single given user for a given repo_name
-      if @repos_admin # Are we admin?
 
-        remove_user(user_id)
-
-        # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(
-          MarkusConfigurator.markus_config_repository_storage +
-            '/gitolite-admin', GITOLITE_SETTINGS)
-
-        # Sync gitolite admin repo
-        ga_repo.update
-
-        # Grab the repo from gitolite
-        repo_name = self.get_repos.workdir.split('/').last
-        repo = ga_repo.config.get_repo(repo_name)
-
-        if repo.nil?
-          # Create new repo if it doesn't exist
-          repo = Gitolite::Config::Repo.new(repo_name)
-        end
-
-        git_permission = self.class.__translate_to_git_perms(permissions)
-        repo.add_permission(git_permission, "", user_id)
-        ga_repo.config.add_repo(repo)
-
-        # Readd the 'git' public key to the gitolite admin repo after changes
-        admin_key = Gitolite::SSHKey.from_file(
-          GITOLITE_SETTINGS[:public_key])
-        ga_repo.add_key(admin_key)
-
-        # update Gitolite repo
-        ga_repo.save_and_apply
-
-      else
+      # TODO Check that user exists for repo or raise UserNotFound.new(user_id + " not found")?
+      unless @repos_admin # are we admin?
         raise NotAuthorityError.new(
-          'Unable to modify permissions: Not in authoritative mode!')
+            'Unable to modify permissions: Not in authoritative mode!')
       end
+      GitRepository.__set_all_permissions
     end
 
+    # Delete user from access list
     def remove_user(user_id)
-      # Delete user from access list
-      # There is no user remove support from gitolite ruby library
-      # Work-around:
-      # - copy permissions from repo
-      # - remove repo from config and save and apply
-      # - add again permissions not removed
 
-      if @repos_admin # Are we admin?
-        # Adds a user with given permissions to the repository
-        ga_repo = Gitolite::GitoliteAdmin.new(
-          MarkusConfigurator.markus_config_repository_storage +
-            '/gitolite-admin', GITOLITE_SETTINGS)
-
-        # Sync gitolite admin repo
-        ga_repo.update
-
-        repo_name = self.get_repos.workdir.split('/').last
-
-        # Grab the repo from gitolite
-        repo = ga_repo.config.get_repo(repo_name)
-        rw_list = []
-        r_list  = []
-        found = false
-        if !repo.nil?
-          repo.permissions[0]["RW+"][""].each do |user|
-            if(user != user_id)
-              rw_list.push(user)
-            else
-              found = true
-            end
-          end
-
-          repo.permissions[0]["R"][""].each do |user|
-            if(user != user_id)
-              r_list.push(user)
-            else
-              found = true
-            end
-          end
-
-          # Readd the 'git' public key to the gitolite admin repo after changes
-          admin_key = Gitolite::SSHKey.from_file(
-            GITOLITE_SETTINGS[:public_key])
-
-          ga_repo.add_key(admin_key)
-
-          # update Gitolite repo
-          ga_repo.save_and_apply
-
-          if found==true
-            ga_repo.config.rm_repo(repo)
-            ga_repo.save_and_apply
-            rw_list.each do |user|
-              add_user(user,Repository::Permission::READ_WRITE)
-            end
-
-            r_list.each do |user|
-              add_user(user,Repository::Permission::READ)
-            end
-          else
-            raise UserNotFound.new(user_id + " not found")
-          end
-        else
-          raise UserNotFound.new(user_id + " not found")
-        end
-      else
+      # TODO Check that user exists for repo or raise UserNotFound.new(user_id + " not found")?
+      unless @repos_admin # are we admin?
         raise NotAuthorityError.new(
-          'Unable to modify permissions: Not in authoritative mode!')
+            'Unable to modify permissions: Not in authoritative mode!')
       end
+      GitRepository.__set_all_permissions
     end
 
-    def self.add_user(user_id, permissions, repo_name)
+    def add_user(user_id, permissions, repo_name)
 
-      # Adds a user with given permissions to the repository
-      unless File.exist?(MarkusConfigurator.markus_config_repository_permission_file)
-        # create file if not existent
-        File.open(MarkusConfigurator.markus_config_repository_permission_file, 'w').close
+      # TODO Check if user already exists for repo or raise UserAlreadyExistent.new(user_id + " already existent")?
+      # TODO Why repo_name, do I ever have to create the repo itself?
+      unless @repos_admin # are we admin?
+        raise NotAuthorityError.new(
+            'Unable to modify permissions: Not in authoritative mode!')
       end
-
-      ga_repo = Gitolite::GitoliteAdmin.new(
-        MarkusConfigurator.markus_config_repository_storage +
-          '/gitolite-admin', GITOLITE_SETTINGS)
-
-      # Sync repo
-      ga_repo.reload!
-
-      # Grab the repo from gitolite
-      repo = ga_repo.config.get_repo(repo_name)
-
-      # Create a new repo if required from gitolite
-      if repo.nil?
-        repo = Gitolite::Config::Repo.new(repo_name)
-        ga_repo.config.add_repo(repo)
-      else
-        repo.permissions[0].each do |perm|
-          if(repo.permissions[0][perm[0]][""].include? user_id)
-            raise UserAlreadyExistent.new(user_id + ' already existent')
-          end
-        end
-      end
-
-      git_permission = GitRepository.__translate_to_git_perms(permissions)
-      repo.add_permission(git_permission, '', user_id)
-
-
+      GitRepository.__set_all_permissions
     end
 
     # Sets permissions over several repositories. Use set_permissions to set
