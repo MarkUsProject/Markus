@@ -204,7 +204,29 @@ module Repository
       raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"
     end
 
-    # Builds a hash of all repositories and users allowed to rw to them
+    # Returns all users allowed to access a specific repo (assumes all permissions are rw)
+    def self.get_permissions(repo_name)
+
+      assignment = Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
+                             .where({groupings: {group: {repo_name: repo_name}}})
+                             .order(due_date: :desc)
+                             .first
+      if assignment.nil?
+        raise "Repository #{repo_name} does not exist"
+      end
+      admins = Admin.pluck(:user_name)
+      tas = Ta.pluck(:user_name)
+      valid_grouping = assignment.valid_groupings.first
+      if valid_grouping.nil?
+        return admins + tas
+      else
+        accepted_students = valid_grouping.accepted_students
+        accepted_students = accepted_students.map(&:user_name)
+        return admins + tas + accepted_students
+      end
+    end
+
+    # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
 
       permissions = {}
