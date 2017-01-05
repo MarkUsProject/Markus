@@ -204,28 +204,6 @@ module Repository
       raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"
     end
 
-    # Returns all users allowed to access a specific repo (assumes all permissions are rw)
-    def self.get_permissions(repo_name)
-
-      assignment = Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
-                             .where({groupings: {group: {repo_name: repo_name}}})
-                             .order(due_date: :desc)
-                             .first
-      if assignment.nil?
-        raise "Repository #{repo_name} does not exist"
-      end
-      admins = Admin.pluck(:user_name)
-      tas = Ta.pluck(:user_name)
-      valid_grouping = assignment.valid_groupings.first
-      if valid_grouping.nil?
-        return admins + tas
-      else
-        accepted_students = valid_grouping.accepted_students
-        accepted_students = accepted_students.map(&:user_name)
-        return admins + tas + accepted_students
-      end
-    end
-
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
 
@@ -233,18 +211,7 @@ module Repository
       admins = Admin.pluck(:user_name)
       tas = Ta.pluck(:user_name)
       non_student_repos = Group.pluck(:repo_name)
-      # Permission subtleties:
-      # 1) a repository is associated with a Group, but..
-      # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-      # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
-      # the assignment level, allowing the same Group repo to have different students according to the assignment.
-      # The two extremes to implement it are union (permissive) or intersection (restrictive), but we are going to take
-      # a last-deadline approach instead, where we assume that the valid students at any point in time are the ones
-      # valid for the last assignment due.
-      # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
-      # we may want to add or [more frequently] remove some students from it)
-      assignments = Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
-                              .order(due_date: :desc)
+      assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
         valid_groupings = assignment.valid_groupings
         valid_groupings.each do |valid_grouping|

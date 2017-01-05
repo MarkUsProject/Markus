@@ -71,18 +71,17 @@ module Repository
                           some directory with same name exists already")
       end
 
-      # TODO Check what connect_string is, and whether the bare or the clone should be in a subdir
-      Rugged::Repository.init_at(connect_string, :bare)
-
-      # Repo is created bare, proceed to clone it in the repository storage location
-      repo_name = File.basename(connect_string.split('/').last)
-      cloned_repo = Git.clone(connect_string, MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
+      # Repo is created bare, then clone it in the repository storage location
+      repo_path, sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+      Rugged::Repository.init_at(bare_path, :bare)
+      cloned_repo = Git.clone(bare_path, connect_string)
 
       # Lets make some sample files and the new master branch
       cloned_repo.reset
       cloned_repo.branch('master')
 
-      repo = Rugged::Repository.discover(MarkusConfigurator.markus_config_repository_storage + '/' + repo_name)
+      repo = Rugged::Repository.discover(connect_string)
 
       # Do an initial commit with a README to create index.
       file_path_for_readme = File.join(repo.workdir, 'README.md')
@@ -192,7 +191,6 @@ module Repository
       return @repos
     end
 
-    # TODO This is always null, since we create it bare
     def get_repos_workdir
       # Get working directory of the repository
       # workdir = path/to/my/repository/
@@ -202,12 +200,12 @@ module Repository
     def get_repos_path
       # Get the repository's .git folder
       # path = path/to/my/repository/.git
-      return @repos_path
+      return @repos.path
     end
 
     # Gets the repository name
     def get_repo_name
-      File.basename(@repos_path.split('/').last)
+      @repos_path.rpartition(File::SEPARATOR)[2]
     end
 
     # Given a File object, perform a lookup for the Rugged::Tree
@@ -351,37 +349,39 @@ module Repository
     # TODO All permissions are rw for the time being, so the provided permissions are not really used
     def get_users(permissions)
 
-      users = AbstractRepository.get_permissions(get_repo_name)
-      if users.empty?
-        users = nil
+      unless @repos_admin # are we admin?
+        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
+      repo_name = get_repo_name
+      permissions = AbstractRepository.get_all_permissions
+      users = permissions[repo_name]
 
       users
     end
 
-    def get_permissions(user_id)
+    # TODO All permissions are rw for the time being
+    def get_permissions(user_name)
 
       unless @repos_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       begin
-        user = User.find(user_id)
+        user = User.find_by(user_name: user_name)
       rescue RecordNotFound
-        raise UserNotFound.new("User id #{user_id} does not exist")
+        raise UserNotFound.new("User #{user_name} does not exist")
       end
       if user.admin? or user.ta?
         return Repository::Permission::READ_WRITE
       end
-      users = AbstractRepository.get_permissions(get_repo_name)
-      unless users.include?(user.user_name)
-        raise UserNotFound.new("User #{user.user_name} not found in this repo")
+      unless get_users(Repository::Permission::ANY).include?(user_name)
+        raise UserNotFound.new("User #{user_name} not found in this repo")
       end
 
       Repository::Permission::READ_WRITE
     end
 
     # Generate all the permissions for students for all groupings in all assignments.
-    # This is done as a single operation to mirror the SVN repo code.  We found
+    # This is done as a single operation to mirror the SVN repo code. We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
     def self.__set_all_permissions
 
@@ -401,9 +401,10 @@ module Repository
       end
 
       # Create auth csv file
+      sorted_permissions = AbstractRepository.get_all_permissions.sort.to_h
       CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
         csv.flock(File::LOCK_EX)
-        AbstractRepository.get_all_permissions.each do |repo_name, users|
+        sorted_permissions.each do |repo_name, users|
           csv << [repo_name] + users
         end
         csv.flock(File::LOCK_UN)
@@ -412,35 +413,33 @@ module Repository
 
     # TODO I don't think this is used anywhere
     # Set permissions for a single given user for a given repo_name
-    def set_permissions(user_id, permissions)
+    def set_permissions(user_name, permissions)
 
-      # TODO Check that user exists for repo or raise UserNotFound.new(user_id + " not found")?
       unless @repos_admin # are we admin?
-        raise NotAuthorityError.new(
-            'Unable to modify permissions: Not in authoritative mode!')
+        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
       end
-      GitRepository.__set_all_permissions
+      get_permissions(user_name) # side effect if user does not exist: raise UserNotFound
+      # TODO No-op until all permissions are rw
     end
 
     # Delete user from access list
-    def remove_user(user_id)
+    # TODO The user must have been removed from the appropriate db tables before invoking this, maybe it's better doing it all here
+    def remove_user(user_name)
 
-      # TODO Check that user exists for repo or raise UserNotFound.new(user_id + " not found")?
       unless @repos_admin # are we admin?
-        raise NotAuthorityError.new(
-            'Unable to modify permissions: Not in authoritative mode!')
+        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
       end
+      # TODO Can't check that user exists for repo or raise UserNotFound, if it has already been removed from the db
       GitRepository.__set_all_permissions
     end
 
-    def add_user(user_id, permissions, repo_name)
+    # TODO The user must have been added to the appropriate db tables before invoking this, maybe it's better doing it all here
+    def add_user(user_name, permissions)
 
-      # TODO Check if user already exists for repo or raise UserAlreadyExistent.new(user_id + " already existent")?
-      # TODO Why repo_name, do I ever have to create the repo itself?
       unless @repos_admin # are we admin?
-        raise NotAuthorityError.new(
-            'Unable to modify permissions: Not in authoritative mode!')
+        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
       end
+      # TODO Can't check that user does not exists for repo or raise UserAlreadyExistent, if it has already been added to the db
       GitRepository.__set_all_permissions
     end
 
@@ -523,7 +522,7 @@ module Repository
       Rugged::Commit.create(@repos, commit_options(@repos, author,
                                                    'Removing file'))
 
-      # todo: quick fix to make gitolite sync on file upload
+      # TODO: quick fix to make gitolite sync on file upload (is it still needed without gitolite?)
       g = Git.open(@repos_path)
       g.push
     end
