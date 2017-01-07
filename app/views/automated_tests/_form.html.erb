@@ -68,7 +68,7 @@
           <%= label_tag :non_regenerating_tokens, t('automated_tests.token.no_regeneration'),
                         class: 'checkbox_label', style: 'text-align: right;' %>
           <%= f.check_box :non_regenerating_tokens,
-                          onchange: "toggle_token_regeneration(jQuery('#assignment_non_regenerating_tokens').is(':checked'))" %>
+                          onchange: "toggle_token_regeneration($('#assignment_non_regenerating_tokens').is(':checked'))" %>
           <%= label_tag :unlimited_tokens, t('automated_tests.token.unlimited'),
                         class: 'checkbox_label', style: 'text-align: right;' %>
           <%= f.check_box :unlimited_tokens,
