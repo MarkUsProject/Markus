@@ -1,10 +1,10 @@
 /* Expands/Collapses the box for an automated test result */
 function toggleResult(collapse_lnk) {
-    collapse_lnk = jQuery(collapse_lnk);
+    collapse_lnk = $(collapse_lnk);
     // find the needed DOM elements
     test_result = collapse_lnk.closest('.test-result');
     box = test_result.find('.results_table');
-    
+
     if (collapse_lnk.text() === 'Show Results') {
         box.show();
         collapse_lnk.text('Hide Results');
