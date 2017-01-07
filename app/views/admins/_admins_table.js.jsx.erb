@@ -8,7 +8,7 @@
           id: 'user_name',
           content: '<%= j raw I18n.t(:'user.user_name') %>',
           sortable: true,
-          searchable: true 
+          searchable: true
         },
         {
           id: 'last_name',
@@ -46,7 +46,7 @@
       // Show the loading indicator
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: 'admins/populate',
         method: 'GET',
         dataType: 'json',

@@ -8,20 +8,20 @@
 function DropDownMenu(trigger_node, menu_node) {
   this.trigger_node = trigger_node;
   this.menu_node = menu_node;
-  jQuery(this.menu_node).hide();
+  $(this.menu_node).hide();
 
   // Set up the trigger_node click event
   var me = this;
-  jQuery(this.trigger_node).click(function(event) {
+  $(this.trigger_node).click(function(event) {
     me.refreshPositions();
     me.show();
   });
 
   // Set up the trigger_node mouseout event
-  jQuery(this.trigger_node).bind('mouseout', function(event) {
+  $(this.trigger_node).bind('mouseout', function(event) {
     var menu_node = me.getMenuNode();
     var mouse_entered = me.getRelatedTarget(event);
-    if(mouse_entered !== null && !(jQuery(mouse_entered).closest(menu_node).length > 0) && mouse_entered.tagName != "HTML") {
+    if(mouse_entered !== null && !($(mouse_entered).closest(menu_node).length > 0) && mouse_entered.tagName != "HTML") {
       me.hide();
     }
   });
@@ -29,13 +29,13 @@ function DropDownMenu(trigger_node, menu_node) {
 
 DropDownMenu.prototype.refreshPositions = function() {
   // Get cumulative position offsets of trigger_node...
-  var offset_left   = jQuery(this.getTriggerNode()).offset()[0];
-  var offset_top    = jQuery(this.getTriggerNode()).offset()[1];
-  var offset_height = jQuery(this.getTriggerNode()).height();
+  var offset_left   = $(this.getTriggerNode()).offset()[0];
+  var offset_top    = $(this.getTriggerNode()).offset()[1];
+  var offset_height = $(this.getTriggerNode()).height();
 
   // Position menu node so that it's directly under the trigger node,
   // and hide it
-  jQuery(this.getMenuNode()).css({
+  $(this.getMenuNode()).css({
     "position" : "absolute",
     "left" : "offset_left + 'px'",
     "top" : "(offset_top + offset_height) + 'px'",
@@ -60,11 +60,11 @@ DropDownMenu.prototype.setMenuNode = function(menu_node) {
 }
 
 DropDownMenu.prototype.show = function() {
-  jQuery(this.menu_node).show();
+  $(this.menu_node).show();
 }
 
 DropDownMenu.prototype.hide = function() {
-  jQuery(this.menu_node).hide();
+  $(this.menu_node).hide();
 }
 
 DropDownMenu.prototype.getRelatedTarget = function(event) {

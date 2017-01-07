@@ -14,22 +14,22 @@ var LIB = LIB || (function(){
     };
 }());
 
-jQuery(document).ready(function() {
+$(document).ready(function() {
 
     if(LIB.getId1 == null || LIB.getId2 == null){
         return;
     }
     //initially disable yml
-    jQuery(LIB.getId2())[0].hidden = true;
+    $(LIB.getId2())[0].hidden = true;
     //disable yml (and enable csv) when csv is clicked
     document.getElementById('upload_file_type_csv').addEventListener('click', function() {
-        jQuery(LIB.getId1())[0].hidden = false;
-        jQuery(LIB.getId2())[0].hidden = true;
+        $(LIB.getId1())[0].hidden = false;
+        $(LIB.getId2())[0].hidden = true;
     });
 
     //and vice versa
     document.getElementById('upload_file_type_yml').addEventListener('click', function() {
-        jQuery(LIB.getId1())[0].hidden = true;
-        jQuery(LIB.getId2())[0].hidden = false;
+        $(LIB.getId1())[0].hidden = true;
+        $(LIB.getId2())[0].hidden = false;
     });
 });

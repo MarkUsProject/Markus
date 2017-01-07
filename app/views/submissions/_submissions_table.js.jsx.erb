@@ -146,7 +146,7 @@
       // Show working indicator.
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: 'populate_submissions_table',
         method: 'GET',
         dataType: 'json',
@@ -298,7 +298,7 @@
         filter: 'none',
         groupings: this.props.selected_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_submissions',
         data: dataLoad,
@@ -313,7 +313,7 @@
         filter: 'none',
         groupings: this.props.selected_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_submissions',
         data: dataLoad,
@@ -328,7 +328,7 @@
         filter: 'none',
         groupings: this.props.selected_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_submissions',
         data: dataLoad,
@@ -343,7 +343,7 @@
         filter: 'none',
         groupings: this.props.selected_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'update_submissions',
         data: dataLoad,
@@ -355,7 +355,7 @@
     uncollectAllSubmissions: function() {
       var confirm = window.confirm("<%= t('collect_submissions.undo_results_loss_warning') %>");
       if (!confirm) { return; }
-      jQuery.ajax({
+      $.ajax({
         method: 'GET',
         url: 'uncollect_all_submissions',
       });
@@ -367,7 +367,7 @@
       var dataLoad = {
         groupings: this.props.selected_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'collect_submissions',
         data: dataLoad,
@@ -379,7 +379,7 @@
       });
     },
     runTests: function () {
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'run_tests',
         data: {groupings: this.props.selected_submissions},

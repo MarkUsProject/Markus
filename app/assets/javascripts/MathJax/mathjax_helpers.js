@@ -5,20 +5,20 @@ function reloadDOM() {
 }
 
 function hideAnnotationPreview() {
-    jQuery('#annotation_preview').hide();
-    jQuery('#annotation_preview_title').hide();
+    $('#annotation_preview').hide();
+    $('#annotation_preview_title').hide();
 
     // recenter dialog
-    var dialog = jQuery('#create_annotation_dialog');
+    var dialog = $('#create_annotation_dialog');
     dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 
 function showAnnotationPreview() {
-    jQuery('#annotation_preview').show();
-    jQuery('#annotation_preview_title').show();
+    $('#annotation_preview').show();
+    $('#annotation_preview_title').show();
 
     // recenter dialog
-    var dialog = jQuery('#create_annotation_dialog');
+    var dialog = $('#create_annotation_dialog');
     dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 

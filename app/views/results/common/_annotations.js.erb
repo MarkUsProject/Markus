@@ -23,10 +23,10 @@
     annotation_type = ANNOTATION_TYPES.CODE;
 
     document.getElementById('select_file_id').disabled = false;
-    var dp_highlighter = jQuery('.dp-highlighter')[0];
-    var first_ol = jQuery('ol')[0];
+    var dp_highlighter = $('.dp-highlighter')[0];
+    var first_ol = $('ol')[0];
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
-        jQuery(dp_highlighter).find(first_ol)[0]);
+        $(dp_highlighter).find(first_ol)[0]);
 
     // Apply modifications to Syntax Highlighter
     syntax_highlighter_adapter.applyMods();
@@ -315,7 +315,7 @@
       var box = get_selection_box();
       if (!box) { return; }
 
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= add_existing_annotation_annotations_path %>',
         type: 'POST',
         data: 'annotation_type=image' +
@@ -333,7 +333,7 @@
       var box = annotation_manager.selectionRectangleAsInts();
       if (!box) { return; }
 
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= add_existing_annotation_annotations_path %>',
         type: 'POST',
         data: 'annotation_type=pdf' +
@@ -352,7 +352,7 @@
       positions = get_mouse_positions();
       if (!positions) { return false; }
 
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= add_existing_annotation_annotations_path %>',
         type: 'POST',
         data: 'submission_file_id=' + document.getElementById('select_file_id').value +
@@ -371,7 +371,7 @@
   // Load a submitted file into the code-viewer based on file id's
   function load_submitted_file(submission_file_id, focus_line) {
     // Clear out any annotation_texts still on the screen
-    jQuery('.annotation_text_display').each(function() {
+    $('.annotation_text_display').each(function() {
       this.remove();
     });
 
@@ -380,7 +380,7 @@
     positions = null;
     annotation_manager = null;
 
-    jQuery.ajax({
+    $.ajax({
       url: '<%= @current_user.student? ? codeviewer_assignment_result_path(uid: @uid) :
                                          codeviewer_assignment_submission_result_path(uid: @uid) %>',
       type: 'POST',
@@ -394,7 +394,7 @@
 
   function load_submitted_file_and_focus(submission_file_id, focus_line) {
     // First, switch to the source code viewer tab
-    jQuery('#code_pane').tabs({ active: 0 });
+    $('#code_pane').tabs({ active: 0 });
 
     if (document.getElementById('select_file_id').value == submission_file_id) {
       focus_source_code_line(focus_line);
@@ -431,7 +431,7 @@
     // Send AJAX request
     if (positions != null) {
       // Text annotation
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= annotations_path %>',
         type: 'POST',
         data: 'annotation_type=text' +
@@ -448,7 +448,7 @@
       });
     } else if (annotation_type === ANNOTATION_TYPES.IMAGE) {
       // Image annotation
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= annotations_path %>',
         type: 'POST',
         data: 'annotation_type=image' +
@@ -490,7 +490,7 @@
           break;
       }
 
-      jQuery.ajax({
+      $.ajax({
         url:  '<%= annotations_path %>',
         type: 'POST',
         data: 'annotation_type=pdf' +
@@ -522,8 +522,8 @@
   }
 
   function hide_all_annotation_content_editors() {
-    jQuery('.annotation_text_content_editor').each(function(index) {
-      jQuery(this).hide();
+    $('.annotation_text_content_editor').each(function(index) {
+      $(this).hide();
     });
 
     var box = document.getElementById('sel_box');

@@ -51,7 +51,7 @@
     refresh: function() {
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: 'tas/populate',
         method: 'GET',
         dataType: 'json',

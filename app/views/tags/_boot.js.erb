@@ -1,11 +1,11 @@
 <script>
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
     window.modal_create_new   = new ModalMarkus('#create_new_dialog');
     window.modal_edit         = new ModalMarkus('#edit_tags_dialog');
     new ModalMarkus('#upload_dialog', '#uploadModal');
     new ModalMarkus('#download_dialog', '#downloadModal');
 
-    jQuery('.sortable ul').sortable({
+    $('.sortable ul').sortable({
       axis:   'y',
       cursor: 'move'
     });

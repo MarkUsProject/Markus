@@ -17,7 +17,7 @@ function localize_date(actual_date_div, date_div, format) {
 /** Localize the date/time with a specified locale format string. */
 function localize_datetime(actual_date_div, date_div, format) {
   if (actual_date_div.value.indexOf(' ') > -1) {
-    var date = convert_date_time(jQuery(actual_date_div).attr('value'));
+    var date = convert_date_time($(actual_date_div).attr('value'));
     date_div.value = date.format(format);
   }
 }

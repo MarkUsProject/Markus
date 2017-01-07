@@ -80,7 +80,7 @@
 
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         url: '<%= populate_assignment_peer_reviews_path %>',
         method: 'GET',
         dataType: 'json',
@@ -151,7 +151,7 @@
       );
     }
   });
-  
+
   // The table of groups to be graders on the left.
   var ReviewerTable = React.createClass({
     getInitialState: function() {
@@ -351,7 +351,7 @@
 
   var ActionsColumn = React.createClass({
     performButtonAction: function(event) {
-      var numGroupsToAssignVal = jQuery('#peer-review-spinner').val();
+      var numGroupsToAssignVal = $('#peer-review-spinner').val();
 
       var dataToSend = {
         actionString: event.currentTarget.getAttribute('id'),
@@ -370,7 +370,7 @@
 
       document.getElementById('working').style.display = '';
 
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: '<%= assign_groups_assignment_peer_reviews_path %>',
         data: dataToSend,

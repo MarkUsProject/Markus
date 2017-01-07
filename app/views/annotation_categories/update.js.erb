@@ -1,5 +1,5 @@
 if (<%= flash.now[:error].blank? %>) {
-  jQuery('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
+  $('#annotation_category_' + <%= @annotation_category.id %>).replaceWith(
     "<%= escape_javascript(render partial: 'annotation_category',
                                   locals: { annotation_category: @annotation_category }).html_safe %>");
 }

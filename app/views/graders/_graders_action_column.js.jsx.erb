@@ -27,7 +27,7 @@
         criterion_associations: this.props.selected_graders_in_criteria,
         skip_empty_submissions: this.props.skip_empty_submissions
       };
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'graders/global_actions',
         data: dataLoad,

@@ -57,7 +57,7 @@
 
       this.setState({ selected_files: [] });
 
-      jQuery.ajax({
+      $.ajax({
         url: '<%=  populate_file_manager_assignment_path(id: @assignment.id) %>',
         method: 'GET',
         dataType: 'json',
@@ -148,7 +148,7 @@
       var delete_file = this.accessThroughArray();
       var file_revisions = this.getFileRevisions();
 
-      jQuery.ajax({
+      $.ajax({
         url: '<%= update_files_assignment_path(id: @assignment.id) %>',
         method: 'POST',
         data: {

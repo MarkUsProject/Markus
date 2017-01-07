@@ -10,8 +10,8 @@
     </div>
 
     <%= button_tag t('edit'),
-                   onclick: "jQuery('#annotation_text_content_edit_#{annot.annotation_text.id}').show();
-                            jQuery('#annotation_text_content_display_#{annot.annotation_text.id}').hide();",
+                   onclick: "$('#annotation_text_content_edit_#{annot.annotation_text.id}').show();
+                            $('#annotation_text_content_display_#{annot.annotation_text.id}').hide();",
                    class: 'edit_remove_annotation_button' %>
 
     <%= button_to t('remove'),
@@ -42,8 +42,8 @@
                          data: { confirm: t('marker.annotation.change_across_submissions') } %>
           <input type='reset'
                  value='<%= t('cancel') %>'
-                 onclick="jQuery('#annotation_text_content_edit_<%= annot.annotation_text.id %>').hide();
-                          jQuery('#annotation_text_content_display_<%= annot.annotation_text.id %>').show();">
+                 onclick="$('#annotation_text_content_edit_<%= annot.annotation_text.id %>').hide();
+                          $('#annotation_text_content_display_<%= annot.annotation_text.id %>').show();">
         </p>
       <% end %>
     </div>

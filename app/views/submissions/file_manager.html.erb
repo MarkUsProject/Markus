@@ -25,7 +25,7 @@
 
   <script>
     window.setInterval(function () {
-      jQuery.ajax({
+      $.ajax({
         url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
         method: 'GET',
         success: function(data) {
@@ -119,7 +119,7 @@
         <% if @missing_assignment_files.size > 5 %>
           <%= link_to I18n.t('student.submission.toggle_file_list'),
                            'javascript:void(0);',
-                           onclick: "jQuery('#missing_assignment_files_list').toggle();"%>
+                           onclick: "$('#missing_assignment_files_list').toggle();"%>
         <% end %>
       </p>
 

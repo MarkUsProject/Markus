@@ -36,12 +36,12 @@
 <script>
   var modalNotesGroup = null;
 
-  jQuery(document).ready(function() {
+  $(document).ready(function() {
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
 
     // Set up the 'working' notices
-    jQuery('#working').ajaxStart(function() {
+    $('#working').ajaxStart(function() {
       this.style.display = '';
       window.onbeforeunload = check_working;
     }).ajaxStop(function() {
@@ -53,13 +53,13 @@
     // Hide the criterion that AREN'T empty (i.e. are marked)
     // Check if the marks are released, if they are there is nothing to hide
     <% unless @result.released_to_students %>
-      jQuery('.mark_criterion_level_container').each(function() {
+      $('.mark_criterion_level_container').each(function() {
         expand_unmarked(this, 'RubricCriterion');
       });
-      jQuery('.mark_grade_input').each(function() {
+      $('.mark_grade_input').each(function() {
         expand_unmarked(this, 'FlexibleCriterion');
       });
-      jQuery('.mark_grade_input_checkbox_container').each(function() {
+      $('.mark_grade_input_checkbox_container').each(function() {
         expand_unmarked(this, 'CheckboxCriterion');
       });
     <% end %>
@@ -76,7 +76,7 @@
 
 <% # Javascript for feedback file window %>
 <%= render partial: 'assignments/feedback_file_window',
-           formats: [:js] %>           
+           formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js] %>

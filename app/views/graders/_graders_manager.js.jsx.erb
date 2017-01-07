@@ -41,7 +41,7 @@
     },
     criteriaCheckboxClicked: function(event) {
       var dataLoad = {value: event.currentTarget.checked};
-      jQuery.ajax({
+      $.ajax({
         method: 'POST',
         url: 'graders/set_assign_criteria',
         data: dataLoad,
@@ -65,7 +65,7 @@
       // 3nd element: Info for the graders table
       // 4rd element: Info for groups table + criteria (if we are using crit.)
       //              this is actually a hash.
-      jQuery.ajax({
+      $.ajax({
         url: 'graders/populate',
         method: 'GET',
         dataType: 'json',
@@ -114,7 +114,7 @@
         skip_empty_submissions={this.state.skip_empty_submissions}
       />);
       to_render.push(<GroupsTableManager
-        assign_to_criteria={this.state.assign_to_criteria} 
+        assign_to_criteria={this.state.assign_to_criteria}
         groups_and_criteria={this.state.groups_and_criteria}
         selected_groups={this.state.selected_groups}
         onSelectedGroupsChange={this.updateSelectedGroups}
@@ -141,8 +141,8 @@
             {to_render}
           </div>
         </div>
-        
-        
+
+
       );
     }
   });
@@ -189,7 +189,7 @@
       } else {
         return (
           <div className={'col-right'}>
-            <GroupsTableNoCriteria 
+            <GroupsTableNoCriteria
               groups={this.props.groups_and_criteria.groups}
               selected_groups={this.props.selected_groups}
               onSelectedGroupsChange={this.props.onSelectedGroupsChange}
@@ -218,7 +218,7 @@
       refresh: React.PropTypes.func
     },
     componentDidMount: function() {
-      jQuery('#group-tabs').tabs();
+      $('#group-tabs').tabs();
     },
     tableChanged: function(event) {
       var table = event.currentTarget.getAttribute('id');
@@ -584,7 +584,7 @@
               checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
               onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
         }
-        
+
         g['graders'] = graders;
         return g;
       }.bind(this));

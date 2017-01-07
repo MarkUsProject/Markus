@@ -11,7 +11,7 @@ function open_file(id, path, downloading) {
 
 function open_submenu(dir_element) {
   dir_element.nextElementSibling.style.display = 'block';
-  dir_element.nextElementSibling.style.top = jQuery(dir_element).position().top + 'px';
+  dir_element.nextElementSibling.style.top = $(dir_element).position().top + 'px';
 
   // When opening a submenu, we want to close all currently open submenus
   // that aren't part of this submenu's path.
@@ -36,7 +36,7 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
   }
 }
 
-jQuery(document).ready(function() {
+$(document).ready(function() {
   if (first_file_id !== null && first_file_path !== null) {
     // for code viewer
     open_file(first_file_id, first_file_path, false);

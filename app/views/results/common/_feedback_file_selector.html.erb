@@ -3,7 +3,7 @@
               class: 'inline_label' %>
 
 <select id='select_feedback_file_id'
-        onchange='load_feedback_file(jQuery(this).val());'>
+        onchange='load_feedback_file($(this).val());'>
   <% if feedback_files.where(submission_id: submission_id).empty? %>
     <option value=''><%= t('feedback_file.no_files_available') %></option>
   <% else %>

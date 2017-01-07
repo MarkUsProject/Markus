@@ -10,7 +10,7 @@
             ' Loading it in the web viewer may take a long time.' +
             ' Do you wish to proceed?')){
           // clear recently added file and terminate loop
-          jQuery(this).val('');
+          $(this).val('');
           notTerminate = false;
         }
       }
@@ -20,7 +20,7 @@
   });
 */
 
-jQuery(document).ready(function (){
+$(document).ready(function (){
   window.modal_addnew = new ModalMarkus('#addnew_dialog');
 });
 
@@ -31,7 +31,7 @@ function submitFile(e) {
 function enableDisableSubmit() {
   var hasRows = false;
 
-  jQuery('tbody').each(function(i) {
+  $('tbody').each(function(i) {
     var oRows = this.getElementsByTagName('tr');
     var iRowCount = oRows.length;
     if (iRowCount > 0) {
@@ -39,12 +39,12 @@ function enableDisableSubmit() {
     }
   });
 
-  jQuery('#submit_form input[type=submit]').each(function(i) {
-    jQuery(this).find('input, textarea').each(function(i) {
+  $('#submit_form input[type=submit]').each(function(i) {
+    $(this).find('input, textarea').each(function(i) {
       if (hasRows) {
-        jQuery(this).removeAttr('readonly');
+        $(this).removeAttr('readonly');
       } else {
-        jQuery(this).attr('readonly', 'readonly');
+        $(this).attr('readonly', 'readonly');
       }
     });
   });

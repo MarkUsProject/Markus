@@ -6,10 +6,10 @@
                                                       :id,
                                                       :short_identifier),
                    onchange: "document.getElementById('working').style.display = '';
-                              jQuery.ajax({
+                              $.ajax({
                                 url: '" + new_update_groupings_notes_path + "',
                                 type: 'POST',
-                                data: jQuery(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
+                                data: $(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
                               }).done(function() {
                                 document.getElementById('working').style.display = 'none';
                               });" %>

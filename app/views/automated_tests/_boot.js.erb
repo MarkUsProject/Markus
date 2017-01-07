@@ -5,7 +5,7 @@ function check_start_of_availability_date(new_start_date) {
   }
 }
 
-jQuery(window).load(function() {
+$(window).load(function() {
   <% if @assignment %>
     toggle_token_regeneration(<%= @assignment.non_regenerating_tokens %>);
     toggle_tests_tokens(<%= @assignment.unlimited_tokens %>);
@@ -13,7 +13,7 @@ jQuery(window).load(function() {
     toggle_tests(<%= @assignment.enable_test %>);
   <% end %>
 
-  jQuery('#assignment_token_start_date').datetimepicker({
+  $('#assignment_token_start_date').datetimepicker({
     controlType:      'select',
     showTime:         false,
     numberOfMonths:   2,

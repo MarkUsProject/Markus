@@ -26,7 +26,7 @@
           searchable: true
         }
       ];
-      
+
       <% for assignment in @assignments %>
         columns.push({
           id: 'assignment_' + <%= assignment.id %>,
@@ -77,7 +77,7 @@
       document.getElementById('working').style.display = '';
 
       var that = this;
-      jQuery.ajax('<%= populate_course_summaries_path %>',
+      $.ajax('<%= populate_course_summaries_path %>',
                   { method: 'GET',
                     dataType: 'json' })
             .done(function (data) {
@@ -90,7 +90,7 @@
       var that = this;
       var course_summaries_data = this.state.courseSummaries.map(function(courseSummary) {
         var cs = {};
-        
+
         cs['id'] = courseSummary.id;
         cs['user_name'] = courseSummary.user_name;
         cs['first_name'] = courseSummary.first_name;
@@ -115,7 +115,7 @@
           var key = "marking_scheme_" + id;
           cs[key] = parseFloat(courseSummary.weighted_marks[id]);
         <% end %>
-        
+
         return cs;
       });
 

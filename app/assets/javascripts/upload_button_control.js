@@ -9,17 +9,17 @@ var button_id = _get('button_id');
 var Function_List = {
   onReady: function(u_id, b_id){
     // Ensures only one upload field was entered.
-    if (jQuery(u_id).length != 1) return;
+    if ($(u_id).length != 1) return;
 
     // Checks to see if the file upload id changed.
-    jQuery('body').on('change','#' + u_id, function(){
+    $('body').on('change','#' + u_id, function(){
       if (document.getElementById(b_id[0]) === null) return;
 
       var filePath = this.value;
       var i;
 
       // Enables/Disables all buttons.
-      for (i = 0; i < jQuery(b_id).length; i++) {
+      for (i = 0; i < $(b_id).length; i++) {
         // Either disables or enables upload buttons.
         if (filePath === "") {
           document.getElementById(b_id[i]).disabled = true;
@@ -32,7 +32,7 @@ var Function_List = {
 };
 
 // Finally, executes the jQuery ready command.
-jQuery(document).ready(Function_List.onReady(upload_id, button_id));
+$(document).ready(Function_List.onReady(upload_id, button_id));
 
 function _get(param_name){
   // Gets the correct attribute from the script.

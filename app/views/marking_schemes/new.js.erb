@@ -1,19 +1,19 @@
 // Remove HTML from edit div and hide it
-jQuery('.edit-ms').html('');
-jQuery('.edit-ms').hide();
+$('.edit-ms').html('');
+$('.edit-ms').hide();
 
 // Remove HTML from add div incase another marking
 // scheme is being edited
-jQuery('.new-ms').html('');
+$('.new-ms').html('');
 
-jQuery('.new-ms').append("<h2><%= t('marking_schemes.add_new') %></h2>");
-jQuery('.new-ms').append("<%= j (render 'form') %>");
+$('.new-ms').append("<h2><%= t('marking_schemes.add_new') %></h2>");
+$('.new-ms').append("<%= j (render 'form') %>");
 
 // Show add div if hidden
-jQuery('.new-ms').show();
+$('.new-ms').show();
 
 // Scroll to div
-jQuery('html, body').animate({
-  scrollTop: jQuery('.new-ms').offset().top
+$('html, body').animate({
+  scrollTop: $('.new-ms').offset().top
 }, 1000);
 
