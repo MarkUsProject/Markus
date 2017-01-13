@@ -44,7 +44,7 @@ install:
   - wget http://www.sqlite.org/sqlite-amalgamation-3071501.zip
   - unzip sqlite-amalgamation-3071501.zip
   - mv sqlite-amalgamation-3071501 subversion-1.9.5/sqlite-amalgamation
-  - cd subversion-1.9.%
+  - cd subversion-1.9.5
   - LDFLAGS="-L/home/travis/.rvm/rubies/ruby-2.1.3/lib/" ./configure --prefix=/home/travis/.rvm/rubies/ruby-2.1.3/
   - make
   - make swig-rb
