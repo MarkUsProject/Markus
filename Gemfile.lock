@@ -108,7 +108,6 @@ GEM
       railties (>= 3.0.0)
     faker (1.5.0)
       i18n (~> 0.5)
-    git (1.2.9.1)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     hike (1.2.3)
@@ -229,7 +228,7 @@ GEM
       rubocop (>= 0.24.1)
     ruby-progressbar (1.7.5)
     rubyzip (1.1.7)
-    rugged (0.21.4)
+    rugged (0.25.1)
     sass (3.4.18)
     sass-rails (5.0.0.beta1)
       railties (>= 4.0.0, < 5.0)
@@ -318,7 +317,6 @@ DEPENDENCIES
   execjs
   factory_girl_rails
   faker
-  git
   httparty
   i18n
   jbuilder (~> 2.0)
@@ -347,7 +345,7 @@ DEPENDENCIES
   rubocop
   rubocop-git
   rubyzip
-  rugged (~> 0.21.4)
+  rugged
   sass-rails (= 5.0.0.beta1)
   shoulda
   shoulda-callback-matchers (~> 1.1.1)

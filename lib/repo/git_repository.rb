@@ -1,19 +1,7 @@
 require 'rugged'
 require 'digest/md5'
-require 'git'
 
 require File.join(File.dirname(__FILE__),'repository') # load repository module
-
-def commit_options(repo, author, message)
-  {
-    author:  { email: 'markus@markus.com', name: author, time: Time.now },
-    committer: { email: 'markus@markus.com', name: author, time: Time.now },
-    message: message,
-    tree: repo.index.write_tree(repo),
-    parents: repo.empty? ? [] : [repo.head.target].compact,
-    update_ref: 'HEAD'
-  }
-end
 
 module Repository
 
@@ -48,15 +36,35 @@ module Repository
       @closed = false
       @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if GitRepository.repository_exists?(@repos_path)
-
-        # make sure working directory is up-to-date
-        g = Git.open(@repos_path)
-        g.pull
-
         @repos = Rugged::Repository.new(@repos_path)
+        # make sure working directory is up-to-date
+        @repos.fetch('origin')
+        @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo
+        @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       else
         raise "Repository does not exist at path \"#{@repos_path}\""
       end
+    end
+
+    def self.do_commit(repo, author, message)
+      index = repo.index
+      commit_tree = index.write_tree(repo)
+      index.write
+      commit_author = {email: 'markus@markus.com', name: author, time: Time.now}
+      commit_options = {
+          author: commit_author,
+          committer: commit_author,
+          message: message,
+          tree: commit_tree,
+          parents: repo.empty? ? [] : [repo.head.target].compact, # compact in case target returns nil? (suggested upstream)
+          update_ref: 'HEAD'
+      }
+      Rugged::Commit.create(repo, commit_options)
+    end
+
+    def self.do_commit_and_push(repo, author, message)
+      GitRepository.do_commit(repo, author, message)
+      repo.push('origin', ['refs/heads/master'])
     end
 
     # Static method: Creates a new Git repository at
@@ -75,32 +83,18 @@ module Repository
       repo_path, sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       Rugged::Repository.init_at(bare_path, :bare)
-      cloned_repo = Git.clone(bare_path, connect_string)
+      repo = Rugged::Repository.clone_at(bare_path, connect_string)
 
-      # Lets make some sample files and the new master branch
-      cloned_repo.reset
-      cloned_repo.branch('master')
-
-      repo = Rugged::Repository.discover(connect_string)
-
-      # Do an initial commit with a README to create index.
-      file_path_for_readme = File.join(repo.workdir, 'README.md')
-      File.open(file_path_for_readme, 'w+') do |readme|
+      # Do an initial commit with a README.md file.
+      readme_path = File.join(connect_string, 'README.md')
+      File.open(readme_path, 'w') do |readme|
         readme.write('Initial commit.')
       end
       oid = Rugged::Blob.from_workdir(repo, 'README.md')
-      index = repo.index
-      index.add(path: 'README.md', oid: oid, mode: 0100644)
-      index.write
-      Rugged::Commit.create(
-        repo,
-        commit_options(
-          repo,
-          'Markus',
-          'Initial readme commit.'))
+      repo.index.add(path: 'README.md', oid: oid, mode: 0100644)
+      GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
-      cloned_repo.push
-      return true
+      true
     end
 
     # Static method: Opens an existing Git repository
@@ -515,16 +509,9 @@ module Repository
         raise Repository::FileDoesNotExist.new(path)
       end
 
-      @repos.index.remove(path);
       File.unlink(File.join(@repos_path, path))
-      @repos.index.write_tree(@repos)
-      @repos.index.write
-      Rugged::Commit.create(@repos, commit_options(@repos, author,
-                                                   'Removing file'))
-
-      # TODO: quick fix to make gitolite sync on file upload (is it still needed without gitolite?)
-      g = Git.open(@repos_path)
-      g.push
+      @repos.index.remove(path)
+      GitRepository.do_commit_and_push(@repos, author, 'Removing file')
     end
 
     # Replaces file at provided path with file_data
@@ -560,18 +547,14 @@ module Repository
       # Get the file path to write to using the ruby File module.
       abs_path = File.join(@repos_path, path)
       # Actually create the file.
-      File.open(abs_path, 'w+') do |file|
+      File.open(abs_path, 'w') do |file|
         file.write file_data.force_encoding('UTF-8')
       end
 
       # Get the hash of the file we just created and added
       oid = Rugged::Blob.from_workdir(@repos, path)
-      index = @repos.index
-      index.add(path: path, oid: oid, mode: 0100644)
-      index.write
-      Rugged::Commit.create(@repos, commit_options(@repos, author, 'Add file'))
-      g = Git.open(@repos.workdir)
-      g.push
+      @repos.index.add(path: path, oid: oid, mode: 0100644)
+      GitRepository.do_commit_and_push(@repos, author, 'Add file')
     end
 
     # Create and commit an empty directory, if it's not already present.
