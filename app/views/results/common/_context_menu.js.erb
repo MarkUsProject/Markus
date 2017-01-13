@@ -1,52 +1,110 @@
 <script>
   $(function(){
-    var context_menu_el = $("<ul id='custom-context-menu'></ul>")
-      .css({
-        display: 'none',
-        position: 'absolute',
-        'z-index': 100,
-        overflow: 'hidden',
-        background: 'white',
-        border: '1px solid grey',
-        'border-radius': '2px',
-        margin: 0,
-        padding: 0,
-        'list-style-type': 'none'
-      })
-      .appendTo('body');
-
-    var create_menu_item = function(label, action) {
-      var item = $("<li class='context_menu_item'>" + label + "</li>")
-        .css({
-          padding: '10px 10px',
-          cursor: 'pointer',
-          'border-bottom': '1px solid grey'
-        });
-      item.mouseenter(function() {$(this).css('background', '#b7d3ec')});
-      item.mouseleave(function() {$(this).css('background', 'white')});
-      item.click(function(event) {
-        context_menu_el.hide(0, action);
-      });
-      return item;
-    };
-    context_menu_el.append(create_menu_item('New Annotation', function(){ make_new_annotation(); return false;}));
-    context_menu_el.append(create_menu_item('Pre-Canned > ', 'testing2'));
-    context_menu_el.append(create_menu_item('Next', 'testing3'));
-    context_menu_el.append(create_menu_item('Prev', 'testing3'));
-
-    // Custom context menu active on codeviewer DOM element
-    $('#codeviewer').on('contextmenu', function(event) {
-      event.preventDefault();
-      context_menu_el.finish().toggle(50).css({top: event.pageY + 'px', left: event.pageX + 'px'});
-    });
-
-    $(document).bind('mousedown', function(event) {
-      if (!(context_menu_el.find($(event.target)).length > 0)) {
-        context_menu_el.hide(50);
-      } else {
-        event.preventDefault();
+    var menu_items = {
+      new_annotation: {
+        label: 'New Annotation',
+        shortcut: 'ctrl + alt + n',
+        action: function(){
+          make_new_annotation();
+          return false;
+        }
+      },
+      pre_canned_annotations: {
+        label: 'Pre-canned >',
+        shortcut: '',
+        action: function(){
+          return false;
+        }
+      },
+      delete_annotation: {
+        label: 'Delete Annotation >',
+        shortcut: '',
+        action: function(){
+          return false;
+        }
+      },
+      next_file: {
+        label: 'Next File',
+        shortcut: '',
+        action: function(){
+          return false;
+        }
+      },
+      prev_file: {
+        label: 'Prev File',
+        shortcut: '',
+        action: function(){
+          return false;
+        }
       }
-    });
+    };
+    
+    var context_menu_el = create_menu_element();
+    add_menu_item_element(context_menu_el, menu_items.new_annotation);
+    add_menu_item_element(context_menu_el, menu_items.pre_canned_annotations);
+    add_menu_item_element(context_menu_el, menu_items.delete_annotation);
+    add_menu_item_element(context_menu_el, menu_items.next_file);
+    add_menu_item_element(context_menu_el, menu_items.prev_file);
 
+    add_context_menu_event_listeners(context_menu_el);
+    
+    
+    function create_menu_element() {
+      var css = {
+        'display': 'none',
+        'position': 'absolute',
+        'z-index': '100',
+        'overflow': 'hidden',
+        'background': 'white',
+        'border': '1px solid grey',
+        'border-radius': '2px',
+        'margin': 0,
+        'padding': 0,
+        'list-style-type': 'none'
+      };
+      return $('<ul/>', {id: 'custom-context-menu'}).css(css).appendTo('body');
+    }
+    
+    function add_menu_item_element(menu_element, item) {
+      var css = {
+        padding: '10px 10px',
+        cursor: 'pointer',
+        'border-bottom': '1px solid grey'
+      };
+      var item_element = $('<li/>', {class: 'context_menu_item'});
+      item_element.text(item.label);
+      item_element.css(css);
+      item_element.mouseenter(function() {
+        $(this).css('background', '#b7d3ec')
+      });
+      item_element.mouseleave(function() {
+        $(this).css('background', 'white')
+      });
+      item_element.click(function(event) {
+        context_menu_el.hide(0, item.action);
+      });
+      menu_element.append(item_element);
+    }
+    
+    function add_context_menu_event_listeners(menu_element) {
+      // Custom context menu active on codeviewer DOM element right click event
+      $('#codeviewer').on('contextmenu', function(event) {
+        event.preventDefault();
+        var updated_menu_position_css = {
+          top: event.pageY + 'px',
+          left: event.pageX + 'px'
+        }
+        menu_element.finish().toggle(50).css(updated_menu_position_css);
+      });
+      
+      // Any non-context menu mouse event should close the context menu
+      $(document).bind('mousedown', function(event) {
+        if (!(menu_element.find($(event.target)).length > 0)) {
+          menu_element.hide(50);
+        } else {
+          event.preventDefault();
+        }
+      });
+    }
   });
 </script>
