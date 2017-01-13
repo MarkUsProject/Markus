@@ -89,6 +89,9 @@
            formats: [:js],
            locals: { first_file: @first_file } %>
 
+<%= render partial: 'results/common/context_menu',
+           formats: [:js] %>
+
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
 <aside class='dialog' id='download_files_dialog'>

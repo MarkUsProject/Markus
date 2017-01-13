@@ -1,0 +1,52 @@
+<script>
+  $(function(){
+    var context_menu_el = $("<ul id='custom-context-menu'></ul>")
+      .css({
+        display: 'none',
+        position: 'absolute',
+        'z-index': 100,
+        overflow: 'hidden',
+        background: 'white',
+        border: '1px solid grey',
+        'border-radius': '2px',
+        margin: 0,
+        padding: 0,
+        'list-style-type': 'none'
+      })
+      .appendTo('body');
+
+    var create_menu_item = function(label, action) {
+      var item = $("<li class='context_menu_item'>" + label + "</li>")
+        .css({
+          padding: '10px 10px',
+          cursor: 'pointer',
+          'border-bottom': '1px solid grey'
+        });
+      item.mouseenter(function() {$(this).css('background', '#b7d3ec')});
+      item.mouseleave(function() {$(this).css('background', 'white')});
+      item.click(function(event) {
+        context_menu_el.hide(0, action);
+      });
+      return item;
+    };
+    context_menu_el.append(create_menu_item('New Annotation', function(){ make_new_annotation(); return false;}));
+    context_menu_el.append(create_menu_item('Pre-Canned > ', 'testing2'));
+    context_menu_el.append(create_menu_item('Next', 'testing3'));
+    context_menu_el.append(create_menu_item('Prev', 'testing3'));
+
+    // Custom context menu active on codeviewer DOM element
+    $('#codeviewer').on('contextmenu', function(event) {
+      event.preventDefault();
+      context_menu_el.finish().toggle(50).css({top: event.pageY + 'px', left: event.pageX + 'px'});
+    });
+
+    $(document).bind('mousedown', function(event) {
+      if (!(context_menu_el.find($(event.target)).length > 0)) {
+        context_menu_el.hide(50);
+      } else {
+        event.preventDefault();
+      }
+    });
+
+  });
+</script>
