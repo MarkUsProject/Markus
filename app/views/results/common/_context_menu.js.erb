@@ -1,4 +1,73 @@
 <script>
+$(document).contextmenu({
+  delegate: '#codeviewer',
+  autoFocus: true,
+  preventContextMenuForPopup: true,
+  preventSelect: false,
+  taphold: true,
+  show: {
+    effect: 'slidedown',
+    duration: 'fast'
+  },
+  menu: [
+    {
+      title: 'New Annotation <kbd>Ctrl+?</kbd>',
+      cmd: 'new_annotation',
+    },
+    {
+      title: 'Pre-canned <kbd>Ctrl+?</kbd>',
+      children: [
+        {
+          title: "First",
+          action: function (event, ui) {
+              alert('First annot');
+          }
+        },
+        {
+          title: "Second",
+          cmd: "sub2",
+          tooltip: "Second"
+        }]
+    },
+    {
+      title: 'Delete Annotation',
+      cmd: "delete_annotation",
+    },
+    {
+      title: "----"
+    },
+    {
+      title: 'Next File',
+      cmd: "next_file",
+    },
+    {
+      title: 'Previous File',
+      cmd: "prev_file",
+    }
+  ],
+  select: function (event, ui) {
+    var $target = ui.target;
+    switch (ui.cmd) {
+      case "new_annotation":
+        make_new_annotation();
+        break
+      case "delete_annotation":
+        break
+    }
+  },
+  beforeOpen: function (event, ui) {
+      var $menu = ui.menu,
+          $target = ui.target,
+          extraData = ui.extraData;
+
+      ui.menu.zIndex($(event.target).zIndex() + 1);
+
+      $(document).contextmenu("enableEntry", "delete_annotation", function() {
+        return false;  //Check here if there is an active annotation clicked
+      });
+  }
+});
+/*
   $(function(){
     var menu_items = {
       new_annotation: {
@@ -106,5 +175,5 @@
         }
       });
     }
-  });
+  });*/
 </script>
