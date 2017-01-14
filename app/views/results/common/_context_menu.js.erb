@@ -1,21 +1,14 @@
 <script>
-  $(document).contextmenu({
-    delegate: '#codeviewer',
-    autoFocus: true,
-    preventContextMenuForPopup: true,
-    preventSelect: false,
-    taphold: true,
-    show: {
-      effect: 'slidedown',
-      duration: 'fast'
-    },
-    menu: [
-      {
+  (function() {
+    var menu_items = {
+      new_annotation: {
         title: 'New Annotation <kbd>Ctrl+?</kbd>',
         cmd: 'new_annotation',
+        action: make_new_annotation,
       },
-      {
+      pre_canned_annotations: {
         title: 'Pre-canned <kbd>Ctrl+?</kbd>',
+        action: function(event, ui){ return false; },
         children: [
           {
             title: "First",
@@ -25,46 +18,76 @@
           },
           {
             title: "Second",
-            cmd: "sub2",
+            action: "sub2",
             tooltip: "Second"
-          }]
+          }
+        ]
       },
-      {
+      delete_annotation: {
         title: 'Delete Annotation',
         cmd: "delete_annotation",
+        action: "delete_annotation",
+        disabled: true
       },
-      {
+      separator: {
         title: "----"
       },
-      {
+      next_file: {
         title: 'Next File',
-        cmd: "next_file",
+        cmd: 'next_file',
+        action: "next_file"
       },
-      {
+      prev_file: {
         title: 'Previous File',
-        cmd: "prev_file",
+        cmd: 'prev_file',
+        action: "prev_file"
       }
-    ],
-    select: function (event, ui) {
-      var $target = ui.target;
-      switch (ui.cmd) {
-        case "new_annotation":
-          make_new_annotation();
-          break
-        case "delete_annotation":
-          break
-      }
-    },
-    beforeOpen: function (event, ui) {
-        var $menu = ui.menu,
-            $target = ui.target,
-            extraData = ui.extraData;
-
+    }
+    
+    $(document).contextmenu({
+      delegate: '#codeviewer',
+      autoFocus: false,
+      preventContextMenuForPopup: true,
+      preventSelect: false,
+      taphold: true,
+      ignoreParentSelect: false,
+      show: {
+        effect: 'slidedown',
+        duration: 'fast'
+      },
+      menu: [
+        menu_items.new_annotation,
+        menu_items.pre_canned_annotations,
+        menu_items.delete_annotation,
+        menu_items.separator,
+        menu_items.next_file,
+        menu_items.prev_file
+      ],
+      beforeOpen: function (event, ui) {
         ui.menu.zIndex($(event.target).zIndex() + 1);
 
-        $(document).contextmenu("enableEntry", "delete_annotation", function() {
-          return false;  //Check here if there is an active annotation clicked
-        });
-    }
-  });
+        // Enable "delete" menu item if an annotation was clicked.
+        $(document).contextmenu('enableEntry', 'delete_annotation', (function()
+        {
+          var right_clicked_el = $(ui.target);
+          if (right_clicked_el.prop('tagName') &&
+              right_clicked_el.prop('tagName').toLowerCase() === 'span') {
+            var has_annotation_depth = false,
+                has_annotation_id = false;
+            $.each(right_clicked_el[0].attributes, function(index, attr) {
+              if (attr.nodeName.toLowerCase() === 'data-annotationdepth') {
+                has_annotation_depth = true;
+              }
+              if (attr.nodeName.toLowerCase()
+                                   .indexOf('data-annotationid') != -1) {
+                has_annotation_id = true;
+              }
+            });
+            return (has_annotation_depth && has_annotation_id);
+          }
+          return false;
+        })());
+      }
+    });
+  })();
 </script>

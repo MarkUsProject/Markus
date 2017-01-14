@@ -2,7 +2,9 @@
   <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('pdfjs/viewer') %>
-  <%= stylesheet_link_tag('context_menu') %>
+  <% if !@result.released_to_students %>
+    <%= stylesheet_link_tag('context_menu') %>
+  <% end %>
 
   <%= javascript_include_tag 'Results/file_selector',
                              'panes',
@@ -16,7 +18,9 @@
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu' %>
-<%= javascript_include_tag 'jquery.ui-contextmenu.min' %>
+<% if !@result.released_to_students %>
+  <%= javascript_include_tag 'jquery.ui-contextmenu.min' %>
+<% end %>
 
 <!-- MathML -->
 <%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
@@ -91,8 +95,10 @@
            formats: [:js],
            locals: { first_file: @first_file } %>
 
-<%= render partial: 'results/common/context_menu',
-           formats: [:js] %>
+<% if !@result.released_to_students %>
+  <%= render partial: 'results/common/context_menu',
+             formats: [:js] %>
+<% end %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
