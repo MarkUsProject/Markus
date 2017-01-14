@@ -1,179 +1,70 @@
 <script>
-$(document).contextmenu({
-  delegate: '#codeviewer',
-  autoFocus: true,
-  preventContextMenuForPopup: true,
-  preventSelect: false,
-  taphold: true,
-  show: {
-    effect: 'slidedown',
-    duration: 'fast'
-  },
-  menu: [
-    {
-      title: 'New Annotation <kbd>Ctrl+?</kbd>',
-      cmd: 'new_annotation',
+  $(document).contextmenu({
+    delegate: '#codeviewer',
+    autoFocus: true,
+    preventContextMenuForPopup: true,
+    preventSelect: false,
+    taphold: true,
+    show: {
+      effect: 'slidedown',
+      duration: 'fast'
     },
-    {
-      title: 'Pre-canned <kbd>Ctrl+?</kbd>',
-      children: [
-        {
-          title: "First",
-          action: function (event, ui) {
-              alert('First annot');
-          }
-        },
-        {
-          title: "Second",
-          cmd: "sub2",
-          tooltip: "Second"
-        }]
-    },
-    {
-      title: 'Delete Annotation',
-      cmd: "delete_annotation",
-    },
-    {
-      title: "----"
-    },
-    {
-      title: 'Next File',
-      cmd: "next_file",
-    },
-    {
-      title: 'Previous File',
-      cmd: "prev_file",
-    }
-  ],
-  select: function (event, ui) {
-    var $target = ui.target;
-    switch (ui.cmd) {
-      case "new_annotation":
-        make_new_annotation();
-        break
-      case "delete_annotation":
-        break
-    }
-  },
-  beforeOpen: function (event, ui) {
-      var $menu = ui.menu,
-          $target = ui.target,
-          extraData = ui.extraData;
-
-      ui.menu.zIndex($(event.target).zIndex() + 1);
-
-      $(document).contextmenu("enableEntry", "delete_annotation", function() {
-        return false;  //Check here if there is an active annotation clicked
-      });
-  }
-});
-/*
-  $(function(){
-    var menu_items = {
-      new_annotation: {
-        label: 'New Annotation',
-        shortcut: 'ctrl + alt + n',
-        action: function(){
-          make_new_annotation();
-          return false;
-        }
+    menu: [
+      {
+        title: 'New Annotation <kbd>Ctrl+?</kbd>',
+        cmd: 'new_annotation',
       },
-      pre_canned_annotations: {
-        label: 'Pre-canned >',
-        shortcut: '',
-        action: function(){
-          return false;
-        }
+      {
+        title: 'Pre-canned <kbd>Ctrl+?</kbd>',
+        children: [
+          {
+            title: "First",
+            action: function (event, ui) {
+                alert('First annot');
+            }
+          },
+          {
+            title: "Second",
+            cmd: "sub2",
+            tooltip: "Second"
+          }]
       },
-      delete_annotation: {
-        label: 'Delete Annotation >',
-        shortcut: '',
-        action: function(){
-          return false;
-        }
+      {
+        title: 'Delete Annotation',
+        cmd: "delete_annotation",
       },
-      next_file: {
-        label: 'Next File',
-        shortcut: '',
-        action: function(){
-          return false;
-        }
+      {
+        title: "----"
       },
-      prev_file: {
-        label: 'Prev File',
-        shortcut: '',
-        action: function(){
-          return false;
-        }
+      {
+        title: 'Next File',
+        cmd: "next_file",
+      },
+      {
+        title: 'Previous File',
+        cmd: "prev_file",
       }
-    };
-    
-    var context_menu_el = create_menu_element();
-    add_menu_item_element(context_menu_el, menu_items.new_annotation);
-    add_menu_item_element(context_menu_el, menu_items.pre_canned_annotations);
-    add_menu_item_element(context_menu_el, menu_items.delete_annotation);
-    add_menu_item_element(context_menu_el, menu_items.next_file);
-    add_menu_item_element(context_menu_el, menu_items.prev_file);
+    ],
+    select: function (event, ui) {
+      var $target = ui.target;
+      switch (ui.cmd) {
+        case "new_annotation":
+          make_new_annotation();
+          break
+        case "delete_annotation":
+          break
+      }
+    },
+    beforeOpen: function (event, ui) {
+        var $menu = ui.menu,
+            $target = ui.target,
+            extraData = ui.extraData;
 
-    add_context_menu_event_listeners(context_menu_el);
-    
-    
-    function create_menu_element() {
-      var css = {
-        'display': 'none',
-        'position': 'absolute',
-        'z-index': '100',
-        'overflow': 'hidden',
-        'background': 'white',
-        'border': '1px solid grey',
-        'border-radius': '2px',
-        'margin': 0,
-        'padding': 0,
-        'list-style-type': 'none'
-      };
-      return $('<ul/>', {id: 'custom-context-menu'}).css(css).appendTo('body');
+        ui.menu.zIndex($(event.target).zIndex() + 1);
+
+        $(document).contextmenu("enableEntry", "delete_annotation", function() {
+          return false;  //Check here if there is an active annotation clicked
+        });
     }
-    
-    function add_menu_item_element(menu_element, item) {
-      var css = {
-        padding: '10px 10px',
-        cursor: 'pointer',
-        'border-bottom': '1px solid grey'
-      };
-      var item_element = $('<li/>', {class: 'context_menu_item'});
-      item_element.text(item.label);
-      item_element.css(css);
-      item_element.mouseenter(function() {
-        $(this).css('background', '#b7d3ec')
-      });
-      item_element.mouseleave(function() {
-        $(this).css('background', 'white')
-      });
-      item_element.click(function(event) {
-        context_menu_el.hide(0, item.action);
-      });
-      menu_element.append(item_element);
-    }
-    
-    function add_context_menu_event_listeners(menu_element) {
-      // Custom context menu active on codeviewer DOM element right click event
-      $('#codeviewer').on('contextmenu', function(event) {
-        event.preventDefault();
-        var updated_menu_position_css = {
-          top: event.pageY + 'px',
-          left: event.pageX + 'px'
-        }
-        menu_element.finish().toggle(50).css(updated_menu_position_css);
-      });
-      
-      // Any non-context menu mouse event should close the context menu
-      $(document).bind('mousedown', function(event) {
-        if (!(menu_element.find($(event.target)).length > 0)) {
-          menu_element.hide(50);
-        } else {
-          event.preventDefault();
-        }
-      });
-    }
-  });*/
+  });
 </script>
