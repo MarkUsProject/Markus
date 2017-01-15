@@ -69,23 +69,9 @@
         // Enable "delete" menu item if an annotation was clicked.
         $(document).contextmenu('enableEntry', 'delete_annotation', (function()
         {
-          var right_clicked_el = $(ui.target);
-          if (right_clicked_el.prop('tagName') &&
-              right_clicked_el.prop('tagName').toLowerCase() === 'span') {
-            var has_annotation_depth = false,
-                has_annotation_id = false;
-            $.each(right_clicked_el[0].attributes, function(index, attr) {
-              if (attr.nodeName.toLowerCase() === 'data-annotationdepth') {
-                has_annotation_depth = true;
-              }
-              if (attr.nodeName.toLowerCase()
-                                   .indexOf('data-annotationid') != -1) {
-                has_annotation_id = true;
-              }
-            });
-            return (has_annotation_depth && has_annotation_id);
-          }
-          return false;
+          var clicked_element = $(ui.target);
+          var is_annotated = clicked_element.hasClass('source-code-glowing-1');
+          return is_annotated;
         })());
       }
     });
