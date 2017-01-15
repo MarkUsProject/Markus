@@ -7,7 +7,7 @@
         action: make_new_annotation,
       },
       pre_canned_annotations: {
-        title: 'Pre-canned <kbd>Ctrl+?</kbd>',
+        title: 'Pre-canned <kbd>Ctrl+? <b>></b></kbd>',
         action: function(event, ui){ return false; },
         children: [
           {
@@ -45,7 +45,7 @@
     }
     
     $(document).contextmenu({
-      delegate: '#codeviewer',
+      delegate: '#codeviewer, #sel_box',
       autoFocus: false,
       preventContextMenuForPopup: true,
       preventSelect: false,
