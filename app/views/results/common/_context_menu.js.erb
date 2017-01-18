@@ -5,9 +5,11 @@
         title: 'New Annotation <kbd>Ctrl+?</kbd>',
         cmd: 'new_annotation',
         action: make_new_annotation,
+        disabled: true
       },
       pre_canned_annotations: {
         title: 'Pre-canned <kbd>Ctrl+? <b>></b></kbd>',
+        cmd: 'precanned_annotations',
         action: function(event, ui){ return false; },
         children: [
           {
@@ -21,7 +23,8 @@
             action: "sub2",
             tooltip: "Second"
           }
-        ]
+        ],
+        disabled: true
       },
       delete_annotation: {
         title: 'Delete Annotation',
@@ -50,13 +53,32 @@
       beforeOpen: function (event, ui) {
         ui.menu.zIndex($(event.target).zIndex() + 1);
 
+        // Enable annotation menu items only if a selection has been made
+        var selection_exists = (function() {
+          if (annotation_type === ANNOTATION_TYPES.CODE) {
+            return window.getSelection().toString() !== '';
+          } else if (annotation_type === ANNOTATION_TYPES.PDF) {
+            return !!get_pdf_box_attrs();
+          } else {
+            return !!get_selection_box_coordinates();
+          }
+        })();
+        $(document).contextmenu('enableEntry', 'new_annotation',
+                                selection_exists);
+        $(document).contextmenu('enableEntry', 'precanned_annotations',
+                                selection_exists);
+
         // Enable "delete" menu item if an annotation was clicked.
-        $(document).contextmenu('enableEntry', 'delete_annotation', (function()
-        {
+        var annotation_selected = (function() {
           var clicked_element = $(ui.target);
-          var is_annotated = clicked_element.hasClass('source-code-glowing-1');
-          return is_annotated;
-        })());
+          if (annotation_type === ANNOTATION_TYPES.CODE) {
+            return clicked_element.hasClass('source-code-glowing-1');
+          } else {
+            return clicked_element.hasClass('annotation_holder');
+          }
+        })();
+        $(document).contextmenu('enableEntry', 'delete_annotation',
+                                annotation_selected);
       }
     });
   })();
