@@ -28,19 +28,6 @@
         cmd: "delete_annotation",
         action: "delete_annotation",
         disabled: true
-      },
-      separator: {
-        title: "----"
-      },
-      next_file: {
-        title: 'Next File',
-        cmd: 'next_file',
-        action: "next_file"
-      },
-      prev_file: {
-        title: 'Previous File',
-        cmd: 'prev_file',
-        action: "prev_file"
       }
     }
     
@@ -58,10 +45,7 @@
       menu: [
         menu_items.new_annotation,
         menu_items.pre_canned_annotations,
-        menu_items.delete_annotation,
-        menu_items.separator,
-        menu_items.next_file,
-        menu_items.prev_file
+        menu_items.delete_annotation
       ],
       beforeOpen: function (event, ui) {
         ui.menu.zIndex($(event.target).zIndex() + 1);
