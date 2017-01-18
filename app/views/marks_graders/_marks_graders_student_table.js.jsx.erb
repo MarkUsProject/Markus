@@ -96,8 +96,8 @@
         };
         return filter;
       });;
-      var all = '<%= I18n.t('all') %>';
-      section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      var all = '<%= t('all') %>';
+      section_filters.unshift({name: all, text: all, func: null});
 
       var columns = [
           {

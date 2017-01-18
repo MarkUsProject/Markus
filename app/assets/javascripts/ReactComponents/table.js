@@ -319,7 +319,11 @@ SimpleTableFilter = React.createClass({displayName: 'SimpleTableFilter',
 
     for (var i = 0; i < this.props.filters.length; i++) {
       // Get number of elements that pass filter
-      var number = this.props.data.filter(this.props.filters[i].func).length;
+      if (this.props.filters[i].func === null) {
+        var number = this.props.data.length;
+      } else {
+        var number = this.props.data.filter(this.props.filters[i].func).length;
+      }
       var fltr =
         (this.props.current_filter == this.props.filters[i].name ?
          React.DOM.span( {key:this.props.filters[i].name},

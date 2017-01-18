@@ -365,7 +365,7 @@
         return filter;
       });
       var all = '<%= t('all') %>';
-      section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      section_filters.unshift({name: all, text: all, func: null});
 
 
       // Massage the data so it will fit into the table.
@@ -565,7 +565,7 @@
         return filter;
       });;
       var all = '<%= t('all') %>';
-      filters.unshift({name: all, text: all, func: function(g) { return g; } });
+      filters.unshift({name: all, text: all, func: null});
 
       // Massage the data so it will fit into the table.
       var groups_data = this.props.groups.map(function(group) {
