@@ -3,7 +3,7 @@ rvm:
   - 2.1.3
 
 before_install:
-  - sudo apt-get install -y cmake libssh2-dev
+  - sudo apt-get install -y cmake libssh2*-dev
 
 install:
   - travis_wait bundle install --path=~/.bundle --jobs=3 --retry=3 --without development production console
