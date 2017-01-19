@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Repository::GitRevision do
   context 'with a git repo' do
     before(:context) do
-      unless GitRepository.repository_exists?('test_repo_workdir')
+      unless Repository::GitRepository.repository_exists?('test_repo_workdir')
         Repository::GitRepository.create('test_repo_workdir')
       end
     end
