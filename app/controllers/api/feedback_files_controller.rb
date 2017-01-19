@@ -75,10 +75,10 @@ module Api
       end
 
       # Try creating the Feedback file
-      if params[:mime_type] == 'text/plain'
-        content = params[:file_content]
-      else
+      if params[:file_content].respond_to? :read # binary data
         content = params[:file_content].read
+      else
+        content = params[:file_content]
       end
       if submission.feedback_files.create(filename: params[:filename],
                                           mime_type: params[:mime_type],
