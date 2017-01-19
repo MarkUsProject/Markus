@@ -29,11 +29,23 @@
       delete_annotation: {
         title: 'Delete Annotation',
         cmd: "delete_annotation",
-        action: "delete_annotation",
+        action: function(event, ui) {
+          var clicked_element = $(ui.target);
+          $.each(clicked_element[0].attributes, function(index, attr) {
+            if (attr.nodeName.toLowerCase()
+                    .indexOf('data-annotationid') != -1) {
+
+              var annot_id = attr.value;
+              $('.annotation_form_remove_id' + annot_id)
+                .closest("form").submit();
+              return;
+            }
+          });
+        },
         disabled: true
       }
     }
-    
+
     $(document).contextmenu({
       delegate: '#codeviewer, #sel_box',
       autoFocus: false,
