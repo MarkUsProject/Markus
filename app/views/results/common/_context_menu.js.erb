@@ -45,16 +45,26 @@
         cmd: "delete_annotation",
         action: function(event, ui) {
           var clicked_element = $(ui.target);
-          $.each(clicked_element[0].attributes, function(index, attr) {
-            if (attr.nodeName.toLowerCase()
-                    .indexOf('data-annotationid') != -1) {
+          var annot_id = '';
+          if (annotation_type === ANNOTATION_TYPES.CODE) {
+            $.each(clicked_element[0].attributes, function(index, attr) {
+              if (attr.nodeName.toLowerCase()
+                      .indexOf('data-annotationid') != -1) {
 
-              var annot_id = attr.value;
-              $('.annotation_form_remove_id' + annot_id)
-                .closest("form").submit();
-              return;
-            }
-          });
+                annot_id = attr.value;
+                return false; // breaks out of $.each iterator
+              }
+            });
+          } else {
+            annot_id = clicked_element.attr('id')
+                                      .replace('annotation_holder_', '');
+          }
+
+          if (annot_id !== '') {
+            $('.annotation_form_remove_id' + annot_id).closest("form")
+                                                      .submit();
+          }
+          return;
         },
         disabled: true
       }
