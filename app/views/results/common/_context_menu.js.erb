@@ -1,4 +1,18 @@
 <script>
+  /*
+    This file contains the Javascript code necessary for the functionality
+    of the annotation context menu. For the annotation context menu to
+    function properly, these dependencies are necessary:
+
+    Context-Menu and library related:
+      * jquery.ui-contextmenu.min.js (..\app\assets\javascripts\)
+        * Depends on jQuery and jQuery-ui
+      * context_menu.css (..\app\assets\stylesheets\)
+
+    Context-Menu button functionality:
+      * _annotations.js.erb (..\app\views\results\common\)
+
+     */
   (function() {
     var menu_items = {
       new_annotation: {
