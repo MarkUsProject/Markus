@@ -3,17 +3,7 @@ require 'spec_helper'
 describe Repository::GitRevision do
   context 'with a git repo' do
     before(:context) do
-      # Make sure gitolite-admin repo is cloned in test environment
-      ga_repo = Gitolite::GitoliteAdmin.new(
-        "#{::Rails.root}/data/test/repos/gitolite-admin", GITOLITE_SETTINGS)
-
-      # Bring the repo up to date
-      ga_repo.reload!
-
-      # Make sure repo exists, if not make it
-      repo = ga_repo.config.get_repo('test_repo_workdir')
-
-      if repo.nil?
+      unless GitRepository.repository_exists?('test_repo_workdir')
         Repository::GitRepository.create('test_repo_workdir')
       end
     end
