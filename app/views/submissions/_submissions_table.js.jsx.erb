@@ -213,8 +213,8 @@
           };
           return filter;
         });
-        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
-        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+        var all = '<%= t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: null});
       }
 
       var submissions_data = this.state.submissions.map(function(submission) {

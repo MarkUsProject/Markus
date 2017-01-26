@@ -199,8 +199,8 @@
           }
           return filter;
         });
-        var all = '<%= I18n.t('browse_submissions.sections.all') %>';
-        section_filters.unshift({name: all, text: all, func: function(g) { return g; } });
+        var all = '<%= t('browse_submissions.sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: null});
       }
 
       // Add grades and marking state columns to array of table columns
