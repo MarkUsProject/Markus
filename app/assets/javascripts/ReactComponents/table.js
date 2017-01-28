@@ -78,6 +78,7 @@ var Table = React.createClass({displayName: 'Table',
     var first_secondary_filter_func =
         this.props.secondary_filters ? this.props.secondary_filters[0].func : null;
     return {
+      //sorted_rows: this.props.data,
       visible_rows: [],
       selected_rows: [],
       filter: first_filter_name,
@@ -558,7 +559,7 @@ function sort_by_column(data, column, direction, compare) {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
       // Is a react Grade Box
-      if (a.props.hasOwnProperty('grade_entry_column') || 
+      if (a.props.hasOwnProperty('grade_entry_column') ||
           a.props.hasOwnProperty('data-grade-entry-item-id')) {
         return a;
       // Contains image

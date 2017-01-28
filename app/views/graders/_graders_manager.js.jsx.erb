@@ -293,12 +293,15 @@
       var value = event.currentTarget.checked;
       // the id attribute is of the form "<id>_<class>"
       var criterion_id = parseInt(event.currentTarget.getAttribute('id').split('_')[0], 10);
-      var criterion_class = event.currentTarget.getAttribute('id').split('_')[1];
+      var criterion_class = event.currentTarget.getAttribute('value');
       var new_selected_criteria = this.props.selected_criteria.slice();
       if (value) {
         new_selected_criteria.push([criterion_id, criterion_class]);
       } else { // Delete array of criterion not checked
-        new_selected_criteria.splice(([].concat.apply([], new_selected_criteria).indexOf(criterion_id)) / 2, 1);
+        var i = new_selected_criteria.findIndex(function (e) {
+          return e[0] === criterion_id && e[1] === criterion_class;
+        });
+        new_selected_criteria.splice(i / 2, 1);
       }
       this.props.onSelectedCriteriaChange(new_selected_criteria);
     },
@@ -433,8 +436,11 @@
         // Need 'id' to have both the criterion id and class to ensure uniqueness
         c['id'] = criterion.id + '_' + criterion.class;
         var criteria_selected = this.props.selected_criteria.slice();
+        var i = criteria_selected.findIndex(function (e) {
+          return e[0] === criterion.id && e[1] === criterion.class;
+        });
         c['checkbox'] = <input id={criterion.id} value={criterion.class} type='checkbox'
-          checked={([].concat.apply([], criteria_selected)).indexOf(criterion.id) !== -1}
+          checked={i !== -1}
           onChange={this.criteriaCheckboxClicked} />
         c['name'] = criterion.name;
         var graders = [];
