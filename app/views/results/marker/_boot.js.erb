@@ -12,21 +12,27 @@
   });
 
   <% if @assignment.assign_graders_to_criteria && @current_user.ta? %>
-    window.onload = function() {
+    $(document).ready(function() {
       <% current_user_criteria = @current_user.get_criterion_associations_by_assignment(@assignment)
                                               .map &:criterion %>
       <% @mark_criteria.each do |criterion| %>
-        var id_prefix = '<%= criterion.class == RubricCriterion ? 'mark' : 'flexible' %>';
+        <% if criterion.class == RubricCriterion %>
+          var id_prefix = 'mark';
+        <% elsif criterion.class == FlexibleCriterion %>
+          var id_prefix = 'flexible';
+        <% else %>
+          var id_prefix = 'checkbox';
+        <% end %>
         var criterion_li = document.getElementById(id_prefix + '<%= "_criterion_#{criterion.id}" %>');
         <% if current_user_criteria.include?(criterion) %>
           criterion_li.addClass('assigned');
         <% else %>
           criterion_li.addClass('unassigned');
           jQuery(criterion_li).find('input').prop('disabled', true);
-          hide_criterion(<%= criterion.id %>, <%= criterion.class %>);
+          hide_criterion(<%= criterion.id %>, '<%= criterion.class %>');
         <% end %>
       <% end %>
-    };
+    });
   <% end %>
 
   jQuery(document).ready(function () {
