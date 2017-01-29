@@ -16,14 +16,14 @@
   (function() {
     var menu_items = {
       new_annotation: {
-        title: 'New Annotation <kbd>Ctrl+?</kbd>',
+        title: 'New Annotation',
         cmd: 'new_annotation',
         action: make_new_annotation,
         disabled: true
       },
       pre_canned_annotations: {
-        title: 'Pre-canned <kbd>Ctrl+? <b>></b></kbd>',
-        cmd: 'precanned_annotations',
+        title: 'Common Annotations',
+        cmd: 'common_annotations',
         action: function(event, ui){ return false; },
         children: [
           {
@@ -101,7 +101,7 @@
         })();
         $(document).contextmenu('enableEntry', 'new_annotation',
                                 selection_exists);
-        $(document).contextmenu('enableEntry', 'precanned_annotations',
+        $(document).contextmenu('enableEntry', 'common_annotations',
                                 selection_exists);
 
         // Enable "delete" menu item if an annotation was clicked.
