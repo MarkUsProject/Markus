@@ -14,6 +14,8 @@
 
      */
   (function() {
+    var released_to_students = <%= @result.released_to_students %>;
+    if (released_to_students) return;
     var menu_items = {
       new_annotation: {
         title: 'New Annotation',
