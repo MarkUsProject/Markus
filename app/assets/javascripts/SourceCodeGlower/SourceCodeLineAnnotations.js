@@ -145,7 +145,8 @@ SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id,
 
   // Clone relationships array and remove the found relationship
   var index = this.getRelationships().indexOf(relationship);
-  var clonedRelationships = this.getRelationships().slice().splice(index,relationship);
+  var clonedRelationships = this.getRelationships().slice();
+  clonedRelationships.splice(index, 1);
 
   this.setRelationships(clonedRelationships);
 }
