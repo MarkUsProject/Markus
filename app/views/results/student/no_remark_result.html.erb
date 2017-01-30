@@ -23,7 +23,7 @@
                     id: @assignment.id,
                     submission_id: @submission.id },
                   class: 'button',
-                  onclick: "return confirm('#{t(:cancel_remark_request)}');",
+                  data: { confirm: t(:cancel_remark_request) },
                   method: :delete %>
     </p>
   </div>
