@@ -55,11 +55,7 @@
               url: '<%= annotations_path %>?' + query_str_params.join('&'),
               method: 'POST',
               data: { _method: 'delete' },
-              dataType: 'script',
-              success: function() {
-                // Need to remove highlighted references to deleted annotation
-                $('span').removeAttr('data-annotationid' + annot_id);
-              }
+              dataType: 'script'
             });
 
           }
