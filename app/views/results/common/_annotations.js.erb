@@ -229,7 +229,7 @@
     document.getElementById('new_annotation_content').focus();
   }
 
-  function get_selection_box() {
+  function get_selection_box_coordinates() {
     var box = document.getElementById('sel_box');
     var x1 = parseInt(box.style.left, 10) -
                document.getElementById('image_preview').offsetLeft +
@@ -241,11 +241,20 @@
     var y2 = y1 + parseInt(box.style.height, 10);
 
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+      return false;
+    } else {
+      return { x1: x1, x2: x2, y1: y1, y2: y2 };
+    }
+  }
+
+  function get_selection_box() {
+    var coordinates = get_selection_box_coordinates();
+    if (!coordinates) {
       alert("<%= I18n.t('marker.annotation.select_an_area') %>");
       return false;
+    } else {
+      return coordinates;
     }
-
-    return { x1: x1, x2: x2, y1: y1, y2: y2 };
   }
 
 
@@ -281,14 +290,25 @@
     return false;
   }
 
-  function make_new_pdf_annotation () {
+  function get_pdf_box_attrs() {
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
 
     if (!box || boxSize.width < 5 || boxSize.height < 5) {
+      return false;
+    } else {
+      return { box: box, boxSize: boxSize };
+    }
+  }
+
+  function make_new_pdf_annotation () {
+    var box_attrs = get_pdf_box_attrs();
+    if (!box_attrs) {
       alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
       return;
     }
+    var box = box_attrs.box;
+    var boxSize = box_attrs.boxSize;
 
     // Open the modal dialog to ask for new Annotation details
     modal.open();

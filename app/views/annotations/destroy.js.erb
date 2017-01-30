@@ -14,3 +14,5 @@ document.getElementById('annotation_summary_list').innerHTML =
 
 hide_all_annotation_content_editors();
 reloadDOM();
+// Need to remove data attribute from highlight elements - must be last.
+$('span').removeAttr('data-annotationid<%= @annotation.id %>');

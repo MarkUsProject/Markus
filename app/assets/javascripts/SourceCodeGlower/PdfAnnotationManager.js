@@ -201,6 +201,7 @@
 
     // Press down, activate the selection box
     $pages.mousedown(function(ev) {
+      if (ev.which !== 1 && ev.target.id === 'sel_box') return;
       var point = getRelativePointForMouseEvent(ev);
 
       self.setSelectionBox($(ev.delegateTarget), {
@@ -389,6 +390,7 @@
       width: (((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
       height: (((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
     });
+    $control.attr('id', 'annotation_holder_' + coords.annot_id);
 
 
     var $page = this.getPageContainer(coords.page);
