@@ -81,7 +81,7 @@ Found a bug? Want a feature? Please email <info@markusproject.org>.
 
 ## 8. Credits
 
-MarkUs grew out of OLM, which was build using the TurboGears framework. We are
+MarkUs grew out of OLM, which was built using the TurboGears framework. We are
 grateful to everyone who worked on or funded both projects, and to the creators
 of Ruby on Rails for building such a great framework.
 
