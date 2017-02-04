@@ -67,6 +67,15 @@
           return;
         },
         disabled: true
+      },
+      separator: {
+        title: '----'
+      },
+      copy: {
+        title: 'Copy',
+        cmd: 'copy',
+        action: function(){ document.execCommand('copy'); },
+        disabled: true
       }
     }
 
@@ -84,7 +93,9 @@
       menu: [
         menu_items.new_annotation,
         menu_items.common_annotations,
-        menu_items.delete_annotation
+        menu_items.delete_annotation,
+        menu_items.separator,
+        menu_items.copy,
       ],
       beforeOpen: function (event, ui) {
         ui.menu.zIndex($(event.target).zIndex() + 1);
@@ -102,6 +113,8 @@
         $(document).contextmenu('enableEntry', 'new_annotation',
                                 selection_exists);
         $(document).contextmenu('enableEntry', 'common_annotations',
+                                selection_exists);
+        $(document).contextmenu('enableEntry', 'copy',
                                 selection_exists);
 
         var has_common_annot = $(document).contextmenu('getMenu')
