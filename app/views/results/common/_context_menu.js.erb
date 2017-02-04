@@ -26,34 +26,6 @@
       common_annotations: {
         title: 'Common Annotations <kbd>></kbd>',
         cmd: 'common_annotations',
-        action: function(event, ui){ return false; },
-        children: [
-        <% annotation_categories.each do |annotation_category| %>
-          {
-            title: '<%= truncate(annotation_category.annotation_category_name, length: 40) %>',
-            cmd: 'annotation_category_<%= annotation_category.id %>',
-            action: function(event, ui){ return false; },
-            children: [
-            <% if annotation_category.annotation_texts.empty? %>
-              {
-                title: '<%= t('marker.annotation.no_annotation_in_this_category') %>',
-                action: function(event, ui){ return false; }
-              }
-            <% end %>
-
-            <% annotation_category.annotation_texts.each do |annotation_text| %>
-              {
-                title: '<%= truncate(annotation_text.content, length: 70) %>',
-                cmd: 'annotation_text_<%= annotation_text.id %>',
-                action: function(){
-                  add_existing_annotation(<%= annotation_text.id %>, <%= result.id %>);
-                }
-              },
-            <% end %>
-            ]
-          },
-        <% end %>
-        ],
         disabled: true
       },
       delete_annotation: {
@@ -131,8 +103,12 @@
                                 selection_exists);
         $(document).contextmenu('enableEntry', 'common_annotations',
                                 selection_exists);
+
+        var has_common_annot = $(document).contextmenu('getMenu')
+                                          .find('.has_common_annotations')
+                                          .length > 0;
         $(document).contextmenu('showEntry', 'common_annotations',
-                                menu_items.common_annotations.children.length > 0);
+                                has_common_annot);
 
         // Enable "delete" menu item if an annotation was clicked.
         var annotation_selected = (function() {
@@ -147,5 +123,46 @@
                                 annotation_selected);
       }
     });
+  })();
+
+  (function() {
+   var common_annotations = [
+    <% annotation_categories.each do |annotation_category| %>
+      {
+        title: '<%= truncate(annotation_category.annotation_category_name, length: 40) %> <kbd>></kbd>',
+        cmd: 'annotation_category_<%= annotation_category.id %>',
+        action: function(event, ui){ return false; },
+        children: [
+        <% if annotation_category.annotation_texts.empty? %>
+          {
+            title: '<%= t('marker.annotation.no_annotation_in_this_category') %>',
+            action: function(event, ui){ return false; }
+          }
+        <% end %>
+
+        <% annotation_category.annotation_texts.each do |annotation_text| %>
+          {
+            title: '<%= truncate(annotation_text.content, length: 70) %>',
+            cmd: 'annotation_text_<%= annotation_text.id %>',
+            action: function(){
+              add_existing_annotation(<%= annotation_text.id %>, <%= result.id %>);
+            }
+          },
+        <% end %>
+        ]
+      },
+    <% end %>
+    ];
+
+    if (common_annotations.length > 0) {
+      $(document).contextmenu("setEntry", "common_annotations", {
+        title: 'Common Annotations <kbd>></kbd>',
+        cmd: 'common_annotations',
+        addClass: 'has_common_annotations',
+        action: function(event, ui){ return false; },
+        children: common_annotations,
+        disabled: true
+      });
+    }
   })();
 </script>
