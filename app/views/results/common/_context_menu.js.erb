@@ -14,7 +14,7 @@
 
      */
   (function() {
-    var released_to_students = <%= @result.released_to_students %>;
+    var released_to_students = <%= result.released_to_students %>;
     if (released_to_students) return;
     var menu_items = {
       new_annotation: {
@@ -24,11 +24,11 @@
         disabled: true
       },
       common_annotations: {
-        title: 'Common Annotations',
+        title: 'Common Annotations <kbd>></kbd>',
         cmd: 'common_annotations',
         action: function(event, ui){ return false; },
         children: [
-        <% @assignment.annotation_categories.each do |annotation_category| %>
+        <% annotation_categories.each do |annotation_category| %>
           {
             title: '<%= truncate(annotation_category.annotation_category_name, length: 40) %>',
             cmd: 'annotation_category_<%= annotation_category.id %>',
@@ -46,7 +46,7 @@
                 title: '<%= truncate(annotation_text.content, length: 70) %>',
                 cmd: 'annotation_text_<%= annotation_text.id %>',
                 action: function(){
-                  add_existing_annotation(<%= annotation_text.id %>, <%= @result.id %>);
+                  add_existing_annotation(<%= annotation_text.id %>, <%= result.id %>);
                 }
               },
             <% end %>
@@ -54,8 +54,7 @@
           },
         <% end %>
         ],
-        disabled: false
-        //show: false
+        disabled: true
       },
       delete_annotation: {
         title: 'Delete Annotation',
@@ -82,8 +81,8 @@
             var query_str_params = [
               ['id=' + annot_id],
               ['submission_file_id=' + sub_file_id],
-              ['result_id=<%= @result.id %>'],
-              ['assignment_id=<%= @result.submission.grouping.assignment.id %>']
+              ['result_id=<%= result.id %>'],
+              ['assignment_id=<%= result.submission.grouping.assignment.id %>']
             ];
             $.ajax({
               url: '<%= annotations_path %>?' + query_str_params.join('&'),
@@ -132,8 +131,8 @@
                                 selection_exists);
         $(document).contextmenu('enableEntry', 'common_annotations',
                                 selection_exists);
-        //$(document).contextmenu('showEntry', 'common_annotations',
-        //                        annotation_selected);
+        $(document).contextmenu('showEntry', 'common_annotations',
+                                menu_items.common_annotations.children.length > 0);
 
         // Enable "delete" menu item if an annotation was clicked.
         var annotation_selected = (function() {

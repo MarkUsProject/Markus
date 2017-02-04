@@ -92,7 +92,11 @@
            locals: { first_file: @first_file } %>
 
 <%= render partial: 'results/common/context_menu',
-         formats: [:js] %>
+           formats: [:js],
+           locals: {
+             result: @result,
+             annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
+           } %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
