@@ -76,6 +76,30 @@
         cmd: 'copy',
         action: function(){ document.execCommand('copy'); },
         disabled: true
+      },
+      download: {
+        title: 'Download File',
+        cmd: 'download',
+        action: function() { download_func('false'); },
+        disabled: false
+      },
+      download_annotated: {
+        title: 'Download Annotated File',
+        cmd: 'download_annotated',
+        action: function() { download_func('true'); },
+        disabled: false
+      }
+    }
+    function download_func(include_annot) {
+      var sub_file_id = $('#select_file_id').val()
+      if (sub_file_id !== null && sub_file_id.length !== 0) {
+      window.open('<%= download_assignment_submission_result_path(
+              result.submission.grouping.assignment.id,
+              result.submission.grouping.current_submission_used.id,
+              result.submission.grouping
+                    .current_submission_used.get_latest_result.id) %>' +
+      '?utf8=✓&include_annotations=' + include_annot +
+      '&select_file_id=' + sub_file_id);
       }
     }
 
@@ -96,6 +120,8 @@
         menu_items.delete_annotation,
         menu_items.separator,
         menu_items.copy,
+        menu_items.download,
+        menu_items.download_annotated
       ],
       beforeOpen: function (event, ui) {
         ui.menu.zIndex($(event.target).zIndex() + 1);
