@@ -46,11 +46,12 @@ class TokenTest < ActiveSupport::TestCase
     context 'when number of tokens is equal to 0' do
       setup do
         @token = Token.make(remaining: '0')
-        @token.decrease_tokens
       end
 
       should 'raise an error' do
-        assert_raises
+        assert_raises RuntimeError do
+          @token.decrease_tokens
+        end
       end
     end
   end
