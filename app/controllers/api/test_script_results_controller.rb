@@ -46,16 +46,18 @@ module Api
           e}, status: 404
     end
 
-    # Creates a new test result for a group's latest assignment submission
+    # Creates a new test result for a group's assignment submission
     # Requires:
     #  - assignment_id
     #  - group_id
-    #  - file_content: Contents of the test results file to be uploaded
+    #  - file_content: The test results in xml format
+    #  - test_scripts: A list of test scripts that were run
+    #  - requested_by: The api key of the user that requested the test run
     # Optional:
     #  - submission_id
     def create
       # TODO This code should really be in test_results
-      if has_missing_params?([:file_content, :test_scripts])
+      if has_missing_params?([:file_content, :test_scripts, :requested_by])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -72,10 +74,11 @@ module Api
         grouping = submission.grouping
         assignment = submission.assignment
       end
+      requested_by = User.find_by(api_key: params[:requested_by])
 
       begin
         AutomatedTestsClientHelper.process_test_result(params[:file_content], params[:test_scripts], assignment,
-                                                       grouping, submission)
+                                                       grouping, submission, requested_by)
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -110,10 +113,10 @@ module Api
     #  result and its test results and reprocess the xml test harness file. 
     # This is basically a delete followed by a create
     # Requires: assignment_id, group_id, id
-    #  - file_content: New contents of the test results file
+    #  - file_content: New contents of the test results
     # Optional: submission_id
     def update
-      if has_missing_params?([:id, :file_content, :test_scripts])
+      if has_missing_params?([:id, :file_content, :test_scripts, :requested_by])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -131,12 +134,14 @@ module Api
         grouping = submission.grouping
         assignment = submission.assignment
       end
+      requested_by = User.find_by(api_key: params[:requested_by])
 
       if AutomatedTestsClientHelper.process_test_result(params[:file_content],
                                                         params[:test_scripts],
                                                         assignment,
                                                         grouping,
-                                                        submission) &&
+                                                        submission,
+                                                        requested_by) &&
           test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

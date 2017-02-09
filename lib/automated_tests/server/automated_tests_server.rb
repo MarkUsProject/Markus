@@ -90,6 +90,7 @@ class AutomatedTestsServer
                    'Authorization' => "MarkUsAuth #{server_api_key}",
                    'Accept' => 'application/json'},
                :body => {
+                   'requested_by' => user_api_key,
                    'test_scripts' => test_scripts,
                    'file_content' => all_output}}
     unless submission_id.nil?

@@ -792,6 +792,14 @@ class Grouping < ActiveRecord::Base
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
+  def prepare_tokens_to_use
+    if self.token.nil?
+      self.create_token(remaining: nil, last_used: nil)
+    end
+    self.token.reassign_tokens
+    self.token
+  end
+
   private
 
   # Once a grouping is valid, grant (write) repository permissions for students

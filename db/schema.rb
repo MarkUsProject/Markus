@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160907214406) do
+ActiveRecord::Schema.define(version: 20170207220201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -499,7 +499,10 @@ ActiveRecord::Schema.define(version: 20160907214406) do
     t.datetime "updated_at"
     t.integer  "submission_id"
     t.integer  "repo_revision"
+    t.integer  "requested_by_id"
   end
+
+  add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree
 
   create_table "test_scripts", force: :cascade do |t|
     t.integer "assignment_id",           null: false
@@ -551,6 +554,7 @@ ActiveRecord::Schema.define(version: 20160907214406) do
     t.integer  "notes_count",   default: 0
   end
 
+  add_index "users", ["api_key"], name: "index_users_on_api_key", unique: true, using: :btree
   add_index "users", ["user_name"], name: "index_users_on_user_name", unique: true, using: :btree
 
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
@@ -573,5 +577,6 @@ ActiveRecord::Schema.define(version: 20160907214406) do
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
+  add_foreign_key "test_script_results", "users", column: "requested_by_id"
   add_foreign_key "tokens", "groupings"
 end

@@ -22,6 +22,7 @@ class TestScriptResult < ActiveRecord::Base
   belongs_to :submission, required: false
   belongs_to :test_script
   belongs_to :grouping
+  belongs_to :requested_by, class_name: 'User', inverse_of: :test_script_results
 
   has_many :test_results, dependent: :destroy
 

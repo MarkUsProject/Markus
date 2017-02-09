@@ -250,6 +250,7 @@ Markus::Application.configure do
   # Look at lib/automated_tests/README.md for the documentation
   AUTOMATED_TESTING_ENGINE_ON = true
   ATE_EXPERIMENTAL_STUDENT_TESTS_ON = true
+  ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME = 2.hours
   ATE_SERVER_HOST = 'localhost'
   ATE_SERVER_FILES_USERNAME = 'localhost'
   ATE_SERVER_TESTS_USERNAME = 'localhost'
