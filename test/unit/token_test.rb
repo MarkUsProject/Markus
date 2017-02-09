@@ -49,12 +49,8 @@ class TokenTest < ActiveSupport::TestCase
         @token.decrease_tokens
       end
 
-      should 'not decrease number of tokens (not enough tokens)' do
-        assert_equal(0, @token.remaining)
-      end
-
-      should 'not update the token used date' do
-        assert_nil(@token.last_used)
+      should 'raise an error' do
+        assert_raises
       end
     end
   end
