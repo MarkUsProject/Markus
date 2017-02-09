@@ -495,7 +495,7 @@ module AutomatedTestsClientHelper
       end
     end
 
-    # release the token + set the marks assigned by the test
+    # set the marks assigned by the test
     unless submission.nil?
       submission.set_marks_for_tests
     end
