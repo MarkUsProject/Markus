@@ -78,7 +78,6 @@ var Table = React.createClass({displayName: 'Table',
     var first_secondary_filter_func =
         this.props.secondary_filters ? this.props.secondary_filters[0].func : null;
     return {
-      //sorted_rows: this.props.data,
       visible_rows: [],
       selected_rows: [],
       filter: first_filter_name,

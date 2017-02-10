@@ -12,7 +12,7 @@
   });
 
   <% if @assignment.assign_graders_to_criteria && @current_user.ta? %>
-    $(document).ready(function() {
+    $jQuery(document).ready(function() {
       <% current_user_criteria = @current_user.get_criterion_associations_by_assignment(@assignment)
                                               .map &:criterion %>
       <% @mark_criteria.each do |criterion| %>
