@@ -38,7 +38,7 @@ module Api
       feedback_file = submission.feedback_files.find(params[:id])
 
       # Everything went fine; send file_content
-      send_data feedback_file.file_content, 
+      send_data feedback_file.file_content,
                 type: feedback_file.mime_type,
                 filename: feedback_file.filename,
                 disposition: 'inline'
@@ -75,10 +75,10 @@ module Api
       end
 
       # Try creating the Feedback file
-      if params[:mime_type] == 'text/plain'
-        content = params[:file_content]
-      else
+      if params[:file_content].respond_to? :read # binary data
         content = params[:file_content].read
+      else
+        content = params[:file_content]
       end
       if submission.feedback_files.create(filename: params[:filename],
                                           mime_type: params[:mime_type],

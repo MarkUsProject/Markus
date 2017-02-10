@@ -78,6 +78,7 @@ var Table = React.createClass({displayName: 'Table',
     var first_secondary_filter_func =
         this.props.secondary_filters ? this.props.secondary_filters[0].func : null;
     return {
+      sorted_rows: [],
       visible_rows: [],
       selected_rows: [],
       filter: first_filter_name,
@@ -91,17 +92,19 @@ var Table = React.createClass({displayName: 'Table',
     }
   },
   componentDidMount: function() {
-    this.setState({visible_rows: this.updateVisibleRows({})});
+    var rows = this.getVisibleRows({});
+    this.setState({visible_rows: rows, sorted_rows: rows});
   },
   componentWillReceiveProps: function(nextProps) {
-    this.setState({visible_rows: this.updateVisibleRows({data:nextProps.data})});
+    var rows = this.getVisibleRows({data:nextProps.data});
+    this.setState({visible_rows: rows, sorted_rows: rows});
   },
   // A filter was clicked. Adjust state accordingly.
   synchronizeFilter: function(filter) {
     var filter_func = this.props.filters.filter(function(fltr) {
         return fltr.name == filter;
       })[0].func;
-    var visible_rows = this.updateVisibleRows({
+    var visible_rows = this.getVisibleRows({
       filter_func: filter_func
     });
     this.setState({
@@ -115,7 +118,7 @@ var Table = React.createClass({displayName: 'Table',
     var filter_func = this.props.secondary_filters.filter(function(fltr) {
         return fltr.name == filter;
       })[0].func;
-    var visible_rows = this.updateVisibleRows({
+    var visible_rows = this.getVisibleRows({
       secondary_filter_func: filter_func
     });
     this.setState({
@@ -126,7 +129,7 @@ var Table = React.createClass({displayName: 'Table',
   },
   // Search input changed. Adjust state accordingly.
   synchronizeSearchInput: function(search_text) {
-    var visible_rows = this.updateVisibleRows({search_text: search_text});
+    var visible_rows = this.getVisibleRows({search_text: search_text});
     this.setState({
       search_text: search_text.toLowerCase(),
       visible_rows: visible_rows
@@ -137,10 +140,18 @@ var Table = React.createClass({displayName: 'Table',
     var compare_func = this.props.columns.filter(function(col) {
         return col.id == sort_column;
     })[0].compare;
+
+    var rows = this.state.sorted_rows.slice();
+    sort_by_column(rows,
+                   sort_column,
+                   sort_direction,
+                   compare_func);
+
     this.setState({
       sort_column: sort_column,
       sort_direction: sort_direction,
-      sort_compare: compare_func
+      sort_compare: compare_func,
+      sorted_rows: rows
     });
   },
   headerCheckboxClicked: function(event) {
@@ -172,14 +183,14 @@ var Table = React.createClass({displayName: 'Table',
   },
   // If search input or filter changed, pass the changed item into an object changed inhere
   // and it'll return the new visible rows so you can update the state with it.
-  updateVisibleRows: function(changed) {
+  getVisibleRows: function(changed) {
     var searchables = this.props.columns.filter(function(col) {
       return col.searchable;
     }).map(function(col) {
       return col.id;
     });
 
-    var new_data = changed.hasOwnProperty('data') ? changed.data : this.props.data;
+    var new_data = changed.hasOwnProperty('data') ? changed.data : this.state.sorted_rows; // this.props.data;
     var filter_function = changed.hasOwnProperty('filter_func') ? changed.filter_func : this.state.filter_func;
     var secondary_filter_function = changed.hasOwnProperty('secondary_filter_func') ? changed.secondary_filter_func : this.state.secondary_filter_func;
     var search_text = changed.hasOwnProperty('search_text') ? changed.search_text: this.state.search_text;
@@ -226,6 +237,7 @@ var Table = React.createClass({displayName: 'Table',
     if (!this.props.search) {
       search_div = null;
     }
+
     return (
       React.DOM.div( {className:"react-table"},
         TableFilter( {
@@ -247,7 +259,7 @@ var Table = React.createClass({displayName: 'Table',
               columns:              columns,
               rowCheckboxClicked:   this.rowCheckboxClicked,
               selectable:           this.props.selectable,
-              getVisibleRows:       this.updateVisibleRows,
+              visibleRows:          this.getVisibleRows({}),
               state:                this.state} ),
             footer_div
           )
@@ -319,7 +331,11 @@ SimpleTableFilter = React.createClass({displayName: 'SimpleTableFilter',
 
     for (var i = 0; i < this.props.filters.length; i++) {
       // Get number of elements that pass filter
-      var number = this.props.data.filter(this.props.filters[i].func).length;
+      if (this.props.filters[i].func === null) {
+        var number = this.props.data.length;
+      } else {
+        var number = this.props.data.filter(this.props.filters[i].func).length;
+      }
       var fltr =
         (this.props.current_filter == this.props.filters[i].name ?
          React.DOM.span( {key:this.props.filters[i].name},
@@ -449,20 +465,14 @@ TableRows = React.createClass({displayName: 'TableRows',
     columns: React.PropTypes.array,
     selectable: React.PropTypes.bool,
     rowCheckboxClicked: React.PropTypes.func,
-    getVisibleRows: React.PropTypes.func,
+    visibleRows: React.PropTypes.array,
     state: React.PropTypes.object
   },
 
   render: function() {
-    var visible_data = this.props.getVisibleRows({});
-    var sorted_data = sort_by_column(visible_data,
-                                     this.props.state.sort_column,
-                                     this.props.state.sort_direction,
-                                     this.props.state.sort_compare);
-
     var final_data = null;
     if (this.props.selectable) {
-      final_data = sorted_data.map(function(row) {
+      final_data = this.props.visibleRows.map(function(row) {
         var checked = this.props.state.selected_rows.indexOf(row.id) !== -1;
         row['checkbox'] = React.DOM.input( {type:'checkbox',
           onChange:this.props.rowCheckboxClicked,
@@ -470,7 +480,7 @@ TableRows = React.createClass({displayName: 'TableRows',
         return row;
       }.bind(this));
     } else {
-      final_data = sorted_data;
+      final_data = this.props.visibleRows;
     }
 
     // create rows
@@ -580,16 +590,19 @@ function sort_by_column(data, column, direction, compare) {
 
   compare = compare || compare_values;
 
+  data.map(function(a, i) { a.pos = i; });
+
   // sort row by column id
-  var sorted = data.sort(function(a, b) {
-    return compare(makeComparable(a[column]), makeComparable(b[column]));
+  data.sort(function(a, b) {
+    var c = compare(makeComparable(a[column]), makeComparable(b[column]));
+
+    if (c === 0) {
+      return a.pos - b.pos;
+    } else if (direction === 'desc') {
+      return -c;
+    } else {
+      return c;
+    }
   });
-
-  // flip order if direction descending
-  if (direction == 'desc') {
-      sorted.reverse();
-  }
-
-  return sorted;
 }
 
