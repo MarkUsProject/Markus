@@ -72,7 +72,7 @@
         </div>
         <div id='test_results' class='sub_block'>
           <%= render partial: 'test_script_result',
-                     locals: {show_output: true},
+                     locals: {current_user: @current_user, ran_by: 'student'},
                      collection: @test_script_results.where(submission_id: nil) %>
         </div>
       </div>

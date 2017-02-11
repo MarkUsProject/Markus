@@ -72,7 +72,7 @@
                     </div>
                     <div id="test_results" class="sub_block">
                       <%= render partial: 'automated_tests/test_script_result',
-                                 locals: {show_output: true},
+                                 locals: {current_user: @current_user, ran_by: 'instructor'},
                                  collection: submission.test_script_results %>
                     </div>
                   </div>

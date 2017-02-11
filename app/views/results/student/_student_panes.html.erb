@@ -55,11 +55,11 @@
                         <div class="sub_block">
                           <%= raw t("automated_tests.marks_obtained",
                                     :marking => "#{@grouping.get_total_test_script_marks} /
-                                             #{@assignment.total_instructor_test_script_marks}" ) %>
+                                                 #{@assignment.total_instructor_test_script_marks}" ) %>
                         </div>
                         <div id="test_results" class="sub_block">
                           <%= render partial: 'automated_tests/test_script_result',
-                                     locals: {show_output: !@current_user.student?},
+                                     locals: {current_user: @current_user, ran_by: 'instructor'},
                                      collection: submission.test_script_results %>
                         </div>
                       </div>

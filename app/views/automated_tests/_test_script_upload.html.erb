@@ -68,8 +68,16 @@
             <%= raw maxmarks_section %>
         <% end %>
 
-        <div style="display:none">
+        <div>
           <%= f.label :display_settings, t('automated_tests.script_option.display_settings') %> <br/>
+          <ul>
+            <li>
+              <%= f.label :display_actual_output, t('automated_tests.script_option.display_actual_output') %>
+              <%= f.select :display_actual_output, options_for_select(display_options, f.object.display_actual_output) %>
+            </li>
+          </ul>
+        </div>
+        <div style="display:none">
           <ul>
             <li>
               <%= f.label :display_description, t('automated_tests.script_option.display_description') %>
@@ -90,10 +98,6 @@
             <li>
               <%= f.label :display_expected_output, t('automated_tests.script_option.display_expected_output') %>
               <%= f.select :display_expected_output, options_for_select(display_options, f.object.display_expected_output) %>
-            </li>
-            <li>
-              <%= f.label :display_actual_output, t('automated_tests.script_option.display_actual_output') %>
-              <%= f.select :display_actual_output, options_for_select(display_options, f.object.display_actual_output) %>
             </li>
           </ul>
         </div>

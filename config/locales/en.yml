@@ -1674,11 +1674,11 @@ en:
         display_marks_earned: "Marks Earned"
         display_input: "Test Input"
         display_expected_output: "Expected Output"
-        display_actual_output: "Actual Ouput"
+        display_actual_output: "Output to Students"
         display_option:
            do_not_display: "Do not display"
-           display_after_submission: "Display after submission"
-           display_after_collection: "Display after collection"
+           display_after_submission: "Always display"
+           display_after_collection: "Display only when ran by a student"
       token:
         tokens_form: "Tokens available per group"
         tokens_regenerate: "and regenerate every"

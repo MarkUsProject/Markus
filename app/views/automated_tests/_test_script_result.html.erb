@@ -1,5 +1,9 @@
 <div class='test-result'>
   <% test_script_name = test_script_result.test_script.script_name %>
+  <% show_output = (
+    !current_user.student? ||
+    test_script_result.test_script.display_actual_output == 'display_after_submission' ||
+    (ran_by == 'student' && test_script_result.test_script.display_actual_output == 'display_after_collection')) %>
 
   <h3><%= "#{t('automated_tests.test_run')} - #{test_script_name}" %>
     <span class='right'>
