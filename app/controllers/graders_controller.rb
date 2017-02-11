@@ -170,7 +170,7 @@ class GradersController < ApplicationController
           flash_now(:error, I18n.t('assignment.group.select_a_grader'))
           head 400
           return
-        end        
+        end
         if params[:skip_empty_submissions] == 'true'
           # If the instructor wants to skip empty submissions, filter
           # groups with empty submissions into a new array

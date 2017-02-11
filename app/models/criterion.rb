@@ -57,7 +57,7 @@ class Criterion < ActiveRecord::Base
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
-    new_values = yield(criteria.map(&:id), criteria.map(&:class), ta_ids)
+    new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
     values = new_values - existing_values
 
     # Add assignment_id column common to all rows. It is not included above so
