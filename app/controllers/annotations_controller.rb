@@ -15,10 +15,13 @@ class AnnotationsController < ApplicationController
 
     if params[:annotation_type] == 'image'
       @annotation = ImageAnnotation.new
-      @annotation.update_attributes({
+      @annotation.update_attributes!({
         x1: Integer(params[:x1]), x2: Integer(params[:x2]),
         y1: Integer(params[:y1]), y2: Integer(params[:y2]),
+        annotation_text_id: params[:annotation_text_id],
         submission_file_id: @submission_file_id,
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
         result_id: result_id
