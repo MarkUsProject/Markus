@@ -48,19 +48,16 @@ var annotation_context_menu = {
 
           if (annot_id !== null && annot_id.length !== 0 &&
               sub_file_id !== null && sub_file_id.length !== 0) {
-            var query_str_params = [
-              ['id=' + annot_id],
-              ['submission_file_id=' + sub_file_id],
-              ['result_id=' + result_id],
-              ['assignment_id=' + assignment_id]
-            ];
             $.ajax({
-              url: annot_path + '?' + query_str_params.join('&'),
-              method: 'POST',
-              data: { _method: 'delete' },
+              url: annot_path,
+              method: 'DELETE',
+              data: { _method: 'delete',
+                      id: annot_id,
+                      submission_file_id: sub_file_id,
+                      result_id: result_id,
+                      assignment_id: assignment_id },
               dataType: 'script'
             });
-
           }
           return;
         },
@@ -92,7 +89,7 @@ var annotation_context_menu = {
     function download_func(include_annot) {
       var sub_file_id = $('#select_file_id').val();
       if (sub_file_id !== null && sub_file_id.length !== 0) {
-        window.open(file_dl_path + '?utf8=?&include_annotations=' +
+        window.open(file_dl_path + '?utf8=✓&include_annotations=' +
                     include_annot + '&select_file_id=' + sub_file_id);
       }
     }
