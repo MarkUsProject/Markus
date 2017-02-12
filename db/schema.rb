@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161207195428) do
+ActiveRecord::Schema.define(version: 20170212205736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,14 @@ ActiveRecord::Schema.define(version: 20161207195428) do
   end
 
   add_index "checkbox_criteria", ["assignment_id", "name"], name: "index_checkbox_criteria_on_assignment_id_and_name", unique: true, using: :btree
+
+  create_table "criteria_assignment_files_joins", force: :cascade do |t|
+    t.integer  "criterion_id",       null: false
+    t.string   "criterion_type",     null: false
+    t.integer  "assignment_file_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "criterion_ta_associations", force: :cascade do |t|
     t.integer  "ta_id"
@@ -497,10 +505,10 @@ ActiveRecord::Schema.define(version: 20161207195428) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
-    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
+    t.integer  "repo_revision"
   end
 
   create_table "test_scripts", force: :cascade do |t|
@@ -561,6 +569,7 @@ ActiveRecord::Schema.define(version: 20161207195428) do
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "checkbox_criteria", "assignments"
+  add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"

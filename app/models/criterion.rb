@@ -1,6 +1,11 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ActiveRecord::Base
+  has_many :criteria_assignment_files_joins,
+           as: :criterion
+  has_many :assignment_files,
+           through: :criteria_assignment_files_joins
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
