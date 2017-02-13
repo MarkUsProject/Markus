@@ -21,7 +21,8 @@
         <% if annotation_category.annotation_texts.empty? %>
           {
             title: '<%= t('marker.annotation.no_annotation_in_this_category') %>',
-            action: function(event, ui){ return false; }
+            action: function(event, ui){ return false; },
+            disabled: true
           }
         <% end %>
 

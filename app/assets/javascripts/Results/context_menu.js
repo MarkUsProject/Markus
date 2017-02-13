@@ -51,8 +51,7 @@ var annotation_context_menu = {
             $.ajax({
               url: annot_path,
               method: 'DELETE',
-              data: { _method: 'delete',
-                      id: annot_id,
+              data: { id: annot_id,
                       submission_file_id: sub_file_id,
                       result_id: result_id,
                       assignment_id: assignment_id },
