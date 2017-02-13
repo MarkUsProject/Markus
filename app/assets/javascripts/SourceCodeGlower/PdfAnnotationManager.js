@@ -434,6 +434,17 @@
   }
 
   /**
+   * Get the AnnotationText in the PDF corresponding to the given
+   * annotation id annot_id.
+   *
+   * @param {string} annot_id [description]
+   */
+  PdfAnnotationManager.prototype.getAnnotationTextForId = function(annot_id) {
+    var annot = this.annotationsById[annot_id.toString()];
+    return annot ? annot.annotation : false;
+  }
+
+  /**
    * Add an annotation to the PDF.
    *
    * @param {string} annotation_text_id [description]
