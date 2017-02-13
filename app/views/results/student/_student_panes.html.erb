@@ -54,8 +54,7 @@
                         <br />
                         <div class="sub_block">
                           <%= raw t("automated_tests.marks_obtained",
-                                    :marking => "#{@grouping.get_total_test_script_marks} /
-                                                 #{@assignment.total_instructor_test_script_marks}" ) %>
+                                    :marking => "#{submission.last_test_marks}/#{@assignment.total_instructor_test_script_marks}") %>
                         </div>
                         <div id="test_results" class="sub_block">
                           <%= render partial: 'automated_tests/test_script_result',

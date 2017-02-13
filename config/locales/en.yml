@@ -1678,7 +1678,7 @@ en:
         display_option:
            do_not_display: "Do not display"
            display_after_submission: "Always display"
-           display_after_collection: "Display only when ran by a student"
+           display_after_collection: "Display only when run by a student"
       token:
         tokens_form: "Tokens available per group"
         tokens_regenerate: "and regenerate every"

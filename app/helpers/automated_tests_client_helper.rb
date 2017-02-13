@@ -231,16 +231,16 @@ module AutomatedTestsClientHelper
     unless File.exist?(test_dir)
       raise I18n.t('automated_tests.error.no_test_files')
     end
-    all_scripts = TestScript.where(assignment_id: assignment.id)
-    if all_scripts.empty?
-      raise I18n.t('automated_tests.error.no_test_files')
-    end
 
     # Select a subset of test scripts
     if user.admin?
-      test_scripts = all_scripts.select(&:run_by_instructors)
+      test_scripts = assignment.instructor_test_scripts
+                               .order(:seq_num)
+                               .pluck(:script_name)
     elsif user.student?
-      test_scripts = all_scripts.select(&:run_by_students)
+      test_scripts = assignment.student_test_scripts
+                               .order(:seq_num)
+                               .pluck(:script_name)
     else
       test_scripts = []
     end
@@ -248,7 +248,7 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.no_test_files')
     end
 
-    return test_scripts.sort_by(&:seq_num)
+    test_scripts
   end
 
   def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
@@ -260,9 +260,6 @@ module AutomatedTestsClientHelper
     end
     test_server_user = get_test_server_user
     test_scripts = get_test_scripts(assignment, current_user)
-    test_scripts.map! do |script|
-      script.script_name
-    end
     check_user_permission(current_user, grouping)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision

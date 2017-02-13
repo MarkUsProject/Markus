@@ -146,6 +146,13 @@ class Submission < ActiveRecord::Base
     end
   end
 
+  def last_test_marks
+    test_script_ids = self.assignment.instructor_test_scripts
+                          .distinct
+                          .pluck(:id)
+    Grouping.last_test_marks(test_script_ids, self.test_script_results)
+  end
+
   # For group submissions, actions here must only be accessible to members
   # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).

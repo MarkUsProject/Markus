@@ -42,14 +42,6 @@ class Token < ActiveRecord::Base
     end
   end
 
-  # Gets the last test result executed by any student in the grouping associated with this token
-  def last_test_result
-    # TODO Migrate requested_by to NOT NULL
-    TestScriptResult.where({grouping: grouping, requested_by: grouping.accepted_students})
-                    .order(updated_at: :desc)
-                    .limit(1)
-  end
-
   # Checks whether a test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented a test result to be stored)
   def enqueued?
@@ -58,7 +50,9 @@ class Token < ActiveRecord::Base
       # first test or buffer time expired (in case some unhandled problem happened)
       false
     else
-      last_result_time = self.last_test_result.pluck(:updated_at)
+      last_result_time = self.grouping.student_test_script_results
+                                      .limit(1)
+                                      .pluck(:created_at)
       if !last_result_time.empty? && self.last_used < last_result_time[0]
         # test results already came back
         false

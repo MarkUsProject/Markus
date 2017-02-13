@@ -774,22 +774,43 @@ class Grouping < ActiveRecord::Base
     end
   end
 
-  def get_total_test_script_marks
+  def review_for(reviewee_group)
+    reviewee_group.peer_reviews.find_by(reviewer_id: id)
+  end
 
-    #find the unique test scripts for this submission
-    test_script_ids = test_script_results.pluck(:test_script_id).uniq
+  def instructor_test_script_results
+    # TODO Refactor requested_by to NOT NULL
+    # TODO Use native .or() with Rails 5
+    self.test_script_results
+        .where(['requested_by_id IS NULL OR requested_by_id IN (?)', User.where(type: User::ADMIN).pluck(:id)])
+  end
 
-    #add the latest result from each of our test scripts
+  def student_test_script_results
+    self.test_script_results
+        .where(requested_by: self.accepted_students)
+  end
+
+  def self.last_test_marks(test_script_ids, test_script_results)
     test_script_ids.sum do |test_script_id|
-      last_result = self.test_script_results
-                        .where(test_script_id: test_script_id)
-                        .first
-      last_result.nil? ? 0 : last_result.marks_earned
+      mark = test_script_results.where(test_script_id: test_script_id)
+                                .limit(1)
+                                .pluck(:marks_earned)
+      mark.empty? ? 0 : mark[0]
     end
   end
 
-  def review_for(reviewee_group)
-    reviewee_group.peer_reviews.find_by(reviewer_id: id)
+  def last_instructor_test_marks
+    test_script_ids = self.assignment.instructor_test_scripts
+                                     .distinct
+                                     .pluck(:id)
+    self.last_test_marks(test_script_ids, self.instructor_test_script_results)
+  end
+
+  def last_student_test_marks
+    test_script_ids = self.assignment.student_test_scripts
+                                     .distinct
+                                     .pluck(:id)
+    self.last_test_marks(test_script_ids, self.student_test_script_results)
   end
 
   def prepare_tokens_to_use
