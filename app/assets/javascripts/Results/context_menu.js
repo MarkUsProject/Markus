@@ -26,25 +26,26 @@ var annotation_context_menu = {
         cmd: 'common_annotations',
         disabled: true
       },
+      edit_annotation: {
+        title: 'Edit',
+        cmd: 'edit_annotation',
+        action: function(event, ui) {
+          var clicked_element = $(ui.target);
+          var annot_id = get_annotation_id(clicked_element);
+          var current_annot_text = annotation_manager
+                                    .getAnnotationTextForId(annot_id)
+                                    .content;
+          alert(current_annot_text);
+        },
+        disabled: true
+      },
       delete_annotation: {
         title: 'Delete Annotation',
         cmd: "delete_annotation",
         action: function(event, ui) {
           var clicked_element = $(ui.target);
-          var annot_id = '';
+          var annot_id = get_annotation_id(clicked_element);
           var sub_file_id = $('#select_file_id').val();
-          if (annotation_type === ANNOTATION_TYPES.CODE) {
-            $.each(clicked_element[0].attributes, function(index, attr) {
-              if (attr.nodeName.toLowerCase()
-                      .indexOf('data-annotationid') != -1) {
-                annot_id = attr.value;
-                // Continue iteration in case of multiple annotations
-              }
-            });
-          } else {
-            annot_id = clicked_element.attr('id')
-                                      .replace('annotation_holder_', '');
-          }
 
           if (annot_id !== null && annot_id.length !== 0 &&
               sub_file_id !== null && sub_file_id.length !== 0) {
@@ -85,6 +86,23 @@ var annotation_context_menu = {
       }
     };
 
+    function get_annotation_id(clicked_element) {
+      var annot_id = '';
+      if (annotation_type === ANNOTATION_TYPES.CODE) {
+        $.each(clicked_element[0].attributes, function(index, attr) {
+          if (attr.nodeName.toLowerCase()
+            .indexOf('data-annotationid') != -1) {
+            annot_id = attr.value;
+            // Continue iteration in case of multiple annotations
+          }
+        });
+      } else {
+        annot_id = clicked_element.attr('id')
+          .replace('annotation_holder_', '');
+      }
+      return annot_id;
+    }
+
     function download_func(include_annot) {
       var sub_file_id = $('#select_file_id').val();
       if (sub_file_id !== null && sub_file_id.length !== 0) {
@@ -107,6 +125,7 @@ var annotation_context_menu = {
       menu: [
         menu_items.new_annotation,
         menu_items.common_annotations,
+        menu_items.edit_annotation,
         menu_items.delete_annotation,
         menu_items.separator,
         menu_items.copy,
@@ -148,6 +167,8 @@ var annotation_context_menu = {
             return clicked_element.hasClass('annotation_holder');
           }
         })();
+        $(document).contextmenu('enableEntry', 'edit_annotation',
+                                annotation_selected);
         $(document).contextmenu('enableEntry', 'delete_annotation',
                                 annotation_selected);
       }
