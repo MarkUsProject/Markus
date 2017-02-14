@@ -72,7 +72,7 @@ class AutomatedTestsController < ApplicationController
       display_actual_output: :do_not_display
     )
     @assignment.test_support_files.build
-    @student_tests_on = MarkusConfigurator.markus_ate_experimental_student_tests_on
+    @student_tests_on = MarkusConfigurator.markus_ate_experimental_student_tests_on?
   end
 
   def student_interface
@@ -81,32 +81,25 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = TestScriptResult.where(grouping: @grouping,
-                                                    submission_id: nil)
-                                             .order(created_at: :desc)
-      @token = fetch_latest_tokens_for_grouping(@grouping)
+      @test_script_results = @grouping.student_test_script_results
+      @token = @grouping.prepare_tokens_to_use
     end
   end
 
   def execute_test_run
     @assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(@assignment.id)
-    token = fetch_latest_tokens_for_grouping(grouping)
 
-    # For running tests
-    if @assignment.unlimited_tokens || token.remaining > 0
-      run_tests(grouping.id)
-    end
-    redirect_to action: :student_interface, id: params[:id]
-  end
-
-  def run_tests(grouping_id)
     begin
-      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping_id, @current_user)
+      grouping = current_user.accepted_grouping_for(@assignment.id)
+      if grouping.nil?
+        raise I18n.t('automated_tests.error.bad_group')
+      end
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping.id, @current_user)
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
     end
+    redirect_to action: :student_interface, id: params[:id]
   end
 
   # Download is called when an admin wants to download a test script

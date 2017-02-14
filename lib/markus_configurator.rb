@@ -228,11 +228,19 @@ module MarkusConfigurator
     return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
   end
 
-  def markus_ate_experimental_student_tests_on
+  def markus_ate_experimental_student_tests_on?
     if automated_testing_engine_on? && (defined? ATE_EXPERIMENTAL_STUDENT_TESTS_ON)
       return ATE_EXPERIMENTAL_STUDENT_TESTS_ON
     else
       return false
+    end
+  end
+
+  def markus_ate_experimental_student_tests_buffer_time
+    if markus_ate_experimental_student_tests_on? && (defined? ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME)
+      return ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME
+    else
+      return 2.hours
     end
   end
 

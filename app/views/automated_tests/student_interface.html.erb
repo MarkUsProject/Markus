@@ -67,13 +67,12 @@
       <div class='block_content'>
         <div class='sub_block'>
           <%= raw t('automated_tests.marks_obtained',
-                    marking: "#{@grouping.get_total_test_script_marks} /
-                              #{@assignment.total_student_test_script_marks}" ) %>
+                    marking: "#{@grouping.last_student_test_marks}/#{@assignment.total_student_test_script_marks}") %>
         </div>
         <div id='test_results' class='sub_block'>
           <%= render partial: 'test_script_result',
                      locals: {current_user: @current_user, ran_by: 'student'},
-                     collection: @test_script_results.where(submission_id: nil) %>
+                     collection: @test_script_results %>
         </div>
       </div>
     </div>

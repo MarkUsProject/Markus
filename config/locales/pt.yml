@@ -1450,6 +1450,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       information: "Informação"
       run_tests: "Executar testes"
       test_run: "Execução de Teste"
+      tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
                       Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
@@ -1492,9 +1493,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         not_enabled: "UPDATE ME"
         no_test_server_user: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
-        not_belong_to_group: "UPDATE ME"
+        bad_group: "UPDATE ME"
         no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
         no_test_files: "UPDATE ME"
+        already_enqueued: "UPDATE ME"
       test_result:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
