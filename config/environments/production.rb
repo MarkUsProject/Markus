@@ -296,6 +296,13 @@ Markus::Application.configure do
   ATE_TESTS_QUEUE_NAME = 'ate_tests'
 
   ###################################################################
+  # Exam Plugin settings
+  ###################################################################
+  # Global flag to enable/disable all exam plugin features.
+  EXPERIMENTAL_EXAM_PLUGIN_ON = true
+  EXAM_TEMPLATE_DIR = "#{::Rails.root.to_s}/data/dev/exam_templates"
+
+  ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
   ###################################################################
 end

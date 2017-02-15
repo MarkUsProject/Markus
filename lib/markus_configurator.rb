@@ -292,6 +292,26 @@ module MarkusConfigurator
     end
   end
 
+  ###################################################################
+  # Exam Plugin configuration
+  ###################################################################
+  # Global flag to enable/disable all exam plugin features.
+  def markus_exam_plugin_on
+    if defined? EXPERIMENTAL_EXAM_PLUGIN_ON
+      EXPERIMENTAL_EXAM_PLUGIN_ON
+    else
+      false
+    end
+  end
+
+  def markus_exam_template_dir
+    if defined? EXAM_TEMPLATE_DIR
+      EXAM_TEMPLATE_DIR
+    else
+      File.join(::Rails.root.to_s, 'data', 'dev', 'exam_templates')
+    end
+  end
+
   ##########################################
   # Resque Configuration
   ##########################################
