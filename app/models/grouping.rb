@@ -803,14 +803,14 @@ class Grouping < ActiveRecord::Base
     test_script_ids = self.assignment.instructor_test_scripts
                                      .distinct
                                      .pluck(:id)
-    self.last_test_marks(test_script_ids, self.instructor_test_script_results)
+    Grouping.last_test_marks(test_script_ids, self.instructor_test_script_results)
   end
 
   def last_student_test_marks
     test_script_ids = self.assignment.student_test_scripts
                                      .distinct
                                      .pluck(:id)
-    self.last_test_marks(test_script_ids, self.student_test_script_results)
+    Grouping.last_test_marks(test_script_ids, self.student_test_script_results)
   end
 
   def prepare_tokens_to_use
