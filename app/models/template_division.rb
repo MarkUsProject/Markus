@@ -6,4 +6,8 @@ class TemplateDivision < ActiveRecord::Base
   validates :end, numericality: { greater_than_or_equal_to: 1,
                                   only_integer: true }
   validates :label, uniqueness: true, allow_blank: false
+
+  def hash
+    [self.start, self.end, self.label].hash
+  end
 end
