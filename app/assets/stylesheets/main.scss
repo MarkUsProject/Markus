@@ -86,11 +86,7 @@
 
   .grader_distribution {
     margin-bottom: 0;
-  }
-
-  #grader-right {
-    height: 380px;
-    overflow: scroll;
+    display: block;
   }
 
   ::-webkit-scrollbar {
