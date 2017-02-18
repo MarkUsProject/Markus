@@ -1,10 +1,15 @@
 <% unless ta.nil? %>
 
-    <canvas id='a<%= assignment.id %>_tas' width='400' height='350'></canvas>
+    <% if ta.nil? || ta.first.nil? %>
+        <% @ta_id = 0 %>
+    <% else %>
+        <% @ta_id = ta.first.id %>
+
+    <canvas id='a<%= assignment.id %>_ta_<%= @ta_id %>' width='400' height='350'></canvas>
     <script>
         //<![CDATA[
         // Set up graph
-        var ctx = document.getElementById('a<%= assignment.id %>_tas').getContext('2d');
+        var ctx = document.getElementById('a<%= assignment.id %>_ta_<%= @ta_id %>').getContext('2d');
         // Set up data
 
         var colours = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
@@ -54,4 +59,5 @@
         });
         //]]>
     </script>
+<% end %>
 <% end %>
