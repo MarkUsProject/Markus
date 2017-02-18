@@ -8,20 +8,6 @@
                                              action: 'grader_summary',
                                              assignment_id: assignment.id }
   %>):</p>
-  <div id="grader-right">
-    <ul>
-      <% assignment.tas.each do |ta| %>
-        <li>
-          <%= link_to "#{ta.first_name} #{ta.last_name}",
-                      { controller: 'tas', action: 'refresh_graph', id: ta.id,
-                        assignment: assignment.id },
-                      remote: true %>
-          (<%= t('browse_submissions.how_many_marked_short',
-                 num_marked: assignment.get_num_marked(ta.id),
-                 num_assigned: assignment.get_num_assigned(ta.id)) %>)
-        </li>
-      <% end %>
-    </ul>
-  </div>
+
 <% end %>
 
