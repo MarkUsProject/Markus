@@ -7,7 +7,8 @@
   <%= javascript_include_tag 'Results/file_selector',
                              'panes',
                              'pdfjs',
-                             'testresults_config'%>
+                             'testresults_config',
+                             'Results/context_menu' %>
 
   <%= javascript_tag do -%>
     PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
@@ -92,7 +93,11 @@
            locals: { first_file: @first_file } %>
 
 <%= render partial: 'results/common/context_menu',
-         formats: [:js] %>
+           formats: [:js],
+           locals: {
+             result: @result,
+             annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
+           } %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog'></aside>
