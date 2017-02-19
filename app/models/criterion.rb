@@ -2,7 +2,8 @@
 # criterion.
 class Criterion < ActiveRecord::Base
   has_many :criteria_assignment_files_joins,
-           as: :criterion
+           as: :criterion,
+           dependent: :destroy
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
 
