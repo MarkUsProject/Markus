@@ -1,7 +1,9 @@
+require 'fileutils'
 require 'combine_pdf'
 require 'prawn'
 require 'prawn/qrcode'
 require 'zxing'
+require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
   belongs_to :assignment
@@ -19,9 +21,7 @@ class ExamTemplate < ActiveRecord::Base
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name
     )
-    unless Dir.exist? template_path
-      Dir.mkdir(template_path)
-    end
+    FileUtils.mkdir template_path unless Dir.exists? template_path
 
     File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
       f.write blob
@@ -36,8 +36,7 @@ class ExamTemplate < ActiveRecord::Base
   # Generate copies of the given exam template, with the given start number.
   def generate_copies(num_copies, start=1)
     template_path = File.join(
-      MarkusConfigurator.markus_exam_template_dir,
-      assignment.short_identifier,
+      base_path,
       filename
     )
     template_pdf = CombinePDF.load template_path
@@ -59,29 +58,45 @@ class ExamTemplate < ActiveRecord::Base
     end
 
     generated_pdf.save File.join(
-      MarkusConfigurator.markus_exam_template_dir,
-      assignment.short_identifier,
+      base_path,
       "#{start}-#{start + num_copies - 1}.pdf"
     )
   end
 
   # Split up PDF file based on this exam template.
   def split_pdf(path)
+    # Create directory for files whose QR code couldn't be parsed
+    error_dir = File.join(base_path, 'error')
+    raw_dir = File.join(base_path, 'raw')
+    FileUtils.mkdir error_dir unless Dir.exists? error_dir
+    FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
+
+    basename = File.basename path, '.pdf'
     pdf = CombinePDF.load path
     partial_exams = Hash.new do |hash, key|
       hash[key] = []
     end
-    pdf.pages.each do |page|
+    pdf.pages.each_index do |i|
+      page = pdf.pages[i]
       new_page = CombinePDF.new
       new_page << page
-      qrcode_string = ZXing.decode new_page.to_pdf
+      new_page.save File.join(raw_dir, "#{basename}-#{i}.pdf")
+
+      # Snip out the part of the PDF that contains the QR code.
+      img = Magick::Image::read(File.join(raw_dir, "#{basename}-#{i}.pdf")).first
+      qr_img = img.crop 0, 10, img.columns, img.rows / 5
+      qr_img.write File.join(raw_dir, "#{basename}-#{i}.png")
+
+      # qrcode_string = ZXing.decode new_page.to_pdf
+      qrcode_string = ZXing.decode qr_img.to_blob
       qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
       m = qrcode_regex.match qrcode_string
       if m.nil?
-        next
+        new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+      else
+        partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+        puts "#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}"
       end
-      partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
-      puts "#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}"
     end
 
     save_pages partial_exams
@@ -91,10 +106,26 @@ class ExamTemplate < ActiveRecord::Base
 
   # Save the pages into groups for this assignment
   def save_pages(partial_exams)
+    complete_dir = File.join(base_path, 'complete')
+    incomplete_dir = File.join(base_path, 'incomplete')
+
     partial_exams.each do |exam_num, pages|
       next if pages.empty?
+      pages.sort_by! { |page_num, _| page_num }
 
-      pages.sort!
+      # Save raw pages
+      if pages.length == num_pages
+        destination = File.join complete_dir, "#{exam_num}"
+      else
+        destination = File.join incomplete_dir, "#{exam_num}"
+      end
+      FileUtils.mkdir_p destination unless Dir.exists? destination
+      pages.each do |page_num, page|
+        new_pdf = CombinePDF.new
+        new_pdf << page
+        new_pdf.save File.join(destination, "#{page_num}.pdf")
+      end
+
       group = Group.find_or_create_by(
         group_name: group_name_for(exam_num),
         repo_name: group_name_for(exam_num)
@@ -141,6 +172,11 @@ class ExamTemplate < ActiveRecord::Base
         repo.commit(txn)
       end
     end
+  end
+
+  def base_path
+    File.join MarkusConfigurator.markus_exam_template_dir,
+              assignment.short_identifier
   end
 
   def group_name_for(exam_num)

@@ -379,6 +379,7 @@ DEPENDENCIES
   redcarpet (~> 3.0.0)
   responders (~> 2.0)
   resque
+  rmagick
   rspec-rails (~> 3.0)
   rubocop
   rubocop-git

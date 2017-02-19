@@ -60,6 +60,7 @@ gem 'prawn'
 gem 'prawn-qrcode'
 gem 'combine_pdf'
 gem 'zxing_cpp'
+gem 'rmagick'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
