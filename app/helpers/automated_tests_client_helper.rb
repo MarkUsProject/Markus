@@ -45,6 +45,7 @@ module AutomatedTestsClientHelper
         # Edit existing test script file
         if params[('new_update_script_' + testscripts[file_num][:script_name]).to_sym].nil?
           updated_script_files[file_num] = file.clone
+          updated_script_files[file_num][:seq_num] = file_num
         else
           new_update_script = params[('new_update_script_' + testscripts[file_num][:script_name]).to_sym]
           new_script_name = new_update_script.original_filename
