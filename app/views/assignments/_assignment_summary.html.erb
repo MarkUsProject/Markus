@@ -22,7 +22,7 @@
     </div>
     <br>
     <div id='assignment_<%= assignment.id %>_ta_graph' class='ta_grade_distribution'>
-      <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: assignment, ta: ta } %>
+      <%= render partial: 'graders/ta_grade_distribution_graph', locals: { assignment: assignment, tas: tas } %>
     </div>
     <div class='right'>
       <%= render partial: 'assignments/grader_summary', locals: { assignment: assignment } %>
