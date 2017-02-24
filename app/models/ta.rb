@@ -72,6 +72,11 @@ class Ta < User
   end
 
   def update_distribution(distribution, result, out_of, intervals)
+    if out_of == 0
+      distribution[0] += 1
+      return distribution
+    end
+
     steps = 100 / intervals # number of percentage steps in each interval
     percentage = [100, (result.total_mark / out_of * 100).ceil].min
     interval = (percentage / steps).floor
