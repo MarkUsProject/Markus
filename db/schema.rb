@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161207195428) do
+ActiveRecord::Schema.define(version: 20170219132130) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 20161207195428) do
     t.integer  "checkbox_criteria_count"
     t.boolean  "enable_student_tests",             default: false, null: false
     t.boolean  "non_regenerating_tokens",          default: false
+    t.boolean  "scanned_exam",                     default: false, null: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
@@ -139,6 +140,14 @@ ActiveRecord::Schema.define(version: 20161207195428) do
 
   add_index "checkbox_criteria", ["assignment_id", "name"], name: "index_checkbox_criteria_on_assignment_id_and_name", unique: true, using: :btree
 
+  create_table "criteria_assignment_files_joins", force: :cascade do |t|
+    t.integer  "criterion_id",       null: false
+    t.string   "criterion_type",     null: false
+    t.integer  "assignment_file_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "criterion_ta_associations", force: :cascade do |t|
     t.integer  "ta_id"
     t.integer  "criterion_id"
@@ -150,6 +159,16 @@ ActiveRecord::Schema.define(version: 20161207195428) do
 
   add_index "criterion_ta_associations", ["criterion_id"], name: "index_criterion_ta_associations_on_criterion_id", using: :btree
   add_index "criterion_ta_associations", ["ta_id"], name: "index_criterion_ta_associations_on_ta_id", using: :btree
+
+  create_table "exam_templates", force: :cascade do |t|
+    t.integer  "assignment_id"
+    t.string   "filename",      null: false
+    t.integer  "num_pages",     null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "exam_templates", ["assignment_id"], name: "index_exam_templates_on_assignment_id", using: :btree
 
   create_table "extra_marks", force: :cascade do |t|
     t.integer  "result_id"
@@ -481,6 +500,18 @@ ActiveRecord::Schema.define(version: 20161207195428) do
 
   add_index "tags", ["user_id"], name: "index_tags_on_user_id", using: :btree
 
+  create_table "template_divisions", force: :cascade do |t|
+    t.integer  "exam_template_id"
+    t.integer  "start",                             null: false
+    t.integer  "end",                               null: false
+    t.string   "label",                             null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.integer  "criteria_assignment_files_join_id"
+  end
+
+  add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
+
   create_table "test_results", force: :cascade do |t|
     t.integer  "test_script_result_id"
     t.string   "name"
@@ -497,10 +528,10 @@ ActiveRecord::Schema.define(version: 20161207195428) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
-    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
+    t.integer  "repo_revision"
   end
 
   create_table "test_scripts", force: :cascade do |t|
@@ -561,6 +592,8 @@ ActiveRecord::Schema.define(version: 20161207195428) do
   add_foreign_key "assignment_files", "assignments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_stats", "assignments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "checkbox_criteria", "assignments"
+  add_foreign_key "criteria_assignment_files_joins", "assignment_files"
+  add_foreign_key "exam_templates", "assignments"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"
@@ -575,5 +608,7 @@ ActiveRecord::Schema.define(version: 20161207195428) do
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
+  add_foreign_key "template_divisions", "criteria_assignment_files_joins"
+  add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "tokens", "groupings"
 end

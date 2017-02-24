@@ -55,6 +55,13 @@ gem 'rails-perftest', '~>0.0.2'
 gem 'arel', '~>6.0.2'
 gem 'jbuilder', '~> 2.0'
 
+# Exam template requirements
+gem 'prawn'
+gem 'prawn-qrcode'
+gem 'combine_pdf'
+gem 'zxing_cpp'
+gem 'rmagick'
+
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
