@@ -72,6 +72,13 @@ class ResultsController < ApplicationController
       @mark_criteria = @assignment.get_criteria(:ta)
     end
 
+    # Reorder criteria assigned to specific TAs
+    if @assignment.assign_graders_to_criteria && current_user.ta?
+      assigned_criteria = current_user.get_criterion_associations_by_assignment(@assignment)
+                                       .map &:criterion
+      @mark_criteria = @mark_criteria.partition { |c| assigned_criteria.include? c }.flatten
+    end
+
     @mark_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by(result_id: @result.id)
       # NOTE: Due to the way marks were set up, they originally assumed that
@@ -296,7 +303,7 @@ class ResultsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:select_file_id])
-    
+
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
         file_contents = file.retrieve_file(true)

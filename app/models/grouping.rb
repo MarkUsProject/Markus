@@ -681,7 +681,7 @@ class Grouping < ActiveRecord::Base
                                                       [:grace_period_deductions,
                                                        :user]])
                 .where(user: user)
-                .select { |m| m.grouping.is_valid? }
+                .select { |m| assignment.scanned_exam? || m.grouping.is_valid? }
                 .map &:grouping
     elsif user.is_a_reviewer?(assignment)
       # grab only the groupings of reviewees that this reviewer
@@ -689,6 +689,8 @@ class Grouping < ActiveRecord::Base
       user_group = user.grouping_for(assignment.id)
       groupings = user_group.peer_reviews_to_others
       groupings.map {|p| Result.find(p.result_id).submission.grouping}
+    elsif user.admin? && assignment.scanned_exam?
+      assignment.groupings
     else
       assignment.groupings.joins(:memberships)
           .includes(:assignment,

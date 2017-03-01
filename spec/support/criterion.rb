@@ -7,19 +7,19 @@ shared_examples 'a criterion' do
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:criterion_ids_types) do
       hash_criteria = {}
-      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id, criterion.class.to_s] }
+      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id.to_s, criterion.class.to_s] }
       hash_criteria
     end
     let(:criterion_ids_types_one) do
       hash_criteria = {}
-      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id, criterion.class.to_s] if index < 1 }
+      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id.to_s, criterion.class.to_s] if index < 1 }
       hash_criteria
     end
     let(:criterion_ids_types_match) do
       criterion_ids_by_type = {}
       %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
         criterion_ids_by_type[type] =
-          criterion_ids_types.values.select{ |id_type| id_type[1] == type }.map(&:first)
+          criterion_ids_types.values.select{ |id_type| id_type[1] == type }.map { |c| c.first.to_i }
       end
       criterion_ids_by_type
     end
@@ -54,7 +54,6 @@ shared_examples 'a criterion' do
         (tas.size + 1).times do
           Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
         end
-
         ta_set = tas.to_set
         criteria.each do |criterion|
           criterion.reload

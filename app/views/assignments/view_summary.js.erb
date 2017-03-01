@@ -1,6 +1,6 @@
 document.getElementById('assignment_summaries').innerHTML =
   "<%= escape_javascript(render partial: 'assignment_summary',
-                                locals: { assignment: @assignment, ta: @current_ta}).html_safe %>";
+                                locals: { assignment: @assignment, tas: @tas}).html_safe %>";
 
 $('#assignment_<%= @assignment.id %>_graph').html(
   "<%= escape_javascript(render partial: 'grade_distribution_graph',
@@ -8,7 +8,7 @@ $('#assignment_<%= @assignment.id %>_graph').html(
 
 $('#assignment_<%= @assignment.id %>_ta_graph').html(
   "<%= escape_javascript(render partial: 'graders/ta_grade_distribution_graph',
-                                locals: { assignment: @assignment, ta: @current_ta }) %>");
+                                locals: { assignment: @assignment, tas: @tas }) %>");
 
 $('a[data-id]').removeClass('link_disabled');
 

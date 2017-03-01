@@ -1,6 +1,12 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ActiveRecord::Base
+  has_many :criteria_assignment_files_joins,
+           as: :criterion,
+           dependent: :destroy
+  has_many :assignment_files,
+           through: :criteria_assignment_files_joins
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
@@ -45,21 +51,19 @@ class Criterion < ActiveRecord::Base
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criterion_ids = assignment.get_criteria(:ta)
-                              .select { |crit| criterion_ids_in.include? crit.id }
-                              .map &:id
-
+    criteria = assignment.get_criteria(:ta)
+                         .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
     columns = [:criterion_id, :criterion_type, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                      .where(criterion_id: criterion_ids,
+                      .where(criterion_id: criteria.map(&:id),
                              ta_id: ta_ids)
                       .pluck(:criterion_id, :criterion_type, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
-    new_values = yield(criterion_ids, criterion_types, ta_ids)
+    new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
     values = new_values - existing_values
 
     # Add assignment_id column common to all rows. It is not included above so

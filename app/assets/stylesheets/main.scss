@@ -53,6 +53,11 @@
     width: 250px;
   }
 
+  .ta_grade_distribution {
+    display: inline-block;
+    width: 700px;
+  }
+
   .title {
     color: $dark-blue;
     font-weight: 300;
@@ -81,11 +86,7 @@
 
   .grader_distribution {
     margin-bottom: 0;
-  }
-
-  #grader-right {
-    height: 380px;
-    overflow: scroll;
+    display: block;
   }
 
   ::-webkit-scrollbar {

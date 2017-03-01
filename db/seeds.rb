@@ -9,3 +9,4 @@ Rake::Task['db:rubric'].invoke
 Rake::Task['db:marks'].invoke
 Rake::Task['db:remarks'].invoke
 Rake::Task['db:peer_reviews'].invoke
+Rake::Task['db:scanned_exam'].invoke

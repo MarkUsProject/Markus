@@ -17,7 +17,7 @@
         <div class='grader-summary-graph'>
           <div id='assignment_<%= @assignment.id %>_ta_<% ta.id %>_graph'>
             <%= render partial: 'graders/ta_grade_distribution_graph',
-                       locals: { assignment: @assignment, ta: ta } %>
+                       locals: { assignment: @assignment, tas: [ta] } %>
           </div>
         </div>
       <% end %>

@@ -41,22 +41,6 @@
     <p class='success'><%= flash[:submit_notice] %></p>
   <% end %>
 
-  <% if @assignment.vcs_submit %>
-    <div id='directory_selector'>
-      <p>
-        <%= I18n.t('student.submission.current_path') %>
-        <% path_memory = '/'
-           links = []
-           @path.split('/').each do |folder|
-           path_memory = File.join(path_memory, folder)
-           links.push(link_to folder, action: 'file_manager', path: path_memory)
-        end %>
-        <%= link_to '[root]', action: 'file_manager', path: '/' %>
-        <%= links.join('/')%>
-      </p>
-    </div>
-  <% end %>
-
   <% if flash[:transaction_warning] %>
     <div class='warning'><%= flash[:transaction_warning] %></div>
   <% end %>
@@ -129,6 +113,22 @@
         <% end %>
       </ul>
     </div>
+  <% end %>
+
+  <% if @assignment.vcs_submit %>
+    <p>
+      <%= t('student.submission.current_path') %>
+      <%= link_to '[root]', action: 'file_manager', path: '/' %>
+      <%
+        path_memory = '/'
+        @path.split('/').each do |folder|
+          if (folder != '')
+            path_memory = File.join(path_memory, folder) %>
+            <%= link_to(" / #{folder}", action: 'file_manager', path: path_memory).html_safe %>
+          <% end
+        end
+      %>
+    </p>
   <% end %>
 
   <div id='file_table'></div>

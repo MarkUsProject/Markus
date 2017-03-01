@@ -71,6 +71,7 @@ class Assignment < ActiveRecord::Base
   has_many :section_due_dates
   accepts_nested_attributes_for :section_due_dates
 
+  has_one :exam_template, dependent: :destroy
 
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
@@ -113,6 +114,8 @@ class Assignment < ActiveRecord::Base
                          presence: true,
                          numericality: { greater_than: 0 }
   end
+
+  validates_inclusion_of :scanned_exam, in: [true, false]
 
   validate :minimum_number_of_groups
 
