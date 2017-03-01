@@ -120,7 +120,7 @@ $(document).ready(function() {
   });
 
   // Handle indenting in the new annotation textarea (2 spaces)
-  $('#new_annotation_content, #edit_annotation_content').keydown(function(e) {
+  $('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
 
     if (keyCode == 9) {

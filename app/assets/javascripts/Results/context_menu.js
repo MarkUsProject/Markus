@@ -32,23 +32,6 @@ var annotation_context_menu = {
         action: function(event, ui) {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
-          var current_annot_text = annotation_manager
-                                    .getAnnotationTextForId(annot_id)
-                                    .content;
-          // Strip <p> wrapper
-          current_annot_text = current_annot_text.substring(3,
-                               current_annot_text.lastIndexOf('</'));
-
-          // Decode HTML entities
-          var text_decode = document.createElement('textarea');
-          text_decode.innerHTML = current_annot_text;
-          current_annot_text = text_decode.value;
-
-          // Move text cursor to beginning of annotation text
-          $('#edit_annotation_content').val(current_annot_text)
-                                       .get(0).setSelectionRange(0,0);
-
-          edit_annot_modal.open();
         },
         disabled: true
       },

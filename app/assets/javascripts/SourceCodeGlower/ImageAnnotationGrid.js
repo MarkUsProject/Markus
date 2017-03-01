@@ -148,16 +148,6 @@ ImageAnnotationGrid.prototype.registerAnnotationText = function(annotation_text)
   this.getAnnotationTextManager().addAnnotationText(annotation_text);
 }
 
-ImageAnnotationGrid.prototype.getAnnotationTextForId = function(annot_id) {
-  var annot_grid = this.get_annotation_grid();
-  for (var i = 0; i < annot_grid.length; i++) {
-    if (annot_grid[i].annot_id.toString() === annot_id.toString()) {
-      return this.getAnnotationTextManager().getAnnotationText(annot_grid[i].id);
-    }
-  }
-  return false;
-}
-
 // Call this any time the annotation_grid gets modified
 ImageAnnotationGrid.prototype.share_grid_with_event_handler = function() {
   this.getImageEventHandler().set_annotation_grid(this.annotation_grid);

@@ -168,18 +168,6 @@ SourceCodeLineAnnotations.prototype.getAnnotationTextsForLineNum = function(
   return result;
 }
 
-SourceCodeLineAnnotations.prototype.getAnnotationTextForId = function(annot_id) {
-  var relationships = this.getRelationships();
-  for (var i = 0; i < relationships.length; i++) {
-    var relationship = relationships[i];
-    if (relationship['annotation_id'].toString() === annot_id.toString()) {
-      return this.getAnnotationTextManager().getAnnotationText(
-        relationship['annotation_text_id']);
-    }
-  }
-  return false;
-}
-
 // Does this source code line have any annotations at all?
 SourceCodeLineAnnotations.prototype.hasAnnotation = function(line_num) {
   var relationships = this.getRelationships();
