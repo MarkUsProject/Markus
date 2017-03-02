@@ -303,10 +303,10 @@
 
   function edit_existing_annotation(annotation_id, result_id,
                                     assignment_id, sub_file_id) {
-    //TODO: localization for all context-menu related items
-    var title = 'Edit annotation';
+    var title = '<%= I18n.t('marker.annotation.edit_annotation') %>';
     var submit_annotation_edit = function() {
-      if (confirm(' <%= t('marker.annotation.change_across_submissions') %>')) {
+      if (confirm('<%= I18n.t('marker.annotation' +
+                              '.change_across_submissions') %>')) {
         $.ajax({
           url:  '<%= update_annotation_annotations_path %>',
           method: 'PATCH',
