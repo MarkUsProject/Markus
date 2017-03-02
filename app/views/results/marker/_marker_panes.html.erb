@@ -176,7 +176,7 @@
         <!-- Annotation pane-->
         <div id='annotation_holder'></div>
 
-        <aside class='dialog' id='create_annotation_dialog'>
+        <aside class='dialog' id='annotation_dialog'>
           <input type='hidden' id='x1' value=''>
           <input type='hidden' id='x2' value=''>
           <input type='hidden' id='y1' value=''>
@@ -184,11 +184,12 @@
           <input type='hidden' id='annot_dialog_page' value=''> <%# For use in PDF's %>
           <div>
             <div style="float: left;">
-              <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
+              <h2 id='annotation_dialog_title'></h2>
               <p>
                 <textarea id="new_annotation_content"></textarea>
               </p>
               <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
+              <div id="annotation_category_dialog" style="display: none">
               <% if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
                 <%= hidden_field_tag 'new_annotation_category', value: t('annotations.one_time_only') %>
               <% else %>
@@ -202,21 +203,10 @@
                   <% end %>
                 </select>
               <% end %>
+              </div>
 
               <section class='dialog-actions'>
-                <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
-                        submit_new_annotation(
-                            $('#new_annotation_content').val(),
-                            $('#new_annotation_category').val(),
-                            $('#x1').val(),
-                            $('#x2').val(),
-                            $('#y1').val(),
-                            $('#y2').val(),
-                            $('#annot_dialog_page').val(),
-                            <%= result.id %>,
-                            <%= assignment.id %>);">
-                  <%= I18n.t('marker.annotation.new_annotation') %>
-                </button>
+                <button id='annotation_modal_button'></button>
                 <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>
               </section>
             </div>

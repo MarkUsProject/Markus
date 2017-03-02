@@ -268,6 +268,9 @@
   }
 
   function make_new_annotation() {
+    var title = '<%= I18n.t('marker.annotation.new_annotation') %>';
+    setup_annotation_modal(title, submit_new_annotation);
+
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions
     if (annotation_type === ANNOTATION_TYPES.CODE) {
@@ -288,6 +291,13 @@
     // Manually reset the modal dialog values
     set_dialog_values('', '', '', '', '', '');
     return false;
+  }
+
+  function setup_annotation_modal(title, btn_function) {
+    $('#annotation_dialog_title').text(title);
+    $('#annotation_category_dialog').show();
+    $('#annotation_modal_button').text(title);
+    $('#annotation_modal_button').unbind('click').click(btn_function);
   }
 
   function get_pdf_box_attrs() {
@@ -437,8 +447,19 @@
    * @param  {[type]} result_id   [description]
    * @return {[type]}             [description]
    */
-  function submit_new_annotation(content, category_id, x1, x2, y1, y2, page, result_id,
-                                 assignment_id) {
+  function submit_new_annotation() {
+    var content = $('#new_annotation_content').val()
+    var category_id =  $('#new_annotation_category').val()
+    var x1 = $('#x1').val();
+    var x2 = $('#x2').val();
+    var y1 = $('#y1').val();
+    var y2 = $('#y2').val();
+    var page = $('#annot_dialog_page').val();
+    var result_id = <%= result_id %>;
+    var assignment_id = <%= assignment_id %>;
+
+    hideAnnotationPreview();
+
     // Was any annotation text content provided?
     if (content == '') {
       alert("<%= I18n.t('marker.annotation.provide_text') %>");
