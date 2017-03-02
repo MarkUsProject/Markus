@@ -126,6 +126,11 @@ class AnnotationsController < ApplicationController
     @annotations = @submission.annotations
   end
 
+  def edit
+    @annotation = Annotation.find(params[:id])
+    @text_annotation = @annotation.annotation_text
+  end
+
   def destroy
     @annotation = Annotation.find(params[:id])
     @text_annotation = @annotation.annotation_text
@@ -147,7 +152,11 @@ class AnnotationsController < ApplicationController
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
     @submission_file_id = params[:submission_file_id]
-    @annotation_text = AnnotationText.find(@id)
+    if params[:id]
+      @annotation_text = Annotation.find(params[:id]).annotation_text
+    else
+      @annotation_text = AnnotationText.find(@id)
+    end
     @annotation_text.content = @content
     @annotation_text.save
     @submission_file = SubmissionFile.find(@submission_file_id)

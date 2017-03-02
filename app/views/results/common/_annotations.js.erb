@@ -269,7 +269,7 @@
 
   function make_new_annotation() {
     var title = '<%= I18n.t('marker.annotation.new_annotation') %>';
-    setup_annotation_modal(title, submit_new_annotation);
+    setup_annotation_modal(title, submit_new_annotation, true);
 
     // Check if image is shown, and call the appropriate function if so
     // Set global variable 'positions' to current mouse positions
@@ -293,11 +293,54 @@
     return false;
   }
 
-  function setup_annotation_modal(title, btn_function) {
+  function setup_annotation_modal(title, btn_function,
+                                  show_annotation_categories) {
     $('#annotation_dialog_title').text(title);
-    $('#annotation_category_dialog').show();
+    $('#annotation_category_dialog').toggle(show_annotation_categories);
     $('#annotation_modal_button').text(title);
     $('#annotation_modal_button').unbind('click').click(btn_function);
+  }
+
+  function edit_existing_annotation(annotation_id, result_id,
+                                    assignment_id, sub_file_id) {
+    //TODO: localization for all context-menu related items
+    var title = 'Edit annotation';
+    var submit_annotation_edit = function() {
+      if (confirm(' <%= t('marker.annotation.change_across_submissions') %>')) {
+        $.ajax({
+          url:  '<%= update_annotation_annotations_path %>',
+          method: 'PATCH',
+          data: {
+            id: annotation_id,
+            result_id: result_id,
+            assignment_id: assignment_id,
+            submission_file_id: sub_file_id,
+            utf8: '✓',
+            annotation_text: { content: $('#new_annotation_content').val() },
+          },
+          dataType: 'script',
+          success: function() { modal.close(); }
+        });
+      }
+    };
+
+    setup_annotation_modal(title, submit_annotation_edit, false);
+
+    $.ajax({
+      url:  '<%= edit_annotations_path %>',
+      method: 'POST',
+      data: {
+        id: annotation_id,
+        result_id: result_id,
+        assignment_id: assignment_id
+      },
+      dataType: 'text',
+      success: function(data) {
+        var decoded_data = $('<textarea>').html(data).text();
+        $('#new_annotation_content').val(decoded_data);
+        modal.open();
+      }
+    });
   }
 
   function get_pdf_box_attrs() {

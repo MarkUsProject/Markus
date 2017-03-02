@@ -32,6 +32,12 @@ var annotation_context_menu = {
         action: function(event, ui) {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
+          var sub_file_id = $('#select_file_id').val();
+          if (annot_id !== null && annot_id.length !== 0 &&
+            sub_file_id !== null && sub_file_id.length !== 0) {
+            edit_existing_annotation(annot_id, result_id,
+                                     assignment_id, sub_file_id);
+          }
         },
         disabled: true
       },
