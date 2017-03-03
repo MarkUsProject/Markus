@@ -327,10 +327,10 @@
     setup_annotation_modal(title, submit_annotation_edit, false);
 
     $.ajax({
-      url:  '<%= edit_annotations_path %>',
-      method: 'POST',
+      url:  Routes.edit_annotation_path(annotation_id,
+                                        {locale: '<%= I18n.locale %>'}),
+      method: 'GET',
       data: {
-        id: annotation_id,
         result_id: result_id,
         assignment_id: assignment_id
       },
@@ -479,16 +479,6 @@
 
   /**
    * Called when the create button is clicked in the annotation dialog.
-   *
-   * @param  {[type]} content     [description]
-   * @param  {[type]} category_id [description]
-   * @param  {[type]} x1          [description]
-   * @param  {[type]} x2          [description]
-   * @param  {[type]} y1          [description]
-   * @param  {[type]} y2          [description]
-   * @param  {[type]} page        [description]
-   * @param  {[type]} result_id   [description]
-   * @return {[type]}             [description]
    */
   function submit_new_annotation() {
     var content = $('#new_annotation_content').val()
