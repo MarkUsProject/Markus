@@ -64,6 +64,11 @@ class AnnotationsController < ApplicationController
     @annotations = @submission.annotations
   end
 
+  def new
+    @result = Result.find(params[:result_id])
+    @assignment = @result.submission.grouping.assignment
+  end
+
   def create
     @text = AnnotationText.create({
       content: params[:content],

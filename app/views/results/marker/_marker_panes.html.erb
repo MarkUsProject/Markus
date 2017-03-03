@@ -176,49 +176,9 @@
         <!-- Annotation pane-->
         <div id='annotation_holder'></div>
 
-        <aside class='dialog' id='annotation_dialog'>
-          <input type='hidden' id='x1' value=''>
-          <input type='hidden' id='x2' value=''>
-          <input type='hidden' id='y1' value=''>
-          <input type='hidden' id='y2' value=''>
-          <input type='hidden' id='annot_dialog_page' value=''> <%# For use in PDF's %>
-          <div>
-            <div style="float: left;">
-              <h2 id='annotation_dialog_title'></h2>
-              <p>
-                <textarea id="new_annotation_content"></textarea>
-              </p>
-              <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
-              <div id="annotation_category_dialog" style="display: none">
-              <% if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-                <%= hidden_field_tag 'new_annotation_category', value: t('annotations.one_time_only') %>
-              <% else %>
-                <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
-                <select id='new_annotation_category'>
-                  <option value=''><%= t('annotations.one_time_only') %></option>
-                  <% annotation_categories.each do |annotation_category| %>
-                      <option value='<%= annotation_category.id %>'>
-                        <%= annotation_category.annotation_category_name %>
-                      </option>
-                  <% end %>
-                </select>
-              <% end %>
-              </div>
+        <!-- Modal element -->
+        <aside class='dialog' id='annotation_dialog'></aside>
 
-              <section class='dialog-actions'>
-                <button id='annotation_modal_button'></button>
-                <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>
-              </section>
-            </div>
-            <div style="float: right">
-              <h2 id="annotation_preview_title" style="display: none"> <%= t('marker.annotation.preview_title') %></h2>
-              <p id="annotation_preview" style="display: none; word-wrap: break-word;"></p>
-            </div>
-            <div style="clear:both;"></div>
-          </div>
-
-
-        </aside>
       </div> <!-- Mark pane -->
     </div>
   </div>

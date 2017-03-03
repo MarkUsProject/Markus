@@ -1,0 +1,28 @@
+$('#annotation_dialog').empty();
+document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
+  render partial: "annotation_modal",
+         locals: { assignment: @assignment,
+                   result: @result,
+                   current_user: @current_user,
+                   annotation_categories:
+                     @assignment.annotation_categories
+                                .includes(:annotation_texts),
+                   form_values: params,
+                   title: I18n.t('marker.annotation.new_annotation'),
+                   content: '',
+                   new_annotation: true,
+                   submit_btn_data: {}}
+)%>';
+$('#new_annotation_content').keydown(function(e) {
+  var keyCode = e.keyCode || e.which;
+  if (keyCode == 9) {
+    e.preventDefault();
+    var start = this.selectionStart;
+    var end   = this.selectionEnd;
+    this.value = this.value.substring(0, start)
+        + '  '
+        + this.value.substring(end);
+    this.selectionStart = this.selectionEnd = start + 2;
+  }
+});
+modal.open();
