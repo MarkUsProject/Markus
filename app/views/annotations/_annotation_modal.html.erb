@@ -1,6 +1,5 @@
 <%= form_for :annotation_text,
-             url: { action: 'create',
-                    controller: 'annotations' },
+             url: form_url,
              remote: true,
              html: { onsubmit: 'commit.disabled = true;'} do |f| %>
 
@@ -11,7 +10,7 @@
     <div style="float: left;">
       <h2><%= title %></h2>
       <p>
-        <%= f.text_area content, id: 'new_annotation_content', name: 'content', required: true %>
+        <%= f.text_area :content, id: 'new_annotation_content', name: 'content', value: content, required: true %>
       </p>
       <%= button_tag t('marker.annotation.preview'), type: 'button', onclick: 'updateAnnotationPreview();' %>
       <% if new_annotation %>

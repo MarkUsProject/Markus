@@ -153,7 +153,7 @@ class AnnotationsController < ApplicationController
   end
 
   def update_annotation
-    @content = params[:annotation_text][:content]
+    @content = params[:content]
     @annotation = Annotation.find(params[:id])
     @annotation_text = @annotation.annotation_text
     @annotation_text.content = @content

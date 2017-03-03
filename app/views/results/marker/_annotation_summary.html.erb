@@ -29,13 +29,12 @@
                           controller: 'annotations' },
                    remote: true do |f| %>
 
-        <%= f.hidden_field :id %>
         <input type='hidden' name='id' value='<%= annot.id %>'>
         <input type='hidden' name='result_id' value='<%= annot.result_id %>'>
         <input type='hidden' name='assignment_id'
                value='<%= annot.result.submission.grouping.assignment.id %>'>
 
-        <p class='manageAnnotations'><%= f.text_area :content, cols: 60, rows: 5 %></p>
+        <p class='manageAnnotations'><%= f.text_area :content, name: 'content', cols: 60, rows: 5 %></p>
 
         <p class='manageAnnotations'>
           <%= submit_tag t('marker.annotation.submit_edit'),

@@ -336,54 +336,6 @@
     });
   }
 
-  function setup_annotation_modal(title, btn_function,
-                                  show_annotation_categories) { //TODO: Remove this
-    $('#annotation_dialog_title').text(title);
-    $('#annotation_category_dialog').toggle(show_annotation_categories);
-    $('#annotation_modal_button').text(title);
-    $('#annotation_modal_button').unbind('click').click(btn_function);
-  }
-
-  function edit_existing_annotation(annotation_id, result_id, assignment_id) { //TODO: Remove this
-    var title = '<%= I18n.t('marker.annotation.edit_annotation') %>';
-    var submit_annotation_edit = function() {
-      if (confirm('<%= I18n.t('marker.annotation' +
-                              '.change_across_submissions') %>')) {
-        $.ajax({
-          url:  '<%= update_annotation_annotations_path %>',
-          method: 'PATCH',
-          data: {
-            id: annotation_id,
-            result_id: result_id,
-            assignment_id: assignment_id,
-            utf8: '✓',
-            annotation_text: { content: $('#new_annotation_content').val() },
-          },
-          dataType: 'script',
-          success: function() { modal.close(); }
-        });
-      }
-    };
-
-    setup_annotation_modal(title, submit_annotation_edit, false);
-
-    $.ajax({
-      url:  Routes.edit_annotation_path(annotation_id,
-                                        {locale: '<%= I18n.locale %>'}),
-      method: 'GET',
-      data: {
-        result_id: result_id,
-        assignment_id: assignment_id
-      },
-      dataType: 'text',
-      success: function(data) {
-        var decoded_data = $('<textarea>').html(data).text();
-        $('#new_annotation_content').val(decoded_data);
-        modal.open();
-      }
-    });
-  }
-
   function get_pdf_box_attrs() {
     var box = annotation_manager.selectionRectangleAsInts();
     var boxSize = annotation_manager.selectionBoxSize();
@@ -501,6 +453,22 @@
     if (line != null) {
       line.getLineNode().scrollIntoView();
     }
+  }
+
+  function open_annotation_modal() {
+    $('#new_annotation_content').keydown(function(e) {
+    var keyCode = e.keyCode || e.which;
+      if (keyCode == 9) {
+        e.preventDefault();
+        var start = this.selectionStart;
+        var end   = this.selectionEnd;
+        this.value = this.value.substring(0, start)
+            + '  '
+            + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 2;
+      }
+    });
+    modal.open();
   }
 
   function close_annotation_modal() {
