@@ -301,8 +301,7 @@
     $('#annotation_modal_button').unbind('click').click(btn_function);
   }
 
-  function edit_existing_annotation(annotation_id, result_id,
-                                    assignment_id, sub_file_id) {
+  function edit_existing_annotation(annotation_id, result_id, assignment_id) {
     var title = '<%= I18n.t('marker.annotation.edit_annotation') %>';
     var submit_annotation_edit = function() {
       if (confirm('<%= I18n.t('marker.annotation' +
@@ -314,7 +313,6 @@
             id: annotation_id,
             result_id: result_id,
             assignment_id: assignment_id,
-            submission_file_id: sub_file_id,
             utf8: '✓',
             annotation_text: { content: $('#new_annotation_content').val() },
           },

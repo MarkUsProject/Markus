@@ -136,8 +136,7 @@ class AnnotationsController < ApplicationController
     @text_annotation = @annotation.annotation_text
     @text_annotation.destroy if @text_annotation.annotation_category.nil?
     @old_annotation = @annotation.destroy
-    @submission_file_id = params[:submission_file_id]
-    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission_file = @annotation.submission_file
     @submission = @submission_file.submission
     @annotations = @submission.annotations
     @annotations.each do |annot|
@@ -150,16 +149,11 @@ class AnnotationsController < ApplicationController
 
   def update_annotation
     @content = params[:annotation_text][:content]
-    @id = params[:annotation_text][:id]
-    @submission_file_id = params[:submission_file_id]
-    if params[:id]
-      @annotation_text = Annotation.find(params[:id]).annotation_text
-    else
-      @annotation_text = AnnotationText.find(@id)
-    end
+    @annotation = Annotation.find(params[:id])
+    @annotation_text = @annotation.annotation_text
     @annotation_text.content = @content
     @annotation_text.save
-    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission_file = @annotation.submission_file
     @submission = @submission_file.submission
     @annotations = @submission.annotations
     @result_id = params[:result_id]
