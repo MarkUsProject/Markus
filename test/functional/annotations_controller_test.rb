@@ -144,11 +144,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         submission_file_id:  @submission_file.id})
       put_as @user, :update_annotation,
              format: :js,
+             id: anno.id,
              assignment_id: @assignment.id,
              submission_file_id: @submission_file.id,
              result_id: @result.id,
-             annotation_text: { id: @annotation_text.id,
-                                content: @annotation_text.content}
+             content: @annotation_text.content
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
@@ -237,11 +237,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         submission_file_id:  @submission_file.id})
       put_as @user, :update_annotation,
              format: :js,
+             id: anno.id,
              assignment_id: @assignment.id,
              submission_file_id: @submission_file.id,
              result_id: @result.id,
-             annotation_text: { id: @annotation_text.id,
-                                content: @annotation_text.content}
+             content: @annotation_text.content
       assert_response :success
       assert render_template 'update_annotation'
     end # End context :update_annotation
