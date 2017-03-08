@@ -25,8 +25,17 @@ class Token < ActiveRecord::Base
     elsif assignment.unlimited_tokens
       # grouping has 1 token that is never consumed
       self.remaining = 1
-    elsif self.last_used.nil? || (self.last_used + assignment.token_period.hours) < Time.zone.now
+    elsif self.last_used.nil?
       self.remaining = assignment.tokens_per_period
+    else
+      # divide time into chunks of token_period hours
+      # reassign tokens only the first time they are used during the current chunk
+      hours_from_start = (Time.zone.now - assignment.token_start_date) / 3600
+      periods_from_start = (hours_from_start / assignment.token_period).floor
+      last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+      if self.last_used < last_period_begin
+        self.remaining = assignment.tokens_per_period
+      end
     end
     self.save
   end
