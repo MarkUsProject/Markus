@@ -375,7 +375,8 @@ module AutomatedTestsClientHelper
       test_username = nil
       # enqueue locally using resque api
       Resque.enqueue_to(server_queue, AutomatedTestsServer, markus_address, user_api_key, server_api_key, test_username,
-                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, submission_id)
+                        test_scripts, files_path, tests_path, results_path, assignment.id, group.id, group.repo_name,
+                        submission_id)
     else
       # tests executed locally or remotely with authentication:
       # copy the student's submission and all necessary files through ssh in a temp folder
@@ -403,7 +404,8 @@ module AutomatedTestsClientHelper
           # enqueue remotely directly in redis, resque does not allow for multiple redis servers
           resque_params = {:class => 'AutomatedTestsServer',
                            :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
-                                     files_path, tests_path, results_path, assignment.id, group.id, submission_id]}
+                                     files_path, tests_path, results_path, assignment.id, group.id, group.repo_name,
+                                     submission_id]}
           ssh.exec!("redis-cli rpush \"resque:queue:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       rescue Exception => e

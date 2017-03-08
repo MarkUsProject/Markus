@@ -12,7 +12,7 @@ class AutomatedTestsServer
   # a) the user running MarkUs if ATE_SERVER_HOST == 'localhost'
   # b) ATE_SERVER_FILES_USERNAME otherwise
   def self.perform(markus_address, user_api_key, server_api_key, test_username, test_scripts, files_path, tests_path,
-                   results_path, assignment_id, group_id, submission_id)
+                   results_path, assignment_id, group_id, group_repo_name, submission_id)
 
     # move files to the test location (if needed)
     test_scripts_executables = get_test_scripts_chmod(test_scripts, tests_path)
@@ -27,7 +27,7 @@ class AutomatedTestsServer
     all_output = '<testrun>'
     all_errors = ''
     test_scripts.each do |script|
-      run_command = "cd '#{tests_path}'; ./'#{script}' #{markus_address} #{user_api_key} #{assignment_id} #{group_id}"
+      run_command = "cd '#{tests_path}'; ./'#{script}' #{markus_address} #{user_api_key} #{assignment_id} #{group_id} #{group_repo_name}"
       unless test_username.nil?
         run_command = "sudo -u #{test_username} -- bash -c \"#{run_command}\""
       end
