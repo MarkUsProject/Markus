@@ -1497,6 +1497,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
         no_test_files: "UPDATE ME"
         already_enqueued: "UPDATE ME"
+        after_due_date: "UPDATE ME"
       test_result:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

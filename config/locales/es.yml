@@ -1977,6 +1977,7 @@ es:
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
         no_test_files:        "No hay un script para lanzar la prueba"
         already_enqueued:     "UPDATE ME"
+        after_due_date:       "UPDATE ME"
       test_result:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

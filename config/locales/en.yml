@@ -1624,7 +1624,7 @@ en:
       script_name: "Script Name"
       test_parameters: "Test Script Options"
       revision_used_for_test: "<span class='prop_label'>Revision used:</span> %{revision}"
-      due_date_is_passed: "You cannot run test as the due date for this assignment is passed"
+      due_date_is_passed: "You cannot run tests as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
       test_run: "Test Run"
@@ -1707,6 +1707,7 @@ en:
         no_tokens: "You do not have tokens to run the tests"
         no_test_files: "There are no test scripts to run the tests"
         already_enqueued: "You have a test already enqueued for execution, please wait for the results"
+        after_due_date: "The due date for this assignment has passed"
       test_result:
         all_tests: "All tests"
         unknown_test: "Unknown test"
