@@ -196,7 +196,7 @@ module AutomatedTestsClientHelper
   # Verify the user has the permission to run the tests - admins
   # always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def self.check_user_permission(user, grouping, assignment)
+  def self.check_user_permission(user, grouping)
 
     # admins are always ok
     if user.admin?
@@ -217,7 +217,7 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.bad_group')
     end
     # deadline has not passed
-    if assignment.submission_rule.can_collect_now?
+    if grouping.assignment.submission_rule.can_collect_now?
       raise I18n.t('automated_tests.error.after_due_date')
     end
     token = grouping.prepare_tokens_to_use
@@ -265,7 +265,7 @@ module AutomatedTestsClientHelper
     end
     test_server_user = get_test_server_user
     test_scripts = get_test_scripts(assignment, current_user)
-    check_user_permission(current_user, grouping, assignment)
+    check_user_permission(current_user, grouping)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
     # if current_user is a student, then we use the latest repo revision

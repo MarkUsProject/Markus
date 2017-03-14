@@ -45,7 +45,7 @@
         <% if @assignment.unlimited_tokens || @token.remaining > 0 %>
           <h3><%= t('automated_tests.run_tests') %></h3>
           <% if @grouping.assignment.submission_rule.can_collect_now? %>
-            <p><%= t('automated_tests.due_date_is_passed') %></p>
+            <p><%= t('automated_tests.error.after_due_date') %></p>
           <% else %>
             <p><%= raw t('automated_tests.need_one_file') %></p>
 
