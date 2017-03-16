@@ -123,6 +123,7 @@ class Assignment < ActiveRecord::Base
   validates :due_date, date: true
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
+  after_save :update_repo_auth
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
@@ -1076,7 +1077,15 @@ class Assignment < ActiveRecord::Base
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
     Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
+              .where(vcs_submit: true)
               .order(due_date: :desc)
+  end
+
+  def update_repo_auth
+    if self.vcs_submit_was != self.vcs_submit
+      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+      repo.__set_all_permissions
+    end
   end
 
 end
