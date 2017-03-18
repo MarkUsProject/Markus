@@ -81,6 +81,10 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
   end
 
+  def grade_distribution_graph
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+  end
+
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])

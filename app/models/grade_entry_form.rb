@@ -56,6 +56,34 @@ class GradeEntryForm < ActiveRecord::Base
     percent
   end
 
+  def grade_distribution_array(intervals = 20)
+    distribution = Array.new(intervals, 0)
+    grade_entry_students.each do |grade_entry_student|
+      result = grade_entry_student.total_grade
+      distribution = update_distribution(distribution, result, out_of_total, intervals)
+    end
+    distribution.to_json
+  end
+
+  def update_distribution(distribution, result, out_of, intervals)
+    steps = 100 / intervals # number of percentage steps in each interval
+    percentage = [100, (result / out_of * 100).ceil].min
+    interval = (percentage / steps).floor
+    interval -= (percentage % steps == 0) ? 1 : 0
+    distribution[interval] += 1
+    distribution
+  end
+
+  # Determine the total mark for a grade entry item, as a percentage
+  def calculate_grade_entry_item_percent(grade_entry_item)
+    unless grade_entry_item.nil?
+      total = grade_entry_item.total_grade
+    end
+
+    percent = BLANK_MARK
+    out_of = grade_entry_item.out_of
+  end
+
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_average
