@@ -55,6 +55,8 @@ gem 'rails-perftest', '~>0.0.2'
 gem 'arel', '~>6.0.2'
 gem 'jbuilder', '~> 2.0'
 
+gem 'js-routes'
+
 # Exam template requirements
 gem 'prawn'
 gem 'prawn-qrcode'
