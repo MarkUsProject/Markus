@@ -22,6 +22,49 @@ class GradeEntryItem < ActiveRecord::Base
   validates_presence_of :position
   validates_numericality_of :position, greater_than_or_equal_to: 0
 
+  # Calculate and set the total grade of a grade entry form
+  def total_grade
+    total = grades.sum(:grade).round(2)
+
+    if total == 0 && self.all_blank_grades?
+      total = nil
+    end
+
+    write_attribute(:total_grade, total)
+
+    total
+  end
+
+  # Return whether or not the given grade entry item's grades are all blank
+  # (Needed because ActiveRecord's "sum" method returns 0 even if
+  #  all the grade.grade values are nil and we need to distinguish
+  #  between a total mark of 0 and a blank mark.)
+  def all_blank_grades?
+    grades = self.grades
+    grades_without_nils = grades.select do |grade|
+      !grade.grade.nil?
+    end
+    grades_without_nils.blank?
+  end
+
+  def grade_distribution_array(intervals = 20)
+    distribution = Array.new(intervals, 0)
+    grades.each do |grade|
+      result = grade.grade
+      distribution = update_distribution(distribution, result, out_of, intervals)
+    end
+    distribution.to_json
+  end
+
+  def update_distribution(distribution, result, out_of, intervals)
+    steps = 100 / intervals # number of percentage steps in each interval
+    percentage = [100, (result / out_of * 100).ceil].min
+    interval = (percentage / steps).floor
+    interval -= (percentage % steps == 0) ? 1 : 0
+    distribution[interval] += 1
+    distribution
+  end
+
   # Create new grade entry items (or update them if they already exist) using
   # the first two rows from a CSV file
   #

@@ -74,16 +74,6 @@ class GradeEntryForm < ActiveRecord::Base
     distribution
   end
 
-  # Determine the total mark for a grade entry item, as a percentage
-  def calculate_grade_entry_item_percent(grade_entry_item)
-    unless grade_entry_item.nil?
-      total = grade_entry_item.total_grade
-    end
-
-    percent = BLANK_MARK
-    out_of = grade_entry_item.out_of
-  end
-
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_average
