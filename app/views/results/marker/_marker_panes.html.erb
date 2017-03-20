@@ -3,17 +3,21 @@
     <div id='left-pane'>
       <div class='tab-pane' id='code_pane'>
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
-           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+          <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <% if @result.is_a_review? %>
+              <li><a href='#peer_review_marks_by_student'><%= t('marker.marks.marks') %></a></li>
+          <% end %>
+
           <% if can_show_test_results_tab?(assignment) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
           <% if can_show_feedback_files_tab?(submission) %>
               <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
           <% end %>
-           <% if can_show_remark_request_tab_in_marker_pane(submission) %>
+          <% if can_show_remark_request_tab_in_marker_pane(submission) %>
               <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
-           <% end %>
+          <% end %>
         </ul>
 
         <div id='code_holder'>
@@ -53,6 +57,23 @@
 
           <ul id='annotation_summary_list'></ul>
         </div>
+
+        <% if @result.is_a_review? %>
+          <div id = 'peer_review_marked_by_student'>
+            <div id='mark_criteria'>
+              <ul id='mark_criteria_pane_list'>
+                <%# Also need to render the mark per criteria (if exist) %>
+                <% @mark_criteria.each do |mark_criterion| -%>
+                    <%= render partial: "results/marker/marker_#{mark_criterion.class.to_s.underscore}_li",
+                               locals: { mark_criterion: mark_criterion,
+                                         result: result,
+                                         mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                         old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
+                <% end -%>
+              </ul>
+            </div>
+          </div>
+        <% end %>
 
         <% if can_show_test_results_tab?(assignment) %>
           <div id='test_result_tab' style='display:none;'>
