@@ -1886,8 +1886,6 @@ es:
       script_name:                        "Nombre del script"
       test_parameters:                    "Opciones del script de la prueba"
       revision_used_for_test:             "<span class='prop_label'>Revisión usada:</span> %{revision}"
-      due_date_is_passed:                 "Usted no puede lanzar las prueba debido a que el último plazo de entrega para
-                                           este proyecto ha pasado"
       information:                        "Información"
       run_tests:                          "Lanzar pruebas"
       test_run:                           "Lanzar prueba"
@@ -1977,6 +1975,8 @@ es:
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
         no_test_files:        "No hay un script para lanzar la prueba"
         already_enqueued:     "UPDATE ME"
+        after_due_date:       "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este
+                               proyecto ha pasado"
       test_result:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

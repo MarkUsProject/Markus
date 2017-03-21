@@ -216,6 +216,10 @@ module AutomatedTestsClientHelper
     unless user.accepted_groupings.include?(grouping)
       raise I18n.t('automated_tests.error.bad_group')
     end
+    # deadline has not passed
+    if grouping.assignment.submission_rule.can_collect_now?
+      raise I18n.t('automated_tests.error.after_due_date')
+    end
     token = grouping.prepare_tokens_to_use
     # no other enqueued tests
     if token.enqueued?

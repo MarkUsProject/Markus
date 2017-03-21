@@ -1473,7 +1473,6 @@ fr:
       script_name: "UPDATE ME"
       test_parameters: "UPDATE ME"
       revision_used_for_test: "<span class=\"prop_label\">Révision utilisée:</span> %{revision}"
-      due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
       run_tests: "Exécuter les tests."
       test_run: "L'exécution du test"
@@ -1565,6 +1564,7 @@ fr:
         no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
         no_test_files: "UPDATE ME"
         already_enqueued: "UPDATE ME"
+        after_due_date: "Vous ne pouvez pas exécuter de test après la date de retour"
       test_result:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
