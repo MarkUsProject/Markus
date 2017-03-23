@@ -118,6 +118,7 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      tested: "Tested"
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
       not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
       no_submission: "%{group_name} has no submissions"

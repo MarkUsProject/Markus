@@ -125,6 +125,7 @@ es:
       completed:              "Completado"
       released:               "Publicado"
       remark_requested:       "Recalificación solicitada"
+      tested:                 "UPDATE ME"
       not_complete:           "No puede publicar los resultados para %{group_name}: el proceso de calificación no ha
                                sido completado."
       not_complete_unrelease: "No puede ocultar los resultados para %{group_name}: el proceso de calificación no ha sido

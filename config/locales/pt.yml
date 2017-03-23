@@ -118,6 +118,7 @@ pt:
       released: "Liberado"
       are_marked: "são marcados"
       remark_requested: "Pedido de revisão"
+      tested: "UPDATE ME"
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"
       no_submission: "%{group_name} não tem submissões"

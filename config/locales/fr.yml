@@ -121,6 +121,7 @@ fr:
       released: "Affiché"
       are_marked: "sont corrigés"
       remark_requested: "Réévaluation demandée"
+      tested: "UPDATE ME"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
       not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
       no_submission: "%{group_name} n'a pas d'envoi"

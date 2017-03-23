@@ -211,6 +211,10 @@
         return (<%= image_tag('icons/double_exclamation.png',
                               alt: t('marking_state.remark_requested'),
                               title: t('marking_state.remark_requested')) %>);
+      } else if (state === 'tested') {
+        return (<%= image_tag('icons/wrench.png',
+                              alt: t('marking_state.tested'),
+                              title: t('marking_state.tested')) %>);
       } else {
         return 'Invalid marking state';
       }
