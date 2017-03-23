@@ -1440,7 +1440,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     automated_tests:
       automated_tests: "Test Framework"
       enable_test: "Permitir testes para esse projeto"
-      upload_required: "UPDATE ME <span class='required_field'>*</span>"
       student_tests: "UPDATE ME"
       enable_student_tests: "UPDATE ME"
       required_files_ant: "Arquivos exigidos para Ant"
@@ -1469,7 +1468,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       assignment_lib_files: "Arquivos de bibliotecas associadas"
       assignment_parser_files: "Arquivos de interpretador associados"
       private: "Privado?"
-      replace: "Substituir"
       filename_exists: "já foi tomado"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
       invalid_buildxml: "Arquivo Ant build.xml deve ser nomeado build.xml"
@@ -1477,6 +1475,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalid_filename: "Arquivos de testes, bibliotecas e interpretadores não pode ser nomeado build.xml ou build.properties"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       script_option:
+        upload_required: "UPDATE ME <span class='required_field'>*</span>"
+        upload_help: "UPDATE ME"
+        replace: "Substituir"
+        replace_help: "UPDATE ME"
         remove_file: "UPDATE ME"
         remove_file_help: "UPDATE ME"
         run_settings: "UPDATE ME"

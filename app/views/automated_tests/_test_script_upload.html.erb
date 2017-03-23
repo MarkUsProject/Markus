@@ -43,8 +43,10 @@
 
       <div class="settings_left_side">
 
-        <%= f.label :script_name, (saved ? t('automated_tests.replace') :
-                                           t('automated_tests.upload_required').html_safe) %>
+        <%= f.label :script_name, (saved ? t('automated_tests.script_option.replace') :
+                                           t('automated_tests.script_option.upload_required').html_safe),
+                    title: (saved ? t('automated_tests.script_option.replace_help') :
+                                    t('automated_tests.script_option.upload_help')) %>
         <%= file_field_tag (saved ? ('new_update_script_'+f.object.script_name).to_sym :
                                     :new_script),
                            class: 'upload_file' %><br/>
