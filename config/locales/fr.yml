@@ -1324,7 +1324,6 @@ fr:
     automated_tests:
       title: "Tests automatiques du code"
       testing_disabled: "Les tests automatiques du code sont désactivés pour ce projet."
-      upload_required:  "Envoyer<span class='required_field'>*</span>"
       automated_tests: "Tests"
       test_results: "Résultat des tests"
       expand_all: "Montrer toutes"
@@ -1361,7 +1360,6 @@ fr:
       new_test_support_file: "UPDATE ME"
       assignment_test_script_files: "UPDATE ME"
       assignment_test_support_files: "UPDATE ME"
-      replace: "UPDATE ME"
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br>
                       Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
@@ -1385,6 +1383,10 @@ fr:
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:
+        upload_required: "Envoyer<span class='required_field'>*</span>"
+        upload_help: "UPDATE ME"
+        replace: "UPDATE ME"
+        replace_help: "UPDATE ME"
         remove_file: "UPDATE ME"
         remove_file_help: "UPDATE ME"
         run_settings: "UPDATE ME"
