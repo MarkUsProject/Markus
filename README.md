@@ -1,4 +1,4 @@
-![MarkUs logo] (http://markusproject.org/img/markus_logo_big.png)
+![MarkUs logo](http://markusproject.org/img/markus_logo_big.png)
 
 Welcome to MarkUs! Online Marking Made Easy
 ===========================================
