@@ -82,7 +82,11 @@
            formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
-           formats: [:js] %>
+           formats: [:js],
+           locals: {
+             result_id: @result.id,
+             assignment_id: @result.submission.grouping.assignment.id
+           } %>
 
 <%= render partial: 'results/marker/setup_annotation_categories',
            formats: [:js],

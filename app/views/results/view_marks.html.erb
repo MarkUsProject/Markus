@@ -38,7 +38,11 @@
            formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
-           formats: [:js] %>
+           formats: [:js],
+           locals: {
+             result_id: @result.id,
+             assignment_id: @result.submission.grouping.assignment.id
+           } %>
 
 <%= render partial: 'results/student/enable_remark_request_buttons',
            formats: [:js] %>

@@ -377,6 +377,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         remark_flag: "(Reavaliado)"
         no_annotation_in_this_category: "Existem anotações nessa categoria"
         new_annotation: "Criar nova anotação"
+        edit_annotation: "Edit annotation"
         annotation_category: "Categoria de anotação"
         preview: "Visualização"
         preview_title: "Veja como a anotação vai olhar:"
@@ -387,6 +388,14 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
         select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
         provide_text:   "Você deve fornecer alguma anotação"
+        context_menu:
+          new: "New Annotation"
+          common: "Common Annotations"
+          edit: "Edit"
+          delete: "Remove"
+          copy: "Copy"
+          download: "Download File"
+          download_annotated: "Download Annotated File"
 
     #app/views/results/common
     common:

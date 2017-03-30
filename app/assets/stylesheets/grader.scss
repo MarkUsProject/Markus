@@ -235,9 +235,9 @@
 }
 
 
-/* New annotation dialog */
+/* Annotation dialog - for creating or editing new annotations */
 
-#create_annotation_dialog {
+#annotation_dialog {
   padding-top: 1.5em;
 
   textarea#new_annotation_content {

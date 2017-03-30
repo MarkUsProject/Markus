@@ -411,6 +411,7 @@ en:
         remark_flag: "(remark)"
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
+        edit_annotation: "Edit annotation"
         annotation_category: "Annotation Category"
         preview: "Preview"
         preview_title: "Here's how the annotation will look:"
@@ -421,6 +422,14 @@ en:
         select_an_area: "You should select an area on the image to annotate"
         select_an_area_pdf: "You should select an area on the PDF to annotate"
         provide_text:   "You must provide some annotation text"
+        context_menu:
+          new: "New Annotation"
+          common: "Common Annotations"
+          edit: "Edit"
+          delete: "Remove"
+          copy: "Copy"
+          download: "Download File"
+          download_annotated: "Download Annotated File"
 
     #app/views/results/common
     common:

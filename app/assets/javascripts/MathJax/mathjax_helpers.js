@@ -9,7 +9,7 @@ function hideAnnotationPreview() {
     $('#annotation_preview_title').hide();
 
     // recenter dialog
-    var dialog = $('#create_annotation_dialog');
+    var dialog = $('#annotation_dialog');
     dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 
@@ -18,7 +18,7 @@ function showAnnotationPreview() {
     $('#annotation_preview_title').show();
 
     // recenter dialog
-    var dialog = $('#create_annotation_dialog');
+    var dialog = $('#annotation_dialog');
     dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 

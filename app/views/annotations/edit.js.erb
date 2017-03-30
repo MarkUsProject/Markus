@@ -1,0 +1,15 @@
+<% params[:_method] = 'patch' %>
+$('#annotation_dialog').empty();
+document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
+  render partial: "annotation_modal",
+         locals: { form_url: { action: 'update_annotation',
+                               controller: 'annotations' },
+                   form_values: params,
+                   title: t('marker.annotation.edit_annotation'),
+                   content: @text_annotation.content,
+                   new_annotation: false,
+                   submit_btn_data: {
+                     confirm: t('marker.annotation.change_across_submissions')
+                   } }
+)%>';
+open_annotation_modal();

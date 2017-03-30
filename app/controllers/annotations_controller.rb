@@ -15,10 +15,13 @@ class AnnotationsController < ApplicationController
 
     if params[:annotation_type] == 'image'
       @annotation = ImageAnnotation.new
-      @annotation.update_attributes({
+      @annotation.update_attributes!({
         x1: Integer(params[:x1]), x2: Integer(params[:x2]),
         y1: Integer(params[:y1]), y2: Integer(params[:y2]),
+        annotation_text_id: params[:annotation_text_id],
         submission_file_id: @submission_file_id,
+        creator_id: current_user.id,
+        creator_type: current_user.type,
         is_remark: is_remark,
         annotation_number: submission.annotations.count + 1,
         result_id: result_id
@@ -59,6 +62,11 @@ class AnnotationsController < ApplicationController
     @annotation.save
     @submission = @submission_file.submission
     @annotations = @submission.annotations
+  end
+
+  def new
+    @result = Result.find(params[:result_id])
+    @assignment = @result.submission.grouping.assignment
   end
 
   def create
@@ -123,13 +131,17 @@ class AnnotationsController < ApplicationController
     @annotations = @submission.annotations
   end
 
+  def edit
+    @annotation = Annotation.find(params[:id])
+    @text_annotation = @annotation.annotation_text
+  end
+
   def destroy
     @annotation = Annotation.find(params[:id])
     @text_annotation = @annotation.annotation_text
     @text_annotation.destroy if @text_annotation.annotation_category.nil?
     @old_annotation = @annotation.destroy
-    @submission_file_id = params[:submission_file_id]
-    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission_file = @annotation.submission_file
     @submission = @submission_file.submission
     @annotations = @submission.annotations
     @annotations.each do |annot|
@@ -141,13 +153,12 @@ class AnnotationsController < ApplicationController
   end
 
   def update_annotation
-    @content = params[:annotation_text][:content]
-    @id = params[:annotation_text][:id]
-    @submission_file_id = params[:submission_file_id]
-    @annotation_text = AnnotationText.find(@id)
+    @content = params[:content]
+    @annotation = Annotation.find(params[:id])
+    @annotation_text = @annotation.annotation_text
     @annotation_text.content = @content
     @annotation_text.save
-    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission_file = @annotation.submission_file
     @submission = @submission_file.submission
     @annotations = @submission.annotations
     @result_id = params[:result_id]

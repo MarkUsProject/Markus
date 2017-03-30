@@ -542,6 +542,7 @@ es:
         remark_flag:                    "(Recalificación)"
         no_annotation_in_this_category: "No existen anotaciones en esta categoría"
         new_annotation:                 "Crear una nueva anotación"
+        edit_annotation:                "Edit annotation"
         annotation_category:            "Categoría de la anotación"
         preview:                        "Vista Previa"
         preview_title:                  "La anotación lucirá de la siguiente manera:"
@@ -553,6 +554,14 @@ es:
         select_an_area:                 "Usted debe seleccionar un área o imagen a anotar"
         select_an_area_pdf:             "Usted debe seleccionar un área a anotar en el PDF "
         provide_text:                   "Usted debe proveer texto para la anotación"
+        context_menu:
+          new:                          "New Annotation"
+          common:                       "Common Annotations"
+          edit:                         "Edit"
+          delete:                       "Remove"
+          copy:                         "Copy"
+          download:                     "Download File"
+          download_annotated:           "Download Annotated File"
 
     #app/views/results/common
     common:
