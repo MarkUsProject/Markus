@@ -78,10 +78,16 @@ class Ta < User
     end
 
     steps = 100 / intervals # number of percentage steps in each interval
-    percentage = [100, (result.total_mark / out_of * 100).ceil].min
-    interval = (percentage / steps).floor
-    interval -= (percentage % steps == 0) ? 1 : 0
-    distribution[interval] += 1
+    percentage = (result.total_mark / out_of * 100).ceil
+    if percentage == 0
+      distribution[0] += 1
+    elsif percentage >= 100
+      distribution[intervals - 1] += 1
+    elsif (percentage % steps) == 0
+      distribution[percentage / steps - 1] += 1
+    else
+      distribution[percentage / steps] += 1
+    end
     distribution
   end
 end
