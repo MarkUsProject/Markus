@@ -2,10 +2,10 @@
 
   <div id='annotation_category_controls'>
     <div class='float_right'>
-    <%= button_to t('annotations.delete.delete_message'),
+    <%= button_to t('remove'),
                   [@assignment, annotation_category],
                   method: 'delete',
-                  data: { confirm: t('annotations.delete.annotation_category') },
+                  data: { confirm: t('annotation_categories.destroy.warning') },
                   html: { class: 'delete' },
                   remote: true %>
     </div>
@@ -16,7 +16,7 @@
                     remote: true do |f| %>
        <span id='annotation_category_inputs'>
          <%= f.label :annotation_category_name,
-                     t('annotations.update.annotation_category_name') %>
+                     AnnotationCategory.human_attribute_name(:annotation_category_name) %>
          <%= f.text_field :annotation_category_name, rows: '3' %>
        </span>
 

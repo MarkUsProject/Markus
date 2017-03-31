@@ -1,0 +1,24 @@
+en:
+  annotation_categories:
+    create:
+      success: "This annotation category was successfully created."
+    destroy:
+      success: "Annotation category deleted."
+      warning: "Deleting this annotation category will also delete its annotations. Deleted annotations will no longer be attached to student submissions. Are you sure you want to do this?"
+    download:
+      title: "Download Annotations"
+    index:
+      add_annotation_category: "Add Annotation Category"
+      title: "Annotations: %{assignment_short_identifier}"
+    update:
+      success: "This annotation category was successfully updated."
+    upload:
+      error: "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
+      success: "Successfully uploaded %{annotation_category_number} Annotation Categories"
+      title: "Upload Annotations"
+
+    # Miscellaneous
+    add_annotation: "Add Annotation"
+    no_annotations: "There are no annotations in this category"
+    none: "There are no annotation categories yet."
+    one_time_only: "One Time Only"

@@ -540,10 +540,8 @@ es:
       annotation:
         from_line_to:                   "%{file_path}: Línea %{line_start} hasta la %{line_end}"
         remark_flag:                    "(Recalificación)"
-        no_annotation_in_this_category: "No existen anotaciones en esta categoría"
         new_annotation:                 "Crear una nueva anotación"
         edit_annotation:                "Edit annotation"
-        annotation_category:            "Categoría de la anotación"
         preview:                        "Vista Previa"
         preview_title:                  "La anotación lucirá de la siguiente manera:"
         sure_to_remove:                 "¿Está seguro/a de querer remover esta anotación?"
@@ -1274,29 +1272,15 @@ es:
         not_in_use:  "Etiquetas no usadas"
 
     annotations:
-      annotation_category:           "Categoría de la Anotación"
-      no_annotation_categories:      "No existen categorías de anotación todavía."
-      title:                         "Anotaciones: %{assignment_short_identifier}"
-      name:                          "Nombre de la Categoría"
       help_message:                  "De click en una categoría de anotación para añadir anotaciones."
-      add_annotation_category:       "Añadir una categoría de anotación"
       annotations:                   "Anotaciones"
       created_by:                    "Creado Por:"
       last_edited_by:                "Editado por última vez por:"
-      update:
-        annotation_category_success: "Esta categoría de anotación fue actualizada satisfactoriamente"
-        annotation_category_error:   "No se pudo actualizar la Categoría de Anotación:"
-        annotation_category_name:    "Nombre de la Categoría de Anotación"
-        add_annotation:              "Añadir Anotación"
       delete:
         delete_message:      "Eliminar la categoría de anotación"
         annotation_text:     "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está
                               seguro/a de realizar esto?"
-        annotation_category: "Eliminar esta categoría de anotación también eliminará las anotaciones de la misma.
-                              Las anotaciones eliminadas no estarán asociadas a las entregas de los estudiantes.
-                              ¿Está seguro/a de querer hacer esto?"
       upload:
-        upload_annotations: "Subir Anotaciones"
         upload_message_csv: "
         <p>
             Seleccionar un archivo en formato CSV de la siguiente forma:<br>
@@ -1308,17 +1292,12 @@ es:
             <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
-        success:          "%{annotation_category_number} categorías de anotación han sido actualizadas exitosamente"
-        error:            "No se pudo subir la categoría: %{annotation_category} localizada en la línea
-                           %{annotation_line}"
         syntax_error:     "Existe un error en el archivo que usted subió: %{error}"
         flash_error:      "No se pudo reconocer el formato %{format} para descargar"
         unparseable_yaml: "No se pudo interpretar el archivo con formato YAML"
       download:
-        download_annotations: "Descargar Anotaciones"
         download_csv:         "Descargar en formato CSV"
         download_yml:         "Descargar en formato YML"
-      one_time_only:          "Una sola vez"
 
     submission_rules:
       submission_rule:

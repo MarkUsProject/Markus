@@ -400,10 +400,8 @@ fr:
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
-        no_annotation_in_this_category: "Il n'y a pas d'annotation dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         edit_annotation: "Edit annotation"
-        annotation_category: "Catégorie de l'annotation"
         preview: "Avant-première"
         preview_title: "Voici l'apparence de l'annotation:"
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
@@ -947,26 +945,14 @@ fr:
     unhide_students: "Activer les étudiants"
 
     annotations:
-      annotation_category: "Catégories d'annotations"
-      no_annotation_categories: "Il n'y a pas encore de catégories d'annotations."
-      title: "Annotations pour le projet %{assignment_short_identifier}"
-      name: "Nom de la catégorie"
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
-      add_annotation_category: "Ajouter une catégorie d'annotations"
       annotations: "Annotations"
       created_by: "Créée par :"
       last_edited_by: "Dernière édition par :"
-      update:
-        annotation_category_success: "La catégorie d'annotations a bien été créée ou mise à jour."
-        annotation_category_error: "Erreur dans la mise à jour ou la création de la catégorie d'annotations : "
-        annotation_category_name: "Nom de la catégorie d'annotations"
-        add_annotation: "Ajouter une annotation"
       delete:
         delete_message: "Supprimer la catégorie d'annotations"
         annotation_text: "Supprimer cette annotation va supprimer les commentaires attachés à tous les fichiers auquels elle pourrait être rattachée. Êtes-vous sûr de vouloir faire cela ?"
-        annotation_category:  "Supprimer cette catégorie d'annotation va supprimer aussi toutes les annotations. Les annotations supprimées ne seront plus rattachées au devoirs des étudiants. Êtes-vous sûr de vouloir faire cela ?"
       upload:
-        upload_annotations: "Envoi d'annotations"
         upload_message_csv: "
         <p>
             Sélectionner un fichier CSV formaté comme suit : <br>
@@ -978,16 +964,12 @@ fr:
             <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
-        success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
-        error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
         syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
         flash_error: "Le format %{format} que vous voulez télécharger n'a pas été reconnu."
         unparseable_yaml: "Ne pourrait pas analyzer le fichier YAML"
       download:
-        download_annotations: "Télécharger les annotations"
         download_csv: "Télécharger au format CSV"
         download_yml: "Télécharger au format YML"
-      one_time_only:  "Une seule fois"
 
     submission_rules:
       submission_rule:

@@ -1,6 +1,6 @@
 <div class='sortable'>
   <header>
-    <span><%= t('annotations.annotation_category') %></span>
+    <span><%= AnnotationCategory.model_name.human %></span>
   </header>
   <ul id='annotation_category_pane_list'>
     <% if @annotation_categories.length > 0 %>
@@ -10,7 +10,7 @@
       <% end %>
     <% else %>
       <div id='no_annotation_categories_info' class='information'>
-        <%= t('annotations.no_annotation_categories') %>
+        <%= t('annotation_categories.none') %>
       </div>
     <% end %>
   </ul>

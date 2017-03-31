@@ -19,4 +19,4 @@ pt:
 
     # Miscellaneous
     all: "Todas as Sessões"
-    no_sections: "Ainda não há sessões."
+    none: "Ainda não há sessões."

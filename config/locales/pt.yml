@@ -376,10 +376,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
-        no_annotation_in_this_category: "Existem anotações nessa categoria"
         new_annotation: "Criar nova anotação"
         edit_annotation: "Edit annotation"
-        annotation_category: "Categoria de anotação"
         preview: "Visualização"
         preview_title: "Veja como a anotação vai olhar:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
@@ -915,26 +913,14 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     unhide_students: "Marcar como ativo"
 
     annotations:
-      annotation_category: "Categorias de anotação"
-      no_annotation_categories: "Ainda não há categorias de anotação"
-      title: "Anotações: %{assignment_short_identifier}"
-      name: "Nome da categoria"
       help_message: "Clique em uma categoria de anotação para adicionar anotações."
-      add_annotation_category: "Adicionar categoria de anotação"
       annotations: "Anotações"
       created_by: "Criado por:"
       last_edited_by: "Última edição por:"
-      update:
-        annotation_category_success: "Esta categoria de anotação foi atualizada com sucesso"
-        annotation_category_error: "Não foi possível atualizar a categoria de anotação:"
-        annotation_category_name: "Nome da categoria de anotação"
-        add_annotation: "Adicionar anotação"
       delete:
         delete_message: "Apagar categoria de anotação"
         annotation_text: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
-        annotation_category:  "Apagar esta categoria de anotação também irá apagar suas anotações. Anotações excluídas deixarão de estar ligadas à apresentações dos alunos. Tem certeza de que quer fazer isto?"
       upload:
-        upload_annotations: "Carregar anotações"
         upload_message_csv: "
         <p>
             Selecione um arquivo CSV no seguinte formato: <br>
@@ -946,16 +932,12 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             <code>category_name: <br>- category_text<br>- category_text</code><br>
 
           </p>"
-        success:  "Carregado com sucesso %{annotation_category_number} categorias de anotações"
-        error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
         syntax_error: "Existe um erro no  arquivo carregado: %{error}"
         flash_error: "Não foi possível reconhecer o formato %{format}"
         unparseable_yaml: "Não foi possível analisar o arquivo YAML"
       download:
-        download_annotations: "Baixar anotações"
         download_csv: "Baixar em formato CSV"
         download_yml: "Baixar em formato YML"
-      one_time_only:  "Uma única vez"
 
     submission_rules:
       submission_rule:

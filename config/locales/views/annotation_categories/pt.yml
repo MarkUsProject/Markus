@@ -1,0 +1,24 @@
+pt:
+  annotation_categories:
+    create:
+      success: "Esta categoria de anotação foi atualizada com sucesso"
+    destroy:
+      success: "Apagar categoria de anotação"
+      warning: "Apagar esta categoria de anotação também irá apagar suas anotações. Anotações excluídas deixarão de estar ligadas à apresentações dos alunos. Tem certeza de que quer fazer isto?"
+    download:
+      title: "Baixar anotações"
+    index:
+      add_annotation_category: "Adicionar categoria de anotação"
+      title: "Anotações: %{assignment_short_identifier}"
+    update:
+      success: "Esta categoria de anotação foi atualizada com sucesso"
+    upload:
+      error: "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
+      success: "Carregado com sucesso %{annotation_category_number} categorias de anotações"
+      title: "Carregar anotações"
+
+    # Miscellaneous
+    add_annotation: "Adicionar anotação"
+    no_annotations: "Existem anotações nessa categoria"
+    none: "Ainda não há categorias de anotação."
+    one_time_only: "Uma única vez"

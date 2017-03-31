@@ -19,4 +19,4 @@ fr:
 
     # Miscellaneous
     all: "Tous les Sections"
-    no_sections: "Il n'y a pas encore de section."
+    none: "Il n'y a pas encore de section."

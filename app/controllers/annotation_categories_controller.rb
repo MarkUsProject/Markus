@@ -21,7 +21,7 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_category = @assignment.annotation_categories
                                       .new(annotation_category_params)
     if @annotation_category.save
-      flash_message(:success, I18n.t('annotations.update.annotation_category_success'))
+      flash_message(:success, t('.success'))
       render :insert_new_annotation_category
     else
       render :new_annotation_category_error
@@ -36,7 +36,7 @@ class AnnotationCategoriesController < ApplicationController
   def destroy
     @annotation_category = AnnotationCategory.find(params[:id])
     if @annotation_category.destroy
-      flash_message(:success, I18n.t('annotations.delete.delete_message'))
+      flash_message(:success, t('.success'))
     end
   end
 
@@ -46,7 +46,7 @@ class AnnotationCategoriesController < ApplicationController
 
     @annotation_category.update_attributes(annotation_category_params)
     if @annotation_category.save
-      flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
+      flash.now[:success] = t('.success')
     else
       flash.now[:error] = @annotation_category.errors.full_messages
     end
@@ -57,7 +57,7 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text.update_attributes(annotation_text_params)
     @annotation_text.last_editor_id = current_user.id
     if @annotation_text.save
-      flash_now(:success, I18n.t('annotations.update.annotation_category_success'))
+      flash_now(:success, t('annotation_categories.update.success'))
     end
   end
 
@@ -74,7 +74,7 @@ class AnnotationCategoriesController < ApplicationController
         render :new_annotation_text_error
         return
       end
-      flash_now(:success, I18n.t('annotations.update.annotation_category_success'))
+      flash_now(:success, t('annotation_categories.update.success'))
       @assignment = Assignment.find(params[:assignment_id])
       render :insert_new_annotation_text
     end
@@ -203,16 +203,16 @@ class AnnotationCategoriesController < ApplicationController
       result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
-        flash_message(:error, I18n.t('annotations.upload.error',
-                                     annotation_category: key, annotation_line: annotation_line))
+        flash_message(:error, t('annotation_categories.upload.error',
+                                annotation_category: key, annotation_line: annotation_line))
         break
       else
         annotation_category_number += 1
       end
      end
      if annotation_category_number > 0
-       flash_message(:success, I18n.t('annotations.upload.success',
-                                      annotation_category_number: annotation_category_number))
+       flash_message(:success, t('annotation_categories.upload.success',
+                                 annotation_category_number: annotation_category_number))
      end
     end
     redirect_to action: 'index', assignment_id: @assignment.id

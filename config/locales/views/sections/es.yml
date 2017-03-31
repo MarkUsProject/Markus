@@ -19,4 +19,4 @@ es:
 
     # Miscellaneous
     all: "Todas las Secciones"
-    no_sections: "No hay secciones todavía."
+    none: "No hay secciones todavía."

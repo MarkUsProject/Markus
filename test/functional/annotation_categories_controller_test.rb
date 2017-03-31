@@ -161,7 +161,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                format: :js
         assert_response :success
         assert_not_nil assigns :annotation_category
-        assert_equal I18n.t('annotations.update.annotation_category_success'),
+        assert_equal I18n.t('annotation_categories.update.success'),
                      flash[:success]
       end
 
@@ -336,7 +336,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               assignment_id: @assignment.id,
               annotation_category_list_csv: StringIO.new('name, text')
       assert_response :redirect
-      assert set_flash.to(t('annotations.upload.success',
+      assert set_flash.to(t('annotation_categories.upload.success',
                             annotation_category_number: 1))
       assert_not_nil assigns :assignment
     end
@@ -387,7 +387,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin, :yml_upload, assignment_id: @assignment.id, annotation_category_list_yml: "--- \n A:\n - A1\n - A2\n"
 
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.success',
+        assert set_flash.to(t('annotation_categories.upload.success',
                               annotation_category_number: 1))
         assert_not_nil assigns :assignment
         @assignment.reload
