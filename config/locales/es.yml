@@ -73,7 +73,6 @@ es:
     dashboard:          "Panel"
     assignments:        "Proyectos"
     users:              "Usuarios"
-    sections:           "Secciones"
     home:               "Inicio"
     settings:           "Configuración"
 
@@ -213,6 +212,7 @@ es:
         overall_comment:           "Comentario general"
         upload_file_requirement:   "La lista de archivos entregados no coincide con los archivos necesarios para este
                                     proyecto."
+        due_dates_type:            "Habilitar último plazo de entrega por secciones"
         group:
             empty:                        "Grupo vacío"
             assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
@@ -702,12 +702,8 @@ es:
       replace:                              "Reemplazar"
       delete:                               "Eliminar"
       error_collecting:                     "Algunos problemas ocurrieron mientras se recolectaban los archivos."
-      section:                              "Sección"
       collect_work_for_section:             "Recolectar los trabajos para esta sección:"
       download_groupings_files:             "Descargar todas las entregas"
-      sections:                             "Sección:"
-      sections:
-        all:                                "Todas las secciones"
       revision_history:                     "%{num}: "
       tags_used:                            "Etiquetas Usadas"
       tags_search:                          "Buscar por Etiquetas:"
@@ -728,8 +724,6 @@ es:
       criterion:          "criterio"
       per_page:           "por página"
       filename:           "Nombre del Archivo"
-      section:            "Sección"
-      sections:           "Secciones:"
       search_summaries:   "Buscar Resúmenes"
 
     course_summaries_index:
@@ -1073,7 +1067,6 @@ es:
       edit_grader:            "Editar la información del evaluador"
       manage_graders:         "Administrar los Evaluadores"
       graders:                "Evaluadores"
-      section:                "Sección"
       all_graders:            "Todos los Evaluadores"
       assigned_graders:       "Asignar los Evaluadores"
       possible_graders:       "Posibles Evaluadores"
@@ -1182,7 +1175,6 @@ es:
         type:                             "Tipo"
         user_type:                        "Tipo"
         grace_credits:                    "Créditos de Gracia Restantes"
-        section:                          "Sección"
         notes_count:                      "Notas"
         display_grader_names_to_students: "¿Desea mostrar a los estudiantes el nombre de los evaluadores?"
 
@@ -1739,25 +1731,8 @@ es:
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
 
     section:
-      name:                "Nombre"
-      legend:              "Sección"
-      create_new_section:  "Añadir una nueva sección"
-      update_section:      "Actualizar la sección"
-      add_section:         "Añadir una nueva sección"
-      manage_users:        "Administar Usuarios"
-      due_dates_type:      "Habilitar último plazo de entrega por secciones"
-      no_sections:         "No hay secciones todavía."
-      create:
-        success:           "La sección %{name} ha sido creada exitosamente."
-        error:             "No se pudo crear la sección."
-      update:
-        success:           "La sección %{name} fue actualizada exitosamente."
-        error:             "No se pudo actualizar la sección."
       delete:
-        success:           "La sección fue eliminada exitosamente."
-        link_confirm:      "Esto eliminará esta sección permanentemente. ¿Desea continuar?"
         error_permissions: "Usted no tiene permiso para eliminar esta sección."
-        not_empty:         "Usted no puede eliminar esta sección porque tiene estudiantes en ella."
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes

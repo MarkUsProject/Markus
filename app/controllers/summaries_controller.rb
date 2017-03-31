@@ -9,7 +9,7 @@ class SummariesController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '" + I18n.t(:'summaries_index.section') + "',
+        content: '#{Section.model_name.human}',
         sortable: true
       },"
     end

@@ -1,0 +1,22 @@
+en:
+  sections:
+    create:
+      error: "Failed to create section."
+      success: "Successfully created section %{name}."
+    edit:
+      title: "Update section"
+    destroy:
+      not_empty: "You cannot delete this section because it has students in it."
+      success: "Section was deleted successfully."
+    index:
+      destroy_confirm: "This will remove this section permanently. Continue?"
+      title: "Manage sections"
+    new:
+      title: "Add a new section"
+    update:
+      error: "Failed to update section."
+      success: "Successfully updated section %{name}."
+
+    # Miscellaneous
+    all: "All Sections"
+    no_sections: "There are no sections yet."

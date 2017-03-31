@@ -139,9 +139,9 @@
       return (
         <span>
         <% if Section.any? %>
-          <%= j raw t('browse_submissions.section') %>:
+          <%= Section.model_name.human %>:
           <select id={this.props.selectId} className="white" onChange={this.props.changeSection}>
-            <option value=""><%= j raw t('browse_submissions.sections.all') %></option>
+            <option value=""><%= t('sections.all') %></option>
             <% Section.all.order(:name).each do |section| %>
               <option value="<%= j raw section.name %>"><%= j raw section.name %></option>
             <% end %>

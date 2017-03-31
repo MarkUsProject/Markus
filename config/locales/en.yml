@@ -66,7 +66,6 @@ en:
     dashboard:          "Dashboard"
     assignments:        "Assignments"
     users:              "Users"
-    sections:           "Sections"
     home:               "Home"
     settings:           "Settings"
 
@@ -179,6 +178,7 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
+        section_due_dates_type: "Enable section due dates"
         group:
             empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
@@ -540,12 +540,8 @@ en:
       replace:              "Replace"
       delete:               "Delete"
       error_collecting:     "There were problems collecting some files."
-      section:              "Section"
       collect_work_for_section: "Collect work for section:"
       download_groupings_files: "Download all submissions"
-      sections:             "Section:"
-      sections:
-        all:                "All Sections"
       revision_history:     "%{num}: "
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
@@ -566,8 +562,6 @@ en:
       criterion:             "criterion"
       per_page:             "per page"
       filename:             "Filename"
-      section:              "Section"
-      sections:             "Section:"
       search_summaries:     "Search Summaries"
 
     course_summaries_index:
@@ -886,7 +880,6 @@ en:
       edit_grader:        "Edit a Grader"
       manage_graders:     "Manage Graders"
       graders:            "Graders"
-      section:            "Section"
       all_graders:        "All Graders"
       assigned_graders:   "Assigned Graders"
       possible_graders:   "Possible Graders"
@@ -988,7 +981,6 @@ en:
         type:           "Type"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
-        section:        "Section"
         notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
@@ -1487,25 +1479,8 @@ en:
     past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
-      name: "Name"
-      legend: "Section"
-      create_new_section: "Add a new section"
-      update_section: "Update Section"
-      add_section: "Add a new section"
-      manage_users: "Manage Users"
-      due_dates_type: "Enable section due dates"
-      no_sections: "There are no sections yet."
-      create:
-        success: "Successfully created section %{name}."
-        error:   "Failed to create section."
-      update:
-        success: "Successfully updated section %{name}."
-        error:   "Failed to update section."
       delete:
-        success: "Section was deleted successfully."
-        link_confirm: "This will remove this section permanently. Continue?"
         error_permissions: "You do not have sufficient permissions to delete this section."
-        not_empty: "You cannot delete this section because it has students in it."
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 

@@ -1,11 +1,11 @@
 <%= form_for(@section, remote: true) do |f| %>
   <div id='add_section_error'> </div>
 
-  <h2><%= t('section.add_section') %></h2>
+  <h2><%= t('sections.new.title') %></h2>
 
   <div>
-    <%= raw(f.label :name, t('section.name')) %>
-    <%= raw(f.text_field :name) %>
+    <%= f.label :name, Section.human_attribute_name(:name) %>
+    <%= f.text_field :name %>
   </div>
 
   <section class='dialog-actions'>

@@ -12,7 +12,7 @@ class PeerReviewsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    
+
     unless @assignment.is_peer_review?
       redirect_to edit_assignment_path(@assignment)
       return
@@ -22,7 +22,7 @@ class PeerReviewsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '#{t('summaries_index.section')}',
+        content: '#{Section.model_name.human}',
         sortable: true
       },"
     end

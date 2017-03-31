@@ -168,6 +168,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         type:  "Tipo de projeto"
         overall_comment: "Comentários gerais"
         upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
+        section_due_dates_type: "Prazo de entrega por sessão: "
         group:
             empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
@@ -495,12 +496,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       replace:              "Substituir"
       delete:               "Apagar"
       error_collecting:     "Houve problemas em obter os arquivos."
-      section:              "Sessão"
       collect_work_for_section: "Coletar submissões para a sessão:"
       download_groupings_files: "Baixar todas as submissões"
-      sections:             "Sessão:"
-      sections:
-        all:                "Todas as Sessões"
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
       how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
@@ -813,7 +810,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       edit_grader:        "Editar avaliador"
       manage_graders:     "Gerenciar avaliadores"
       graders:            "Avaliadores"
-      section:            "Sessão"
       all_graders:        "Todos os avaliadores"
       assigned_graders:   "Atribuir avaliador"
       possible_graders:   "Possiveis avaliadores"
@@ -912,7 +908,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         type:           "Tipo"
         user_type:      "Tipo"
         grace_credits:  "Créditos de tolerância"
-        section:        "Sessão"
         notes_count:    "Notas"
         display_grader_names_to_students: "Mostrar nome de avaliadores aos alunos?"
 
@@ -1319,25 +1314,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
 
     section:
-      name: "Nome"
-      legend: "Sessão"
-      create_new_section: "Criar nova sessão"
-      update_section: "Atualizar sessão"
-      add_section: "Inserir nova sessão"
-      manage_users: "Gerenciar usuários"
-      due_dates_type: "Prazo de entrega por sessão: "
-      no_sections: "Ainda não há sessões."
-      create:
-        success: "Sessão %{name} criada com sucesso."
-        error:   "Falha na criação da sessão."
-      update:
-        success: "Sessão %{name} atualizada com sucesso."
-        error:   "Falha ao atualizar sessão."
       delete:
-        success: "Sessão apagada com sucesso."
-        link_confirm: "Isso removerá a sessão permanentemente. Continuar?"
         error_permissions: "Você não possui permissão suficiente para apagar essa sessão."
-        not_empty: "Você não pode apagar essa sessão porque há estudantes nela."
 
     date:
       formats:

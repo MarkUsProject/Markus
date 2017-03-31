@@ -178,7 +178,7 @@
         } else {
           optionalInputBox =
             <span>
-              <%= j raw I18n.t(:'section.no_sections') %>
+              <%= t('sections.no_sections') %>
             </span>
         }
       }
@@ -189,7 +189,7 @@
           <div>
             <select value={this.state.select_value} onChange={this.actionSelectChanged}>
               <option value='give_grace_credits'><%= j raw I18n.t(:'give_grace_credits') %></option>
-              <option value='update_section'><%= j raw I18n.t(:'add_section') %></option>
+              <option value='update_section'><%= j raw I18n.t('add_section') %></option>
               <option value='hide'><%= j raw I18n.t(:'hide_students') %></option>
               <option value='unhide'><%= j raw I18n.t(:'unhide_students') %></option>
             </select>

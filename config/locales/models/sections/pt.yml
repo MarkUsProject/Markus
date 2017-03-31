@@ -1,0 +1,8 @@
+pt:
+  activerecord:
+    models:
+      section:
+        one: "Sessão"
+    attributes:
+      section:
+        name: "Nome"
