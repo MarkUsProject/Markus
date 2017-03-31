@@ -56,17 +56,12 @@ class SectionsController < ApplicationController
   def destroy
     @section = Section.find(params[:id])
 
-    # only destroy section if this user is allowed to do so and the section has no students
-    if @section.user_can_modify?(current_user)
-      if @section.has_students?
-        flash_message(:error, t('.not_empty'))
-      else
-        @section.section_due_dates.each(&:destroy)
-        @section.destroy
-        flash_message(:success, t('.success'))
-      end
+    if @section.has_students?
+      flash_message(:error, t('.not_empty'))
     else
-      flash_message(:error, t('.error_permissions'))
+      @section.section_due_dates.each(&:destroy)
+      @section.destroy
+      flash_message(:success, t('.success'))
     end
     redirect_to action: :index
   end

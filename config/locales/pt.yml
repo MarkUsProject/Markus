@@ -1313,10 +1313,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
 
-    section:
-      delete:
-        error_permissions: "Você não possui permissão suficiente para apagar essa sessão."
-
     date:
       formats:
         default: "%d/%m/%Y"

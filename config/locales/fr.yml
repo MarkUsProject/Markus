@@ -1329,10 +1329,6 @@ fr:
     past_due_date_warning: "La date de retour de ce projet est passée."
     past_due_date_notice: "La date de retour de ce projet est passée pour : "
 
-    section:
-      delete:
-        error_permissions: "Vous n'avez pas les permissions suffisantes pour supprimer cette section."
-
     date:
       formats:
         default: "%d/%m/%Y"

@@ -16,8 +16,4 @@ class Section < ActiveRecord::Base
   def section_due_date_for(aid)
     SectionDueDate.where(assignment_id: aid, section_id: id).first
   end
-
-  def user_can_modify?(current_user)
-    current_user.admin?
-  end
 end

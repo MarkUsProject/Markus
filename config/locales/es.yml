@@ -1731,8 +1731,6 @@ es:
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
 
     section:
-      delete:
-        error_permissions: "Usted no tiene permiso para eliminar esta sección."
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes

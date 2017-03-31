@@ -1479,8 +1479,6 @@ en:
     past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
-      delete:
-        error_permissions: "You do not have sufficient permissions to delete this section."
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 
