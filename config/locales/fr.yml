@@ -270,8 +270,6 @@ fr:
     hidden:             "Caché"
     active:             "Actif"
     not_active:         "Inactif"
-    download:           "Télécharger"
-    upload:             "Envoyer"
     uploading_please_wait: "Envoi en cours — veuillez patienter…"
     choose_assignment:  "Choix du projet…"
     properties:         "Propriétés"
@@ -339,12 +337,9 @@ fr:
 
     #app/views/resluts/marker/_marker_panes.html.erb
     marker:
-      new_annot: "Nouv. annot."
       overall_comments: "Commentaire général"
       overall_comments_success: "Commentaires généraux mis à jour avec succès."
-      current_annotations: "Annotations en cours"
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
-      annot_summary: "Liste annot."
       source_code: "Code Source"
       test_results: "Résultats de test"
       feedback_files: "Fichiers de support"
@@ -943,33 +938,6 @@ fr:
 
     hide_students: "Désactiver les étudiants"
     unhide_students: "Activer les étudiants"
-
-    annotations:
-      help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
-      annotations: "Annotations"
-      created_by: "Créée par :"
-      last_edited_by: "Dernière édition par :"
-      delete:
-        delete_message: "Supprimer la catégorie d'annotations"
-        annotation_text: "Supprimer cette annotation va supprimer les commentaires attachés à tous les fichiers auquels elle pourrait être rattachée. Êtes-vous sûr de vouloir faire cela ?"
-      upload:
-        upload_message_csv: "
-        <p>
-            Sélectionner un fichier CSV formaté comme suit : <br>
-            <code>category_name,annotation_text,annotation_text … </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Sélectionner un fichier YAML formaté comme suit :<br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
-        flash_error: "Le format %{format} que vous voulez télécharger n'a pas été reconnu."
-        unparseable_yaml: "Ne pourrait pas analyzer le fichier YAML"
-      download:
-        download_csv: "Télécharger au format CSV"
-        download_yml: "Télécharger au format YML"
 
     submission_rules:
       submission_rule:

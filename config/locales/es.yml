@@ -418,8 +418,6 @@ es:
     hidden:                      "Oculto"
     active:                      "Activo"
     not_active:                  "Inactivo"
-    download:                    "Descargar"
-    upload:                      "Subir"
     uploading_please_wait:       "Subiendo - por favor espere..."
     choose_assignment:           "Escoger..."
     properties:                  "Propiedades"
@@ -466,14 +464,11 @@ es:
 
     #app/views/results/marker/
     marker:
-      new_annot:                   "Nueva Anotación"
       overall_comments:            "Comentarios Generales"
       overall_comments_success:    "Los Comentarios Generales han sido actualizados exitosamente."
-      current_annotations:         "Anotaciones recientes"
       across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
                                     número de línea para ser redirigido al lugar exacto en el archivo que contiene la
                                     anotación."
-      annot_summary:               "Anotaciones"
       source_code:                 "Código Inicial"
       test_results:                "Resultados de la Prueba"
       feedback_files:              "Archivos de Retroalimentación"
@@ -1271,33 +1266,6 @@ es:
         in_use:      "Etiquetas en uso"
         not_in_use:  "Etiquetas no usadas"
 
-    annotations:
-      help_message:                  "De click en una categoría de anotación para añadir anotaciones."
-      annotations:                   "Anotaciones"
-      created_by:                    "Creado Por:"
-      last_edited_by:                "Editado por última vez por:"
-      delete:
-        delete_message:      "Eliminar la categoría de anotación"
-        annotation_text:     "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está
-                              seguro/a de realizar esto?"
-      upload:
-        upload_message_csv: "
-        <p>
-            Seleccionar un archivo en formato CSV de la siguiente forma:<br>
-            <code>category_name,annotation_text,annotation_text ... </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Seleccionar un archivo en formato YAML de la siguiente forma:<br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        syntax_error:     "Existe un error en el archivo que usted subió: %{error}"
-        flash_error:      "No se pudo reconocer el formato %{format} para descargar"
-        unparseable_yaml: "No se pudo interpretar el archivo con formato YAML"
-      download:
-        download_csv:         "Descargar en formato CSV"
-        download_yml:         "Descargar en formato YML"
 
     submission_rules:
       submission_rule:

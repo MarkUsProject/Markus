@@ -1,0 +1,12 @@
+fr:
+  download: "Télécharger"
+  download_csv: "Télécharger au format CSV"
+  download_yml: "Télécharger au format YML"
+  upload: "Envoyer"
+
+  download_errors:
+    unrecognized_format: "Le format %{format} que vous voulez télécharger n'a pas été reconnu."
+
+  upload_errors:
+    syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
+    unparseable_yml: "Ne pourrait pas analyzer le fichier YAML"

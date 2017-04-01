@@ -4,7 +4,7 @@
       <div class='tab-pane' id='code_pane'>
         <ul>
           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-          <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
           <% if can_show_test_results_tab?(assignment) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
@@ -37,7 +37,7 @@
             <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
             <p><%= markdown(comment) %></p>
 
-            <h3><%= t('marker.current_annotations') %></h3>
+            <h3><%= Annotation.model_name.human.pluralize %></h3>
             <p><%= t('marker.across_all_submission_files') %></p>
           </div>
 

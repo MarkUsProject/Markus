@@ -14,7 +14,7 @@
   <%= label_tag :yml, 'YML' %>
 
   <div id='annotation_upload_csv'>
-    <%= t('annotations.upload.upload_message_csv').html_safe %>
+    <%= t('annotations.upload.csv_instructions_html').html_safe %>
     <%= form_tag({ action: 'csv_upload',
                    id: @assignment.id },
                  { multipart: true }) do %>
@@ -38,7 +38,7 @@
     <% end %>
   </div>
   <div id='annotation_upload_yml'>
-    <%= t('annotations.upload.upload_message_yml').html_safe %>
+    <%= t('annotations.upload.yml_instructions_html').html_safe %>
     <%= form_tag({ action: 'yml_upload',
                    id: @assignment.id },
                  { multipart: true }) do %>

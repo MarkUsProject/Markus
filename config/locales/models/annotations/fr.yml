@@ -1,0 +1,9 @@
+fr:
+  activerecord:
+    models:
+      annotation:
+        one: "Annotation"
+    attributes:
+      annotation:
+        created_by: "Créée par :"
+

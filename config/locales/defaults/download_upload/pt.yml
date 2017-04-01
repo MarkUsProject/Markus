@@ -1,0 +1,12 @@
+pt:
+  download: "Baixar"
+  download_csv: "Baixar em formato CSV"
+  download_yml: "Baixar em formato YML"
+  upload: "Carregar"
+
+  download_errors:
+    unrecognized_format: "Não foi possível reconhecer o formato %{format}"
+
+  upload_errors:
+    syntax_error: "Existe um erro no arquivo carregado: %{error}"
+    unparseable_yml: "Não foi possível analisar o arquivo YAML"

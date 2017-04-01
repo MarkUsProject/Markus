@@ -84,7 +84,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.destroy
-      flash_now(:success, I18n.t('annotations.delete.delete_message'))
+      flash_now(:success, t('.success'))
     end
   end
 
@@ -139,8 +139,8 @@ class AnnotationCategoriesController < ApplicationController
                   filename: "#{@assignment.short_identifier}_annotations.yml",
                   disposition: 'attachment'
       else
-        flash[:error] = I18n.t('annotations.upload.flash_error',
-                               format: params[:format])
+        flash[:error] = t('download_errors.unrecognized_format',
+                          format: params[:format])
         redirect_to action: 'index',
                     id: params[:id]
     end
@@ -186,15 +186,15 @@ class AnnotationCategoriesController < ApplicationController
       begin
         annotations = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
-        flash_message(:error, I18n.t('annotations.upload.syntax_error',
-                                     error: "#{e}"))
+        flash_message(:error,
+                      t('upload_errors.syntax_error', error: "#{e}"))
         redirect_to action: 'index', assignment_id: @assignment.id
         return
       end
 
       # YAML::load returns a hash if successful
       unless annotations.is_a? Hash
-        flash_message(:error, I18n.t('annotations.upload.unparseable_yaml'))
+        flash_message(:error, I18n.t('upload_errors.unparseable_yml'))
         redirect_to action: 'index', assignment_id: @assignment.id
         return
       end

@@ -268,8 +268,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     hidden:             "Oculto"
     active:             "Ativo"
     not_active:         "Não ativo"
-    download:           "Baixar"
-    upload:             "Carregar"
     uploading_please_wait: "Carregando - por favor aguarde..."
     choose_assignment:  "Escolher..."
     properties:         "Propriedades"
@@ -315,12 +313,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     #app/views/resluts/marker/
     marker:
-      new_annot: "Nova anotação"
       overall_comments: "Comentários gerais"
       overall_comments_success: "Comentários gerais atualizado com sucesso."
-      current_annotations: "Anotações atuais"
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
-      annot_summary: "Resumo de anot."
       source_code: "código fonte"
       test_results: "Resultado dos testes"
       feedback_files: "Arquivos de comentários"
@@ -911,33 +906,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     hide_students: "Marcar como inativo"
     unhide_students: "Marcar como ativo"
-
-    annotations:
-      help_message: "Clique em uma categoria de anotação para adicionar anotações."
-      annotations: "Anotações"
-      created_by: "Criado por:"
-      last_edited_by: "Última edição por:"
-      delete:
-        delete_message: "Apagar categoria de anotação"
-        annotation_text: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
-      upload:
-        upload_message_csv: "
-        <p>
-            Selecione um arquivo CSV no seguinte formato: <br>
-            <code>category_name,annotation_text,annotation_text ... </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Selecione um arquivo YAML no seguinte formato: <br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        syntax_error: "Existe um erro no  arquivo carregado: %{error}"
-        flash_error: "Não foi possível reconhecer o formato %{format}"
-        unparseable_yaml: "Não foi possível analisar o arquivo YAML"
-      download:
-        download_csv: "Baixar em formato CSV"
-        download_yml: "Baixar em formato YML"
 
     submission_rules:
       submission_rule:

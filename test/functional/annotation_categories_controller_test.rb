@@ -264,7 +264,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :download,
                assignment_id: @assignment.id, format: 'xml'
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.flash_error',
+        assert set_flash.to(t('download_errors.unrecognized_format',
                               format: 'xml'))
       end
     end
@@ -403,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 annotation_category_list_yml: "--- \n A:\n - A1\n A2\n"
 
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.syntax_error',
+        assert set_flash.to(t('upload_errors.syntax_error',
                               error: "syntax error on line 4, col -1: `'"))
         assert_not_nil assigns :assignment
         @assignment.reload
@@ -421,7 +421,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal(flash[:error],
-                     [I18n.t('annotations.upload.unparseable_yaml')])
+                     [I18n.t('upload_errors.unparseable_yml')])
       end
 
       should 'on :yml_upload route properly' do
