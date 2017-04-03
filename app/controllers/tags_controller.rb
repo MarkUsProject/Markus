@@ -177,7 +177,7 @@ class TagsController < ApplicationController
       # Handles errors associated with loads.
       rescue Psych::SyntaxError => e
         flash_message(:error, I18n.t('tags.upload.error') + '  ' +
-            I18n.t('tags.upload.syntax_error', error: "#{e}"))
+            t('upload_errors.syntax_error', error: "#{e}"))
         redirect_to :back
         return
       end

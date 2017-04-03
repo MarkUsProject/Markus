@@ -104,7 +104,7 @@ class CriteriaController < ApplicationController
         criteria = YAML::load(file.utf8_encode(encoding))
       rescue Psych::SyntaxError => e
         flash_message(:error, I18n.t('criteria.upload.error.invalid_format') + '  ' +
-                      I18n.t('criteria.upload.syntax_error', error: "#{e}"))
+                      I18n.t('upload_errors.syntax_error', error: "#{e}"))
         redirect_to action: 'index', id: assignment.id
         return
       end

@@ -435,7 +435,7 @@
 <% if @assignment.can_upload_starter_code? && @assignment.id %>
     <fieldset>
       <legend>
-        <span><%= t('assignment.starter_code.title') %></span>
+        <span><%= t('upload_the', item: t('assignment.starter_code')) %></span>
       </legend>
       <%= render 'file_manager' %>
     </fieldset>

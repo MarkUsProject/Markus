@@ -19,7 +19,7 @@
                                id: 'upload_csv_script',
                                upload_id: 'upload_csv',
                                button_id: 'button_upload_csv' %>
-    <p><%= t('tags.upload.upload_csv_prompt') %></p>
+    <p><%= t('upload_prompt_csv') %></p>
     <%= form_for :upload_csv,
                  url: csv_upload_assignment_tags_path(@assignment),
                  html: { multipart: true, size: 1 } do |f| %>
@@ -48,7 +48,7 @@
                                id: 'upload_yml_script',
                                upload_id: 'upload_yml',
                                button_id: 'button_upload_yml' %>
-    <p><%= t('tags.upload.upload_yml_prompt') %></p>
+    <p><%= t('upload_prompt_yml') %></p>
     <%= form_for :upload_yml,
                  url: yml_upload_assignment_tags_path(@assignment),
                  html: { multipart: true, size: 1 } do |f| %>

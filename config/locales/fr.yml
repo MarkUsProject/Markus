@@ -270,7 +270,6 @@ fr:
     hidden:             "Caché"
     active:             "Actif"
     not_active:         "Inactif"
-    uploading_please_wait: "Envoi en cours — veuillez patienter…"
     choose_assignment:  "Choix du projet…"
     properties:         "Propriétés"
     grades:             "Notes"
@@ -588,7 +587,6 @@ fr:
         invalid_user_name: "Nom d'utilisateur invalide."
         upload_success: "Notes mises à jour : %{num_updates} mise(s) à jour."
         upload_title: "Envoyer un fichier de notes CSV"
-        upload_prompt: "Sélectionner un fichier CSV à envoyer"
         upload_format_html: "<p>Le fichier devra être au format suivant : </p>
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
                              <li>le premier objet pour les deux premières lignes est ignoré ;</li>
@@ -719,7 +717,6 @@ fr:
         upload_a_class_list: "Envoyer une liste d'étudiants"
         select_csv_file:     "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section)</code>"
         student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-        csv_file:            "Fichier CSV"
       download:
         download_student_list: "Télécharger la liste des étudiants"
     hide_students:      "Désactiver les étudiants"
@@ -842,7 +839,6 @@ fr:
       upload:
         select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-        csv_file:         "Fichier CSV"
         not_added: "Les correcteurs suivants n'ont pas été ajoutés correctement : "
         make_sure: "Vérifiez que : "
         ta_names: "Les noms des correcteurs sont en caractères alphanumériques."
@@ -854,7 +850,6 @@ fr:
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
       upload:
@@ -1051,14 +1046,11 @@ fr:
         file:     "le fichier de Critères"
         prompt:   "Tous les types de critères seront téléchargés au format YAML."
       upload:
-        yml_title:       "Envoyer le fichier XML"
-        yml_prompt:      "Choisissez un fichier YML à envoyer"
         success:         "Le fichier contenant le barème a bien été envoyé : %{num_loaded}."
         error:
           invalid_format: "Les critères suivants a un format non valide:"
           names_taken:    "Les noms des critères suivants sont déjà prises:"
         empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
-        syntax_error:    "Il y a une erreur dans le fichier que vous avez téléchargé: %{error}"
         format_yml_html: "
           <ul>
             <li><p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>

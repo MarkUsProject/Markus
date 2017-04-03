@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('criteria.upload.yml_title') %>
+<%= content_for :modal_title, t('upload_the', item: t('criteria.title')) %>
 <%= content_for :modal_content do %>
 
   <!-- Script for disabling upload buttons. -->
@@ -8,7 +8,7 @@
                              upload_id: 'yml_upload_rubric',
                              button_id: 'upload_yml' %>
 
-  <p><%= t('criteria.upload.yml_prompt') %></p>
+  <p><%= t('upload_prompt_yml') %></p>
   <%= form_for :yml_upload,
                url: upload_yml_assignment_criteria_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>

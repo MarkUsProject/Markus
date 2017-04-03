@@ -244,8 +244,7 @@ es:
             allow:    "Permitir solicitudes de recalificación"
             due_date: "Último plazo para recalificación"
             message:  "Mensaje de recalificación"
-        starter_code:
-            title:    "Subir Código Inicial"
+        starter_code: "Código Inicial"
         marking_scheme:
             title:    "Esquema de calificación"
             rubric:   "Rúbrica"
@@ -418,7 +417,6 @@ es:
     hidden:                      "Oculto"
     active:                      "Activo"
     not_active:                  "Inactivo"
-    uploading_please_wait:       "Subiendo - por favor espere..."
     choose_assignment:           "Escoger..."
     properties:                  "Propiedades"
     grades:                      "Evaluadores"
@@ -775,7 +773,6 @@ es:
         invalid_user_name:  "Nombre de usuario inválido."
         upload_success:     "La tabla de notas ha sido subida exitosamente: %{num_updates} actualización(es)."
         upload_title:       "Subir el Archivo de Notas"
-        upload_prompt:      "Seleccione el archivo con formato CSV que desea subir"
         upload_format_html: "<p>El archivo debería tener el siguiente formato:</p>
                              <ul><li>dos líneas en la parte superior, las cuales especifican los nombres y totales de
                              las preguntas;</li>
@@ -906,7 +903,6 @@ es:
                                 <code>user_name,last_name,first_name(,section)</code>"
         student_same_number:   "Si un estudiante con el mismo número de estudiante existe, entonces la información del
                                 estudiante es actualizada."
-        csv_file:              "Archivo en Formato CSV"
       download:
         download_student_list: "Descargar Lista de Estudiantes"
       create:
@@ -1070,7 +1066,6 @@ es:
         select_csv_file:  "Seleccionar el archivo en formato CSV que tiene la siguiente forma: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un asistente de cátedra con el mismo nombre existe, la información del asistente es
                            actualizada."
-        csv_file:         "Archivo con formato CSV"
         not_added:        "Los siguientes asistentes de cátedra no han podido ser añadidos exitosamente:"
         make_sure:        "Asegúrese que:"
         ta_names:         "Los nombres de los asistentes de cátedra son alfanuméricos"
@@ -1082,7 +1077,6 @@ es:
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Par Estudiante / Evaluador en formato CSV"
       upload:
@@ -1195,9 +1189,6 @@ es:
         tag_prompt:  "Por favor seleccione las etiquetas en la parte inferior para eliminarlas:"
 
       upload:
-        upload_csv:        "Subir CSV"
-        upload_csv_title:  "Subir archivo en formato CSV"
-        upload_csv_prompt: "Seleccione el archivo en formato CSV que desea subir:"
         upload_success:    "%{nb_updates} etiqueta(s) han sido añadidad exitosamente!"
         invalid_line:      "La línea tiene un formato inapropiado."
         upload_csv_html:   "
@@ -1213,9 +1204,6 @@ es:
             <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
             <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
           </p>"
-        upload_yml:        "Subir YAML"
-        upload_yml_title:  "Subir el archivo con formato YAML"
-        upload_yml_prompt: "Seleccionar el archivo en formato YAML que desea subir:"
         upload_yml_html:   "
           <p>
             El archivo debería tener el siguiente formato:<br>
@@ -1236,7 +1224,6 @@ es:
           </p>"
         error:             "Un error ha ocurrido mientras se subian las etiquetas: "
         empty_error:       " El archivo con formato YAML está vacío."
-        syntax_error:      " El syntax es incorrecto. (%{error})"
 
       download:
         download_title: "Descargar Etiquetas"
@@ -1415,14 +1402,11 @@ es:
         file:     "archivo con criterios de calificación"
         prompt:   "Todos los tipos de criterios serán descargados en formato YAML."
       upload:
-        yml_title:       "Subir archivo con formato YML"
-        yml_prompt:      "Seleccione el archivo en formato YML que desee subir"
         success:         "Los criterios de calificación han sido subidos exitosamente: %{num_loaded}."
         error:
           invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
           names_taken:    "Otros criterios ya tienen los siguientes nombres:"
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
-        syntax_error:    "Un error ha ocurrido con el archivo subido: %{error}"
         format_yml_html: "
           <ul>
             <li><p>El archivo debe tener el siguiente formato para criterios de tipo rúbrica:<br>

@@ -205,8 +205,7 @@ en:
             allow:  "Allow remark requests"
             due_date:  "Remark Due Date"
             message:   "Remark Message"
-        starter_code:
-            title:  "Upload Starter Code"
+        starter_code: "Starter Code"
         marking_scheme:
             title: "Marking Scheme"
             rubric: "Rubric"
@@ -292,7 +291,6 @@ en:
     hidden:             "Hidden"
     active:             "Active"
     not_active:         "Not active"
-    uploading_please_wait: "Uploading - please wait..."
     choose_assignment:  "Choose..."
     properties:         "Properties"
     grades:             "Grades"
@@ -458,7 +456,6 @@ en:
         duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"
       upload:
-        malformed_csv: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
         # when a non-text file has a csv extension (ie: user changes extension
         # from .pdf to .csv on a pdf file)
         non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
@@ -613,7 +610,6 @@ en:
         invalid_user_name: "Invalid user name."
         upload_success: "Grades table successfully uploaded: %{num_updates} update(s)."
         upload_title: "Upload Grades File"
-        upload_prompt: "Select a CSV file to upload"
         upload_format_html: "<p>The file should have the following format:</p>
                              <ul><li>two lines at the top which specify the question names and totals;</li>
                              <li>the first item for the first two lines is ignored;</li>
@@ -733,7 +729,6 @@ en:
         upload_a_class_list: "Upload a class list"
         select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section)</code>"
         student_same_number: "If a student with the same student number exists, then the student's information is updated."
-        csv_file:            "CSV File"
       download:
         download_student_list: "Download Student List"
       create:
@@ -880,7 +875,6 @@ en:
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        csv_file:         "CSV File"
         not_added: "The following TAs have not been successfully added:"
         make_sure: "Make sure that:"
         ta_names: "TA names are alphanumeric"
@@ -892,7 +886,6 @@ en:
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Student / Grader map CSV format"
       upload:
@@ -999,10 +992,6 @@ en:
         tag_prompt: "Please select tags below to delete them:"
 
       upload:
-        upload: "Upload"
-        upload_csv: "Upload CSV"
-        upload_csv_title: "Upload CSV File"
-        upload_csv_prompt: "Select a CSV file to upload:"
         upload_success: "%{nb_updates} tag(s) have been successfully added!"
         invalid_line: "Line is in improper format."
         upload_csv_html: "
@@ -1017,9 +1006,6 @@ en:
             <i>tag_name</i> represents the name of the tag to be added.<br>
             <i>tag_description</i> represents the description for that record.<br>
           </p>"
-        upload_yml: "Upload YAML"
-        upload_yml_title: "Upload YAML File"
-        upload_yml_prompt: "Select a YAML file to upload:"
         upload_yml_html: "
           <p>
             The file should have the following format:<br>
@@ -1040,7 +1026,6 @@ en:
           </p>"
         error: "There was an error uploading tags: "
         empty_error: " The YAML file was empty."
-        syntax_error: " The syntax is incorrect. (%{error})"
 
       download:
         download_title: "Download Tags"
@@ -1181,14 +1166,11 @@ en:
         file:     "Criteria File"
         prompt:   "All types of criteria will be downloaded in YAML format."
       upload:
-        yml_title:       "Upload YML File"
-        yml_prompt:      "Select a YML file to upload"
         success:         "Criteria successfully uploaded: %{num_loaded}."
         error:
           invalid_format: "The following criteria had invalid format:"
           names_taken:    "The following criteria names are already taken:"
         empty_error:     "No criteria were found in the provided file."
-        syntax_error:    "There is an error in the file you uploaded: %{error}"
         format_yml_html: "
           <ul>
             <li><p>The file should have the following format for a rubric criterion:<br>

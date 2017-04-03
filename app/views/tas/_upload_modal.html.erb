@@ -12,7 +12,6 @@
 
   <%= form_tag upload_ta_list_tas_path, { multipart: true } do %>
     <div>
-      <%= label_tag 'userlist', t('graders.upload.csv_file') %>
       <%= file_field_tag 'userlist' %>
     </div>
     <div>
