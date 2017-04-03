@@ -99,7 +99,7 @@ fr:
     filename:  "Fichier"
     message:  "Informations "
     remove:  "Enlever"
-    download_csv_grade_report:  "Liste des étudiants et des devoirs au format CSV"
+    csv_grade_report:  "liste des étudiants et des devoirs au format CSV"
     days_and_hours_left:      "(%{days} jour(s) et %{hours} heure(s))"
     hours_and_minutes_left:   "(%{hours} heure(s) et %{minutes} minute(s))"
     days_left:          "(%{days} jour(s) restant(s))"
@@ -296,8 +296,6 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
-    assignment_format:  "Téléchargement au format %{file}"
-    upload_assignment_format: "Envoi au format %{file}"
     select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
     all_csv_file:       "Tous les champs : "
 
@@ -468,7 +466,7 @@ fr:
       currently_collected:  "Version recueillies:"
       no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
       current_path:         "Chemin actuel : "
-      download_all_files:   "Télécharger tous les fichiers"
+      all_files:   "tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
@@ -515,7 +513,7 @@ fr:
       delete:               "Supprimer"
       error_collecting:     "Il y avait des erreurs en ramassant les soumissions."
       collect_work_for_section: "Récupérer les envois pour la section :"
-      download_groupings_files: "Télécharger tous les envois"
+      all_submissions:      "tous les envois"
       revision_history:     "%{num} : "
       search_submissions:   "Rechercher Soumissions"
       how_many_marked:      "%{num_marked}/%{num_assigned} soumissions sont corrigés"
@@ -651,7 +649,6 @@ fr:
       delete_confirm: "Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?"
       use_another_assignments_groups: "Utiliser les groupes d'un autre projet"
       upload:
-        upload: "Envoi"
         upload_groups_file: "Envoyer un fichier contenant des groupes"
         description: "Format du fichier CSV : <br>
             <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
@@ -663,10 +660,8 @@ fr:
         description_grader_criteria_map: "Format du fichier CSV : <br>
                        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download: "Télécharger la liste des groupes"
         download_groups_file: "Télécharger groupes"
         download_grader_maps: "Télécharger les attributions des correcteurs"
-        download_csv: "Télécharger la liste des groupes au format CSV"
         download_grader_groups_csv: "Groupes / attribution des correcteurs CSV"
         download_grader_criteria_csv: "Critères / attribution des correcteurs CSV"
       reuse_groups: "Réutiliser les groupes"
@@ -727,8 +722,6 @@ fr:
         csv_file:            "Fichier CSV"
       download:
         download_student_list: "Télécharger la liste des étudiants"
-        download_csv_format:   "Télécharger la liste des étudiants au format CSV"
-        download_xml_format:   "Télécharger la liste des étudiants au format XML"
     hide_students:      "Désactiver les étudiants"
     unhide_students:    "Activer les étudiants"
     students_not_successfully_added_message_1: "Les étudiants suivants n'ont pas été ajoutés correctement : "
@@ -856,7 +849,6 @@ fr:
         each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       download:
-        download_list: "Télécharger la liste des correcteurs au format CSV"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
 
@@ -1056,13 +1048,9 @@ fr:
       move_up:        "Monter"
       move_down:      "Descendre"
       download:
-        title:    "Télécharger"
-        file:     "Télécharger le fichier de Critères"
+        file:     "le fichier de Critères"
         prompt:   "Tous les types de critères seront téléchargés au format YAML."
-        link_yml: "Télécharger critères au format YAML"
-        yml:      "Télécharger YML"
       upload:
-        yml:             "Envoyer YML"
         yml_title:       "Envoyer le fichier XML"
         yml_prompt:      "Choisissez un fichier YML à envoyer"
         success:         "Le fichier contenant le barème a bien été envoyé : %{num_loaded}."
@@ -1117,20 +1105,6 @@ fr:
       name: "Nom du critère"
       description: "Description"
       description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
-      download:
-        title: "Télécharger le fichier de barème (flexible)"
-        prompt: "Le barème (flexible) est actuellement disponible au format CSV."
-        link: "Télécharger le barème (flexible) au format CSV"
-      upload:
-        title: "Envoyer un fichier de barème (flexible)"
-        prompt: "Choisissez un fichier CSV à envoyer"
-        format_html: "
-        <p>Le fichier devra être au format suivant : </p>
-        <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
-        pas apparaître.</p>"
-        success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
 
@@ -1139,20 +1113,6 @@ fr:
       name: "Nom du critère"
       description: "Description"
       description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez."
-      download:
-        title: "Télécharger le fichier de barème"
-        prompt: "Critères de Checkbox sont actuellement disponibles au format CSV"
-        link: "Télécharger critères Checkbox au format CSV"
-      upload:
-        title: "Télécharger Checkbox Critères Fichier"
-        prompt: "Choisissez un fichier CSV à envoyer"
-        format_html: "
-        <p>Le fichier devra être au format suivant : </p>
-        <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
-        pas apparaître.</p>"
-        success: "critères de Checkbox téléchargés avec succès: %{nb_updates} mise à jour."
       move_criterion:
         error: "Impossible de déplacer les critères de case à cocher."
 
@@ -1162,22 +1122,6 @@ fr:
       level:
         levels: "Niveaux"
         level_index: "Niveau %{index}"
-      download:
-        title: "Télécharger le fichier de barème (rubrique)"
-        prompt: "Le barème (rubrique) est actuellement disponible au format CSV et YAML."
-        link_csv: "Télécharger le barème (rubrique) au format CSV"
-        link_yml: "Télécharger le barème (rubrique) au format YAML"
-      upload:
-        csv:       "Envoyer CSV"
-        csv_title: "Envoyer un fichier de barème (rubrique) CSV"
-        csv_prompt: "Choisissez un fichier CSV à envoyer"
-        format_csv_html: "
-        <p>Le fichier devra être au format suivant : </p>
-        <ul><li>un critère par ligne.</li><li>chaque ligne devra être terminée par un retour chariot.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br>
-        et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
-        séparé aussi par les virgules)."
       defaults:
         level_0: "Très insuffisant"
         level_1: "Insuffisant"

@@ -102,7 +102,7 @@
                  onclick: 'with_annotations();' if can_download && !files.empty? %>
 
 
-  <%= submit_tag t('browse_submissions.download_all_files'),
+  <%= submit_tag t('download_the', item: t('browse_submissions.all_files')),
                  name: 'download_zip_button',
                  id: 'download_all_files_button',
                  onclick: 'with_annotations();' unless files.empty? %>

@@ -1,8 +1,11 @@
 en:
   download: "Download"
   download_csv: "Download in CSV Format"
+  download_the: "Download %{item}"
   download_yml: "Download in YML Format"
   upload: "Upload"
+  upload_the: "Upload %{item}"
+  upload_with_format: "Upload in %{file} format"
 
   download_errors:
     unrecognized_format: "Could not recognize %{format} format to download with"

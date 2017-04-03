@@ -108,7 +108,7 @@
                       $('#progress_text').html('<%=t('stopping_collection_process')%>');
                       return true;"
              name='commit'>
-      <%= link_to t('browse_submissions.download_all_files'),
+      <%= link_to t('download_the', item: t('browse_submissions.all_files')),
                   { action: :downloads,
                     revision_number: @revision_number,
                     grouping_id: @grouping.id,

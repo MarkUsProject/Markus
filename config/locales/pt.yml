@@ -96,7 +96,7 @@ pt:
     filename:  "Nome do Arquivo"
     message:  "Mensagem"
     remove:  "Remover"
-    download_csv_grade_report:  "Baixar relatório de notas em formato CSV "
+    csv_grade_report:  "relatório de notas em formato CSV"
     days_and_hours_left:      "(%{days} dias(s) e %{hours} hora(s) restante(s))"
     hours_and_days_left:      "(%{hours} hora(s) e %{minutes} minuto(s) restante(s)"
     days_left:          "(%{days} dia(s) restante(s))"
@@ -294,8 +294,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     invalid_grouping:   "(inválido)"
     validate:           "Validar"
     encoding:           "Codificação"
-    assignment_format:  "Baixar em formato %{file}"
-    upload_assignment_format: "Carregar em formato %{file}"
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
 
@@ -444,7 +442,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       currently_collected:  "Versão coletada:"
       no_rev_before_deadline: 	"Nenhuma revisão apresentado antes do prazo"
       current_path:         "Caminho atual:"
-      download_all_files:   "Baixar todos os arquivos"
+      all_files:   "todos os arquivos"
       root:                 "[root]"
       collect_and_grab:     "Coletar e avaliar essa revisão"
       could_not_collect:    "Não foi possível coletar a submissão do grupo %{group_name} - a data de coleta ainda não chegou."
@@ -490,7 +488,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       delete:               "Apagar"
       error_collecting:     "Houve problemas em obter os arquivos."
       collect_work_for_section: "Coletar submissões para a sessão:"
-      download_groupings_files: "Baixar todas as submissões"
+      all_submissions:      "todas as submissões"
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
       how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
@@ -617,7 +615,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       delete_confirm: 'Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?'
       use_another_assignments_groups: "Usar grupos de outro projeto?"
       upload:
-        upload: "Carregar"
         upload_groups_file: "Carregar arquivo de grupos"
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
@@ -626,10 +623,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download: "Baixar"
         download_groups_file: "Baixar arquivo de grupos"
         download_grader_maps: "Baixar mapeamento dos avaliadores"
-        download_csv: "Formato CSV "
         download_grader_groups_csv: "Grupo / Formato CSV mapa avaliadores"
         download_grader_criteria_csv: "Critério / Formato CSV mapa avaliadores"
       reuse_groups: "Reutilizar grupos"
@@ -683,8 +678,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         csv_file:            "Arquivo CSV"
       download:
         download_student_list: "Baixar lista de estudantes"
-        download_csv_format:   "Baixar lista de estudantes em formato CSV"
-        download_xml_format:   "Baixar lista de estudantes em formato XML"
       create:
         success: "Aluno %{user_name} criado com sucesso."
         error: "Falha ao criar aluno."
@@ -825,7 +818,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         each_field: "Cada campo é separado por uma vírgula (sem espaços)"
         each_line: "Cada linha tem os campos requeridos especificados acima"
       download:
-        download_list: "Baixar lista de corretores no formato CSV"
         begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
 
@@ -1026,13 +1018,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       move_up:        "Mover para cima"
       move_down:      "Mover para baixo"
       download:
-        title:    "Baixar"
-        file:     "Baixar Arquivo de Critérios"
+        file:     "Arquivo de Critérios"
         prompt:   "Todos os tipos de critérios serão baixados no formato YAML."
-        link_yml: "Baixar Critérios em Formato YAML"
-        yml:      "Baixar YML"
       upload:
-        yml:             "Carregar YML"
         yml_title:       "Carregar arquivo YML"
         yml_prompt:      "Selecionar um arquivo YML para carregar"
         success:         "Critério carregado com sucesso: %{num_loaded}."
@@ -1087,19 +1075,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       name: "Nome do critério flexível"
       description: "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
-      download:
-        title: "Baixar arquivo de critério flexível"
-        prompt: "Critérios flexíveis estão disponíveis em CSV."
-        link: "Baixar critérios flexíveis em formato CSV"
-      upload:
-        title: "Carregar arquivo de critério flexível"
-        prompt: "Selecione um arquivo CSV para carrregar"
-        format_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
-        success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
 
@@ -1108,19 +1083,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       name:             "Nome do critério flexível"
       description:      "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
-      download:
-        title:  "Baixar Caixa de seleção Critérios de Arquivo"
-        prompt: " critérios de caixa de seleção estão disponíveis em CSV."
-        link:   "Baixar critérios caixa de seleção no formato CSV"
-      upload:
-        title:  "Publique as Caixa de seleção Critérios Arquivo"
-        prompt: "Selecione um arquivo CSV para carrregar"
-        format_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
-        success: "Critérios de caixa de seleção carregado com sucesso: %{nb_updates} update(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
 
@@ -1130,21 +1092,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       level:
         levels: "Níveis"
         level_index: "Nível %{index}"
-      download:
-        title: "Baixar arquivo de rúbrica"
-        prompt: "Critério de rúbrica estão disponíveis em CSV e YAML."
-        link_csv: "Baixar rúbrica em formato CSV"
-        link_yml: "Baixar rúbrica em formato YAML"
-      upload:
-        csv:       "Carregar CSV"
-        csv_title: "Carregar arquivo CSV"
-        csv_prompt: "Selecionar um arquivo CSV para carregar"
-        format_csv_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
-        e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"

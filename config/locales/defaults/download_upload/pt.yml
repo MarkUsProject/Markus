@@ -1,8 +1,10 @@
 pt:
   download: "Baixar"
   download_csv: "Baixar em formato CSV"
+  download_the: "Baixar %{item}"
   download_yml: "Baixar em formato YML"
   upload: "Carregar"
+  upload_with_format: "Carregar em formato %{file}"
 
   download_errors:
     unrecognized_format: "Não foi possível reconhecer o formato %{format}"

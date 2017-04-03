@@ -96,7 +96,7 @@ en:
     filename:  "Filename"
     message:  "Message"
     remove:  "Remove"
-    download_csv_grade_report:  "Download CSV Grades Report"
+    csv_grade_report:  "CSV grades report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
     hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
@@ -318,8 +318,6 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
-    assignment_format:  "Download in %{file} format"
-    upload_assignment_format: "Upload in %{file} format"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
@@ -487,7 +485,7 @@ en:
       currently_collected:  "Collected version:"
       no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"
-      download_all_files:   "Download all files"
+      all_files:            "all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
@@ -534,7 +532,7 @@ en:
       delete:               "Delete"
       error_collecting:     "There were problems collecting some files."
       collect_work_for_section: "Collect work for section:"
-      download_groupings_files: "Download all submissions"
+      all_submissions:      "all submissions"
       revision_history:     "%{num}: "
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
@@ -602,7 +600,6 @@ en:
         no_mark: "N/A"
         marking_state: "Marking State"
         download: "Download Grades"
-        download_prompt: "Download Grades in CSV format"
       is_hidden: "Hide Spreadsheet"
 
       students:
@@ -676,7 +673,6 @@ en:
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
       use_another_assignments_groups: "Use another assignment's groups"
       upload:
-        upload: "Upload"
         upload_groups_file: "Upload Groups File"
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
@@ -685,10 +681,8 @@ en:
         description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download: "Download"
         download_groups_file: "Download Groups File"
         download_grader_maps: "Download Grader Maps"
-        download_csv: "CSV Format"
         download_grader_groups_csv: "Group / Grader map CSV format"
         download_grader_criteria_csv: "Criteria / Grader map CSV format"
       reuse_groups: "Reuse Groups"
@@ -742,8 +736,6 @@ en:
         csv_file:            "CSV File"
       download:
         download_student_list: "Download Student List"
-        download_csv_format:   "Download Student list in CSV format"
-        download_xml_format:   "Download Student list in XML format"
       create:
         success: "Successfully created student %{user_name}."
         error: "Failed to create student."
@@ -895,8 +887,6 @@ en:
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       download:
-        download_list_csv: "Download TA list in CSV format"
-        download_list_yml: "Download TA list in YML format"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
 
@@ -1053,7 +1043,6 @@ en:
         syntax_error: " The syntax is incorrect. (%{error})"
 
       download:
-        download: "Download"
         download_title: "Download Tags"
         download_html: "
           <p>
@@ -1189,13 +1178,9 @@ en:
       move_up:        "Move up"
       move_down:      "Move down"
       download:
-        title:    "Download"
-        file:     "Download Criteria File"
+        file:     "Criteria File"
         prompt:   "All types of criteria will be downloaded in YAML format."
-        link_yml: "Download Criteria in YAML Format"
-        yml:      "Download YML"
       upload:
-        yml:             "Upload YML"
         yml_title:       "Upload YML File"
         yml_prompt:      "Select a YML file to upload"
         success:         "Criteria successfully uploaded: %{num_loaded}."
@@ -1249,39 +1234,11 @@ en:
       title: "Flexible Criteria"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-      download:
-        title: "Download Flexible Criteria File"
-        prompt: "Flexible criteria are currently available in CSV."
-        link: "Download Flexible criteria in CSV format"
-      upload:
-        title: "Upload Flexible Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>The description is optional. Note that if it is not present, the second
-        comma should not appear.</p>"
-        success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
 
     checkbox_criteria:
       title: "Checkbox Criteria"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-      download:
-        title: "Download Checkbox Criteria File"
-        prompt: "Checkbox criteria are currently available in CSV."
-        link: "Download Checkbox criteria in CSV format"
-      upload:
-        title: "Upload Checkbox Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>The description is optional. Note that if it is not present, the second
-        comma should not appear.</p>"
-        success: "Checkbox criteria successfully uploaded: %{nb_updates} update(s)."
       move_criterion:
         error: "Failed to move checkbox criteria."
 
@@ -1290,22 +1247,6 @@ en:
       level:
         levels: "Levels"
         level_index: "Level %{index}"
-      download:
-        title: "Download Rubric File"
-        prompt: "Rubric criteria are currently available in CSV and YAML."
-        link_csv: "Download rubric in CSV Format"
-        link_yml: "Download rubric in YAML Format"
-      upload:
-        csv:       "Upload CSV"
-        csv_title: "Upload CSV File"
-        csv_prompt: "Select a CSV file to upload"
-        format_csv_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
-        and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
-        by commas)."
       defaults:
         level_0: "Very Poor"
         level_1: "Weak"
