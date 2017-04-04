@@ -73,7 +73,6 @@ es:
     dashboard:          "Panel"
     assignments:        "Proyectos"
     users:              "Usuarios"
-    sections:           "Secciones"
     home:               "Inicio"
     settings:           "Configuración"
 
@@ -104,7 +103,7 @@ es:
     filename:                  "Nombre del archivo"
     message:                   "Mensaje"
     remove:                    "Remover"
-    download_csv_grade_report: "Descargar el reporte de notas en formato CSV"
+    csv_grade_report: "el reporte de notas en formato CSV"
     days_and_hours_left:       "(%{days} días(s) y %{hours} hora(s) restantes)"
     hours_and_minutes_left:    "(%{hours} hora(s) y %{minutes} minuto(s) restantes)"
     days_left:                 "(%{days} días(s) restantes)"
@@ -213,6 +212,7 @@ es:
         overall_comment:           "Comentario general"
         upload_file_requirement:   "La lista de archivos entregados no coincide con los archivos necesarios para este
                                     proyecto."
+        due_dates_type:            "Habilitar último plazo de entrega por secciones"
         group:
             empty:                        "Grupo vacío"
             assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
@@ -244,8 +244,7 @@ es:
             allow:    "Permitir solicitudes de recalificación"
             due_date: "Último plazo para recalificación"
             message:  "Mensaje de recalificación"
-        starter_code:
-            title:    "Subir Código Inicial"
+        starter_code: "Código Inicial"
         marking_scheme:
             title:    "Esquema de calificación"
             rubric:   "Rúbrica"
@@ -418,9 +417,6 @@ es:
     hidden:                      "Oculto"
     active:                      "Activo"
     not_active:                  "Inactivo"
-    download:                    "Descargar"
-    upload:                      "Subir"
-    uploading_please_wait:       "Subiendo - por favor espere..."
     choose_assignment:           "Escoger..."
     properties:                  "Propiedades"
     grades:                      "Evaluadores"
@@ -446,8 +442,6 @@ es:
     invalid_grouping:            "(inválido)"
     validate:                    "Validar"
     encoding:                    "Codificación"
-    assignment_format:           "Descargar en formato %{file}"
-    upload_assignment_format:    "Subir en formato %{file}"
     select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
     all_csv_file:                "Todos los campos: "
 
@@ -466,14 +460,11 @@ es:
 
     #app/views/results/marker/
     marker:
-      new_annot:                   "Nueva Anotación"
       overall_comments:            "Comentarios Generales"
       overall_comments_success:    "Los Comentarios Generales han sido actualizados exitosamente."
-      current_annotations:         "Anotaciones recientes"
       across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
                                     número de línea para ser redirigido al lugar exacto en el archivo que contiene la
                                     anotación."
-      annot_summary:               "Anotaciones"
       source_code:                 "Código Inicial"
       test_results:                "Resultados de la Prueba"
       feedback_files:              "Archivos de Retroalimentación"
@@ -540,10 +531,8 @@ es:
       annotation:
         from_line_to:                   "%{file_path}: Línea %{line_start} hasta la %{line_end}"
         remark_flag:                    "(Recalificación)"
-        no_annotation_in_this_category: "No existen anotaciones en esta categoría"
         new_annotation:                 "Crear una nueva anotación"
         edit_annotation:                "Edit annotation"
-        annotation_category:            "Categoría de la anotación"
         preview:                        "Vista Previa"
         preview_title:                  "La anotación lucirá de la siguiente manera:"
         sure_to_remove:                 "¿Está seguro/a de querer remover esta anotación?"
@@ -656,7 +645,7 @@ es:
       currently_collected:                  "Versión recolectada:"
       no_rev_before_deadline: 	            "Ninguna revisión fue enviada antes de la fecha límite"
       current_path:                         "Ruta al Directorio:"
-      download_all_files:                   "Descargar todos los archivos"
+      all_files:                            "todos los archivos"
       root:                                 "[root]"
       collect_and_grab:                     "Recolectar y Calificar esta revisión"
       could_not_collect:                    "No se pudo recolectar las entregas para el grupo %{group_name} - la fecha
@@ -702,12 +691,8 @@ es:
       replace:                              "Reemplazar"
       delete:                               "Eliminar"
       error_collecting:                     "Algunos problemas ocurrieron mientras se recolectaban los archivos."
-      section:                              "Sección"
       collect_work_for_section:             "Recolectar los trabajos para esta sección:"
-      download_groupings_files:             "Descargar todas las entregas"
-      sections:                             "Sección:"
-      sections:
-        all:                                "Todas las secciones"
+      all_submissions:                      "todas las entregas"
       revision_history:                     "%{num}: "
       tags_used:                            "Etiquetas Usadas"
       tags_search:                          "Buscar por Etiquetas:"
@@ -728,8 +713,6 @@ es:
       criterion:          "criterio"
       per_page:           "por página"
       filename:           "Nombre del Archivo"
-      section:            "Sección"
-      sections:           "Secciones:"
       search_summaries:   "Buscar Resúmenes"
 
     course_summaries_index:
@@ -790,7 +773,6 @@ es:
         invalid_user_name:  "Nombre de usuario inválido."
         upload_success:     "La tabla de notas ha sido subida exitosamente: %{num_updates} actualización(es)."
         upload_title:       "Subir el Archivo de Notas"
-        upload_prompt:      "Seleccione el archivo con formato CSV que desea subir"
         upload_format_html: "<p>El archivo debería tener el siguiente formato:</p>
                              <ul><li>dos líneas en la parte superior, las cuales especifican los nombres y totales de
                              las preguntas;</li>
@@ -858,7 +840,6 @@ es:
                                        asociada con el mismo. ¿Desea continuar?"
       use_another_assignments_groups: "Use los grupos de otro proyecto"
       upload:
-        upload:                          "Subir"
         upload_groups_file:              "Subir un archivo para los grupos"
         description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
@@ -867,10 +848,8 @@ es:
         description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download:                     "Descargar"
         download_groups_file:         "Descargar Archivos del Grupo"
         download_grader_maps:         "Descargar los pares del evaluador"
-        download_csv:                 "Formato CSV"
         download_grader_groups_csv:   "Par Grupo / Evaluador en formato CSV"
         download_grader_criteria_csv: "Par Criterios de Calificación / Evaluador en formato CSV"
       reuse_groups:         "Reusar Grupos"
@@ -924,11 +903,8 @@ es:
                                 <code>user_name,last_name,first_name(,section)</code>"
         student_same_number:   "Si un estudiante con el mismo número de estudiante existe, entonces la información del
                                 estudiante es actualizada."
-        csv_file:              "Archivo en Formato CSV"
       download:
         download_student_list: "Descargar Lista de Estudiantes"
-        download_csv_format:   "Descargar Lista de Estudiantes en formato CSV"
-        download_xml_format:   "Descargar Lista de Estudiantes en formato XML"
       create:
         success: "El estudiante %{user_name} ha sido creado exitosamente."
         error:   "No se pudo crear el estudiante."
@@ -1073,7 +1049,6 @@ es:
       edit_grader:            "Editar la información del evaluador"
       manage_graders:         "Administrar los Evaluadores"
       graders:                "Evaluadores"
-      section:                "Sección"
       all_graders:            "Todos los Evaluadores"
       assigned_graders:       "Asignar los Evaluadores"
       possible_graders:       "Posibles Evaluadores"
@@ -1091,20 +1066,17 @@ es:
         select_csv_file:  "Seleccionar el archivo en formato CSV que tiene la siguiente forma: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un asistente de cátedra con el mismo nombre existe, la información del asistente es
                            actualizada."
-        csv_file:         "Archivo con formato CSV"
         not_added:        "Los siguientes asistentes de cátedra no han podido ser añadidos exitosamente:"
         make_sure:        "Asegúrese que:"
         ta_names:         "Los nombres de los asistentes de cátedra son alfanuméricos"
         each_field:       "Cada campo está separado por una coma (no existen espacios)"
         each_line:        "Cada línea tiene los campos requeridos especificados en la parte superior"
       download:
-        download_list:    "Descargar la lista de los asistentes de cátedra en formato CSV"
         begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
         end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Par Estudiante / Evaluador en formato CSV"
       upload:
@@ -1182,7 +1154,6 @@ es:
         type:                             "Tipo"
         user_type:                        "Tipo"
         grace_credits:                    "Créditos de Gracia Restantes"
-        section:                          "Sección"
         notes_count:                      "Notas"
         display_grader_names_to_students: "¿Desea mostrar a los estudiantes el nombre de los evaluadores?"
 
@@ -1218,9 +1189,6 @@ es:
         tag_prompt:  "Por favor seleccione las etiquetas en la parte inferior para eliminarlas:"
 
       upload:
-        upload_csv:        "Subir CSV"
-        upload_csv_title:  "Subir archivo en formato CSV"
-        upload_csv_prompt: "Seleccione el archivo en formato CSV que desea subir:"
         upload_success:    "%{nb_updates} etiqueta(s) han sido añadidad exitosamente!"
         invalid_line:      "La línea tiene un formato inapropiado."
         upload_csv_html:   "
@@ -1236,9 +1204,6 @@ es:
             <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
             <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
           </p>"
-        upload_yml:        "Subir YAML"
-        upload_yml_title:  "Subir el archivo con formato YAML"
-        upload_yml_prompt: "Seleccionar el archivo en formato YAML que desea subir:"
         upload_yml_html:   "
           <p>
             El archivo debería tener el siguiente formato:<br>
@@ -1259,10 +1224,8 @@ es:
           </p>"
         error:             "Un error ha ocurrido mientras se subian las etiquetas: "
         empty_error:       " El archivo con formato YAML está vacío."
-        syntax_error:      " El syntax es incorrecto. (%{error})"
 
       download:
-        download:       "Descargar"
         download_title: "Descargar Etiquetas"
         download_html:  "
           <p>
@@ -1281,52 +1244,6 @@ es:
         in_use:      "Etiquetas en uso"
         not_in_use:  "Etiquetas no usadas"
 
-    annotations:
-      annotation_category:           "Categoría de la Anotación"
-      no_annotation_categories:      "No existen categorías de anotación todavía."
-      title:                         "Anotaciones: %{assignment_short_identifier}"
-      name:                          "Nombre de la Categoría"
-      help_message:                  "De click en una categoría de anotación para añadir anotaciones."
-      add_annotation_category:       "Añadir una categoría de anotación"
-      annotations:                   "Anotaciones"
-      created_by:                    "Creado Por:"
-      last_edited_by:                "Editado por última vez por:"
-      update:
-        annotation_category_success: "Esta categoría de anotación fue actualizada satisfactoriamente"
-        annotation_category_error:   "No se pudo actualizar la Categoría de Anotación:"
-        annotation_category_name:    "Nombre de la Categoría de Anotación"
-        add_annotation:              "Añadir Anotación"
-      delete:
-        delete_message:      "Eliminar la categoría de anotación"
-        annotation_text:     "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está
-                              seguro/a de realizar esto?"
-        annotation_category: "Eliminar esta categoría de anotación también eliminará las anotaciones de la misma.
-                              Las anotaciones eliminadas no estarán asociadas a las entregas de los estudiantes.
-                              ¿Está seguro/a de querer hacer esto?"
-      upload:
-        upload_annotations: "Subir Anotaciones"
-        upload_message_csv: "
-        <p>
-            Seleccionar un archivo en formato CSV de la siguiente forma:<br>
-            <code>category_name,annotation_text,annotation_text ... </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Seleccionar un archivo en formato YAML de la siguiente forma:<br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        success:          "%{annotation_category_number} categorías de anotación han sido actualizadas exitosamente"
-        error:            "No se pudo subir la categoría: %{annotation_category} localizada en la línea
-                           %{annotation_line}"
-        syntax_error:     "Existe un error en el archivo que usted subió: %{error}"
-        flash_error:      "No se pudo reconocer el formato %{format} para descargar"
-        unparseable_yaml: "No se pudo interpretar el archivo con formato YAML"
-      download:
-        download_annotations: "Descargar Anotaciones"
-        download_csv:         "Descargar en formato CSV"
-        download_yml:         "Descargar en formato YML"
-      one_time_only:          "Una sola vez"
 
     submission_rules:
       submission_rule:
@@ -1482,21 +1399,14 @@ es:
       move_up:        "Subir"
       move_down:      "Bajar"
       download:
-        title:    "Descargar"
-        file:     "Descargar archivo con criterios de calificación"
+        file:     "archivo con criterios de calificación"
         prompt:   "Todos los tipos de criterios serán descargados en formato YAML."
-        link_yml: "Descargar criterios de calificación en formato YAML"
-        yml:      "Descargar YML"
       upload:
-        yml:             "Subir YML"
-        yml_title:       "Subir archivo con formato YML"
-        yml_prompt:      "Seleccione el archivo en formato YML que desee subir"
         success:         "Los criterios de calificación han sido subidos exitosamente: %{num_loaded}."
         error:
           invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
           names_taken:    "Otros criterios ya tienen los siguientes nombres:"
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
-        syntax_error:    "Un error ha ocurrido con el archivo subido: %{error}"
         format_yml_html: "
           <ul>
             <li><p>El archivo debe tener el siguiente formato para criterios de tipo rúbrica:<br>
@@ -1543,76 +1453,18 @@ es:
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."
-      download:
-        title:  "Descargar el Archivo de los Criterios de Calificación Flexibles"
-        prompt: "Los Criterios de Calificación Flexibles están desponibles en formato CSV."
-        link:   "Descargar los Criterios de Calificación Flexibles en formato CSV"
-      upload:
-        title:  "Subir el Archivo de Criterios de Calificación Flexibles"
-        prompt: "Seleccione el archivo CSV que desea subir"
-        format_html: "
-        <p>El archivo debería tener el siguiente formato:</p>
-        <ul><li>un registro por línea;</li><li>cada línea debería terminar en un carriage-return o un line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>La descripción es opcional. Nótese que si esta no está presente, la segunda coma no debería aparecer.</p>"
-        success: "Los Criterios de Calificación Flexibles subidos exitosamente: %{nb_updates} actualizado(s)."
 
     checkbox_criteria:
       title:            "Criterio de Calificación tipo Caja de Selección"
       description:      "Descripción"
       description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
                          preliminar."
-      download:
-        title:  "Descargar el Archivo de los Criterios de Calificación de tipo Checkbox"
-        prompt: "Los Criterios de Calificación de tipo están desponibles en formato CSV."
-        link:   "Descargar los Criterios de Calificación de tipo Checkbox en formato CSV"
-      upload:
-        title:  "Subir el Archivo de Criterios de Calificación de tipo Checkbox"
-        prompt: "Seleccione el archivo CSV que desea subir"
-        format_html: "
-          <p>El archivo debería tener el siguiente formato:</p>
-          <ul><li>un registro por línea;</li><li>cada línea debería terminar en un carriage-return o un line-feed.</li></ul>
-          <code>criteria_name,max_value,description</code>
-          <p>La descripción es opcional. Nótese que si esta no está presente, la segunda coma no debería aparecer.</p>"
-        success: "Los Criterios de Calificación de tipo Checkbox subidos exitosamente: %{nb_updates} update(s)."
 
     rubric_criteria:
       title:     "Criterios de Calificación por Rúbrica"
       level:
         levels:      "Niveles"
         level_index: "Nivel %{index}"
-      download:
-        title:    "Descargar Archivo de los Criterios de Calificación por Rúbrica"
-        prompt:   "Los criterios de Calificación por Rúbrica están disponibles en formatos CSV y YML."
-        link_csv: "Descargar los Criterios de Calificación por Rúbrica en formato CSV"
-        link_yml: "Descargar los Criterios de Calificación por Rúbrica en formato YAML"
-      upload:
-        csv:             "Subir CSV"
-        csv_title:       "Subir Archivo CSV"
-        yml:             "Subir YML"
-        yml_title:       "Subir Archivo YML File"
-        csv_prompt:      "Seleccionar el archivo en formato CSV que desea subir"
-        yml_prompt:      "Seleccionar el archivo en formato YML que desea subir"
-        format_csv_html: "
-        <p>El archivo debería tener el siguiente formato:</p>
-        <ul><li>un registro por línea;</li><li>cada línea debería terminar en un carriage-return o line-feed.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>donde <em>level_names</em> deben contener el nombre de cada nivel (seperado por comas)<br>
-        y <em>level_descriptions</em> pueden contener la descripción de cada nivel (opcional, también separado por
-        commas)."
-        format_yml_html: "
-          <p>El archivo debería tener el siguiente formato:<br>
-              <code>criterion_name:<br>
-                    &nbsp;&nbsp;weight: weight<br>
-                    &nbsp;&nbsp;level_0:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                    &nbsp;&nbsp;level_1:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;[...]</code>
-          </p>"
-        error: "Algunos Criterios de Calificación por Rúbrica son inválidos:"
-        syntax_error: "Exite un error en el archivo que ha subido: %{error}"
-        empty_error: "No se encontró ningun criterio de calificación en el archivo provisto."
       defaults:
         level_0: "Insuficiente"
         level_1: "Malo"
@@ -1739,25 +1591,6 @@ es:
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
 
     section:
-      name:                "Nombre"
-      legend:              "Sección"
-      create_new_section:  "Añadir una nueva sección"
-      update_section:      "Actualizar la sección"
-      add_section:         "Añadir una nueva sección"
-      manage_users:        "Administar Usuarios"
-      due_dates_type:      "Habilitar último plazo de entrega por secciones"
-      no_sections:         "No hay secciones todavía."
-      create:
-        success:           "La sección %{name} ha sido creada exitosamente."
-        error:             "No se pudo crear la sección."
-      update:
-        success:           "La sección %{name} fue actualizada exitosamente."
-        error:             "No se pudo actualizar la sección."
-      delete:
-        success:           "La sección fue eliminada exitosamente."
-        link_confirm:      "Esto eliminará esta sección permanentemente. ¿Desea continuar?"
-        error_permissions: "Usted no tiene permiso para eliminar esta sección."
-        not_empty:         "Usted no puede eliminar esta sección porque tiene estudiantes en ella."
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes

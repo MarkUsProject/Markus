@@ -4,8 +4,8 @@
 
 <%= form_for @section, as: :section do |f| %>
   <p>
-    <%= raw(f.label :name, t('section.name')) %>:
-    <%= raw(f.text_field :name) %>
+    <%= f.label :name, Section.human_attribute_name(:name) %>:
+    <%= f.text_field :name %>
   </p>
 
   <%= f.submit t(:save) , data: { disable_with: t('working') } %>

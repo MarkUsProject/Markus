@@ -4,7 +4,7 @@
       <div class='tab-pane' id='code_pane'>
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
-           <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+           <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
           <% if can_show_test_results_tab?(assignment) %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
@@ -27,7 +27,7 @@
                                  can_download: true } %>
 
               <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
-                <%= t('marker.new_annot')%>
+                <%= t('annotations.new.button')%>
               </button>
 
               <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
@@ -47,7 +47,7 @@
             <%= render partial: 'results/marker/overall_comment',
                        locals: { result: old_result ? old_result : result } %>
 
-            <h3><%= t('marker.current_annotations') %></h3>
+            <h3><%= Annotation.model_name.human.pluralize %></h3>
             <p><%= t('marker.across_all_submission_files') %></p>
           </div>
 

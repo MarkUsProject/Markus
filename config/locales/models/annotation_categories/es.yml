@@ -1,0 +1,8 @@
+es:
+  activerecord:
+    models:
+      annotation_category:
+        one: "Categoría de la Anotación"
+    attributes:
+      annotation_category:
+        annotation_category_name: "Nombre de la Categoría"

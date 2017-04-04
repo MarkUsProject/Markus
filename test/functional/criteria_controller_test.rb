@@ -87,7 +87,7 @@ END
 
       assert_response :redirect
       assert_not_nil set_flash.to(t('criteria.upload.error.invalid_format') + '  ' +
-                                  t('criteria.upload.syntax_error',
+                                  t('upload_errors.syntax_error',
                                     error: "syntax error on line 2, col 1: `'"))
       @assignment.reload
       assert_equal(@assignment.get_criteria(:all, :rubric).size, 0)

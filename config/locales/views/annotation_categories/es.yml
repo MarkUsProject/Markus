@@ -1,0 +1,27 @@
+es:
+  annotation_categories:
+    create:
+      success: "Esta categoría de anotación fue actualizada satisfactoriamente"
+    delete_annotation_text:
+      confirm: "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está seguro/a de realizar esto?"
+      success: "Eliminar la categoría de anotación"
+    destroy:
+      success: "Eliminar la categoría de anotación"
+      warning: "Eliminar esta categoría de anotación también eliminará las anotaciones de la misma. Las anotaciones eliminadas no estarán asociadas a las entregas de los estudiantes. ¿Está seguro/a de querer hacer esto?"
+    download:
+      title: "Descargar Anotaciones"
+    index:
+      add_annotation_category: "Añadir una categoría de anotación"
+      title: "Anotaciones: %{assignment_short_identifier}"
+    update:
+      success: "Esta categoría de anotación fue actualizada satisfactoriamente"
+    upload:
+      error: "No se pudo subir la categoría: %{annotation_category} localizada en la línea %{annotation_line}"
+      success: "%{annotation_category_number} categorías de anotación han sido actualizadas exitosamente"
+      title: "Subir Anotaciones"
+
+    # Miscellaneous
+    add_annotation: "Añadir Anotación"
+    no_annotations: "No existen anotaciones en esta categoría"
+    none: "No existen categorías de anotación todavía."
+    one_time_only: "Una sola vez"

@@ -1,5 +1,5 @@
 <% content_for :title do %>
-    <%= t('section.manage_users') %>
+    <%= t('.title') %>
     <span class='title-help sections_manage_users_help'>
       <p class='help-message-title sections_manage_users_help'>
         <%= t('section.help.manage_users') %>
@@ -10,18 +10,18 @@
 <div class='wrapper'>
   <%= render 'shared/flash_message' %>
 
-  <%= link_to t('section.add_section'),
+  <%= link_to t('sections.new.title'),
               new_section_path,
               class: 'button' %>
 
   <% if @sections.empty? %>
-    <p><%= t('section.no_sections') %></p>
+    <p><%= t('sections.none') %></p>
   <% else %>
     <div class='table'>
       <table>
         <thead>
           <tr>
-            <th><%= t('section.legend') %></th>
+            <th><%= Section.model_name.human %></th>
             <th><%= t('actions') %></th>
           </tr>
         </thead>
@@ -35,7 +35,7 @@
               <%= button_to t('delete'),
                             { action: 'destroy',
                               id: section.id },
-                            data: { confirm: t('section.delete.link_confirm') },
+                            data: { confirm: t('.destroy_confirm') },
                             method: 'delete',
                             disabled: !section.students.empty?,
                             class: 'inline-button' %>

@@ -65,7 +65,7 @@
           </div>
 
           <div>
-            <%= f.label :section_due_dates_type, t('section.due_dates_type') %>
+            <%= f.label :section_due_dates_type, t('assignment.section_due_dates_type') %>
             <%= f.check_box :section_due_dates_type,
                             onclick: 'set_onbeforeunload(true);' %>
           </div>
@@ -80,7 +80,7 @@
                                @section_due_dates do |due_date_f| %>
                   <% obj = due_date_f.object %>
                   <p>
-                    <%= due_date_f.label :section, t('section.legend') %>
+                    <%= due_date_f.label :section, Section.model_name.human %>
                     <%= obj.section.name %>
                     <%= due_date_f.text_field :section_id, class: 'hidden' %>
                     <%= due_date_f.label :due_date, t(:due_date),

@@ -161,7 +161,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                format: :js
         assert_response :success
         assert_not_nil assigns :annotation_category
-        assert_equal I18n.t('annotations.update.annotation_category_success'),
+        assert_equal I18n.t('annotation_categories.update.success'),
                      flash[:success]
       end
 
@@ -264,7 +264,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :download,
                assignment_id: @assignment.id, format: 'xml'
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.flash_error',
+        assert set_flash.to(t('download_errors.unrecognized_format',
                               format: 'xml'))
       end
     end
@@ -336,7 +336,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               assignment_id: @assignment.id,
               annotation_category_list_csv: StringIO.new('name, text')
       assert_response :redirect
-      assert set_flash.to(t('annotations.upload.success',
+      assert set_flash.to(t('annotation_categories.upload.success',
                             annotation_category_number: 1))
       assert_not_nil assigns :assignment
     end
@@ -387,7 +387,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin, :yml_upload, assignment_id: @assignment.id, annotation_category_list_yml: "--- \n A:\n - A1\n - A2\n"
 
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.success',
+        assert set_flash.to(t('annotation_categories.upload.success',
                               annotation_category_number: 1))
         assert_not_nil assigns :assignment
         @assignment.reload
@@ -403,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 annotation_category_list_yml: "--- \n A:\n - A1\n A2\n"
 
         assert_response :redirect
-        assert set_flash.to(t('annotations.upload.syntax_error',
+        assert set_flash.to(t('upload_errors.syntax_error',
                               error: "syntax error on line 4, col -1: `'"))
         assert_not_nil assigns :assignment
         @assignment.reload
@@ -421,7 +421,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
         assert_response :redirect
         assert_equal(flash[:error],
-                     [I18n.t('annotations.upload.unparseable_yaml')])
+                     [I18n.t('upload_errors.unparseable_yml')])
       end
 
       should 'on :yml_upload route properly' do
@@ -470,7 +470,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 annotation_category_list_csv: tempfile,
                 encoding: 'UTF-8'
         assert_response :redirect
-        assert_equal(flash[:error], [I18n.t('csv.upload.malformed_csv')])
+        assert_equal(flash[:error], [I18n.t('upload_errors.malformed_csv')])
       end
 
       should 'on :csv_upload gracefully handle a non csv file with .csv extension' do

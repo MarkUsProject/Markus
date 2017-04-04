@@ -26,7 +26,7 @@
                         assignment_criteria_path(@assignment.id) %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
-            <%= link_to t('annotations.annotations'),
+            <%= link_to Annotation.model_name.human.pluralize,
                         assignment_annotation_categories_path(@assignment) %>
           </li>
           <% if MarkusConfigurator.automated_testing_engine_on? && !@assignment.is_peer_review? %>

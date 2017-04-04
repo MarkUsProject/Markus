@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('annotations.upload.upload_annotations') %>
+<%= content_for :modal_title, t('annotation_categories.upload.title') %>
 <%= content_for :modal_content do %>
 
   <!-- Script for disabling upload buttons. -->
@@ -31,11 +31,11 @@
     <section class='dialog-actions'>
       <%= hidden_field_tag :file_format, '', id: 'file_format' %>
       <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_assignment_format, file: 'YML'),
+          <%= submit_tag t(:upload_with_format, file: 'YML'),
                          disabled: true,
                          id: 'yml_upload',
                          onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_assignment_format, file: 'CSV'),
+          <%= submit_tag t(:upload_with_format, file: 'CSV'),
                          disabled: true,
                          id: 'csv_upload',
                          onclick: 'choose_upload("csv")' %>

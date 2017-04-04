@@ -96,7 +96,7 @@ pt:
     filename:  "Nome do Arquivo"
     message:  "Mensagem"
     remove:  "Remover"
-    download_csv_grade_report:  "Baixar relatório de notas em formato CSV "
+    csv_grade_report:  "relatório de notas em formato CSV"
     days_and_hours_left:      "(%{days} dias(s) e %{hours} hora(s) restante(s))"
     hours_and_days_left:      "(%{hours} hora(s) e %{minutes} minuto(s) restante(s)"
     days_left:          "(%{days} dia(s) restante(s))"
@@ -168,6 +168,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         type:  "Tipo de projeto"
         overall_comment: "Comentários gerais"
         upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
+        section_due_dates_type: "Prazo de entrega por sessão: "
         group:
             empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
@@ -267,9 +268,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     hidden:             "Oculto"
     active:             "Ativo"
     not_active:         "Não ativo"
-    download:           "Baixar"
-    upload:             "Carregar"
-    uploading_please_wait: "Carregando - por favor aguarde..."
     choose_assignment:  "Escolher..."
     properties:         "Propriedades"
     grades:             "Notas"
@@ -295,8 +293,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     invalid_grouping:   "(inválido)"
     validate:           "Validar"
     encoding:           "Codificação"
-    assignment_format:  "Baixar em formato %{file}"
-    upload_assignment_format: "Carregar em formato %{file}"
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
 
@@ -314,12 +310,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     #app/views/resluts/marker/
     marker:
-      new_annot: "Nova anotação"
       overall_comments: "Comentários gerais"
       overall_comments_success: "Comentários gerais atualizado com sucesso."
-      current_annotations: "Anotações atuais"
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
-      annot_summary: "Resumo de anot."
       source_code: "código fonte"
       test_results: "Resultado dos testes"
       feedback_files: "Arquivos de comentários"
@@ -375,10 +368,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       annotation:
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
-        no_annotation_in_this_category: "Existem anotações nessa categoria"
         new_annotation: "Criar nova anotação"
         edit_annotation: "Edit annotation"
-        annotation_category: "Categoria de anotação"
         preview: "Visualização"
         preview_title: "Veja como a anotação vai olhar:"
         sure_to_remove: "Tem certeza que quer remover essa anotação?"
@@ -450,7 +441,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       currently_collected:  "Versão coletada:"
       no_rev_before_deadline: 	"Nenhuma revisão apresentado antes do prazo"
       current_path:         "Caminho atual:"
-      download_all_files:   "Baixar todos os arquivos"
+      all_files:   "todos os arquivos"
       root:                 "[root]"
       collect_and_grab:     "Coletar e avaliar essa revisão"
       could_not_collect:    "Não foi possível coletar a submissão do grupo %{group_name} - a data de coleta ainda não chegou."
@@ -495,12 +486,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       replace:              "Substituir"
       delete:               "Apagar"
       error_collecting:     "Houve problemas em obter os arquivos."
-      section:              "Sessão"
       collect_work_for_section: "Coletar submissões para a sessão:"
-      download_groupings_files: "Baixar todas as submissões"
-      sections:             "Sessão:"
-      sections:
-        all:                "Todas as Sessões"
+      all_submissions:      "todas as submissões"
       revision_history:     "%{num}: "
       search_submissions:   "Pesquisa Submissões"
       how_many_marked:      "%{num_marked}/%{num_assigned} submissões são corrigidos"
@@ -566,7 +553,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         invalid_user_name: "Nome de usuário inválido."
         upload_success: "Tabela de notas carregada com sucesso:%{num_updates} atualização (s)."
         upload_title: "Arquivo de notas carregado"
-        upload_prompt: "Selecione um arquivo CSV para carregar"
         upload_format_html: "<p>O arquivo deve conter o seguinte formato:</p>
                              <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
                              <li>o primeiro objeto para as duas primeiras linhas é ignorado;</li>
@@ -627,7 +613,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       delete_confirm: 'Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?'
       use_another_assignments_groups: "Usar grupos de outro projeto?"
       upload:
-        upload: "Carregar"
         upload_groups_file: "Carregar arquivo de grupos"
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
@@ -636,10 +621,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download: "Baixar"
         download_groups_file: "Baixar arquivo de grupos"
         download_grader_maps: "Baixar mapeamento dos avaliadores"
-        download_csv: "Formato CSV "
         download_grader_groups_csv: "Grupo / Formato CSV mapa avaliadores"
         download_grader_criteria_csv: "Critério / Formato CSV mapa avaliadores"
       reuse_groups: "Reutilizar grupos"
@@ -690,11 +673,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         upload_a_class_list: "Carregar lista de alunos"
         select_csv_file:     "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section)</code>"
         student_same_number: "Se um estudante com o mesmo nome de usuário exsitir, então a informação do aluno será atualizada."
-        csv_file:            "Arquivo CSV"
       download:
         download_student_list: "Baixar lista de estudantes"
-        download_csv_format:   "Baixar lista de estudantes em formato CSV"
-        download_xml_format:   "Baixar lista de estudantes em formato XML"
       create:
         success: "Aluno %{user_name} criado com sucesso."
         error: "Falha ao criar aluno."
@@ -813,7 +793,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       edit_grader:        "Editar avaliador"
       manage_graders:     "Gerenciar avaliadores"
       graders:            "Avaliadores"
-      section:            "Sessão"
       all_graders:        "Todos os avaliadores"
       assigned_graders:   "Atribuir avaliador"
       possible_graders:   "Possiveis avaliadores"
@@ -829,20 +808,17 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       upload:
         select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
         grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
-        csv_file:         "Arquivo CSV"
         not_added: "Os seguintes corretores não foram adicionados com sucesso:"
         make_sure: "Tenha certeza que:"
         ta_names: "O nome dos corretores são alfanuméricos "
         each_field: "Cada campo é separado por uma vírgula (sem espaços)"
         each_line: "Cada linha tem os campos requeridos especificados acima"
       download:
-        download_list: "Baixar lista de corretores no formato CSV"
         begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Alunos / Atribuição de corretores CSV "
       upload:
@@ -912,55 +888,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         type:           "Tipo"
         user_type:      "Tipo"
         grace_credits:  "Créditos de tolerância"
-        section:        "Sessão"
         notes_count:    "Notas"
         display_grader_names_to_students: "Mostrar nome de avaliadores aos alunos?"
 
     hide_students: "Marcar como inativo"
     unhide_students: "Marcar como ativo"
-
-    annotations:
-      annotation_category: "Categorias de anotação"
-      no_annotation_categories: "Ainda não há categorias de anotação"
-      title: "Anotações: %{assignment_short_identifier}"
-      name: "Nome da categoria"
-      help_message: "Clique em uma categoria de anotação para adicionar anotações."
-      add_annotation_category: "Adicionar categoria de anotação"
-      annotations: "Anotações"
-      created_by: "Criado por:"
-      last_edited_by: "Última edição por:"
-      update:
-        annotation_category_success: "Esta categoria de anotação foi atualizada com sucesso"
-        annotation_category_error: "Não foi possível atualizar a categoria de anotação:"
-        annotation_category_name: "Nome da categoria de anotação"
-        add_annotation: "Adicionar anotação"
-      delete:
-        delete_message: "Apagar categoria de anotação"
-        annotation_text: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
-        annotation_category:  "Apagar esta categoria de anotação também irá apagar suas anotações. Anotações excluídas deixarão de estar ligadas à apresentações dos alunos. Tem certeza de que quer fazer isto?"
-      upload:
-        upload_annotations: "Carregar anotações"
-        upload_message_csv: "
-        <p>
-            Selecione um arquivo CSV no seguinte formato: <br>
-            <code>category_name,annotation_text,annotation_text ... </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Selecione um arquivo YAML no seguinte formato: <br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        success:  "Carregado com sucesso %{annotation_category_number} categorias de anotações"
-        error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
-        syntax_error: "Existe um erro no  arquivo carregado: %{error}"
-        flash_error: "Não foi possível reconhecer o formato %{format}"
-        unparseable_yaml: "Não foi possível analisar o arquivo YAML"
-      download:
-        download_annotations: "Baixar anotações"
-        download_csv: "Baixar em formato CSV"
-        download_yml: "Baixar em formato YML"
-      one_time_only:  "Uma única vez"
 
     submission_rules:
       submission_rule:
@@ -1081,21 +1013,14 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       move_up:        "Mover para cima"
       move_down:      "Mover para baixo"
       download:
-        title:    "Baixar"
-        file:     "Baixar Arquivo de Critérios"
+        file:     "Arquivo de Critérios"
         prompt:   "Todos os tipos de critérios serão baixados no formato YAML."
-        link_yml: "Baixar Critérios em Formato YAML"
-        yml:      "Baixar YML"
       upload:
-        yml:             "Carregar YML"
-        yml_title:       "Carregar arquivo YML"
-        yml_prompt:      "Selecionar um arquivo YML para carregar"
         success:         "Critério carregado com sucesso: %{num_loaded}."
         error:
           invalid_format: "Os seguintes critérios deveriam formato inválido:"
           names_taken:    "Os seguintes nomes de critérios são já tomada:"
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
-        syntax_error:    "Existe um erro no arquivo carregado : %{error}"
         format_yml_html: "
           <ul>
             <li><p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
@@ -1142,19 +1067,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       name: "Nome do critério flexível"
       description: "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
-      download:
-        title: "Baixar arquivo de critério flexível"
-        prompt: "Critérios flexíveis estão disponíveis em CSV."
-        link: "Baixar critérios flexíveis em formato CSV"
-      upload:
-        title: "Carregar arquivo de critério flexível"
-        prompt: "Selecione um arquivo CSV para carrregar"
-        format_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
-        success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
 
@@ -1163,19 +1075,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       name:             "Nome do critério flexível"
       description:      "Descrição"
       description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
-      download:
-        title:  "Baixar Caixa de seleção Critérios de Arquivo"
-        prompt: " critérios de caixa de seleção estão disponíveis em CSV."
-        link:   "Baixar critérios caixa de seleção no formato CSV"
-      upload:
-        title:  "Publique as Caixa de seleção Critérios Arquivo"
-        prompt: "Selecione um arquivo CSV para carrregar"
-        format_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
-        success: "Critérios de caixa de seleção carregado com sucesso: %{nb_updates} update(s)."
       move_criterion:
         error: "Impossível mover critério (flexível)."
 
@@ -1185,21 +1084,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       level:
         levels: "Níveis"
         level_index: "Nível %{index}"
-      download:
-        title: "Baixar arquivo de rúbrica"
-        prompt: "Critério de rúbrica estão disponíveis em CSV e YAML."
-        link_csv: "Baixar rúbrica em formato CSV"
-        link_yml: "Baixar rúbrica em formato YAML"
-      upload:
-        csv:       "Carregar CSV"
-        csv_title: "Carregar arquivo CSV"
-        csv_prompt: "Selecionar um arquivo CSV para carregar"
-        format_csv_html: "
-        <p>O arquivo deve possuir o seguinte formato:</p>
-        <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br>
-        e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"
@@ -1317,27 +1201,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       Nome do critério, descrição, valores máximos e visibilidade podem ser modificados."
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
-
-    section:
-      name: "Nome"
-      legend: "Sessão"
-      create_new_section: "Criar nova sessão"
-      update_section: "Atualizar sessão"
-      add_section: "Inserir nova sessão"
-      manage_users: "Gerenciar usuários"
-      due_dates_type: "Prazo de entrega por sessão: "
-      no_sections: "Ainda não há sessões."
-      create:
-        success: "Sessão %{name} criada com sucesso."
-        error:   "Falha na criação da sessão."
-      update:
-        success: "Sessão %{name} atualizada com sucesso."
-        error:   "Falha ao atualizar sessão."
-      delete:
-        success: "Sessão apagada com sucesso."
-        link_confirm: "Isso removerá a sessão permanentemente. Continuar?"
-        error_permissions: "Você não possui permissão suficiente para apagar essa sessão."
-        not_empty: "Você não pode apagar essa sessão porque há estudantes nela."
 
     date:
       formats:

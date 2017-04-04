@@ -11,12 +11,12 @@
       <%= button_to t(:delete),
                     delete_annotation_text_assignment_annotation_category_path(id: annotation_text.id),
                     method: 'delete',
-                    data: { confirm: t('annotations.delete.annotation_text') },
+                    data: { confirm: t('annotation_categories.delete_annotation_text.confirm') },
                     remote: true,
                     class: 'inline-button' %>
     </div>
     <div class='annotation_text_details'>
-      <p><%= t('annotations.created_by') %>
+      <p><%= Annotation.human_attribute_name(:creator) %>
         <% if annotation_text.get_creator.nil? %>
           <%= 'N/A' %>
         <% else %>
