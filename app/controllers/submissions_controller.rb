@@ -284,14 +284,14 @@ class SubmissionsController < ApplicationController
     if Section.all.size > 0
       @section_column = "{
         id: 'section',
-        content: '#{t(:'browse_submissions.section')}',
+        content: '#{Section.model_name.human}',
         sortable: true
       },"
       Section.all.each do |section|
         if @assignment.submission_rule.can_collect_now?(section)
           @available_sections[section.name] = section.id
         end
-      end 
+      end
     else
       @section_column = ''
     end

@@ -66,7 +66,6 @@ en:
     dashboard:          "Dashboard"
     assignments:        "Assignments"
     users:              "Users"
-    sections:           "Sections"
     home:               "Home"
     settings:           "Settings"
 
@@ -97,7 +96,7 @@ en:
     filename:  "Filename"
     message:  "Message"
     remove:  "Remove"
-    download_csv_grade_report:  "Download CSV Grades Report"
+    csv_grade_report:  "CSV grades report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
     hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
@@ -179,6 +178,7 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
+        section_due_dates_type: "Enable section due dates"
         group:
             empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
@@ -205,8 +205,7 @@ en:
             allow:  "Allow remark requests"
             due_date:  "Remark Due Date"
             message:   "Remark Message"
-        starter_code:
-            title:  "Upload Starter Code"
+        starter_code: "Starter Code"
         marking_scheme:
             title: "Marking Scheme"
             rubric: "Rubric"
@@ -292,9 +291,6 @@ en:
     hidden:             "Hidden"
     active:             "Active"
     not_active:         "Not active"
-    download:           "Download"
-    upload:             "Upload"
-    uploading_please_wait: "Uploading - please wait..."
     choose_assignment:  "Choose..."
     properties:         "Properties"
     grades:             "Grades"
@@ -320,8 +316,6 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
-    assignment_format:  "Download in %{file} format"
-    upload_assignment_format: "Upload in %{file} format"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
@@ -340,12 +334,9 @@ en:
 
     #app/views/results/marker/
     marker:
-      new_annot: "New Annot."
       overall_comments: "Overall Comments"
       overall_comments_success: "Overall comments successfully updated."
-      current_annotations: "Current Annotations"
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
-      annot_summary: "Annotations"
       source_code: "Source Code"
       test_results: "Test Results"
       feedback_files: "Feedback files"
@@ -409,9 +400,8 @@ en:
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
-        no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
-        annotation_category: "Annotation Category"
+        edit_annotation: "Edit annotation"
         preview: "Preview"
         preview_title: "Here's how the annotation will look:"
         sure_to_remove: "Are you sure you want to remove this annotation?"
@@ -421,6 +411,14 @@ en:
         select_an_area: "You should select an area on the image to annotate"
         select_an_area_pdf: "You should select an area on the PDF to annotate"
         provide_text:   "You must provide some annotation text"
+        context_menu:
+          new: "New Annotation"
+          common: "Common Annotations"
+          edit: "Edit"
+          delete: "Remove"
+          copy: "Copy"
+          download: "Download File"
+          download_annotated: "Download Annotated File"
 
     #app/views/results/common
     common:
@@ -458,7 +456,6 @@ en:
         duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"
       upload:
-        malformed_csv: "The selected file was improperly formed. Please ensure the file meets Markus specifications."
         # when a non-text file has a csv extension (ie: user changes extension
         # from .pdf to .csv on a pdf file)
         non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
@@ -485,7 +482,7 @@ en:
       currently_collected:  "Collected version:"
       no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"
-      download_all_files:   "Download all files"
+      all_files:            "all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
@@ -531,12 +528,8 @@ en:
       replace:              "Replace"
       delete:               "Delete"
       error_collecting:     "There were problems collecting some files."
-      section:              "Section"
       collect_work_for_section: "Collect work for section:"
-      download_groupings_files: "Download all submissions"
-      sections:             "Section:"
-      sections:
-        all:                "All Sections"
+      all_submissions:      "all submissions"
       revision_history:     "%{num}: "
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
@@ -557,8 +550,6 @@ en:
       criterion:             "criterion"
       per_page:             "per page"
       filename:             "Filename"
-      section:              "Section"
-      sections:             "Section:"
       search_summaries:     "Search Summaries"
 
     course_summaries_index:
@@ -606,7 +597,6 @@ en:
         no_mark: "N/A"
         marking_state: "Marking State"
         download: "Download Grades"
-        download_prompt: "Download Grades in CSV format"
       is_hidden: "Hide Spreadsheet"
 
       students:
@@ -620,7 +610,6 @@ en:
         invalid_user_name: "Invalid user name."
         upload_success: "Grades table successfully uploaded: %{num_updates} update(s)."
         upload_title: "Upload Grades File"
-        upload_prompt: "Select a CSV file to upload"
         upload_format_html: "<p>The file should have the following format:</p>
                              <ul><li>two lines at the top which specify the question names and totals;</li>
                              <li>the first item for the first two lines is ignored;</li>
@@ -696,7 +685,6 @@ en:
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
       use_another_assignments_groups: "Use another assignment's groups"
       upload:
-        upload: "Upload"
         upload_groups_file: "Upload Groups File"
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
@@ -705,10 +693,8 @@ en:
         description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
       download:
-        download: "Download"
         download_groups_file: "Download Groups File"
         download_grader_maps: "Download Grader Maps"
-        download_csv: "CSV Format"
         download_grader_groups_csv: "Group / Grader map CSV format"
         download_grader_criteria_csv: "Criteria / Grader map CSV format"
       reuse_groups: "Reuse Groups"
@@ -759,11 +745,8 @@ en:
         upload_a_class_list: "Upload a class list"
         select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section)</code>"
         student_same_number: "If a student with the same student number exists, then the student's information is updated."
-        csv_file:            "CSV File"
       download:
         download_student_list: "Download Student List"
-        download_csv_format:   "Download Student list in CSV format"
-        download_xml_format:   "Download Student list in XML format"
       create:
         success: "Successfully created student %{user_name}."
         error: "Failed to create student."
@@ -893,7 +876,6 @@ en:
       edit_grader:        "Edit a Grader"
       manage_graders:     "Manage Graders"
       graders:            "Graders"
-      section:            "Section"
       all_graders:        "All Graders"
       assigned_graders:   "Assigned Graders"
       possible_graders:   "Possible Graders"
@@ -909,21 +891,17 @@ en:
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        csv_file:         "CSV File"
         not_added: "The following TAs have not been successfully added:"
         make_sure: "Make sure that:"
         ta_names: "TA names are alphanumeric"
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       download:
-        download_list_csv: "Download TA list in CSV format"
-        download_list_yml: "Download TA list in YML format"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
 
     #Grade Entry Forms Graders' View
     marks_graders:
-      #upload:
       download:
         download_grader_students_csv: "Student / Grader map CSV format"
       upload:
@@ -995,7 +973,6 @@ en:
         type:           "Type"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
-        section:        "Section"
         notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
@@ -1031,10 +1008,6 @@ en:
         tag_prompt: "Please select tags below to delete them:"
 
       upload:
-        upload: "Upload"
-        upload_csv: "Upload CSV"
-        upload_csv_title: "Upload CSV File"
-        upload_csv_prompt: "Select a CSV file to upload:"
         upload_success: "%{nb_updates} tag(s) have been successfully added!"
         invalid_line: "Line is in improper format."
         upload_csv_html: "
@@ -1049,9 +1022,6 @@ en:
             <i>tag_name</i> represents the name of the tag to be added.<br>
             <i>tag_description</i> represents the description for that record.<br>
           </p>"
-        upload_yml: "Upload YAML"
-        upload_yml_title: "Upload YAML File"
-        upload_yml_prompt: "Select a YAML file to upload:"
         upload_yml_html: "
           <p>
             The file should have the following format:<br>
@@ -1072,10 +1042,8 @@ en:
           </p>"
         error: "There was an error uploading tags: "
         empty_error: " The YAML file was empty."
-        syntax_error: " The syntax is incorrect. (%{error})"
 
       download:
-        download: "Download"
         download_title: "Download Tags"
         download_html: "
           <p>
@@ -1093,49 +1061,6 @@ en:
         all: "All Tags"
         in_use: "Tags in Use"
         not_in_use: "Tags Not in Use"
-
-    annotations:
-      annotation_category: "Annotation Category"
-      no_annotation_categories: "There are no annotation categories yet."
-      title: "Annotations: %{assignment_short_identifier}"
-      name: "Category name"
-      help_message: "Click on an annotation category to add annotations."
-      add_annotation_category: "Add Annotation Category"
-      annotations: "Annotations"
-      created_by: "Created By:"
-      last_edited_by: "Last Edited By:"
-      update:
-        annotation_category_success: "This Annotation Category was successfully updated"
-        annotation_category_error: "Could not update Annotation Category:"
-        annotation_category_name: "Annotation category name"
-        add_annotation: "Add Annotation"
-      delete:
-        delete_message: "Delete annotation category"
-        annotation_text: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
-        annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
-      upload:
-        upload_annotations: "Upload Annotations"
-        upload_message_csv: "
-        <p>
-            Select a CSV file of the following form:<br>
-            <code>category_name,annotation_text,annotation_text ... </code><br>
-          </p>"
-        upload_message_yml: "
-        <p>
-            Select a YAML file of the following form:<br>
-            <code>category_name: <br>- category_text<br>- category_text</code><br>
-
-          </p>"
-        success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
-        error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
-        syntax_error: "There is an error in the file you uploaded: %{error}"
-        flash_error: "Could not recognize %{format} format to download with"
-        unparseable_yaml: "Could not parse YAML file"
-      download:
-        download_annotations: "Download Annotations"
-        download_csv: "Download in CSV Format"
-        download_yml: "Download in YML Format"
-      one_time_only:  "One Time Only"
 
     submission_rules:
       submission_rule:
@@ -1254,21 +1179,14 @@ en:
       move_up:        "Move up"
       move_down:      "Move down"
       download:
-        title:    "Download"
-        file:     "Download Criteria File"
+        file:     "Criteria File"
         prompt:   "All types of criteria will be downloaded in YAML format."
-        link_yml: "Download Criteria in YAML Format"
-        yml:      "Download YML"
       upload:
-        yml:             "Upload YML"
-        yml_title:       "Upload YML File"
-        yml_prompt:      "Select a YML file to upload"
         success:         "Criteria successfully uploaded: %{num_loaded}."
         error:
           invalid_format: "The following criteria had invalid format:"
           names_taken:    "The following criteria names are already taken:"
         empty_error:     "No criteria were found in the provided file."
-        syntax_error:    "There is an error in the file you uploaded: %{error}"
         format_yml_html: "
           <ul>
             <li><p>The file should have the following format for a rubric criterion:<br>
@@ -1314,39 +1232,11 @@ en:
       title: "Flexible Criteria"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-      download:
-        title: "Download Flexible Criteria File"
-        prompt: "Flexible criteria are currently available in CSV."
-        link: "Download Flexible criteria in CSV format"
-      upload:
-        title: "Upload Flexible Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>The description is optional. Note that if it is not present, the second
-        comma should not appear.</p>"
-        success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
 
     checkbox_criteria:
       title: "Checkbox Criteria"
       description: "Description"
       description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-      download:
-        title: "Download Checkbox Criteria File"
-        prompt: "Checkbox criteria are currently available in CSV."
-        link: "Download Checkbox criteria in CSV format"
-      upload:
-        title: "Upload Checkbox Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,max_value,description</code>
-        <p>The description is optional. Note that if it is not present, the second
-        comma should not appear.</p>"
-        success: "Checkbox criteria successfully uploaded: %{nb_updates} update(s)."
       move_criterion:
         error: "Failed to move checkbox criteria."
 
@@ -1355,22 +1245,6 @@ en:
       level:
         levels: "Levels"
         level_index: "Level %{index}"
-      download:
-        title: "Download Rubric File"
-        prompt: "Rubric criteria are currently available in CSV and YAML."
-        link_csv: "Download rubric in CSV Format"
-        link_yml: "Download rubric in YAML Format"
-      upload:
-        csv:       "Upload CSV"
-        csv_title: "Upload CSV File"
-        csv_prompt: "Select a CSV file to upload"
-        format_csv_html: "
-        <p>The file should have the following format:</p>
-        <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
-        <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br>
-        and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
-        by commas)."
       defaults:
         level_0: "Very Poor"
         level_1: "Weak"
@@ -1494,25 +1368,6 @@ en:
     past_due_date_notice: "Due date for this assignment is in the past for: "
 
     section:
-      name: "Name"
-      legend: "Section"
-      create_new_section: "Add a new section"
-      update_section: "Update Section"
-      add_section: "Add a new section"
-      manage_users: "Manage Users"
-      due_dates_type: "Enable section due dates"
-      no_sections: "There are no sections yet."
-      create:
-        success: "Successfully created section %{name}."
-        error:   "Failed to create section."
-      update:
-        success: "Successfully updated section %{name}."
-        error:   "Failed to update section."
-      delete:
-        success: "Section was deleted successfully."
-        link_confirm: "This will remove this section permanently. Continue?"
-        error_permissions: "You do not have sufficient permissions to delete this section."
-        not_empty: "You cannot delete this section because it has students in it."
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 

@@ -151,7 +151,7 @@
         <%= link_to t('students.students'), controller: 'students' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'sections' %>'>
-        <%= link_to t(:sections), controller: 'sections' %>
+        <%= link_to Section.model_name.human.pluralize, controller: 'sections' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'tas' %>'>
         <%= link_to t('graders.graders'), controller: 'tas' %>

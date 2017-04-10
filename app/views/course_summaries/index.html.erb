@@ -11,7 +11,7 @@
   ]
   if @current_user.admin?
     @heading_buttons += [
-      { link_text: t(:download_csv_grade_report),
+      { link_text: t('download_the', item: t('csv_grade_report')),
         link_path: download_csv_grades_report_course_summaries_path }
     ]
   end

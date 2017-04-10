@@ -1,5 +1,4 @@
 class SectionsController < ApplicationController
-
   before_filter :authorize_only_for_admin
 
   layout 'assignment_content'
@@ -21,14 +20,14 @@ class SectionsController < ApplicationController
     @section = Section.new(section_params)
     if @section.save
       @sections = Section.all
-      flash_message(:success, I18n.t('section.create.success', name: @section.name))
+      flash_message(:success, t('.success', name: @section.name))
       if params[:section_modal]
         render 'close_modal_add_section'
         return
       end
       redirect_to action: 'index'
     else
-      flash_message(:error, I18n.t('section.create.error'))
+      flash_message(:error, t('.error'))
       if params[:section_modal]
         render 'add_new_section_handler'
         return
@@ -46,10 +45,10 @@ class SectionsController < ApplicationController
   def update
     @section = Section.find(params[:id])
     if @section.update_attributes(section_params)
-      flash_message(:success, I18n.t('section.update.success', name: @section.name))
+      flash_message(:success, t('.success', name: @section.name))
       redirect_to action: 'index'
     else
-      flash_message(:error, I18n.t('section.update.error'))
+      flash_message(:error, t('.error'))
       render :edit
     end
   end
@@ -57,17 +56,12 @@ class SectionsController < ApplicationController
   def destroy
     @section = Section.find(params[:id])
 
-    # only destroy section if this user is allowed to do so and the section has no students
-    if @section.user_can_modify?(current_user)
-      if @section.has_students?
-        flash_message(:error, I18n.t('section.delete.not_empty'))
-      else
-        @section.section_due_dates.each(&:destroy)
-        @section.destroy
-        flash_message(:success, I18n.t('section.delete.success'))
-      end
+    if @section.has_students?
+      flash_message(:error, t('.not_empty'))
     else
-      flash_message(:error, I18n.t('section.delete.error_permissions'))
+      @section.section_due_dates.each(&:destroy)
+      @section.destroy
+      flash_message(:success, t('.success'))
     end
     redirect_to action: :index
   end

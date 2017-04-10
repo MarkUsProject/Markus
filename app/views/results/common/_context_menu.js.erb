@@ -20,7 +20,7 @@
         children: [
         <% if annotation_category.annotation_texts.empty? %>
           {
-            title: '<%= t('marker.annotation.no_annotation_in_this_category') %>',
+            title: '<%= t('annotation_categories.no_annotations') %>',
             action: function(event, ui){ return false; },
             disabled: true
           }

@@ -9,8 +9,7 @@
 
 document.getElementById('annotation_summary_list').innerHTML =
   '<%= escape_javascript(render partial: "results/marker/annotation_summary",
-                                locals: { annots: @annotations,
-                                          submission_file_id: @submission_file_id }) %>';
+                                locals: { annots: @annotations }) %>';
 
 hide_all_annotation_content_editors();
 reloadDOM();

@@ -7,7 +7,7 @@
   <%= stylesheet_link_tag('clickable') %>
 <% end %>
 
-<% content_for :title, t('annotations.title',
+<% content_for :title, t('.title',
   assignment_short_identifier: @assignment.is_peer_review? ?
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
     @assignment.short_identifier) %>
@@ -15,7 +15,7 @@
 <% path = new_assignment_annotation_category_path %>
 
 <% @heading_buttons = [
-  { link_text: t('annotations.add_annotation_category'),
+  { link_text: t('.add_annotation_category'),
     link_path: '#',
     html_options: { onclick: "add_annotation_category('#{path}')" } },
   { link_text: t('download'),

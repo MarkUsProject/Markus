@@ -2,7 +2,7 @@
 <%= content_for :modal_title, t('grade_entry_forms.csv.upload_title') %>
 <%= content_for :modal_content do %>
 
-  <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
+  <p><%= t('upload_prompt_csv') %></p>
 
   <%= form_for :upload, url: { controller:'grade_entry_forms',
                                action: 'csv_upload',

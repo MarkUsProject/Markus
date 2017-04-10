@@ -15,8 +15,8 @@
                    class: 'edit_remove_annotation_button' %>
 
     <%= button_to t('remove'),
-                  annotations_path(id: annot.id, submission_file_id: @submission_file_id,
-                                   assignment_id: annot.result.submission.grouping.assignment.id, result_id: annot.result_id),
+                  annotations_path(id: annot.id, assignment_id: annot.result.submission.grouping.assignment.id,
+                                   result_id: annot.result_id),
                   method: :delete,
                   class: 'edit_remove_annotation_button',
                   data: { confirm: t('marker.annotation.sure_to_remove') },
@@ -29,13 +29,12 @@
                           controller: 'annotations' },
                    remote: true do |f| %>
 
-        <%= f.hidden_field :id %>
+        <input type='hidden' name='id' value='<%= annot.id %>'>
         <input type='hidden' name='result_id' value='<%= annot.result_id %>'>
-        <input type='hidden' name='submission_file_id' value='<%= @submission_file_id %>'>
         <input type='hidden' name='assignment_id'
                value='<%= annot.result.submission.grouping.assignment.id %>'>
 
-        <p class='manageAnnotations'><%= f.text_area :content, cols: 60, rows: 5 %></p>
+        <p class='manageAnnotations'><%= f.text_area :content, name: 'content', cols: 60, rows: 5 %></p>
 
         <p class='manageAnnotations'>
           <%= submit_tag t('marker.annotation.submit_edit'),

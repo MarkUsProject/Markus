@@ -16,43 +16,50 @@ var annotation_context_menu = {
   setup: function(annot_path, result_id, assignment_id, file_dl_path) {
     var menu_items = {
       new_annotation: {
-        title: 'New Annotation',
+        title: '<%= I18n.t('marker.annotation.context_menu.new') %>',
         cmd: 'new_annotation',
         action: make_new_annotation,
         disabled: true
       },
       common_annotations: {
-        title: 'Common Annotations <kbd>></kbd>',
+        title: ('<%= I18n.t('marker.annotation.context_menu.common') %>' +
+                ' <kbd>></kbd>'),
         cmd: 'common_annotations',
         disabled: true
       },
+      edit_annotation: {
+        title: '<%= I18n.t('marker.annotation.context_menu.edit') %>',
+        cmd: 'edit_annotation',
+        action: function(event, ui) {
+          var clicked_element = $(ui.target);
+          var annot_id = get_annotation_id(clicked_element);
+          if (annot_id !== null && annot_id.length !== 0) {
+            $.ajax({
+              url:  Routes.edit_annotation_path(annot_id,
+                                                {locale: '<%= I18n.locale %>'}),
+              method: 'GET',
+              data: {
+                id: annot_id,
+                result_id: result_id,
+                assignment_id: assignment_id
+              },
+              dataType: 'script'
+            });
+          }
+        },
+        disabled: true
+      },
       delete_annotation: {
-        title: 'Delete Annotation',
+        title: '<%= I18n.t('marker.annotation.context_menu.delete') %>',
         cmd: "delete_annotation",
         action: function(event, ui) {
           var clicked_element = $(ui.target);
-          var annot_id = '';
-          var sub_file_id = $('#select_file_id').val();
-          if (annotation_type === ANNOTATION_TYPES.CODE) {
-            $.each(clicked_element[0].attributes, function(index, attr) {
-              if (attr.nodeName.toLowerCase()
-                      .indexOf('data-annotationid') != -1) {
-                annot_id = attr.value;
-                // Continue iteration in case of multiple annotations
-              }
-            });
-          } else {
-            annot_id = clicked_element.attr('id')
-                                      .replace('annotation_holder_', '');
-          }
-
-          if (annot_id !== null && annot_id.length !== 0 &&
-              sub_file_id !== null && sub_file_id.length !== 0) {
+          var annot_id = get_annotation_id(clicked_element);
+          if (annot_id !== null && annot_id.length !== 0) {
             $.ajax({
               url: annot_path,
               method: 'DELETE',
               data: { id: annot_id,
-                      submission_file_id: sub_file_id,
                       result_id: result_id,
                       assignment_id: assignment_id },
               dataType: 'script'
@@ -66,24 +73,42 @@ var annotation_context_menu = {
         title: '----'
       },
       copy: {
-        title: 'Copy',
+        title: '<%= I18n.t('marker.annotation.context_menu.copy') %>',
         cmd: 'copy',
         action: function(){ document.execCommand('copy'); },
         disabled: true
       },
       download: {
-        title: 'Download File',
+        title: '<%= I18n.t('marker.annotation.context_menu.download') %>',
         cmd: 'download',
         action: function() { download_func('false'); },
         disabled: false
       },
       download_annotated: {
-        title: 'Download Annotated File',
+        title:
+          '<%= I18n.t('marker.annotation.context_menu.download_annotated') %>',
         cmd: 'download_annotated',
         action: function() { download_func('true'); },
         disabled: false
       }
     };
+
+    function get_annotation_id(clicked_element) {
+      var annot_id = '';
+      if (annotation_type === ANNOTATION_TYPES.CODE) {
+        $.each(clicked_element[0].attributes, function(index, attr) {
+          if (attr.nodeName.toLowerCase()
+            .indexOf('data-annotationid') != -1) {
+            annot_id = attr.value;
+            // Continue iteration in case of multiple annotations
+          }
+        });
+      } else {
+        annot_id = clicked_element.attr('id')
+          .replace('annotation_holder_', '');
+      }
+      return annot_id;
+    }
 
     function download_func(include_annot) {
       var sub_file_id = $('#select_file_id').val();
@@ -107,6 +132,7 @@ var annotation_context_menu = {
       menu: [
         menu_items.new_annotation,
         menu_items.common_annotations,
+        menu_items.edit_annotation,
         menu_items.delete_annotation,
         menu_items.separator,
         menu_items.copy,
@@ -148,6 +174,8 @@ var annotation_context_menu = {
             return clicked_element.hasClass('annotation_holder');
           }
         })();
+        $(document).contextmenu('enableEntry', 'edit_annotation',
+                                annotation_selected);
         $(document).contextmenu('enableEntry', 'delete_annotation',
                                 annotation_selected);
       }
@@ -156,7 +184,8 @@ var annotation_context_menu = {
   set_common_annotations: function(common_annotations_menu_children) {
     if (common_annotations_menu_children.length > 0) {
       $(document).contextmenu("setEntry", "common_annotations", {
-        title: 'Common Annotations <kbd>></kbd>',
+        title: ('<%= I18n.t('marker.annotation.context_menu.common') %>' +
+                ' <kbd>></kbd>'),
         cmd: 'common_annotations',
         addClass: 'has_common_annotations',
         action: function(event, ui){ return false; },

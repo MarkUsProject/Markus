@@ -1,0 +1,27 @@
+fr:
+  annotation_categories:
+    create:
+      success: "La catégorie d'annotations a bien été créée ou mise à jour."
+    delete_annotation_text:
+      confirm: "Supprimer cette annotation va supprimer les commentaires attachés à tous les fichiers auquels elle pourrait être rattachée. Êtes-vous sûr de vouloir faire cela ?"
+      success: "Supprimer la catégorie d'annotations"
+    destroy:
+      success: "Supprimer la catégorie d'annotations"
+      warning: "Supprimer cette catégorie d'annotation va supprimer aussi toutes les annotations. Les annotations supprimées ne seront plus rattachées au devoirs des étudiants. Êtes-vous sûr de vouloir faire cela ?"
+    download:
+      title: "Télécharger les annotations"
+    index:
+      add_annotation_category: "Ajouter une catégorie d'annotations"
+      title: "Annotations pour le projet %{assignment_short_identifier}"
+    update:
+      success: "La catégorie d'annotations a bien été créée ou mise à jour."
+    upload:
+      error: "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
+      success: "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
+      title: "Envoi d'annotations"
+
+    # Miscellaneous
+    add_annotation: "Ajouter une annotation"
+    no_annotations: "Il n'y a pas d'annotation dans cette catégorie"
+    none: "Il n'y a pas encore de catégories d'annotations."
+    one_time_only:  "Une seule fois"
