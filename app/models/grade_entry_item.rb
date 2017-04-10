@@ -60,7 +60,12 @@ class GradeEntryItem < ActiveRecord::Base
     steps = 100 / intervals # number of percentage steps in each interval
     percentage = [100, (result / out_of * 100).ceil].min
     interval = (percentage / steps).floor
-    interval -= (percentage % steps == 0) ? 1 : 0
+    if interval > 0
+      interval -= (percentage % steps == 0) ? 1 : 0
+    else
+      interval = 0
+    end
+
     distribution[interval] += 1
     distribution
   end
