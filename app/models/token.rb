@@ -1,6 +1,6 @@
 class Token < ActiveRecord::Base
 
-  validate   :last_used_date
+  validate :last_used_date
 
   belongs_to :grouping
   validates_presence_of :grouping_id, :remaining
@@ -18,30 +18,57 @@ class Token < ActiveRecord::Base
     end
   end
 
+  def reassign_tokens
+    assignment = grouping.assignment
+    if Time.zone.now < assignment.token_start_date || !grouping.is_valid?
+      self.remaining = 0
+    elsif assignment.unlimited_tokens
+      # grouping has 1 token that is never consumed
+      self.remaining = 1
+    elsif self.last_used.nil?
+      self.remaining = assignment.tokens_per_period
+    else
+      # divide time into chunks of token_period hours
+      # reassign tokens only the first time they are used during the current chunk
+      hours_from_start = (Time.zone.now - assignment.token_start_date) / 3600
+      periods_from_start = (hours_from_start / assignment.token_period).floor
+      last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+      if self.last_used < last_period_begin
+        self.remaining = assignment.tokens_per_period
+      end
+    end
+    self.save
+  end
+
   # Each test will decrease the number of tokens by one
   def decrease_tokens
     if self.remaining > 0
-      self.remaining = self.remaining - 1
-      if self.last_used.nil?
-        self.last_used = DateTime.now
-      end
-      save
+      self.remaining -= 1
+      self.last_used = Time.zone.now
+      self.save
+    else
+      raise I18n.t('automated_tests.error.no_tokens')
     end
   end
 
-  def reassign_tokens
-    assignment = grouping.assignment
-    if DateTime.now < assignment.token_start_date || !grouping.is_valid?
-      self.remaining = 0
-    elsif assignment.unlimited_tokens
-      # grouping has  1 token that is never consumed
-      self.remaining = 1
-    elsif (last_used.nil? ||
-          (last_used.to_time.to_i + assignment.token_period * 60 * 60 <=
-            DateTime.now.to_time.to_i)) && !assignment.non_regenerating_tokens
-      self.remaining = assignment.tokens_per_period
+  # Checks whether a test using tokens is currently being enqueued for execution
+  # (with buffer time in case of unhandled errors that prevented a test result to be stored)
+  def enqueued?
+    buffer_time = MarkusConfigurator.markus_ate_experimental_student_tests_buffer_time
+    if self.last_used.nil? || (self.last_used + buffer_time) < Time.zone.now
+      # first test or buffer time expired (in case some unhandled problem happened)
+      false
+    else
+      last_result_time = self.grouping.student_test_script_results
+                                      .limit(1)
+                                      .pluck(:created_at)
+      if !last_result_time.empty? && self.last_used < last_result_time[0]
+        # test results already came back
+        false
+      else
+        true
+      end
     end
-    self.save
   end
 
   # Update the number of tokens based on the old and new token limits

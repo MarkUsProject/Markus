@@ -96,7 +96,7 @@ class TATest < ActiveSupport::TestCase
       assert = ta.save
     end
 
-    should 'revoke repository permissions when destroying an TA object' do
+    should 'revoke repository permissions when destroying a TA object' do
       ta = Ta.make
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [ta.user_name])
@@ -117,8 +117,8 @@ class TATest < ActiveSupport::TestCase
       destroy_repos
     end
 
-    should 'not remove repository permissions when deleting an TA' do
-      ta =  Ta.make
+    should 'not remove repository permissions when deleting a TA' do
+      ta = Ta.make
       @repo.expects(:delete_bulk_permissions).never
       ta.destroy
     end

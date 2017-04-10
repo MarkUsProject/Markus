@@ -42,7 +42,7 @@
         <% if @assignment.unlimited_tokens || @token.remaining > 0 %>
           <h3><%= t('automated_tests.run_tests') %></h3>
           <% if @grouping.assignment.submission_rule.can_collect_now? %>
-            <p><%= t('automated_tests.due_date_is_passed') %></p>
+            <p><%= t('automated_tests.error.after_due_date') %></p>
           <% else %>
             <p><%= raw t('automated_tests.need_one_file') %></p>
 
@@ -64,15 +64,14 @@
       <div class='block_content'>
         <div class='sub_block test_points'>
           <%= raw t('automated_tests.marks_obtained',
-                    marking: "#{@grouping.get_total_test_script_marks} /
-                              #{@assignment.total_student_test_script_marks}" ) %>
+                    marking: "#{@grouping.last_student_test_marks}/#{@assignment.total_student_test_script_marks}") %>
         </div>
         <div id='test_results' class='sub_block'>
           <% student_results = @test_script_results.where(submission_id: nil) %>
           <%= render partial: 'test_script_result',
-                     locals: { show_output: false,
+                     locals: { current_user: @current_user, ran_by: 'student',
                                latest_date: student_results.nil? ? nil : student_results[0].created_at },
-                     collection: @test_script_results.where(submission_id: nil) %>
+                     collection: @test_script_results %>
         </div>
       </div>
     </div>

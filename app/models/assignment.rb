@@ -129,6 +129,7 @@ class Assignment < ActiveRecord::Base
   validates :due_date, date: true
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
+  after_save :update_repo_auth
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
@@ -311,13 +312,25 @@ class Assignment < ActiveRecord::Base
     self.save
   end
 
+  def instructor_test_scripts
+    self.test_scripts
+        .where(run_by_instructors: true)
+  end
+
+  def student_test_scripts
+    self.test_scripts
+        .where(run_by_students: true)
+  end
+
   def total_instructor_test_script_marks
-    return test_scripts.where('run_by_instructors' => true).sum('max_marks')
+    self.instructor_test_scripts
+        .sum(:max_marks)
   end
 
   #total marks for scripts that are run on student request
   def total_student_test_script_marks
-    return test_scripts.where('run_by_students' => true).sum('max_marks')
+    self.student_test_scripts
+        .sum(:max_marks)
   end
 
   def add_group(new_group_name=nil)
@@ -1058,4 +1071,28 @@ class Assignment < ActiveRecord::Base
       end
     end
   end
+
+  # Repository authentication subtleties:
+  # 1) a repository is associated with a Group, but..
+  # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
+  # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+  # the assignment level, allowing the same Group repo to have different students according to the assignment.
+  # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
+  # Instead, we are going to take a last-deadline approach instead, where we assume that the valid students at any point
+  # in time are the ones valid for the last assignment due.
+  # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
+  # we may want to add or [more frequently] remove some students from it)
+  def self.get_repo_auth_records
+    Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
+              .where(vcs_submit: true)
+              .order(due_date: :desc)
+  end
+
+  def update_repo_auth
+    if self.vcs_submit_was != self.vcs_submit
+      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+      repo.__set_all_permissions
+    end
+  end
+
 end
