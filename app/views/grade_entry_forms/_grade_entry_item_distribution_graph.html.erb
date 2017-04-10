@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Chart', 'chart_config' %>
+  <%= javascript_include_tag 'Chart', 'chart_config', 'markus_colors' %>
 <% end %>
 
 <% unless grade_entry_items.nil? %>
@@ -9,9 +9,6 @@
   <script>
     // Set up graph
     var ctx = document.getElementById('grade_entry_form_<%= grade_entry_form.id %>_grade_entry_items').getContext('2d');
-
-    var colours = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
-        'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'];
 
     // Set up data
     var data = {

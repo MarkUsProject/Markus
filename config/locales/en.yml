@@ -1459,8 +1459,6 @@ en:
     outstanding_remark_request: "%{request_count} outstanding remark request"
     outstanding_remark_requests: "%{request_count} outstanding remark requests"
 
-    #app/views/main/_
-
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution"
     assign_graders:            "Assign Graders"
