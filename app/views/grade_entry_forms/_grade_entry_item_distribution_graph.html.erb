@@ -1,14 +1,14 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Chart', 'chart_config' %>
+    <%= javascript_include_tag 'Chart', 'chart_config' %>
 <% end %>
 
-<% unless @grade_entry_items.nil? %>
+<% unless grade_entry_items.nil? %>
 
-  <canvas id='grade_entry_form<%= @grade_entry_form.id %>_grade_entry_items' width='400' height='350'></canvas>
+  <canvas id='grade_entry_form_<%= grade_entry_form.id %>_grade_entry_items' width='400' height='350'></canvas>
 
   <script>
     // Set up graph
-    var ctx = document.getElementById('grade_entry_form<%= @grade_entry_form.id %>_grade_entry_items').getContext('2d');
+    var ctx = document.getElementById('grade_entry_form_<%= grade_entry_form.id %>_grade_entry_items').getContext('2d');
 
     var colours = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)',
         'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'];
@@ -17,9 +17,9 @@
     var data = {
       labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
       datasets: [
-        <% @grade_entry_items.each_with_index do |grade_entry_item, index| %>
+        <% grade_entry_items.each_with_index do |grade_entry_item, index| %>
           {
-            label: "grade_entry_item_<%= grade_entry_item.id %>",
+            label: "Grade Entry Item <%= grade_entry_item.id %>",
             backgroundColor: colours[<%= index %>],
             data: <%= grade_entry_item.grade_distribution_array(20) %>
           },
@@ -41,7 +41,21 @@
         }
       },
       legend: {
-          display: true
+        display: true,
+        onClick: function(e, legendItem) {
+          var index = legendItem.datasetIndex;
+          var chart = this.chart;
+
+          for (i = 0, ilen = (chart.data.datasets || []).length; i < ilen; ++i) {
+            meta = chart.getDatasetMeta(i);
+            if (i == index) {
+              meta.hidden = false;
+            } else {
+              meta.hidden = true;
+            }
+          }
+          chart.update();
+        }
       }
     };
 
