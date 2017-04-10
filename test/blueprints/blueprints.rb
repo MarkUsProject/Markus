@@ -321,6 +321,7 @@ TestScriptResult.blueprint do
   test_script {TestScript.make}
   marks_earned {0}
   repo_revision {1}
+  requested_by {Admin.make}
 end
 
 TestFile.blueprint do

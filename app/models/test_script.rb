@@ -83,18 +83,7 @@ class TestScript < ActiveRecord::Base
       record.errors.add attr, ' ' + name + ' ' + I18n.t("automated_tests.filename_exists")
     end
   end
-  
-  # validates the uniqueness of seq_num for the same assignment
-  validates_each :seq_num do |record, attr, value|
-    # FIXME: create a loop to loop through all dup_file
-    # dup_files = TestScript.find_all_by_assignment_id_and_seq_num(record.assignment_id, value)
-    dup_file = TestScript.find_by_assignment_id_and_seq_num(record.assignment_id, value)
-    if dup_file && dup_file.id != record.id
-      # FIXME: fix the error message: this is not filename
-      record.errors.add attr, ' ' + value.to_s + ' ' + I18n.t("automated_tests.filename_exists")
-    end
-  end
-  
+
   validates_numericality_of :seq_num
   validates_numericality_of :max_marks, only_integer: true, greater_than_or_equal_to: 0
 
