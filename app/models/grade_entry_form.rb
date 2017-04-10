@@ -59,7 +59,11 @@ class GradeEntryForm < ActiveRecord::Base
   def grade_distribution_array(intervals = 20)
     distribution = Array.new(intervals, 0)
     grade_entry_students.each do |grade_entry_student|
-      result = grade_entry_student.total_grade
+      if grade_entry_student.total_grade.nil?
+        result = 0
+      else
+        result = grade_entry_student.total_grade
+      end
       distribution = update_distribution(distribution, result, out_of_total, intervals)
     end
     distribution.to_json
@@ -69,7 +73,11 @@ class GradeEntryForm < ActiveRecord::Base
     steps = 100 / intervals # number of percentage steps in each interval
     percentage = [100, (result / out_of * 100).ceil].min
     interval = (percentage / steps).floor
-    interval -= (percentage % steps == 0) ? 1 : 0
+    if interval > 0
+      interval -= (percentage % steps == 0) ? 1 : 0
+    else
+      interval = 0
+    end
     distribution[interval] += 1
     distribution
   end
@@ -94,6 +102,79 @@ class GradeEntryForm < ActiveRecord::Base
     # Watch out for division by 0
     return 0 if num_released.zero?
     ((total_marks / num_released) / out_of_total) * 100
+  end
+
+  # Determine the median of all of the students' marks that have been
+  # released so far (return a percentage).
+  def calculate_released_median
+    grade_entry_students = self.grade_entry_students
+                             .where(released_to_student: true)
+    nums_released = grade_entry_students.size
+
+    if nums_released % 2 == 0
+      mid_index = nums_released / 2
+      median = grade_entry_students[mid_index].total_grade
+    else
+      upper_mid_index = nums_released.ceil
+      lower_mid_index = nums_released.floor
+      median = (grade_enty_students[upper_mid_index].total_grade +
+        grade_entry_students[lower_mid_index].total_grade) / 2
+    end
+
+    return median
+  end
+
+  # Determine the number of grade_entry_forms that have been released
+  def calculate_released_grade_entry_forms
+    grade_entry_students = self.grade_entry_students
+                             .where(released_to_student: true)
+    nums_released = grade_entry_students.size
+
+    return nums_released
+  end
+
+  # Determine the number of failed results
+  def calculate_released_failed
+    nums_failed = 0
+
+    grade_entry_students = self.grade_entry_students
+                             .where(released_to_student: true)
+    grade_entry_students.each do |grade_entry_student|
+      if (grade_entry_student.total_grade / out_of_total) < 0.5
+        nums_failed += 1
+      end
+    end
+
+    return nums_failed
+  end
+
+  # Determine the number of zeros
+  def calculate_released_zeros
+    nums_zeros = 0
+
+    grade_entry_students = self.grade_entry_students
+                             .where(released_to_student: true)
+    grade_entry_students.each do |grade_entry_student|
+      if grade_entry_student.total_grade == 0
+        nums_zeros += 1
+      end
+    end
+
+    return nums_zeros
+  end
+
+  # Determine the number of grade_entry_students that have submitted
+  # the grade_entry_form
+  def grade_entry_forms_submitted
+    submitted = 0
+
+    grade_entry_students.each do |grade_entry_student|
+      if !grade_entry_student.total_grade.nil?
+        submitted += 1
+      end
+    end
+
+    return submitted
   end
 
   # Create grade_entry_student for each student in the course

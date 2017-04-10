@@ -630,6 +630,22 @@ en:
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
+    #app/views/grade_entry_forms/_grade_entry_form_summary.html.erb
+
+    grade_entry_form_link: "%{short_id}: %{description}"
+
+    #app/views/grade_entry_forms/_grade_entry_form_info_summary.html.erb
+
+    grade_entry_form_due_date: "Due Date"
+    grade_entry_form_average: "Class Average:"
+    percentage: "%{percentage}%"
+    grade_entry_form_median: "Grade Entry Form Median:"
+    grade_entry_form_submitted: "Grade Entry Forms Submitted:"
+    grade_entry_form_released: "Grade Entry Forms Released:"
+    grade_entry_form_failed: "Number of fails:"
+    grade_entry_form_zeros: "Number of zeros:"
+    refresh_graph: "Refresh the graph"
+
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
     current_grade_entry_forms_title: "Current marks spreadsheets"
     spreadsheet_item: "Marks spreadsheet"
@@ -1587,6 +1603,8 @@ en:
     refresh_graph:             "Refresh the graph"
     outstanding_remark_request: "%{request_count} outstanding remark request"
     outstanding_remark_requests: "%{request_count} outstanding remark requests"
+
+    #app/views/main/_
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution"
