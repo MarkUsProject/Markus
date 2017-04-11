@@ -139,7 +139,7 @@ class TestScriptTest < ActiveSupport::TestCase
 
     should "return true when the seq_num already exists" do
       @validscriptfile.seq_num = 2
-      assert !@validscriptfile.valid?, "script file expected to be valid when the seq_num already exists in the same assignment"
+      assert @validscriptfile.valid?, "script file expected to be valid when the seq_num already exists in the same assignment"
     end
 
     should "return false when the display_description option has an invalid option" do
