@@ -414,12 +414,12 @@ module AutomatedTestsClientHelper
         end
       end
     rescue Exception => e
-        submission = submission_id.nil? ? nil : Submission.find(submission_id)
-        requested_by = User.find_by(api_key: user_api_key)
-        create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
-                                             I18n.t('automated_tests.test_result.all_tests'),
-                                             I18n.t('automated_tests.test_result.bad_server',
-                                                    {hostname: test_server_host, error: e.message}))
+      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+      requested_by = User.find_by(api_key: user_api_key)
+      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_server',
+                                                  {hostname: test_server_host, error: e.message}))
     end
   end
 
