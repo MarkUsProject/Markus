@@ -321,3 +321,17 @@ function update_total_mark(total_mark) {
   document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
 }
+
+function compact_view_toggle() {
+  var toggle_elements = [
+    $('#menus'),
+    $('.top_bar'),
+    $('.title_bar'),
+    $('#footer_wrapper')
+  ];
+  $.each(toggle_elements, function(idx, element){
+    element.toggle();
+  });
+  $('#content').toggleClass('expanded_view');
+  fix_panes();
+}
