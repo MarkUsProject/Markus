@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render partial: 'layouts/head' %>
+  <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
+  <%# React stuff (compressed version + JSX transformer) %>
+  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
+                             'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
+  <%= javascript_include_tag 'application' %>
+  <% # UI LIBRARIES %>
+  <%= javascript_include_tag 'menu',
+                             'layouts',
+                             'help-system' %>
+  <%= yield :head %>
+</head>
+<body>
+<div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
+  <div id='mobile_menu'>
+    <a id='menu_icon'></a>
+  </div>
+  <div id='wrapper' class='wrapper_flex'>
+    <nav id='menus'>
+      <div id='menus_child'>
+        <%= render partial: 'layouts/header' %>
+        <%= render partial: 'layouts/menu' %>
+        <%= render partial: 'layouts/sub_menu' %>
+        <%= render partial: 'layouts/sub_sub_menu' %>
+        <%= render partial: 'layouts/footer' %>
+      </div>
+      <%= render partial: 'layouts/about' %>
+      <%= render partial: 'layouts/role_switch' %>
+      <%= render partial: 'layouts/redirect' %>
+    </nav>
+
+    <div class='top_bar' style="display: none">
+      <div id='working' style='display:none;'>
+        <span><%= t(:working) %></span>
+        <span id='ellipsis'></span>
+      </div>
+      <div class='results_title_bar'>
+        <div class='logo_img flex_vertical_center'>
+          <a href='<%= root_url %>' id='results-logo-img'></a>
+        </div>
+        <h3 class='title_text flex_vertical_center'>
+        <%= t('results.title',
+              { assignment_name: @assignment.short_identifier,
+                group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
+        </h3>
+        <div class='download_text flex_vertical_center'>
+          <a onclick="compact_view_toggle()" style="margin: 0px 15px">Normal View</a>
+          <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+            <%= link_to t(:download),
+                        'javascript:void(0);',
+                        onclick:'modal_download.open();' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <section id='content'>
+      <%= render partial: 'layouts/noscript'%>
+      <%= content_for?(:content) ? yield(:content) : yield %>
+    </section>
+
+    <div id='footer_wrapper'><%= render partial: 'layouts/footer' %></div>
+  </div>
+
+</div>
+
+<%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
+
+<script>
+  $(document).ready(function($) {
+    setInterval(function() {
+      $.get('<%= check_timeout_main_index_path %>');
+    }, 120000);
+  });
+</script>
+</body>
+</html>
