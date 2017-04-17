@@ -64,7 +64,6 @@ en:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
-    assignments:        "Assignments"
     users:              "Users"
     home:               "Home"
     settings:           "Settings"
@@ -776,7 +775,6 @@ en:
       no_peer_submission_yet: "You have no submissions to review yet."
       no_reviews: "No one has reviewed you yet."
       no_group_yet: "You don't have a group yet"
-      grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
             Please wait until the instructor forms groups."
       invitations: "Invitations"

@@ -63,7 +63,6 @@ pt:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Painel"
-    assignments:        "Projetos"
     users:              "Usuários"
     sections:           "Sessões"
     home:               "Home"
@@ -713,7 +712,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       no_peer_submission_yet: "Você não tem observações a avaliar ainda."
       no_reviews: "Ninguém comentou você ainda."
       no_group_yet: "Você ainda não está em um grupo"
-      grace_date_passed: "e o período de tolerância para este projeto já passou"
       not_allowed_to_form_group: "Você não tem permissão para criar um grupo por si só. Por favor, espere até que um instrutor forme os grupos."
       invitations: "Convites"
       invited_by: "Você foi convidado por %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"

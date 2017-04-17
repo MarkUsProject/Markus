@@ -71,7 +71,6 @@ es:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Panel"
-    assignments:        "Proyectos"
     users:              "Usuarios"
     home:               "Inicio"
     settings:           "Configuración"
@@ -953,7 +952,6 @@ es:
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       no_group_yet:                       "Usted no tiene un grupo todavía"
-      grace_date_passed:                  "y el plazo de aplazamiento de gracia para este proyecto ha pasado"
       not_allowed_to_form_group:          "Usted no puede formar grupos para este proyecto. Por favor espere hasta que
                                            el instructor forme los grupos."
       invitations:                        "Invitaciones"

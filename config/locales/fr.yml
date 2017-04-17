@@ -63,7 +63,6 @@ fr:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Tableau de bord"
-    assignments:        "Projets"
     users:              "Utilisateurs"
     sections:           "Sections"
     home:               "Accueil"
@@ -743,7 +742,6 @@ fr:
       no_peer_submission_yet: "Vous avez aucune observation à révision."
       no_reviews: "Personne ne vous a encore de commentaires."
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
-      grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
             Merci d'attendre que les correcteurs et les administrateurs forment des groupes."
       invitations: "Invitations"

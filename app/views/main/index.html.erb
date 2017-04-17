@@ -10,7 +10,7 @@
   <div id='section'>
     <div id='dashboard_lists'>
       <div id='assignment_list'>
-        <h3 class='title'><%= t(:assignments) %></h3>
+        <h3 class='title'><%= Assignment.model_name.human.pluralize %></h3>
         <%= render partial: 'dashboard_list',
                    locals: { controller: 'main' } %>
       </div>
