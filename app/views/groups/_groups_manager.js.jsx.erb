@@ -294,11 +294,11 @@
 
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
-          members.push(<div key={group.members[i].id}>
-            <input id={group.members[i].id}
+          members.push(<div key={group.members[i][0]}>
+            <input id={group.members[i][0]}
               type='checkbox'
-              checked={this.props.selected_students_in_groups.indexOf(group.members[i].id) !== -1}
-              onChange={this.studentCheckboxClicked} /> {group.members[i].user_name}</div>);
+              checked={this.props.selected_students_in_groups.indexOf(group.members[i][0]) !== -1}
+              onChange={this.studentCheckboxClicked} /> {group.members[i][1]} ({group.members[i][2]})</div>);
         }
         g['members'] = members;
         g['valid'] = group.valid;

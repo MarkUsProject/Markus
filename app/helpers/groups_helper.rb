@@ -29,13 +29,14 @@ module GroupsHelper
 
     groupings = target_assignment.groupings
                            .includes(:group,
+                                     :student_memberships,
                                      :non_rejected_student_memberships,
                                      :students,
                                      :inviter)
     groupings.map do |grouping|
       g = grouping.attributes
       g[:name] = grouping.group.group_name
-      g[:members] = grouping.students
+      g[:members] = grouping.student_memberships.map {|membership| [membership.user.id, membership.user.user_name, membership.membership_status]}#grouping.students
       g[:section] = grouping.section
       g[:valid] = grouping.is_valid?
       g[:validate_link] = view_context.link_to(
