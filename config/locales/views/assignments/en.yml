@@ -1,0 +1,4 @@
+en:
+  assignments:
+    due_date:
+      final_due_date_passed: "The deadline, including late or grace periods, has passed."

@@ -1,0 +1,4 @@
+pt:
+  assignments:
+    due_date:
+      final_due_date_passed: "O período de tolerância para este projeto já passou"

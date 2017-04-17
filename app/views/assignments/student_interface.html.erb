@@ -19,6 +19,8 @@
   </h1>
 </div>
 
+<%= render partial: 'shared/flash_message' %>
+
 <div class='student_columns'>
   <div id='student_column_left'>
     <div class='block'>
@@ -63,12 +65,12 @@
 
       <div class='block_content'>
         <% # If student has no group, inform them
-        if @grouping.nil? %>
+           if @grouping.nil? %>
           <p class='notice'>
-            <%= t('student.no_group_yet') %>
+            <%= t('student.no_group_yet') %>.
             <% if @assignment.past_collection_date?(@student.section) %>
-              <%= t('student.grace_date_passed') %>
-            <% end %>!
+              <%= t('assignments.due_date.final_due_date_passed') %>
+            <% end %>
           </p>
 
           <% # Test if the student can form groupings or not
@@ -182,20 +184,6 @@
                 </ul>
               <% else %>
                 <%= flash[:fail_notice] %>
-              <% end %>
-            </div>
-          <% end %>
-
-          <% if flash[:success] && !flash[:success].empty? %>
-            <div class='success'>
-              <% if flash[:success].is_a?(Array) %>
-                <ul>
-                  <% flash[:success].each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              <% else %>
-                <%= flash[:success] %>
               <% end %>
             </div>
           <% end %>
