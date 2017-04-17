@@ -158,7 +158,9 @@ class ResultsController < ApplicationController
 
     # Respond to AJAX request.
     respond_to do |format|
-      format.html
+      format.html do
+        render layout: 'result_content'
+      end
       format.json do
         @request_type = params[:type]
 
