@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170219132130) do
+ActiveRecord::Schema.define(version: 20170417202352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -484,7 +484,7 @@ ActiveRecord::Schema.define(version: 20170219132130) do
     t.datetime "created_at"
     t.integer  "submission_version"
     t.boolean  "submission_version_used"
-    t.integer  "revision_number",          null: false
+    t.text     "revision_identifier",      null: false
     t.datetime "revision_timestamp",       null: false
     t.text     "remark_request"
     t.datetime "remark_request_timestamp"
