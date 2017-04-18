@@ -100,16 +100,16 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
     should "be able to retrieve a revision given a valid revision as integer number" do
       r = @repo.get_latest_revision()
       assert_not_nil(r, "Could not retrieve latest revision")
-      rev_int = r.revision_number
+      rev_int = r.revision_identifier
       new_revision = @repo.get_revision(rev_int)
       assert_instance_of(Repository::MemoryRevision, new_revision, "Revision not of class MemoryRevision")
-      assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
+      assert_equal(new_revision.revision_identifier, rev_int, "Revision numbers (int values) should be equal")
     end
 
     should "raise a RevisionDoesNotExist exception" do
       r = @repo.get_latest_revision()
       assert_not_nil(r, "Could not retrieve latest revision")
-      revision_non_existent = r.revision_number + 3
+      revision_non_existent = r.revision_identifier + 3
       assert_raise(RevisionDoesNotExist) do
         @repo.get_revision(revision_non_existent) # raises exception
       end
@@ -137,15 +137,15 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
 
     add_file_test = "add a new file to an empty repository"
     should(add_file_test) do
-      rev_num = @repo.get_latest_revision().revision_number
+      rev_num = @repo.get_latest_revision().revision_identifier
       txn = @repo.get_transaction(TEST_USER)
       filename = "MyClass.java"
       file_contents = File.read(RESOURCE_DIR+"/"+filename)
       txn.add("/"+filename, file_contents)
-      latest_revision = @repo.get_latest_revision().revision_number
+      latest_revision = @repo.get_latest_revision().revision_identifier
       assert_equal(rev_num, latest_revision, "Revision # should be the same!")
       @repo.commit(txn) # commit transaction
-      latest_revision = @repo.get_latest_revision().revision_number
+      latest_revision = @repo.get_latest_revision().revision_identifier
 
       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
 
@@ -164,7 +164,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       filename = "MyClass.java"
       add_file_helper(@repo, "/"+filename)
       txn = @repo.get_transaction(TEST_USER)
-      txn.remove("/"+filename, @repo.get_latest_revision().revision_number)
+      txn.remove("/"+filename, @repo.get_latest_revision().revision_identifier)
       @repo.commit(txn)
 
       # filename should not be available in repo now
@@ -180,7 +180,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
       assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # repository should know of the added files, now
       files = new_revision.files_at_path("/")
       files_to_add.each do |file|
@@ -201,13 +201,13 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       file_contents = File.read(RESOURCE_DIR+"/"+filename)
       txn.add("/"+filename, file_contents)
       # remove a file
-      txn.remove("/test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+      txn.remove("/test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
       assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       files_to_add << filename # push filename to files_to_add
@@ -235,7 +235,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
       assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       files_to_add << filename # push filename to files_to_add
@@ -255,7 +255,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
   <para>Some text here</para>
 </book>'''
       # test if FileDoesNotExistConflict is raised
-      txn.replace("/file/not/existent", replace_content, "application/xml", @repo.get_latest_revision().revision_number)
+      txn.replace("/file/not/existent", replace_content, "application/xml", @repo.get_latest_revision().revision_identifier)
       assert_equal(false, @repo.commit(txn), "Commit should not have been successful")
       assert_equal(true, txn.conflicts?, "Transaction should have a FileDoesNotExistConflict")
       assert_raise(FileDoesNotExistConflict) do
@@ -264,16 +264,16 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
         end
       end
       new_revision = @repo.get_latest_revision()
-      assert_equal(old_revision.revision_number, new_revision.revision_number, "Revision number should not have been increased, since commit had conflicts!")
+      assert_equal(old_revision.revision_identifier, new_revision.revision_identifier, "Revision number should not have been increased, since commit had conflicts!")
 
       # test clean replace
       txn = @repo.get_transaction(TEST_USER)
-      txn.replace("/test.xml", replace_content, "application/xml", @repo.get_latest_revision().revision_number)
+      txn.replace("/test.xml", replace_content, "application/xml", @repo.get_latest_revision().revision_identifier)
       @repo.commit(txn)
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
       assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       assert_not_nil(files["test.xml"], "File 'test.xml' not found in repository")
@@ -295,13 +295,13 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       repo_timestamp = Time.now
 
       # remove a file
-      txn.remove("/test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+      txn.remove("/test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
       assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       files_to_add << filename # push filename to files_to_add
@@ -319,7 +319,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::MemoryRevision, latest_rev, "Revision number is of wrong type")
-      assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
+      assert_equal(rev_num_by_timestamp.revision_identifier, latest_rev.revision_identifier, "Revision number (int values) do not match")
 
       # test.xml should be in the repository for the timestamp "repo_timestamp"
       rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)
@@ -413,7 +413,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       revision1 = @repo.get_latest_revision()
       new_repo = MemoryRepository.open(REPO_LOCATION)
       revision2 = new_repo.get_latest_revision()
-      assert_equal revision1.revision_number, revision2.revision_number, "These two revision numbers should match!"
+      assert_equal revision1.revision_identifier, revision2.revision_identifier, "These two revision numbers should match!"
     end
 
   end # end context
@@ -514,31 +514,31 @@ class MemoryRevisionTest < Test::Unit::TestCase
     setup do
       @mem_rev = MemoryRevision.new(0) # create new revision
       # add some files to revision
-      dir1 = RevisionDirectory.new( @mem_rev.revision_number, {
+      dir1 = RevisionDirectory.new( @mem_rev.revision_identifier, {
           name: "dir_1",
           path: "/",
-          last_modified_revision: @mem_rev.revision_number,
+          last_modified_revision: @mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
-      file1 = RevisionFile.new( @mem_rev.revision_number, {
+      file1 = RevisionFile.new( @mem_rev.revision_identifier, {
           name: "MyClass.java",
           path: "/dir_1", # put MyClass.java into directory "dir_1"
-          last_modified_revision: @mem_rev.revision_number,
+          last_modified_revision: @mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
-      file2 = RevisionFile.new( @mem_rev.revision_number, {
+      file2 = RevisionFile.new( @mem_rev.revision_identifier, {
           name: "MyInterface.java",
           path: "/dir_1",
-          last_modified_revision: @mem_rev.revision_number,
+          last_modified_revision: @mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
-      file3 = RevisionFile.new( @mem_rev.revision_number, {
+      file3 = RevisionFile.new( @mem_rev.revision_identifier, {
           name: "test.xml",
           path: "/",
-          last_modified_revision: @mem_rev.revision_number,
+          last_modified_revision: @mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
@@ -578,31 +578,31 @@ class MemoryRevisionTest < Test::Unit::TestCase
     should "provide me with a set of changed files in this revision" do
       mem_rev = MemoryRevision.new(0) # create new revision
       # add some files to revision
-      dir1 = RevisionDirectory.new( mem_rev.revision_number, {
+      dir1 = RevisionDirectory.new( mem_rev.revision_identifier, {
           name: "dir_1",
           path: "/",
-          last_modified_revision: mem_rev.revision_number,
+          last_modified_revision: mem_rev.revision_identifier,
           changed: false,
           user_id: TEST_USER
       })
-      file1 = RevisionFile.new( mem_rev.revision_number, {
+      file1 = RevisionFile.new( mem_rev.revision_identifier, {
           name: "MyClass.java",
           path: "/dir_1", # put MyClass.java into directory "dir_1"
-          last_modified_revision: mem_rev.revision_number,
+          last_modified_revision: mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
-      file2 = RevisionFile.new( mem_rev.revision_number, {
+      file2 = RevisionFile.new( mem_rev.revision_identifier, {
           name: "MyInterface.java",
           path: "/dir_1",
-          last_modified_revision: mem_rev.revision_number,
+          last_modified_revision: mem_rev.revision_identifier,
           changed: false,
           user_id: TEST_USER
       })
-      file3 = RevisionFile.new( mem_rev.revision_number, {
+      file3 = RevisionFile.new( mem_rev.revision_identifier, {
           name: "test.xml",
           path: "/",
-          last_modified_revision: mem_rev.revision_number,
+          last_modified_revision: mem_rev.revision_identifier,
           changed: true,
           user_id: TEST_USER
       })
@@ -622,10 +622,10 @@ class MemoryRevisionTest < Test::Unit::TestCase
 
       # more testing
       mem_rev = MemoryRevision.new(0) # create new revision
-      file1 = RevisionFile.new( mem_rev.revision_number, {
+      file1 = RevisionFile.new( mem_rev.revision_identifier, {
           name: "MyClass.java",
           path: "/",
-          last_modified_revision: mem_rev.revision_number,
+          last_modified_revision: mem_rev.revision_identifier,
           changed: false,
           user_id: TEST_USER
       })

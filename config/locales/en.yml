@@ -477,7 +477,7 @@ en:
       find_different_revision: "Find a different revision"
       find_by_revision_timestamp: "Find by Revision Timestamp"
       find_by_revision_number:    "Find by Revision Number"
-      viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_identifier}</span>"
       currently_collected:  "Collected version:"
       no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"

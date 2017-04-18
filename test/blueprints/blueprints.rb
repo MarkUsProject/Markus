@@ -255,7 +255,7 @@ Submission.blueprint do
   grouping {Grouping.make}
   submission_version {1}
   submission_version_used {true}
-  revision_number {1}
+  revision_identifier {1}
   revision_timestamp {1.days.ago}
 end
 

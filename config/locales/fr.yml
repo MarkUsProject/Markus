@@ -460,7 +460,7 @@ fr:
       find_different_revision: "Trouver une autre révision"
       find_by_revision_timestamp: "Par date de révision"
       find_by_revision_number:    "Par numéro de révision"
-      viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_identifier}</span>"
       currently_collected:  "Version recueillies:"
       no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
       current_path:         "Chemin actuel : "

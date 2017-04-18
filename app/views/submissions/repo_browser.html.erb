@@ -44,21 +44,21 @@
       <%= form_tag repo_browser_assignment_submission_path(
                      @assignment,
                      @grouping),
-                   find_revision_by: 'revision_number' do %>
-        <%= select_tag('revision_number',
+                   find_revision_by: 'revision_identifier' do %>
+        <%= select_tag('revision_identifier',
                        options_for_select(@revisions_history.collect { |s|
                           [t('browse_submissions.revision_history',
                              num: s[:num]) +
                            l(s[:date], format: :long_date),
                            s[:num]] },
-                       @revision_number)) %>
+                       @revision_identifier)) %>
         <%= submit_tag t('browse_submissions.find_by_revision_number') %>
       <% end %>
     </fieldset>
   </div>
 
   <div class='global_actions'>
-    <h2><%= raw(t('browse_submissions.viewing_revision', revision_number: @revision_number)) %>
+    <h2><%= raw(t('browse_submissions.viewing_revision', revision_identifier: @revision_identifier)) %>
         (<span id='current_revision_timestamp_display'>
            <%= l(@revision_timestamp, format: :long_date) %>
         </span>)
@@ -66,7 +66,7 @@
         <%= t('browse_submissions.currently_collected') %>
         <% if @grouping.is_collected %>
            <% if @last_submission %>
-               <%= "#" +  @last_submission.revision_number.to_s +
+               <%= "#" + @last_submission.revision_identifier +
           " (" + l(@last_submission.revision_timestamp, format: :long_date) + " )"  %>
            <% else %>
                <%= t('browse_submissions.no_rev_before_deadline') %>
@@ -89,14 +89,14 @@
                       action: 'repo_browser',
                       path: path_memory,
                       id: @grouping.id,
-                      revision_number: @revision_number).html_safe %>
+                      revision_identifier: @revision_identifier).html_safe %>
       <% end %>
     </p>
 
     <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(
                    id: @grouping.id,
                    assignment_id: @assignment.id) do %>
-      <%= hidden_field_tag 'current_revision_number', @revision_number %>
+      <%= hidden_field_tag 'current_revision_identifier', @revision_identifier %>
       <p>
         <%= check_box_tag 'apply_late_penalty' %>
         <%= label_tag 'apply_late_penalty',
@@ -110,7 +110,7 @@
              name='commit'>
       <%= link_to t('download_the', item: t('browse_submissions.all_files')),
                   { action: :downloads,
-                    revision_number: @revision_number,
+                    revision_identifier: @revision_identifier,
                     grouping_id: @grouping.id,
                     path: @path },
                   class: 'button' %>

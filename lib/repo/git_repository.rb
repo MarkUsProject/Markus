@@ -56,7 +56,7 @@ module Repository
           committer: commit_author,
           message: message,
           tree: commit_tree,
-          parents: repo.empty? ? [] : [repo.head.target].compact, # compact in case target returns nil? (suggested upstream)
+          parents: repo.empty? ? [] : [repo.head.target].compact, # compact in case target returns nil (suggested upstream)
           update_ref: 'HEAD'
       }
       Rugged::Commit.create(repo, commit_options)
@@ -80,7 +80,7 @@ module Repository
       end
 
       # Repo is created bare, then clone it in the repository storage location
-      repo_path, sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+      repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       Rugged::Repository.init_at(bare_path, :bare)
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
@@ -257,8 +257,8 @@ module Repository
 
     # Returns hash wrapped
     # as a Git instance
-    def get_revision(revision_number)
-      return Repository::GitRevision.new(revision_number, self)
+    def get_revision(revision_hash)
+      Repository::GitRevision.new(revision_hash, self)
     end
 
     def get_all_revisions
@@ -318,14 +318,14 @@ module Repository
         when :remove
           begin
             remove_file(job[:path], transaction.user_id,
-                        job[:expected_revision_number])
+                        job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
             replace_file(job[:path], job[:file_data], transaction.user_id,
-                         job[:expected_revision_number])
+                         job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -501,8 +501,8 @@ module Repository
     end
 
     # Removes a file from the repository
-    def remove_file(path, author, expected_revision_number = 0)
-      if latest_revision_number != expected_revision_number
+    def remove_file(path, author, expected_revision_identifier = 0)
+      if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       if !path_exists_for_latest_revision?(path)
@@ -515,8 +515,8 @@ module Repository
     end
 
     # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, expected_revision_number = 0)
-      if latest_revision_number != expected_revision_number
+    def replace_file(path, file_data, author, expected_revision_identifier = 0)
+      if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       if !path_exists_for_latest_revision?(path)
@@ -585,11 +585,10 @@ module Repository
 
     # Constructor; Check if revision is actually present in
     # repository
-    def initialize(revision_number, repo)
-      # Get rugged repository
+    def initialize(revision_hash, repo)
+      super(revision_hash)
       @repo = repo.get_repos
-      @revision_number = revision_number
-      @hash = get_hash_of_revision(revision_number)
+      @hash = revision_hash
       @commit = @repo.lookup(@hash)
       @author = @commit.author[:name]
 
@@ -621,14 +620,14 @@ module Repository
         if obj[:type] == :blob
           # This object is a file
           file = Repository::RevisionFile.new(
-            @revision_number,
+            @revision_identifier,
             name: obj[:name],
             # Is the path with or without filename?
             # -- Answer: The path is WITHOUT the filename to be consistent
             # with SVN implementation
             path: path,
             # The following is placeholder information.
-            last_modified_revision: @revision_number,
+            last_modified_revision: @revision_identifier,
             # Last modified date fix here
             last_modified_date: @last_modified_date_author[0],
 
@@ -640,11 +639,11 @@ module Repository
         elsif obj[:type] == :tree
           # This object is a directory
           directory = Repository::RevisionDirectory.new(
-            @revision_number,
+            @revision_identifier,
             name: obj[:name],
             # Same comments as above in RevisionFile
             path: path,
-            last_modified_revision: @revision_number,
+            last_modified_revision: @revision_identifier,
             last_modified_date: @last_modified_date_author[0],
             changed: true,
             user_id: @last_modified_date_author[1][:name]

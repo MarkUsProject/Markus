@@ -133,9 +133,9 @@ module Repository
             'Repository.get_all_revisions: Not yet implemented'
     end
 
-    # Return a Repository::AbstractRevision for a given revision_number
+    # Return a Repository::AbstractRevision for a given revision_identifier
     # if it exists
-    def get_revision(revision_number)
+    def get_revision(revision_identifier)
       raise NotImplementedError,  'Repository.get_revision: Not yet implemented'
     end
 
@@ -240,10 +240,10 @@ module Repository
   class RevisionOutOfSyncConflict < Conflict; end
 
   class AbstractRevision
-    attr_reader :revision_number, :timestamp, :user_id, :comment
+    attr_reader :revision_identifier, :timestamp, :user_id, :comment
 
-    def initialize(revision_number)
-      @revision_number = revision_number
+    def initialize(revision_identifier)
+      @revision_identifier = revision_identifier
     end
 
     def path_exists?(path)
@@ -337,12 +337,12 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_number)
-      @jobs.push(action: :remove, path: path, expected_revision_number: expected_revision_number)
+    def remove(path, expected_revision_identifier)
+      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier)
     end
 
-    def replace(path, file_data, mime_type, expected_revision_number)
-      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_number: expected_revision_number)
+    def replace(path, file_data, mime_type, expected_revision_identifier)
+      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_identifier: expected_revision_identifier)
     end
 
     def add_conflict(conflict)

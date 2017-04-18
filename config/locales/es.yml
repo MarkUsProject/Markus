@@ -640,7 +640,7 @@ es:
       find_different_revision:              "Encontrar una revisión diferente"
       find_by_revision_timestamp:           "Encontrar basado en la fecha y hora de modificación de la revisión"
       find_by_revision_number:              "Encontrar basado en el número de revisión"
-      viewing_revision:                     "Mirando Revisión: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
+      viewing_revision:                     "Mirando Revisión: #<span id=\"current_revision_number_display\">%{revision_identifier}</span>"
       currently_collected:                  "Versión recolectada:"
       no_rev_before_deadline: 	            "Ninguna revisión fue enviada antes de la fecha límite"
       current_path:                         "Ruta al Directorio:"

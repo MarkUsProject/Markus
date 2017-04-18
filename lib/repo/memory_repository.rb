@@ -135,13 +135,13 @@ module Repository
           end
         when :remove
           begin
-            new_rev = remove_file(new_rev, job[:path], job[:expected_revision_number])
+            new_rev = remove_file(new_rev, job[:path], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            new_rev = replace_file_content(new_rev, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+            new_rev = replace_file_content(new_rev, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -173,11 +173,11 @@ module Repository
 
     # Return a RepositoryRevision for a given rev_num (int)
     def get_revision(rev_num)
-      if (@current_revision.revision_number == rev_num)
+      if (@current_revision.revision_identifier == rev_num)
         return @current_revision
       end
       @revision_history.each do |revision|
-        if (revision.revision_number == rev_num)
+        if (revision.revision_identifier == rev_num)
           return revision
         end
       end
@@ -311,10 +311,10 @@ module Repository
       if rev.path_exists?(full_path)
         raise FileExistsConflict # raise conflict if path exists
       end
-      dir = RevisionDirectory.new(rev.revision_number, {
+      dir = RevisionDirectory.new(rev.revision_identifier, {
         name: File.basename(full_path),
         path: File.dirname(full_path),
-        last_modified_revision: rev.revision_number,
+        last_modified_revision: rev.revision_identifier,
         last_modified_date: Time.now,
         changed: true,
         user_id: rev.user_id
@@ -329,10 +329,10 @@ module Repository
         raise FileExistsConflict.new(full_path)
       end
       # file does not exist, so add it
-      file = RevisionFile.new(rev.revision_number, {
+      file = RevisionFile.new(rev.revision_identifier, {
         name: File.basename(full_path),
         path: File.dirname(full_path),
-        last_modified_revision: rev.revision_number,
+        last_modified_revision: rev.revision_identifier,
         changed: true,
         user_id: rev.user_id,
         last_modified_date: Time.now
@@ -348,7 +348,7 @@ module Repository
       end
       # replace content of file in question
       act_rev = get_latest_revision()
-      if (act_rev.revision_number != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       files_list = rev.files_at_path(File.dirname(full_path))
@@ -362,7 +362,7 @@ module Repository
         raise Repostiory::FileDoesNotExistConflict.new(full_path)
       end
       act_rev = get_latest_revision()
-      if (act_rev.revision_number != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       filename = File.basename(full_path)
@@ -376,7 +376,7 @@ module Repository
     # set to false; does not create a deep copy the contents of files
     def copy_revision(original)
       # we only copy the RevisionFile/RevisionDirectory entries
-      new_revision = MemoryRevision.new(original.revision_number)
+      new_revision = MemoryRevision.new(original.revision_identifier)
       new_revision.user_id = original.user_id
       new_revision.comment = original.comment
       new_revision.files_content = {}
@@ -558,7 +558,7 @@ module Repository
     # Not (!) part of the AbstractRepository API:
     # A simple helper method to be used to increment the revision number
     def __increment_revision_number
-      @revision_number += 1
+      @revision_identifier += 1
     end
 
     private
@@ -578,11 +578,11 @@ module Repository
         if object.instance_of?(type) && (object.path == path ||
             alt_path == path || git_path == path)
           if (!only_changed)
-            object.from_revision = @revision_number # set revision number
+            object.from_revision = @revision_identifier # set revision number
             result[object.name] = object
           else
             if object.changed
-              object.from_revision = @revision_number # reset revision number
+              object.from_revision = @revision_identifier # reset revision number
               result[object.name] = object
             end
           end
@@ -600,7 +600,7 @@ module Repository
           alt_path = object.path + '/'
         end
         if (object.path == path || alt_path == path)
-          if (object.from_revision + 1) == @revision_number
+          if (object.from_revision + 1) == @revision_identifier
             return true
           end
         end

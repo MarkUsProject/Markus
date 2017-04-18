@@ -25,11 +25,11 @@ class SubmissionsJob < ActiveJob::Base
       groupings.each do |grouping|
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
-        if options[:revision_number].nil?
+        if options[:revision_identifier].nil?
           time = assignment.submission_rule.calculate_collection_time.localtime
           new_submission = Submission.create_by_timestamp(grouping, time)
         else
-          new_submission = Submission.create_by_revision_number(grouping, options[:revision_number])
+          new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
         end
 
         if assignment.submission_rule.is_a? GracePeriodSubmissionRule
