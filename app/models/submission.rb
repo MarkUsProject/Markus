@@ -13,6 +13,9 @@ class Submission < ActiveRecord::Base
   has_many   :results, -> { order :created_at },
              dependent: :destroy
 
+  has_many   :non_pr_results, -> { where(peer_review_id: nil).order(:created_at) },
+             class_name: 'Result'
+
   has_one    :submitted_remark, -> { where.not remark_request_submitted_at: nil },
              class_name: 'Result'
 
@@ -73,10 +76,6 @@ class Submission < ActiveRecord::Base
     else
       non_pr_results.last
     end
-  end
-
-  def non_pr_results
-    results.find_all {|r| !r.is_a_review?}
   end
 
   def remark_result_id
