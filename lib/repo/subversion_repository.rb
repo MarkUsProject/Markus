@@ -951,6 +951,7 @@ module Repository
     # Constructor; Check if revision is actually present in
     # repository
     def initialize(revision_number, repo)
+      revision_number = revision_number.to_i if revision_number.is_a? String
       @repo = repo
       begin
         @timestamp = @repo.__get_property(:date, revision_number)

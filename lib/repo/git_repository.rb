@@ -1,7 +1,6 @@
 require 'rugged'
-require 'digest/md5'
 
-require File.join(File.dirname(__FILE__),'repository') # load repository module
+require File.join(File.dirname(__FILE__), 'repository') # load repository module
 
 module Repository
 
@@ -182,7 +181,7 @@ module Repository
 
     def get_repos
       # Get rugged repository from GitRepository
-      return @repos
+      @repos
     end
 
     def get_repos_workdir
@@ -591,14 +590,7 @@ module Repository
       @hash = revision_hash
       @commit = @repo.lookup(@hash)
       @author = @commit.author[:name]
-
-      # TODO: get correct version of time
-      @timestamp = @commit.time
-      if @timestamp.instance_of?(String)
-        @timestamp = Time.parse(@timestamp).localtime
-      elsif @timestamp.instance_of?(Time)
-        @timestamp = @timestamp.localtime
-      end
+      @timestamp = @commit.time.in_time_zone
     end
 
     def get_hash_of_revision(revision_number)
