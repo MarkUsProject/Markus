@@ -20,7 +20,7 @@
 <%= javascript_include_tag 'jquery.ui-contextmenu.min' %>
 
 <!-- MathML -->
-<%= javascript_include_tag 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
+<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
 <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
@@ -172,6 +172,7 @@
   </h1>
 
   <div class='heading_buttons'>
+    <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
     <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       <%= link_to t(:download),
                   'javascript:void(0);',

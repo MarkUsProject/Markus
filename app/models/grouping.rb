@@ -799,6 +799,7 @@ class Grouping < ActiveRecord::Base
     # TODO Refactor requested_by to NOT NULL
     # TODO Use native .or() with Rails 5
     self.test_script_results
+        .where(submission: self.current_submission_used)
         .where(['requested_by_id IS NULL OR requested_by_id IN (?)', User.where(type: User::ADMIN).pluck(:id)])
   end
 

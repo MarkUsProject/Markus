@@ -16,7 +16,8 @@ function resize_col() {
   if (offset >= limit && offset <= (1 - limit)) {
     $drag.draggable('option', 'revert', false);
     left.style.width = offset * panes_width + 'px';
-    right.style.width = (1 - offset) * panes_width - 5 + 'px';
+    var drag_width = $drag.width() + 2 * parseInt($drag.css('margin-left'));
+    right.style.width = (1 - offset) * panes_width - drag_width + 'px';
   } else {
     // Just in case we somehow go past the limit
     $drag.draggable('option', 'revert', true);
@@ -39,21 +40,25 @@ function make_draggable() {
       // Calculate offset and resize
       offset = (ui.offset.left - panes_offset.left) / panes_width;
       resize_col();
+      $drag.css('height', ($drag.parent().height() -
+        2 * parseInt($drag.css('margin-top'))) + 'px');
     }
   });
 }
 
 /* Calculates the bounds for the drag bar */
 function calculate_bounds() {
-  bounds = [panes_offset.left + limit * panes_width,
+  var drag_width = $drag.width() + 2 * parseInt($drag.css('margin-left'));
+  bounds = [panes_offset.left + limit * panes_width + drag_width,
             panes_offset.top,
-            panes_offset.left + panes_width - (limit * panes_width) - 5,
+            panes_offset.left + panes_width -
+              (limit * panes_width) - drag_width,
             panes_offset.top + $panes.height()];
 }
 
 /* On page load: get DOM elements, calculate some stuff,
    and initialize the drag bar/columns.  */
-$(document).ready(function() {
+$(window).load(function() {
   left   = document.getElementById('left-pane');
   right  = document.getElementById('right-pane');
   $panes = $('#panes');
@@ -70,14 +75,17 @@ $(document).ready(function() {
 
   // Initialize the drag bar and resize the columns
   make_draggable();
+  $drag.css('height', ($drag.parent().height() -
+                       2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   resize_col();
+  $("*[role='tab']").on('click', fix_panes);
 });
 
 /* Handle window resizing */
 // NOTE: Don't manually override window.onresize. This will conflict with
 // other such uses, as we do in menu.js (TODO: change that one, too).
-window.addEventListener('resize', function(event) {
+function fix_panes(){
   panes_width = $panes.width();
   panes_offset = $panes.offset();
   resize_col();
@@ -88,5 +96,8 @@ window.addEventListener('resize', function(event) {
   make_draggable();
 
   // Make sure the drag bar stays in the right place
+  $drag.css('height', ($drag.parent().height() -
+    2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
-});
+}
+window.addEventListener('resize', fix_panes);

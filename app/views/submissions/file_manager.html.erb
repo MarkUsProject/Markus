@@ -151,7 +151,9 @@
       <%= submit_tag t(:submit),
                      disabled: !@grouping.is_valid?,
                      onclick: 'set_onbeforeunload(false); submitFile(event)' %>
-      <%= button_tag t(:close), onclick: 'modal_addnew.close();' %>
+      <%= button_tag t(:close),
+                     type: 'button',
+                     onclick: 'set_onbeforeunload(false); modal_addnew.close();' %>
     </section>
   <% end %>
 </aside>

@@ -75,37 +75,16 @@ class KeyPairsController < ApplicationController
 
   # Adds a specific public key to a specific user.
   def add_key(_path)
-    ga_repo = Gitolite::GitoliteAdmin.new(
-      File.join(REPOSITORY_STORAGE, 'gitolite-admin'), GITOLITE_SETTINGS)
-
-    # Check to see if an individual repo exists for this user
-    key = Gitolite::SSHKey.from_file(_path)
-
-    ga_repo.add_key(key)
-
-    admin_key = Gitolite::SSHKey.from_file(GITOLITE_SETTINGS[:public_key])
-    ga_repo.add_key(admin_key)
-
-    # update Gitolite repo
-    ga_repo.save_and_apply
+    # TODO: Think of a generic mechanism
   end
 
   # Deletes a specific public key from a specific user.
   def remove_key(_path)
-    ga_repo = Gitolite::GitoliteAdmin.new(
-      REPOSITORY_STORAGE + '/gitolite-admin', GITOLITE_SETTINGS)
-
-    # Check to see if an individual repo exists for this user
-    key = Gitolite::SSHKey.from_file(_path)
-
-    # Remove key from gitolite
-    ga_repo.rm_key(key)
-
-    # Update Gitolite repo
-    ga_repo.save_and_apply
-
+    # TODO: Think of a generic mechanism
     # Delete key file
-    File.delete(_path)
+    if File.exist?(_path)
+      File.delete(_path)
+    end
   end
 
   # POST /key_pairs

@@ -57,7 +57,7 @@ module CourseSummariesHelper
   def get_mark_for_all_assignments_for_student(student, assignments)
     marks = Hash[assignments.map {|a| [a.id, 0]}]
 
-    student.groupings.each do |g|
+    student.accepted_groupings.each do |g|
       sub = g.current_submission_used
       if current_user.admin?
         marks[g.assignment_id] = sub ? sub.get_latest_result.total_mark : 0

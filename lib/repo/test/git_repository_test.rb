@@ -414,7 +414,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
   context "A repository with an authorization file specified" do
 
     GIT_AUTH_FOLDER = GIT_TEST_REPOS_DIR + "/git_auth"
-    GIT_AUTH_FILE = GIT_AUTH_FOLDER + "/conf/gitolite.conf"
+    GIT_AUTH_FILE = GIT_AUTH_FOLDER + "/conf/conf"
 
     setup do
       #cleanup any files that may be left over
@@ -423,7 +423,6 @@ class GitRepositoryTest < ActiveSupport::TestCase
       FileUtils.remove_dir(TEST_REPO, true)
       FileUtils.rm(GIT_AUTH_FILE, force: true)
 
-      ga_repo =  Gitolite::GitoliteAdmin.bootstrap(GIT_AUTH_FOLDER)
       # have a clean auth file
       FileUtils.cp(GIT_AUTH_FILE + '.orig', GIT_AUTH_FILE)
       # create repository first
@@ -637,7 +636,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       # use a different svn_authz file for this test
       old_git_auth = GIT_AUTH_FILE
       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff"
-      new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
+      new_git_auth_file = new_git_auth + "/conf/conf"
 
       if !File.directory?(new_git_auth)
         FileUtils.mkdir_p(new_git_auth)
@@ -736,7 +735,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
     teardown do
       new_git_auth = GIT_TEST_REPOS_DIR + "/git_auth_bulk_stuff2"
-      new_git_auth_file = new_git_auth + "/conf/gitolite.conf"
+      new_git_auth_file = new_git_auth + "/conf/conf"
 
       # remove auth file if it exists
       if File.directory?(new_git_auth)

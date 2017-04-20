@@ -17,7 +17,7 @@
 
 <% @assignments.each do |assignment| %>
   <% if assignment == @assignments.first %>
-    <li class='section'><%= t('assignments') %></li>
+    <li class='section'><%= Assignment.model_name.human.pluralize %></li>
   <% end %>
 
   <% if assignment.is_peer_review? %>

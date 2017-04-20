@@ -37,10 +37,10 @@
         <% # If student has no group, inform them
            if @grouping.nil? %>
             <p class='notice'>
-              <%= t('student.no_group_yet') %>
+              <%= t('student.no_group_yet') %>.
               <% if @assignment.past_collection_date?(@student.section) %>
-                  <%= t('student.grace_date_passed') %>
-              <% end %>!
+                <%= t('assignments.due_date.final_due_date_passed') %>
+              <% end %>
             </p>
         <% else %>
             <%# Since the student has a group already, we display information about the group only %>
