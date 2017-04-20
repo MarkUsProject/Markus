@@ -17,16 +17,13 @@ module Repository
 
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
-        raise ConfigurationError.new(
-            "Required config 'IS_REPOSITORY_ADMIN' not set")
+        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if MarkusConfigurator.markus_config_repository_storage.nil?
-        raise ConfigurationError.new(
-            "Required config 'REPOSITORY_STORAGE' not set")
+        raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new(
-            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
@@ -55,7 +52,7 @@ module Repository
           committer: commit_author,
           message: message,
           tree: commit_tree,
-          parents: repo.empty? ? [] : [repo.head.target].compact, # compact in case target returns nil (suggested upstream)
+          parents: repo.empty? ? [] : [repo.head.target].compact, # compact if target returns nil (suggested upstream)
           update_ref: 'HEAD'
       }
       Rugged::Commit.create(repo, commit_options)
@@ -70,12 +67,11 @@ module Repository
     # location 'connect_string'
     def self.create(connect_string)
       if GitRepository.repository_exists?(connect_string)
-        raise RepositoryCollision.new(
-                "There is already a repository at #{connect_string}")
+        raise RepositoryCollision.new("There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
-        raise IOError.new("Could not create a repository at #{connect_string}:
-                          some directory with same name exists already")
+        raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
+                           already")
       end
 
       # Repo is created bare, then clone it in the repository storage location
@@ -99,22 +95,41 @@ module Repository
     # Static method: Opens an existing Git repository
     # at location 'connect_string'
     def self.open(connect_string)
-      repo = GitRepository.new(connect_string)
+      GitRepository.new(connect_string)
     end
 
     # static method that should yield to a git repo and then close it
     def self.access(connect_string)
-      repo = self.open(connect_string)
+      repo = GitRepository.open(connect_string)
       yield repo
     end
 
     # static method that deletes the git repo
     # rm everything? or only .git?
     def self.delete(repo_path)
-      #repo = Rugged::Repository.new(repo_path)
-      #ref = Rugged::Reference.lookup(repo, "refs/heads/master")
-      #ref.delete!
       FileUtils.rm_rf(repo_path)
+    end
+
+    def get_revision(revision_hash)
+      Repository::GitRevision.new(revision_hash, self)
+    end
+
+    def get_latest_revision
+      get_revision(latest_revision_identifier)
+    end
+
+    def get_revision_by_timestamp(target_timestamp, _path = nil)
+      # returns a Git instance representing the revision at the
+      # current timestamp, should be a ruby time stamp instance
+      walker = Rugged::Walker.new(@repos)
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(latest_commit)
+      walker.each do |commit|
+        return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
+      end
+      # If no revision number was found, display the latest revision
+      # with an error message
+      raise 'No revision found before supplied timestamp.'
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -247,19 +262,6 @@ module Repository
       return start
     end
 
-    # Returns a Repository::SubversionRevision instance
-    # holding the latest Subversion repository revision
-    # number
-    def get_latest_revision
-      return get_revision(latest_revision_number)
-    end
-
-    # Returns hash wrapped
-    # as a Git instance
-    def get_revision(revision_hash)
-      Repository::GitRevision.new(revision_hash, self)
-    end
-
     def get_all_revisions
       youngest_revision = latest_revision_number
       log = []
@@ -267,22 +269,6 @@ module Repository
         log.push(Repository::GitRevision.new(num, self))
       end
       return log
-    end
-
-    def get_revision_by_timestamp(target_timestamp, _path = nil)
-      # returns a Git instance representing the revision at the
-      # current timestamp, should be a ruby time stamp instance
-      walker = Rugged::Walker.new(self.get_repos)
-      walker.push(self.get_repos.head.target)
-      walker.each do |c|
-        if c.time <= target_timestamp
-          @revision_number = get_revision_number(c)
-          return get_revision(@revision_number)
-        end
-      end
-      # If no revision number was found, display the latest revision
-      # with an error message
-      raise 'No revision found before supplied timestamp.'
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
@@ -483,8 +469,17 @@ module Repository
     ####################################################################
 
     private
+
+    def latest_commit
+      @repos.head.target
+    end
+
+    def latest_revision_identifier
+      latest_commit.oid
+    end
+
     def latest_revision_number(_path = nil, _revision_number = nil)
-      return get_revision_number(@repos.head.target)
+      get_revision_number(latest_commit)
     end
 
     def path_exists_for_latest_revision?(path)
