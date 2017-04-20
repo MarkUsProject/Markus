@@ -59,9 +59,7 @@ class GradeEntryForm < ActiveRecord::Base
   def grade_distribution_array(intervals = 20)
     distribution = Array.new(intervals, 0)
     grade_entry_students.each do |grade_entry_student|
-      if grade_entry_student.total_grade.nil?
-        result = 0
-      else
+      if !grade_entry_student.total_grade.nil?
         result = grade_entry_student.total_grade
       end
       distribution = update_distribution(distribution, result, out_of_total, intervals)
