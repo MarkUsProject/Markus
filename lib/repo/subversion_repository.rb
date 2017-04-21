@@ -258,6 +258,14 @@ module Repository
 
     end
 
+    def get_all_revisions
+      revisions = []
+      1.upto(latest_revision_number) do |revision_number|
+        revisions << get_revision(revision_number)
+      end
+      revisions
+    end
+
     # Returns a Repository::TransAction object, to work with. Do operations,
     # like 'add', 'remove', etc. on the transaction instead of the repository
     def get_transaction(user_id, comment="")

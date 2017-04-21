@@ -45,73 +45,74 @@ class SubmissionsController < ApplicationController
     begin
       if params[:revision_identifier]
         @revision_identifier = params[:revision_identifier]
+        @revision = repo.get_revision(@revision_identifier)
       elsif params[:revision_timestamp]
-        @revision_identifier = repo.get_revision_by_timestamp(
-            Time.parse(params[:revision_timestamp])).revision_identifier
+        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
+        @revision_identifier = @revision.revision_identifier
       else
-        @revision_identifier = repo.get_latest_revision.revision_identifier
+        @revision = repo.get_latest_revision
+        @revision_identifier = @revision.revision_identifier
       end
-      if @revision_identifier == 0
-        @revision_identifier = 1
-      end
-      @revision = repo.get_revision(@revision_identifier)
       @revision_timestamp = @revision.timestamp
     rescue Exception => e
       flash[:error] = e.message
-      @revision_identifier = repo.get_latest_revision.revision_identifier
-      @revision_timestamp = repo.get_latest_revision.timestamp
+      @revision = repo.get_latest_revision
+      @revision_identifier = @revision.revision_identifier
+      @revision_timestamp = @revision.timestamp
     end
-    # Generate a revisions' history with date and num
+
+    # Generate a revisions' history with date and identifier
+    assignment_path = File.join(@assignment.repository_folder, @path)
     @revisions_history = []
-
-    # Good idea from git branch. But SubversionRepository has
-    # no get_all_revisions method... yet (TODO)
-    # hmm. Let's make rev_number a method and have it return an array.
-    # repo.get_all_revisions.each do |revision|
-    #  @revisions_history << {num: revision.revision_identifier,
-    #                         date: revision.timestamp}
-    rev_number = repo.get_latest_revision.revision_identifier + 1
-    assign_path = File.join(@assignment.repository_folder, @path)
-    rev_number.times do |rev|
-      begin
-        revision = repo.get_revision(rev)
-        unless revision.path_exists?(assign_path)
-          raise 'error'
-        end
-      rescue Exception
-        revision = nil
-      end
-      if revision && (!revision.changed_files_at_path(assign_path).empty? ||
-                      !revision.changed_filenames_at_path(assign_path).empty?)
-        @revisions_history << { num: revision.revision_identifier,
-                                date: revision.timestamp }
-        unless params[:revision_identifier] || params[:revision_timestamp]
-          @revision_identifier = revision.revision_identifier
-          @revision_timestamp = revision.timestamp
-        end
-      end
+    full_history = []
+    repo.get_all_revisions.each do |revision|
+      @revisions_history << { num: revision.revision_identifier, date: revision.timestamp }
+      full_history << { num: revision.revision_identifier, date: revision.timestamp }
     end
+    @revisions_history = full_history if @revisions_history.empty?
 
-    if @revisions_history.empty?
-      rev_number.times do |rev|
-        begin
-          revision = repo.get_revision(rev)
-          unless revision.path_exists?(assign_path)
-            raise 'error'
-          end
-        rescue Exception
-          revision = nil
-        end
-        if revision
-          @revisions_history << { num: revision.revision_identifier,
-                                  date: revision.timestamp }
-          unless params[:revision_identifier] || params[:revision_timestamp]
-            @revision_identifier = revision.revision_identifier
-            @revision_timestamp = revision.timestamp
-          end
-        end
-      end
-    end
+    # rev_number = repo.get_latest_revision.revision_identifier + 1
+    # assign_path = File.join(@assignment.repository_folder, @path)
+    # rev_number.times do |rev|
+    #   begin
+    #     revision = repo.get_revision(rev)
+    #     unless revision.path_exists?(assign_path)
+    #       raise 'error'
+    #     end
+    #   rescue Exception
+    #     revision = nil
+    #   end
+    #   if revision && (!revision.changed_files_at_path(assign_path).empty? ||
+    #                   !revision.changed_filenames_at_path(assign_path).empty?)
+    #     @revisions_history << { num: revision.revision_identifier,
+    #                             date: revision.timestamp }
+    #     unless params[:revision_identifier] || params[:revision_timestamp]
+    #       @revision_identifier = revision.revision_identifier
+    #       @revision_timestamp = revision.timestamp
+    #     end
+    #   end
+    # end
+    #
+    # if @revisions_history.empty?
+    #   rev_number.times do |rev|
+    #     begin
+    #       revision = repo.get_revision(rev)
+    #       unless revision.path_exists?(assign_path)
+    #         raise 'error'
+    #       end
+    #     rescue Exception
+    #       revision = nil
+    #     end
+    #     if revision
+    #       @revisions_history << { num: revision.revision_identifier,
+    #                               date: revision.timestamp }
+    #       unless params[:revision_identifier] || params[:revision_timestamp]
+    #         @revision_identifier = revision.revision_identifier
+    #         @revision_timestamp = revision.timestamp
+    #       end
+    #     end
+    #   end
+    # end
 
     last_rev = @grouping.submissions
     @last_submission = nil

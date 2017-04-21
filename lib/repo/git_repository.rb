@@ -132,6 +132,17 @@ module Repository
       raise 'No revision found before supplied timestamp.'
     end
 
+    def get_all_revisions
+      revisions = []
+      walker = Rugged::Walker.new(@repos)
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(latest_commit)
+      walker.each do |commit|
+        revisions << get_revision(commit.oid)
+      end
+      revisions
+    end
+
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
     # object of the file itself.
     def get_blob(oid)
@@ -260,15 +271,6 @@ module Repository
         break if commit.oid == hash
       end
       return start
-    end
-
-    def get_all_revisions
-      youngest_revision = latest_revision_number
-      log = []
-      (1..youngest_revision).each do |num|
-        log.push(Repository::GitRevision.new(num, self))
-      end
-      return log
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
