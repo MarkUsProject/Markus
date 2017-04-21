@@ -19,10 +19,4 @@ Chart.defaults.bar.scales.xAxes = [{
   }
 }];
 
-Chart.defaults.bar.scales.yAxes = [{
-  ticks: {
-    beginAtZero: true
-  }
-}];
-
 Chart.defaults.global.legend.display = false;
