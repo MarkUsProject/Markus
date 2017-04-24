@@ -169,7 +169,8 @@
   <% if @current_user.student? %>
     webViewerLoad("<%= download_assignment_results_path(select_file_id: submission_file_id,
                                                         id: @result.id,
-                                                        show_in_browser: true ) %>"); // PDF
+                                                        show_in_browser: true,
+                                                        from_codeviewer: true) %>"); // PDF
   <% else %>
     webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,
                                                                    show_in_browser: true ) %>"); // PDF
