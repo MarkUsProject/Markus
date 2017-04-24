@@ -240,10 +240,11 @@ module Repository
   class RevisionOutOfSyncConflict < Conflict; end
 
   class AbstractRevision
-    attr_reader :revision_identifier, :timestamp, :user_id, :comment
+    attr_reader :revision_identifier, :revision_identifier_ui, :timestamp, :user_id, :comment
 
     def initialize(revision_identifier)
       @revision_identifier = revision_identifier
+      @revision_identifier_ui = @revision_identifier
     end
 
     def path_exists?(path)

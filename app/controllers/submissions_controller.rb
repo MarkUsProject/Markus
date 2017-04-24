@@ -64,12 +64,15 @@ class SubmissionsController < ApplicationController
     # Generate a revisions' history with date and identifier
     assignment_path = File.join(@assignment.repository_folder, @path)
     @revisions_history = []
-    full_history = []
+    all_revisions = []
     repo.get_all_revisions.each do |revision|
-      @revisions_history << { num: revision.revision_identifier, date: revision.timestamp }
-      full_history << { num: revision.revision_identifier, date: revision.timestamp }
+      all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
+                         date: revision.timestamp }
+      #next unless revision.path_exists?(assignment_path)
+      @revisions_history << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
+                              date: revision.timestamp }
     end
-    @revisions_history = full_history if @revisions_history.empty?
+    @revisions_history = all_revisions if @revisions_history.empty?
 
     # rev_number = repo.get_latest_revision.revision_identifier + 1
     # assign_path = File.join(@assignment.repository_folder, @path)
@@ -118,7 +121,7 @@ class SubmissionsController < ApplicationController
     @last_submission = nil
     if !last_rev.empty?
       selected = @revisions_history.select do |rev|
-        rev[:num] == last_rev.last.revision_identifier
+        rev[:id] == last_rev.last.revision_identifier
       end
 
       @last_submission = selected.empty? ? nil : last_rev.last

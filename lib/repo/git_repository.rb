@@ -583,6 +583,7 @@ module Repository
     # repository
     def initialize(revision_hash, repo)
       super(revision_hash)
+      @revision_identifier_ui = @revision_identifier[0..6]
       @repo = repo.get_repos
       @hash = revision_hash
       @commit = @repo.lookup(@hash)
