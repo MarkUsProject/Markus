@@ -40,7 +40,7 @@ module CourseSummariesHelper
     ]
 
     @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form)
-                   .group('grade_entry_students.user_id', 'grade_entry_items .grade_entry_form_id')
+                   .group('grade_entry_students.user_id', 'grade_entry_items.grade_entry_form_id')
                    .sum('grade')
   end
 
