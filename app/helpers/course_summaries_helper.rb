@@ -4,8 +4,10 @@ module CourseSummariesHelper
   # Get JSON data for the table
   def get_table_json_data
     course_information
-    all_students = Student.includes(:memberships, groupings: :current_submission_used, grade_entry_students: :grades)
-    student_list = all_students.map do |student|
+    all_students = Student.includes(:memberships,
+                                    groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
+                                    grade_entry_students: :grades)
+    student_list = all_students.all.map do |student|
       get_student_information(student)
     end
     student_list.to_json
@@ -24,14 +26,22 @@ module CourseSummariesHelper
     @weights = get_marking_weights_for_all_marking_schemes
     @gef_weights = get_gef_marking_weights_for_all_marking_schemes
 
+    rubric_max = RubricCriterion.group(:assignment_id).sum(:max_mark)
+    flexible_max = FlexibleCriterion.group(:assignment_id).sum(:max_mark)
+    checkbox_max = CheckboxCriterion.group(:assignment_id).sum(:max_mark)
     @max_marks = Hash[Assignment.all.map do |a|
-      [a.id, a.max_mark]
+      [a.id, rubric_max.fetch(a.id, 0) + flexible_max.fetch(a.id, 0) + checkbox_max.fetch(a.id, 0)]
     end
     ]
+
     @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
       [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
     end
     ]
+
+    @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form)
+                   .group('grade_entry_students.user_id', 'grade_entry_items .grade_entry_form_id')
+                   .sum('grade')
   end
 
   def get_student_information(student)
@@ -76,20 +86,7 @@ module CourseSummariesHelper
   end
 
   def get_mark_for_all_gef_for_student(student, gefs)
-    gef_marks = Hash[gefs.map {|gef| [gef.id, 0]}]
-    student.grade_entry_students.each do |ges|
-      form_id = ges.grade_entry_form_id
-      if current_user.admin?
-        gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
-      else
-        if ges.released_to_student
-          gef_marks[form_id] = ges.total_grade.nil? ? 0 : ges.total_grade
-        else
-          gef_marks[form_id] = 0
-        end
-      end
-    end
-    gef_marks
+    Hash[gefs.map {|gef| [gef.id, @gef_marks.fetch([student.id, gef.id], 0)]}]
   end
 
   def get_max_mark_for_grade_entry_form(gef_id)
