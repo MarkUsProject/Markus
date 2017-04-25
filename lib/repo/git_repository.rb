@@ -135,7 +135,7 @@ module Repository
     def get_all_revisions
       revisions = []
       walker = Rugged::Walker.new(@repos)
-      walker.sorting(Rugged::SORT_DATE)
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
       walker.push(latest_commit)
       walker.each do |commit|
         revisions << get_revision(commit.oid)
@@ -585,10 +585,31 @@ module Repository
       super(revision_hash)
       @revision_identifier_ui = @revision_identifier[0..6]
       @repo = repo.get_repos
-      @hash = revision_hash
-      @commit = @repo.lookup(@hash)
+      @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
       @timestamp = @commit.time.in_time_zone
+    end
+
+    def path_exists?(path)
+      begin
+        @commit.tree.path(path)
+        true
+      rescue Rugged::TreeError
+        false
+      end
+    end
+
+    def changes_at_path?(path)
+      # get all diffs with parent commits (a merge has 2+ parents), and analyze each change
+      @commit.parents.each do |parent|
+        parent.diff(@commit).each_delta do |delta|
+          # renames are off by default (showing up as del+add), so using new_file is enough
+          if delta.new_file[:path].include?(path)
+            return true
+          end
+        end
+      end
+      false
     end
 
     def get_hash_of_revision(revision_number)
@@ -718,59 +739,6 @@ module Repository
 
       directories
     end
-
-    # Returns true if the path given to this function reflects an
-    # actual file in the repository, false otherwise
-    def path_exists?(path)
-      # Chop the forward-slash off the end
-      if path[-1] == '/'
-        path = path[0..-2]
-      end
-
-      # Split the path into parts
-      parts = path.split('/')
-
-      tree_ptr = @commit.tree
-
-      # Follow the 'tree-path' and return false if we cannot find
-      # each part along the way
-      parts.each do |path_part|
-        found = false
-        tree_ptr.each do |current_tree|
-          # For each object in this tree check for our part
-          if current_tree[:name] == path_part
-            # Move to next part of path (next tree / subdirectory)
-            tree_ptr = @repo.lookup(current_tree[:oid])
-            found = true
-            break
-          end
-        end
-        if !found
-          return found
-        end
-      end
-      # If we made it this far, the path was traversed successfully
-      true
-    end
-
-    # Return changed files at 'path'
-    def changed_files_at_path(path)
-      files = files_at_path(path)
-
-      files.select do |_name, file|
-        file.changed
-      end
-    end
-
-    def changed_filenames_at_path(path)
-      files = files_at_path(path)
-
-      files.select do |_name, file|
-        file.changed
-      end
-      return files.keys
-    end
-
 
     def last_modified_date()
       return self.timestamp

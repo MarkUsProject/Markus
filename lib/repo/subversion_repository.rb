@@ -1005,9 +1005,8 @@ module Repository
       return result
     end
 
-    # Return changed files at 'path' (recursively)
-    def changed_files_at_path(path)
-      return files_at_path_helper(path, true)
+    def changes_at_path?(path)
+      !files_at_path_helper(path, true).empty?
     end
 
     # Return the names of changed files at this revision at 'path'

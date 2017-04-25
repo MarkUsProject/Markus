@@ -247,8 +247,14 @@ module Repository
       @revision_identifier_ui = @revision_identifier
     end
 
+    # Checks if +path+ reflects an actual file or directory in this revision of the repository.
     def path_exists?(path)
       raise NotImplementedError, "Revision.path_exists? not yet implemented"
+    end
+
+    # Checks if there have been changes under +path+ due to this revision.
+    def changes_at_path?(path)
+      raise NotImplementedError, "Revision.changes_at_path? not yet implemented"
     end
 
     # Return all of the files in this repository at the root directory
@@ -258,10 +264,6 @@ module Repository
 
     def directories_at_path(path)
       raise NotImplementedError, "Revision.directories_at_path not yet implemented"
-    end
-
-    def changed_files_at_path(path)
-      raise NotImplementedError, "Revision.changed_files_at_path not yet implemented"
     end
 
   end

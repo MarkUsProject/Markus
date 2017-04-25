@@ -37,7 +37,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
-    @path = params[:path] || '/'
+    @path = params[:path] || File::SEPARATOR
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
     repo = @grouping.group.repo
@@ -68,7 +68,9 @@ class SubmissionsController < ApplicationController
     repo.get_all_revisions.each do |revision|
       all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
                          date: revision.timestamp }
-      #next unless revision.path_exists?(assignment_path)
+      next if
+        !revision.path_exists?(assignment_path) ||
+        !revision.changes_at_path?(assignment_path)
       @revisions_history << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
                               date: revision.timestamp }
     end

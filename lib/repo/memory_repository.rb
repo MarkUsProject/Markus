@@ -523,8 +523,8 @@ module Repository
       return files_at_path_helper(path, false, RevisionDirectory)
     end
 
-    def changed_files_at_path(path)
-      return files_at_path_helper(path, true)
+    def changes_at_path?(path)
+      !files_at_path_helper(path, true).empty?
     end
 
     # Not (!) part of the AbstractRepository API:
