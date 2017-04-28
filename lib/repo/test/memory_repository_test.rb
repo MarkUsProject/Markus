@@ -611,14 +611,12 @@ class MemoryRevisionTest < Test::Unit::TestCase
       mem_rev.__add_file(file1, File.read(RESOURCE_DIR+"/"+file1.name))
       @mem_rev.__add_directory(dir1)
 
-      files = mem_rev.changed_files_at_path("/")
-      assert_equal("test.xml", files.keys()[0], "Wrong filename!")
-      assert_equal(File.read(RESOURCE_DIR+"/"+files.keys()[0]), mem_rev.files_content[files[files.keys()[0]].to_s], "Content mismatch")
-      files = mem_rev.changed_files_at_path("/dir_1")
-      assert_equal("MyClass.java", files.keys()[0], "Wrong filename!")
-      assert_equal(File.read(RESOURCE_DIR+"/"+files.keys()[0]), mem_rev.files_content[files[files.keys()[0]].to_s], "Content mismatch")
-      files = mem_rev.changed_files_at_path("/some/not/existent/path")
-      assert_equal({}, files, "There shouldn't be any files")
+      changed = mem_rev.changes_at_path?("/")
+      assert_equal(true, changed, "There should be changes")
+      changed = mem_rev.changes_at_path?("/dir_1")
+      assert_equal(true, changed, "There should be changes")
+      changed = mem_rev.changes_at_path?("/some/not/existent/path")
+      assert_equal(false, changed, "There shouldn't be any changes")
 
       # more testing
       mem_rev = MemoryRevision.new(0) # create new revision
@@ -630,8 +628,8 @@ class MemoryRevisionTest < Test::Unit::TestCase
           user_id: TEST_USER
       })
       mem_rev.__add_file(file1, File.read(RESOURCE_DIR+"/"+file1.name))
-      files = mem_rev.changed_files_at_path("/")
-      assert_equal({}, files, "There shouldn't be any _CHANGED_ files")
+      changed = mem_rev.changes_at_path?("/")
+      assert_equal(false, changed, "There shouldn't be any _CHANGED_ files")
     end
   end # end context
 end # end class MemoryRevisionTest
