@@ -49,11 +49,11 @@
 
       $.ajax({
         url: '<%= repo_browser_assignment_submission_path(
-          @assignment,
+          @grouping.assignment,
           id: @grouping.id,
           path: @path,
-          revision_timestamp: @revision_timestamp,
-          revision_identifier: @revision_identifier) %>',
+          revision_timestamp: @revision.timestamp,
+          revision_identifier: @revision.revision_identifier) %>',
         method: 'POST',
         dataType: 'json',
         success: function(data) {
