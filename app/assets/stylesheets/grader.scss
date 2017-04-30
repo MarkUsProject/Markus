@@ -217,6 +217,10 @@
 }
 
 .dp-highlighter {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
   .annotation_highlighted_text {
     background-color: #f99;
     color: $dark-grey;
@@ -228,7 +232,7 @@
   }
 
   ol {
-    overflow-y: hidden;
+    flex-grow: 1;
   }
 }
 
