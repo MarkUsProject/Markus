@@ -1,4 +1,5 @@
 require 'csv_invalid_line_error'
+require 'histogram/array'
 
 class Assignment < ActiveRecord::Base
   include RepositoryHelper
@@ -130,6 +131,8 @@ class Assignment < ActiveRecord::Base
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
   after_save :update_repo_auth
+
+  BLANK_MARK = ''
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC') }
@@ -703,40 +706,46 @@ class Assignment < ActiveRecord::Base
     get_criteria.size
   end
 
-  # Returns an array with the number of groupings who scored between
-  # certain percentage ranges [0-5%, 6-10%, ...]
-  # intervals defaults to 20
-  def grade_distribution_as_percentage(intervals=20)
-    distribution = Array.new(intervals, 0)
+  # Determine the total mark for a particular student, as a percentage
+  def calculate_total_percent(result)
+    total = result.total_mark
+
+    percent = BLANK_MARK
     out_of = max_mark
 
-    if out_of == 0
-      return distribution
+    # Check for NA mark or division by 0
+    unless total.nil? || out_of == 0
+      percent = (total / out_of) * 100
     end
+    percent
+  end
 
-    steps = 100 / intervals # number of percentage steps in each interval
+  # An array of all the grades for an assignment
+  def percentage_grades_array
+    grades = Array.new()
     groupings = self.groupings.includes([{current_submission_used: :results}])
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if submission && submission.has_result?
         result = submission.get_latest_completed_result
-        unless result.nil?
-          percentage = (result.total_mark / out_of * 100).ceil
-          if percentage == 0
-            distribution[0] += 1
-          elsif percentage >= 100
-            distribution[intervals - 1] += 1
-          elsif (percentage % steps) == 0
-            distribution[percentage / steps - 1] += 1
-          else
-            distribution[percentage / steps] += 1
-          end
+        unless result.nil? || result.total_mark.nil?
+          grades.push(calculate_total_percent(result))
         end
       end
-    end # end of groupings loop
+    end
 
-    distribution
+    return grades
+  end
+
+  # Returns grade distribution for a grade entry item for each student
+  def grade_distribution_array(intervals = 20)
+    data = percentage_grades_array
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count(0)
+    distribution[-1] = distribution.last + data.count{ |x| x > 100}
+    return distribution
   end
 
   # Returns all the TAs associated with the assignment
@@ -922,7 +931,7 @@ class Assignment < ActiveRecord::Base
     end
     true
   end
-  
+
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
