@@ -109,65 +109,33 @@ class GradeEntryForm < ActiveRecord::Base
   # released so far (return a percentage).
   def calculate_released_average
     percentage_grades = released_percentage_grades_array
-    # byebug
-    avg_mark = percentage_grades.mean
-    return avg_mark
+    return percentage_grades.mean
   end
 
   # Determine the median of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_median
     percentage_grades = released_percentage_grades_array
-    med = percentage_grades.median
-    return med
+    return percentage_grades.median
   end
 
   # Determine the number of grade_entry_forms that have been released
   def calculate_released_grade_entry_forms
-    nums_released = released_percentage_grades_array.number.round
-
-    return nums_released
+    return released_percentage_grades_array.number.round
   end
 
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted
-
-    submitted = percentage_grades_array.number.round
-
-    return submitted
+    return percentage_grades_array.number.round
   end
 
-  # Determine the number of failed results
   def calculate_released_failed
-    nums_failed = 0
-
-    percentage_grades = released_percentage_grades_array
-    percentage_grades.each do |percentage_grade|
-      if percentage_grade < 50
-        nums_failed += 1
-      end
-    end
-
-    return nums_failed
+    return released_percentage_grades_array.count { |mark| mark < 50 }
   end
-
-  # # Determine the number of zeros
-  # def calculate_released_zeros
-  #   nums_zeros = 0
-  #
-  #   percentage_grades = released_percentage_grades_array
-  #   percentage_grades.each do |percentage_grade|
-  #     if percentage_grade == 0
-  #       nums_zeros += 1
-  #     end
-  #   end
-  #
-  #   return nums_zeros
-  # end
 
   def calculate_released_zeros
-    released_percentage_grades_array.count(&:zero?)
+    return released_percentage_grades_array.count(&:zero?)
   end
 
   # Create grade_entry_student for each student in the course
