@@ -54,6 +54,8 @@ gem 'jbuilder', '~> 2.0'
 
 gem 'js-routes'
 
+gem 'histogram', '~> 0.2.4.1'
+
 # Exam template requirements
 gem 'prawn'
 gem 'prawn-qrcode'
