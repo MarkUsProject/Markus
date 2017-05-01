@@ -1,4 +1,5 @@
 require 'csv_invalid_line_error'
+require 'descriptive_statistics'
 
 class Assignment < ActiveRecord::Base
   include RepositoryHelper
@@ -270,18 +271,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def average(marks)
-    marks.empty? ? 0 : marks.reduce(:+) / marks.size.to_f
+    marks.empty? ? 0 : marks.mean
   end
 
   def median(marks)
-    count = marks.size
-    return 0 if count.zero?
-
-    if count.even?
-      average([marks[count/2 - 1], marks[count/2]])
-    else
-      marks[count/2]
-    end
+    marks.empty? ? 0 : marks.median
   end
 
   def self.get_current_assignment
@@ -922,7 +916,7 @@ class Assignment < ActiveRecord::Base
     end
     true
   end
-  
+
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
