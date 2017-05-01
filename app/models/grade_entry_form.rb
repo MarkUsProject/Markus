@@ -61,7 +61,7 @@ class GradeEntryForm < ActiveRecord::Base
   def percentage_grades_array
     grades = Array.new()
     grade_entry_students.each do |grade_entry_student|
-      if !grade_entry_student.total_grade.nil?
+      if !grade_entry_student.nil? && !grade_entry_student.total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
@@ -69,10 +69,13 @@ class GradeEntryForm < ActiveRecord::Base
     return grades
   end
 
+  # Returns grade distribution for a grade entry form for all students
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
-    histogram = data.histogram(intervals, :min => 0, :max => 100, :bin_boundary => :min, :bin_width => 5)
-    return histogram.fetch(1)
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count(0)
+    return distribution
   end
 
   # Determine the average of all of the students' marks that have been
@@ -114,7 +117,7 @@ class GradeEntryForm < ActiveRecord::Base
         grade_entry_students[lower_mid_index].total_grade) / 2
     end
 
-    return median
+    return ((median / out_of_total) * 100)
   end
 
   # Determine the number of grade_entry_forms that have been released
