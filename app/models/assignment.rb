@@ -743,8 +743,9 @@ class Assignment < ActiveRecord::Base
     data = percentage_grades_array
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count(0)
-    distribution[-1] = distribution.last + data.count{ |x| x > 100}
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+
     return distribution
   end
 
