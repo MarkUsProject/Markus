@@ -35,20 +35,12 @@ describe GradeEntryItem do
     it { is_expected.not_to allow_value(-100).for(:position) }
   end
 
-  context 'A good Grade Entry Item model' do
-    before { GradeEntryItem.create(:position => 1) }
-
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(
-      :grade_entry_form_id).with_message(
-      I18n.t('grade_entry_forms.invalid_name')) }
-  end
-
   # Make sure different grade entry forms can have grade entry items
   # with the same name
-  it 'allow same column name for different grade entry forms' do
-    grade_entry_form_1 = GradeEntryForm.create!(:short_identifier => 'a', :is_hidden => false)
-    grade_entry_form_2 = GradeEntryForm.create!(:short_identifier => 'b', :is_hidden => false)
-    column = grade_entry_form_1.grade_entry_items.create!(:name => 'Q1', :position => 1, :out_of => 1)
+  it 'allows same column name for different grade entry forms' do
+    grade_entry_form_1 = GradeEntryForm.create!(short_identifier: 'a', is_hidden: false)
+    grade_entry_form_2 = GradeEntryForm.create!(short_identifier: 'b', is_hidden: false)
+    column = grade_entry_form_1.grade_entry_items.create!(name: 'Q1', position: 1, out_of: 1)
 
     # Re-use the column name for a different grade entry form
     dup_column = GradeEntryItem.new
