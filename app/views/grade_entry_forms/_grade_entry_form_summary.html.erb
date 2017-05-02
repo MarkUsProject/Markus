@@ -1,0 +1,34 @@
+<% content_for :head do %>
+    <%= javascript_include_tag 'Chart', 'chart_config' %>
+<% end %>
+
+<% unless @grade_entry_form.nil? %>
+    <div class='assignment_summary'>
+      <h2 class='title'>
+        <%= link_to I18n.t(:grade_entry_form_link,
+                           short_id: @grade_entry_form.short_identifier,
+                           description: @grade_entry_form.description),
+                    grades_grade_entry_form_path(@grade_entry_form),
+                    class: 'title' %>
+      </h2>
+
+      <div id='grade_entry_form_<%= @grade_entry_form.id %>_graph' class='left'>
+        <%= render partial: 'grade_entry_forms/grade_distribution_graph', locals: { grade_entry_form: @grade_entry_form } %>
+      </div>
+
+      <div class='right'>
+        <%= render partial: 'grade_entry_forms/grade_entry_form_info_summary', locals: { grade_entry_form: @grade_entry_form } %>
+        <p>
+          <%= link_to I18n.t(:refresh_graph),
+                      refresh_graph_grade_entry_form_path(id: @grade_entry_form.id),
+                      remote: true %>
+        </p>
+      </div>
+
+      <br>
+      <div id='grade_entry_form_<%= @grade_entry_form.id %>_grade_entry_items_graph' class='ta_grade_distribution'>
+        <%= render partial: 'grade_entry_forms/grade_entry_item_distribution_graph', locals: { grade_entry_form: @grade_entry_form, grade_entry_items: @grade_entry_items } %>
+      </div>
+    </div>
+<% end %>
+

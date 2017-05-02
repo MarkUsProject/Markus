@@ -13,8 +13,8 @@
       // Set up data
 
       var data = {
-        // Set up labels [0, 5, ..., 95]
-        labels: Array.apply(null, Array(20)).map(function (_, i) { return i * 5; }),
+        // Set up labels [0, 5, ..., 100]
+        labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
         datasets: [
           <% tas.each_with_index do |ta, index| %>
             {

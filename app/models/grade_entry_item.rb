@@ -22,6 +22,31 @@ class GradeEntryItem < ActiveRecord::Base
   validates_presence_of :position
   validates_numericality_of :position, greater_than_or_equal_to: 0
 
+  def grade_distribution_array(intervals = 20)
+    distribution = Array.new(intervals, 0)
+    grades.each do |grade|
+      result = grade.grade
+      if out_of > 0
+        distribution = update_distribution(distribution, result, out_of, intervals)
+      end
+    end
+    distribution.to_json
+  end
+
+  def update_distribution(distribution, result, out_of, intervals)
+    steps = 100 / intervals # number of percentage steps in each interval
+    percentage = [100, (result / out_of * 100).ceil].min
+    interval = (percentage / steps).floor
+    if interval > 0
+      interval -= (percentage % steps == 0) ? 1 : 0
+    else
+      interval = 0
+    end
+
+    distribution[interval] += 1
+    distribution
+  end
+
   # Create new grade entry items (or update them if they already exist) using
   # the first two rows from a CSV file
   #
