@@ -14,23 +14,20 @@ describe StudentMembership do
     end
 
     it 'valid format of membership status' do
-      membership = StudentMembership.new
-      membership.grouping_id = 1
-      membership.user_id = 1
-      membership.membership_status = 'jdbffh'
-      expect(membership.save).to eq(false)
+      membership = StudentMembership.create(grouping_id: 1, user_id: 1, membership_status: 'blah')
+      expect(membership.valid?).to be false
     end
 
     it 'be able to spot an inviter' do
       membership = StudentMembership.create(
         membership_status: StudentMembership::STATUSES[:inviter])
-      expect(membership.inviter?).to eq(true)
+      expect(membership.inviter?).to be true
     end
 
     it 'be able to spot an non-inviter' do
       membership = StudentMembership.create(
         membership_status: StudentMembership::STATUSES[:accepted])
-      expect(membership.inviter?).to eq(false)
+      expect(membership.inviter?).to be false
     end
 
   end
