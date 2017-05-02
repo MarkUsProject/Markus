@@ -109,7 +109,7 @@ class GradeEntryForm < ActiveRecord::Base
   # released so far (return a percentage).
   def calculate_released_average
     percentage_grades = released_percentage_grades_array
-    return percentage_grades.mean
+    percentage_grades.blank? ? 0 :  percentage_grades.mean
   end
 
   # Determine the median of all of the students' marks that have been

@@ -245,7 +245,8 @@ class Assignment < ActiveRecord::Base
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    get_criteria(user_visibility).map(&:max_mark).sum.round(2)
+    s = get_criteria(user_visibility).map(&:max_mark).sum
+    s.nil? ? 0 : s.round(2)
   end
 
   # calculates summary statistics of released results for this assignment
