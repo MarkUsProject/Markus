@@ -195,6 +195,14 @@ $(document).ready(function() {
       mark_elem.addClass('remarked');
     }
   });
+
+  $('.error, .notice, .warning').append(
+    $('<a />', {
+      text: 'hide',
+      style: 'float: right;',
+      onclick: '$(this).parent().hide()'
+    })
+  );
 });
 
 function expand_unmarked(elem, criterion_class) {
