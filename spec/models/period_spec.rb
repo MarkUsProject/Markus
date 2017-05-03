@@ -12,16 +12,7 @@ describe Period do
     it { is_expected.to allow_value(100).for(:hours) }
     it { is_expected.not_to allow_value(-1).for(:hours) }
     it { is_expected.not_to allow_value(-100).for(:hours) }
-  end
-
-  it 'A valid grace period' do
-      period = Period.create(hours: 1)
-      expect(period.valid?).to be true
-  end
-
-  it 'invalid grace period with nil hours' do
-    period = Period.create(hours: nil)
-    expect(period.valid?).to be false
+    it { is_expected.not_to allow_value(nil).for(:hours) }
   end
 
   context 'A penalty decay period' do
@@ -60,7 +51,5 @@ describe Period do
       @period.deduction = 'string'
       expect(@period.valid?).to be false
     end
-
   end
-
 end
