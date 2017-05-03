@@ -19,7 +19,7 @@ describe Membership do
     before { @membership = StudentMembership.create(membership_status: StudentMembership::STATUSES[:accepted]) }
 
     it 'not be inviter' do
-      expect(!@membership.inviter?).to be true
+      expect(@membership.inviter?).to be false
     end
   end
 end
