@@ -1,4 +1,5 @@
 require 'csv_invalid_line_error'
+require 'descriptive_statistics'
 
 class Assignment < ActiveRecord::Base
   include RepositoryHelper
@@ -244,7 +245,8 @@ class Assignment < ActiveRecord::Base
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    get_criteria(user_visibility).map(&:max_mark).sum.round(2)
+    s = get_criteria(user_visibility).map(&:max_mark).sum
+    s.nil? ? 0 : s.round(2)
   end
 
   # calculates summary statistics of released results for this assignment
@@ -270,18 +272,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def average(marks)
-    marks.empty? ? 0 : marks.reduce(:+) / marks.size.to_f
+    marks.empty? ? 0 : marks.mean
   end
 
   def median(marks)
-    count = marks.size
-    return 0 if count.zero?
-
-    if count.even?
-      average([marks[count/2 - 1], marks[count/2]])
-    else
-      marks[count/2]
-    end
+    marks.empty? ? 0 : marks.median
   end
 
   def self.get_current_assignment
@@ -922,7 +917,7 @@ class Assignment < ActiveRecord::Base
     end
     true
   end
-  
+
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
