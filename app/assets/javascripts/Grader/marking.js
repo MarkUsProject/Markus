@@ -1,4 +1,10 @@
 $(document).ready(function() {
+  // Maintain compact view if toggled on
+  if (typeof(Storage) !== 'undefined' &&
+    localStorage.getItem('compact_view') === 'on') {
+    compact_view_toggle(true);
+  }
+
   // Changing the marking status
   $('#marking_state').change(function() {
     update_status(this, this.value)
@@ -8,7 +14,7 @@ $(document).ready(function() {
     var params = {
       'value': value || '',
       'authenticity_token': AUTH_TOKEN
-    }
+    };
 
     $.ajax({
       url:  element.getAttribute('data-action'),
@@ -22,7 +28,7 @@ $(document).ready(function() {
     var params = {
       'value': this.checked || '',
       'authenticity_token': AUTH_TOKEN
-    }
+    };
 
     $.ajax({
       url:  this.getAttribute('data-action'),
@@ -136,7 +142,7 @@ $(document).ready(function() {
       // Put caret in correct position
       this.selectionStart = this.selectionEnd = start + 2;
     }
-  })
+  });
 
   // Handle the expand/collapse buttons
   $('#expand_all').click(function() {
@@ -189,6 +195,14 @@ $(document).ready(function() {
       mark_elem.addClass('remarked');
     }
   });
+
+  $('.error, .notice, .warning').append(
+    $('<a />', {
+      text: 'hide',
+      style: 'float: right;',
+      onclick: '$(this).parent().hide()'
+    })
+  );
 });
 
 function expand_unmarked(elem, criterion_class) {
@@ -322,7 +336,7 @@ function update_total_mark(total_mark) {
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
 }
 
-function compact_view_toggle() {
+function compact_view_toggle(init) {
   var toggle_elements = [
     $('#menus'),
     $('.top_bar'),
@@ -333,5 +347,12 @@ function compact_view_toggle() {
     element.toggle();
   });
   $('#content').toggleClass('expanded_view');
-  fix_panes();
+  if (!init) {
+    if (typeof(Storage) !== 'undefined') {
+      var compact_view = localStorage.getItem('compact_view');
+      if (compact_view) localStorage.removeItem('compact_view');
+      else localStorage.setItem('compact_view', 'on');
+    }
+    fix_panes();
+  }
 }
