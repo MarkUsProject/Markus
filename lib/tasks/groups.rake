@@ -9,7 +9,7 @@ namespace :db do
       puts "Populating #{assignment.short_identifier} with #{num_groups} groups"
       num_groups.times do |time|
         student = students[time]
-        if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
+        if assignment.short_identifier == 'A0' || assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
             )

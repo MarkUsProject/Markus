@@ -4,13 +4,17 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
-    #Right now, only generate marks for two assignments
-    Grouping.where(assignment_id: [1, 2]).each do |grouping|
+    #Right now, only generate marks for three assignments
+    Grouping.where(assignment_id: [1, 2, 3]).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
       result = new_submission.results.first
       grouping.is_collected = true
       grouping.save
+
+      if grouping.assignment_id == 1
+        grouping.assignment.submission_rule.apply_submission_rule(new_submission)
+      end
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
@@ -29,6 +33,7 @@ namespace :db do
       end
     end
 
+    puts 'Release Results for Assignments'
     #Release the marks after they have been inputed into the assignments
     Result.all.each do |result|
       result.marking_state = 'complete'
