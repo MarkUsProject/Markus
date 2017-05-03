@@ -114,6 +114,7 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     hike (1.2.3)
+    histogram (0.2.4.1)
     i18n (0.8.1)
     jbuilder (2.4.1)
       activesupport (>= 3.0.0, < 5.1)
@@ -339,6 +340,7 @@ DEPENDENCIES
   execjs
   factory_girl_rails
   faker
+  histogram (~> 0.2.4.1)
   i18n
   jbuilder (~> 2.0)
   jquery-rails

@@ -1,3 +1,5 @@
+require 'histogram/array'
+
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
 class GradeEntryItem < ActiveRecord::Base
@@ -22,29 +24,44 @@ class GradeEntryItem < ActiveRecord::Base
   validates_presence_of :position
   validates_numericality_of :position, greater_than_or_equal_to: 0
 
-  def grade_distribution_array(intervals = 20)
-    distribution = Array.new(intervals, 0)
-    grades.each do |grade|
-      result = grade.grade
-      if out_of > 0
-        distribution = update_distribution(distribution, result, out_of, intervals)
-      end
+  BLANK_MARK = ''
+
+  # Determine the total mark for a particular student, as a percentage
+  def calculate_total_percent(grade)
+    total = grade.grade
+
+    percent = BLANK_MARK
+    out_of = self.out_of
+
+    # Check for NA mark or division by 0
+    unless total.nil? || out_of == 0
+      percent = (total / out_of) * 100
     end
-    distribution.to_json
+    percent
   end
 
-  def update_distribution(distribution, result, out_of, intervals)
-    steps = 100 / intervals # number of percentage steps in each interval
-    percentage = [100, (result / out_of * 100).ceil].min
-    interval = (percentage / steps).floor
-    if interval > 0
-      interval -= (percentage % steps == 0) ? 1 : 0
-    else
-      interval = 0
+  # An array of all grade_entry_students' percentage total grades that are not nil
+  def percentage_grades_array
+    grade_entry_item_grades = Array.new()
+
+    grades.each do |grade|
+      if !grade.nil? && !grade.grade.nil?
+        grade_entry_item_grades.push(calculate_total_percent(grade))
+      end
     end
 
-    distribution[interval] += 1
-    distribution
+    return grade_entry_item_grades
+  end
+
+  # Returns grade distribution for a grade entry item for each student
+  def grade_distribution_array(intervals = 20)
+    data = percentage_grades_array
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+
+    return distribution
   end
 
   # Create new grade entry items (or update them if they already exist) using

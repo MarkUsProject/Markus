@@ -1,3 +1,5 @@
+require 'histogram/array'
+
 # we need repository and permission constants
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository')
 
@@ -14,6 +16,8 @@ class Ta < User
 
   has_many :grade_entry_student_tas, dependent: :delete_all
   has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all
+
+  BLANK_MARK = ''
 
   def memberships_for_assignment(assignment)
     assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
@@ -57,37 +61,43 @@ class Ta < User
                         .count
   end
 
-  def grade_distribution_array(assignment, intervals = 20)
-    distribution = Array.new(intervals, 0)
+  # Determine the total mark for a particular student, as a percentage
+  def calculate_total_percent(assignment, result)
+    total = result.total_mark
+
+    percent = BLANK_MARK
+    out_of = assignment.max_mark
+
+    # Check for NA mark or division by 0
+    unless total.nil? || out_of == 0
+      percent = (total / out_of) * 100
+    end
+    percent
+  end
+
+  # An array of all the grades for an assignment
+  def percentage_grades_array(assignment)
+    grades = Array.new()
     assignment.groupings.joins(:tas)
       .where(memberships: { user_id: id }).find_each do |grouping|
       submission = grouping.current_submission_used
       next if submission.nil?
       result = submission.get_latest_completed_result
       next if result.nil?
-      distribution = update_distribution(distribution, result,
-                                         assignment.max_mark, intervals)
-    end # end of groupings loop
-    distribution.to_json
+      grades.push(calculate_total_percent(assignment, result))
+    end
+
+    return grades
   end
 
-  def update_distribution(distribution, result, out_of, intervals)
-    if out_of == 0
-      distribution[0] += 1
-      return distribution
-    end
+  # Returns grade distribution for a grade entry item for each student
+  def grade_distribution_array(assignment, intervals = 20)
+    data = percentage_grades_array(assignment)
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
 
-    steps = 100 / intervals # number of percentage steps in each interval
-    percentage = (result.total_mark / out_of * 100).ceil
-    if percentage == 0
-      distribution[0] += 1
-    elsif percentage >= 100
-      distribution[intervals - 1] += 1
-    elsif (percentage % steps) == 0
-      distribution[percentage / steps - 1] += 1
-    else
-      distribution[percentage / steps] += 1
-    end
-    distribution
+    return distribution
   end
 end

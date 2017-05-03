@@ -1043,7 +1043,7 @@ describe Assignment do
     end
   end
 
-  describe '#grade_distribution_as_percentage' do
+  describe '#grade_distribution_array' do
     before :each do
       @assignment = create(:assignment)
       5.times { create(:rubric_criterion, assignment: @assignment) }
@@ -1051,9 +1051,9 @@ describe Assignment do
 
     context 'when there are no submitted marks' do
       it 'returns the correct distribution' do
-        expect(@assignment.grade_distribution_as_percentage)
+        expect(@assignment.grade_distribution_array)
           .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
-        expect(@assignment.grade_distribution_as_percentage(10))
+        expect(@assignment.grade_distribution_array(10))
           .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       end
     end
@@ -1078,22 +1078,22 @@ describe Assignment do
 
       context 'without an interval provided' do
         it 'returns distribution with default 20 intervals' do
-          expect(@assignment.grade_distribution_as_percentage.size).to eq 20
+          expect(@assignment.grade_distribution_array.size).to eq 20
         end
 
         it 'returns the correct distribution' do
-          expect(@assignment.grade_distribution_as_percentage)
+          expect(@assignment.grade_distribution_array)
             .to eq [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
         end
       end
 
       context 'with an interval provided' do
         it 'returns distribution in the provided interval' do
-          expect(@assignment.grade_distribution_as_percentage(10).size).to eq 10
+          expect(@assignment.grade_distribution_array(10).size).to eq 10
         end
 
         it 'returns the correct distribution' do
-          expect(@assignment.grade_distribution_as_percentage(10))
+          expect(@assignment.grade_distribution_array(10))
             .to eq [1, 0, 0, 0, 3, 0, 0, 0, 0, 2]
         end
       end

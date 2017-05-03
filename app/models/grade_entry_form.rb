@@ -1,5 +1,6 @@
 require 'encoding'
 require 'descriptive_statistics'
+require 'histogram/array'
 
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
@@ -83,26 +84,15 @@ class GradeEntryForm < ActiveRecord::Base
     return grades
   end
 
+  # Returns grade distribution for a grade entry form for all students
   def grade_distribution_array(intervals = 20)
-    distribution = Array.new(intervals, 0)
-    percentage_grades_array.each do |grade|
-      distribution = update_distribution(distribution, grade, intervals)
-    end
-    distribution.to_json
-  end
+    data = percentage_grades_array
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
 
-  # def update_distribution(distribution, result, out_of, intervals)
-  def update_distribution(distribution, result, intervals)
-    steps = 100 / intervals # number of percentage steps in each interval
-    percentage = [100, result.ceil].min
-    interval = (percentage / steps).floor
-    if interval > 0
-      interval -= (percentage % steps == 0) ? 1 : 0
-    else
-      interval = 0
-    end
-    distribution[interval] += 1
-    distribution
+    return distribution
   end
 
   # Determine the average of all of the students' marks that have been

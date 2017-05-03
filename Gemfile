@@ -55,6 +55,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'js-routes'
 
 gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
+gem 'histogram', '~> 0.2.4.1'
 
 # Exam template requirements
 gem 'prawn'
