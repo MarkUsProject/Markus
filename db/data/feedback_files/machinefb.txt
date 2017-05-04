@@ -1,0 +1,521 @@
+==========
+
+StudentID: STUID
+
+===== Testing compilation and error messages =====
+
+Test 1a: fcopy with illegal argument should print errors:
+
+mkdir: cannot create directory 'TestDest': File exists
+
+T1a: passed
+
+Test 1b: fcopy with illegal destination should print errors:
+
+T1b: passed
+
+Test 2: Checking for invalid includes and use of goto:
+
+T2: passed
+
+Test 3: Checking for uses of goto outside of error handling:
+
+T3: passed
+
+Test 4: Checking size and hash before copying file:
+
+T4: passed
+
+Test 5: Checking return values on syscalls and using perror:
+
+T5: passed
+
+Test 6: Reading response to question about detecting hard links:
+
+T6: passed
+
+===== Test Cases without Errors =====
+
+----------
+
+$ ls -Rali EmptyDirectory
+
+EmptyDirectory:
+
+total 8
+
+12456897 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 11 reid cs209hi 4096 Apr 7 10:21 ..
+
+Copy completed successfully
+
+1 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+----------
+
+$ ls -Rali DirWithOneFile
+
+DirWithOneFile:
+
+total 12
+
+12456921 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456922 -rw-r--r-- 1 reid instrs 512 Apr 7 10:21 file1
+
+Copy completed successfully
+
+1 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+----------
+
+$ ls -Rali DirWithFiles
+
+DirWithFiles:
+
+total 20
+
+12456923 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456924 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456925 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456926 -r--r--r-- 1 reid instrs 1024 Apr 6 21:47 file3
+
+Copy completed successfully
+
+1 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+----------
+
+$ ls -Rali DirWithSubDir
+
+DirWithSubDir:
+
+total 12
+
+12456933 drwxr-xr-x 3 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456934 drwxr-xr-x 2 reid instrs 4096 Apr 6 21:47 SubDir
+
+DirWithSubDir/SubDir:
+
+total 16
+
+12456934 drwxr-xr-x 2 reid instrs 4096 Apr 6 21:47 .
+
+12456933 drwxr-xr-x 3 reid cs209hi 4096 Apr 6 21:47 ..
+
+12456935 -rw-r--r-- 1 reid instrs 4096 Apr 7 10:21 file1
+
+12456936 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+Copy completed successfully
+
+2 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+----------
+
+$ ls -Rali TestDirectory
+
+TestDirectory:
+
+total 28
+
+12456937 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456888 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 DirWithFiles
+
+12456941 drwxr-xr-x 2 reid instrs 4096 Apr 6 21:47 SubDirectory
+
+12456940 -rwxr-xr-x 1 reid cs209hi 1024 Apr 6 21:47 file1
+
+12456939 -rw-r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file2
+
+12456938 -r--r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file3
+
+TestDirectory/DirWithFiles:
+
+total 20
+
+12456888 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456937 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456910 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456903 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456900 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory/SubDirectory:
+
+total 16
+
+12456941 drwxr-xr-x 2 reid instrs 4096 Apr 6 21:47 .
+
+12456937 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456942 -rw-r--r-- 1 reid instrs 512 Apr 7 10:21 file1
+
+12456943 -rw-r--r-- 1 reid instrs 4096 Apr 7 10:21 file2
+
+Copy completed successfully
+
+3 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+----------
+
+$ ls -Rali TestDirectory2
+
+TestDirectory2:
+
+total 28
+
+12456944 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456947 drwxr-xr-x 4 reid cs209hi 4096 Apr 6 21:47 SubDirectory
+
+12456919 drwxr-xr-x 4 reid instrs 4096 Apr 7 10:21 TestDirectory
+
+12456950 -rwxr-xr-x 1 reid cs209hi 1024 Apr 6 21:47 file1
+
+12456946 -rw-r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file2
+
+12456945 -r--r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file3
+
+TestDirectory2/SubDirectory:
+
+total 24
+
+12456947 drwxr-xr-x 4 reid cs209hi 4096 Apr 6 21:47 .
+
+12456944 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456951 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 TestDirectory
+
+12456958 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 TestSubDirectory
+
+12456949 -rw-r--r-- 1 reid cs209hi 512 Apr 6 21:47 file1
+
+12456948 -rw-r--r-- 1 reid cs209hi 4096 Apr 6 21:47 file2
+
+TestDirectory2/SubDirectory/TestDirectory:
+
+total 28
+
+12456951 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 .
+
+12456947 drwxr-xr-x 4 reid cs209hi 4096 Apr 6 21:47 ..
+
+12456975 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 DirWithFiles
+
+12456954 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 SubDirectory
+
+12456957 -rwxr-xr-x 1 reid cs209hi 1024 Apr 7 10:21 file1
+
+12456953 -rw-r--r-- 1 reid cs209hi 1024 Apr 7 10:21 file2
+
+12456952 -r--r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file3
+
+TestDirectory2/SubDirectory/TestDirectory/DirWithFiles:
+
+total 20
+
+12456975 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456951 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456978 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456977 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456976 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory2/SubDirectory/TestDirectory/SubDirectory:
+
+total 16
+
+12456954 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456951 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456956 -rw-r--r-- 1 reid cs209hi 512 Apr 7 10:21 file1
+
+12456955 -rw-r--r-- 1 reid cs209hi 4096 Apr 7 10:21 file2
+
+TestDirectory2/SubDirectory/TestSubDirectory:
+
+total 28
+
+12456958 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 .
+
+12456947 drwxr-xr-x 4 reid cs209hi 4096 Apr 6 21:47 ..
+
+12456979 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 DirWithFiles
+
+12456962 drwxr-xr-x 3 reid cs209hi 4096 Apr 7 10:21 SubSubDirectory
+
+12456961 -rwxr-xr-x 1 reid cs209hi 1024 Apr 6 21:47 file1
+
+12456960 -rw-r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file2
+
+12456959 -r--r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file3
+
+TestDirectory2/SubDirectory/TestSubDirectory/DirWithFiles:
+
+total 20
+
+12456979 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456958 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456982 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456981 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456980 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory2/SubDirectory/TestSubDirectory/SubSubDirectory:
+
+total 24
+
+12456962 drwxr-xr-x 3 reid cs209hi 4096 Apr 7 10:21 .
+
+12456958 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456983 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 DirWithFiles
+
+12456965 -rwxr-xr-x 1 reid cs209hi 1024 Apr 6 21:47 file1
+
+12456964 -rw-r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file2
+
+12456963 -r--r--r-- 1 reid cs209hi 1024 Apr 6 21:47 file3
+
+TestDirectory2/SubDirectory/TestSubDirectory/SubSubDirectory/DirWithFiles:
+
+total 20
+
+12456983 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456962 drwxr-xr-x 3 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456986 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456985 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456984 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory2/TestDirectory:
+
+total 28
+
+12456919 drwxr-xr-x 4 reid instrs 4096 Apr 7 10:21 .
+
+12456944 drwxr-xr-x 4 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456920 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 DirWithFiles
+
+12456971 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 SubDirectory
+
+12456974 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456970 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456969 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory2/TestDirectory/DirWithFiles:
+
+total 20
+
+12456920 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456919 drwxr-xr-x 4 reid instrs 4096 Apr 7 10:21 ..
+
+12456968 -rwxr-xr-x 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456967 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file2
+
+12456966 -r--r--r-- 1 reid instrs 1024 Apr 7 10:21 file3
+
+TestDirectory2/TestDirectory/SubDirectory:
+
+total 16
+
+12456971 drwxr-xr-x 2 reid instrs 4096 Apr 7 10:21 .
+
+12456919 drwxr-xr-x 4 reid instrs 4096 Apr 7 10:21 ..
+
+12456973 -rw-r--r-- 1 reid instrs 512 Apr 7 10:21 file1
+
+12456972 -rw-r--r-- 1 reid instrs 4096 Apr 7 10:21 file2
+
+Copy completed successfully
+
+12 processes used
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure matches
+
+Checking structure of copied directory ...
+
+[SUCCESS] File structure and permissions match
+
+Checking content of files ...
+
+[SUCCESS] File content matches
+
+Checking number of processes used ...
+
+[SUCCESS] Number of processes used is as expected
+
+===== Test Cases with Errors =====
+
+----------
+
+$ ls -Rali DirWithSymLink
+
+DirWithSymLink:
+
+total 12
+
+12456930 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456931 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file1
+
+12456932 lrwxrwxrwx 1 reid instrs 5 Apr 6 21:47 symlink1 -> file1
+
+Copy completed successfully
+
+1 processes used
+
+Checking structure of copied directory ...
+
+5d4
+
+< symlink1
+
+[SUCCESS] File structure fails to match as expected
+
+----------
+
+$ ls -Rali DirWithDotFile
+
+DirWithDotFile:
+
+total 16
+
+12456927 drwxr-xr-x 2 reid cs209hi 4096 Apr 6 21:47 .
+
+12456892 drwxr-sr-x 12 reid cs209hi 4096 Apr 7 10:21 ..
+
+12456929 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 .file1
+
+12456928 -rw-r--r-- 1 reid instrs 1024 Apr 7 10:21 file1
+
+Copy completed successfully
+
+1 processes used
+
+Checking structure of copied directory ...
+
+4d3
+
+< .file1
+
+[SUCCESS] File structure fails to match as expected
