@@ -64,6 +64,7 @@ namespace :db do
           file_contents.rewind
           path = File.join(saving_repo, filename)
           txn.add(path, file_contents.read, '')
+          file_contents.close
         else # if content is a directory and filename doesn't start with .
           new_saving_repo = File.join(saving_repo, filename) # generating new saving repo for recursion
           txn.add_path(new_saving_repo)
