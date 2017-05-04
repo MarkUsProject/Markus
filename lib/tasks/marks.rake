@@ -4,10 +4,13 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
+    # Open the text for the feedback files
     mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
     hfile = File.open("db/data/feedback_files/humanfb.txt", "rb")
     mcont = mfile.read
     hcont = hfile.read
+    mfile.close
+    hfile.close
 
     #Right now, only generate marks for two assignments
     Grouping.where(assignment_id: [1, 2]).each do |grouping|
