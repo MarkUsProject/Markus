@@ -4,7 +4,7 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
-    # Open the text for the feedback files
+    # Open the text for the feedback files to reference
     mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
     hfile = File.open("db/data/feedback_files/humanfb.txt", "rb")
     mcont = mfile.read
