@@ -144,7 +144,7 @@ describe TestScript do
       end
     end
 
-    context 'script file expected to be invalid when the seq_num already exists in the same assignment' do
+    context 'script file expected to be valid when the seq_num already exists in the same assignment' do
       it 'return true when the seq_num already exists' do
         @invalidscriptfile.seq_num = 2
         expect(@invalidscriptfile).to be_valid
