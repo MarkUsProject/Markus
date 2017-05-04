@@ -17,9 +17,9 @@ module CourseSummariesHelper
   end
 
   def course_information
-    @all_assignments = Assignment.all
-    @all_grade_entry_forms = GradeEntryForm.all
-    @all_schemes = MarkingScheme.all
+    @all_assignments = Assignment.order(:id).all
+    @all_grade_entry_forms = GradeEntryForm.order(:id).all
+    @all_schemes = MarkingScheme.order(:id).all
 
     @weights = get_marking_weights_for_all_marking_schemes
     @gef_weights = get_gef_marking_weights_for_all_marking_schemes
