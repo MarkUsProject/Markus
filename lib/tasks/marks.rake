@@ -5,14 +5,14 @@ namespace :db do
     puts 'Assign Marks for Assignments'
 
     #Right now, only generate marks for three assignments
-    Grouping.where(assignment_id: [1, 2, 3]).each do |grouping|
+    Grouping.joins(:assignment).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
       result = new_submission.results.first
       grouping.is_collected = true
       grouping.save
 
-      if grouping.assignment_id == 1
+      if grouping.assignment.short_identifier == 'A0'
         grouping.assignment.submission_rule.apply_submission_rule(new_submission)
       end
 
