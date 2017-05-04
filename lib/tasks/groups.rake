@@ -41,7 +41,7 @@ namespace :db do
         group.access_repo do |repo|
           txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
           #add files to the root folder of the repo (e.g. "A1")
-          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
+          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
           # recursively copying contents(files & directories) inside the file_dir
           copy_dir(file_dir, txn, assignment.repository_folder)
 
