@@ -14,7 +14,7 @@ namespace :db do
         gradable_item_id: a.id, weight: random_weight, is_assignment: true)
     end
 
-    GradeEntryForm.all.each do |grade_entry_form|
+    GradeEntryForm.find_each do |grade_entry_form|
       random_weight = 1 + rand(0...10)
       grade_entry_form.grade_entry_items.each do |item|
         marking_scheme.marking_weights << MarkingWeight.new(
