@@ -4,6 +4,14 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments'
 
+    # Open the text for the feedback files to reference
+    mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
+    hfile = File.open("db/data/feedback_files/humanfb.txt", "rb")
+    mcont = mfile.read
+    hcont = hfile.read
+    mfile.close
+    hfile.close
+
     #Right now, only generate marks for three assignments
     Grouping.joins(:assignment).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
@@ -15,6 +23,16 @@ namespace :db do
       if grouping.assignment.short_identifier == 'A0'
         grouping.assignment.submission_rule.apply_submission_rule(new_submission)
       end
+
+      # add a human written feedback file
+      FeedbackFile.create(
+        submission: new_submission, filename: 'humanfb', mime_type: 'text', file_content: hcont
+      )
+
+      # add an machine-generated feedback file
+      FeedbackFile.create(
+        submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
+      )
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
