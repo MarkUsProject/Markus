@@ -12,23 +12,23 @@ namespace :db do
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
-            )
+          )
           grouping = Grouping.create(
             group: group,
             assignment: assignment
-            )
+          )
           grouping.invite([student.user_name],
-            StudentMembership::STATUSES[:inviter],
-            invoked_by_admin=true,
-            update_permissions=false)
+                          StudentMembership::STATUSES[:inviter],
+                          invoked_by_admin=true,
+                          update_permissions=false)
         elsif assignment.short_identifier == 'A0' || assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
-            )
+          )
           grouping = Grouping.create(
             group: group,
             assignment: assignment
-            )
+          )
           (0..1).each do |count|
             grouping.invite(
               [students[time + count * 15].user_name],
@@ -42,48 +42,9 @@ namespace :db do
           txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
           #add files to the root folder of the repo (e.g. "A1")
           file_dir  = File.join(File.dirname(__FILE__), '/../../db/data')
-          Dir.foreach(file_dir) do |filename|
-            unless File.directory?(File.join(file_dir, filename))
-              file_contents = File.open(File.join(file_dir, filename))
-              file_contents.rewind
-              path = File.join(assignment.repository_folder, filename)
-              txn.add(path, file_contents.read, '')
-            end
-          end
+          # recursively copying contents(files & directories) inside the file_dir
+          copy_dir(file_dir, txn, assignment.repository_folder)
 
-          #create subdirectories in the repos
-          path_a = File.join(assignment.repository_folder, 'a')
-          txn.add_path(path_a)
-          path_b = File.join(path_a, 'b')
-          txn.add_path(path_b)
-          path_c = File.join(path_a, 'c')
-          txn.add_path(path_c)
-          path_d = File.join(path_c, 'd')
-          txn.add_path(path_d)
-          path_e = File.join(assignment.repository_folder, 'e')
-          txn.add_path(path_e)
-          path_f = File.join(path_e, 'f')
-          txn.add_path(path_f)
-
-          #the files in "test-files-in-inner-dirs" folder are used to populate the subdirectories in the repos
-          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/test-files-in-inner-dirs')
-          subdirs_to_contents = {
-              'a' => ['1.py', '2.py'],
-              'a/b' => ['3.py'],
-              'a/c' => ['4.py'],
-              'a/c/d' => ['5.py', '6.py'],
-              'e' => ['7.py'],
-              'e/f'=> ['8.py', '9.py', '10.py']
-          }
-
-          subdirs_to_contents.each do |subdir, filenames|
-            filenames.each do |filename|
-              file_contents = File.open(File.join(file_dir, filename))
-              file_contents.rewind
-              path = File.join(File.join(assignment.repository_folder, subdir), filename)
-              txn.add(path, file_contents.read, '')
-            end
-          end
           repo.commit(txn)
         end
       end
@@ -91,5 +52,26 @@ namespace :db do
     # This really should be done in a more generic way
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo.__set_all_permissions
+  end
+
+  def copy_dir(file_dir, txn, saving_repo)
+    txn.add_path(saving_repo)
+    Dir.foreach(file_dir) do |filename|
+      content = File.join(file_dir, filename)
+      if filename[0] != '.'
+        if not File.directory?(content)  # if content is a file
+          file_contents = File.open(content)
+          file_contents.rewind
+          path = File.join(saving_repo, filename)
+          txn.add(path, file_contents.read, '')
+          file_contents.close
+        else # if content is a directory and filename doesn't start with .
+          new_saving_repo = File.join(saving_repo, filename) # generating new saving repo for recursion
+          txn.add_path(new_saving_repo)
+          new_dir = File.join(file_dir, filename) # generating new file path for recursion
+          copy_dir(new_dir, txn, new_saving_repo)
+        end
+      end
+    end
   end
 end
