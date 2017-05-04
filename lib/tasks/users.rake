@@ -42,5 +42,8 @@ namespace :db do
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students, nil)
     end
+    Student.find_each do |student|
+      student.update_attribute(:grace_credits, 5)
+    end
   end
 end

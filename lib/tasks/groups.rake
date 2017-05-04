@@ -21,7 +21,7 @@ namespace :db do
             StudentMembership::STATUSES[:inviter],
             invoked_by_admin=true,
             update_permissions=false)
-        elsif assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
+        elsif assignment.short_identifier == 'A0' || assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
             )
