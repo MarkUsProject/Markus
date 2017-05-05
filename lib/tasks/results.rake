@@ -64,11 +64,12 @@ namespace :markus do
           grouping = student.accepted_grouping_for(a1.id)
           group = grouping.group
           #commit some files into the group repository
-          file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample_submission_files')
+          file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'submission_files')
           Dir.foreach(file_dir) do |filename|
             unless File.directory?(File.join(file_dir, filename))
               file_contents = File.open(File.join(file_dir, filename))
               file_contents.rewind
+              file_contents.close
               group.access_repo do |repo|
                 txn = repo.get_transaction(student.user_name)
                 path = File.join(a1.repository_folder, filename)
