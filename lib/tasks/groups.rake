@@ -13,17 +13,8 @@ namespace :db do
       num_groups.times do |time|
         student = students[time]
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
-          group = Group.create(
-            group_name: "#{ student.user_name } #{ assignment.short_identifier }"
-          )
-          grouping = Grouping.create(
-            group: group,
-            assignment: assignment
-          )
-          grouping.invite([student.user_name],
-                          StudentMembership::STATUSES[:inviter],
-                          invoked_by_admin=true,
-                          update_permissions=false)
+          student.create_group_for_working_alone_student(assignment.id)
+          group = Group.find_by group_name: student.user_name
         elsif assignment.short_identifier == 'A0' || assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
@@ -32,13 +23,16 @@ namespace :db do
             group: group,
             assignment: assignment
           )
-          (0..1).each do |count|
-            grouping.invite(
-              [students[time + count * 15].user_name],
-              StudentMembership::STATUSES[:inviter],
-              invoked_by_admin=true,
-              update_permissions=false)
-          end
+          grouping.invite(
+            [student.user_name],
+            StudentMembership::STATUSES[:inviter],
+            invoked_by_admin=true,
+            update_permissions=false)
+          grouping.invite(
+            [students[time + 15].user_name],
+            StudentMembership::STATUSES[:accepted],
+            invoked_by_admin=true,
+            update_permissions=false)
         end
 
         group.access_repo do |repo|
