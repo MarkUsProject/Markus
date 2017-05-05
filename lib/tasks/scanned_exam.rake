@@ -35,7 +35,7 @@ namespace :db do
     template.template_divisions.create_with_associations(a.id, label: 'Q4', start: 4, end: 5)
 
     template.generate_copies 5
-    template_path  = File.join(File.dirname(__FILE__), '/../../db/scanned_exams/midterm1_scanned_sample.pdf')
+    template_path  = File.join(File.dirname(__FILE__), '/../../db/data/scanned_exams/midterm1_scanned_sample.pdf')
     template.split_pdf template_path
   end
 end
