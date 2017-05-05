@@ -8,61 +8,6 @@ describe SubmissionFile do
   it { is_expected.to validate_presence_of :filename }
   it { is_expected.to validate_presence_of :path }
 
-  context 'A SubmissionFile without parameter and without id' do
-    before(:each) do
-      @submission_file = SubmissionFile.create()
-    end
-    it 'be invalid and should not be saved' do
-      expect(@submission_file).not_to be_valid
-      expect(@submission_file.save).to be false
-    end
-  end
-
-  context 'A SubmissionFile without parameter and with id' do
-    before(:each) do
-      @submission_file = SubmissionFile.create(submission_id: 1)
-    end
-    it 'be invalid and should not be saved' do
-      expect(@submission_file).not_to be_valid
-      expect(@submission_file.save).to be false
-    end
-  end
-
-  context 'A SubmissionFile without filename' do
-    before(:each) do
-      @submission_file = SubmissionFile.create(filename: '',
-                                              path:     'path',
-                                              submission_id: 1)
-    end
-    it 'be invalid and should not be saved' do
-      expect(@submission_file).not_to be_valid
-      expect(@submission_file.save).to be false
-    end
-  end
-
-  context 'A SubmissionFile without path' do
-    before(:each) do
-      @submission_file = SubmissionFile.create(filename: 'filename',
-                                              path:     '',
-                                              submission_id: 1)
-    end
-    it 'be invalid and should not be saved' do
-      expect(@submission_file).not_to be_valid
-      expect(@submission_file.save).to be false
-    end
-  end
-
-  context 'A SubmissionFile with filename and path, but without id' do
-    before(:each) do
-      @submission_file = SubmissionFile.create(filename: 'filename',
-                                              path:     'path')
-    end
-    it 'be invalid and should not be saved' do
-      expect(@submission_file).not_to be_valid
-      expect(@submission_file.save).to be false
-    end
-  end
-
   context 'A .java Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.java',
