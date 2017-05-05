@@ -11,7 +11,7 @@ namespace :db do
         student = students[time]
         if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
           student.create_group_for_working_alone_student(assignment.id)
-          group = Group.where(group_name: student.user_name).first
+          group = Group.find_by group_name: student.user_name
         elsif assignment.short_identifier == 'A0' || assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
