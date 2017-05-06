@@ -165,7 +165,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def accepted_students
-    self.accepted_student_memberships.collect do |memb|
+    self.accepted_student_memberships.includes(user: :grace_period_deductions).collect do |memb|
       memb.user
     end
   end

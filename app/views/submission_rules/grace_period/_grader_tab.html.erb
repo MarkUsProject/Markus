@@ -1,5 +1,5 @@
 <%
-  user_deductions = grouping.grace_period_deductions.group_by {|d| d.membership.user}
+  user_deductions = grouping.grace_period_deductions.includes(membership: :user).group_by {|d| d.membership.user}
 %>
 
 <h3><%=I18n.t('submission_rules.grace_period_submission_rule.deductions')%></h3>
