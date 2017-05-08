@@ -383,13 +383,14 @@ class GradeEntryFormsController < ApplicationController
         if totals.empty?
           totals = row
           # Create/update the grade entry items
-          grades << GradeEntryItem.create_or_update_from_csv_rows(
+          grades = GradeEntryItem.create_or_update_from_csv_rows(
             names,
             totals,
             @grade_entry_form,
             overwrite)
           next
         end
+        GradeEntryItem.import grades.flatten
         columns = @grade_entry_form.grade_entry_items.reload
         grade_list = @grade_entry_form.grades.map do |g|
           [[g.grade_entry_student_id, g.grade_entry_item_id], g.grade]
@@ -416,7 +417,6 @@ class GradeEntryFormsController < ApplicationController
           end
         end
       end
-      GradeEntryItem.import grades.flatten
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
       end

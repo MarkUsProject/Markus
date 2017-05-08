@@ -88,17 +88,14 @@ class GradeEntryItem < ActiveRecord::Base
     names.shift
     totals.shift
 
-    grade_entrys = []
+    grade_entries = []
 
     (names.size).times do |i|
-      grade_entry_item = grade_entry_form.grade_entry_items.find_by(name: names[i])
-      if !grade_entry_item
-        grade_entry_item = grade_entry_form.grade_entry_items.new(name: names[i])
-      end
+      grade_entry_item = grade_entry_form.grade_entry_items.first_or_initialize(name: names[i])
 
       grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
-      grade_entrys << grade_entry_item
+      grade_entries << grade_entry_item
     end
 
     # Delete old questions if we want to overwrite them
@@ -113,6 +110,6 @@ class GradeEntryItem < ActiveRecord::Base
       end
     end
 
-    return grade_entrys
+    return grade_entries
   end
 end
