@@ -390,7 +390,7 @@ class GradeEntryFormsController < ApplicationController
             overwrite)
           next
         end
-        GradeEntryItem.import grades.flatten
+        GradeEntryItem.import grades
         columns = @grade_entry_form.grade_entry_items.reload
         grade_list = @grade_entry_form.grades.map do |g|
           [[g.grade_entry_student_id, g.grade_entry_item_id], g.grade]
