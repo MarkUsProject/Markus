@@ -13,7 +13,6 @@ namespace :db do
     hfile.close
     feedbackfiles = []
     marks = []
-    t1 = Time.now
     #Right now, only generate marks for three assignments
     Grouping.joins(:assignment).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
@@ -55,9 +54,6 @@ namespace :db do
 
     Mark.joins(result: [submission: [grouping: :assignment]]).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).destroy_all
     Mark.import marks
-
-    t2 = Time.now
-    puts "TIME DIFFERENCE #{t2 - t1}"
 
     puts 'Release Results for Assignments'
     #Release the marks after they have been inputed into the assignments
