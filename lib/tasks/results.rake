@@ -64,7 +64,7 @@ namespace :markus do
           grouping = student.accepted_grouping_for(a1.id)
           group = grouping.group
           #commit some files into the group repository
-          file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample_submission_files')
+          file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'submission_files')
           Dir.foreach(file_dir) do |filename|
             unless File.directory?(File.join(file_dir, filename))
               file_contents = File.open(File.join(file_dir, filename))
@@ -75,6 +75,7 @@ namespace :markus do
                 txn.add(path, file_contents.read, '')
                 repo.commit(txn)
               end
+              file_contents.close
             end
           end
           submission = Submission.create_by_timestamp(grouping, Time.now)
