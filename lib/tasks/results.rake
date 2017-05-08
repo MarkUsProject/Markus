@@ -69,13 +69,13 @@ namespace :markus do
             unless File.directory?(File.join(file_dir, filename))
               file_contents = File.open(File.join(file_dir, filename))
               file_contents.rewind
-              file_contents.close
               group.access_repo do |repo|
                 txn = repo.get_transaction(student.user_name)
                 path = File.join(a1.repository_folder, filename)
                 txn.add(path, file_contents.read, '')
                 repo.commit(txn)
               end
+              file_contents.close
             end
           end
           submission = Submission.create_by_timestamp(grouping, Time.now)
