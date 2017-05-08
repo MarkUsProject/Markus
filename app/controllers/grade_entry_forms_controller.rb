@@ -371,6 +371,10 @@ class GradeEntryFormsController < ApplicationController
       totals = ''
       columns = []
 
+
+      grades = []
+      #GradeEntryItem.import grades
+
       # Parse the grades
       result = MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
         next if CSV.generate_line(row).strip.empty?
@@ -382,7 +386,7 @@ class GradeEntryFormsController < ApplicationController
         if totals.empty?
           totals = row
           # Create/update the grade entry items
-          GradeEntryItem.create_or_update_from_csv_rows(
+          grades << GradeEntryItem.create_or_update_from_csv_rows(
             names,
             totals,
             @grade_entry_form,
@@ -415,6 +419,7 @@ class GradeEntryFormsController < ApplicationController
           end
         end
       end
+      GradeEntryItem.import grades.flatten
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
       end
