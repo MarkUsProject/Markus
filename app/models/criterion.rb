@@ -163,9 +163,11 @@ class Criterion < ActiveRecord::Base
   end
 
   def create_marks
+    # results with specific assignment
     results = Result
                 .joins(submission: :grouping)
                 .where(groupings: {assignment_id: self.assignment_id})
+    # creates mark object and updates total mark
     results.each do |r|
       mark = self.marks.create(result_id: id)
       r.update_total_mark
