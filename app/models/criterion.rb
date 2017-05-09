@@ -7,6 +7,8 @@ class Criterion < ActiveRecord::Base
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
 
+  after_create :create_marks
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
@@ -158,5 +160,15 @@ class Criterion < ActiveRecord::Base
         WHERE assignment_id = #{assignment.id}
     #{"AND id IN (#{checkbox_criterion_ids_str})" unless checkbox_criterion_ids_str.empty?}
     UPDATE_SQL
+  end
+
+  def create_marks
+    results = Result
+                .joins(submission: :grouping)
+                .where(groupings: {assignment_id: self.assignment_id})
+    results.each do |r|
+      mark = self.marks.create(result_id: id)
+      r.update_total_mark
+    end
   end
 end
