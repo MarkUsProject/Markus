@@ -12,10 +12,12 @@ namespace :db do
       num_groups = (assignment.short_identifier == 'A1' && ENV['A1_GROUP_AMOUNT']) ? ENV['A1_GROUP_AMOUNT'].to_i : 15
       num_groups.times do |time|
         student = students[time]
-        if assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3'
+        # if this is an individual assignment
+        if assignment.groups_min == 1 && assignment.group_max == 1
           student.create_group_for_working_alone_student(assignment.id)
           group = Group.find_by group_name: student.user_name
-        elsif assignment.short_identifier == 'A0' || assignment.short_identifier == 'A2' || assignment.short_identifier == 'A4'
+        # if this is a group assignment
+        else
           group = Group.create(
             group_name: "#{ student.user_name } #{ assignment.short_identifier }"
           )
