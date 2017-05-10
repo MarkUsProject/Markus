@@ -2,7 +2,7 @@ namespace :db do
 
   desc 'Update fake marks for assignments'
   task :marks => :environment do
-    puts 'Assign Marks for Assignments (This may take awhile)'
+    puts 'Assign Marks for Assignments (This may take a while)'
 
     # Open the text for the feedback files to reference
     mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
@@ -44,7 +44,8 @@ namespace :db do
         else
           random_mark = rand(0..1)
         end
-        marks << Mark.new(result_id:     result.id,
+        marks << Mark.new(
+                  result_id:     result.id,
                   markable_id:   criterion.id,
                   markable_type: criterion.class.to_s,
                   mark: random_mark)
