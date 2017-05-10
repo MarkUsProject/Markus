@@ -26,6 +26,7 @@
       </div>
     </div>
 
+    <% if (@old_result.get_positive_extra_points != 0 or @old_result.get_negative_extra_points != 0) %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
@@ -41,7 +42,7 @@
             <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
           </td>
           <td id='extra_marks_bonus'>
-            <%= old_result.get_positive_extra_points %>
+            <%= @old_result.get_positive_extra_points %>
           </td>
         </tr>
         <tr>
@@ -54,19 +55,20 @@
         </tr>
       </table>
     </div>
-
+    <% end %>
+    <% if @old_result.extra_marks.percentage.size != 0 %>
     <div class='extra_percentage_pane'>
       <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: old_result.extra_marks.percentage,
                            result_id: old_result.id } %>
     </div>
-
     <div class='summary_block'>
       <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
       <span id='total_extra_percentage'><%= old_result.get_total_extra_percentage %></span><br>
       <strong><%= t('marker.marks.translated_to_points') %></strong>
       <span id='total_extra_percentage_as_points'><%= old_result.get_total_extra_percentage_as_points %></span><br>
     </div>
+    <% end %>
   </div>
 <% end %>
 
@@ -94,6 +96,7 @@
       </div>
     </div>
 
+    <% if (@result.get_negative_extra_points != 0 or @result.get_positive_extra_points != 0) %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
@@ -109,7 +112,7 @@
             <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
           </td>
           <td id='extra_marks_bonus'>
-            <%= result.get_positive_extra_points %>
+            <%= @result.get_positive_extra_points %>
           </td>
         </tr>
         <tr>
@@ -122,7 +125,8 @@
         </tr>
       </table>
     </div>
-
+    <% end %>
+    <% if extra_marks_percentage.size != 0 %>
     <div class='extra_percentage_pane'>
       <%= render partial: 'results/student/extra_percentage_table',
                  locals: { extra_marks_percentage: extra_marks_percentage,
@@ -135,23 +139,9 @@
       <strong><%= t('marker.marks.translated_to_points') %></strong>
       <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
     </div>
+    <% end %>
   <% end %>
 </div>
-
-<% unless @result.is_a_review? %>
-  <div class='extra_percentage_pane'>
-    <%= render partial: 'results/student/extra_percentage_table',
-               locals: { extra_marks_percentage: extra_marks_percentage,
-                         result_id: result.id } %>
-  </div>
-
-  <div class='summary_block'>
-    <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
-    <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
-    <strong><%= t('marker.marks.translated_to_points') %></strong>
-    <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
-  </div>
-<% end %>
 
 <% if old_result %>
   <div class='mark_total'>
