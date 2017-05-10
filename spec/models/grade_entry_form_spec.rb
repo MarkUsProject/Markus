@@ -1,6 +1,5 @@
 require 'spec_helper'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'test', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'test', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints'))
 
 describe GradeEntryForm do
 
@@ -14,52 +13,18 @@ describe GradeEntryForm do
   it { is_expected.to allow_value(1.day.ago).for(:date) }
   it { is_expected.to allow_value(1.day.from_now).for(:date) }
   it { is_expected.not_to allow_value('100-10').for(:date) }
+  it { is_expected.not_to allow_value('2009-').for(:date) }
   it { is_expected.not_to allow_value('abcd').for(:date) }
 
-  context ' A good Grade entry model' do
-    it do
-      is_expected.to validate_uniqueness_of(:short_identifier)
-                       .with_message(I18n.t('grade_entry_forms.invalid_identifier'))
-    end
-  end
-
-  # Make sure validate works appropriately when the date is valid
-  def test_validate_valid_date
-    g = GradeEntryForm.create(short_identifier: 'T1',
-                              date: 1.day.from_now,
-                              is_hidden: false)
-    expect(g).to be_valid
-  end
-
-  # Make sure validate works appropriately when the date is invalid
-  def test_validate_invalid_date
-    g = GradeEntryForm.create(short_identifier: 'T1',
-                              date: '2009-',
-                              is_hidden: false)
-    expect(g).not_to be_valid
-
-  end
-
-  # Make sure that validate allows dates to be set in the past
-  def test_validate_date_in_the_past
-    g = GradeEntryForm.create(short_identifier: 'T1',
-                              date: 1.day.ago,
-                              is_hidden: false)
-    expect(g).not_to be_valid
-
+  it do
+    is_expected.to validate_uniqueness_of(:short_identifier)
+                     .with_message(I18n.t('grade_entry_forms.invalid_identifier'))
   end
 
   # Tests for out_of_total
   context 'A grade entry form object: ' do
     before(:each) do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
-    end
-
-    # Need at least one GradeEntryForm object created for this
-    # test to pass.
-    it do
-      is_expected.to validate_uniqueness_of(:short_identifier)
-                       .with_message(I18n.t('grade_entry_forms.invalid_identifier'))
     end
 
     it 'verify that the total number of marks is calculated correctly' do
@@ -193,7 +158,6 @@ describe GradeEntryForm do
           grade_entry_student.grades.create(grade_entry_item: @grade_entry_items[j],
                                             grade: 5 + i + j)
         end
-
         # The marks will be released for 3 out of the 5 students
         if i <= 2
           grade_entry_student.released_to_student = true
@@ -205,11 +169,11 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when there are no marks released' do
-      expect(@grade_entry_form_none_released.calculate_released_average()).to eq 0
+      expect(@grade_entry_form_none_released.calculate_released_average).to eq 0
     end
 
     it 'verify the correct value is returned when multiple marks have been released and there are no blank marks' do
-      expect(@grade_entry_form.calculate_released_average()).to eq 70.00
+      expect(@grade_entry_form.calculate_released_average).to eq 70.00
     end
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
@@ -218,11 +182,9 @@ describe GradeEntryForm do
         student = Student.make
         @grade_entry_form.grade_entry_students.find_by(user: student).update(released_to_student: true)
       end
-      expect(@grade_entry_form.calculate_released_average()).to eq 70.00
+      expect(@grade_entry_form.calculate_released_average).to eq 70.00
     end
   end
-
-
 
   def make_grade_entry_form_with_multiple_grade_entry_items
     grade_entry_form = GradeEntryForm.create(short_identifier: 'T1', date: 1.day.ago, is_hidden: false)
@@ -236,6 +198,4 @@ describe GradeEntryForm do
     grade_entry_form.grade_entry_items = grade_entry_items
     return grade_entry_form
   end
-
-
 end
