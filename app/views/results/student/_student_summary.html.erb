@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <% if (@old_result.get_positive_extra_points != 0 or @old_result.get_negative_extra_points != 0) %>
+    <% if @old_result.get_positive_extra_points != 0 || @old_result.get_negative_extra_points != 0 %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <% if (@result.get_negative_extra_points != 0 or @result.get_positive_extra_points != 0) %>
+    <% if @result.get_negative_extra_points != 0 || @result.get_positive_extra_points != 0 %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
         <strong><%= t('marker.marks.bonus_deductions') %></strong>
