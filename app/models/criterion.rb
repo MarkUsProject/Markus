@@ -169,7 +169,13 @@ class Criterion < ActiveRecord::Base
                 .where(groupings: {assignment_id: self.assignment_id})
     # creates mark object and updates total mark
     results.each do |r|
-      mark = self.marks.create(result_id: id)
+      # if criteria is ta visible
+      if self.ta_visible
+        mark = self.marks.create(result_id: r.submission_id) # create mark object for ta review result
+        # if criteria is peer visible
+      elsif self.peer_visible
+        mark = self.marks.create(result_id: r.peer_review_id) # create mark object for peer review result
+      end
       r.update_total_mark
     end
   end
