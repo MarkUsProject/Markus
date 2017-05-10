@@ -13,7 +13,7 @@ namespace :db do
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment
-        if assignment.groups_min == 1 && assignment.group_max == 1
+        if assignment.group_min == 1 && assignment.group_max == 1
           student.create_group_for_working_alone_student(assignment.id)
           group = Group.find_by group_name: student.user_name
         # if this is a group assignment
