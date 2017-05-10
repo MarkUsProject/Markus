@@ -1,5 +1,4 @@
 require 'spec_helper'
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints'))
 
 describe GradeEntryForm do
 
@@ -40,7 +39,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when the student has grades for some of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
@@ -48,7 +47,7 @@ describe GradeEntryForm do
     end
 
     it 'when the student has grades for all of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
@@ -57,13 +56,13 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
-      student1 = Student.make
+      student1 = create(:student)
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
       expect(grade_entry_student_with_no_grades.total_grade).to be_nil
     end
 
     it 'verify the correct value is returned when the student has zero for all of the questions' do
-      student1 = Student.make
+      student1 = create(:student)
       grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student1)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
@@ -80,7 +79,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct percentage is returned when the student has grades for some of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
@@ -88,7 +87,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct percentage is returned when the student has grades for all of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
@@ -97,13 +96,13 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct percentage is returned when the student has grades for none of the questions' do
-      student1 = Student.make
+      student1 = create(:student)
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_no_grades)).to eq ''
     end
 
     it 'verify the correct percentage is returned when the student has zero for all of the questions' do
-      student1 = Student.make
+      student1 = create(:student)
       grade_entry_student_with_all_zeros = @grade_entry_form.grade_entry_students.find_by(user: student1)
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
@@ -120,7 +119,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when the student has grades for some of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
@@ -128,7 +127,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when the student has grades for all of the questions' do
-      student = Student.make
+      student = create(:student)
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
@@ -137,7 +136,7 @@ describe GradeEntryForm do
     end
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
-      student1 = Student.make
+      student1 = create(:student)
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
       expect(grade_entry_student_with_no_grades.all_blank_grades?).to be true
     end
@@ -151,7 +150,7 @@ describe GradeEntryForm do
       @grade_entry_items = @grade_entry_form.grade_entry_items
       # Set up 5 GradeEntryStudents
       (0..4).each do |i|
-        student = Student.make
+        student = create(:student)
         grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: student)
         # Give the student a grade for all three questions for the grade entry form
         (0..2).each do |j|
@@ -179,7 +178,7 @@ describe GradeEntryForm do
     it 'verify the correct value is returned when the student has grades for none of the questions' do
       # Blank marks for students
       (0..2).each do
-        student = Student.make
+        student = create(:student)
         @grade_entry_form.grade_entry_students.find_by(user: student).update(released_to_student: true)
       end
       expect(@grade_entry_form.calculate_released_average).to eq 70.00
