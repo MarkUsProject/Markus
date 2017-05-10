@@ -49,13 +49,13 @@ class SubmissionRule < ActiveRecord::Base
       @get_collection_time[section.id] = calculate_collection_time(section)
     end
   end
-  
+
   def calculate_collection_time(section=nil)
     assignment.section_due_date(section) + hours_sum.hours
   end
 
   def calculate_grouping_collection_time(grouping)
-    if grouping.inviter.section
+    if grouping.inviter != nil && grouping.inviter.section
       SectionDueDate.due_date_for(grouping.inviter.section,
                                          assignment)
     else
