@@ -8,7 +8,7 @@ class Criterion < ActiveRecord::Base
            through: :criteria_assignment_files_joins
 
   # Every time a criterion is *updated* and one (or both) of these attributes changes.
-  after_update :replace_marks
+  after_save :replace_marks
 
   self.abstract_class = true
 
@@ -164,7 +164,7 @@ class Criterion < ActiveRecord::Base
   end
 
   def replace_marks
-    m = []
+    mark_objects = []
     # results with specific assignment
     results = Result
                 .joins(submission: :grouping)
@@ -174,8 +174,8 @@ class Criterion < ActiveRecord::Base
       results.each do |r|
         if !r.is_a_review? # filter results that are not peer reviews
           self.marks.where(result_id: r.id).destroy_all # delete old marks
-          if !self.ta_visible # in case ta_visible becomes false, we have to create mark object
-            m << Mark.new(result_id: r.id) # create mark object for TA review result
+          unless self.ta_visible # in case ta_visible becomes false, we have to create mark object
+            mark_objects << Mark.new(result_id: r.id) # create mark object for TA review result
           end
           r.update_total_mark
         end
@@ -186,13 +186,13 @@ class Criterion < ActiveRecord::Base
       results.each do |r|
         if r.is_a_review? # filter results that are peer reviews
           self.marks.where(result_id: r.id).destroy_all # delete old marks
-          if !self.peer_visible # in case peer_visible becomes false, we have to create mark object
-            m << Mark.new(result_id: r.id) # create mark object for peer review result
+          unless self.peer_visible # in case peer_visible becomes false, we have to create mark object
+            mark_objects << Mark.new(result_id: r.id) # create mark object for peer review result
           end
           r.update_total_mark
         end
       end
     end
-    Mark.import m
+    Mark.import mark_objects
   end
 end
