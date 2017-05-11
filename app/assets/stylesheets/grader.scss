@@ -266,13 +266,33 @@
   width: 100%;
 }
 
+.annotation_options{
+  display: block;
+  float: left;
+  overflow: auto;
+}
+
+#file_download_button {
+  float: left;
+  margin: 0 1em 0 0;
+}
+
 #new_annotation_button {
   display: table-cell;
-  font-weight: 300;
-  margin: 0 2.0em 0 0;
+  color: $grey;
+  text-shadow: none;
+  text-transform: uppercase;
+  border: none;
+  background: $white;
+  font-weight: normal;
+  margin: 0 0.5em 0 0;
   min-width: 0;
   vertical-align: top;
   float: left;
+  font-size: 1em;
+  padding: 0.2em 0.5em;
+  margin-top: 4px;
+  box-shadow: none;
 }
 
 #annotation_categories {
