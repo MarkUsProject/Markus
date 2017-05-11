@@ -48,8 +48,9 @@ class Result < ActiveRecord::Base
 
   # Calculate the total mark for this submission
   def update_total_mark
+    user_visibility = is_a_review? ? :peer : :ta
     update_attributes(total_mark:
-      [0, get_subtotal + get_total_extra_points +
+      [0, get_subtotal(user_visibility) + get_total_extra_points +
           get_total_extra_percentage_as_points].max)
   end
 
