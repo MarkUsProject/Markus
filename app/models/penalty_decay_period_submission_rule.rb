@@ -74,10 +74,11 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
         deduction = -deduction
       end
       interval = period.interval
-      if overtime_hours / interval < 1
+      if overtime_hours < interval
         total_penalty += deduction
       else
-        total_penalty += (overtime_hours / interval).floor.to_f * deduction
+        max_intervals = period.hours / period.interval
+        total_penalty += [(overtime_hours / interval).ceil.to_f, max_intervals].min * deduction
       end
       overtime_hours = overtime_hours - period.hours
       break if overtime_hours <= 0
