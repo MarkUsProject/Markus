@@ -7,7 +7,8 @@ class Criterion < ActiveRecord::Base
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
 
-  after_create :create_marks
+  # Every time a criterion is *updated* and one (or both) of these attributes changes.
+  after_update :replace_marks
 
   self.abstract_class = true
 
@@ -54,14 +55,14 @@ class Criterion < ActiveRecord::Base
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     criteria = assignment.get_criteria(:ta)
-                         .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
+                 .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
     columns = [:criterion_id, :criterion_type, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                      .where(criterion_id: criteria.map(&:id),
-                             ta_id: ta_ids)
-                      .pluck(:criterion_id, :criterion_type, :ta_id)
+                        .where(criterion_id: criteria.map(&:id),
+                               ta_id: ta_ids)
+                        .pluck(:criterion_id, :criterion_type, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
@@ -82,8 +83,8 @@ class Criterion < ActiveRecord::Base
     %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
       criterion_ids_by_type[type] =
         criterion_ids_in.zip(criterion_types)
-                        .select { |_, crit_type| crit_type == type}
-                        .map { |crit_id, _| crit_id }
+          .select { |_, crit_type| crit_type == type}
+          .map { |crit_id, _| crit_id }
     end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end
@@ -107,22 +108,22 @@ class Criterion < ActiveRecord::Base
       rubric_criterion_ids_str = ''
     else
       rubric_criterion_ids_str = Array(criterion_ids_by_type['RubricCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
+                                   .map { |criterion_id| connection.quote(criterion_id) }
+                                   .join(',')
     end
     if criterion_ids_by_type.nil?  or criterion_ids_by_type['FlexibleCriterion'].nil?
       flexible_criterion_ids_str = ''
     else
       flexible_criterion_ids_str = Array(criterion_ids_by_type['FlexibleCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
+                                     .map { |criterion_id| connection.quote(criterion_id) }
+                                     .join(',')
     end
     if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
       checkbox_criterion_ids_str = ''
     else
       checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
+                                     .map { |criterion_id| connection.quote(criterion_id) }
+                                     .join(',')
     end
 
     # TODO replace these raw SQL with dynamic SET clause with Active Record
@@ -162,33 +163,40 @@ class Criterion < ActiveRecord::Base
     UPDATE_SQL
   end
 
-  def create_marks
-    # results with specific assignment
-    results = Result
-                .joins(submission: :grouping)
-                .where(groupings: {assignment_id: self.assignment_id})
+  def replace_marks
+    #byebug
+    if self.ta_visible_changed? || self.peer_visible_changed?
+      # results with specific assignment
+      results = Result
+                  .joins(submission: :grouping)
+                  .where(groupings: {assignment_id: self.assignment_id})
 
-    # creates mark object and updates total mark
-    marks = []
-    if self.visible?
-      # if criteria is ta_visible
-      if self.ta_visible
-        results.each do |r|
-          if !r.is_a_review? # filter results that are not peer reviews
-            marks << self.marks.new(result_id: r.id)  # create mark object for ta review result
-            r.update_total_mark
+      # creates new marks and delete old marks
+      if self.visible?
+        if self.peer_visible # if criteria is peer_visible
+          results.each do |r|
+            if r.is_a_review? # filter results that are peer reviews
+              self.marks.where(result_id: r.id).destroy_all # delete old marks
+              self.marks.new(result_id: r.id) # create mark object for peer review result
+              r.update_total_mark
+            end
+          end
+        elsif self.ta_visible # if criteria is ta_visible
+          results.each do |r|
+            if !r.is_a_review? # filter results that are not peer reviews
+              self.marks.where(result_id: r.id).destroy_all # delete old marks
+              self.marks.new(result_id: r.id)  # create mark object for ta review result
+              r.update_total_mark
+            end
           end
         end
-      # if criteria is peer_visible
-      elsif self.peer_visible
-        results.each do |r|
-          if r.is_a_review? # filter results that are peer reviews
-            marks << self.marks.new(result_id: r.id) # create mark object for peer review result
-            r.update_total_mark
-          end
+
+        self.marks.each do |mark|
+          puts mark
         end
+        marks = self.marks
+        #Mark.import marks
       end
     end
-    Mark.import marks
   end
 end
