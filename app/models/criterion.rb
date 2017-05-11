@@ -164,38 +164,32 @@ class Criterion < ActiveRecord::Base
   end
 
   def replace_marks
-    #byebug
+    marks = []
     if self.ta_visible_changed? || self.peer_visible_changed?
       # results with specific assignment
       results = Result
                   .joins(submission: :grouping)
                   .where(groupings: {assignment_id: self.assignment_id})
-
       # creates new marks and delete old marks
       if self.visible?
         if self.peer_visible # if criteria is peer_visible
           results.each do |r|
             if r.is_a_review? # filter results that are peer reviews
               self.marks.where(result_id: r.id).destroy_all # delete old marks
-              self.marks.new(result_id: r.id) # create mark object for peer review result
+              marks << Mark.new(result_id: r.id) # create mark object for peer review result
               r.update_total_mark
             end
           end
-        elsif self.ta_visible # if criteria is ta_visible
+        elsif self.ta_visible # if criteria is= ta_visible
           results.each do |r|
             if !r.is_a_review? # filter results that are not peer reviews
               self.marks.where(result_id: r.id).destroy_all # delete old marks
-              self.marks.new(result_id: r.id)  # create mark object for ta review result
+              marks << Mark.new(result_id: r.id)  # create mark object for ta review result
               r.update_total_mark
             end
           end
         end
-
-        self.marks.each do |mark|
-          puts mark
-        end
-        marks = self.marks
-        #Mark.import marks
+        Mark.import marks
       end
     end
   end
