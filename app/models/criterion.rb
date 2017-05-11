@@ -170,11 +170,10 @@ class Criterion < ActiveRecord::Base
                 .joins(submission: :grouping)
                 .where(groupings: {assignment_id: self.assignment_id})
     if self.ta_visible_changed?
-      # existing marks should be deleted
       results.each do |r|
         if !r.is_a_review? # filter results that are not peer reviews
-          self.marks.where(result_id: r.id).destroy_all # delete old marks
-          unless self.ta_visible # in case ta_visible becomes false, we have to create mark object
+          unless self.ta_visible # in case ta_visible becomes false
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
             mark_objects << Mark.new(result_id: r.id) # create mark object for TA review result
           end
           r.update_total_mark
@@ -182,11 +181,10 @@ class Criterion < ActiveRecord::Base
       end
     end
     if self.peer_visible_changed?
-      # existing marks should be deleted
       results.each do |r|
         if r.is_a_review? # filter results that are peer reviews
-          self.marks.where(result_id: r.id).destroy_all # delete old marks
-          unless self.peer_visible # in case peer_visible becomes false, we have to create mark object
+          unless self.peer_visible # in case peer_visible becomes false
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
             mark_objects << Mark.new(result_id: r.id) # create mark object for peer review result
           end
           r.update_total_mark
