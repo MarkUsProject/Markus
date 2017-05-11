@@ -1013,7 +1013,7 @@ ul.annotation_text_list {
   #panes {
     display: flex;
     width: 100%;
-
+ 
     @include breakpoint(small) {
       display: block;
     }
