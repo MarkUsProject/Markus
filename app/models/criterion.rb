@@ -171,7 +171,7 @@ class Criterion < ActiveRecord::Base
                 .where(groupings: {assignment_id: self.assignment_id})
     if self.ta_visible_changed?
       results.each do |r|
-        if !r.is_a_review? # filter results that are not peer reviews
+        unless r.is_a_review? # filter results that are not peer reviews
           unless self.ta_visible # in case ta_visible becomes false
             self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
             mark_objects << Mark.new(result_id: r.id) # create mark object for TA review result
