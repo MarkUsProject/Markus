@@ -166,32 +166,39 @@ class Criterion < ActiveRecord::Base
   def replace_marks
     #byebug
     m = []
-    if self.ta_visible_changed? || self.peer_visible_changed?
-      # results with specific assignment
-      results = Result
-                  .joins(submission: :grouping)
-                  .where(groupings: {assignment_id: self.assignment_id})
-      # creates new marks and delete old marks
-      if self.visible?
-        if self.peer_visible # if criteria is peer_visible
-          results.each do |r|
-            if r.is_a_review? # filter results that are peer reviews
-              self.marks.where(result_id: r.id).destroy_all # delete old marks
-              m << Mark.new(result_id: r.id) # create mark object for peer review result
-              r.update_total_mark
-            end
+    # results with specific assignment
+    results = Result
+                .joins(submission: :grouping)
+                .where(groupings: {assignment_id: self.assignment_id})
+    if self.ta_visible_changed?
+      # existing marks should be deleted
+      results.each do |r|
+        if !r.is_a_review? # filter results that are not peer reviews
+          self.marks.where(result_id: r.id).destroy_all # delete old marks
+          if !self.ta_visible # in case peer_visible becomes false, we have to create mark object
+            m << Mark.new(result_id: r.id) # create mark object for TA review result
           end
-        elsif self.ta_visible # if criteria is= ta_visible
-          results.each do |r|
-            if !r.is_a_review? # filter results that are not peer reviews
-              self.marks.where(result_id: r.id).destroy_all # delete old marks
-              m << Mark.new(result_id: r.id)  # create mark object for ta review result
-              r.update_total_mark
-            end
-          end
+          r.update_total_mark
         end
-        Mark.import m
       end
     end
+    if self.peer_visible_changed?
+      # existing marks should be deleted
+      results.each do |r|
+        if r.is_a_review? # filter results that are peer reviews
+          self.marks.where(result_id: r.id).destroy_all # delete old marks
+          if !self.peer_visible # in case peer_visible becomes false, we have to create mark object
+            m << Mark.new(result_id: r.id) # create mark object for peer review result
+          end
+          r.update_total_mark
+        end
+      end
+    end
+
+    m.each do |marking|
+      puts marking
+    end
+
+    Mark.import m
   end
 end
