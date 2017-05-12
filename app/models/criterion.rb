@@ -7,7 +7,7 @@ class Criterion < ActiveRecord::Base
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
 
-  # Every time a criterion is *updated* and one (or both) of these attributes changes.
+  # Every time a criterion is updated or created
   after_save :replace_marks
 
   self.abstract_class = true
@@ -55,7 +55,7 @@ class Criterion < ActiveRecord::Base
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     criteria = assignment.get_criteria(:ta)
-                 .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
+                         .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
     columns = [:criterion_id, :criterion_type, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
@@ -164,19 +164,20 @@ class Criterion < ActiveRecord::Base
   end
 
   def replace_marks
+    #byebug
     mark_objects = []
     # results with specific assignment
-    results = Result
-                .joins(submission: :grouping)
-                .where(groupings: {assignment_id: self.assignment_id})
-    if self.ta_visible_changed?
+    results = Result.joins(submission: :grouping)
+                    .where(groupings: {assignment_id: self.assignment_id})
+    if self.ta_visible_changed? || self.id_changed? # if visibility changes or if criterion is created
       if self.ta_visible # The criterion has changed from not visible to visible
         results.each do |r|
           unless r.is_a_review? # filter results that are not peer reviews
-            mark_objects << Mark.new(result_id: r.id) # create mark object for TA review result
+            mark_objects << self.marks.new(result_id: r.id) # create mark object for TA review result
             r.update_total_mark
           end
         end
+        Mark.import mark_objects
       else # the criterion has changed from visible to not visible.
         results.each do |r|
           unless r.is_a_review? # filter results that are not peer reviews
@@ -186,14 +187,15 @@ class Criterion < ActiveRecord::Base
         end
       end
     end
-    if self.peer_visible_changed?
+    if self.peer_visible_changed? || self.id_changed? # if visibility changes or if criterion is created
       if self.peer_visible # The criterion has changed from not visible to visible
         results.each do |r|
           if r.is_a_review? # filter results that are peer reviews
-            mark_objects << Mark.new(result_id: r.id) # create mark object for peer review result
+            mark_objects << self.marks.new(result_id: r.id) # create mark object for peer review result
             r.update_total_mark
           end
         end
+        Mark.import mark_objects
       else # the criterion has changed from visible to not visible.
         results.each do |r|
           if r.is_a_review? # filter results that are peer reviews
@@ -203,6 +205,5 @@ class Criterion < ActiveRecord::Base
         end
       end
     end
-    Mark.import mark_objects
   end
 end
