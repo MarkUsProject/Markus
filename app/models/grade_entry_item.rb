@@ -91,7 +91,7 @@ class GradeEntryItem < ActiveRecord::Base
     grade_entries = []
 
     (names.size).times do |i|
-      grade_entry_item = grade_entry_form.grade_entry_items.first_or_initialize(name: names[i])
+      grade_entry_item = grade_entry_form.grade_entry_items.where(name: names[i]).first_or_initialize
 
       grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
