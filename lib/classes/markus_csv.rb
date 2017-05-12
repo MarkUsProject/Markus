@@ -32,8 +32,8 @@ class MarkusCSV
       end
       CSV.parse(input, options) do |row|
         begin
+          valid_line_count += 1 unless row[0].blank?
           parse_obj.call(row)
-          valid_line_count += 1 if row[0]
         rescue CSVInvalidLineError => e
           # append individual error messages to each entry
           line = row.join(',')
