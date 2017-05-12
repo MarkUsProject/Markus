@@ -60,9 +60,9 @@ class Criterion < ActiveRecord::Base
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                        .where(criterion_id: criteria.map(&:id),
-                               ta_id: ta_ids)
-                        .pluck(:criterion_id, :criterion_type, :ta_id)
+                      .where(criterion_id: criteria.map(&:id),
+                             ta_id: ta_ids)
+                      .pluck(:criterion_id, :criterion_type, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
@@ -83,8 +83,8 @@ class Criterion < ActiveRecord::Base
     %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
       criterion_ids_by_type[type] =
         criterion_ids_in.zip(criterion_types)
-          .select { |_, crit_type| crit_type == type}
-          .map { |crit_id, _| crit_id }
+                        .select { |_, crit_type| crit_type == type}
+                        .map { |crit_id, _| crit_id }
     end
     update_assigned_groups_counts(assignment, criterion_ids_by_type)
   end
@@ -108,22 +108,22 @@ class Criterion < ActiveRecord::Base
       rubric_criterion_ids_str = ''
     else
       rubric_criterion_ids_str = Array(criterion_ids_by_type['RubricCriterion'])
-                                   .map { |criterion_id| connection.quote(criterion_id) }
-                                   .join(',')
+                .map { |criterion_id| connection.quote(criterion_id) }
+                .join(',')
     end
     if criterion_ids_by_type.nil?  or criterion_ids_by_type['FlexibleCriterion'].nil?
       flexible_criterion_ids_str = ''
     else
       flexible_criterion_ids_str = Array(criterion_ids_by_type['FlexibleCriterion'])
-                                     .map { |criterion_id| connection.quote(criterion_id) }
-                                     .join(',')
+                  .map { |criterion_id| connection.quote(criterion_id) }
+                  .join(',')
     end
     if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
       checkbox_criterion_ids_str = ''
     else
       checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
-                                     .map { |criterion_id| connection.quote(criterion_id) }
-                                     .join(',')
+                  .map { |criterion_id| connection.quote(criterion_id) }
+                  .join(',')
     end
 
     # TODO replace these raw SQL with dynamic SET clause with Active Record
