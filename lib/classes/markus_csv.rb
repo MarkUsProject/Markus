@@ -15,14 +15,16 @@ class MarkusCSV
   end
 
   # Performs an action for each object in a collection represented by
-  # a CSV string. 'input' is the input string, and parse_obj is a block which
-  # takes a line and performs an action, or raises CSVInvalidLineError.
+  # a CSV string. 'input' is the input string, 'header_count' is the
+  # number of header lines to remove from the displayed valid_line_count
+  # and parse_obj is a block which takes a line and performs an action,
+  # or raises CSVInvalidLineError.
   # Returns a result hash, containing a success message with the number of
   # successful rows parsed, as well as an error message, consisting of one
   # of the following:
   #   1) A string listing all erroneous lines.
   #   2) A more generic error message for invalid files.
-  def self.parse(input, options = {}, &parse_obj)
+  def self.parse(input, header_count = 0, options = {}, &parse_obj)
     invalid_lines = []
     valid_line_count = 0
     result = { invalid_lines: '', valid_lines: '' }
@@ -32,8 +34,8 @@ class MarkusCSV
       end
       CSV.parse(input, options) do |row|
         begin
-          valid_line_count += 1 unless row[0].blank?
           parse_obj.call(row)
+          valid_line_count += 1
         rescue CSVInvalidLineError => e
           # append individual error messages to each entry
           line = row.join(',')
@@ -50,7 +52,7 @@ class MarkusCSV
       end
       if valid_line_count > 0
         result[:valid_lines] = I18n.t('csv_valid_lines',
-                                      valid_line_count: valid_line_count)
+                                      valid_line_count: valid_line_count - header_count)
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = t('upload_errors.malformed_csv')
