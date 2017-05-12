@@ -88,13 +88,14 @@ class GradeEntryItem < ActiveRecord::Base
     names.shift
     totals.shift
 
+    grade_entries = []
+
     (names.size).times do |i|
-      grade_entry_item = grade_entry_form.grade_entry_items.find_or_create_by(name: names[i])
+      grade_entry_item = grade_entry_form.grade_entry_items.where(name: names[i]).first_or_initialize
+
       grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
-      unless grade_entry_item.save
-        raise CSV::MalformedCSVError
-      end
+      grade_entries << grade_entry_item
     end
 
     # Delete old questions if we want to overwrite them
@@ -108,5 +109,7 @@ class GradeEntryItem < ActiveRecord::Base
         i = i + 1
       end
     end
+
+    return grade_entries
   end
 end
