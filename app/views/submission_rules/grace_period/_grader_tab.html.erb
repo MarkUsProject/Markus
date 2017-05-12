@@ -1,29 +1,39 @@
 <%
   user_deductions = grouping.grace_period_deductions.includes(membership: :user).group_by {|d| d.membership.user}
 %>
-
-<h3><%=I18n.t('submission_rules.grace_period_submission_rule.deductions')%></h3>
-<% user_deductions.each do |u| %>
-<table>
-  <thead>
-    <th colspan="2">
-      <%= u[0].user_name %> - (<%= u[0].first_name%> <%=u[0].last_name%>)
-    </th>
-  </thead>
-  <tr>
-    <td>
-      <%= u[1].first.deduction %> credits
-    </td>
-    <td>
-      <%= button_to(
-            t('submission_rules.grace_period_submission_rule.remove_deduction'),
-            delete_grace_period_deduction_assignment_submission_result_path(
-                id: grouping.id, deduction_id: u[1].first.id),
-            confirm: t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
-            class: "button_to_delete_deduction",
-            remote: true) %>
-    </td>
-  </tr>
-</table>
+<% if user_deductions.size > 0 %>
+<div class='submission_rule_pane'>
+  <div class='submission_rule_label'>
+    <strong><%= t('marker.marks.submission_rule') %>:</strong>
+  </div>
+  <div id="submission_rule_viewer">
+    <h3><%=I18n.t('submission_rules.grace_period_submission_rule.deductions')%></h3>
+    <% user_deductions.each do |u| %>
+    <table>
+      <thead>
+        <th colspan="2">
+          <%= u[0].user_name %> - (<%= u[0].first_name%> <%=u[0].last_name%>)
+        </th>
+      </thead>
+      <tr>
+        <td>
+          <%= u[1].first.deduction %> credits
+        </td>
+        <td>
+          <% unless @current_user.student? %>
+          <%= button_to(
+                t('submission_rules.grace_period_submission_rule.remove_deduction'),
+                delete_grace_period_deduction_assignment_submission_result_path(
+                    id: grouping.id, deduction_id: u[1].first.id),
+                confirm: t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
+                class: "button_to_delete_deduction",
+                remote: true) %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+    <% end %>
+  </div>
+</div>
 <% end %>
 

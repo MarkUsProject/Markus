@@ -2,7 +2,7 @@ namespace :db do
 
   desc 'Update fake marks for assignments'
   task :marks => :environment do
-    puts 'Assign Marks for Assignments'
+    puts 'Assign Marks for Assignments (This may take a while)'
 
     # Open the text for the feedback files to reference
     mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
@@ -11,7 +11,8 @@ namespace :db do
     hcont = hfile.read
     mfile.close
     hfile.close
-
+    feedbackfiles = []
+    marks = []
     #Right now, only generate marks for three assignments
     Grouping.joins(:assignment).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
@@ -25,12 +26,12 @@ namespace :db do
       end
 
       # add a human written feedback file
-      FeedbackFile.create(
+      feedbackfiles << FeedbackFile.new(
         submission: new_submission, filename: 'humanfb', mime_type: 'text', file_content: hcont
       )
 
       # add an machine-generated feedback file
-      FeedbackFile.create(
+      feedbackfiles << FeedbackFile.new(
         submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
       )
 
@@ -43,23 +44,28 @@ namespace :db do
         else
           random_mark = rand(0..1)
         end
-        on_result_creation_mark = Mark.find_by(result_id:     result.id,
-                                               markable_id:   criterion.id,
-                                               markable_type: criterion.class.to_s)
-        on_result_creation_mark.update_attribute(:mark, random_mark)
-        result.save
+        marks << Mark.new(
+                  result_id:     result.id,
+                  markable_id:   criterion.id,
+                  markable_type: criterion.class.to_s,
+                  mark: random_mark)
       end
     end
+    FeedbackFile.import feedbackfiles
+
+    Mark.joins(result: [submission: [grouping: :assignment]]).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).destroy_all
+    Mark.import marks
 
     puts 'Release Results for Assignments'
     #Release the marks after they have been inputed into the assignments
     Result.all.each do |result|
+      result.update_total_mark
       result.marking_state = 'complete'
       result.released_to_students = true
       result.save
     end
 
-    Assignment.where(short_identifier: %w(A1 A2)).each do |a|
+    Assignment.where(short_identifier: %w(A0 A1 A2)).each do |a|
       a.update_results_stats
       a.assignment_stat.refresh_grade_distribution
     end
