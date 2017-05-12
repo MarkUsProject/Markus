@@ -101,16 +101,9 @@ class Criterion < ActiveRecord::Base
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment, criterion_ids_by_type = nil)
     # Sanitize the IDs in the input.
-    criteria = ['RubricCriterion', 'FlexibleCriterion', 'CheckboxCriterion']
-    criteria.each do |criterion|
-      if criterion_ids_by_type.nil? or criterion_ids_by_type[criterion].nil?
-        rubric_criterion_ids_str = ''
-      else
-        rubric_criterion_ids_str = Array(criterion_ids_by_type[criterion])
-                                     .map { |criterion_id| connection.quote(criterion_id) }
-                                     .join(',')
-      end
-    end
+    rubric_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'RubricCriterion')
+    flexible_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'FlexibleCriterion')
+    checkbox_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'CheckboxCriterion')
 
     # TODO replace these raw SQL with dynamic SET clause with Active Record
     # language when the latter supports subquery in the SET clause.
@@ -131,6 +124,16 @@ class Criterion < ActiveRecord::Base
         WHERE assignment_id = #{assignment.id}
       #{"AND id IN (#{str})" unless str.empty?}
       UPDATE_SQL
+    end
+  end
+
+  def self.generate_criterion_ids_str(criterion_ids_by_type, type)
+    if criterion_ids_by_type.nil? or criterion_ids_by_type[type].nil?
+      ''
+    else
+      Array(criterion_ids_by_type[type])
+                                   .map { |criterion_id| connection.quote(criterion_id) }
+                                   .join(',')
     end
   end
 end
