@@ -101,32 +101,20 @@ class Criterion < ActiveRecord::Base
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment, criterion_ids_by_type = nil)
     # Sanitize the IDs in the input.
-    if criterion_ids_by_type.nil? or criterion_ids_by_type['RubricCriterion'].nil?
-      rubric_criterion_ids_str = ''
-    else
-      rubric_criterion_ids_str = Array(criterion_ids_by_type['RubricCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
-    end
-    if criterion_ids_by_type.nil?  or criterion_ids_by_type['FlexibleCriterion'].nil?
-      flexible_criterion_ids_str = ''
-    else
-      flexible_criterion_ids_str = Array(criterion_ids_by_type['FlexibleCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
-    end
-    if criterion_ids_by_type.nil?  or criterion_ids_by_type['CheckboxCriterion'].nil?
-      checkbox_criterion_ids_str = ''
-    else
-      checkbox_criterion_ids_str = Array(criterion_ids_by_type['CheckboxCriterion'])
-        .map { |criterion_id| connection.quote(criterion_id) }
-        .join(',')
-    end
+    rubric_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'RubricCriterion')
+    flexible_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'FlexibleCriterion')
+    checkbox_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'CheckboxCriterion')
 
     # TODO replace these raw SQL with dynamic SET clause with Active Record
     # language when the latter supports subquery in the SET clause.
-    RubricCriterion.connection.execute(<<-UPDATE_SQL)
-      UPDATE #{RubricCriterion.table_name} AS c SET assigned_groups_count =
+    criteria_str = Hash.new
+    criteria_str[RubricCriterion] = rubric_criterion_ids_str
+    criteria_str[FlexibleCriterion] = flexible_criterion_ids_str
+    criteria_str[CheckboxCriterion] = checkbox_criterion_ids_str
+
+    criteria_str.each do |criterion, str|
+      criterion.connection.execute(<<-UPDATE_SQL)
+      UPDATE #{criterion.table_name} AS c SET assigned_groups_count =
         (SELECT count(DISTINCT g.id) FROM memberships AS m
           INNER JOIN groupings AS g ON m.grouping_id = g.id
           INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
@@ -134,29 +122,18 @@ class Criterion < ActiveRecord::Base
             AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
             AND m.type = 'TaMembership')
         WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{rubric_criterion_ids_str})" unless rubric_criterion_ids_str.empty?}
-    UPDATE_SQL
-    FlexibleCriterion.connection.execute(<<-UPDATE_SQL)
-      UPDATE #{FlexibleCriterion.table_name} AS c SET assigned_groups_count =
-        (SELECT count(DISTINCT g.id) FROM memberships AS m
-          INNER JOIN groupings AS g ON m.grouping_id = g.id
-          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
-          WHERE g.assignment_id = #{assignment.id}
-            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
-            AND m.type = 'TaMembership')
-        WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{flexible_criterion_ids_str})" unless flexible_criterion_ids_str.empty?}
-    UPDATE_SQL
-    CheckboxCriterion.connection.execute(<<-UPDATE_SQL)
-      UPDATE #{CheckboxCriterion.table_name} AS c SET assigned_groups_count =
-        (SELECT count(DISTINCT g.id) FROM memberships AS m
-          INNER JOIN groupings AS g ON m.grouping_id = g.id
-          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
-          WHERE g.assignment_id = #{assignment.id}
-            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
-            AND m.type = 'TaMembership')
-        WHERE assignment_id = #{assignment.id}
-    #{"AND id IN (#{checkbox_criterion_ids_str})" unless checkbox_criterion_ids_str.empty?}
-    UPDATE_SQL
+      #{"AND id IN (#{str})" unless str.empty?}
+      UPDATE_SQL
+    end
+  end
+
+  def self.generate_criterion_ids_str(criterion_ids_by_type, type)
+    if criterion_ids_by_type.nil? or criterion_ids_by_type[type].nil?
+      ''
+    else
+      Array(criterion_ids_by_type[type])
+                                   .map { |criterion_id| connection.quote(criterion_id) }
+                                   .join(',')
+    end
   end
 end
