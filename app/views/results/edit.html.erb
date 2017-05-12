@@ -173,11 +173,6 @@
 
   <div class='heading_buttons'>
     <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
-    <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-      <%= link_to t(:download),
-                  'javascript:void(0);',
-                  onclick:'modal_download.open();' %>
-    <% end %>
   </div>
 </div>
 
