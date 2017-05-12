@@ -170,24 +170,36 @@ class Criterion < ActiveRecord::Base
                 .joins(submission: :grouping)
                 .where(groupings: {assignment_id: self.assignment_id})
     if self.ta_visible_changed?
-      results.each do |r|
-        unless r.is_a_review? # filter results that are not peer reviews
-          unless self.ta_visible # in case ta_visible becomes false
-            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+      if self.ta_visible # The criterion has changed from not visible to visible
+        results.each do |r|
+          unless r.is_a_review? # filter results that are not peer reviews
             mark_objects << Mark.new(result_id: r.id) # create mark object for TA review result
+            r.update_total_mark
           end
-          r.update_total_mark
+        end
+      else # the criterion has changed from visible to not visible.
+        results.each do |r|
+          unless r.is_a_review? # filter results that are not peer reviews
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+            r.update_total_mark
+          end
         end
       end
     end
     if self.peer_visible_changed?
-      results.each do |r|
-        if r.is_a_review? # filter results that are peer reviews
-          unless self.peer_visible # in case peer_visible becomes false
-            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+      if self.peer_visible # The criterion has changed from not visible to visible
+        results.each do |r|
+          if r.is_a_review? # filter results that are peer reviews
             mark_objects << Mark.new(result_id: r.id) # create mark object for peer review result
+            r.update_total_mark
           end
-          r.update_total_mark
+        end
+      else # the criterion has changed from visible to not visible.
+        results.each do |r|
+          if r.is_a_review? # filter results that are peer reviews
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+            r.update_total_mark
+          end
         end
       end
     end
