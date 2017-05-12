@@ -20,6 +20,7 @@ Markus::Application.routes.draw do
             resources :test_results, except: [:new, :edit]
           end
           member do
+            put 'add_annotations'
             put 'update_marks'
             put 'update_marking_state'
           end

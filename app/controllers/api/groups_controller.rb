@@ -134,6 +134,67 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
+    def add_annotations
+      assignment = Assignment.find(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+           .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                   .current_submission_used
+                   .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+          'No submissions exist for that group' }, status: 404
+        return
+      end
+
+      # We shouldn't be able to update marks if marking is already complete.
+      if result.marking_state == Result::MARKING_STATES[:complete]
+        render 'shared/http_status', locals: { code: '404', message:
+          'Marking for that submission is already completed' }, status: 404
+        return
+      end
+
+      params[:annotations].each do |annot_params|
+        annotation_category = assignment.annotation_categories.find_or_create_by(
+          annotation_category_name: annot_params[:annotation_category_name]
+        )
+        text = AnnotationText.create(
+          content: annot_params[:content],
+          annotation_category_id: annotation_category.id,
+          creator_id: @current_user.id,
+          last_editor_id: @current_user.id
+        )
+        submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
+        TextAnnotation.create(
+          line_start: annot_params[:line_start],
+          line_end: annot_params[:line_end],
+          column_start: annot_params[:column_start],
+          column_end: annot_params[:column_end],
+          annotation_text_id: text.id,
+          submission_file_id: submission_file.id,
+          creator_id: @current_user.id,
+          creator_type: @current_user.type,
+          is_remark: !result.remark_request_submitted_at.nil?,
+          annotation_number: result.submission.annotations.count + 1,
+          result_id: result.id
+        )
+      end
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
     # Return key:value pairs of group_name:group_id
     def group_ids_by_name
       groups = Assignment.find(params[:assignment_id])
@@ -178,6 +239,20 @@ module Api
             'No submissions exist for that group' }, status: 404
         return
       end
+    end
+
+    private
+
+    def annotations_params
+      params.require(annotations: [
+        :annotation_category_name,
+        :column_end,
+        :column_start,
+        :content,
+        :filename,
+        :line_end,
+        :line_start
+      ])
     end
   end # end GroupsController
 end
