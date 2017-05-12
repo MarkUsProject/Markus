@@ -164,7 +164,6 @@ class Criterion < ActiveRecord::Base
   end
 
   def replace_marks
-    #byebug
     mark_objects = []
     # results with specific assignment
     results = Result.joins(submission: :grouping)
