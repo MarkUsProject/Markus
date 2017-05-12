@@ -25,16 +25,22 @@
             <%= render partial: 'results/common/file_selector_dropdown',
                        locals: { files: files,
                                  can_download: true } %>
-
-              <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
-                <%= t('annotations.new.button')%>
-              </button>
-
               <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-                <%= render partial: 'annotations/annotation_categories',
-                           locals: { annotation_categories: annotation_categories,
-                                     result_id: result.id } %>
+                <button id='file_download_button' onclick='modal_download.open(); return false;'>
+                  <%= t(:download)%>
+                </button>
               <% end %>
+
+              <div class="annotation_options">
+                <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
+                  <%= t('annotations.new.button')%>
+                </button>
+                <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                  <%= render partial: 'annotations/annotation_categories',
+                             locals: { annotation_categories: annotation_categories,
+                                       result_id: result.id } %>
+                <% end %>
+            </div>
           </div>
 
           <div id='codeviewer' class='flex-col'></div>
