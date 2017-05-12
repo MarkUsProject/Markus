@@ -18,10 +18,18 @@
       <span><%= old_result.get_subtotal %> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     </div>
     <% end %>
-
-    <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule %>
-        <%= render partial: assignment.submission_rule.grader_tab_partial,
-                   locals: { grouping: result.submission.grouping } %>
+    <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule and
+        (@old_result.submission.grouping.grace_period_deductions.
+            includes(membership: :user).group_by {|d| d.membership.user}).size > 0 %>
+        <div class='submission_rule_pane'>
+          <div class='submission_rule_label'>
+            <strong><%= t('marker.marks.submission_rule') %>:</strong>
+          </div>
+          <div id="submission_rule_viewer">
+            <%= render partial: assignment.submission_rule.grader_tab_partial,
+                       locals: { grouping: result.submission.grouping } %>
+          </div>
+        </div>
     <% end %>
 
     <% if @old_result.get_positive_extra_points != 0 || @old_result.get_negative_extra_points != 0 %>
@@ -85,9 +93,18 @@
         <span><%= result.get_subtotal %> / <%= assignment.max_mark %></span>
     </div>
     <% end %>
-    <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule %>
-      <%= render partial: assignment.submission_rule.grader_tab_partial,
-                 locals: { grouping: result.submission.grouping } %>
+      <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule and
+          (result.submission.grouping.grace_period_deductions.
+              includes(membership: :user).group_by {|d| d.membership.user}).size > 0 %>
+      <div class='submission_rule_pane'>
+        <div class='submission_rule_label'>
+          <strong><%= t('marker.marks.submission_rule') %>:</strong>
+        </div>
+        <div id="submission_rule_viewer">
+          <%= render partial: assignment.submission_rule.grader_tab_partial,
+                     locals: { grouping: result.submission.grouping } %>
+        </div>
+      </div>
     <% end %>
 
     <% if @result.get_negative_extra_points != 0 || @result.get_positive_extra_points != 0 %>
