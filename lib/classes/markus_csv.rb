@@ -24,7 +24,7 @@ class MarkusCSV
   # of the following:
   #   1) A string listing all erroneous lines.
   #   2) A more generic error message for invalid files.
-  def self.parse(input, header_count = 0, options = {}, &parse_obj)
+  def self.parse(input, options = {}, header_count = 0, &parse_obj)
     invalid_lines = []
     valid_line_count = 0
     result = { invalid_lines: '', valid_lines: '' }
