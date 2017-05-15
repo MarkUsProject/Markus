@@ -1180,6 +1180,8 @@ fr:
             success: "Remarque mise à jour."
 
     criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}."
+    criterion_created_success:    "Le critère a été créé avec succès"
+    criterion_created_failure:    "Le critère n'a pas été créé"
     criterion_saved_success:   "Le critète a été sauvegardé."
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés."
     criterion:          "Critère"

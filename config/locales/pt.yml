@@ -1171,6 +1171,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
             success: "Anotação foi atualizada com sucesso."
 
     criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
+    criterion_created_success:   "O critério foi criado com êxito"
+    criterion_created_failure:   "Critério não foi criado"
     criterion_saved_success:   "Critério salvo com sucesso"
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
     criterion:          "Critério"
