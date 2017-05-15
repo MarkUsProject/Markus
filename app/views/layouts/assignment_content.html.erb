@@ -46,7 +46,7 @@
           <%= yield(:additional_headings) %>
         </div>
       </div>
-
+      <%= render partial: 'shared/flash_message' %>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
 
