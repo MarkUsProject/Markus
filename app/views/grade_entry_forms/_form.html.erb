@@ -17,9 +17,6 @@
 
 <div class='wrapper'>
   <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
-
-  <%# render 'shared/flash_message' %>
-
   <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
 
     <%= render partial: 'shared/error_explanation',
