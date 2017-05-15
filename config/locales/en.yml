@@ -1334,7 +1334,7 @@ en:
 
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_created_success:   "Criterion was successfully created"
-    criterion_created_failture:   "Criterion failed to be created"
+    criterion_created_failure:   "Criterion failed to be created"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_saved_failure:   "Criterion failed to be saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
