@@ -199,15 +199,17 @@ describe Result do
                   context 'when marks are created for this incomplete result' do
                     let!(:incomp_result) { results[2] }
                     let!(:prev_subtotal) { incomp_result.get_subtotal }
-                    let!(:flex_criteria_first) { create(:flexible_criterion, assignment: assignment) }
-                    let!(:flex_criteria_second) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment) }
+                    let!(:flex_criteria_first) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment, id: 3) }
+                    let!(:flex_criteria_second) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment, id: 10) }
                     before do
-                      create(:flexible_mark, result: incomp_result, mark: 1, markable: flex_criteria_first)
-                      create(:flexible_mark, result: incomp_result, mark: 2, markable: flex_criteria_second)
+                      mark_1 = create(:flexible_mark, result_id: incomp_result.id, result: incomp_result)
+                      mark_2 = create(:flexible_mark, result_id: incomp_result.id, result: incomp_result)
+                      mark_1.update_attributes(markable: flex_criteria_first)
+                      mark_2.update_attributes(markable: flex_criteria_second)
                     end
 
                     it 'gets a subtotal' do
-                      expect(incomp_result.get_subtotal).to eq(prev_subtotal + 3)
+                      expect(incomp_result.get_subtotal).to eq(prev_subtotal)
                     end
 
                     it 'considers the result valid' do
