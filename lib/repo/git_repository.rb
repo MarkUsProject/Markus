@@ -115,7 +115,7 @@ module Repository
     end
 
     def get_latest_revision
-      get_revision(latest_revision_identifier)
+      get_revision(@repos.last_commit.oid)
     end
 
     def get_revision_by_timestamp(target_timestamp, _path = nil)
@@ -123,12 +123,10 @@ module Repository
       # current timestamp, should be a ruby time stamp instance
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_DATE)
-      walker.push(latest_commit)
+      walker.push(@repos.last_commit)
       walker.each do |commit|
         return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
       end
-      # If no revision number was found, display the latest revision
-      # with an error message
       raise 'No revision found before supplied timestamp.'
     end
 
@@ -136,7 +134,7 @@ module Repository
       revisions = []
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
-      walker.push(latest_commit)
+      walker.push(@repos.last_commit)
       walker.each do |commit|
         revisions << get_revision(commit.oid)
       end
@@ -472,16 +470,8 @@ module Repository
 
     private
 
-    def latest_commit
-      @repos.head.target
-    end
-
-    def latest_revision_identifier
-      latest_commit.oid
-    end
-
     def latest_revision_number(_path = nil, _revision_number = nil)
-      get_revision_number(latest_commit)
+      get_revision_number(@repos.last_commit.oid)
     end
 
     def path_exists_for_latest_revision?(path)
@@ -579,8 +569,7 @@ module Repository
   # than repositories
   class GitRevision < Repository::AbstractRevision
 
-    # Constructor; Check if revision is actually present in
-    # repository
+    # Constructor; checks if revision_hash is actually present in repository
     def initialize(revision_hash, repo)
       super(revision_hash)
       @revision_identifier_ui = @revision_identifier[0..6]
@@ -603,13 +592,103 @@ module Repository
       # get all diffs with parent commits (a merge has 2+ parents), and analyze each change
       @commit.parents.each do |parent|
         parent.diff(@commit).each_delta do |delta|
-          # renames are off by default (showing up as del+add), so using new_file is enough
-          if delta.new_file[:path].include?(path)
-            return true
-          end
+          # renames are off by default (showing up as del+add), so using new_file is enough (catches del too)
+          return true if delta.new_file[:path].include?(path)
         end
       end
       false
+    end
+
+    # Checks if a file or directory at +path+ was changed by +commit+.
+    # (optimizations based on Rugged bug #343)
+    def entry_changed?(commit, path)
+      entry = commit.tree[path]
+      commit.parents.each do |parent|
+        # if at a root commit, consider it changed if we have this file;
+        # i.e. if we added it in the initial commit
+        unless parent
+          return entry != nil
+        end
+        parent_entry = parent.tree[path]
+        # neither exists, no change
+        if not entry and not parent_entry
+          next
+        # only in one of them, change
+        elsif not entry or not parent_entry then
+          return true
+        # otherwise it's changed if their ids aren't the same
+        elsif entry[:oid] != parent_entry[:oid]
+          return true
+        end
+      end
+      false
+    end
+
+    def changes_at_path2?(path)
+      entry_changed?(@commit, path)
+    end
+
+    def files_at_path2(path)
+      files = {}
+      path_tree = @commit.tree.path(path)
+      path_tree.each_blob do |blob|
+        file_name = blob[:name]
+        # get the last commit that modified the blob
+        last_commit_modified = nil
+        walker = Rugged::Walker.new(@repo)
+        walker.sorting(Rugged::SORT_DATE)
+        walker.push(@commit)
+        walker.each do |commit|
+          if entry_changed?(commit, file_name)
+            last_commit_modified = commit
+            break
+          end
+        end
+        # wrap in a RevisionFile
+        files[file_name] = Repository::RevisionFile.new(
+          @revision_identifier,
+          name: file_name,
+          path: path, # without filename, to be consistent with SVN
+          last_modified_revision: @revision_identifier, # just a placeholder
+          last_modified_date: last_commit_modified.time.in_time_zone,
+          changed: last_commit_modified == @commit,
+          user_id: last_commit_modified.author[:name],
+          mime_type: MIME::Types.type_for(file_name).first.content_type
+        )
+      end
+
+      files
+    end
+
+    def directories_at_path2(path)
+      dirs = {}
+      path_tree = @commit.tree.path(path)
+      path_tree.each_tree do |tree|
+        dir_name = tree[:name]
+        # get the last commit that modified the tree
+        last_commit_modified = nil
+        walker = Rugged::Walker.new(@repo)
+        walker.sorting(Rugged::SORT_DATE)
+        walker.push(@commit)
+        walker.each do |commit|
+          if entry_changed?(commit, dir_name)
+            last_commit_modified = commit
+            break
+          end
+        end
+        # wrap in a RevisionDirectory
+        dirs[dir_name] = Repository::RevisionDirectory.new(
+          @revision_identifier,
+          name: dir_name,
+          path: path,
+          last_modified_revision: @revision_identifier, # just a placeholder
+          last_modified_date: last_commit_modified.time.in_time_zone,
+          changed: last_commit_modified == @commit,
+          user_id: last_commit_modified.author[:name]
+        )
+      end
+
+      dirs
     end
 
     def get_hash_of_revision(revision_number)
