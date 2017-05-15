@@ -204,8 +204,8 @@ describe Result do
                     before do
                       mark_1 = create(:flexible_mark, result_id: incomp_result.id, result: incomp_result)
                       mark_2 = create(:flexible_mark, result_id: incomp_result.id, result: incomp_result)
-                      mark_1.update_attributes(markable: flex_criteria_first)
-                      mark_2.update_attributes(markable: flex_criteria_second)
+                      mark_1.update_attributes(markable: flex_criteria_first, mark: 1)
+                      mark_2.update_attributes(markable: flex_criteria_second, mark: 2)
                     end
 
                     it 'gets a subtotal' do
