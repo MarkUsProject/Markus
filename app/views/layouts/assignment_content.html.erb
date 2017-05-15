@@ -51,7 +51,6 @@
       <%= content_for?(:content) ? yield(:content) : yield %>
 
       <div class='wrapLeft'>
-        <%= render partial: 'shared/flash_message' %>
         <%= yield(:wrap_left_content) %>
       </div>
     </section>
