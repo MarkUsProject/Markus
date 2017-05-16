@@ -184,6 +184,7 @@ Markus::Application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
+            get 'peer_review_marking'
           end
         end
       end
