@@ -31,6 +31,7 @@ class CriteriaController < ApplicationController
       return
     end
     @criteria = @assignment.get_criteria
+    flash_now(:success, t('criterion_created_success'))
     render :create_and_edit
   end
 
