@@ -58,11 +58,49 @@
         </div>
       </div>
     </div>
+    <%
+      if @current_user.admin? then
+        num_marked = @assignment.get_num_marked()
+        num_assigned = @assignment.get_num_assigned()
+      else
+        num_marked = @assignment.get_num_marked(@current_user.id)
+        num_assigned = @assignment.get_num_assigned(@current_user.id)
+      end
+    %>
     <section id='content'>
+      <div class="progress_meter">
+        <span id="progress_span"><p>
+          <%= t('browse_submissions.how_many_marked',
+                num_marked: num_marked,
+                num_assigned: num_assigned)%>
+        </p></span>
+      </div>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
-
+    <script type="text/javascript">
+        var marked = <%= num_marked %>
+        var total = <%= num_assigned %>
+        function update_bar(score, outof){
+            var width = (score/outof) * 100;
+            var bar = $('#progress_span');
+            bar.css('width', width + '%');
+            if(width > 75){
+                bar.css('background-color', 'green')
+            }else if(width > 25){
+                bar.css('background-color', 'yellow')
+            }
+        }
+        update_bar(marked, total);
+        $(document).on("click","#toggle_marking_state input[value='Revert to Incomplete']",function() {
+            marked = marked - 1;
+            update_bar(marked, total);
+        });
+        $(document).on("click","#toggle_marking_state input[value='Set to Complete']",function() {
+            marked = marked + 1;
+            update_bar(marked, total);
+        });
+    </script>
     <div id='footer_wrapper'><%= render partial: 'layouts/footer' %></div>
   </div>
 
