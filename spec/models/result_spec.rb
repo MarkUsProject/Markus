@@ -204,27 +204,21 @@ describe Result do
 
                     # When we create flex_criteria_first and flex_criteria_second, it goes through callback function
                     # called replace_marks, which creates marks or deletes marks depending on whether criterion is
-                    # peer_visible or ta_visible. We have to undo the process.
+                    # peer_visible or ta_visible. We have to undo the process to prevent error.
                     before do
                       results = Result.joins(submission: :grouping)
-                                  .where(groupings: {assignment_id: flex_criteria_first.assignment_id})
+                                      .where(groupings: {assignment_id: flex_criteria_first.assignment_id})
                       results.each do |r|
                         unless r.is_a_review? # filter results that are not peer reviews
-                          flex_criteria_first.marks.where(result_id: r.id).destroy_all # create mark object for TA review result
-                          r.update_total_mark
-                        else
-                          flex_criteria_first.marks.create(result_id: r.id) # create mark object for peer review result
+                          flex_criteria_first.marks.where(result_id: r.id).destroy_all # delete existing marks
                           r.update_total_mark
                         end
                       end
                       results = Result.joins(submission: :grouping)
-                                  .where(groupings: {assignment_id: flex_criteria_second.assignment_id})
+                                      .where(groupings: {assignment_id: flex_criteria_second.assignment_id})
                       results.each do |r|
                         unless r.is_a_review? # filter results that are not peer reviews
-                          flex_criteria_second.marks.where(result_id: r.id).destroy_all # create mark object for TA review result
-                          r.update_total_mark
-                        else
-                          flex_criteria_second.marks.create(result_id: r.id) # create mark object for peer review result
+                          flex_criteria_second.marks.where(result_id: r.id).destroy_all # delete existing marks
                           r.update_total_mark
                         end
                       end
