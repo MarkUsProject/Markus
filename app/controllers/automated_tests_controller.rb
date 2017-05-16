@@ -21,11 +21,18 @@ class AutomatedTestsController < ApplicationController
       # Get new support file from upload form
       new_support_file = params[:new_support_file]
 
-      @assignment = process_test_form(@assignment,
-                                      params,
-                                      assignment_params,
-                                      new_script,
-                                      new_support_file)
+      begin
+        @assignment = process_test_form(@assignment,
+                                        params,
+                                        assignment_params,
+                                        new_script,
+                                        new_support_file)
+      rescue => e
+        flash_message(:error, e.message)
+        redirect_to :back
+      end
+
+
       # Save assignment and associated test files
       if @assignment.save
         flash_message(:success, I18n.t('assignment.update_success'))
