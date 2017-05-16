@@ -1302,7 +1302,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            @mark = Mark.make
+            @result = Result.make
+            @rub_criteria = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
+            clean_out_criteria_marks(@rub_criteria)
+            @mark = Mark.create(result: @result,
+                                markable: @rub_criteria,
+                                mark: 1)
           end
 
           should 'fails validation' do
@@ -1439,4 +1444,15 @@ class ResultsControllerTest < AuthenticatedControllerTest
       end
     end
   end # An authenticated and authorized TA doing a
+  
+  def clean_out_criterion_marks(criterion)
+    results = Result.joins(submission: :grouping)
+                    .where(groupings: {assignment_id: criterion.assignment_id})
+    results.each do |r|
+      unless r.is_a_review? # filter results that are not peer reviews
+        criterion.marks.where(result_id: r.id).destroy_all # delete existing marks
+        r.update_total_mark
+      end
+    end
+  end
 end
