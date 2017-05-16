@@ -1,0 +1,243 @@
+<div id='panes-content'>
+  <div id='panes'>
+    <div id='left-pane'>
+      <div class='tab-pane' id='code_pane'>
+        <ul id='code_and_annotations_tabs' class='subsection_tabs'>
+          <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+          <li><a href='#annotations_summary'><%= t('marker.annot_summary') %></a></li>
+          <li><a href='#parent_marking_scheme'><%= t('marker.marks.marks') %></a></li>
+        </ul>
+
+        <div id='code_holder'>
+          <%# For image/PDF annotations %>
+          <div id='sel_box'></div>
+
+          <div id='annotation_menu'>
+
+            <%= render partial: 'results/common/file_selector_dropdown',
+                       locals: { files: files,
+                                 can_download: true } %>
+
+            <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
+              <%= t('marker.new_annot')%>
+            </button>
+
+            <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                <%= render partial: 'annotations/annotation_categories',
+                           locals: { annotation_categories: annotation_categories,
+                                     result_id: result.id } %>
+            <% end %>
+          </div>
+]
+          <div id='codeviewer'></div>
+        </div>
+
+        <div id='annotations_summary'>
+          <div id='annotations_summary_head'>
+            <h3><%= t('marker.overall_comments') %></h3>
+
+            <%= render partial: 'results/marker/overall_comment',
+                       locals: { result: old_result ? old_result : result } %>
+
+            <h3><%= t('marker.current_annotations') %></h3>
+            <p><%= t('marker.across_all_submission_files') %></p>
+          </div>
+
+          <ul id='annotation_summary_list'></ul>
+        </div>
+
+        <div id = 'parent_marking_scheme'>
+          <div id='mark_criteria_pane'>
+            <ul id='mark_criteria_pane_list'>
+              <%# Also need to render the mark per criteria (if exist) %>
+              <% @mark_criteria.each do |mark_criterion| -%>
+                  <%= render partial: "results/student/student_#{mark_criterion.class.to_s.underscore}_li",
+                             locals: { mark_criterion: mark_criterion,
+                                       result: @original_result,
+                                       mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                       old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
+              <% end -%>
+            </ul>
+          </div>
+        </div>
+
+        <% if can_show_test_results_tab?(assignment) %>
+            <div id='test_result_tab' style='display:none;'>
+              <div id='testviewer'>
+                <%= link_to t("automated_tests.run_tests"),
+                            run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
+                            class: 'button' %>
+                <% unless submission.test_script_results.empty? %>
+                    <div class="block">
+                      <h2><%= t("automated_tests.test_results") %></h2>
+                      <div class="block_content">
+                        <br />
+                        <div class="sub_block">
+                          <%= raw t("automated_tests.marks_obtained",
+                                    :marking => "#{@grouping.get_total_test_script_marks} /
+                                             #{@assignment.total_instructor_test_script_marks}" ) %>
+                        </div>
+                        <div id="test_results" class="sub_block">
+                          <%= render partial: 'automated_tests/test_script_result',
+                                     locals: {show_output: true},
+                                     collection: submission.test_script_results %>
+                        </div>
+                      </div>
+                    </div>
+                <% end %>
+              </div>
+            </div>
+        <% end %>
+
+        <% if can_show_feedback_files_tab?(submission) %>
+            <div id='feedback_file_tab' style='display:none;'>
+
+              <div id='feedback_file_selector_menu'>
+                <div id='feedback_files_controls'>
+                  <%= render partial: 'results/common/feedback_file_selector',
+                             locals: { feedback_files: feedback_files,
+                                       submission_id: submission.id } %>
+                </div>
+              </div>
+
+              <div id='feedback_file_content'>
+              </div>
+            </div>
+        <% end %>
+
+        <div id='remark_request_tab' style='display:none;'>
+          <% if can_show_remark_request_tab_in_marker_pane(submission) %>
+              <%= render partial: 'results/marker/remark_request',
+                         locals: { result: result,
+                                   submission: submission,
+                                   assignment: assignment } %>
+          <% end %>
+        </div>
+      </div> <%# Code Pane %>
+    </div>
+
+    <div id='drag'></div>
+
+    <!--TODO add the right pane-->
+
+    <div id='right-pane'>
+      <div class='tab-pane' id='mark_pane'>
+        <ul id='mark_tabs' class='subsection_tabs'>
+          <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
+          <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
+          <% unless @result.is_a_review? %>
+              <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
+          <% end %>
+        </ul>
+
+        <div id='mark_viewer'>
+          <div class='mark_tools'>
+            <button class='inline-button' id='expand_all'>
+              <%= t('marker.marks.expand_all') %>
+            </button>
+            <button class='inline-button' id='collapse_all'>
+              <%= t('marker.marks.collapse_all') %>
+            </button>
+            <button class='inline-button' id='expand_unmarked'>
+              <%= t('marker.marks.expand_unmarked') %>
+            </button>
+          </div>
+
+          <div id='mark_criteria'>
+            <ul id='mark_criteria_pane_list'>
+              <%# Also need to render the mark per criteria (if exist) %>
+              <% @pr_mark_criteria.each do |mark_criterion| -%>
+                  <%- # debug mark_criterion -%>
+                  <%= render partial: "results/marker/marker_#{mark_criterion.class.to_s.underscore}_li",
+                             locals: { mark_criterion: mark_criterion,
+                                       result: result,
+                                       mark: pr_marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
+                                       old_mark: pr_old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
+              <% end -%>
+            </ul>
+          </div>
+        </div> <%# Criterion Viewer %>
+
+        <div id='summary_viewer' class='marks_summary_pane'>
+          <%= render partial: 'results/marker/marker_summary',
+                     locals: { mark_criteria: pr_mark_criteria,
+                               marks_map: pr_marks_map,
+                               old_marks_map: pr_old_marks_map,
+                               assignment: assignment,
+                               old_result: @old_result,
+                               result: result,
+                               extra_marks_points: extra_marks_points,
+                               extra_marks_percentage: extra_marks_percentage } %>
+        </div>
+
+        <!-- Tag insertion pane. -->
+        <% unless @result.is_a_review? %>
+            <div id='tag_viewer'>
+              <%= render partial: 'results/marker/tag_summary',
+                         locals: { assignment: assignment,
+                                   old_result: @old_result,
+                                   result: result } %>
+            </div>
+        <% end %>
+
+        <!-- Annotation pane-->
+        <div id='annotation_holder'></div>
+
+        <aside class='dialog' id='create_annotation_dialog'>
+          <input type='hidden' id='x1' value=''>
+          <input type='hidden' id='x2' value=''>
+          <input type='hidden' id='y1' value=''>
+          <input type='hidden' id='y2' value=''>
+          <input type='hidden' id='annot_dialog_page' value=''> <%# For use in PDF's %>
+          <div>
+            <div style="float: left;">
+              <h2><%= I18n.t('marker.annotation.new_annotation') %></h2>
+              <p>
+                <textarea id="new_annotation_content"></textarea>
+              </p>
+              <button onclick="updateAnnotationPreview()"><%= t('marker.annotation.preview') %></button>
+              <% if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                  <%= hidden_field_tag 'new_annotation_category', value: t('annotations.one_time_only') %>
+              <% else %>
+                  <h3><%= I18n.t('marker.annotation.annotation_category') %></h3>
+                  <select id='new_annotation_category'>
+                    <option value=''><%= t('annotations.one_time_only') %></option>
+                    <% annotation_categories.each do |annotation_category| %>
+                        <option value='<%= annotation_category.id %>'>
+                          <%= annotation_category.annotation_category_name %>
+                        </option>
+                    <% end %>
+                  </select>
+              <% end %>
+
+              <section class='dialog-actions'>
+                <button id='new_annotation_modal_button' onclick="hideAnnotationPreview();
+                    submit_new_annotation(
+                        jQuery('#new_annotation_content').val(),
+                        jQuery('#new_annotation_category').val(),
+                        jQuery('#x1').val(),
+                        jQuery('#x2').val(),
+                        jQuery('#y1').val(),
+                        jQuery('#y2').val(),
+                        jQuery('#annot_dialog_page').val(),
+                        <%= result.id %>,
+                        <%= assignment.id %>);">
+                  <%= I18n.t('marker.annotation.new_annotation') %>
+                </button>
+                <%= button_tag t('cancel'), onclick: 'modal.close(); hideAnnotationPreview();' %>
+              </section>
+            </div>
+            <div style="float: right">
+              <h2 id="annotation_preview_title" style="display: none"> <%= t('marker.annotation.preview_title') %></h2>
+              <p id="annotation_preview" style="display: none; word-wrap: break-word;"></p>
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+
+
+        </aside>
+      </div> <!-- Mark pane -->
+    </div>
+
+  </div>
+</div>

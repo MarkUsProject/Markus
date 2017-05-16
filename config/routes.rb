@@ -184,6 +184,7 @@ Markus::Application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
+            get 'peer_review_marking'
           end
         end
       end
@@ -210,6 +211,13 @@ Markus::Application.routes.draw do
           post 'update_mark'
           post 'update_overall_comment'
           patch 'update_remark_request'
+
+        end
+      end
+
+      resources :results, path: '/peer_reviews' do
+        member do
+          get 'peer_review_marking'
         end
       end
 
