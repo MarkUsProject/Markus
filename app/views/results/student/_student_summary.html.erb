@@ -19,7 +19,7 @@
     </div>
     <% end %>
     <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule &&
-        (@old_result.submission.grouping.grace_period_deductions.any?).size > 0 %>
+         @old_result.submission.grouping.grace_period_deductions.any? %>
         <div class='submission_rule_pane'>
           <div class='submission_rule_label'>
             <strong><%= t('marker.marks.submission_rule') %>:</strong>
@@ -93,7 +93,7 @@
     </div>
     <% end %>
       <% if assignment.submission_rule.is_a? GracePeriodSubmissionRule &&
-          (result.submission.grouping.grace_period_deductions.any?).size > 0 %>
+          result.submission.grouping.grace_period_deductions.any? %>
       <div class='submission_rule_pane'>
         <div class='submission_rule_label'>
           <strong><%= t('marker.marks.submission_rule') %>:</strong>
