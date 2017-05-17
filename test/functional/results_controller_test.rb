@@ -1230,11 +1230,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.stubs(:find).returns(@file)
 
             get_as @ta,
-                    :download,
-                    assignment_id: 1,
-                    submission_id: 1,
-                    id: 1,
-                    select_file_id: 1
+                   :download,
+                   assignment_id: 1,
+                   submission_id: 1,
+                   id: 1,
+                   select_file_id: 1
             assert_equal flash[:file_download_error], SAMPLE_ERR_MSG
             assert_response :redirect
           end
