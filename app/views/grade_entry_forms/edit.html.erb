@@ -1,7 +1,6 @@
-<div class='title_bar'>
-   <h1><%= t('grade_entry_forms.edit.title') +
-           " #{@grade_entry_form.short_identifier}" %></h1>
-</div>
+<% content_for :title do %>
+    <%= t('grade_entry_forms.edit.title') +
+           " #{@grade_entry_form.short_identifier}" %>
+<% end %>
 
 <%= render partial: 'form' %>
-

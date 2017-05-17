@@ -1554,6 +1554,8 @@ es:
 
     criteria_edit_total_mark:               "Este criterio de calificación será calificado sobre
                                              %{criterion_total_mark}"
+    criterion_created_success:              "El criterio se guardó correctamente"
+    criterion_created_failure:              "No se pudo crear el criterio"
     criterion_saved_success:                "El criterio de calificación fue guardado exitosamente"
     criterion_saved_failure:                "El criterio de calificación no pudo ser guardado"
     criterion_deleted_success:              "El criterio de calificación y las notas asociadas fueron eliminadas

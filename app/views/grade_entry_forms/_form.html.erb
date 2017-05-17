@@ -17,9 +17,6 @@
 
 <div class='wrapper'>
   <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
-
-  <%= render 'shared/flash_message' %>
-
   <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
 
     <%= render partial: 'shared/error_explanation',
@@ -92,8 +89,8 @@
 
     </fieldset>
 
-    <%= f.submit t(f.object.new_record? ? 'grade_entry_forms.create.submit' : 
-                                          'grade_entry_forms.edit.submit'), 
+    <%= f.submit t(f.object.new_record? ? 'grade_entry_forms.create.submit' :
+                                          'grade_entry_forms.edit.submit'),
                  data: { disable_with: t('working') } %>
   <% end %>
 </div>
