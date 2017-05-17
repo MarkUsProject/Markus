@@ -777,11 +777,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @file.expects(:submission).twice.returns(
                 submission)
             get_as @admin,
-                    :download,
-                    assignment_id: 1,
-                    submission_id: 1,
-                    select_file_id: 1,
-                    id: 1
+                   :download,
+                   assignment_id: 1,
+                   submission_id: 1,
+                   select_file_id: 1,
+                   id: 1
 
             assert_equal flash[:file_download_error], SAMPLE_ERR_MSG
             assert_response :redirect
@@ -1246,12 +1246,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.stubs(:find).returns(@file)
 
             get_as @ta,
-                   :download,
-                   assignment_id: 1,
-                   submission_id: 1,
-                   id: 1,
-                   select_file_id: 1,
-                   show_in_browser: true
+                    :download,
+                    assignment_id: 1,
+                    submission_id: 1,
+                    id: 1,
+                    select_file_id: 1,
+                    show_in_browser: true
             assert_equal true, flash.empty?
             assert_equal response.header['Content-Type'], 'image'
             assert_response :success
