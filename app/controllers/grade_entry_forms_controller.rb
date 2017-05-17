@@ -373,7 +373,7 @@ class GradeEntryFormsController < ApplicationController
 
       grades = []
       # Parse the grades
-      result = MarkusCSV.parse(grades_file.read, {encoding: encoding}, 2) do |row|
+      result = MarkusCSV.parse(grades_file.read,encoding: encoding, header_count: 2) do |row|
         next unless row.any?
         # grab names and totals from the first two rows
         if names.empty?

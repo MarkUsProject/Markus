@@ -15,19 +15,18 @@ class MarkusCSV
   end
 
   # Performs an action for each object in a collection represented by
-  # a CSV string. 'input' is the input string, 'header_count' is the
-  # number of header lines to remove from the displayed valid_line_count
-  # and parse_obj is a block which takes a line and performs an action,
-  # or raises CSVInvalidLineError.
+  # a CSV string. 'input' is the input string and parse_obj is a block
+  # which takes a line and performs an action, or raises CSVInvalidLineError.
   # Returns a result hash, containing a success message with the number of
   # successful rows parsed, as well as an error message, consisting of one
   # of the following:
   #   1) A string listing all erroneous lines.
   #   2) A more generic error message for invalid files.
-  def self.parse(input, options = {}, header_count = 0, &parse_obj)
+  def self.parse(input, options = {}, &parse_obj)
     invalid_lines = []
     valid_line_count = 0
     result = { invalid_lines: '', valid_lines: '' }
+    header_count = options.delete(:header_count) || 0
     begin
       if options[:encoding]
         input = input.utf8_encode(options[:encoding])
