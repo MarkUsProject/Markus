@@ -38,7 +38,7 @@ module Repository
         @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       else
-        raise "Repository does not exist at path \"#{@repos_path}\""
+        raise "Repository does not exist at entry_name \"#{@repos_path}\""
       end
     end
 
@@ -149,10 +149,10 @@ module Repository
 
     # Exports git repo to a new folder (clone repository)
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
-    # all the repository on that path need to exist, or the export will fail.
+    # all the repository on that entry_name need to exist, or the export will fail.
     # Exports git repo to a new folder (clone repository)
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
-    # all the repository on that path need to exist, or the export will fail.
+    # all the repository on that entry_name need to exist, or the export will fail.
     # if export means exporting repo as zip/tgz git-ruby library should be used
     def export(repo_dest_dir, filepath = nil)
 
@@ -210,13 +210,13 @@ module Repository
 
     def get_repos_workdir
       # Get working directory of the repository
-      # workdir = path/to/my/repository/
+      # workdir = entry_name/to/my/repository/
       return @repos.workdir
     end
 
     def get_repos_path
       # Get the repository's .git folder
-      # path = path/to/my/repository/.git
+      # entry_name = entry_name/to/my/repository/.git
       return @repos.path
     end
 
@@ -500,7 +500,7 @@ module Repository
       GitRepository.do_commit_and_push(@repos, author, 'Removing file')
     end
 
-    # Replaces file at provided path with file_data
+    # Replaces file at provided entry_name with file_data
     def replace_file(path, file_data, author, expected_revision_identifier = 0)
       if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
@@ -511,10 +511,10 @@ module Repository
       write_file(path, file_data, author)
     end
 
-    # Writes to file using path, file_data, and author
+    # Writes to file using entry_name, file_data, and author
     def write_file(path, file_data = nil, author)
 
-      # Get directory path of file (one level higher)
+      # Get directory entry_name of file (one level higher)
       dir = File.dirname(path)
       abs_path = File.join(@repos_path, dir)
 
@@ -530,7 +530,7 @@ module Repository
     # file on disk if it already exists, but will only make a
     # new commit if the file contents have changed.
     def make_file(path, file_data, author)
-      # Get the file path to write to using the ruby File module.
+      # Get the file entry_name to write to using the ruby File module.
       abs_path = File.join(@repos_path, path)
       # Actually create the file.
       File.open(abs_path, 'w') do |file|
@@ -545,7 +545,7 @@ module Repository
 
     # Create and commit an empty directory, if it's not already present.
     # The dummy file is required so the directory gets committed.
-    # path should be a directory
+    # entry_name should be a directory
     def make_directory(path)
       gitkeep_filename = File.join(path, '.gitkeep')
       add_file(gitkeep_filename, '', 'markus')
@@ -588,28 +588,32 @@ module Repository
       end
     end
 
-    def changes_at_path?(path)
-      # get all diffs with parent commits (a merge has 2+ parents), and analyze each change
-      @commit.parents.each do |parent|
-        parent.diff(@commit).each_delta do |delta|
-          # renames are off by default (showing up as del+add), so using new_file is enough (catches del too)
-          return true if delta.new_file[:path].include?(path)
-        end
-      end
-      false
-    end
-
     # Checks if a file or directory at +path+ was changed by +commit+.
     # (optimizations based on Rugged bug #343)
     def entry_changed?(commit, path)
-      entry = commit.tree[path]
+      dir_path = File.dirname(path)
+      entry_name = File.basename(path)
+      if dir_path == '.'
+        dir_tree = commit.tree
+      else
+        dir_info = commit.tree.path(dir_path)
+        dir_tree = @repo.lookup(dir_info[:oid])
+      end
+      entry = dir_tree[entry_name]
+      # check each parent commit (a merge has 2+ parents)
       commit.parents.each do |parent|
         # if at a root commit, consider it changed if we have this file;
         # i.e. if we added it in the initial commit
         unless parent
           return entry != nil
         end
-        parent_entry = parent.tree[path]
+        if dir_path == '.'
+          parent_dir_tree = parent.tree
+        else
+          parent_dir_info = parent.tree.path(dir_path)
+          parent_dir_tree = @repo.lookup(parent_dir_info[:oid])
+        end
+        parent_entry = parent_dir_tree[entry_name]
         # neither exists, no change
         if not entry and not parent_entry
           next
@@ -624,71 +628,61 @@ module Repository
       false
     end
 
-    def changes_at_path2?(path)
+    def changes_at_path?(path)
       entry_changed?(@commit, path)
     end
 
-    def files_at_path2(path)
-      files = {}
-      path_tree = @commit.tree.path(path)
-      path_tree.each_blob do |blob|
-        file_name = blob[:name]
-        # get the last commit that modified the blob
-        last_commit_modified = nil
+    def entries_at_path(path, type=nil)
+      if path == '.'
+        path_tree = @commit.tree
+      else
+        path_info = @commit.tree.path(path)
+        path_tree = @repo.lookup(path_info[:oid])
+      end
+      entries = {}
+      path_tree.each do |entry|
+        entry_type = entry[:type]
+        next unless type.nil? || type == entry_type
+        entry_name = entry[:name]
         walker = Rugged::Walker.new(@repo)
-        walker.sorting(Rugged::SORT_DATE)
+        walker.sorting(Rugged::SORT_DATE) # TODO inverse?
         walker.push(@commit)
-        walker.each do |commit|
-          if entry_changed?(commit, file_name)
-            last_commit_modified = commit
-            break
-          end
+        # get the last commit that modified the entry
+        last_commit_modified = walker.find { |commit| entry_changed?(commit, File.join(path, entry_name)) }
+        # wrap in a RevisionFile or RevisionDirectory
+        if entry_type == 'blob'
+          entries[entry_name] = Repository::RevisionFile.new(
+            @revision_identifier,
+            name: entry_name,
+            path: path, # without filename, to be consistent with SVN
+            last_modified_revision: @revision_identifier, # just a placeholder
+            last_modified_date: last_commit_modified.time.in_time_zone,
+            changed: last_commit_modified == @commit,
+            user_id: last_commit_modified.author[:name],
+            mime_type: MIME::Types.type_for(entry_name).first.content_type
+          )
+        elsif entry_type == 'tree'
+          entries[entry_name] = Repository::RevisionDirectory.new(
+            @revision_identifier,
+            name: entry_name,
+            path: path,
+            last_modified_revision: @revision_identifier, # just a placeholder
+            last_modified_date: last_commit_modified.time.in_time_zone,
+            changed: last_commit_modified == @commit,
+            user_id: last_commit_modified.author[:name]
+          )
         end
-        # wrap in a RevisionFile
-        files[file_name] = Repository::RevisionFile.new(
-          @revision_identifier,
-          name: file_name,
-          path: path, # without filename, to be consistent with SVN
-          last_modified_revision: @revision_identifier, # just a placeholder
-          last_modified_date: last_commit_modified.time.in_time_zone,
-          changed: last_commit_modified == @commit,
-          user_id: last_commit_modified.author[:name],
-          mime_type: MIME::Types.type_for(file_name).first.content_type
-        )
       end
 
-      files
+      entries
+    end
+
+    def files_at_path2(path)
+      entries_at_path(path, 'blob')
     end
 
     def directories_at_path2(path)
-      dirs = {}
-      path_tree = @commit.tree.path(path)
-      path_tree.each_tree do |tree|
-        dir_name = tree[:name]
-        # get the last commit that modified the tree
-        last_commit_modified = nil
-        walker = Rugged::Walker.new(@repo)
-        walker.sorting(Rugged::SORT_DATE)
-        walker.push(@commit)
-        walker.each do |commit|
-          if entry_changed?(commit, dir_name)
-            last_commit_modified = commit
-            break
-          end
-        end
-        # wrap in a RevisionDirectory
-        dirs[dir_name] = Repository::RevisionDirectory.new(
-          @revision_identifier,
-          name: dir_name,
-          path: path,
-          last_modified_revision: @revision_identifier, # just a placeholder
-          last_modified_date: last_commit_modified.time.in_time_zone,
-          changed: last_commit_modified == @commit,
-          user_id: last_commit_modified.author[:name]
-        )
-      end
-
-      dirs
+      entries_at_path(path, 'tree')
     end
 
     def get_hash_of_revision(revision_number)
@@ -699,10 +693,10 @@ module Repository
     end
 
     # Returns all files (incl. folders) in this repository
-    # at path `path` for the current revision file.
+    # at entry_name `entry_name` for the current revision file.
     def objects_at_path(path)
       current_tree = find_object_at_path(path)
-      # current_tree is now at the path we were looking for
+      # current_tree is now at the entry_name we were looking for
       objects = []
       current_tree.each do |obj|
         file_path = File.join(path, obj[:name])
@@ -712,8 +706,8 @@ module Repository
           file = Repository::RevisionFile.new(
             @revision_identifier,
             name: obj[:name],
-            # Is the path with or without filename?
-            # -- Answer: The path is WITHOUT the filename to be consistent
+            # Is the entry_name with or without filename?
+            # -- Answer: The entry_name is WITHOUT the filename to be consistent
             # with SVN implementation
             path: path,
             # The following is placeholder information.
@@ -749,10 +743,10 @@ module Repository
       # we can return a 400 with a message so react knows how to handle
     end
 
-    # Takes in a path (that should be a dir) and returns the Rugged tree object
-    # at that path.
+    # Takes in a entry_name (that should be a dir) and returns the Rugged tree object
+    # at that entry_name.
     def find_object_at_path(path)
-      # Get directory names for path in a nice array
+      # Get directory names for entry_name in a nice array
       # like ['A1', 'src', 'core'] for '/A1/src/core'
       path = path.split('/')
 
@@ -762,7 +756,7 @@ module Repository
       # current_tree is the current directory object we are going through
       # Look at rugged documentation for more info on tree objects
       current_object = @commit.tree
-      # While there are still directories to go through to get to path,
+      # While there are still directories to go through to get to entry_name,
       # find the dirname
       path.each do |level|
         # This loop finds the object we're currently looking
@@ -826,7 +820,7 @@ module Repository
     private
 
     # Returns the last modified date and author in an array given
-    # the path to the file as a string
+    # the entry_name to the file as a string
     def find_last_modified_date_author(path_to_file)
       # Remove starting forward slash, if present
       if path_to_file[0] == '/'
