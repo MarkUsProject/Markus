@@ -474,8 +474,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
             clean_up_criterion_mark(@crit)
             @mark = Mark.make(result: @result, markable: @crit)
-            #Mark.make(criterion_type.to_sym, result: @result)
-
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -704,12 +702,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # for each rubric type, in the following grade range:
             # flexible: 6-10%
             # rubric: 21-25%
-
-            #g = Grouping.make(assignment: @assignment)
-            #s = Submission.make(grouping: g)
-            #@result = s.get_latest_result
-            #Mark.make(criterion_type.to_sym, result: @result)
-
             g = Grouping.make(assignment: @assignment)
             s = Submission.make(grouping: g)
             @result = s.get_latest_result
@@ -720,7 +712,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
             clean_up_criterion_mark(@crit)
             @mark = Mark.make(result: @result, markable: @crit)
-
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
 
@@ -966,10 +957,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            #g = Grouping.make(assignment: @assignment)
-            #@submission = Submission.make(grouping: g)
-            #@mark =  Mark.make(criterion_type.to_sym, result: @submission.get_latest_result)
-            #@result = @mark.result
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
             if criterion_type == 'rubric'
@@ -1333,7 +1320,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            # @mark = Mark.make
             @result_object = Result.make
             @rubric_crit = RubricCriterion.make(assignment: @result_object.submission.grouping.assignment)
             clean_up_criterion_mark(@rubric_crit)
