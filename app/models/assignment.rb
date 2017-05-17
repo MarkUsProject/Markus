@@ -765,10 +765,15 @@ class Assignment < ActiveRecord::Base
     groupings.select(&:has_submission?)
   end
 
+  def is_criteria_mark?(ta_id)
+    self.joins(:criterion_ta_associations).where(criterion_ta_associations: { ta_id: ta_id }).empty?
+  end
+
   def get_num_assigned(ta_id = nil)
     if ta_id.nil?
       groupings.size
     else
+      byebug
       ta_memberships.where(user_id: ta_id).size
     end
   end
