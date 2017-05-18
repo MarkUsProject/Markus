@@ -766,27 +766,44 @@ class Assignment < ActiveRecord::Base
   end
 
   def is_criteria_mark?(ta_id)
-    self.joins(:criterion_ta_associations).where(criterion_ta_associations: { ta_id: ta_id }).empty?
+    !self.criterion_ta_associations.where(ta_id: ta_id).empty?
   end
 
   def get_num_assigned(ta_id = nil)
     if ta_id.nil?
       groupings.size
     else
-      byebug
       ta_memberships.where(user_id: ta_id).size
     end
   end
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.count(marking_completed: true)
+      groupings.select(&:marking_completed?).count
     else
-      n = 0
-      ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
-        x.grouping.marking_completed? && n += 1
+      if is_criteria_mark?(ta_id)
+        criteria = []
+        criteriatype = []
+        self.criterion_ta_associations.where(ta_id: ta_id).find_each do |x|
+          criteria << x.criterion_id
+          criteriatype << x.criterion_type
+        end
+        n = 0
+        ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
+          hasnull = false
+          for i in 0..criteria.size do
+            !(x.grouping.current_submission_used.get_latest_result.marks.where(markable_id: criteria.at(i), markable_type: criteriatype.at(i), mark: nil).empty?) && hasnull = true
+          end
+          !hasnull && n += 1
+        end
+        n
+      else
+        n = 0
+        ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
+          x.grouping.marking_completed? && n += 1
+        end
+        n
       end
-      n
     end
   end
 
