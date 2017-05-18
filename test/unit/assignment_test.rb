@@ -193,9 +193,9 @@ class AssignmentTest < ActiveSupport::TestCase
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
-          @crit = RubricCriterion.make({assignment: @assignment, max_mark: weight * 4})
-          clean_up_criterion_mark(@crit)
-          Mark.make({mark: 4, result: @result, markable: @crit})
+          crit = RubricCriterion.make({assignment: @assignment, max_mark: weight * 4})
+          mark_object = crit.marks.find_by(result: @result)
+          mark_object.update(mark: 4)
           @sum += weight
         end
         @total = @sum * 4
@@ -573,9 +573,9 @@ class AssignmentTest < ActiveSupport::TestCase
             s = Submission.make(grouping: g)
             r = s.get_latest_result
             (1..2).each do
-              @crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
-              clean_up_criterion_mark(@crit)
-              Mark.make(result: r, markable: @crit)
+              crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
+              mark_object = crit.marks.find_by(result: r)
+              mark_object.update(mark: 1)
             end
             r.reload
             r.marking_state = Result::MARKING_STATES[:complete]
@@ -623,9 +623,9 @@ class AssignmentTest < ActiveSupport::TestCase
               s = Submission.make(grouping: g)
               r = s.get_latest_result
               (1..2).each do
-                @crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
-                clean_up_criterion_mark(@crit)
-                Mark.make(result: r, markable: @crit)
+                crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
+                mark_object = crit.marks.find_by(result: r)
+                mark_object.update(mark: 1)
               end
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]
@@ -650,15 +650,4 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end
   end # end assignment instance context
-
-  def clean_up_criterion_mark(criterion)
-    results = Result.joins(submission: :grouping)
-                .where(groupings: {assignment_id: criterion.assignment_id})
-    results.each do |r|
-      unless r.is_a_review? # filter results that are not peer reviews
-        criterion.marks.where(result_id: r.id).destroy_all # delete existing marks
-        r.update_total_mark
-      end
-    end
-  end
 end
