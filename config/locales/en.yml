@@ -1480,6 +1480,10 @@ en:
     date_validator:
       invalid_date: "is not a valid date"
 
+    #Exam Template
+    exam_template:
+          exam_template: "Exam Template"
+
     #Test Framework
     automated_tests:
       title: "Automated Testing"

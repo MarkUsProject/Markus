@@ -1307,6 +1307,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     date_validator:
       invalid_date: "Não é uma data válida"
 
+    #Exam Template
+    exam_template:
+      exam_template: "Modelo do exame"
+
     #Test Framework
     automated_tests:
       automated_tests: "Test Framework"
