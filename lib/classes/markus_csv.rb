@@ -15,8 +15,8 @@ class MarkusCSV
   end
 
   # Performs an action for each object in a collection represented by
-  # a CSV string. 'input' is the input string, and parse_obj is a block which
-  # takes a line and performs an action, or raises CSVInvalidLineError.
+  # a CSV string. 'input' is the input string and parse_obj is a block
+  # which takes a line and performs an action, or raises CSVInvalidLineError.
   # Returns a result hash, containing a success message with the number of
   # successful rows parsed, as well as an error message, consisting of one
   # of the following:
@@ -26,6 +26,7 @@ class MarkusCSV
     invalid_lines = []
     valid_line_count = 0
     result = { invalid_lines: '', valid_lines: '' }
+    header_count = options.delete(:header_count) || 0
     begin
       if options[:encoding]
         input = input.utf8_encode(options[:encoding])
@@ -50,7 +51,7 @@ class MarkusCSV
       end
       if valid_line_count > 0
         result[:valid_lines] = I18n.t('csv_valid_lines',
-                                      valid_line_count: valid_line_count)
+                                      valid_line_count: valid_line_count - header_count)
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = t('upload_errors.malformed_csv')

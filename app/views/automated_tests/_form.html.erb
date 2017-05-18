@@ -17,15 +17,8 @@
 <% end %>
 
 <div class="wrapLeft">
-<% if flash[:success] %>
-  <div class="success">
-    <span><%=flash[:success]%></span>
-  </div>
-  <% elsif flash[:error] %>
-  <div class="error">
-    <span><%=flash[:error]%></span>
-  </div>
-<% end %>
+  <%= render partial: 'shared/flash_message' %>
+</div>
 
 <%= form_for @assignment,
              as: :assignment,
