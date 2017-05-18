@@ -94,6 +94,11 @@ Markus::Application.routes.draw do
         end
       end
 
+      resources :exam_templates do
+        collection do
+        end
+      end
+
       resources :groups do
 
         member do
