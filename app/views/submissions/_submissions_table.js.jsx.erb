@@ -259,6 +259,7 @@
           s['tags'] = <div className='tag_list'>{tag_list}</div>;
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
+          s['tas'] = submission.tas;
           s['has_files'] = submission.has_files;
           <% if @assignment.is_peer_review? %>
             s['reviewees'] = this.renderRevieweeList(submission.reviewees);
