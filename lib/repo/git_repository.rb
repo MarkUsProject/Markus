@@ -588,32 +588,45 @@ module Repository
       end
     end
 
-    # Checks if a file or directory at +path+ was changed by +commit+.
-    # (optimizations based on Rugged bug #343)
-    def entry_changed?(commit, path)
+    # Gets a directory at +path+ (relative to the repo root) in a +commit+ as a Rugged Tree.
+    def get_tree(commit, path)
+      if path == '.'
+        tree = commit.tree
+      else
+        begin
+          tree_hash = commit.tree.path(path)
+          tree = @repo.lookup(tree_hash[:oid])
+        rescue Rugged::TreeError
+          tree = nil
+        end
+      end
+      tree
+    end
+
+    # Gets a file or directory at +path+ (relative to the repo root) in a +commit+ as a Rugged Hash.
+    def get_entry(commit, path)
       dir_path = File.dirname(path)
       entry_name = File.basename(path)
-      if dir_path == '.'
-        dir_tree = commit.tree
-      else
-        dir_info = commit.tree.path(dir_path)
-        dir_tree = @repo.lookup(dir_info[:oid])
+      entry = nil
+      dir_tree = get_tree(commit, dir_path)
+      unless dir_tree.nil?
+        entry = dir_tree[entry_name]
       end
-      entry = dir_tree[entry_name]
+      entry
+    end
+
+    # Checks if a file or directory at +path+ (relative to the repo root) was changed by +commit+.
+    # (optimizations based on Rugged bug #343)
+    def entry_changed?(commit, path)
+      entry = get_entry(commit, path)
+      # if at a root commit, consider it changed if we have this file;
+      # i.e. if we added it in the initial commit
+      if commit.parents.empty?
+        return entry != nil
+      end
       # check each parent commit (a merge has 2+ parents)
       commit.parents.each do |parent|
-        # if at a root commit, consider it changed if we have this file;
-        # i.e. if we added it in the initial commit
-        unless parent
-          return entry != nil
-        end
-        if dir_path == '.'
-          parent_dir_tree = parent.tree
-        else
-          parent_dir_info = parent.tree.path(dir_path)
-          parent_dir_tree = @repo.lookup(parent_dir_info[:oid])
-        end
-        parent_entry = parent_dir_tree[entry_name]
+        parent_entry = get_entry(parent, path)
         # neither exists, no change
         if not entry and not parent_entry
           next
@@ -633,24 +646,19 @@ module Repository
     end
 
     def entries_at_path(path, type=nil)
-      if path == '.'
-        path_tree = @commit.tree
-      else
-        path_info = @commit.tree.path(path)
-        path_tree = @repo.lookup(path_info[:oid])
-      end
       entries = {}
+      path_tree = get_tree(@commit, path)
       path_tree.each do |entry|
         entry_type = entry[:type]
         next unless type.nil? || type == entry_type
         entry_name = entry[:name]
         walker = Rugged::Walker.new(@repo)
-        walker.sorting(Rugged::SORT_DATE) # TODO inverse?
+        walker.sorting(Rugged::SORT_DATE)
         walker.push(@commit)
         # get the last commit that modified the entry
         last_commit_modified = walker.find { |commit| entry_changed?(commit, File.join(path, entry_name)) }
         # wrap in a RevisionFile or RevisionDirectory
-        if entry_type == 'blob'
+        if entry_type == :blob
           entries[entry_name] = Repository::RevisionFile.new(
             @revision_identifier,
             name: entry_name,
@@ -661,7 +669,7 @@ module Repository
             user_id: last_commit_modified.author[:name],
             mime_type: MIME::Types.type_for(entry_name).first.content_type
           )
-        elsif entry_type == 'tree'
+        elsif entry_type == :tree
           entries[entry_name] = Repository::RevisionDirectory.new(
             @revision_identifier,
             name: entry_name,
@@ -678,11 +686,18 @@ module Repository
     end
 
     def files_at_path2(path)
-      entries_at_path(path, 'blob')
+      entries_at_path(path, :blob)
     end
 
     def directories_at_path2(path)
-      entries_at_path(path, 'tree')
+      # transform from absolute to relative
+      if path.start_with?(File::SEPARATOR)
+        path = path[1..-1]
+      end
+      if path == ''
+        path = '.'
+      end
+      entries_at_path(path, :tree)
     end
 
     def get_hash_of_revision(revision_number)
