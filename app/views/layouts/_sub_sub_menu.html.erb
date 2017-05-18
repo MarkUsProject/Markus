@@ -39,7 +39,7 @@
           <% if @assignment.short_identifier == 'midterm1' %>
             <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
               <%= link_to t('exam_template.exam_template'),
-                          edit_assignment_exam_templates_path(@assignment) %>
+                          assignment_exam_templates_path(@assignment) %>
             </li>
           <% end %>
         <% end %>
