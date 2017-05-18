@@ -48,9 +48,6 @@ class RubricCriterionTest < ActiveSupport::TestCase
     result = Result.make(submission: submission)
 
     rubric = RubricCriterion.make(assignment: assignment)
-    clean_up_criterion_mark(rubric)
-    mark = Mark.make(result: result,
-                    markable: rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
 
@@ -320,16 +317,5 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     new_rubric_criteria.delete(attr) if attr
     RubricCriterion.new(new_rubric_criteria)
-  end
-
-  def clean_up_criterion_mark(criterion)
-    results = Result.joins(submission: :grouping)
-                .where(groupings: {assignment_id: criterion.assignment_id})
-    results.each do |r|
-      unless r.is_a_review? # filter results that are not peer reviews
-        criterion.marks.where(result_id: r.id).destroy_all # delete existing marks
-        r.update_total_mark
-      end
-    end
   end
 end
