@@ -81,6 +81,10 @@
 <%= render partial: 'assignments/feedback_file_window',
            formats: [:js] %>
 
+<% # Javascript for progress bar %>
+<%= render partial: 'results/marker/update_progress_bar',
+           formats: [:js] %>
+
 <%= render partial: 'results/common/annotations',
            formats: [:js],
            locals: {
@@ -163,6 +167,27 @@
            onclick='modal_delete_tags.close();'>
   </aside>
 <% end %>
+
+<!-- Progress Bar -->
+<div class="progress_meter">
+    <span id="progress_span">
+    </span>
+</div>
+
+<script type="text/javascript">
+    <%
+      if @current_user.admin?
+        num_marked = @assignment.get_num_marked
+        num_assigned = @assignment.get_num_assigned
+      else
+        num_marked = @assignment.get_num_marked(@current_user.id)
+        num_assigned = @assignment.get_num_assigned(@current_user.id)
+      end
+    %>
+    $( document ).ready(function() {
+        update_bar(<%= num_marked %>, <%= num_assigned %>);
+    });
+</script>
 
 <div class='title_bar'>
   <h1>

@@ -58,40 +58,11 @@
         </div>
       </div>
     </div>
-    <!-- Progress Bar -->
+
     <section id='content'>
-      <div class="progress_meter">
-        <span id="progress_span"><p>
-        </p></span>
-      </div>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
-    <%
-      if @current_user.admin?
-        num_marked = @assignment.get_num_marked()
-        num_assigned = @assignment.get_num_assigned()
-      else
-        num_marked = @assignment.get_num_marked(@current_user.id)
-        num_assigned = @assignment.get_num_assigned(@current_user.id)
-      end
-    %>
-    <script type="text/javascript">
-        var marked = <%= num_marked %>
-        var total = <%= num_assigned %>
-        function update_bar(score, outof){
-            var width = (score/outof) * 100;
-            var $bar = $('#progress_span');
-            $bar.children().text(score + '/' + outof + ' Completed');
-            $bar.css('width', width + '%');
-            if(width > 75){
-                $bar.css('background-color', 'green')
-            }else if(width > 35){
-                $bar.css('background-color', '#FBC02D')
-            }
-        }
-        update_bar(marked, total);
-    </script>
     <div id='footer_wrapper'><%= render partial: 'layouts/footer' %></div>
   </div>
 
