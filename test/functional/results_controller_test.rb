@@ -466,14 +466,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'and the result is available' do
             SubmissionFile.make(submission: @submission)
-
+            # creating this criterion will create marks
             if criterion_type == 'rubric'
-              @crit = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
+              crit = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
             else
-              @crit = FlexibleCriterion.make(assignment: @result.submission.grouping.assignment)
+              crit = FlexibleCriterion.make(assignment: @result.submission.grouping.assignment)
             end
-            clean_up_criterion_mark(@crit)
-            @mark = Mark.make(result: @result, markable: @crit)
+            mark_object = crit.marks.find_by(result: @result)
+            mark_object.update(mark: 1)
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -705,13 +705,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             s = Submission.make(grouping: g)
             @result = s.get_latest_result
+            # creating this criterion will create marks
             if criterion_type == 'rubric'
-              @crit = RubricCriterion.make(assignment: @assignment)
+              crit = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
             else
-              @crit = FlexibleCriterion.make(assignment: @assignment)
+              crit = FlexibleCriterion.make(assignment: @result.submission.grouping.assignment)
             end
-            clean_up_criterion_mark(@crit)
-            @mark = Mark.make(result: @result, markable: @crit)
+            mark_object = crit.marks.find_by(result: @result)
+            mark_object.update(mark: 1)
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
 
@@ -960,12 +961,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
             if criterion_type == 'rubric'
-              @crit = RubricCriterion.make(assignment: @submission.grouping.assignment)
+              crit = RubricCriterion.make(assignment: @submission.grouping.assignment)
             else
-              @crit = FlexibleCriterion.make(assignment: @submission.grouping.assignment)
+              crit = FlexibleCriterion.make(assignment: @submission.grouping.assignment)
             end
-            clean_up_criterion_mark(@crit)
-            @mark = Mark.create(result: @submission.get_latest_result, markable: @crit)
+            @mark = crit.marks.find_by(result: @submission.get_latest_result)
+            @mark.update(mark: 1)
             @result = @mark.result
           end
 
@@ -1322,8 +1323,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             @result_object = Result.make
             @rubric_crit = RubricCriterion.make(assignment: @result_object.submission.grouping.assignment)
-            clean_up_criterion_mark(@rubric_crit)
-            @mark = Mark.create(result: @result_object, markable: @rubric_crit, mark: 1)
+            @mark = @rubric_crit.marks.find_by(result: @result_object)
+            @mark.update(mark: 1)
           end
 
           should 'fails validation' do
@@ -1460,15 +1461,4 @@ class ResultsControllerTest < AuthenticatedControllerTest
       end
     end
   end # An authenticated and authorized TA doing a
-
-  def clean_up_criterion_mark(criterion)
-    results = Result.joins(submission: :grouping)
-                    .where(groupings: {assignment_id: criterion.assignment_id})
-    results.each do |r|
-      unless r.is_a_review? # filter results that are not peer reviews
-        criterion.marks.where(result_id: r.id).destroy_all # delete existing marks
-        r.update_total_mark
-      end
-    end
-  end
 end
