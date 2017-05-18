@@ -1481,8 +1481,8 @@ en:
       invalid_date: "is not a valid date"
 
     #Exam Template
-    exam_template:
-          exam_template: "Exam Template"
+    exam_templates:
+          exam_templates: "Exam Template"
 
     #Test Framework
     automated_tests:

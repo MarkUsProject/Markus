@@ -1321,8 +1321,8 @@ fr:
       invalid_date: "n'est pas une date valide"
 
     #Exam Template
-    exam_template:
-      exam_template: "Modèle d'examen"
+    exam_templates:
+      exam_templates: "Modèle d'examen"
 
     #Test Framework
     automated_tests:
