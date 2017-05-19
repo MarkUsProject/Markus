@@ -775,7 +775,7 @@ class Assignment < ActiveRecord::Base
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.count(marking_completed: true)
+      groupings.select(&:marking_completed?).count
     else
       n = 0
       ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
