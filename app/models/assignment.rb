@@ -766,7 +766,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def is_criteria_mark?(ta_id)
-    !self.criterion_ta_associations.where(ta_id: ta_id).empty?
+    self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
   def get_num_assigned(ta_id = nil)
@@ -782,19 +782,9 @@ class Assignment < ActiveRecord::Base
       groupings.select(&:marking_completed?).count
     else
       if is_criteria_mark?(ta_id)
-        criteria = []
-        criteriatype = []
-        self.criterion_ta_associations.where(ta_id: ta_id).find_each do |x|
-          criteria << x.criterion_id
-          criteriatype << x.criterion_type
-        end
         n = 0
         ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
-          hasnull = false
-          for i in 0..criteria.size do
-            !(x.grouping.current_submission_used.get_latest_result.marks.where(markable_id: criteria.at(i), markable_type: criteriatype.at(i), mark: nil).empty?) && hasnull = true
-          end
-          !hasnull && n += 1
+          x.grouping.current_submission_used.get_latest_result.marks.joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type').where('c.ta_id = ? AND mark IS NULL', ta_id).empty? && n += 1
         end
         n
       else
