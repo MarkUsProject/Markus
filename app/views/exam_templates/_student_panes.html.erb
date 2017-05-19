@@ -1,0 +1,17 @@
+<div id='panes-content'>
+  <div id='panes'>
+    <div id='left-pane'>
+      <div class='tab-pane flex-pane' id='code_pane'>
+        <ul>
+          <li><a href='#code_holder'><%= @assignment.short_identifier %></a></li>
+        </ul>
+
+        <p>number of pages: <%= num_pages %></p>
+        <p>file name: <%= filename %></p>
+        <div id='code_holder' class='flex-col'>
+          <div id='sel_box'></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
