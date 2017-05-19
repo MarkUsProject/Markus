@@ -201,19 +201,19 @@
       // possibly move this to getdefaultprops.
 
       // need to filter for each section
-      var sections = <%= raw @sections.to_json %>;
-      if (sections.length > 0) {
-        var section_filters = sections.map(function(section) {
+      var tas = <%= raw @tas.to_json %>;
+      if (tas.length > 0) {
+        var section_filters = tas.map(function(ta) {
           var filter = {
-            name: section.name,
-            text: section.name,
+            name: ta,
+            text: ta,
             func: function(group) {
-              return group.section === section.name;
+              return group.tas.indexOf(ta) > -1;
             }
           };
           return filter;
         });
-        var all = '<%= t('sections.all') %>';
+        var all = '<%= 'All TAs' %>';
         section_filters.unshift({name: all, text: all, func: null});
       }
 
@@ -259,6 +259,7 @@
           s['tags'] = <div className='tag_list'>{tag_list}</div>;
           s['final_grade'] = submission.final_grade;
           s['section'] = submission.section;
+          s['tas'] = submission.tas;
           s['has_files'] = submission.has_files;
           <% if @assignment.is_peer_review? %>
             s['reviewees'] = this.renderRevieweeList(submission.reviewees);

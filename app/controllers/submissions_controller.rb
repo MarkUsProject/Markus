@@ -277,6 +277,12 @@ class SubmissionsController < ApplicationController
     @groupings = Grouping.get_groupings_for_assignment(@assignment,
                                                        current_user)
     @sections = Section.order(:name)
+
+    @tas = Set.new
+    @groupings.map do |grouping|
+      grouping.tas.pluck(:user_name).each{|ta| @tas.add(ta)}
+    end
+
     @available_sections = Hash.new
     if @assignment.submission_rule.can_collect_now?
       @available_sections[t('groups.unassigned_students')] = 0
