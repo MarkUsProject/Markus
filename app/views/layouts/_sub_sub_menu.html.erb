@@ -36,7 +36,7 @@
                           manage_assignment_automated_tests_path(@assignment) %>
             </li>
           <% end %>
-          <% if @assignment.short_identifier == 'midterm1' %>
+          <% if @assignment.scanned_exam %>
             <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
               <%= link_to t('exam_templates.exam_templates'),
                           assignment_exam_templates_path(@assignment) %>
