@@ -784,7 +784,9 @@ class Assignment < ActiveRecord::Base
       if is_criteria_mark?(ta_id)
         n = 0
         ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
-          x.grouping.current_submission_used.get_latest_result.marks.joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type').where('c.ta_id = ? AND mark IS NULL', ta_id).empty? && n += 1
+          x.grouping.current_submission_used.get_latest_result.marks
+            .joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type')
+            .where('c.ta_id': ta_id, mark: nil).empty? && n += 1
         end
         n
       else
