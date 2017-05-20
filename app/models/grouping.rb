@@ -34,12 +34,12 @@ class Grouping < ActiveRecord::Base
            source: :user
 
   has_many :submissions
-  has_and_belongs_to_many :tags
-  #The first submission found that satisfies submission_version_used == true.
-  #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used,
           -> { where submission_version_used: true },
           class_name: 'Submission'
+  has_one :current_result, through: :current_submission_used
+
+  has_and_belongs_to_many :tags
 
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships

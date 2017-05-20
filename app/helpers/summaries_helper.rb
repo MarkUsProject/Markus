@@ -6,7 +6,7 @@ module SummariesHelper
         .includes(:assignment,
                   :group,
                   :grace_period_deductions,
-                  current_submission_used: :results,
+                  current_result: :marks,
                   accepted_student_memberships: :user)
         .select { |g| g.non_rejected_student_memberships.size > 0 }
     else
@@ -15,7 +15,7 @@ module SummariesHelper
         .includes(:assignment,
                   :group,
                   :grace_period_deductions,
-                  current_submission_used: :results,
+                  current_result: :marks,
                   accepted_student_memberships: :user)
         .select do |g|
           g.non_rejected_student_memberships.size > 0 and
@@ -23,23 +23,8 @@ module SummariesHelper
         end
     end
 
-    parts = groupings.select &:has_submission?
-    results = Result.where(submission_id:
-                             parts.map(&:current_submission_used))
-                    .order(:id)
     groupings.map do |grouping|
-      submission = grouping.current_submission_used
-      if submission.nil?
-        result = nil
-      elsif !submission.remark_submitted?
-        result = (results.select do |r|
-                    r.submission_id == submission.id
-                  end).first
-      else
-        result = (results.select do |r|
-                    r.id == submission.remark_result_id
-                  end).first
-      end
+      result = grouping.current_result
       final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping, assignment)
@@ -63,11 +48,11 @@ module SummariesHelper
   def get_grouping_criteria(assignment, grouping)
     # put all criteria in a hash for retrieval
     criteria_hash = Hash.new
-    criteria = assignment.get_criteria
+    criteria = assignment.get_criteria(:ta)
     criteria.each do |criterion|
       key = 'criterion_' + criterion.class.to_s + '_' + criterion.id.to_s
       if grouping.has_submission?
-        mark = grouping.current_submission_used.get_latest_result.marks.find_by(markable: criterion)
+        mark = grouping.current_result.marks.find_by(markable: criterion)
         if mark.nil? || mark.mark.nil?
           criteria_hash[key] = '-'
         else

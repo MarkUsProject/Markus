@@ -62,11 +62,10 @@ class Ta < User
   end
 
   # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(assignment, result)
+  def calculate_total_percent(result, out_of)
     total = result.total_mark
 
     percent = BLANK_MARK
-    out_of = assignment.max_mark
 
     # Check for NA mark or division by 0
     unless total.nil? || out_of == 0
@@ -78,13 +77,13 @@ class Ta < User
   # An array of all the grades for an assignment
   def percentage_grades_array(assignment)
     grades = Array.new()
-    assignment.groupings.joins(:tas)
+    out_of = assignment.max_mark
+    assignment.groupings.includes(:current_result).joins(:tas)
       .where(memberships: { user_id: id }).find_each do |grouping|
-      submission = grouping.current_submission_used
-      next if submission.nil?
-      result = submission.get_latest_completed_result
-      next if result.nil?
-      grades.push(calculate_total_percent(assignment, result))
+      result = grouping.current_result
+      unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
+        grades.push(calculate_total_percent(result, out_of))
+      end
     end
 
     return grades

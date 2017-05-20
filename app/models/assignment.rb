@@ -60,6 +60,8 @@ class Assignment < ActiveRecord::Base
 		   dependent: :destroy
 
   has_many :groupings
+  has_many :current_submissions_used, through: :groupings,
+           source: :current_submission_used
 
   has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
@@ -702,11 +704,10 @@ class Assignment < ActiveRecord::Base
   end
 
   # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(result)
+  def calculate_total_percent(result, out_of)
     total = result.total_mark
 
     percent = BLANK_MARK
-    out_of = max_mark
 
     # Check for NA mark or division by 0
     unless total.nil? || out_of == 0
@@ -717,16 +718,14 @@ class Assignment < ActiveRecord::Base
 
   # An array of all the grades for an assignment
   def percentage_grades_array
-    grades = Array.new()
-    groupings = self.groupings.includes([{current_submission_used: :results}])
+    grades = Array.new
+    out_of = max_mark
 
-    groupings.each do |grouping|
-      submission = grouping.current_submission_used
-      if submission && submission.has_result?
-        result = submission.get_latest_completed_result
-        unless result.nil? || result.total_mark.nil?
-          grades.push(calculate_total_percent(result))
-        end
+    groupings.includes(:current_result).each do |grouping|
+      result = grouping.current_result
+      unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
+        percent = calculate_total_percent(result, out_of)
+        grades.push(percent) unless percent == BLANK_MARK
       end
     end
 
@@ -752,17 +751,15 @@ class Assignment < ActiveRecord::Base
   # Returns all the submissions that have been graded (completed)
   def graded_submission_results
     results = []
-    groupings.each do |grouping|
-      if grouping.marking_completed?
-        submission = grouping.current_submission_used
-        results.push(submission.get_latest_result) unless submission.nil?
-      end
+    groupings.includes(:current_result).each do |grouping|
+      next if grouping.current_result.nil? || grouping.current_result.marking_state == Result::MARKING_STATES[:incomplete]
+      results.push(grouping.current_result)
     end
     results
   end
 
   def groups_submitted
-    groupings.select(&:has_submission?)
+    groupings.includes(:current_submission_used).select(&:has_submission?)
   end
 
   def get_num_assigned(ta_id = nil)
@@ -777,11 +774,10 @@ class Assignment < ActiveRecord::Base
     if ta_id.nil?
       groupings.select(&:marking_completed?).count
     else
-      n = 0
-      ta_memberships.includes(grouping: [{current_submission_used: [:submitted_remark, :results]}]).where(user_id: ta_id).find_each do |x|
-        x.grouping.marking_completed? && n += 1
-      end
-      n
+      groupings.joins(:current_result, :ta_memberships)
+               .where('memberships.user_id': ta_id,
+                      'results.marking_state': Result::MARKING_STATES[:complete])
+               .count
     end
   end
 
@@ -857,6 +853,10 @@ class Assignment < ActiveRecord::Base
       grouping.inviter.present? &&
           !grouping.inviter.has_section?
     end
+  end
+
+  def current_results
+    groupings.includes(:current_result).map(&:current_result)
   end
 
   # TODO: This is currently disabled until starter code is automatically added
