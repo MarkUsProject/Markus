@@ -1,12 +1,8 @@
-<div class='title_bar'>
-  <h1>
-    <%= ExamTemplate.model_name.human.pluralize %>
-  </h1>
-</div>
+<% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
-<div class='wrapLeft'>
-  <%= render partial: 'student_panes',
-             formats: [:html],
-             handlers: [:erb],
-             locals: { exam_template: @exam_templates.find_by(assignment: @assignment) }%>
-</div>
+<% content_for :content do %>
+    <%= render partial: 'student_panes',
+               formats: [:html],
+               handlers: [:erb],
+               locals: { exam_template: ExamTemplate.find_by(assignment: @assignment) }%>
+<% end %>
