@@ -8,23 +8,22 @@
                     class: 'title' %>
       </h2>
 
-      <div id='weighted_course_summary_graph' class='left'>
-        <%= render partial: 'course_summaries/weighted_course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments,
-                                                                                        marking_schemes: @marking_schemes } %>
-      </div>
-
       <div class='right'>
         <p>
           <%= link_to I18n.t(:refresh_graph),
                       refresh_graph_course_summary_path('course_summary'),
                       remote: true %>
         </p>
-        <%= render partial: 'course_summaries/course_summary_info_summary', locals: { marking_schemes: @marking_schemes } %>
+      </div>
+
+      <div id='course_summary_graph' class='ta_grade_distribution'>
+        <%= render partial: 'course_summaries/course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments } %>
       </div>
 
       <br>
-      <div id='course_summary_graph' class='left'>
-        <%= render partial: 'course_summaries/course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments } %>
+      <div id='weighted_course_summary_graph' class='ta_grade_distribution'>
+        <%= render partial: 'course_summaries/weighted_course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments,
+                                                                                        marking_schemes: @marking_schemes } %>
       </div>
 
     </div>
