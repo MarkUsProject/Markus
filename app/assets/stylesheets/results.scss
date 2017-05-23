@@ -105,6 +105,13 @@
   position: relative;
   background: $light-grey;
   margin: 5px 5px 10px 5px;
+  border: 1px solid $light-blue;
+  display: inline-block;
+  width: 50%;
+}
+
+.progress_meter_top {
+  width: 20%;
 }
 
 .progress_meter > span {

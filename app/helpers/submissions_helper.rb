@@ -93,16 +93,7 @@ module SubmissionsHelper
           end
 
         else
-          submission = grouping.current_submission_used
-          if submission.nil?
-            result = nil
-          elsif submission.submitted_remark.nil?
-            result = (results.select do |r|
-              r.submission_id == submission.id && !r.is_a_review?
-            end).first
-          else
-            result = submission.remark_result
-          end
+          result = grouping.current_result
         end
 
         g[:name] = grouping.get_group_name
