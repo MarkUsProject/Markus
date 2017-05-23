@@ -7,4 +7,7 @@
       <h4>Number of pages: <%= exam_template.num_pages %></h4>
       <h4>Name of file: <%= exam_template.filename %></h4>
     </div>
+
+    <%= render partial: 'exam_template_upload',
+               locals: { exam_template: @exam_templates }%>
 <% end %>
