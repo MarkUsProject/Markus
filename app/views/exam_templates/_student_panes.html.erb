@@ -3,8 +3,8 @@
     <div id='left-pane'>
       <div class='tab-pane flex-pane' id='code_pane'>
         <h4><%= link_to "Download Exam Template", {:controller => "exam_templates", :action => "download"} %></h4><br>
-        <h4>Number of pages: <%= num_pages %></h4>
-        <h4>Name of file: <%= filename %></h4>
+        <h4>Number of pages: <%= exam_template.num_pages %></h4>
+        <h4>Name of file: <%= exam_template.filename %></h4>
 
         <div id='code_holder' class='flex-col'>
           <div id='sel_box'></div>

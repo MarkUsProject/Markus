@@ -8,8 +8,5 @@
   <%= render partial: 'student_panes',
              formats: [:html],
              handlers: [:erb],
-             locals: { files: @files,
-                       num_pages: @num_pages,
-                       filename: @filename,
-                       template_divisions: @template_divisions }%>
+             locals: { exam_template: @exam_templates.find_by(assignment: @assignment) }%>
 </div>
