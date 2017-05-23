@@ -95,7 +95,7 @@ Markus::Application.routes.draw do
       end
 
       resources :exam_templates do
-        collection do
+        member do
           get 'download'
         end
       end
