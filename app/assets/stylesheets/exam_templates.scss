@@ -1,1 +1,8 @@
 @import "assignments";
+
+.template-pane {
+  background: $light-grey;
+  border: 1px solid $blue;
+  border-radius: $radius;
+  padding: 1.2em;
+}
