@@ -627,13 +627,8 @@ en:
     #app/views/course_summaries/_course_summary_info_summary.html.erb
 
     course_summary_weighted_average: "Weighted Class Average:"
-    assignments_weighted_average: "Weighted Assignments Average:"
-    gefs_weighted_average: "Weighted Grade Entry Forms Average:"
     percentage: "%{percentage}%"
     course_summary_weighted_median: "Weighted Class Median:"
-    assignments_weighted_median: "Weighted Assignments Median:"
-    gefs_weighted_median: "Weighted Grade Entry Forms Median:"
-
 
     #app/views/grade_entry_forms/_grade_entry_form_summary.html.erb
 
