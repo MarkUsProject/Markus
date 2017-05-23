@@ -2,14 +2,9 @@
   <div id='panes'>
     <div id='left-pane'>
       <div class='tab-pane flex-pane' id='code_pane'>
-        <ul>
-          <li><a href='#code_holder'><%= @assignment.short_identifier %></a></li>
-        </ul>
-
-        <p>number of pages: <%= num_pages %></p>
-        <p>file name: <%= filename %></p>
-        <%= link_to "click here to download!", {:controller => "exam_templates", :action => "download"} %>
-
+        <h4><%= link_to "Download Exam Template", {:controller => "exam_templates", :action => "download"} %></h4><br>
+        <h4>number of pages: <%= num_pages %></h4><br>
+        <h4>file name: <%= filename %></h4>
         <div id='code_holder' class='flex-col'>
           <div id='sel_box'></div>
         </div>
