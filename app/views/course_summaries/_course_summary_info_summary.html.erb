@@ -1,5 +1,4 @@
-<% unless marking_schemes.nil? %>
-  <% marking_schemes.each do |marking_scheme| %>
+<% unless marking_scheme.nil? %>
     <p class="due_date">
       Marking Scheme <%= marking_scheme.id %>
     </p>
@@ -47,5 +46,4 @@
         </td>
       </tr>
     </table>
-  <% end %>
 <% end %>

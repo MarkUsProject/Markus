@@ -60,5 +60,9 @@
       options: options
     });
   </script>
+
+  <div class='course_summary'>
+    <%= render partial: 'course_summaries/course_summary_info_summary', locals: { marking_scheme: marking_scheme } %>
+  </div>
   <% end %>
 <% end %>
