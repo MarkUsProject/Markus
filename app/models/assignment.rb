@@ -762,6 +762,10 @@ class Assignment < ActiveRecord::Base
     groupings.includes(:current_submission_used).select(&:has_submission?)
   end
 
+  def is_criteria_mark?(ta_id)
+    assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
+  end
+
   def get_num_assigned(ta_id = nil)
     if ta_id.nil?
       groupings.size
@@ -774,10 +778,20 @@ class Assignment < ActiveRecord::Base
     if ta_id.nil?
       groupings.select(&:marking_completed?).count
     else
-      groupings.joins(:current_result, :ta_memberships)
-               .where('memberships.user_id': ta_id,
-                      'results.marking_state': Result::MARKING_STATES[:complete])
-               .count
+      if is_criteria_mark?(ta_id)
+        n = 0
+        ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
+          x.grouping.current_submission_used.get_latest_result.marks
+            .joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type')
+            .where('c.ta_id': ta_id, mark: nil).empty? && n += 1
+        end
+        n
+      else
+        groupings.joins(:current_result, :ta_memberships)
+          .where('memberships.user_id': ta_id,
+                 'results.marking_state': Result::MARKING_STATES[:complete])
+          .count
+      end
     end
   end
 
