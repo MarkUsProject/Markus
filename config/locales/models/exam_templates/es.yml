@@ -1,0 +1,5 @@
+es:
+  activerecord:
+    models:
+      exam_template:
+        one: "Plantilla de examen"

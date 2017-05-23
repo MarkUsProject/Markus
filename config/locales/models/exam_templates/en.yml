@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      exam_template:
+        one: "Exam Template"

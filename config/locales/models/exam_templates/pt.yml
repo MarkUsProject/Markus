@@ -1,0 +1,5 @@
+pt:
+  activerecord:
+    models:
+      exam_template:
+        one: "Modelo de exame"
