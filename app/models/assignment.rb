@@ -732,7 +732,7 @@ class Assignment < ActiveRecord::Base
     return grades
   end
 
-  # An array of all grade_entry_students' weighted percentage total grades that are not nil
+  # An array of all the weighted grades that are not nil
   def weighted_grades_array(weight)
     weighted_grades = Array.new
     grades = percentage_grades_array
@@ -758,7 +758,6 @@ class Assignment < ActiveRecord::Base
   # Returns weighted grade distribution for a grade entry item for each student
   def weighted_grade_distribution_array(intervals = 20, weight)
     data = weighted_grades_array(weight)
-    # byebug
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
