@@ -74,7 +74,10 @@ $(document).ready(function() {
           var mark = items[0];
           var subtotal = items[1];
           var total = items[2];
+          var marked = items[3];
+          var assigned = items[4];
           update_total_mark(total);
+          update_bar(marked, assigned);
           document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
             .innerHTML = mark;
           document.getElementById('current_subtotal_div').innerHTML = subtotal;
@@ -111,7 +114,10 @@ $(document).ready(function() {
           var mark = items[0];
           var subtotal = items[1];
           var total = items[2];
+          var marked = items[3];
+          var assigned = items[4];
           update_total_mark(total);
+          update_bar(marked, assigned);
           document.getElementById('mark_' + mark_id + '_summary_mark_after_weight').innerHTML = mark;
           document.getElementById('current_subtotal_div').innerHTML = subtotal;
           $('#mark_' + mark_id + '_' + yes_or_no_type).prop('checked', true);
@@ -322,8 +328,11 @@ function update_rubric_mark(elem, mark_id, value) {
       var mark = items[0];
       var subtotal = items[1];
       var total = items[2];
+      var marked = items[3];
+      var assigned = items[4];
       select_mark(mark_id, value);
       update_total_mark(total);
+      update_bar(marked, assigned);
       document.getElementById('mark_' + mark_id + '_summary_mark_after_weight')
         .innerHTML = mark;
       document.getElementById('current_subtotal_div').innerHTML = subtotal;

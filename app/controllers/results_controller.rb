@@ -460,9 +460,18 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
+      if @current_user.admin?
+        num_marked = assignment.get_num_marked
+        num_assigned = assignment.get_num_assigned
+      else
+        num_marked = assignment.get_num_marked(@current_user.id)
+        num_assigned = assignment.get_num_assigned(@current_user.id)
+      end
       render text: "#{result_mark.mark.to_f}," +
                    "#{result_mark.result.get_subtotal(visibility)}," +
-                   "#{result_mark.result.total_mark}"
+                   "#{result_mark.result.total_mark}," +
+                   "#{num_marked}," +
+                   "#{num_assigned}"
     else
       m_logger.log("Error while trying to update mark of submission. " +
                    "User: #{current_user.user_name}, " +
