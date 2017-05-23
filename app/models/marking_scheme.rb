@@ -2,6 +2,28 @@ class MarkingScheme < ActiveRecord::Base
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
 
+  # Get the total weights of all marking weights
+  def total_weights
+    total = 0
+    marking_weights.each do |mw|
+      total += mw.weight
+    end
+
+    return total
+  end
+
+  # Get the maximum weight of all marking weights
+  def max_weight
+    max = 0
+    marking_weights.each do |mw|
+      if max < mw.weight
+        max = mw.weight
+      end
+    end
+
+    return max
+  end
+
   # Gets the marking weights for all assignments in the correct order
   def get_assignments_marking_weights(assignments)
     assignments_mw = marking_weights.where(is_assignment: true)
@@ -38,34 +60,15 @@ class MarkingScheme < ActiveRecord::Base
 
   # Calculates the weighted average mark for all assignments and grade entry forms
   def calculate_released_weighted_average
-    return calculate_released_assignments_average + calculate_released_gef_average
-  end
-
-  # Calculates the weighted average mark for all assignments
-  def calculate_released_assignments_average
     weighted_average = 0
-    assignments_mw = marking_weights.where(is_assignment: true)
 
-    assignments_mw.each do |marking_weight|
+    marking_weights.each do |marking_weight|
       gradable_item = marking_weight.get_gradable_item
-      if !gradable_item.results_average.nil?
-        weighted_avg = gradable_item.results_average * marking_weight.weight / 100
+      if marking_weight.is_assignment && !gradable_item.results_average.nil?
+        weighted_avg = gradable_item.results_average * marking_weight.weight / total_weights
         weighted_average += weighted_avg
-      end
-    end
-
-    return weighted_average
-  end
-
-  # Calculates the weighted average mark for all grade entry forms
-  def calculate_released_gef_average
-    weighted_average = 0
-    gefs_mw = marking_weights.where(is_assignment: false)
-
-    gefs_mw.each do |marking_weight|
-      gradable_item = marking_weight.get_gradable_item
-      if !gradable_item.calculate_released_average.nil?
-        weighted_avg = gradable_item.calculate_released_average * marking_weight.weight / 100
+      elsif !marking_weight.is_assignment && !gradable_item.calculate_released_average.nil?
+        weighted_avg = gradable_item.calculate_released_average * marking_weight.weight / total_weights
         weighted_average += weighted_avg
       end
     end
@@ -75,34 +78,15 @@ class MarkingScheme < ActiveRecord::Base
 
   # Calculates the weighted median mark for all assignments and grade entry forms
   def calculate_released_weighted_median
-    return calculate_released_assignments_median + calculate_released_gef_median
-  end
-
-  # Calculates the weighted median mark for all assignments
-  def calculate_released_assignments_median
     weighted_median = 0
-    assignments_mw = marking_weights.where(is_assignment: true)
 
-    assignments_mw.each do |marking_weight|
+    marking_weights.each do |marking_weight|
       gradable_item = marking_weight.get_gradable_item
-      if !gradable_item.results_median.nil?
-        weighted_med = gradable_item.results_median * marking_weight.weight / 100
+      if marking_weight.is_assignment && !gradable_item.results_median.nil?
+        weighted_med = gradable_item.results_median * marking_weight.weight / total_weights
         weighted_median += weighted_med
-      end
-    end
-
-    return weighted_median
-  end
-
-  # Calculates the weighted median mark for all grade entry forms
-  def calculate_released_gef_median
-    weighted_median = 0
-    gefs_mw = marking_weights.where(is_assignment: false)
-
-    gefs_mw.each do |marking_weight|
-      gradable_item = marking_weight.get_gradable_item
-      if !gradable_item.calculate_released_median.nil?
-        weighted_med = gradable_item.calculate_released_median * marking_weight.weight / 100
+      elsif !marking_weight.is_assignment && !gradable_item.calculate_released_median.nil?
+        weighted_med = gradable_item.calculate_released_median * marking_weight.weight / total_weights
         weighted_median += weighted_med
       end
     end

@@ -10,7 +10,7 @@
 
     // Set up data
     var data = {
-      labels: Array.apply(null, Array(21)).map(function (_, i) {
+      labels: Array.apply(null, Array(<%= marking_scheme.max_weight / marking_scheme.total_weights * 100 / 5 + 1 %>)).map(function (_, i) {
         return i * 5;
       }),
       datasets: [
