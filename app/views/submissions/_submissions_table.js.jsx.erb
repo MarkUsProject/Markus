@@ -197,13 +197,9 @@
     },
 
     render: function() {
-      // Do student-specific table stuff here.
-      // possibly move this to getdefaultprops.
-
-      // need to filter for each section
       var tas = <%= raw @tas.to_json %>;
       if (tas.length > 0) {
-        var section_filters = tas.map(function(ta) {
+        var ta_filters = tas.map(function(ta) {
           var filter = {
             name: ta,
             text: ta,
@@ -214,7 +210,7 @@
           return filter;
         });
         var all = '<%= t('tas.all') %>';
-        section_filters.unshift({name: all, text: all, func: null});
+        ta_filters.unshift({name: all, text: all, func: null});
       }
 
       var submissions_data = this.state.submissions.map(function(submission) {
@@ -268,7 +264,7 @@
         return s;
       }.bind(this));
 
-      return (
+    return (
         <div>
           <SubmissionsActionBox
             selected_submissions={this.state.selected_submissions}
@@ -278,7 +274,7 @@
             columns={this.props.columns}
             selectable={true}
             filters={this.props.filters}
-            secondary_filters={section_filters}
+            secondary_filters={ta_filters}
             filter_type={true}
             onSelectedRowsChange={this.updateSelectedSubmissions}
             search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
