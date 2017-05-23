@@ -12,7 +12,7 @@ class ExamTemplatesController < ApplicationController
   def download
     assignment = Assignment.find(params[:assignment_id])
     exam_templates = ExamTemplate.find_by(assignment: assignment)
-    filename = exam_templates[0].filename
+    filename = exam_templates.filename
     basename = File.basename(filename, ".pdf")
     send_file("#{EXAM_TEMPLATE_DIR}/#{basename}/#{filename}",
               filename: "#{filename}",
