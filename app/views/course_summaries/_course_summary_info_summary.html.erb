@@ -12,37 +12,9 @@
       </tr>
 
       <tr>
-        <td><%= I18n.t(:assignments_weighted_average) %></td>
-        <td>
-          <%= I18n.t(:percentage, percentage: number_with_precision(marking_scheme.calculate_released_assignments_average, precision: 1) || '0') %>
-        </td>
-      </tr>
-
-      <tr>
-        <td><%= I18n.t(:gefs_weighted_average) %></td>
-        <td>
-          <%= I18n.t(:percentage, percentage: number_with_precision(marking_scheme.calculate_released_gef_average, precision: 1) || '0') %>
-        </td>
-      </tr>
-
-      <tr>
         <td><%= I18n.t(:course_summary_weighted_median) %></td>
         <td>
           <%= I18n.t(:percentage, percentage: number_with_precision(marking_scheme.calculate_released_weighted_median, precision: 1) || '0') %>
-        </td>
-      </tr>
-
-      <tr>
-        <td><%= I18n.t(:assignments_weighted_median) %></td>
-        <td>
-          <%= I18n.t(:percentage, percentage: number_with_precision(marking_scheme.calculate_released_assignments_median, precision: 1) || '0') %>
-        </td>
-      </tr>
-
-      <tr>
-        <td><%= I18n.t(:gefs_weighted_median) %></td>
-        <td>
-          <%= I18n.t(:percentage, percentage: number_with_precision(marking_scheme.calculate_released_gef_median, precision: 1) || '0') %>
         </td>
       </tr>
     </table>
