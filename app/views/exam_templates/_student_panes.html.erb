@@ -8,6 +8,8 @@
 
         <p>number of pages: <%= num_pages %></p>
         <p>file name: <%= filename %></p>
+        <%= link_to "click here to download!", {:controller => "exam_templates", :action => "download"} %>
+
         <div id='code_holder' class='flex-col'>
           <div id='sel_box'></div>
         </div>
