@@ -1,7 +1,7 @@
 <script>
   function update_bar(score, outof) {
       var width = outof <= 0 ? 100 : (score/outof) * 100;
-      var $bar = $('#progress_span');
+      var $bar = $('.progress_span');
       $bar.text(score + '/' + outof + ' Completed');
       $bar.css('width', width + '%');
       if (width > 75) {

@@ -46,15 +46,13 @@
               { assignment_name: @assignment.short_identifier,
                 group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
         </h3>
-        <div class='header_text_links flex_vertical_center'>
-          <a onclick='compact_view_toggle()'>Normal View</a>
+        <!-- Progress Bar -->
+        <div class="progress_meter progress_meter_top flex_vertical_center">
+          <span class="progress_span">
+          </span>
         </div>
         <div class='header_text_links flex_vertical_center'>
-          <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-            <%= link_to t(:download),
-                        'javascript:void(0);',
-                        onclick:'modal_download.open();' %>
-          <% end %>
+          <a onclick='compact_view_toggle()'>Normal View</a>
         </div>
       </div>
     </div>
