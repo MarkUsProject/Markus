@@ -726,6 +726,7 @@ class Assignment < ActiveRecord::Base
         result = submission.get_latest_completed_result
         unless result.nil? || result.total_mark.nil?
           grades.push(calculate_total_percent(result))
+          # byebug
         end
       end
     end
@@ -733,9 +734,33 @@ class Assignment < ActiveRecord::Base
     return grades
   end
 
+  # An array of all grade_entry_students' weighted percentage total grades that are not nil
+  def weighted_grades_array(weight)
+    weighted_grades = Array.new
+    grades = percentage_grades_array
+    grades.each do |grade|
+      weighted_grade = grade / 100 * weight
+      weighted_grades.push(weighted_grade.to_f)
+    end
+
+    return weighted_grades
+  end
+
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+
+    return distribution
+  end
+
+  # Returns weighted grade distribution for a grade entry item for each student
+  def weighted_grade_distribution_array(intervals = 20, weight)
+    data = weighted_grades_array(weight)
+    # byebug
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
