@@ -2,7 +2,5 @@
 
 <% content_for :content do %>
     <%= render partial: 'form',
-               formats: [:html],
-               handlers: [:erb],
                locals: { exam_template: ExamTemplate.find_by(assignment: @assignment) }%>
 <% end %>
