@@ -46,6 +46,11 @@
               { assignment_name: @assignment.short_identifier,
                 group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
         </h3>
+        <!-- Progress Bar -->
+        <div class="progress_meter progress_meter_top flex_vertical_center">
+          <span class="progress_span">
+          </span>
+        </div>
         <div class='header_text_links flex_vertical_center'>
           <a onclick='compact_view_toggle()'>Normal View</a>
         </div>

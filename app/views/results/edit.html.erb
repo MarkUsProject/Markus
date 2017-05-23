@@ -179,20 +179,17 @@
   </aside>
 <% end %>
 
-<!-- Progress Bar -->
-<div class="progress_meter">
-    <span id="progress_span">
-    </span>
-</div>
-
 <div class='title_bar'>
   <h1>
     <%= t('results.title',
           { assignment_name: @assignment.short_identifier,
             group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
   </h1>
-
   <div class='heading_buttons'>
+    <div class="progress_meter">
+      <span class="progress_span">
+      </span>
+    </div>
     <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
   </div>
 </div>
