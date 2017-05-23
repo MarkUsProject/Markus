@@ -1,7 +1,7 @@
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
 <% content_for :content do %>
-    <%= render partial: 'student_panes',
+    <%= render partial: 'form',
                formats: [:html],
                handlers: [:erb],
                locals: { exam_template: ExamTemplate.find_by(assignment: @assignment) }%>
