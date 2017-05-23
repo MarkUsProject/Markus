@@ -6,7 +6,7 @@ class ExamTemplatesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = ExamTemplate.all
+    @exam_templates = ExamTemplate.find_by(assignment: assignment)
   end
 
   def download
