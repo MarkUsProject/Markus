@@ -1,6 +1,3 @@
-# The actions necessary for managing the Testing Framework form
-require 'helpers/ensure_config_helper.rb'
-
 class ExamTemplatesController < ApplicationController
 
   before_filter      :authorize_only_for_admin
