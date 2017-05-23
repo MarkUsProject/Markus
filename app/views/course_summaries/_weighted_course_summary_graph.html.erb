@@ -1,0 +1,64 @@
+
+<% unless @marking_schemes.nil? %>
+  <% @marking_schemes.each do |marking_scheme| %>
+
+  <canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='400' height='350'></canvas>
+
+  <script>
+    // Set up graph
+    var ctx = document.getElementById('<%= "weighted_summary_graph_#{marking_scheme.id}" %>').getContext('2d');
+
+    // Set up data
+    var data = {
+      labels: Array.apply(null, Array(21)).map(function (_, i) {
+        return i * 5;
+      }),
+      datasets: [
+        <% unless assignments.nil? %>
+          <% marking_scheme.get_assignments_marking_weights(assignments).each_with_index do |mw, index| %>
+            {
+              label: "Weighted <%= mw.get_gradable_item.short_identifier %>",
+              backgroundColor: colours[<%= index %>],
+              data: <%= mw.get_gradable_item.weighted_grade_distribution_array(20, mw.get_weight) %>
+            },
+          <% end %>
+        <% end %>
+        <% unless grade_entry_forms.nil? %>
+          <% marking_scheme.get_gefs_marking_weights(grade_entry_forms).each_with_index do |mw, index| %>
+            {
+              label: "Weighted <%= mw.get_gradable_item.short_identifier %>",
+              backgroundColor: colours[<%= assignments.count + index %>],
+              data: <%= mw.get_gradable_item.weighted_grade_distribution_array(20, mw.get_weight) %>
+            },
+          <% end %>
+        <% end %>
+      ]
+    };
+
+    var options = {
+      tooltips: {
+        callbacks: {
+          title: function (tooltipItems) {
+            var baseNum = parseInt(tooltipItems[0].xLabel);
+            if (baseNum === 0) {
+              return '0-5';
+            } else {
+              return (baseNum + 1) + '-' + (baseNum + 5);
+            }
+          }
+        }
+      },
+      legend: {
+        display: true
+      }
+    };
+
+    // Draw it
+    new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: options
+    });
+  </script>
+  <% end %>
+<% end %>
