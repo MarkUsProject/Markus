@@ -372,9 +372,14 @@ class GradeEntryFormsController < ApplicationController
       columns = []
 
       grades = []
+      to_upsert = []
+      grade_entry_students = {}
+      @grade_entry_form.grade_entry_students.includes(:user).find_each do |s|
+        grade_entry_students[s.user.user_name] = s
+      end
       # Parse the grades
-      result = MarkusCSV.parse(grades_file.read, encoding: encoding) do |row|
-        next if CSV.generate_line(row).strip.empty?
+      result = MarkusCSV.parse(grades_file.read,encoding: encoding, header_count: 2) do |row|
+        next unless row.any?
         # grab names and totals from the first two rows
         if names.empty?
           names = row
@@ -389,32 +394,32 @@ class GradeEntryFormsController < ApplicationController
             @grade_entry_form,
             overwrite)
           GradeEntryItem.import grades
+          columns = @grade_entry_form.grade_entry_items.reload
           next
         end
-        columns = @grade_entry_form.grade_entry_items.reload
         grade_list = @grade_entry_form.grades.map do |g|
           [[g.grade_entry_student_id, g.grade_entry_item_id], g.grade]
         end
         all_grades = Hash[grade_list]
-        Upsert.batch(ActiveRecord::Base.connection, Grade.table_name) do |upsert|
+        s = grade_entry_students[row[0].encode('UTF-8')]
+        raise CSVInvalidLineError if s.nil?
 
-          s = @grade_entry_form.grade_entry_students
-                               .joins(:user)
-                               .find_by('users.user_name' => row[0].encode('UTF-8'))
-          raise CSVInvalidLineError if s.nil?
-
-          row.shift
-          row.zip(columns.take(row.size)).each do |grade, c|
-            new_grade = grade.blank? ? nil : Float(grade)
-            selector = { grade_entry_student_id: s.id,
-                         grade_entry_item_id: c.id }
-            if s.nil? || overwrite
-              setter = { grade: new_grade }
-            else
-              setter = { grade: all_grades[[s.id, c.id]] || new_grade }
-            end
-            upsert.row(selector, setter)
+        row.shift
+        row.zip(columns.take(row.size)).each do |grade, c|
+          new_grade = grade.blank? ? nil : Float(grade)
+          selector = { grade_entry_student_id: s.id,
+                       grade_entry_item_id: c.id }
+          if s.nil? || overwrite
+            setter = { grade: new_grade }
+          else
+            setter = { grade: all_grades[[s.id, c.id]] || new_grade }
           end
+          to_upsert.append([selector, setter])
+        end
+      end
+      Upsert.batch(ActiveRecord::Base.connection, Grade.table_name) do |upsert|
+        to_upsert.each do |selector, setter|
+          upsert.row(selector, setter)
         end
       end
       unless result[:invalid_lines].empty?

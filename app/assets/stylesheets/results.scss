@@ -63,6 +63,10 @@
   text-align: center;
 }
 
+.download_text a{
+  line-height: 32px;
+}
+
 .logo {
   display: flex;
   flex-grow: 1;
@@ -94,6 +98,32 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+
+.progress_meter {
+  height: 24px;  /* Can be anything */
+  position: relative;
+  background: $light-grey;
+  margin: 5px 5px 10px 5px;
+}
+
+.progress_meter > span {
+  display: block;
+  height: 100%;
+  background-color: $red;
+  position: relative;
+  overflow: hidden;
+  color: $white;
+  text-align: right;
+  line-height: 24px;
+  width: 0px;
+  -webkit-transition: width 1s linear,background-color 200ms linear;
+  -moz-transition: width 1s linear,background-color 200ms linear;
+  -o-transition: width 1s linear,background-color 200ms linear;
+  -ms-transition: width 1s linear,background-color 200ms linear;
+  transition: width 1s linear,background-color 200ms linear;
+  margin: 0;
+  padding: 0 10px;
 }
 
 #results-logo-img {

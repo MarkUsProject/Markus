@@ -66,6 +66,17 @@
         expand_unmarked(this, 'CheckboxCriterion');
       });
     <% end %>
+
+    <%
+      if @current_user.admin?
+        num_marked = @assignment.get_num_marked
+        num_assigned = @assignment.get_num_assigned
+      else
+        num_marked = @assignment.get_num_marked(@current_user.id)
+        num_assigned = @assignment.get_num_assigned(@current_user.id)
+      end
+    %>
+    update_bar(<%= num_marked %>, <%= num_assigned %>);
   });
 
   function check_working() {
@@ -79,6 +90,10 @@
 
 <% # Javascript for feedback file window %>
 <%= render partial: 'assignments/feedback_file_window',
+           formats: [:js] %>
+
+<% # Javascript for progress bar %>
+<%= render partial: 'results/marker/update_progress_bar',
            formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
@@ -164,6 +179,12 @@
   </aside>
 <% end %>
 
+<!-- Progress Bar -->
+<div class="progress_meter">
+    <span id="progress_span">
+    </span>
+</div>
+
 <div class='title_bar'>
   <h1>
     <%= t('results.title',
@@ -173,11 +194,6 @@
 
   <div class='heading_buttons'>
     <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
-    <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-      <%= link_to t(:download),
-                  'javascript:void(0);',
-                  onclick:'modal_download.open();' %>
-    <% end %>
   </div>
 </div>
 

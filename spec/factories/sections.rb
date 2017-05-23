@@ -2,6 +2,6 @@ require 'faker'
 
 FactoryGirl.define do
   factory :section do
-    name { Faker::Lorem.word }
+    sequence(:name) { |n| "Section #{n}" }
   end
 end
