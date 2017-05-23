@@ -14,7 +14,7 @@ class ExamTemplatesController < ApplicationController
     exam_templates = ExamTemplate.find_by(assignment: assignment)
     filename = exam_templates[0].filename
     basename = File.basename(filename, ".pdf")
-    send_file("#{Rails.root}/data/dev/exam_templates/#{basename}/#{filename}",
+    send_file("#{EXAM_TEMPLATE_DIR}/#{basename}/#{filename}",
               filename: "#{filename}",
               type: "application/pdf")
   end
