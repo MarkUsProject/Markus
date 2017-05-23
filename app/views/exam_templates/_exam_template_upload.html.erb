@@ -1,0 +1,8 @@
+<br><br>
+<label>Upload Exam Template</label>
+<%= form_tag({:action=>'update', :controller=>"exam_templates", :id=>exam_template.id}, :multipart => true) do %>
+    <p>
+      <%= file_field 'upload', 'datafile' %>
+    </p>
+    <%= submit_tag 'Submit' %>
+<% end %>
