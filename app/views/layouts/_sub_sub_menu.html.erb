@@ -38,7 +38,7 @@
           <% end %>
           <% if @assignment.scanned_exam %>
             <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
-              <%= link_to t('exam_templates.exam_templates'),
+              <%= link_to ExamTemplate.model_name.human.pluralize,
                           assignment_exam_templates_path(@assignment) %>
             </li>
           <% end %>
