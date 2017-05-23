@@ -15,7 +15,7 @@
             {
               label: "<%= assignment.short_identifier %>",
               backgroundColor: colours[<%= index %>],
-              data: <%= assignment.grade_distribution_array(20) %>
+              data: <%= assignment.assignment_stat.grade_distribution_array %>
             },
           <% end %>
         <% end %>
