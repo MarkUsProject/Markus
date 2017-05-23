@@ -1708,10 +1708,6 @@ es:
     date_validator:
       invalid_date: "no es una fecha válida"
 
-    #Exam Template
-    exam_templates:
-      exam_templates: "Plantilla de examen"
-
     #Test Framework
     automated_tests:
       title:                              "Pruebas Automatizadas"
