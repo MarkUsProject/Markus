@@ -25,5 +25,7 @@ class ExamTemplatesController < ApplicationController
     old_exam_template = ExamTemplate.find_by(assignment: assignment, id: params[:id])
     old_template_filename = old_exam_template.filename
     ExamTemplate.create_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
+    flash_message(:success, 'Exam Template has been successfully uploaded')
+    redirect_to action: 'index'
   end
 end
