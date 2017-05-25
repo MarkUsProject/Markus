@@ -14,8 +14,8 @@
     <fieldset>
       <legend><%= t("Update Exam Template") %></legend>
       <p><%= raw t("assignment.required_fields") %> <span class='required_field'>*</span></p>
-
+      <%= f.label 'Upload New Template' %>
       <%= f.file_field :new_template %>
-      <%= submit_tag t(:submit)%>
+      <p><%= submit_tag t(:submit)%></p>
     </fieldset>
 <% end %>
