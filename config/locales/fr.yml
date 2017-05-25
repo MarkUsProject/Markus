@@ -1320,6 +1320,14 @@ fr:
     date_validator:
       invalid_date: "n'est pas une date valide"
 
+    #Exam Template
+    exam_templates:
+      download: "Télécharger le modèle d'examen"
+      update: "Modèle d'examen de mise à jour"
+      upload_label: "Télécharger un nouveau modèle"
+      success_update: "Le modèle d'examen a été téléchargé avec succès"
+      failure_update: "Le modèle d'examen n'a pas été mis à jour avec succès"
+
     #Test Framework
     automated_tests:
       title: "Tests automatiques du code"

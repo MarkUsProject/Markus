@@ -5,16 +5,16 @@
     <%= f.error_messages%>
     <div class='template-pane'>
       <h4>
-        <%= link_to 'Download Exam Template', {:action=>'download', :controller=>'exam_templates', :id=>exam_template.id} %>
+        <%= link_to t('exam_templates.download'), {:action=>'download', :controller=>'exam_templates', :id=>exam_template.id} %>
       </h4>
       <h4>Number of pages: <%= exam_template.num_pages %></h4>
       <h4>Name of file: <%= exam_template.filename %></h4>
     </div>
 
     <fieldset>
-      <legend><%= t("Update Exam Template") %></legend>
-      <p><%= raw t("assignment.required_fields") %> <span class='required_field'>*</span></p>
-      <%= f.label 'Upload New Template' %>
+      <legend><%= t('exam_templates.update') %></legend>
+      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+      <%= f.label t('exam_templates.upload_label') %>
       <%= f.file_field :new_template %>
       <p><%= submit_tag t(:submit)%></p>
     </fieldset>
