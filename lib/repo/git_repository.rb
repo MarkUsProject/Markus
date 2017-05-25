@@ -588,7 +588,7 @@ module Repository
       end
     end
 
-    # Gets a directory at +path+ (relative to the repo root) in a +commit+ as a Rugged Tree.
+    # Gets a directory at +path+ (relative to the repo root) in a +commit+ as a Rugged::Tree.
     def get_tree(commit, path)
       if path == '.'
         tree = commit.tree
@@ -596,7 +596,7 @@ module Repository
         begin
           tree_hash = commit.tree.path(path)
           tree = @repo.lookup(tree_hash[:oid])
-        rescue Rugged::TreeError
+        rescue Rugged::TreeError # path not valid
           tree = nil
         end
       end
@@ -645,7 +645,17 @@ module Repository
       entry_changed?(@commit, path)
     end
 
+    # Gets all entries at +path+ of a specified +type+ (:blob, :tree, or nil for both), as Repository::RevisionFile and
+    # Repository::RevisionDirectory.
     def entries_at_path(path, type=nil)
+      # transform from absolute to relative
+      if path.start_with?(File::SEPARATOR)
+        path = path[1..-1]
+      end
+      # unify with Rugged::Tree#path return value
+      if path == ''
+        path = '.'
+      end
       entries = {}
       path_tree = get_tree(@commit, path)
       path_tree.each do |entry|
@@ -659,44 +669,42 @@ module Repository
         last_commit_modified = walker.find { |commit| entry_changed?(commit, File.join(path, entry_name)) }
         # wrap in a RevisionFile or RevisionDirectory
         if entry_type == :blob
+          mime_types = MIME::Types.type_for(entry_name)
+          if mime_types.empty?
+            mime_type = 'text'
+          else
+            mime_type = mime_types.first.content_type
+          end
           entries[entry_name] = Repository::RevisionFile.new(
             @revision_identifier,
             name: entry_name,
             path: path, # without filename, to be consistent with SVN
-            last_modified_revision: @revision_identifier, # just a placeholder
+            last_modified_revision: last_commit_modified.oid,
             last_modified_date: last_commit_modified.time.in_time_zone,
-            changed: last_commit_modified == @commit,
+            changed: last_commit_modified.oid == @revision_identifier,
             user_id: last_commit_modified.author[:name],
-            mime_type: MIME::Types.type_for(entry_name).first.content_type
+            mime_type: mime_type
           )
         elsif entry_type == :tree
           entries[entry_name] = Repository::RevisionDirectory.new(
             @revision_identifier,
             name: entry_name,
             path: path,
-            last_modified_revision: @revision_identifier, # just a placeholder
+            last_modified_revision: last_commit_modified.oid,
             last_modified_date: last_commit_modified.time.in_time_zone,
-            changed: last_commit_modified == @commit,
+            changed: last_commit_modified.oid == @revision_identifier,
             user_id: last_commit_modified.author[:name]
           )
         end
       end
-
       entries
     end
 
-    def files_at_path2(path)
+    def files_at_path(path)
       entries_at_path(path, :blob)
     end
 
-    def directories_at_path2(path)
-      # transform from absolute to relative
-      if path.start_with?(File::SEPARATOR)
-        path = path[1..-1]
-      end
-      if path == ''
-        path = '.'
-      end
+    def directories_at_path(path)
       entries_at_path(path, :tree)
     end
 
@@ -788,7 +796,7 @@ module Repository
 
     # Return all of the files in this repository in a hash where
     # key: filename and value: RevisionFile object
-    def files_at_path(path)
+    def files_at_path2(path)
       # In order to deal with the empty assignment folder case we must check
       # to see if the lookup fails as the directory tree is traversed to the
       # very top
@@ -808,7 +816,7 @@ module Repository
       files
     end
 
-    def directories_at_path(path)
+    def directories_at_path2(path)
       # In order to deal with the empty assignment folder case we must check
       # to see if the lookup fails as the directory tree is traversed to the
       # very top
