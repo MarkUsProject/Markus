@@ -1309,6 +1309,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     #Exam Template
     exam_templates:
+      num_pages: "número de páginas"
+      filename: "Nome do arquivo"
       download: "Download do modelo de exame"
       update: "Atualize Modelo de Exame"
       upload_label: "Carregar novo modelo"

@@ -1482,6 +1482,8 @@ en:
 
     #Exam Template
     exam_templates:
+      num_pages: "Number of pages"
+      filename: "Name of file"
       download: "Download Exam Template"
       update: "Update Exam Template"
       upload_label: "Upload New Template"

@@ -1710,6 +1710,8 @@ es:
 
     #Exam Template
     exam_templates:
+      num_pages: "número de páginas"
+      filename: "Nombre del archivo"
       download: "Descargar plantilla de examen"
       update: "Actualizar plantilla de examen"
       upload_label: "Subir una nueva plantilla"

@@ -1322,6 +1322,8 @@ fr:
 
     #Exam Template
     exam_templates:
+      num_pages: "Nombre de pages"
+      filename: "Nom du fichier"
       download: "Télécharger le modèle d'examen"
       update: "Modèle d'examen de mise à jour"
       upload_label: "Télécharger un nouveau modèle"

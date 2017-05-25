@@ -7,8 +7,8 @@
       <h4>
         <%= link_to t('exam_templates.download'), {:action=>'download', :controller=>'exam_templates', :id=>exam_template.id} %>
       </h4>
-      <h4>Number of pages: <%= exam_template.num_pages %></h4>
-      <h4>Name of file: <%= exam_template.filename %></h4>
+      <h4><%= t('exam_templates.num_pages') %>: <%= exam_template.num_pages %></h4>
+      <h4><%= t('exam_templates.filename') %>: <%= exam_template.filename %></h4>
     </div>
 
     <fieldset>
