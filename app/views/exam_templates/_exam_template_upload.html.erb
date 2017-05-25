@@ -3,5 +3,5 @@
     <p>
       <%= file_field_tag 'new_template' %>
     </p>
-    <%= submit_tag 'Submit' %>
+    <%= submit_tag t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
 <% end %>
