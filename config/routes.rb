@@ -100,6 +100,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
+          get 'index'
           post 'update' # because of collection
         end
       end
