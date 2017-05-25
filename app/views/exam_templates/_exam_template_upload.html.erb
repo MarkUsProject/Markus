@@ -1,7 +1,0 @@
-<label>Upload Exam Template</label>
-<%= form_tag({:action=>"update", :controller=>"exam_templates", :id=>exam_template.id}, :multipart => true) do %>
-    <p>
-      <%= file_field_tag 'new_template' %>
-    </p>
-    <%= submit_tag t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
-<% end %>
