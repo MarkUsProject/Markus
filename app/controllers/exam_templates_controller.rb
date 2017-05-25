@@ -20,7 +20,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def update
-    new_uploaded_io = params[:new_template]
+    new_uploaded_io = params[:exam_template][:new_template]
     # error checking when new_uploaded_io is not pdf
     if new_uploaded_io.content_type != 'application/pdf'
       flash_message(:failure, 'Exam Template should be in pdf format')
@@ -28,7 +28,7 @@ class ExamTemplatesController < ApplicationController
       return
     end
     assignment = Assignment.find(params[:assignment_id])
-    old_exam_template = ExamTemplate.find_by(assignment: assignment, id: params[:id])
+    old_exam_template = ExamTemplate.find_by(assignment: assignment)
     old_template_filename = old_exam_template.filename
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
     flash_message(:success, 'Exam Template has been successfully uploaded')
