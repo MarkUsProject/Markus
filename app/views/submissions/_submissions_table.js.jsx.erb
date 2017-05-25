@@ -197,6 +197,25 @@
     },
 
     render: function() {
+      // Do student-specific table stuff here.
+      // possibly move this to getdefaultprops.
+      // need to filter for each section
+      var sections = <%= raw @sections.to_json %>;
+      if (sections.length > 0) {
+        var section_filters = sections.map(function(section) {
+          var filter = {
+            name: section.name,
+            text: section.name,
+            func: function(group) {
+              return group.section === section.name;
+            }
+          };
+            return filter;
+        });
+        var all = '<%= t('sections.all') %>';
+        section_filters.unshift({name: all, text: all, func: null});
+      }
+
       var tas = <%= raw @tas.to_json %>;
       if (tas.length > 0) {
         var ta_filters = tas.map(function(ta) {
@@ -209,8 +228,8 @@
           };
           return filter;
         });
-        var all = '<%= t('tas.all') %>';
-        ta_filters.unshift({name: all, text: all, func: null});
+        var all_tas = '<%= t('tas.all') %>';
+        ta_filters.unshift({name: all_tas, text: all_tas, func: null});
       }
 
       var submissions_data = this.state.submissions.map(function(submission) {
@@ -274,7 +293,8 @@
             columns={this.props.columns}
             selectable={true}
             filters={this.props.filters}
-            secondary_filters={ta_filters}
+            secondary_filters={section_filters}
+            tertiary_filters={ta_filters}
             filter_type={true}
             onSelectedRowsChange={this.updateSelectedSubmissions}
             search_placeholder={'<%= j raw I18n.t('browse_submissions.search_submissions') %>'}
