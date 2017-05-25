@@ -100,7 +100,7 @@ Markus::Application.routes.draw do
         end
 
         collection do
-          post 'update'
+          post 'update' # because of collection
         end
       end
 
