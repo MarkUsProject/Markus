@@ -1479,7 +1479,7 @@ en:
     #lib/validators/
     date_validator:
       invalid_date: "is not a valid date"
-
+      
     #Test Framework
     automated_tests:
       title: "Automated Testing"
@@ -1492,7 +1492,7 @@ en:
       enable_test: "Enable tests for this assignment"
       student_tests: "Student Tests"
       enable_student_tests: "Allow students to run tests"
-      required_test_files:s "Required files for testing"
+      required_test_files: "Required files for testing"
       need_group_for_test: "You must have a group to run a test"
       test: "Test"
       script_name: "Script Name"
