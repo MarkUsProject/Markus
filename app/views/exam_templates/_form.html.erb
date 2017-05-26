@@ -6,14 +6,14 @@
       <h4>
         <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
       </h4>
-      <h4><%= t('exam_templates.num_pages') %>: <%= exam_template.num_pages %></h4>
-      <h4><%= t('exam_templates.filename') %>: <%= exam_template.filename %></h4>
+      <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
+      <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
     </div>
 
     <fieldset>
-      <legend><%= t('exam_templates.update') %></legend>
+      <legend><%= t('exam_templates.update.general') %></legend>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
-      <%= f.label t('exam_templates.upload_label') %>
+      <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
       <p><%= submit_tag t(:submit)%></p>
     </fieldset>
