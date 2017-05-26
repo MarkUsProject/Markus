@@ -656,17 +656,13 @@ module Repository
       if path == ''
         path = '.'
       end
+      # phase 1: collect all entries
       entries = {}
       path_tree = get_tree(@commit, path)
       path_tree.each do |entry|
         entry_type = entry[:type]
         next unless type.nil? || type == entry_type
         entry_name = entry[:name]
-        walker = Rugged::Walker.new(@repo)
-        walker.sorting(Rugged::SORT_DATE)
-        walker.push(@commit)
-        # get the last commit that modified the entry
-        last_commit_modified = walker.find { |commit| entry_changed?(commit, File.join(path, entry_name)) }
         # wrap in a RevisionFile or RevisionDirectory
         if entry_type == :blob
           mime_types = MIME::Types.type_for(entry_name)
@@ -675,27 +671,30 @@ module Repository
           else
             mime_type = mime_types.first.content_type
           end
-          entries[entry_name] = Repository::RevisionFile.new(
-            @revision_identifier,
-            name: entry_name,
-            path: path, # without filename, to be consistent with SVN
-            last_modified_revision: last_commit_modified.oid,
-            last_modified_date: last_commit_modified.time.in_time_zone,
-            changed: last_commit_modified.oid == @revision_identifier,
-            user_id: last_commit_modified.author[:name],
-            mime_type: mime_type
-          )
+          entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name,
+                                                             mime_type: mime_type)
         elsif entry_type == :tree
-          entries[entry_name] = Repository::RevisionDirectory.new(
-            @revision_identifier,
-            name: entry_name,
-            path: path,
-            last_modified_revision: last_commit_modified.oid,
-            last_modified_date: last_commit_modified.time.in_time_zone,
-            changed: last_commit_modified.oid == @revision_identifier,
-            user_id: last_commit_modified.author[:name]
-          )
+          entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
         end
+      end
+      if entries.empty?
+        return entries
+      end
+      # phase 2: walk the git history once and collect the last commits that modified each entry
+      walker_entries = entries.dup
+      walker = Rugged::Walker.new(@repo)
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(@commit)
+      walker.each do |commit|
+        mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(commit, File.join(path, entry_name)) }
+        mod_entries = walker_entries.extract!(*mod_keys)
+        mod_entries.each do |_, mod_entry|
+          mod_entry.last_modified_revision = commit.oid
+          mod_entry.last_modified_date = commit.time.in_time_zone
+          mod_entry.changed = commit.oid == @revision_identifier
+          mod_entry.user_id = commit.author[:name]
+        end
+        break if walker_entries.empty?
       end
       entries
     end
