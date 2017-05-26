@@ -38,7 +38,7 @@ module Repository
         @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       else
-        raise "Repository does not exist at entry_name \"#{@repos_path}\""
+        raise "Repository does not exist at path \"#{@repos_path}\""
       end
     end
 
@@ -149,10 +149,10 @@ module Repository
 
     # Exports git repo to a new folder (clone repository)
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
-    # all the repository on that entry_name need to exist, or the export will fail.
+    # all the repository on that path need to exist, or the export will fail.
     # Exports git repo to a new folder (clone repository)
     # If a filepath is given, the repo_dest_dir needs to point to a file, and
-    # all the repository on that entry_name need to exist, or the export will fail.
+    # all the repository on that path need to exist, or the export will fail.
     # if export means exporting repo as zip/tgz git-ruby library should be used
     def export(repo_dest_dir, filepath = nil)
 
@@ -210,13 +210,13 @@ module Repository
 
     def get_repos_workdir
       # Get working directory of the repository
-      # workdir = entry_name/to/my/repository/
+      # workdir = path/to/my/repository/
       return @repos.workdir
     end
 
     def get_repos_path
       # Get the repository's .git folder
-      # entry_name = entry_name/to/my/repository/.git
+      # path = path/to/my/repository/.git
       return @repos.path
     end
 
@@ -500,7 +500,7 @@ module Repository
       GitRepository.do_commit_and_push(@repos, author, 'Removing file')
     end
 
-    # Replaces file at provided entry_name with file_data
+    # Replaces file at provided path with file_data
     def replace_file(path, file_data, author, expected_revision_identifier = 0)
       if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
@@ -511,10 +511,10 @@ module Repository
       write_file(path, file_data, author)
     end
 
-    # Writes to file using entry_name, file_data, and author
+    # Writes to file using path, file_data, and author
     def write_file(path, file_data = nil, author)
 
-      # Get directory entry_name of file (one level higher)
+      # Get directory path of file (one level higher)
       dir = File.dirname(path)
       abs_path = File.join(@repos_path, dir)
 
@@ -530,7 +530,7 @@ module Repository
     # file on disk if it already exists, but will only make a
     # new commit if the file contents have changed.
     def make_file(path, file_data, author)
-      # Get the file entry_name to write to using the ruby File module.
+      # Get the file path to write to using the ruby File module.
       abs_path = File.join(@repos_path, path)
       # Actually create the file.
       File.open(abs_path, 'w') do |file|
@@ -545,7 +545,7 @@ module Repository
 
     # Create and commit an empty directory, if it's not already present.
     # The dummy file is required so the directory gets committed.
-    # entry_name should be a directory
+    # path should be a directory
     def make_directory(path)
       gitkeep_filename = File.join(path, '.gitkeep')
       add_file(gitkeep_filename, '', 'markus')
@@ -569,7 +569,7 @@ module Repository
   # than repositories
   class GitRevision < Repository::AbstractRevision
 
-    # Constructor; checks if revision_hash is actually present in repository
+    # Constructor; checks if +revision_hash+ is actually present in +repo+.
     def initialize(revision_hash, repo)
       super(revision_hash)
       @revision_identifier_ui = @revision_identifier[0..6]
@@ -715,10 +715,10 @@ module Repository
     end
 
     # Returns all files (incl. folders) in this repository
-    # at entry_name `entry_name` for the current revision file.
+    # at path `path` for the current revision file.
     def objects_at_path(path)
       current_tree = find_object_at_path(path)
-      # current_tree is now at the entry_name we were looking for
+      # current_tree is now at the path we were looking for
       objects = []
       current_tree.each do |obj|
         file_path = File.join(path, obj[:name])
@@ -728,8 +728,8 @@ module Repository
           file = Repository::RevisionFile.new(
             @revision_identifier,
             name: obj[:name],
-            # Is the entry_name with or without filename?
-            # -- Answer: The entry_name is WITHOUT the filename to be consistent
+            # Is the path with or without filename?
+            # -- Answer: The path is WITHOUT the filename to be consistent
             # with SVN implementation
             path: path,
             # The following is placeholder information.
@@ -765,10 +765,10 @@ module Repository
       # we can return a 400 with a message so react knows how to handle
     end
 
-    # Takes in a entry_name (that should be a dir) and returns the Rugged tree object
-    # at that entry_name.
+    # Takes in a path (that should be a dir) and returns the Rugged tree object
+    # at that path.
     def find_object_at_path(path)
-      # Get directory names for entry_name in a nice array
+      # Get directory names for path in a nice array
       # like ['A1', 'src', 'core'] for '/A1/src/core'
       path = path.split('/')
 
@@ -778,7 +778,7 @@ module Repository
       # current_tree is the current directory object we are going through
       # Look at rugged documentation for more info on tree objects
       current_object = @commit.tree
-      # While there are still directories to go through to get to entry_name,
+      # While there are still directories to go through to get to path,
       # find the dirname
       path.each do |level|
         # This loop finds the object we're currently looking
@@ -842,7 +842,7 @@ module Repository
     private
 
     # Returns the last modified date and author in an array given
-    # the entry_name to the file as a string
+    # the path to the file as a string
     def find_last_modified_date_author(path_to_file)
       # Remove starting forward slash, if present
       if path_to_file[0] == '/'
