@@ -6,7 +6,7 @@ class ExamTemplatesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = ExamTemplate.where(assignment: @assignment)
+    @exam_templates = @assignment.exam_templates
   end
 
   def download
@@ -28,7 +28,7 @@ class ExamTemplatesController < ApplicationController
       return
     end
     assignment = Assignment.find(params[:assignment_id])
-    old_exam_template = ExamTemplate.find_by(assignment: assignment)
+    old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     old_template_filename = old_exam_template.filename
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
     flash_message(:success, t('exam_templates.success_update'))
