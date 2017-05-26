@@ -1479,7 +1479,7 @@ en:
     #lib/validators/
     date_validator:
       invalid_date: "is not a valid date"
-      
+
     #Test Framework
     automated_tests:
       title: "Automated Testing"
