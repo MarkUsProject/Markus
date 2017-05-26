@@ -98,11 +98,6 @@ Markus::Application.routes.draw do
         member do
           get 'download'
         end
-
-        collection do
-          get 'index'
-          post 'update' # because of collection
-        end
       end
 
       resources :groups do
