@@ -2,12 +2,12 @@ pt:
   exam_templates:
     update:
       general:
-        "Update Exam Template"
+        "Atualize Modelo de Exame"
       success:
-        "Exam Template has been successfully uploaded"
+        "O modelo de exame foi carregado com sucesso"
       failure:
-        "Exam Template has not been successfully updated"
+        "Modelo de exame não foi atualizado com sucesso"
       instruction:
-        "Upload New Template"
+        "Carregar novo modelo"
 
-    download: "Download Exam Template"
+    download: "Download do modelo de exame"

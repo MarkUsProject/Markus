@@ -2,12 +2,12 @@ fr:
   exam_templates:
     update:
       general:
-        "Update Exam Template"
+        "Modèle d'examen de mise à jour"
       success:
-        "Exam Template has been successfully uploaded"
+        "Le modèle d'examen a été téléchargé avec succès"
       failure:
-        "Exam Template has not been successfully updated"
+        "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
-        "Upload New Template"
+        "Télécharger un nouveau modèle"
 
-    download: "Download Exam Template"
+    download: "Télécharger le modèle d'examen"
