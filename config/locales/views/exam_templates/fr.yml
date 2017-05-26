@@ -8,6 +8,6 @@ fr:
       failure:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
-        "Télécharger un nouveau modèle"
+        "télécharger"
 
     download: "Télécharger le modèle d'examen"

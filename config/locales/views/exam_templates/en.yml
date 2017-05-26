@@ -8,6 +8,6 @@ en:
       failure:
         "Exam Template has not been successfully updated"
       instruction:
-        "Upload New Template"
+        "Upload"
 
     download: "Download Exam Template"

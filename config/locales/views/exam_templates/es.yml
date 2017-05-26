@@ -8,6 +8,6 @@ es:
       failure:
         "Exam Template has not been successfully updated"
       instruction:
-        "La plantilla de examen no se ha actualizado correctamente"
+        "subir"
 
     download: "Descargar plantilla de examen"

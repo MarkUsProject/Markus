@@ -8,6 +8,6 @@ pt:
       failure:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
-        "Carregar novo modelo"
+        "Envio"
 
     download: "Download do modelo de exame"
