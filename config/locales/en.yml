@@ -1480,16 +1480,6 @@ en:
     date_validator:
       invalid_date: "is not a valid date"
 
-    #Exam Template
-    exam_templates:
-      num_pages: "Number of pages"
-      filename: "Name of file"
-      download: "Download Exam Template"
-      update: "Update Exam Template"
-      upload_label: "Upload New Template"
-      success_update: "Exam Template has been successfully uploaded"
-      failure_update: "Exam Template has not been successfully updated"
-
     #Test Framework
     automated_tests:
       title: "Automated Testing"
@@ -1502,7 +1492,7 @@ en:
       enable_test: "Enable tests for this assignment"
       student_tests: "Student Tests"
       enable_student_tests: "Allow students to run tests"
-      required_test_files: "Required files for testing"
+      required_test_files:s "Required files for testing"
       need_group_for_test: "You must have a group to run a test"
       test: "Test"
       script_name: "Script Name"

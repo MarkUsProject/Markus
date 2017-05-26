@@ -1708,16 +1708,6 @@ es:
     date_validator:
       invalid_date: "no es una fecha válida"
 
-    #Exam Template
-    exam_templates:
-      num_pages: "número de páginas"
-      filename: "Nombre del archivo"
-      download: "Descargar plantilla de examen"
-      update: "Actualizar plantilla de examen"
-      upload_label: "Subir una nueva plantilla"
-      success_update: "La plantilla de examen se ha cargado correctamente"
-      failure_update: "La plantilla de examen no se ha actualizado correctamente"
-
     #Test Framework
     automated_tests:
       title:                              "Pruebas Automatizadas"
