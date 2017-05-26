@@ -1,0 +1,13 @@
+en:
+  exam_templates:
+    update:
+      general:
+        "Update Exam Template"
+      success:
+        "Exam Template has been successfully uploaded"
+      failure:
+        "Exam Template has not been successfully updated"
+      instruction:
+        "Upload New Template"
+
+    download: "Download Exam Template"

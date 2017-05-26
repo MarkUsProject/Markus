@@ -3,3 +3,7 @@ es:
     models:
       exam_template:
         one: "Plantilla de examen"
+    attributes:
+      exam_template:
+        filename: "Nombre del archivo"
+        num_pages: "número de páginas"

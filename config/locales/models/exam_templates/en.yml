@@ -3,3 +3,7 @@ en:
     models:
       exam_template:
         one: "Exam Template"
+    attributes:
+      exam_template:
+        filename: "Name of file"
+        num_pages: "Number of pages"
