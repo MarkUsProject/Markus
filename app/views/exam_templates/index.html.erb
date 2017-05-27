@@ -1,0 +1,4 @@
+<% content_for :title, ExamTemplate.model_name.human.pluralize %>
+
+<%= render partial: 'form',
+           locals: { exam_template: @exam_templates[0] }%>

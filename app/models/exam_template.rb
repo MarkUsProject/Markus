@@ -33,6 +33,23 @@ class ExamTemplate < ActiveRecord::Base
     create(attributes)
   end
 
+  # Replace an ExamTemplate with the correct file
+  def replace_with_file(blob, attributes={})
+    return unless attributes.has_key? :assignment_id
+    assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    template_path = File.join(
+      MarkusConfigurator.markus_exam_template_dir,
+      assignment_name
+    )
+
+    File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
+      f.write blob
+    end
+
+    pdf = CombinePDF.parse blob
+    self.update(num_pages: pdf.pages.length)
+  end
+
   # Generate copies of the given exam template, with the given start number.
   def generate_copies(num_copies, start=1)
     template_path = File.join(

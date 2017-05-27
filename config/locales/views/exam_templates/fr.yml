@@ -1,0 +1,13 @@
+fr:
+  exam_templates:
+    update:
+      general:
+        "Modèle d'examen de mise à jour"
+      success:
+        "Le modèle d'examen a été téléchargé avec succès"
+      failure:
+        "Le modèle d'examen n'a pas été mis à jour avec succès"
+      instruction:
+        "télécharger"
+
+    download: "Télécharger le modèle d'examen"

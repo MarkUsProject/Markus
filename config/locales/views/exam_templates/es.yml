@@ -1,0 +1,13 @@
+es:
+  exam_templates:
+    update:
+      general:
+        "Actualizar plantilla de examen"
+      success:
+        "La plantilla de examen se ha cargado correctamente"
+      failure:
+        "Exam Template has not been successfully updated"
+      instruction:
+        "subir"
+
+    download: "Descargar plantilla de examen"
