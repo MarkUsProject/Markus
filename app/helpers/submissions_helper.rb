@@ -115,6 +115,7 @@ module SubmissionsHelper
             end
           g[:grace_credits_used] = grouping.grace_period_deduction_single
           g[:section] = grouping.section
+          g[:tas] = grouping.tas.pluck(:user_name)
         end
         if assignment.is_peer_review?
           # create a array of hashes, where each hash represents a reviewee with the reviewee grouping's
