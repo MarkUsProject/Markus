@@ -203,35 +203,36 @@
       var sections = <%= raw @sections.to_json %>;
       if (sections.length > 0) {
         var section_filters = sections.map(function(section) {
-          var filter = {
+          return {
             name: section.name,
             text: section.name,
             func: function(group) {
               return group.section === section.name;
             }
           };
-            return filter;
         });
         var all = '<%= t('sections.all') %>';
         section_filters.unshift({name: all, text: all, func: null});
       }
 
-      var tas = <%= raw @tas.to_json %>;
-      if (tas.length > 0) {
-        var ta_filters = tas.map(function(ta) {
-          var filter = {
-            name: ta,
-            text: ta,
-            func: function(group) {
-              return group.tas.indexOf(ta) > -1;
-            }
-          };
-          return filter;
-        });
-        var all_tas = '<%= t('tas.all') %>';
-        ta_filters.unshift({name: all_tas, text: all_tas, func: null});
-      }
-
+      <% if @current_user.admin? %>
+        var tas = <%= raw @tas.to_json %>;
+        if (tas.length > 0) {
+          var ta_filters = tas.map(function(ta) {
+            return filter = {
+              name: ta,
+              text: ta,
+              func: function(group) {
+                return group.tas.indexOf(ta) > -1;
+              }
+            };
+          });
+          var all_tas = '<%= t('tas.all') %>';
+          ta_filters.unshift({name: all_tas, text: all_tas, func: null});
+        }
+      <% else %>
+        var ta_filters = null;
+      <% end %>
       var submissions_data = this.state.submissions.map(function(submission) {
         var s = {};
         s['id'] = submission.id;
@@ -283,7 +284,7 @@
         return s;
       }.bind(this));
 
-    return (
+      return (
         <div>
           <SubmissionsActionBox
             selected_submissions={this.state.selected_submissions}
