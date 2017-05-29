@@ -19,15 +19,16 @@
 
     <fieldset>
       <legend>Template Divisions</legend>
-        <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
-        <% @select = Array.new(exam_template.num_pages) { |index| index + 1 }%>
-        <%= f.fields_for :template_divisions do |form| %>
-          <p>
-            <%= form.text_field :label, required: true %>
-            <%= form.select(:start, options_for_select(@select, form.object.start)) %>
-            <%= form.select(:end, options_for_select(@select, form.object.end)) %>
-          </p>
-        <% end %>
-        <p><%= submit_tag t(:submit)%></p>
+      <p><strong>Add/edit template divisions(s) of the exam template:</strong></p>
+      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+      <% @select = Array.new(exam_template.num_pages) { |index| index + 1 }%>
+      <%= f.fields_for :template_divisions do |form| %>
+        <p>
+          <%= form.text_field :label, required: true %>
+          <%= form.select(:start, options_for_select(@select, form.object.start)) %>
+          <%= form.select(:end, options_for_select(@select, form.object.end)) %>
+        </p>
+      <% end %>
+      <p><%= submit_tag t(:submit)%></p>
     </fieldset>
 <% end %>
