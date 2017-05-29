@@ -1,0 +1,6 @@
+en:
+  flash:
+    actions:
+      update:
+        success: '%{resource_name} was successfully updated.'
+        failure: '%{resource_name} could not be updated.'
