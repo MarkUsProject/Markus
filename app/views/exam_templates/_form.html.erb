@@ -1,5 +1,4 @@
-<%= form_for exam_template,
-             url: { controller: 'exam_templates', action: 'update', id: exam_template.id },
+<%= form_for [@assignment, exam_template],
              html: { multipart: true } do |f| %>
     <%= f.error_messages%>
     <div class='template-pane'>
