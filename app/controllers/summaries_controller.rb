@@ -5,6 +5,8 @@ class SummariesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @tas = @assignment.ta_memberships.includes(grouping: [:tas]).uniq.pluck(:user_name)
+
     @section_column = ''
     if Section.all.size > 0
       @section_column = "{
