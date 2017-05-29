@@ -2,5 +2,5 @@ en:
   flash:
     actions:
       update:
-        success: 'successfully updated %{resource_name}'
+        success: 'Successfully updated %{resource_name}'
         failure: '%{resource_name} could not be updated'
