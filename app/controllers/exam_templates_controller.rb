@@ -26,7 +26,7 @@ class ExamTemplatesController < ApplicationController
     new_uploaded_io = params[:exam_template][:new_template]
     # error checking when new_uploaded_io is not pdf
     if new_uploaded_io.content_type != 'application/pdf'
-      flash[:error] = 'Exam Template could not be updated'
+      flash[:error] = t('exam_templates.update.failure')
       redirect_to action: 'index'
       return
     end
