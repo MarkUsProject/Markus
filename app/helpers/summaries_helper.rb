@@ -41,6 +41,7 @@ module SummariesHelper
       g[:final_grade] = grouping.final_grade(result)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
       g[:total_extra_points] = grouping.total_extra_points(result)
+      g[:tas] = grouping.tas.pluck(:user_name)
       g
     end
   end

@@ -155,6 +155,24 @@
     },
 
     render: function() {
+      <% if @current_user.admin? %>
+        var tas = <%= raw @tas.to_json %>;
+        if (tas.length > 0) {
+          var ta_filters = tas.map(function(ta) {
+            return filter = {
+              name: ta,
+              text: ta,
+              func: function(group) {
+                return group.tas.indexOf(ta) > -1;
+              }
+            };
+          });
+          var all_tas = '<%= t('tas.all') %>';
+          ta_filters.unshift({name: all_tas, text: all_tas, func: null});
+        }
+      <% else %>
+        var ta_filters = null;
+      <% end %>
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;
@@ -180,6 +198,7 @@
         s['section'] = summary.section;
         s['state'] = summary.state;
         s['total_extra_points'] = summary.total_extra_points;
+        s['tas'] = summary.tas;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
           s[key] = summary.criteria[key];
@@ -191,6 +210,7 @@
         <Table data={summaries_data}
           columns={this.props.columns}
           filters={this.props.filters}
+          secondary_filters={ta_filters}
           filter_type={true}
           search_placeholder={'<%= j raw I18n.t('summaries_index.search_summaries') %>'} />
       );
