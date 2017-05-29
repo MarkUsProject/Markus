@@ -1,6 +1,7 @@
 class ExamTemplatesController < ApplicationController
-  responders :flash, :http_cache # responders setup
-  respond_to :html, :json
+  # responders setup
+  responders :flash, :http_cache
+  respond_to :html
 
   before_filter      :authorize_only_for_admin
 
