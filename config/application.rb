@@ -58,7 +58,7 @@ module Markus
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
 
     # flash keys for responder flash
-    config.responders.flash_keys = [ :success, :failure ]
+    config.responders.flash_keys = [ :success, :error ]
     config.app_generators.scaffold_controller :responders_controller
 
     config.active_job.queue_adapter = :resque
