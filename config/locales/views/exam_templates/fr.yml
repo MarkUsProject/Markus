@@ -12,7 +12,7 @@ fr:
     download: "Télécharger le modèle d'examen"
 
   flash:
-    actions:
+    exam_templates:
       update:
         success: 'Exam Template a été mis à jour avec succès.'
         error: "Exam Template n'a pas pu être mis à jour."

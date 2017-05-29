@@ -12,7 +12,7 @@ en:
     download: "Download Exam Template"
 
   flash:
-    actions:
+    exam_templates:
       update:
         success: 'Successfully updated Exam Template'
         error: 'Exam Template could not be updated'
