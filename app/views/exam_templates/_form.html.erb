@@ -16,4 +16,19 @@
       <%= f.file_field :new_template %>
       <p><%= submit_tag t(:submit)%></p>
     </fieldset>
+
+    <fieldset>
+      <legend>Template Divisions</legend>
+        <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+        <%= f.fields_for :template_divisions do |td| %>
+          <p>
+            <%= td.label 'Label' %>
+            <%= td.text_field :label, required: true %>
+            <% @select = Array.new(exam_template.num_pages) { |index| index + 1 }%>
+            <%= select_tag(:start, options_for_select(@select, :start)) %>
+            <%= select_tag(:end, options_for_select(@select, :end)) %>
+          </p>
+        <% end %>
+        <p><%= submit_tag t(:submit)%></p>
+    </fieldset>
 <% end %>
