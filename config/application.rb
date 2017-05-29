@@ -57,6 +57,10 @@ module Markus
     I18n.available_locales = [:en, :es, :fr, :pt]
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
 
+    # flash keys for responder flash
+    config.responders.flash_keys = [ :success, :failure ]
+    config.app_generators.scaffold_controller :responders_controller
+
     config.active_job.queue_adapter = :resque
     config.generators do |g|
       g.test_framework :rspec
