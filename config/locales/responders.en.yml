@@ -3,4 +3,4 @@ en:
     actions:
       update:
         success: 'Successfully updated %{resource_name}'
-        failure: '%{resource_name} could not be updated'
+        error: '%{resource_name} could not be updated'
