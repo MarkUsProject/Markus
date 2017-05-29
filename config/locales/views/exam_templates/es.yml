@@ -9,5 +9,10 @@ es:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
-
     download: "Descargar plantilla de examen"
+
+  flash:
+    actions:
+      update:
+        success: 'Exam Template se actualizó correctamente.'
+        error: 'Exam Template no se pudo actualizar.'

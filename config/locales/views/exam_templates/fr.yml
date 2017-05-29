@@ -9,5 +9,10 @@ fr:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
-
     download: "Télécharger le modèle d'examen"
+
+  flash:
+    actions:
+      update:
+        success: 'Exam Template a été mis à jour avec succès.'
+        error: "Exam Template n'a pas pu être mis à jour."

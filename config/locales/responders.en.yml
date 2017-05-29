@@ -1,6 +1,0 @@
-en:
-  flash:
-    actions:
-      update:
-        success: 'Successfully updated %{resource_name}'
-        error: '%{resource_name} could not be updated'

@@ -9,5 +9,10 @@ en:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
-
     download: "Download Exam Template"
+
+  flash:
+    actions:
+      update:
+        success: 'Successfully updated Exam Template'
+        error: 'Exam Template could not be updated'

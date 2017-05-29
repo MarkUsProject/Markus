@@ -1,6 +1,0 @@
-fr:
-  flash:
-    actions:
-      update:
-        success: '%{resource_name} a été mis à jour avec succès.'
-        error: "%{resource_name} n'a pas pu être mis à jour."
