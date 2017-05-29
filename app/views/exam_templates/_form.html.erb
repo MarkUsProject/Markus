@@ -24,8 +24,8 @@
         <%= f.fields_for :template_divisions do |form| %>
           <p>
             <%= form.text_field :label, required: true %>
-            <%= form.select(:start, options_for_select(@select)) %>
-            <%= form.select(:end, options_for_select(@select)) %>
+            <%= form.select(:start, options_for_select(@select, form.object.start)) %>
+            <%= form.select(:end, options_for_select(@select, form.object.end)) %>
           </p>
         <% end %>
         <p><%= submit_tag t(:submit)%></p>
