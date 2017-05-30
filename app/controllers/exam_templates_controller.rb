@@ -18,7 +18,7 @@ class ExamTemplatesController < ApplicationController
     filename = params[:create_template][:filename]
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
     if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
-      flash_message(:error, 'Exam Template Not Created Successfully')
+      flash_message(:error, t('exam_templates.create.failure'))
       redirect_to action: 'index'
       return
     end
@@ -43,9 +43,9 @@ class ExamTemplatesController < ApplicationController
     end
     # sending flash message if saved
     if new_template.save
-      flash_message(:success, 'Exam Template Created Successfully')
+      flash_message(:success, t('exam_templates.create.success'))
     else
-      flash_message(:error, 'Exam Template Not Created Successfully')
+      flash_message(:error, t('exam_templates.create.failure'))
     end
     redirect_to action: 'index'
   end

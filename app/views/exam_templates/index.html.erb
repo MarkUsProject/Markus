@@ -7,7 +7,7 @@
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
 <% @heading_buttons = [
-    { link_text: 'Add Exam Template',
+    { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
       html_options: { onclick:'modal_create_new.open()' } }
 ] %>

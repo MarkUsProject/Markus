@@ -1,24 +1,24 @@
 <%= content_for :modal_id, 'create_new_template' %>
-<%= content_for :modal_title, 'Add New Exam Template' %>
+<%= content_for :modal_title, t('exam_templates.create.add_new') %>
 <%= content_for :modal_content do %>
-    <%= 'Filename ' %><span class='required_field'>*</span>
+    <%= ExamTemplate.human_attribute_name('filename') %>  <span class='required_field'>*</span>
     <%= form_for :create_template,
                  url: assignment_exam_templates_path(@assignment),
                  html: { multipart: true, size: 1 } do |f| %>
       <div>
         <p>
           <%= f.text_field :filename,
-                           placeholder: 'Enter file name...' %>
+                           placeholder: t('exam_templates.create.enter_filename') %>
         </p>
       </div>
       <div>
-        <p class="alignleft"><%= 'Upload Template ' %><span class='required_field'>*</span></p>
+        <p class="alignleft"><%= t('exam_templates.create.upload') %> <span class='required_field'>*</span></p>
         <p class="clear-alignment">
           <%= f.file_field :file_io %>
         </p>
       </div>
       <section class='dialog-actions'>
-        <%= f.submit 'Save Changes',
+        <%= f.submit t('exam_templates.save_changes'),
                      name: 'submit',
                      data: { disable_with: t('working') },
                      class: 'button' %>
