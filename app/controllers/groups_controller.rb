@@ -135,7 +135,8 @@ class GroupsController < ApplicationController
   def assign_student_and_next
     if params[:s_id].present?
       @student = Student.find(params[:s_id])
-    else
+    end
+    if @student == nil || (@student.first_name + ' ' + @student.last_name) != params[:names]
       @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
     end
     StudentMembership
