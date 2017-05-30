@@ -20,6 +20,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def update
+    assignment = Assignment.find(params[:assignment_id])
+    old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
     unless new_uploaded_io.nil?
@@ -29,8 +31,6 @@ class ExamTemplatesController < ApplicationController
       redirect_to action: 'index'
       return
     end
-    assignment = Assignment.find(params[:assignment_id])
-    old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     old_template_filename = old_exam_template.filename
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
     flash_message(:success, t('exam_templates.update.success'))
