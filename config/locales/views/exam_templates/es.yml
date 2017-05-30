@@ -9,5 +9,17 @@ es:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
+      enter_filename:
+        "Enter file name..."
 
+    save_changes: "Save Changes"
     download: "Descargar plantilla de examen"

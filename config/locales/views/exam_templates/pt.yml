@@ -9,5 +9,17 @@ pt:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
+      enter_filename:
+        "Enter file name..."
 
+    save_changes: "Save Changes"
     download: "Download do modelo de exame"

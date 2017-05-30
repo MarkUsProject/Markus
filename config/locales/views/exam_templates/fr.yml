@@ -9,5 +9,17 @@ fr:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
+      enter_filename:
+        "Enter file name..."
 
+    save_changes: "Save Changes"
     download: "Télécharger le modèle d'examen"
