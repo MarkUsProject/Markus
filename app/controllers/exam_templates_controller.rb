@@ -20,6 +20,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def update
+    # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
     # error checking when new_uploaded_io is not pdf
     if new_uploaded_io.content_type != 'application/pdf'
@@ -33,6 +34,7 @@ class ExamTemplatesController < ApplicationController
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
     flash_message(:success, t('exam_templates.update.success'))
 
+    # updating template division
     if old_exam_template.update(exam_template_params)
       flash_message(:success, t('exam_templates.update.success'))
     else
