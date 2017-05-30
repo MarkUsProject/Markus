@@ -11,6 +11,12 @@
                            placeholder: 'Enter file name...' %>
         </p>
       </div>
+      <div>
+        <p class="alignleft"><%= 'Upload Template' %></p>
+        <p class="clear-alignment">
+          <%= f.file_field :file_io %>
+        </p>
+      </div>
       <section class='dialog-actions'>
         <%= f.submit 'Save Changes',
                      name: 'submit',
