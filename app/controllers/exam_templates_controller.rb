@@ -11,6 +11,7 @@ class ExamTemplatesController < ApplicationController
 
   # Creates a new instance of the exam template.
   def create
+    assignment = Assignment.find(params[:assignment_id])
     # retrieving exam template file
     new_uploaded_io = params[:create_template][:file_io]
     # getting number of pages
@@ -22,10 +23,10 @@ class ExamTemplatesController < ApplicationController
     new_template = ExamTemplate.new(
       filename: filename,
       num_pages: num_pages,
-      assignment: @assignment
+      assignment: assignment
     )
     # creating corresponding directory and file
-    assignment_name = Assignment.find(@assignment.id).short_identifier
+    assignment_name = Assignment.find(assignment.id).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name
