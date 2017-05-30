@@ -9,5 +9,7 @@ fr:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
 
     download: "Télécharger le modèle d'examen"

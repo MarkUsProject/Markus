@@ -9,5 +9,7 @@ pt:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
+      template_divisions:
+        "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
 
     download: "Download do modelo de exame"

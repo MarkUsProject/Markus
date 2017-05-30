@@ -9,5 +9,7 @@ en:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
 
     download: "Download Exam Template"
