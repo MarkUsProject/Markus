@@ -14,8 +14,10 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     # retrieving exam template file
     new_uploaded_io = params[:create_template][:file_io]
-    # error checking when new_uploaded_io is not pdf
-    if new_uploaded_io.content_type != 'application/pdf'
+    # getting filename
+    filename = params[:create_template][:filename]
+    # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
+    if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, 'Exam Template Not Created Successfully')
       redirect_to action: 'index'
       return
@@ -23,8 +25,6 @@ class ExamTemplatesController < ApplicationController
     # getting number of pages
     pdf = CombinePDF.parse new_uploaded_io.read
     num_pages = pdf.pages.length
-    # getting filename
-    filename = params[:create_template][:filename]
     # instantiates new exam template
     new_template = ExamTemplate.new(
       filename: filename,
