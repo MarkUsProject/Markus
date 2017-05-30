@@ -9,6 +9,40 @@ class ExamTemplatesController < ApplicationController
     @exam_templates = @assignment.exam_templates
   end
 
+  # Creates a new instance of the exam template.
+  def create
+    # retrieving exam template file
+    new_uploaded_io = params[:create_template][:file_io]
+    # getting number of pages
+    pdf = CombinePDF.parse new_uploaded_io.read
+    num_pages = pdf.pages.length
+    # getting filename
+    filename = params[:create_template][:name]
+    # instantiates new exam template
+    new_template = ExamTemplate.new(
+      filename: filename,
+      num_pages: num_pages,
+      assignment: @assignment
+    )
+    # creating corresponding directory and file
+    assignment_name = Assignment.find(@assignment.id).short_identifier
+    template_path = File.join(
+      MarkusConfigurator.markus_exam_template_dir,
+      assignment_name
+    )
+    FileUtils.mkdir template_path unless Dir.exists? template_path
+    File.open(File.join(template_path, filename), 'wb') do |f|
+      f.write new_uploaded_io.read
+    end
+    # sending flash message if saved
+    if new_template.save
+      flash_message(:success, 'Exam Template Created Successfully')
+    else
+      flash_message(:error, 'Exam Template Not Created Successfully')
+    end
+    redirect_to action: 'index'
+  end
+
   def download
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
