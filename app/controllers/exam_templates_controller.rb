@@ -22,7 +22,6 @@ class ExamTemplatesController < ApplicationController
   def update
     assignment = Assignment.find(params[:assignment_id])
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
-
     # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
     unless new_uploaded_io.nil?
