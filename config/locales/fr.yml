@@ -614,6 +614,7 @@ fr:
       search_groups: "Rechercher les groupes"
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
+      assign_scans: "Affecter des scans"
       all_students: "Tous les étudiant"
       unassigned_students: "Non assigné(s)"
       assigned_students: "Assigné(s"

@@ -109,6 +109,7 @@ Markus::Application.routes.draw do
           get 'download'
           get 'get_names'
           get 'assign_student_and_next'
+          get 'next_grouping'
           post 'csv_upload'
           get 'add_csv_group'
           get 'download_grouplist'

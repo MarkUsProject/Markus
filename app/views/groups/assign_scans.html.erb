@@ -14,16 +14,17 @@
     <%= render partial: 'layouts/head' %>
 <% end %>
 
+<!-- Keeping this here until to keep the autocomplete looking functional until the codebase is updated -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
     $(document).ready(function() {
         <%
-          num_not_empty = @assignment.get_num_not_empty
+          num_valid = @assignment.get_num_valid
           num_assigned = @assignment.get_num_assigned
         %>
-        update_bar(<%= num_not_empty %>, <%= num_assigned %>);
+        update_bar(<%= num_valid %>, <%= num_assigned %>);
 
         $( "#names" ).autocomplete({
             source: "get_names",
@@ -40,18 +41,39 @@
                 dataType: "json",
                 data: $( "#assign_student" ).serialize(),
                 success: function( data ) {
-                    $( "#group_members" ).empty();
-                    for(i = 0; i < data.students.length; i++){
-                        $( "#group_members" ).append("<p>" + JSON.stringify(data.students[i]) + "</p>")
-                    }
-                    $( "#assign_student" ).trigger("reset");
-                    $( "#grouping_id" ).val(data.grouping_id);
-                    $( "#group_name" ).html(data.group_name);
-                    update_bar(data.num_not_empty, data.num_total);
-                    webViewerLoad(data.filelink);
+                    parseNextScan( data )
                 }
             });
-        })
+        });
+        function getNextScan() {
+            $.ajax({
+                method: 'GET',
+                url: "next_grouping",
+                dataType: "json",
+                data: {
+                    a_id: <%= @assignment.id %>
+                },
+                success: function( data ) {
+                    parseNextScan( data )
+                }
+            });
+        }
+        function parseNextScan(data) {
+            $( "#group_members" ).empty();
+            for(i = 0; i < data.students.length; i++){
+                $( "#group_members" ).append("<p>" + data.students[i] + "</p>")
+            }
+            current_group = $( "#grouping_id" ).val();
+            $( "#assign_student" ).find("input").val("");
+            if( current_group != data.grouping_id){
+                $( "#assign_student" ).find("input").val("");
+                $( "#grouping_id" ).val(data.grouping_id);
+                $( "#group_name" ).html(data.group_name);
+                update_bar(data.num_valid, data.num_total);
+                webViewerLoad(data.filelink);
+            }
+        }
+        getNextScan();
     });
 </script>
 
@@ -234,14 +256,6 @@
               </div>
             </div>  <!-- overlayContainer -->
           </div>
-
-          <script>
-              (function() {
-                  webViewerLoad("<%= download_assignment_groups_path(
-                  select_file_id: @current_grouping.current_submission_used.submission_files.sort.last.id,
-                  show_in_browser: true ) %>"); // PDF
-              })();
-          </script>
         </div>
       </div>
     </div>
@@ -252,19 +266,18 @@
       <div class='tab-pane flex-pane' id='mark_pane'>
         <div class='ui-tabs-panel flex-col'>
           <div class="side_header">
-            <h2 id="group_name"><%= @current_grouping.group.group_name %></h2>
+            <h2 id="group_name"></h2>
           </div>
           <form id="assign_student" class="side_header">
             <input id="names" name="names" type="text" placeholder="Student Name">
             <input id="student_id" name="s_id" type="hidden">
-            <input id="grouping_id" name="g_id" value="<%= @current_grouping.id %>" type="hidden">
-            <button type="submit">Confirm</button>
+            <input id="grouping_id" name="g_id" value="" type="hidden">
+            <button type="submit"><%= t('save') %></button>
           </form>
-          <h3>Members</h3>
+          <h3>
+            <%= t('members') %>
+          </h3>
           <div id="group_members">
-            <% @current_grouping.memberships.each do |a| %>
-                <p> <%= a.user.first_name %> </p>
-            <% end %>
           </div>
         </div>
       </div> <!-- Mark pane -->

@@ -133,10 +133,10 @@ class GroupsController < ApplicationController
   end
 
   def assign_student_and_next
-    if params[:s_id] == nil
-      @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
-    else
+    if params[:s_id].present?
       @student = Student.find(params[:s_id])
+    else
+      @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
     end
     StudentMembership
       .find_or_create_by(user: @student, grouping_id: params[:g_id].to_i, membership_status: StudentMembership::STATUSES[:accepted])
@@ -145,17 +145,24 @@ class GroupsController < ApplicationController
   end
 
   def next_grouping
+    if params[:a_id].present?
+      @assignment = Assignment.find(params[:a_id])
+    end
     @next_grouping = Grouping.get_assign_scans_grouping(@assignment,
                                                         @current_user)
+    names = []
+    @next_grouping.memberships.each do |m|
+      names << m.user.first_name + ' ' + m.user.last_name
+    end
     next_info = {
       group_name: @next_grouping.group.group_name,
       grouping_id: @next_grouping.id,
       filelink: download_assignment_groups_path(
         select_file_id: @next_grouping.current_submission_used.submission_files.sort.last.id,
         show_in_browser: true ),
-      students: @next_grouping.memberships,
+      students: names,
       num_total: @assignment.get_num_assigned,
-      num_not_empty: @assignment.get_num_not_empty
+      num_valid: @assignment.get_num_valid
     }
 
     render json: next_info.to_json

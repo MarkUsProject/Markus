@@ -725,12 +725,14 @@ class Grouping < ActiveRecord::Base
                                                         :submission_files
                                                       ])
           .where(user: user).order('groupings.groups.group_name asc').each do |a|
-          ((grouping = a) && a.grouping.student_memberships.empty? && break)
+          (grouping = a) && a.grouping.student_memberships.empty? && break
+          # (grouping = a) && !a.grouping.is_valid? && break
         end
         grouping
       elsif user.admin?
         assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.group_name asc').each do |a|
-          ((grouping = a) && a.student_memberships.empty? && break)
+          (grouping = a) && a.student_memberships.empty? && break
+          # (grouping = a) && !a.is_valid? && break
         end
         grouping
       end
