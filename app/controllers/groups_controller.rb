@@ -117,6 +117,50 @@ class GroupsController < ApplicationController
                                    .order(:id)
   end
 
+  def assign_scans
+    @assignment = Assignment.find(params[:assignment_id])
+    @current_grouping = Grouping.get_assign_scans_grouping(@assignment,
+                                                      @current_user)
+    if @current_grouping == nil
+      redirect_to(:back)
+    end
+  end
+
+  def get_names
+    names = Student.select(:id, 'CONCAT(first_name,\' \',last_name) AS label', 'CONCAT(first_name,\' \',last_name) AS value')
+              .where('lower(first_name) like ? OR lower(last_name) like ?', "#{params[:term].downcase}%", "#{params[:term].downcase}%")
+    render json: names
+  end
+
+  def assign_student_and_next
+    if params[:s_id] == nil
+      @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
+    else
+      @student = Student.find(params[:s_id])
+    end
+    StudentMembership
+      .find_or_create_by(user: @student, grouping_id: params[:g_id].to_i, membership_status: StudentMembership::STATUSES[:accepted])
+    @assignment = Grouping.find(params[:g_id]).assignment
+    next_grouping
+  end
+
+  def next_grouping
+    @next_grouping = Grouping.get_assign_scans_grouping(@assignment,
+                                                        @current_user)
+    next_info = {
+      group_name: @next_grouping.group.group_name,
+      grouping_id: @next_grouping.id,
+      filelink: download_assignment_groups_path(
+        select_file_id: @next_grouping.current_submission_used.submission_files.sort.last.id,
+        show_in_browser: true ),
+      students: @next_grouping.memberships,
+      num_total: @assignment.get_num_assigned,
+      num_not_empty: @assignment.get_num_not_empty
+    }
+
+    render json: next_info.to_json
+  end
+
   def populate
     @assignment = Assignment.find(params[:assignment_id])
     students_table_info = get_students_table_info
@@ -171,6 +215,19 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.js {}
     end
+  end
+
+  def download
+    file = SubmissionFile.find(params[:select_file_id])
+
+    if params[:include_annotations] == 'true' && !file.is_supported_image?
+      file_contents = file.retrieve_file(true)
+    else
+      file_contents = file.retrieve_file
+    end
+
+    filename = file.filename
+    send_data file_contents, filename: filename
   end
 
   def download_grouplist
@@ -261,7 +318,7 @@ class GroupsController < ApplicationController
 
   private
   # These methods are called through global actions.
-  
+
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
     if groupings.blank?

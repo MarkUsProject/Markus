@@ -4,6 +4,7 @@
 
 @import 'common/assignment_dropdown';
 
+@import 'common/progress_bar';
 
 .col-left {
   width: 45%;
@@ -19,4 +20,49 @@
 
 .floatRight {
   float: right;
+}
+
+.toolbar {
+  display: none;
+}
+
+#viewerContainer{
+  top: 0px;
+}
+
+.side_header{
+  border-bottom: 1px solid $light-grey;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+/* highlight results */
+.ui-autocomplete span.hl_results {
+  background-color: #ffff66;
+}
+
+/* loading - the AJAX indicator */
+.ui-autocomplete-loading {
+  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+
+/* scroll results */
+.ui-autocomplete {
+  max-height: 250px;
+  overflow-y: auto;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+  /* add padding for vertical scrollbar */
+  padding-right: 5px;
+}
+
+.ui-autocomplete li {
+  font-size: 16px;
+}
+
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+  height: 250px;
 }

@@ -713,6 +713,35 @@ class Grouping < ActiveRecord::Base
     end
   end
 
+  def self.get_assign_scans_grouping(assignment, user)
+    if assignment.scanned_exam?
+      grouping = nil
+      if user.ta?
+        assignment.ta_memberships.includes(grouping: [:group,
+                                                      :assignment,
+                                                      :grace_period_deductions,
+                                                      :memberships,
+                                                      current_submission_used:
+                                                        :submission_files
+                                                      ])
+          .where(user: user).order('groupings.groups.group_name asc').each do |a|
+          ((grouping = a) && a.grouping.student_memberships.empty? && break)
+        end
+        grouping
+      elsif user.admin?
+        assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.group_name asc').each do |a|
+          ((grouping = a) && a.student_memberships.empty? && break)
+        end
+        grouping
+      end
+    end
+  end
+
+  def next_assign_scan(assignment)
+    next_grouping = get_assign_scans_grouping(assignment, @currentuser)
+
+  end
+
   # Helper for populate_submissions_table.
   # Returns a formatted time string for the last commit time for this grouping.
   def last_commit_date

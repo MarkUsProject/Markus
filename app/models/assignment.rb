@@ -774,6 +774,14 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def get_num_not_empty
+    n = 0
+    groupings.find_each do |x|
+      !x.student_memberships.empty? && n += 1
+    end
+    n
+  end
+
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
       groupings.select(&:marking_completed?).count
