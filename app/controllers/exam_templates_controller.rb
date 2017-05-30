@@ -25,6 +25,10 @@ class ExamTemplatesController < ApplicationController
     # getting number of pages
     pdf = CombinePDF.parse new_uploaded_io.read
     num_pages = pdf.pages.length
+    # if user didn't include extension of new template (which is pdf), then add '.pdf' to filename
+    if File.extname(filename) == ''
+      filename = filename + '.pdf'
+    end
     # instantiates new exam template
     new_template = ExamTemplate.new(
       filename: filename,
