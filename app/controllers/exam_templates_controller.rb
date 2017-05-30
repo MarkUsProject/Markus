@@ -34,4 +34,15 @@ class ExamTemplatesController < ApplicationController
     flash_message(:success, t('exam_templates.update.success'))
     redirect_to action: 'index'
   end
+
+  def exam_template_params
+    params.require(:exam_template).
+       permit(
+         :assignment,
+         :id,
+         :filename,
+         :num_pages,
+         template_divisions_attributes: [:id, :start, :end, :label]
+       )
+  end
 end
