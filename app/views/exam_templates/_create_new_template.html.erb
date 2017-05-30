@@ -1,7 +1,7 @@
 <%= content_for :modal_id, 'create_new_template' %>
 <%= content_for :modal_title, 'Add New Exam Template' %>
 <%= content_for :modal_content do %>
-    <%= 'Filename:' %>
+    <%= 'Filename ' %><span class='required_field'>*</span>
     <%= form_for :create_template,
                  url: assignment_exam_templates_path(@assignment),
                  html: { multipart: true, size: 1 } do |f| %>
@@ -12,7 +12,7 @@
         </p>
       </div>
       <div>
-        <p class="alignleft"><%= 'Upload Template' %></p>
+        <p class="alignleft"><%= 'Upload Template ' %><span class='required_field'>*</span></p>
         <p class="clear-alignment">
           <%= f.file_field :file_io %>
         </p>
