@@ -22,8 +22,9 @@ class ExamTemplatesController < ApplicationController
       redirect_to action: 'index'
       return
     end
+    new_file_content = new_uploaded_io.read
     # getting number of pages
-    pdf = CombinePDF.parse new_uploaded_io.read
+    pdf = CombinePDF.parse new_file_content
     num_pages = pdf.pages.length
     # if user didn't include extension of new template (which is pdf), then add '.pdf' to filename
     if File.extname(filename) == ''
@@ -37,7 +38,7 @@ class ExamTemplatesController < ApplicationController
     )
     FileUtils.mkdir template_path unless Dir.exists? template_path
     File.open(File.join(template_path, filename), 'wb') do |f|
-      f.write new_uploaded_io.read
+      f.write new_file_content
     end
     # instantiates new exam template
     new_template = ExamTemplate.new(
