@@ -29,12 +29,6 @@ class ExamTemplatesController < ApplicationController
     if File.extname(filename) == ''
       filename = filename + '.pdf'
     end
-    # instantiates new exam template
-    new_template = ExamTemplate.new(
-      filename: filename,
-      num_pages: num_pages,
-      assignment: assignment
-    )
     # creating corresponding directory and file
     assignment_name = Assignment.find(assignment.id).short_identifier
     template_path = File.join(
@@ -45,6 +39,12 @@ class ExamTemplatesController < ApplicationController
     File.open(File.join(template_path, filename), 'wb') do |f|
       f.write new_uploaded_io.read
     end
+    # instantiates new exam template
+    new_template = ExamTemplate.new(
+      filename: filename,
+      num_pages: num_pages,
+      assignment: assignment
+    )
     # sending flash message if saved
     if new_template.save
       flash_message(:success, t('exam_templates.create.success'))
