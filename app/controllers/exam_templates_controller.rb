@@ -17,7 +17,7 @@ class ExamTemplatesController < ApplicationController
     pdf = CombinePDF.parse new_uploaded_io.read
     num_pages = pdf.pages.length
     # getting filename
-    filename = params[:create_template][:name]
+    filename = params[:create_template][:filename]
     # instantiates new exam template
     new_template = ExamTemplate.new(
       filename: filename,
