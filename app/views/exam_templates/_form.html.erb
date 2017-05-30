@@ -18,7 +18,7 @@
 
     <fieldset>
       <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
-      <p><strong>Add/edit template divisions(s) of the exam template:</strong></p>
+      <p><strong><%= t('exam_templates.update.template_divisions') %></strong></p>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
       <% @select = Array.new(exam_template.num_pages) { |index| index + 1 }%>
       <%= f.fields_for :template_divisions do |form| %>
