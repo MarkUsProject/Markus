@@ -11,15 +11,15 @@ es:
         "subir"
     create:
       add_new:
-        "Add Exam Template"
+        "Añadir plantilla de examen"
       success:
-        "Exam Template successfully created"
+        "Plantilla de examen creada correctamente"
       failure:
-        "Exam Template not successfully created"
+        "Plantilla de examen no creada correctamente"
       upload:
-        "Upload Template"
+        "Cargar plantilla"
       enter_filename:
-        "Enter file name..."
+        "Introduzca el nombre del archivo ..."
 
-    save_changes: "Save Changes"
+    save_changes: "Guardar cambios"
     download: "Descargar plantilla de examen"

@@ -11,15 +11,15 @@ fr:
         "télécharger"
     create:
       add_new:
-        "Add Exam Template"
+        "Ajouter un modèle d'examen"
       success:
-        "Exam Template successfully created"
+        "Modèle d'examen créé avec succès"
       failure:
-        "Exam Template not successfully created"
+        "Le modèle d'examen n'a pas été créé avec succès"
       upload:
-        "Upload Template"
+        "Modèle de chargement"
       enter_filename:
-        "Enter file name..."
+        "Entrez le nom du fichier ..."
 
-    save_changes: "Save Changes"
+    save_changes: "Sauvegarder les modifications"
     download: "Télécharger le modèle d'examen"

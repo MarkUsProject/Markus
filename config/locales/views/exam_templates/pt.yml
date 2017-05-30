@@ -11,15 +11,15 @@ pt:
         "Envio"
     create:
       add_new:
-        "Add Exam Template"
+        "Adicionar modelo de exame"
       success:
-        "Exam Template successfully created"
+        "Modelo de exame criado com sucesso"
       failure:
-        "Exam Template not successfully created"
+        "Modelo de exame não criado com sucesso"
       upload:
-        "Upload Template"
+        "Carregar o modelo"
       enter_filename:
-        "Enter file name..."
+        "Digite o nome do arquivo ..."
 
-    save_changes: "Save Changes"
+    save_changes: "Salvar alterações"
     download: "Download do modelo de exame"
