@@ -13,3 +13,9 @@ pt:
         "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
 
     download: "Download do modelo de exame"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Exam Template foi atualizado com sucesso.'
+        error: 'Exam Template não pôde ser atualizado.'

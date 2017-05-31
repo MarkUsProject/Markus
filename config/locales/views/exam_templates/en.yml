@@ -13,3 +13,9 @@ en:
         "Add/edit template divisions(s) of the exam template:"
 
     download: "Download Exam Template"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Successfully updated Exam Template'
+        error: 'Exam Template could not be updated'

@@ -1,4 +1,7 @@
 class ExamTemplatesController < ApplicationController
+  # responders setup
+  responders :flash, :http_cache
+  respond_to :html
 
   before_filter      :authorize_only_for_admin
 
@@ -13,8 +16,8 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
     filename = exam_template.filename
-    basename = File.basename(filename, ".pdf")
-    send_file("#{EXAM_TEMPLATE_DIR}/#{basename}/#{filename}",
+    assignment_name = assignment.short_identifier
+    send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{filename}",
               filename: "#{filename}",
               type: "application/pdf")
   end
@@ -41,7 +44,6 @@ class ExamTemplatesController < ApplicationController
     else
       flash_message(:error, t('exam_templates.update.failure'))
     end
-
     redirect_to action: 'index'
   end
 

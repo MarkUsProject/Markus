@@ -13,3 +13,9 @@ es:
         "Añadir / editar divisiones de plantilla de la plantilla de examen:"
 
     download: "Descargar plantilla de examen"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Exam Template se actualizó correctamente.'
+        error: 'Exam Template no se pudo actualizar.'
