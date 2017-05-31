@@ -23,6 +23,7 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id])
     exam_template.destroy
+    redirect_to action: 'index'
   end
 
   def update
