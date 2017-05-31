@@ -1,6 +1,8 @@
 <% content_for :head do %>
+  <script>
     <%= render partial: 'boot',
                formats: [:js] %>
+  </script>
 <% end %>
 
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
