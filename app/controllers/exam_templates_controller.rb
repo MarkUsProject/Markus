@@ -22,7 +22,11 @@ class ExamTemplatesController < ApplicationController
   def destroy
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id])
-    exam_template.destroy
+    if exam_template.destroy
+      flash_message(:success, 'Exam Template deleted successfully')
+    else
+      flash_message(:error, 'Exam Template not deleted successfully')
+    end
     redirect_to action: 'index'
   end
 
