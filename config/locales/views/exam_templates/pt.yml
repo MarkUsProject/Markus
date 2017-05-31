@@ -9,5 +9,10 @@ pt:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
-
     download: "Download do modelo de exame"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Exam Template foi atualizado com sucesso.'
+        error: 'Exam Template não pôde ser atualizado.'
