@@ -16,13 +16,12 @@ fr:
         "Modèle d'examen supprimé avec succès"
       failure:
         "Modèle d'examen non supprimé avec succès"
-      all:
-        general:
-          "Supprimer tous les modèles d'examen"
-        success:
-          "Tous les modèles d'examen ont été supprimés avec succès"
-        failure:
-          "Tous les modèles d'examen n'ont pas été supprimés avec succès"
+      all_general:
+        "Supprimer tous les modèles d'examen"
+      all_success:
+        "Tous les modèles d'examen ont été supprimés avec succès"
+      all_failure:
+        "Tous les modèles d'examen n'ont pas été supprimés avec succès"
     download: "Télécharger le modèle d'examen"
 
   flash:

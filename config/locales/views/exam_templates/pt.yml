@@ -16,13 +16,12 @@ pt:
         "Modelo de exame excluído com sucesso"
       failure:
         "Modelo de exame não foi excluído com sucesso"
-      all:
-        general:
-          "Exclua todos os modelos de exame"
-        success:
-          "Todos os modelos de exame foram excluídos com êxito"
-        failure:
-          "Todos os modelos de exame não foram excluídos com êxito"
+      all_general:
+        "Exclua todos os modelos de exame"
+      all_success:
+        "Todos os modelos de exame foram excluídos com êxito"
+      all_failure:
+        "Todos os modelos de exame não foram excluídos com êxito"
     download: "Download do modelo de exame"
 
   flash:

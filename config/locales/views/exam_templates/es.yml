@@ -16,13 +16,12 @@ es:
         "Plantilla de examen eliminada correctamente"
       failure:
         "Plantilla de examen no eliminada correctamente"
-      all:
-        general:
-          "Eliminar todas las plantillas de examen"
-        success:
-          "Todas las plantillas de examen eliminadas correctamente"
-        failure:
-          "Todas las plantillas de examen no se han eliminado correctamente"
+      all_general:
+        "Eliminar todas las plantillas de examen"
+      all_success:
+        "Todas las plantillas de examen eliminadas correctamente"
+      all_failure:
+        "Todas las plantillas de examen no se han eliminado correctamente"
     download: "Descargar plantilla de examen"
 
   flash:
