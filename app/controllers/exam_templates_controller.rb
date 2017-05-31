@@ -26,9 +26,9 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id])
     if exam_template.destroy
-      flash_message(:success, 'Exam Template deleted successfully')
+      flash_message(:success, t('exam_templates.delete.success'))
     else
-      flash_message(:error, 'Exam Template not deleted successfully')
+      flash_message(:error, t('exam_templates.delete.failure'))
     end
     redirect_to action: 'index'
   end
