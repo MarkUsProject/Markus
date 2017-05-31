@@ -18,8 +18,6 @@ es:
         "Plantilla de examen no creada correctamente"
       upload:
         "Cargar plantilla"
-      enter_filename:
-        "Introduzca el nombre del archivo ..."
 
     download: "Descargar plantilla de examen"
 

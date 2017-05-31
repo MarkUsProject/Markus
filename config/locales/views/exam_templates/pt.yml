@@ -18,8 +18,6 @@ pt:
         "Modelo de exame não criado com sucesso"
       upload:
         "Carregar o modelo"
-      enter_filename:
-        "Digite o nome do arquivo ..."
 
     download: "Download do modelo de exame"
 

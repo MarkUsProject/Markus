@@ -18,8 +18,6 @@ fr:
         "Le modèle d'examen n'a pas été créé avec succès"
       upload:
         "Modèle de chargement"
-      enter_filename:
-        "Entrez le nom du fichier ..."
 
     download: "Télécharger le modèle d'examen"
 
