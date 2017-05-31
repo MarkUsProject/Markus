@@ -132,9 +132,14 @@ class GroupsController < ApplicationController
   end
 
   def assign_student_and_next
-    student = Student.find(params[:s_id])
+    # if the user has selected a name from the dropdown, s_id is set
+    if params[:s_id].present?
+      student = Student.find(params[:s_id])
+    end
+    # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
     if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
-      @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
+      student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+                               params[:names].downcase, params[:names].downcase).first
     end
     grouping = Grouping.find(params[:g_id])
     StudentMembership

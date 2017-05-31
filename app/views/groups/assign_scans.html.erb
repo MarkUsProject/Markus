@@ -55,12 +55,12 @@
           for(var i = 0; i < data.students.length; i++){
               $("#group_members").append("<p>" + data.students[i] + "</p>")
           }
+          update_bar(data.num_valid, data.num_total);
           current_group = $("#grouping_id").val();
           $("#assign_student").find("input").val("");
           if(current_group != data.grouping_id){
               $("#grouping_id").val(data.grouping_id);
               $("#group_name").html(data.group_name);
-              update_bar(data.num_valid, data.num_total);
               webViewerLoad(data.filelink);
           }else{
               $("#grouping_id").val(current_group);

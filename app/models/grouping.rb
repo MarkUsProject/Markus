@@ -716,9 +716,9 @@ class Grouping < ActiveRecord::Base
   def self.get_assign_scans_grouping(assignment)
     if assignment.scanned_exam?
       grouping = nil
-      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.group_name asc').each do |a|
+      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.id asc').each do |a|
         grouping = a
-        if a.student_memberships.empty?
+        if !a.is_valid?
           break
         end
       end

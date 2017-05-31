@@ -777,7 +777,7 @@ class Assignment < ActiveRecord::Base
   def get_num_valid
     n = 0
     groupings.find_each do |x|
-      if !x.student_memberships.empty?
+      if x.is_valid?
         n += 1
       end
     end
