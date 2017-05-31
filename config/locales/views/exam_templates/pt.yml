@@ -9,6 +9,13 @@ pt:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
+    delete:
+      general:
+        "Apagar modelo de exame"
+      success:
+        "Modelo de exame excluído com sucesso"
+      failure:
+        "Modelo de exame não foi excluído com sucesso"
     download: "Download do modelo de exame"
 
   flash:

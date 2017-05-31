@@ -9,6 +9,13 @@ en:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+    delete:
+      general:
+        "Delete Exam Template"
+      success:
+        "Exam Template deleted successfully"
+      failure:
+        "Exam Template not deleted successfully"
     download: "Download Exam Template"
 
   flash:
