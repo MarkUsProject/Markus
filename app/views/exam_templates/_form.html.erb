@@ -3,6 +3,9 @@
     <%= f.error_messages%>
     <div class='template-pane'>
       <h4>
+        <%= link_to t('exam_templates.delete.all_general'), action: 'destroy_all' %>
+      </h4>
+      <h4>
         <%= link_to t('exam_templates.delete.general'), action: 'destroy', id: exam_template.id %>
       </h4>
       <h4>
