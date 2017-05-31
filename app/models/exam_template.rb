@@ -49,11 +49,6 @@ class ExamTemplate < ActiveRecord::Base
     end
     pdf = CombinePDF.parse blob
     num_pages = pdf.pages.length
-    # if user didn't include extension of new template (which is pdf), then add '.pdf' to filename
-    if File.extname(filename) == ''
-      filename = filename + '.pdf'
-    end
-    # instantiates new exam template
     new_template = ExamTemplate.new(
       filename: filename,
       num_pages: num_pages,
