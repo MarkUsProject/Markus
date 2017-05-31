@@ -13,9 +13,16 @@ en:
       general:
         "Delete Exam Template"
       success:
-        "Exam Template deleted successfully"
+        "Exam Template successfully deleted"
       failure:
-        "Exam Template not deleted successfully"
+        "Exam Template not successfully deleted"
+      all:
+        general:
+          "Delete all exam templates"
+        success:
+          "All exam templates successfully deleted"
+        failure:
+          "All exam templates not successfully deleted"
     download: "Download Exam Template"
 
   flash:
