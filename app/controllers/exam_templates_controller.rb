@@ -36,7 +36,7 @@ class ExamTemplatesController < ApplicationController
   def destroy_all
     assignment = Assignment.find(params[:assignment_id])
     exam_templates = assignment.exam_templates
-    if exam_templates.destroy
+    if exam_templates.destroy_all
       flash_message(:success, t('exam_templates.delete.all_success'))
     else
       flash_message(:error, t('exam_templates.delete.all_failure'))
