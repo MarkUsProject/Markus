@@ -21,29 +21,7 @@ class ExamTemplatesController < ApplicationController
     if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.create.failure'))
     else
-      new_file_content = new_uploaded_io.read
-      pdf = CombinePDF.parse new_file_content
-      num_pages = pdf.pages.length
-      # if user didn't include extension of new template (which is pdf), then add '.pdf' to filename
-      if File.extname(filename) == ''
-        filename = filename + '.pdf'
-      end
-      # creating corresponding directory and file
-      assignment_name = assignment.short_identifier
-      template_path = File.join(
-        MarkusConfigurator.markus_exam_template_dir,
-        assignment_name
-      )
-      FileUtils.mkdir template_path unless Dir.exists? template_path
-      File.open(File.join(template_path, filename), 'wb') do |f|
-        f.write new_file_content
-      end
-      # instantiates new exam template
-      new_template = ExamTemplate.new(
-        filename: filename,
-        num_pages: num_pages,
-        assignment: assignment
-      )
+      new_template = ExamTemplate.new_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: filename)
       # sending flash message if saved
       if new_template.save
         flash_message(:success, t('exam_templates.create.success'))
