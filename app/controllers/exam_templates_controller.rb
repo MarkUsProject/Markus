@@ -1,4 +1,7 @@
 class ExamTemplatesController < ApplicationController
+  # responders setup
+  responders :flash, :http_cache
+  respond_to :html
 
   before_filter      :authorize_only_for_admin
 
@@ -31,7 +34,6 @@ class ExamTemplatesController < ApplicationController
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     old_template_filename = old_exam_template.filename
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
-    flash_message(:success, t('exam_templates.update.success'))
-    redirect_to action: 'index'
+    respond_with(old_exam_template, location: assignment_exam_templates_url)
   end
 end
