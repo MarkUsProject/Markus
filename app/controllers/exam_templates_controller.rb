@@ -19,7 +19,7 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
-  def delete
+  def destroy
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id])
     exam_template.destroy

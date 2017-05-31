@@ -3,7 +3,10 @@
     <%= f.error_messages%>
     <div class='template-pane'>
       <h4>
-        <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
+        <%= link_to 'Delete Exam Template', delete_assignment_exam_template_path(id: exam_template.id) %>
+      </h4>
+      <h4>
+        <%= link_to t('exam_templates.download'), destroy_assignment_exam_template_path(id: exam_template.id) %>
       </h4>
       <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
       <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
