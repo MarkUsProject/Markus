@@ -12,9 +12,7 @@ class ExamTemplatesController < ApplicationController
   # Creates a new instance of the exam template.
   def create
     assignment = Assignment.find(params[:assignment_id])
-    # retrieving exam template file
     new_uploaded_io = params[:create_template][:file_io]
-    # getting filename
     filename = params[:create_template][:filename]
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
     if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
@@ -23,7 +21,6 @@ class ExamTemplatesController < ApplicationController
       return
     end
     new_file_content = new_uploaded_io.read
-    # getting number of pages
     pdf = CombinePDF.parse new_file_content
     num_pages = pdf.pages.length
     # if user didn't include extension of new template (which is pdf), then add '.pdf' to filename
@@ -31,7 +28,7 @@ class ExamTemplatesController < ApplicationController
       filename = filename + '.pdf'
     end
     # creating corresponding directory and file
-    assignment_name = Assignment.find(assignment.id).short_identifier
+    assignment_name = assignment.short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name
