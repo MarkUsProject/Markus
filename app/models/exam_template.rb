@@ -7,7 +7,8 @@ require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
   belongs_to :assignment
-  validates :assignment, :filename, :num_pages, presence: true
+  validates :assignment, :filename, :num_pages, :name, presence: true
+  validates :name, uniqueness: true
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
