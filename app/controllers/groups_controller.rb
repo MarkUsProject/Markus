@@ -119,9 +119,8 @@ class GroupsController < ApplicationController
 
   def assign_scans
     @assignment = Assignment.find(params[:assignment_id])
-    @current_grouping = Grouping.get_assign_scans_grouping(@assignment,
-                                                      @current_user)
-    if @current_grouping == nil
+    @current_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    if @current_grouping.nil?
       redirect_to(:back)
     end
   end
@@ -133,15 +132,14 @@ class GroupsController < ApplicationController
   end
 
   def assign_student_and_next
-    if params[:s_id].present?
-      @student = Student.find(params[:s_id])
-    end
-    if @student == nil || (@student.first_name + ' ' + @student.last_name) != params[:names]
+    student = Student.find(params[:s_id])
+    if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
       @student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?', params[:names].downcase, params[:names].downcase).first
     end
+    grouping = Grouping.find(params[:g_id])
     StudentMembership
-      .find_or_create_by(user: @student, grouping_id: params[:g_id].to_i, membership_status: StudentMembership::STATUSES[:accepted])
-    @assignment = Grouping.find(params[:g_id]).assignment
+      .find_or_create_by(user: student, grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted])
+    @assignment = grouping.assignment
     next_grouping
   end
 
@@ -149,17 +147,15 @@ class GroupsController < ApplicationController
     if params[:a_id].present?
       @assignment = Assignment.find(params[:a_id])
     end
-    @next_grouping = Grouping.get_assign_scans_grouping(@assignment,
-                                                        @current_user)
-    names = []
-    @next_grouping.memberships.each do |m|
-      names << m.user.first_name + ' ' + m.user.last_name
+    next_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    names = next_grouping.memberships.map do |u|
+      u.user.first_name + ' ' + u.user.last_name
     end
     next_info = {
-      group_name: @next_grouping.group.group_name,
-      grouping_id: @next_grouping.id,
+      group_name: next_grouping.group.group_name,
+      grouping_id: next_grouping.id,
       filelink: download_assignment_groups_path(
-        select_file_id: @next_grouping.current_submission_used.submission_files.sort.last.id,
+        select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'EXTRA.pdf').id,
         show_in_browser: true ),
       students: names,
       num_total: @assignment.get_num_assigned,
@@ -227,12 +223,7 @@ class GroupsController < ApplicationController
 
   def download
     file = SubmissionFile.find(params[:select_file_id])
-
-    if params[:include_annotations] == 'true' && !file.is_supported_image?
-      file_contents = file.retrieve_file(true)
-    else
-      file_contents = file.retrieve_file
-    end
+    file_contents = file.retrieve_file
 
     filename = file.filename
     send_data file_contents, filename: filename

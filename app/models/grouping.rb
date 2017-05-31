@@ -713,35 +713,17 @@ class Grouping < ActiveRecord::Base
     end
   end
 
-  def self.get_assign_scans_grouping(assignment, user)
+  def self.get_assign_scans_grouping(assignment)
     if assignment.scanned_exam?
       grouping = nil
-      if user.ta?
-        assignment.ta_memberships.includes(grouping: [:group,
-                                                      :assignment,
-                                                      :grace_period_deductions,
-                                                      :memberships,
-                                                      current_submission_used:
-                                                        :submission_files
-                                                      ])
-          .where(user: user).order('groupings.groups.group_name asc').each do |a|
-          (grouping = a) && a.grouping.student_memberships.empty? && break
-          # (grouping = a) && !a.grouping.is_valid? && break
+      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.group_name asc').each do |a|
+        grouping = a
+        if a.student_memberships.empty?
+          break
         end
-        grouping
-      elsif user.admin?
-        assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.group_name asc').each do |a|
-          (grouping = a) && a.student_memberships.empty? && break
-          # (grouping = a) && !a.is_valid? && break
-        end
-        grouping
       end
+      grouping
     end
-  end
-
-  def next_assign_scan(assignment)
-    next_grouping = get_assign_scans_grouping(assignment, @currentuser)
-
   end
 
   # Helper for populate_submissions_table.

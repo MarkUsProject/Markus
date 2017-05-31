@@ -1,86 +1,78 @@
 <% content_for :head do %>
-    <%= stylesheet_link_tag('clickable') %>
-    <%= javascript_include_tag 'Results/file_selector',
-                               'panes',
-                               'pdfjs',
-                               'testresults_config',
-                               'Results/context_menu' %>
+  <%= stylesheet_link_tag('clickable') %>
+  <%= javascript_include_tag 'Results/file_selector',
+                             'panes',
+                             'pdfjs',
+                             'testresults_config',
+                             'Results/context_menu' %>
 
-    <%= stylesheet_link_tag('grader') %>
-    <%= stylesheet_link_tag('pdfjs/viewer') %>
-    <%= javascript_tag do -%>
-        PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
-    <% end -%>
-    <%= render partial: 'layouts/head' %>
+  <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+  <%= javascript_tag do -%>
+      PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+  <% end -%>
+  <%= render partial: 'layouts/head' %>
 <% end %>
 
-<!-- Keeping this here until to keep the autocomplete looking functional until the codebase is updated -->
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 <script>
-    $(document).ready(function() {
-        <%
-          num_valid = @assignment.get_num_valid
-          num_assigned = @assignment.get_num_assigned
-        %>
-        update_bar(<%= num_valid %>, <%= num_assigned %>);
+  $(document).ready(function() {
+      <%
+        num_valid = @assignment.get_num_valid
+        num_assigned = @assignment.get_num_assigned
+      %>
+      update_bar(<%= num_valid %>, <%= num_assigned %>);
 
-        $( "#names" ).autocomplete({
-            source: "get_names",
-            minLength: 1,
-            select: function(event, ui) {
-                $( "#student_id" ).val(ui.item.id);
-            }
-        });
-        $( "#assign_student" ).submit(function (e) {
-            e.preventDefault();
-            $.ajax({
-                method: 'GET',
-                url: "assign_student_and_next",
-                dataType: "json",
-                data: $( "#assign_student" ).serialize(),
-                success: function( data ) {
-                    parseNextScan( data )
-                }
-            });
-        });
-        function getNextScan() {
-            $.ajax({
-                method: 'GET',
-                url: "next_grouping",
-                dataType: "json",
-                data: {
-                    a_id: <%= @assignment.id %>
-                },
-                success: function( data ) {
-                    parseNextScan( data )
-                }
-            });
-        }
-        function parseNextScan(data) {
-            $( "#group_members" ).empty();
-            for(i = 0; i < data.students.length; i++){
-                $( "#group_members" ).append("<p>" + data.students[i] + "</p>")
-            }
-            current_group = $( "#grouping_id" ).val();
-            $( "#assign_student" ).find("input").val("");
-            if( current_group != data.grouping_id){
-                $( "#grouping_id" ).val(data.grouping_id);
-                $( "#group_name" ).html(data.group_name);
-                update_bar(data.num_valid, data.num_total);
-                webViewerLoad(data.filelink);
-            }else{
-                $( "#grouping_id" ).val(current_group);
-            }
-        }
-        getNextScan();
-    });
+      $("#names").autocomplete({
+          source: "get_names",
+          minLength: 1,
+          select: function(event, ui) {
+              $( "#student_id" ).val(ui.item.id);
+          }
+      });
+      $("#assign_student").submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+              method: 'GET',
+              url: "assign_student_and_next",
+              dataType: "json",
+              data: $( "#assign_student" ).serialize(),
+              success: parseNextScan
+          });
+      });
+      function getNextScan() {
+          $.ajax({
+              method: 'GET',
+              url: "next_grouping",
+              dataType: "json",
+              data: {
+                  a_id: <%= @assignment.id %>
+              },
+              success: parseNextScan
+          });
+      }
+      function parseNextScan(data) {
+          $("#group_members").empty();
+          for(var i = 0; i < data.students.length; i++){
+              $("#group_members").append("<p>" + data.students[i] + "</p>")
+          }
+          current_group = $("#grouping_id").val();
+          $("#assign_student").find("input").val("");
+          if(current_group != data.grouping_id){
+              $("#grouping_id").val(data.grouping_id);
+              $("#group_name").html(data.group_name);
+              update_bar(data.num_valid, data.num_total);
+              webViewerLoad(data.filelink);
+          }else{
+              $("#grouping_id").val(current_group);
+          }
+      }
+      getNextScan();
+  });
+
+  <% # Javascript for progress bar %>
+  <%= render partial: 'groups/update_progress_bar',
+             formats: [:js] %>
 </script>
-
-<% # Javascript for progress bar %>
-<%= render partial: 'groups/update_progress_bar',
-           formats: [:js] %>
 
 <% content_for :title do %>
     <%= t('groups.assign_scans') %>
@@ -270,7 +262,7 @@
             <h2 id="group_name"></h2>
           </div>
           <form id="assign_student" class="side_header">
-            <input id="names" name="names" type="text" placeholder="Student Name">
+            <input id="names" name="names" type="text" placeholder="<%= t('user.full_name') %>">
             <input id="student_id" name="s_id" type="hidden">
             <input id="grouping_id" name="g_id" value="" type="hidden">
             <button type="submit"><%= t('save') %></button>
