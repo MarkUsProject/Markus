@@ -33,6 +33,17 @@ class ExamTemplatesController < ApplicationController
     redirect_to action: 'index'
   end
 
+  def destroy_all
+    assignment = Assignment.find(params[:assignment_id])
+    exam_templates = assignment.exam_templates
+    if exam_templates.destroy
+      flash_message(:success, t('exam_templates.delete.all_success'))
+    else
+      flash_message(:error, t('exam_templates.delete.all_failure'))
+    end
+    redirect_to action: 'index'
+  end
+
   def update
     new_uploaded_io = params[:exam_template][:new_template]
     # error checking when new_uploaded_io is not pdf
