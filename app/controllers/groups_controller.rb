@@ -141,10 +141,10 @@ class GroupsController < ApplicationController
       student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
                                params[:names].downcase, params[:names].downcase).first
     end
-    grouping = Grouping.find(params[:g_id])
+    @grouping = Grouping.find(params[:g_id])
     StudentMembership
-      .find_or_create_by(user: student, grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted])
-    @assignment = grouping.assignment
+      .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
+    @assignment = @grouping.assignment
     next_grouping
   end
 
@@ -156,18 +156,30 @@ class GroupsController < ApplicationController
     names = next_grouping.memberships.map do |u|
       u.user.first_name + ' ' + u.user.last_name
     end
-    next_info = {
-      group_name: next_grouping.group.group_name,
-      grouping_id: next_grouping.id,
-      filelink: download_assignment_groups_path(
-        select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'EXTRA.pdf').id,
-        show_in_browser: true ),
-      students: names,
-      num_total: @assignment.get_num_assigned,
-      num_valid: @assignment.get_num_valid
-    }
-
-    render json: next_info.to_json
+    num_valid = @assignment.get_num_valid
+    num_total = @assignment.get_num_assigned
+    if num_valid == num_total
+      flash[:success] = 'All groups have been successfully assigned students'
+    end
+    if !@grouping.nil? && next_grouping.id == @grouping.id
+      render json: {
+        grouping_id: next_grouping.id,
+        students: names,
+        num_total: num_total,
+        num_valid: num_valid
+      }
+    else
+      render json: {
+        group_name: next_grouping.group.group_name,
+        grouping_id: next_grouping.id,
+        filelink: download_assignment_groups_path(
+          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'EXTRA.pdf').id,
+          show_in_browser: true ),
+        students: names,
+        num_total: num_total,
+        num_valid: num_valid
+      }
+    end
   end
 
   def populate

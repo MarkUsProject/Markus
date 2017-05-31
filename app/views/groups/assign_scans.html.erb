@@ -16,12 +16,6 @@
 
 <script>
   $(document).ready(function() {
-      <%
-        num_valid = @assignment.get_num_valid
-        num_assigned = @assignment.get_num_assigned
-      %>
-      update_bar(<%= num_valid %>, <%= num_assigned %>);
-
       $("#names").autocomplete({
           source: "get_names",
           minLength: 1,
@@ -55,13 +49,16 @@
           for(var i = 0; i < data.students.length; i++){
               $("#group_members").append("<p>" + data.students[i] + "</p>")
           }
-          update_bar(data.num_valid, data.num_total);
           current_group = $("#grouping_id").val();
           $("#assign_student").find("input").val("");
-          if(current_group != data.grouping_id){
+          update_bar(data.num_valid, data.num_total);
+          // Anytime we advance to another assignment
+          if(data.grouping_id != current_group){
               $("#grouping_id").val(data.grouping_id);
               $("#group_name").html(data.group_name);
               webViewerLoad(data.filelink);
+          // When an assignment needs to reload because not meeting minimum group members
+          // or when all assignments are already assigned
           }else{
               $("#grouping_id").val(current_group);
           }
@@ -73,7 +70,6 @@
   <%= render partial: 'groups/update_progress_bar',
              formats: [:js] %>
 </script>
-
 <% content_for :title do %>
     <%= t('groups.assign_scans') %>
     <span class='title-help assignment_groups_help'>
@@ -82,7 +78,6 @@
       </p>
     </span>
 <% end %>
-
 <% content_for :additional_headings do %>
     <div class="progress_meter">
       <span class="progress_span">
@@ -90,7 +85,6 @@
     </div>
     <%= link_to t('groups.manage_groups'), '../groups' %>
 <% end %>
-
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'>
@@ -154,16 +148,6 @@
                   </div>
                 </div>
               </div>
-              <menu type="context" id="viewerContextMenu">
-                <menuitem id="contextFirstPage" label="First Page"
-                          data-l10n-id="first_page"></menuitem>
-                <menuitem id="contextLastPage" label="Last Page"
-                          data-l10n-id="last_page"></menuitem>
-                <menuitem id="contextPageRotateCw" label="Rotate Clockwise"
-                          data-l10n-id="page_rotate_cw"></menuitem>
-                <menuitem id="contextPageRotateCcw" label="Rotate Counter-Clockwise"
-                          data-l10n-id="page_rotate_ccw"></menuitem>
-              </menu>
               <div id="viewerContainer" tabindex="0">
                 <div id="viewer"></div>
               </div>
@@ -186,68 +170,6 @@
                 <textarea id="errorMoreInfo" hidden='true' readonly="readonly"></textarea>
               </div>
             </div> <!-- mainContainer -->
-
-            <div id="overlayContainer" class="hidden">
-              <div id="passwordOverlay" class="container hidden">
-                <div class="dialog">
-                  <div class="row">
-                    <p id="passwordText" data-l10n-id="password_label">Enter the password to open this PDF file:</p>
-                  </div>
-                  <div class="row">
-                    <input type="password" id="password" class="toolbarField" />
-                  </div>
-                  <div class="buttonRow">
-                    <button id="passwordCancel" class="overlayButton"><span data-l10n-id="password_cancel">Cancel</span></button>
-                    <button id="passwordSubmit" class="overlayButton"><span data-l10n-id="password_ok">OK</span></button>
-                  </div>
-                </div>
-              </div>
-              <div id="documentPropertiesOverlay" class="container hidden">
-                <div class="dialog">
-                  <div class="row">
-                    <span data-l10n-id="document_properties_file_name">File name:</span> <p id="fileNameField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_file_size">File size:</span> <p id="fileSizeField">-</p>
-                  </div>
-                  <div class="separator"></div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_title">Title:</span> <p id="titleField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_author">Author:</span> <p id="authorField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_subject">Subject:</span> <p id="subjectField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_keywords">Keywords:</span> <p id="keywordsField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_creation_date">Creation Date:</span> <p id="creationDateField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_modification_date">Modification Date:</span> <p id="modificationDateField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_creator">Creator:</span> <p id="creatorField">-</p>
-                  </div>
-                  <div class="separator"></div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_producer">PDF Producer:</span> <p id="producerField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_version">PDF Version:</span> <p id="versionField">-</p>
-                  </div>
-                  <div class="row">
-                    <span data-l10n-id="document_properties_page_count">Page Count:</span> <p id="pageCountField">-</p>
-                  </div>
-                  <div class="buttonRow">
-                    <button id="documentPropertiesClose" class="overlayButton"><span data-l10n-id="document_properties_close">Close</span></button>
-                  </div>
-                </div>
-              </div>
-            </div>  <!-- overlayContainer -->
           </div>
         </div>
       </div>
