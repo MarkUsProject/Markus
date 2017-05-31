@@ -22,3 +22,9 @@ pt:
         "Digite o nome do arquivo ..."
 
     download: "Download do modelo de exame"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Exam Template foi atualizado com sucesso.'
+        error: 'Exam Template não pôde ser atualizado.'

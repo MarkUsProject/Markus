@@ -22,3 +22,9 @@ es:
         "Introduzca el nombre del archivo ..."
 
     download: "Descargar plantilla de examen"
+
+  flash:
+    exam_templates:
+      update:
+        success: 'Exam Template se actualizó correctamente.'
+        error: 'Exam Template no se pudo actualizar.'

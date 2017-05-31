@@ -1,4 +1,7 @@
 class ExamTemplatesController < ApplicationController
+  # responders setup
+  responders :flash, :http_cache
+  respond_to :html
 
   before_filter      :authorize_only_for_admin
 
@@ -55,8 +58,8 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
     filename = exam_template.filename
-    basename = File.basename(filename, ".pdf")
-    send_file("#{EXAM_TEMPLATE_DIR}/#{basename}/#{filename}",
+    assignment_name = assignment.short_identifier
+    send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{filename}",
               filename: "#{filename}",
               type: "application/pdf")
   end
@@ -73,7 +76,6 @@ class ExamTemplatesController < ApplicationController
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     old_template_filename = old_exam_template.filename
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
-    flash_message(:success, t('exam_templates.update.success'))
-    redirect_to action: 'index'
+    respond_with(old_exam_template, location: assignment_exam_templates_url)
   end
 end
