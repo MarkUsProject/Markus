@@ -34,9 +34,10 @@ class ExamTemplatesController < ApplicationController
       else
         old_template_filename = old_exam_template.filename
         old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
-        respond_with(old_exam_template)
+        respond_with(old_exam_template, location: assignment_exam_templates_url)
+        return
       end
-      redirect_to action: 'index'
     end
+    redirect_to action: 'index'
   end
 end
