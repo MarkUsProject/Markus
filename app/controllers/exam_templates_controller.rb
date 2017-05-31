@@ -46,8 +46,8 @@ class ExamTemplatesController < ApplicationController
   end
 
   def exam_template_params
-    params.require(:exam_template).
-       permit(
+    params.require(:exam_template)
+       .permit(
          :assignment,
          :id,
          :filename,
