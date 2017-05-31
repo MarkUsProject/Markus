@@ -1,7 +1,6 @@
 <% content_for :head do %>
     <%= render partial: 'boot',
-               formats: [:js],
-               handlers: [:erb] %>
+               formats: [:js] %>
 <% end %>
 
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
@@ -13,7 +12,8 @@
 ] %>
 
 <!-- Modals -->
-<%= render partial: 'create_new_template', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'create_new_template',
+           layout: 'layouts/modal_dialog'  %>
 
 <%= render partial: 'form',
            locals: { exam_template: @exam_templates[0] }%>
