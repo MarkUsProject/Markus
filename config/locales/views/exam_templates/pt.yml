@@ -21,5 +21,4 @@ pt:
       enter_filename:
         "Digite o nome do arquivo ..."
 
-    save_changes: "Salvar alterações"
     download: "Download do modelo de exame"
