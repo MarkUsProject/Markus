@@ -99,6 +99,10 @@ Markus::Application.routes.draw do
           get 'download'
           get 'destroy'
         end
+
+        collection do
+          get 'destroy_all'
+        end
       end
 
       resources :groups do
