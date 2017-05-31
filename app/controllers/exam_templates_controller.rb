@@ -19,6 +19,12 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
+  def delete
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find_by(id: params[:id])
+    exam_template.destroy
+  end
+
   def update
     new_uploaded_io = params[:exam_template][:new_template]
     # error checking when new_uploaded_io is not pdf
