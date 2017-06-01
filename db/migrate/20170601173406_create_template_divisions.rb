@@ -2,9 +2,9 @@ class CreateTemplateDivisions < ActiveRecord::Migration
   def change
     create_table :template_divisions do |t|
       t.references :exam_template, index: true, foreign_key: true
-      t.integer :start, null: false
-      t.integer :end, null: false
-      t.string :label, unique: true, null: false
+      t.integer :start
+      t.integer :end
+      t.string :label
 
       t.timestamps null: false
     end
