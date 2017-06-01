@@ -22,6 +22,16 @@ es:
         "Todas las plantillas de examen eliminadas correctamente"
       all_failure:
         "Todas las plantillas de examen no se han eliminado correctamente"
+    create:
+      add_new:
+        "Añadir plantilla de examen"
+      success:
+        "Plantilla de examen creada correctamente"
+      failure:
+        "Plantilla de examen no creada correctamente"
+      upload:
+        "Cargar plantilla"
+
     download: "Descargar plantilla de examen"
 
   flash:

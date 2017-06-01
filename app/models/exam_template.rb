@@ -33,6 +33,30 @@ class ExamTemplate < ActiveRecord::Base
     create(attributes)
   end
 
+  # Instantiate an ExamTemplate with the correct file
+  def self.new_with_file(blob, attributes={})
+    return unless attributes.has_key? :assignment_id
+    assignment = Assignment.find(attributes[:assignment_id])
+    assignment_name = assignment.short_identifier
+    filename = attributes[:filename]
+    template_path = File.join(
+      MarkusConfigurator.markus_exam_template_dir,
+      assignment_name
+    )
+    FileUtils.mkdir template_path unless Dir.exists? template_path
+    File.open(File.join(template_path, filename), 'wb') do |f|
+      f.write blob
+    end
+    pdf = CombinePDF.parse blob
+    num_pages = pdf.pages.length
+    new_template = ExamTemplate.new(
+      filename: filename,
+      num_pages: num_pages,
+      assignment: assignment
+    )
+    return new_template
+  end
+
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id

@@ -22,6 +22,16 @@ en:
         "All exam templates successfully deleted"
       all_failure:
         "All exam templates not successfully deleted"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
+
     download: "Download Exam Template"
 
   flash:
