@@ -23,17 +23,21 @@ class ExamTemplatesController < ApplicationController
   end
 
   def update
-    new_uploaded_io = params[:exam_template][:new_template]
-    # error checking when new_uploaded_io is not pdf
-    if new_uploaded_io.content_type != 'application/pdf'
-      flash_message(:error, t('exam_templates.update.failure'))
-      redirect_to action: 'index'
-      return
-    end
     assignment = Assignment.find(params[:assignment_id])
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
-    old_template_filename = old_exam_template.filename
-    old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
-    respond_with(old_exam_template, location: assignment_exam_templates_url)
+    # updating exam template file
+    new_uploaded_io = params[:exam_template][:new_template]
+    unless new_uploaded_io.nil?
+      # error checking when new_uploaded_io is not pdf
+      if new_uploaded_io.content_type != 'application/pdf'
+        flash_message(:error, t('exam_templates.update.failure'))
+      else
+        old_template_filename = old_exam_template.filename
+        old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
+        respond_with(old_exam_template, location: assignment_exam_templates_url)
+        return
+      end
+    end
+    redirect_to action: 'index'
   end
 end
