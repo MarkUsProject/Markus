@@ -163,6 +163,7 @@ ActiveRecord::Schema.define(version: 20170219132130) do
   create_table "exam_templates", force: :cascade do |t|
     t.integer  "assignment_id"
     t.string   "filename",      null: false
+    t.string   "name",          null: false
     t.integer  "num_pages",     null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
