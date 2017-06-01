@@ -159,7 +159,7 @@ class GroupsController < ApplicationController
     num_valid = @assignment.get_num_valid
     num_total = @assignment.get_num_assigned
     if num_valid == num_total
-      flash[:success] = 'All groups have been successfully assigned students'
+      flash_message(:success, t('groups.done_assign'))
     end
     if !@grouping.nil? && next_grouping.id == @grouping.id
       render json: {

@@ -599,6 +599,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalidate_confirm: "Isso irá impedir que o grupo envie mesmo com o número exigido de alunos. Você tem certeza disso?"
       is_valid: "Grupo válido"
       is_not_valid: "Grupo inválido"
+      done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
       rename_group:
         title: "Renomear grupo"
         link: "Renomear grupo"

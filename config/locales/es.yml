@@ -824,6 +824,7 @@ es:
                                       requerido de estudiantes. ¿Está seguro/a de hacer esto?"
       is_valid:                      "El grupo es válido"
       is_not_valid:                  "El grupo no es válido"
+      done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
       rename_group:
         title:          "Renombrar el grupo"
         link:           "Renombrar el grupo"

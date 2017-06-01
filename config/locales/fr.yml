@@ -633,6 +633,7 @@ fr:
       invalidate_confirm: "Ceci va empêcher ce groupe de poster, même avec le bon nombre d'étudiants. Est-ce correct ?"
       is_valid: "Groupe valide"
       is_not_valid: "Groupe invalide"
+      done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
       rename_group:
         title: "Renommer le groupe"
         link: "Renommer le groupe"
