@@ -1,4 +1,21 @@
+<% content_for :head do %>
+  <script>
+    <%= render partial: 'boot',
+               formats: [:js] %>
+  </script>
+<% end %>
+
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
+
+<% @heading_buttons = [
+    { link_text: t('exam_templates.create.add_new'),
+      link_path: '#',
+      html_options: { onclick:'modal_create_new.open()' } }
+] %>
+
+<!-- Modals -->
+<%= render partial: 'create_new_template',
+           layout: 'layouts/modal_dialog'  %>
 
 <%= render partial: 'form',
            locals: { exam_template: @exam_templates[0] }%>

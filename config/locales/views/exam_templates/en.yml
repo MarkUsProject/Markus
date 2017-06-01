@@ -11,6 +11,15 @@ en:
         "Upload"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
 
     download: "Download Exam Template"
 

@@ -11,6 +11,15 @@ fr:
         "télécharger"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
+    create:
+      add_new:
+        "Ajouter un modèle d'examen"
+      success:
+        "Modèle d'examen créé avec succès"
+      failure:
+        "Le modèle d'examen n'a pas été créé avec succès"
+      upload:
+        "Modèle de chargement"
 
     download: "Télécharger le modèle d'examen"
 

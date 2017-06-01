@@ -11,6 +11,15 @@ pt:
         "Envio"
       template_divisions:
         "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
+    create:
+      add_new:
+        "Adicionar modelo de exame"
+      success:
+        "Modelo de exame criado com sucesso"
+      failure:
+        "Modelo de exame não criado com sucesso"
+      upload:
+        "Carregar o modelo"
 
     download: "Download do modelo de exame"
 

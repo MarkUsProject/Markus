@@ -11,6 +11,15 @@ es:
         "subir"
       template_divisions:
         "Añadir / editar divisiones de plantilla de la plantilla de examen:"
+    create:
+      add_new:
+        "Añadir plantilla de examen"
+      success:
+        "Plantilla de examen creada correctamente"
+      failure:
+        "Plantilla de examen no creada correctamente"
+      upload:
+        "Cargar plantilla"
 
     download: "Descargar plantilla de examen"
 
