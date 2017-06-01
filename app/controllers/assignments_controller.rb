@@ -102,7 +102,7 @@ class AssignmentsController < ApplicationController
       @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
     if @grouping.nil?
-      if @assignment.group_max == 1
+      if @assignment.group_max == 1 && !@assignment.scanned_exam
         begin
           # fix for issue #627
           # currently create_group_for_working_alone_student only returns false
@@ -118,6 +118,9 @@ class AssignmentsController < ApplicationController
         end
         redirect_to action: 'student_interface', id: @assignment.id
       else
+        if @assignment.scanned_exam
+          flash_now(:notice, t('assignments.scanned_exam.under_review'))
+        end
         render :student_interface
       end
     else
