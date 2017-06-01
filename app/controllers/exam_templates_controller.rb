@@ -36,4 +36,16 @@ class ExamTemplatesController < ApplicationController
     old_exam_template.replace_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: old_template_filename)
     respond_with(old_exam_template, location: assignment_exam_templates_url)
   end
+
+  def exam_template_params
+    params.require(:exam_template)
+      .permit(
+        :assignment,
+        :id,
+        :name,
+        :filename,
+        :num_pages,
+        template_divisions_attributes: [:id, :start, :end, :label]
+      )
+  end
 end
