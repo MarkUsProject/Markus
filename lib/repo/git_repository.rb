@@ -225,20 +225,11 @@ module Repository
       @repos_path.rpartition(File::SEPARATOR)[2]
     end
 
-    # Given a File object, perform a lookup for the Rugged::Tree
-    # object which contains the directory information for the
-    # folder where this file resides, then return the specific
-    # file contents that we are interested in.
+    # Given a RevisionFile object, returns its content as a string.
     def stringify(file)
       revision = get_revision(file.from_revision)
-      blob = revision.find_object_at_path(file.path)
-
-      # From the returned Tree blob, find the file in the collection
-      blob.entries.each do |file_entry|
-        if file_entry[:name] == file.name
-          return get_blob(file_entry[:oid]).content
-        end
-      end
+      blob = revision.get_entry(File.join(file.path, file.name))
+      blob.content
     end
     alias download_as_string stringify # create alias
 
@@ -579,46 +570,45 @@ module Repository
       @timestamp = @commit.time.in_time_zone
     end
 
-    def path_exists?(path)
-      begin
-        @commit.tree.path(path)
-        true
-      rescue Rugged::TreeError
-        false
+    # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.
+    # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
+    def get_entry_hash(path, commit=@commit)
+      if path.start_with?(File::SEPARATOR) # transform from absolute to relative
+        path = path[1..-1]
       end
-    end
-
-    # Gets a directory at +path+ (relative to the repo root) in a +commit+ as a Rugged::Tree.
-    def get_tree(commit, path)
-      if path == '.'
-        tree = commit.tree
-      else
+      if path == '' # root Tree
+        entry_hash = {name: path, oid: commit.tree_id, type: :tree, filemode: 0} # mimic Tree#path output
+      else # Tree or Blob
         begin
-          tree_hash = commit.tree.path(path)
-          tree = @repo.lookup(tree_hash[:oid])
+          entry_hash = commit.tree.path(path)
         rescue Rugged::TreeError # path not valid
-          tree = nil
+          entry_hash = nil
         end
       end
-      tree
+      entry_hash
     end
 
-    # Gets a file or directory at +path+ (relative to the repo root) in a +commit+ as a Rugged Hash.
-    def get_entry(commit, path)
-      dir_path = File.dirname(path)
-      entry_name = File.basename(path)
-      entry = nil
-      dir_tree = get_tree(commit, dir_path)
-      unless dir_tree.nil?
-        entry = dir_tree[entry_name]
+    # Gets a file or directory at +path+ from a +commit+ as a Rugged::Blob or Rugged::Tree respectively.
+    # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
+    def get_entry(path, commit=@commit)
+      entry_hash = get_entry_hash(path, commit)
+      if entry_hash.nil?
+        entry = nil
+      else
+        entry = @repo.lookup(entry_hash[:oid])
       end
       entry
     end
 
+    def path_exists?(path)
+      !get_entry_hash(path).nil?
+    end
+
     # Checks if a file or directory at +path+ (relative to the repo root) was changed by +commit+.
+    # The +commit+ can be omitted to default to this revision.
     # (optimizations based on Rugged bug #343)
-    def entry_changed?(commit, path)
-      entry = get_entry(commit, path)
+    def entry_changed?(path, commit=@commit)
+      entry = get_entry_hash(path, commit)
       # if at a root commit, consider it changed if we have this file;
       # i.e. if we added it in the initial commit
       if commit.parents.empty?
@@ -626,7 +616,7 @@ module Repository
       end
       # check each parent commit (a merge has 2+ parents)
       commit.parents.each do |parent|
-        parent_entry = get_entry(parent, path)
+        parent_entry = get_entry_hash(path, parent)
         # neither exists, no change
         if not entry and not parent_entry
           next
@@ -642,28 +632,20 @@ module Repository
     end
 
     def changes_at_path?(path)
-      entry_changed?(@commit, path)
+      entry_changed?(path)
     end
 
-    # Gets all entries at +path+ of a specified +type+ (:blob, :tree, or nil for both), as Repository::RevisionFile and
-    # Repository::RevisionDirectory.
+    # Gets all entries at directory +path+ of a specified +type+ (:blob, :tree, or nil for both), as
+    # Repository::RevisionFile and Repository::RevisionDirectory.
     def entries_at_path(path, type=nil)
-      # transform from absolute to relative
-      if path.start_with?(File::SEPARATOR)
-        path = path[1..-1]
-      end
-      # unify with Rugged::Tree#path return value
-      if path == ''
-        path = '.'
-      end
       # phase 1: collect all entries
       entries = {}
-      path_tree = get_tree(@commit, path)
-      path_tree.each do |entry|
-        entry_type = entry[:type]
+      path_tree = get_entry(path)
+      path_tree.each do |entry_hash|
+        entry_type = entry_hash[:type]
         next unless type.nil? || type == entry_type
-        entry_name = entry[:name]
-        # wrap in a RevisionFile or RevisionDirectory
+        entry_name = entry_hash[:name]
+        # wrap in a RevisionFile or RevisionDirectory (paths without filename to be consistent with SVN)
         if entry_type == :blob
           mime_types = MIME::Types.type_for(entry_name)
           if mime_types.empty?
@@ -671,7 +653,7 @@ module Repository
           else
             mime_type = mime_types.first.content_type
           end
-          entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name,
+          entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name, path: path,
                                                              mime_type: mime_type)
         elsif entry_type == :tree
           entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
@@ -686,7 +668,7 @@ module Repository
       walker.sorting(Rugged::SORT_DATE)
       walker.push(@commit)
       walker.each do |commit|
-        mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(commit, File.join(path, entry_name)) }
+        mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
         mod_entries = walker_entries.extract!(*mod_keys)
         mod_entries.each do |_, mod_entry|
           mod_entry.last_modified_revision = commit.oid
