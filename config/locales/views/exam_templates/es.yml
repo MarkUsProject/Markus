@@ -9,6 +9,16 @@ es:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
+    create:
+      add_new:
+        "Añadir plantilla de examen"
+      success:
+        "Plantilla de examen creada correctamente"
+      failure:
+        "Plantilla de examen no creada correctamente"
+      upload:
+        "Cargar plantilla"
+
     download: "Descargar plantilla de examen"
 
   flash:

@@ -9,6 +9,16 @@ en:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
+
     download: "Download Exam Template"
 
   flash:
