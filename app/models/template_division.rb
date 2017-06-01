@@ -5,8 +5,9 @@ class TemplateDivision < ActiveRecord::Base
   accepts_nested_attributes_for :criteria_assignment_files_join
 
   validates :start, numericality: { greater_than_or_equal_to: 1,
+                                    less_than_or_equal_to: :end,
                                     only_integer: true }
-  validates :end, numericality: { greater_than_or_equal_to: 1,
+  validates :end, numericality: { greater_than_or_equal_to: :start,
                                   only_integer: true }
   validates :label, uniqueness: true, allow_blank: false
 
