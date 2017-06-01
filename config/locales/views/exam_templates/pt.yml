@@ -9,6 +9,16 @@ pt:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
+    create:
+      add_new:
+        "Adicionar modelo de exame"
+      success:
+        "Modelo de exame criado com sucesso"
+      failure:
+        "Modelo de exame não criado com sucesso"
+      upload:
+        "Carregar o modelo"
+
     download: "Download do modelo de exame"
 
   flash:

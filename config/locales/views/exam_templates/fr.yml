@@ -9,6 +9,16 @@ fr:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+    create:
+      add_new:
+        "Ajouter un modèle d'examen"
+      success:
+        "Modèle d'examen créé avec succès"
+      failure:
+        "Le modèle d'examen n'a pas été créé avec succès"
+      upload:
+        "Modèle de chargement"
+
     download: "Télécharger le modèle d'examen"
 
   flash:
