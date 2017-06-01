@@ -30,6 +30,11 @@
   top: 0px;
 }
 
+#mark_pane input[type="text"] {
+  margin-bottom: 5px;
+  min-width: 50%;
+}
+
 .side_header {
   border-bottom: 1px solid $light-grey;
   padding-bottom: 10px;
