@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170219132130) do
+ActiveRecord::Schema.define(version: 20170601173823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -162,9 +162,9 @@ ActiveRecord::Schema.define(version: 20170219132130) do
 
   create_table "exam_templates", force: :cascade do |t|
     t.integer  "assignment_id"
-    t.string   "filename",      null: false
-    t.string   "name",          null: false
-    t.integer  "num_pages",     null: false
+    t.string   "filename"
+    t.string   "name"
+    t.integer  "num_pages"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end
@@ -503,14 +503,15 @@ ActiveRecord::Schema.define(version: 20170219132130) do
 
   create_table "template_divisions", force: :cascade do |t|
     t.integer  "exam_template_id"
-    t.integer  "start",                             null: false
-    t.integer  "end",                               null: false
-    t.string   "label",                             null: false
+    t.integer  "start"
+    t.integer  "end"
+    t.string   "label"
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
     t.integer  "criteria_assignment_files_join_id"
   end
 
+  add_index "template_divisions", ["criteria_assignment_files_join_id"], name: "index_template_divisions_on_criteria_assignment_files_join_id", using: :btree
   add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
 
   create_table "test_results", force: :cascade do |t|
@@ -529,10 +530,10 @@ ActiveRecord::Schema.define(version: 20170219132130) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
-    t.integer  "repo_revision"
     t.integer  "requested_by_id"
   end
 
