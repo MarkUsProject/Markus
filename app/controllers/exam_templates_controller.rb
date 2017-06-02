@@ -72,11 +72,7 @@ class ExamTemplatesController < ApplicationController
   def exam_template_params
     params.require(:exam_template)
       .permit(
-        :assignment,
-        :id,
         :name,
-        :filename,
-        :num_pages,
         template_divisions_attributes: [:id, :start, :end, :label]
       )
   end
