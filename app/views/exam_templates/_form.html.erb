@@ -14,7 +14,7 @@
       <legend><%= t('exam_templates.update.general') %></legend>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
       <p>
-        <%= f.label ExamTemplate.model_name.human + ' ' + ExamTemplate.human_attribute_name('name') %>
+        <%= f.label ExamTemplate.human_attribute_name('name') %>
         <%= f.text_field :name %>
       </p>
       <%= f.label t('exam_templates.update.instruction') %>
