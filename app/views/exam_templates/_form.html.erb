@@ -14,6 +14,19 @@
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
       <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
-      <p><%= submit_tag t(:submit)%></p>
     </fieldset>
+
+    <fieldset>
+      <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
+      <p><strong><%= t('exam_templates.update.template_divisions') %></strong></p>
+      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+      <%= f.fields_for :template_divisions do |form| %>
+        <p>
+          <%= form.text_field :label, required: true %>
+          <%= form.number_field :start, min: 1 %>
+          <%= form.number_field :end, min: 1 %>
+        </p>
+      <% end %>
+    </fieldset>
+    <p><%= submit_tag t(:submit)%></p>
 <% end %>
