@@ -7,4 +7,5 @@ es:
       exam_template:
         filename: "Nombre del archivo"
         num_pages: "número de páginas"
+        name: "nombre"
         template_divisions: "Divisiones de plantillas"
