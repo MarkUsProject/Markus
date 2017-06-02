@@ -1,4 +1,7 @@
 <% content_for :head do %>
+  <%= render partial: 'template_divisions_table',
+             formats: [:'js.jsx'],
+             handlers: [:erb] %>
   <script>
     <%= render partial: 'boot',
                formats: [:js] %>
@@ -19,3 +22,8 @@
 
 <%= render partial: 'form',
            locals: { exam_template: @exam_templates[0] }%>
+
+<% content_for :wrap_left_content do %>
+  <!--The table that contains all the divisions.-->
+  <div id='divisions_table'></div>
+<% end %>
