@@ -1,4 +1,6 @@
 class ExamTemplatesController < ApplicationController
+  include ExamTemplatesHelper
+
   # responders setup
   responders :flash, :http_cache
   respond_to :html
@@ -10,6 +12,13 @@ class ExamTemplatesController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @exam_templates = @assignment.exam_templates
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: get_template_divisions_table_info
+      end
+    end
   end
 
   # Creates a new instance of the exam template.
