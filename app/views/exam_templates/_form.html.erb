@@ -23,7 +23,7 @@
       <%= f.fields_for :template_divisions do |form| %>
         <p>
           <p>
-            <%= form.label t('template_divisions.delete.general') %>
+            <%= form.label t(:delete) %>
             <%= form.check_box :_destroy %>
           </p>
           <%= form.text_field :label, required: true %>
