@@ -33,6 +33,10 @@
     <%= link_to t('download'), '#', id: 'downloadModal' %>
     <span class='menu_bar'></span>
     <%= link_to t('upload'), '#', id: 'uploadModal' %>
+    <% if @assignment.scanned_exam %>
+        <span class='menu_bar'></span>
+        <%= link_to t('groups.assign_scans'), :assign_scans_assignment_groups %>
+    <% end %>
 <% end %>
 
 

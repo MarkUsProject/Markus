@@ -9,6 +9,8 @@ es:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
+      template_divisions:
+        "Añadir / editar divisiones de plantilla de la plantilla de examen:"
     create:
       add_new:
         "Añadir plantilla de examen"

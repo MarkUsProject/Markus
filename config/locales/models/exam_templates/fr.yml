@@ -8,3 +8,4 @@ fr:
         filename: "Nom du fichier"
         num_pages: "Nombre de pages"
         name: "prénom"
+        template_divisions: "Divisions de modèles"

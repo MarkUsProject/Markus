@@ -774,6 +774,10 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  def get_num_valid
+    groupings.select(&:is_valid?).count
+  end
+
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
       groupings.select(&:marking_completed?).count
