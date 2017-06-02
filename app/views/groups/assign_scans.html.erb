@@ -17,16 +17,22 @@
 <script>
   $(document).ready(function() {
       $("#names").autocomplete({
-          source: "get_names",
+          source: function(request, response) {
+              $.getJSON("get_names",
+                        { assignment: <%= @assignment.id %>,
+                          term: $("#names").val()
+                        },
+                        response);
+          },
           minLength: 1,
           select: function(event, ui) {
-              $( "#student_id" ).val(ui.item.id);
+              $("#student_id").val(ui.item.id);
           }
       });
       $("#assign_student").submit(function (e) {
           e.preventDefault();
           $.ajax({
-              method: 'GET',
+              method: "GET",
               url: "assign_student_and_next",
               dataType: "json",
               data: $( "#assign_student" ).serialize(),
@@ -35,7 +41,7 @@
       });
       function getNextScan() {
           $.ajax({
-              method: 'GET',
+              method: "GET",
               url: "next_grouping",
               dataType: "json",
               data: {
