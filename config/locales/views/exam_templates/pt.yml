@@ -16,12 +16,6 @@ pt:
         "Modelo de exame excluído com sucesso"
       failure:
         "Modelo de exame não foi excluído com sucesso"
-      all_general:
-        "Exclua todos os modelos de exame"
-      all_success:
-        "Todos os modelos de exame foram excluídos com êxito"
-      all_failure:
-        "Todos os modelos de exame não foram excluídos com êxito"
       template_divisions:
         "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
     create:

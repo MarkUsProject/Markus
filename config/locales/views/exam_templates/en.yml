@@ -16,12 +16,6 @@ en:
         "Exam Template successfully deleted"
       failure:
         "Exam Template not successfully deleted"
-      all_general:
-        "Delete all exam templates"
-      all_success:
-        "All exam templates successfully deleted"
-      all_failure:
-        "All exam templates not successfully deleted"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
     create:
