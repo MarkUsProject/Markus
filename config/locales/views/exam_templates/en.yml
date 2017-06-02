@@ -22,6 +22,8 @@ en:
         "All exam templates successfully deleted"
       all_failure:
         "All exam templates not successfully deleted"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
     create:
       add_new:
         "Add Exam Template"

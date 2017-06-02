@@ -22,6 +22,8 @@ pt:
         "Todos os modelos de exame foram excluídos com êxito"
       all_failure:
         "Todos os modelos de exame não foram excluídos com êxito"
+      template_divisions:
+        "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
     create:
       add_new:
         "Adicionar modelo de exame"

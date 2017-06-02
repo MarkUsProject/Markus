@@ -22,6 +22,8 @@ es:
         "Todas las plantillas de examen eliminadas correctamente"
       all_failure:
         "Todas las plantillas de examen no se han eliminado correctamente"
+      template_divisions:
+        "Añadir / editar divisiones de plantilla de la plantilla de examen:"
     create:
       add_new:
         "Añadir plantilla de examen"

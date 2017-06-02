@@ -12,6 +12,7 @@ class ExamTemplate < ActiveRecord::Base
                                         only_integer: true }
 
   has_many :template_divisions, dependent: :destroy
+  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
