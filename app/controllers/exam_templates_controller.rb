@@ -42,17 +42,6 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
-  def destroy
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find_by(id: params[:id])
-    if exam_template.destroy
-      flash_message(:success, t('exam_templates.delete.success'))
-    else
-      flash_message(:error, t('exam_templates.delete.failure'))
-    end
-    redirect_to action: 'index'
-  end
-
   def update
     assignment = Assignment.find(params[:assignment_id])
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
@@ -87,7 +76,7 @@ class ExamTemplatesController < ApplicationController
          :id,
          :filename,
          :num_pages,
-         template_divisions_attributes: [:id, :start, :end, :label]
+         template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
        )
   end
 end

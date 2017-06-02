@@ -97,7 +97,6 @@ Markus::Application.routes.draw do
       resources :exam_templates do
         member do
           get 'download'
-          get 'destroy'
         end
       end
 
