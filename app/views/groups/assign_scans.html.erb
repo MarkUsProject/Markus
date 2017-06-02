@@ -87,8 +87,7 @@
 <% end %>
 <div id='panes-content'>
   <div id='panes'>
-    <div id='left-pane'>
-      <div class='tab-pane flex-pane' id='code_pane'>
+    <div id='left-pane' class='display_pane'>
         <div id='codeviewer' class='flex-col'>
           <div id="outerContainer" class="loadingInProgress">
             <div id="mainContainer">
@@ -172,14 +171,12 @@
             </div> <!-- mainContainer -->
           </div>
         </div>
-      </div>
     </div>
 
     <div id='drag'></div>
 
-    <div id='right-pane'>
-      <div class='tab-pane flex-pane' id='mark_pane'>
-        <div class='ui-tabs-panel flex-col'>
+    <div id='right-pane' class='input_pane'>
+      <div class='ui-tabs-panel flex-col'>
           <div class="side_header">
             <h2 id="group_name"></h2>
           </div>
@@ -195,7 +192,6 @@
           <div id="group_members">
           </div>
         </div>
-      </div> <!-- Mark pane -->
     </div>
   </div>
 </div>
