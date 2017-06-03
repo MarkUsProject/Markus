@@ -9,6 +9,13 @@ en:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+    delete:
+      general:
+        "Delete Exam Template"
+      success:
+        "Exam Template successfully deleted"
+      failure:
+        "Exam Template not successfully deleted"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
     create:

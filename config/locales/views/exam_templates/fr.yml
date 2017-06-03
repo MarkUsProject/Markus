@@ -9,6 +9,13 @@ fr:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+    delete:
+      general:
+        "Supprimer le modèle d'examen"
+      success:
+        "Modèle d'examen supprimé avec succès"
+      failure:
+        "Modèle d'examen non supprimé avec succès"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
     create:

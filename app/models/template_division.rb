@@ -2,7 +2,7 @@ class TemplateDivision < ActiveRecord::Base
   belongs_to :exam_template
   belongs_to :criteria_assignment_files_join, dependent: :destroy
 
-  accepts_nested_attributes_for :criteria_assignment_files_join
+  accepts_nested_attributes_for :criteria_assignment_files_join, allow_destroy: true
 
   validates :start, numericality: { greater_than_or_equal_to: 1,
                                     only_integer: true }

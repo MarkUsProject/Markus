@@ -9,6 +9,13 @@ es:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
+    delete:
+      general:
+        "Eliminar plantilla de examen"
+      success:
+        "Plantilla de examen eliminada correctamente"
+      failure:
+        "Plantilla de examen no eliminada correctamente"
       template_divisions:
         "Añadir / editar divisiones de plantilla de la plantilla de examen:"
     create:

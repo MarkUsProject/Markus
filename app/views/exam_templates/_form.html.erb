@@ -22,6 +22,10 @@
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
       <%= f.fields_for :template_divisions do |form| %>
         <p>
+          <p>
+            <%= form.label t(:delete) %>
+            <%= form.check_box :_destroy %>
+          </p>
           <%= form.text_field :label, required: true %>
           <%= form.number_field :start, min: 1 %>
           <%= form.number_field :end, min: 1 %>
