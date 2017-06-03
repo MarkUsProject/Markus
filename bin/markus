@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+QUEUE=* rake environment resque:work &
+rails s

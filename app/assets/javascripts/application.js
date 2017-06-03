@@ -10,6 +10,7 @@
 //= require jquery.easyModal
 //= require_tree ./ReactComponents
 //= require js-routes
+//= require job_poller
 
 
 /** Modal windows, powered by jQuery.easyModal. */
