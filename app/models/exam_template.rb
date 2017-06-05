@@ -6,6 +6,7 @@ require 'zxing'
 require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
+  after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   belongs_to :assignment
   validates :assignment, :filename, :num_pages, :name, presence: true
   validates :name, uniqueness: true
@@ -224,5 +225,12 @@ class ExamTemplate < ActiveRecord::Base
 
   def group_name_for(exam_num)
     "#{assignment.short_identifier}_paper_#{exam_num}"
+  end
+
+  def set_defaults_for_name
+    # Attribute 'name' of exam template is by default set to filename without extension
+    extension = File.extname self.filename
+    basename = File.basename self.filename, extension
+    self.name ||= basename
   end
 end
