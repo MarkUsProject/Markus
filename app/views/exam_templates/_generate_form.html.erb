@@ -1,0 +1,14 @@
+<%= form_for [@assignment, exam_template], url: generate_assignment_exam_template_path(id: exam_template.id),
+             html: { multipart: true } do |f| %>
+    <%= f.error_messages%>
+
+    <fieldset>
+      <legend><%= 'Generate Exam Copies' %></legend>
+      <%= f.label 'Number of Copies: ' %>
+      <input type="number" name="numCopies" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
+      <br>
+      <%= f.label 'Start Index: ' %>
+      <input type="number" name="examTemplateIndex" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
+      <p><%= submit_tag t(:submit) %></p>
+    </fieldset>
+<% end %>
