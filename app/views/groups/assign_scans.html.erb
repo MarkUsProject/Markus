@@ -13,7 +13,8 @@
   <% end -%>
   <%= render partial: 'layouts/head' %>
 <% end %>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 <script>
   $(document).ready(function() {
       $("#names").autocomplete({
@@ -28,7 +29,12 @@
           select: function(event, ui) {
               $("#student_id").val(ui.item.id);
           }
-      });
+      }).data( "autocomplete" )._renderItem = function( ul, item ) {
+          return $( "<li></li>" )
+              .data( "item.autocomplete", item )
+              .append( "<a>" + item.label + "<br>" + item.id_number + "</a>" )
+              .appendTo( ul );
+      };
       $("#assign_student").submit(function (e) {
           e.preventDefault();
           $.ajax({
