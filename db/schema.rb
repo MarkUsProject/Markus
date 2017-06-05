@@ -528,10 +528,10 @@ ActiveRecord::Schema.define(version: 20170602200618) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
-    t.integer  "repo_revision"
     t.integer  "requested_by_id"
   end
 
@@ -585,6 +585,8 @@ ActiveRecord::Schema.define(version: 20170602200618) do
     t.string   "api_key"
     t.integer  "section_id"
     t.integer  "notes_count",   default: 0
+    t.string   "email"
+    t.integer  "id_number"
   end
 
   add_index "users", ["api_key"], name: "index_users_on_api_key", unique: true, using: :btree
