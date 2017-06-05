@@ -586,6 +586,8 @@ ActiveRecord::Schema.define(version: 20170605141017) do
     t.string   "api_key"
     t.integer  "section_id"
     t.integer  "notes_count",   default: 0
+    t.string   "email"
+    t.integer  "id_number"
   end
 
   add_index "users", ["api_key"], name: "index_users_on_api_key", unique: true, using: :btree

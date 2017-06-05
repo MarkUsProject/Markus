@@ -23,6 +23,8 @@ class User < ActiveRecord::Base
 
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
+  validates_uniqueness_of   :email, :allow_nil => true
+  validates_uniqueness_of   :id_number, :allow_nil => true
 
   validates_format_of       :type,          with: /Student|Admin|Ta|TestServer/
   # role constants
@@ -281,6 +283,9 @@ class User < ActiveRecord::Base
     end
     if self.first_name
       self.first_name = self.first_name.strip
+    end
+    if self.email
+      self.email = self.email.strip
     end
   end
 
