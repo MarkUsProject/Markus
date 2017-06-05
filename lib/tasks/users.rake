@@ -42,8 +42,10 @@ namespace :db do
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students, nil)
     end
+    i = 0
     Student.find_each do |student|
-      student.update_attribute(:id_number, sprintf('%010d', rand(10**10)))
+      i += rand(10 ** 7)
+      student.update_attribute(:id_number, sprintf('%010d', i))
       student.update_attribute(:grace_credits, 5)
     end
   end
