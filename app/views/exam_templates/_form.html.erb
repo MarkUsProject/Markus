@@ -5,6 +5,7 @@
       <h4>
         <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
       </h4>
+      <h4><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></h4>
       <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
       <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
     </div>
