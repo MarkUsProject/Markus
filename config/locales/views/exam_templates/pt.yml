@@ -4,7 +4,7 @@ pt:
       general:
         "Atualize Modelo de Exame"
       success:
-        "O modelo de exame foi carregado com sucesso"
+        "Modelo de exame foi atualizado com sucesso"
       failure:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
