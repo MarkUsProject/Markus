@@ -70,10 +70,10 @@ class ExamTemplatesController < ApplicationController
   end
 
   def generate
-    copies = params[:numCopies]
-    index = params[:examTemplateIndex]
+    copies = params[:numCopies].to_i
+    index = params[:examTemplateIndex].to_i
     if copies < 1 || index < 1
-      flash_message(:error, "Invalid")
+      flash_message(:error, "Parameters for generate  must be greater than or equal to 1")
       redirect_to action: 'index'
       return
     end
