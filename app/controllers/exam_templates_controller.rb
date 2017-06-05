@@ -85,7 +85,7 @@ class ExamTemplatesController < ApplicationController
          :id,
          :filename,
          :num_pages,
-         template_divisions_attributes: [:id, :start, :end, :label]
+         template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
        )
   end
 end

@@ -1,4 +1,6 @@
 class SubmissionsJob < ActiveJob::Base
+  include ActiveJob::Status
+
   queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
   before_enqueue do |_job|
@@ -22,6 +24,7 @@ class SubmissionsJob < ActiveJob::Base
       m_logger.log('Submission collection process established database' +
                    ' connection successfully')
 
+      progress.total = groupings.size
       groupings.each do |grouping|
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
@@ -47,6 +50,7 @@ class SubmissionsJob < ActiveJob::Base
         end
 
         grouping.save
+        progress.increment
       end
       m_logger.log('Submission collection process done')
     rescue => e

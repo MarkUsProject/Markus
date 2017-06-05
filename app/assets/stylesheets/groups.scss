@@ -30,7 +30,19 @@
   top: 0px;
 }
 
-#mark_pane input[type="text"] {
+#codeviewer {
+  border-radius: 0px;
+}
+
+.display_pane {
+  border: 1px solid $light-grey;
+}
+
+.input_pane {
+  padding: 15px !important;
+}
+
+.input_pane input[type="text"] {
   margin-bottom: 5px;
   min-width: 50%;
 }

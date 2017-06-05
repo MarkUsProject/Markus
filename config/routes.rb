@@ -416,7 +416,11 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :job_messages, only: %w(show), param: :job_id
+  resources :job_messages, only: %w(show), param: :job_id do
+    member do
+      get 'get'
+    end
+  end
 
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post

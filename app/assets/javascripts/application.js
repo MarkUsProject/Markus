@@ -8,9 +8,9 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require jquery.easyModal
-//= require smart_poll
 //= require_tree ./ReactComponents
 //= require js-routes
+//= require job_poller
 
 
 /** Modal windows, powered by jQuery.easyModal. */

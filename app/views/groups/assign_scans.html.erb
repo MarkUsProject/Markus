@@ -17,16 +17,22 @@
 <script>
   $(document).ready(function() {
       $("#names").autocomplete({
-          source: "get_names",
+          source: function(request, response) {
+              $.getJSON("get_names",
+                        { assignment: <%= @assignment.id %>,
+                          term: $("#names").val()
+                        },
+                        response);
+          },
           minLength: 1,
           select: function(event, ui) {
-              $( "#student_id" ).val(ui.item.id);
+              $("#student_id").val(ui.item.id);
           }
       });
       $("#assign_student").submit(function (e) {
           e.preventDefault();
           $.ajax({
-              method: 'GET',
+              method: "GET",
               url: "assign_student_and_next",
               dataType: "json",
               data: $( "#assign_student" ).serialize(),
@@ -35,7 +41,7 @@
       });
       function getNextScan() {
           $.ajax({
-              method: 'GET',
+              method: "GET",
               url: "next_grouping",
               dataType: "json",
               data: {
@@ -87,8 +93,7 @@
 <% end %>
 <div id='panes-content'>
   <div id='panes'>
-    <div id='left-pane'>
-      <div class='tab-pane flex-pane' id='code_pane'>
+    <div id='left-pane' class='display_pane'>
         <div id='codeviewer' class='flex-col'>
           <div id="outerContainer" class="loadingInProgress">
             <div id="mainContainer">
@@ -172,14 +177,12 @@
             </div> <!-- mainContainer -->
           </div>
         </div>
-      </div>
     </div>
 
     <div id='drag'></div>
 
-    <div id='right-pane'>
-      <div class='tab-pane flex-pane' id='mark_pane'>
-        <div class='ui-tabs-panel flex-col'>
+    <div id='right-pane' class='input_pane'>
+      <div class='ui-tabs-panel flex-col'>
           <div class="side_header">
             <h2 id="group_name"></h2>
           </div>
@@ -195,7 +198,6 @@
           <div id="group_members">
           </div>
         </div>
-      </div> <!-- Mark pane -->
     </div>
   </div>
 </div>
