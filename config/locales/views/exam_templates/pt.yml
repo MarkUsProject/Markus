@@ -4,7 +4,7 @@ pt:
       general:
         "Atualize Modelo de Exame"
       success:
-        "O modelo de exame foi carregado com sucesso"
+        "Modelo de exame foi atualizado com sucesso"
       failure:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
@@ -33,5 +33,5 @@ pt:
   flash:
     exam_templates:
       update:
-        success: 'Exam Template foi atualizado com sucesso.'
-        error: 'Exam Template não pôde ser atualizado.'
+        success: "Modelo de exame foi atualizado com sucesso"
+        error: "Modelo de exame não foi atualizado com sucesso"

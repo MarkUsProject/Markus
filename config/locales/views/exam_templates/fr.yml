@@ -4,7 +4,7 @@ fr:
       general:
         "Modèle d'examen de mise à jour"
       success:
-        "Le modèle d'examen a été téléchargé avec succès"
+        "Le modèle d'examen a été mis à jour avec succès"
       failure:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
@@ -33,5 +33,5 @@ fr:
   flash:
     exam_templates:
       update:
-        success: 'Exam Template a été mis à jour avec succès.'
-        error: "Exam Template n'a pas pu être mis à jour."
+        success: "Le modèle d'examen a été mis à jour avec succès"
+        error: "Le modèle d'examen n'a pas été mis à jour avec succès"
