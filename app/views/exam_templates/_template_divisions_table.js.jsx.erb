@@ -25,6 +25,10 @@
             content: '<%= j raw 'End' %>',
             sortable: true,
             searchable: true,
+          },
+          {
+            id: 'actions',
+            content: '<%= j raw 'Actions' %>',
           }
         ]
       };
@@ -66,6 +70,12 @@
         d.label = division.label;
         d.start = division.start;
         d.end = division.end;
+
+        var action_links = [];
+        action_links.push(division.delete_link);
+        d.actions = <span onClick={this.props.refresh}
+          dangerouslySetInnerHTML={{ __html: action_links.join(' | ') }}></span>;
+
         return d;
       }.bind(this));
 
