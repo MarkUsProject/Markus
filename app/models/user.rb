@@ -287,9 +287,6 @@ class User < ActiveRecord::Base
     if self.email
       self.email = self.email.strip
     end
-    if self.id_number
-      self.id_number = self.id_number.strip
-    end
   end
 
   # Adds read and write permissions for each newly created Admin or Ta user
