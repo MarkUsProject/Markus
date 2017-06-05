@@ -34,4 +34,20 @@ class ExamTemplatesController < ApplicationController
     flash_message(:success, t('exam_templates.update.success'))
     redirect_to action: 'index'
   end
+
+  def generate
+    copies = params[:numCopies]
+    index = params[:examTemplateIndex]
+    if copies < 1 || index < 1
+      flash_message(:error, "Invalid")
+      redirect_to action: 'index'
+      return
+    end
+
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find_by(id: params[:id])
+    exam_template.generate_copies(copies, index)
+    flash_message(:success, "Successfully generated #{copies} exam copies")
+    redirect_to action: 'index'
+  end
 end
