@@ -78,6 +78,14 @@ class ExamTemplatesController < ApplicationController
     redirect_to action: 'index'
   end
 
+  def destroy_template_division
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates[0] # because only first exam template is rendered in a page
+    template_division = exam_template.template_divisions.find_by(id: params[:id])
+    template_division.destroy
+    redirect_to action: 'index'
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(
