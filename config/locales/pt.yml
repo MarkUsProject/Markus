@@ -580,6 +580,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       search_groups: "Pesquisar os grupos"
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
+      assign_scans: "Atribuir varreduras"
       all_students: "Todos os alunos"
       unassigned_students: "Não-atribuíd"
       assigned_students: "Atribuíds"
@@ -598,6 +599,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalidate_confirm: "Isso irá impedir que o grupo envie mesmo com o número exigido de alunos. Você tem certeza disso?"
       is_valid: "Grupo válido"
       is_not_valid: "Grupo inválido"
+      done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
       rename_group:
         title: "Renomear grupo"
         link: "Renomear grupo"

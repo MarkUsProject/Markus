@@ -4,10 +4,34 @@ en:
       general:
         "Update Exam Template"
       success:
-        "Exam Template has been successfully uploaded"
+        "Exam Template has been successfully updated"
       failure:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+    delete:
+      general:
+        "Delete Exam Template"
+      success:
+        "Exam Template successfully deleted"
+      failure:
+        "Exam Template not successfully deleted"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
+    create:
+      add_new:
+        "Add Exam Template"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
+      upload:
+        "Upload Template"
 
     download: "Download Exam Template"
+
+  flash:
+    exam_templates:
+      update:
+        success: "Exam Template has been successfully updated"
+        error: "Exam Template has not been successfully updated"

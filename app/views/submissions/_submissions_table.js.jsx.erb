@@ -391,7 +391,7 @@
         data: dataLoad,
         success: function(data) {
           if (data.success) {
-            window.setInterval(this.props.refresh, 30000);
+            poll_job(data.job_id, undefined, this.props.refresh);
           }
         }.bind(this)
       });

@@ -6,12 +6,15 @@ require 'zxing'
 require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
+  after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   belongs_to :assignment
-  validates :assignment, :filename, :num_pages, presence: true
+  validates :assignment, :filename, :num_pages, :name, presence: true
+  validates :name, uniqueness: true
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
   has_many :template_divisions, dependent: :destroy
+  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
@@ -31,6 +34,30 @@ class ExamTemplate < ActiveRecord::Base
     attributes[:num_pages] = pdf.pages.length
 
     create(attributes)
+  end
+
+  # Instantiate an ExamTemplate with the correct file
+  def self.new_with_file(blob, attributes={})
+    return unless attributes.has_key? :assignment_id
+    assignment = Assignment.find(attributes[:assignment_id])
+    assignment_name = assignment.short_identifier
+    filename = attributes[:filename]
+    template_path = File.join(
+      MarkusConfigurator.markus_exam_template_dir,
+      assignment_name
+    )
+    FileUtils.mkdir template_path unless Dir.exists? template_path
+    File.open(File.join(template_path, filename), 'wb') do |f|
+      f.write blob
+    end
+    pdf = CombinePDF.parse blob
+    num_pages = pdf.pages.length
+    new_template = ExamTemplate.new(
+      filename: filename,
+      num_pages: num_pages,
+      assignment: assignment
+    )
+    return new_template
   end
 
   # Replace an ExamTemplate with the correct file
@@ -198,5 +225,12 @@ class ExamTemplate < ActiveRecord::Base
 
   def group_name_for(exam_num)
     "#{assignment.short_identifier}_paper_#{exam_num}"
+  end
+
+  def set_defaults_for_name
+    # Attribute 'name' of exam template is by default set to filename without extension
+    extension = File.extname self.filename
+    basename = File.basename self.filename, extension
+    self.name ||= basename
   end
 end

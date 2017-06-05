@@ -34,8 +34,8 @@ class TasController < ApplicationController
     @user = Ta.find_by_id(params[:user][:id])
     # update_attributes supplied by ActiveRecords
     if @user.update_attributes(user_params)
-      flash(:success, I18n.t('tas.update.success',
-                             user_name: @user.user_name))
+      flash_message(:success, I18n.t('tas.update.success',
+                                     user_name: @user.user_name))
       redirect_to action: :index
     else
       flash_message(:error, I18n.t('tas.update.error'))

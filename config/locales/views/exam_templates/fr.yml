@@ -4,10 +4,34 @@ fr:
       general:
         "Modèle d'examen de mise à jour"
       success:
-        "Le modèle d'examen a été téléchargé avec succès"
+        "Le modèle d'examen a été mis à jour avec succès"
       failure:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+    delete:
+      general:
+        "Supprimer le modèle d'examen"
+      success:
+        "Modèle d'examen supprimé avec succès"
+      failure:
+        "Modèle d'examen non supprimé avec succès"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
+    create:
+      add_new:
+        "Ajouter un modèle d'examen"
+      success:
+        "Modèle d'examen créé avec succès"
+      failure:
+        "Le modèle d'examen n'a pas été créé avec succès"
+      upload:
+        "Modèle de chargement"
 
     download: "Télécharger le modèle d'examen"
+
+  flash:
+    exam_templates:
+      update:
+        success: "Le modèle d'examen a été mis à jour avec succès"
+        error: "Le modèle d'examen n'a pas été mis à jour avec succès"

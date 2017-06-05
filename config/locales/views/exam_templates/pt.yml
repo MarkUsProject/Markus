@@ -4,10 +4,34 @@ pt:
       general:
         "Atualize Modelo de Exame"
       success:
-        "O modelo de exame foi carregado com sucesso"
+        "Modelo de exame foi atualizado com sucesso"
       failure:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
         "Envio"
+    delete:
+      general:
+        "Apagar modelo de exame"
+      success:
+        "Modelo de exame excluído com sucesso"
+      failure:
+        "Modelo de exame não foi excluído com sucesso"
+      template_divisions:
+        "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
+    create:
+      add_new:
+        "Adicionar modelo de exame"
+      success:
+        "Modelo de exame criado com sucesso"
+      failure:
+        "Modelo de exame não criado com sucesso"
+      upload:
+        "Carregar o modelo"
 
     download: "Download do modelo de exame"
+
+  flash:
+    exam_templates:
+      update:
+        success: "Modelo de exame foi atualizado com sucesso"
+        error: "Modelo de exame não foi atualizado com sucesso"

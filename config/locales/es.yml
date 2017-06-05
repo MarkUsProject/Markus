@@ -338,6 +338,7 @@ es:
             graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
                                   De manera predeterminada, los evaluadores serán asignados a todos los criterios de
                                   calificación."
+            assign_scans:        "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos"
         allow_web_submits:                "Permitir entregas en línea"
         vcs_submit:                       "Permitir entregas a través de version control"
         is_hidden:                        "Ocultar el proyecto para los estudiantes"
@@ -800,6 +801,7 @@ es:
       search_groups:                 "Buscar Grupos"
       add_new:                       "Añadir un nuevo grupo"
       manage_groups:                 "Administrar Grupos"
+      assign_scans:                  "Asignar Escaneado"
       all_students:                  "Todos los/las estudiantes"
       unassigned_students:           "No asignados"
       assigned_students:             "Asignados"
@@ -822,6 +824,7 @@ es:
                                       requerido de estudiantes. ¿Está seguro/a de hacer esto?"
       is_valid:                      "El grupo es válido"
       is_not_valid:                  "El grupo no es válido"
+      done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
       rename_group:
         title:          "Renombrar el grupo"
         link:           "Renombrar el grupo"

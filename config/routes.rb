@@ -112,6 +112,11 @@ Markus::Application.routes.draw do
           get 'add_group'
           post 'use_another_assignment_groups'
           get 'manage'
+          get 'assign_scans'
+          get 'download'
+          get 'get_names'
+          get 'assign_student_and_next'
+          get 'next_grouping'
           post 'csv_upload'
           get 'add_csv_group'
           get 'download_grouplist'
@@ -412,7 +417,11 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :job_messages, only: %w(show), param: :job_id
+  resources :job_messages, only: %w(show), param: :job_id do
+    member do
+      get 'get'
+    end
+  end
 
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post

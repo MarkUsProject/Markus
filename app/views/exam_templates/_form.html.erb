@@ -5,6 +5,7 @@
       <h4>
         <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
       </h4>
+      <h4><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></h4>
       <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
       <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
     </div>
@@ -12,8 +13,29 @@
     <fieldset>
       <legend><%= t('exam_templates.update.general') %></legend>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+      <p>
+        <%= f.label ExamTemplate.human_attribute_name('name') %>
+        <%= f.text_field :name %>
+      </p>
       <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
-      <p><%= submit_tag t(:submit)%></p>
     </fieldset>
+
+    <fieldset>
+      <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
+      <p><strong><%= t('exam_templates.update.template_divisions') %></strong></p>
+      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+      <%= f.fields_for :template_divisions do |form| %>
+        <p>
+          <p>
+            <%= form.label t(:delete) %>
+            <%= form.check_box :_destroy %>
+          </p>
+          <%= form.text_field :label, required: true %>
+          <%= form.number_field :start, min: 1 %>
+          <%= form.number_field :end, min: 1 %>
+        </p>
+      <% end %>
+    </fieldset>
+    <p><%= submit_tag t(:submit)%></p>
 <% end %>

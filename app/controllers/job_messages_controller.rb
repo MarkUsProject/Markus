@@ -8,4 +8,13 @@ class JobMessagesController < ApplicationController
    end
   end
 
+  def get
+    status = ActiveJob::Status.get(params[:job_id])
+    if status.working?
+      flash_now(:success, "#{status[:progress]} out of #{status[:total]}")
+    else
+      flash_now(:success, "#{status.status}")
+    end
+    render json: status.read
+  end
 end
