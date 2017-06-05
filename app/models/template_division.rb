@@ -7,8 +7,8 @@ class TemplateDivision < ActiveRecord::Base
   validates :start, numericality: { greater_than_or_equal_to: 1,
                                     less_than_or_equal_to: :end,
                                     only_integer: true }
-  validates :end, numericality: { less_than_or_equal_to: TemplateDivision.first.exam_template.num_pages,
-                                  only_integer: true }
+  validates :end, numericality: { only_integer: true }
+  validate :end_should_be_less_than_or_equal_to_num_pages
   validates :label, uniqueness: true, allow_blank: false
 
   after_destroy :destroy_associated_objects
@@ -31,6 +31,11 @@ class TemplateDivision < ActiveRecord::Base
 
   def hash
     [self.start, self.end, self.label].hash
+  end
+
+  def end_should_be_less_than_or_equal_to_num_pages
+    num_pages = self.exam_template.num_pages
+    errors.add(:end, "should be less than or equal to num_pages") unless self.end <= num_pages
   end
 
   private
