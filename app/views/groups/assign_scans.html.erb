@@ -1,17 +1,17 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('clickable') %>
+  <%= stylesheet_link_tag 'clickable',
+                          'grader',
+                          'pdfjs/viewer',
+                          'jquery-ui' %>
   <%= javascript_include_tag 'Results/file_selector',
                              'panes',
                              'pdfjs',
                              'testresults_config',
                              'Results/context_menu' %>
 
-  <%= stylesheet_link_tag('grader') %>
-  <%= stylesheet_link_tag('pdfjs/viewer') %>
   <%= javascript_tag do -%>
       PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
   <% end -%>
-  <%= render partial: 'layouts/head' %>
 <% end %>
 
 <script>
@@ -28,7 +28,12 @@
           select: function(event, ui) {
               $("#student_id").val(ui.item.id);
           }
-      });
+      }).data("ui-autocomplete")._renderItem = function(ul, item) {
+          return $("<li>")
+              .data("ui-autocomplete-item", item)
+              .append("<div>" + item.label + "<br><span class='stuid'>" + item.id_number + "</span></div>")
+              .appendTo(ul);
+      };
       $("#assign_student").submit(function (e) {
           e.preventDefault();
           $.ajax({

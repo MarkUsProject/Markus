@@ -13,6 +13,7 @@
 }
 
 .progress_meter > span {
+  min-width: 50px;
   display: block;
   height: 100%;
   background-color: $red;
@@ -28,5 +29,5 @@
   -ms-transition: width 1s linear,background-color 200ms linear;
   transition: width 1s linear,background-color 200ms linear;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 5px;
 }

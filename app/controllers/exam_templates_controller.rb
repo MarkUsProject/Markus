@@ -16,12 +16,16 @@ class ExamTemplatesController < ApplicationController
   def create
     assignment = Assignment.find(params[:assignment_id])
     new_uploaded_io = params[:create_template][:file_io]
+    name_input = params[:create_template][:name]
     filename = new_uploaded_io.original_filename
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
     if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.create.failure'))
     else
-      new_template = ExamTemplate.new_with_file(new_uploaded_io.read, assignment_id: assignment.id, filename: filename)
+      new_template = ExamTemplate.new_with_file(new_uploaded_io.read,
+                                                assignment_id: assignment.id,
+                                                filename: filename,
+                                                name_input: name_input)
       # sending flash message if saved
       if new_template.save
         flash_message(:success, t('exam_templates.create.success'))
@@ -82,6 +86,20 @@ class ExamTemplatesController < ApplicationController
                                                          start: division_start,
                                                          end: division_end)
     redirect_to action: 'index'
+  end
+
+  def generate
+    copies = params[:numCopies].to_i
+    index = params[:examTemplateIndex].to_i
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    exam_template.generate_copies(copies, index)
+    flash_message(:success, t('exam_templates.generate.success', copies: copies))
+
+    generated_filename = "#{index}-#{index + copies - 1}.pdf"
+    send_file("#{exam_template.base_path}/#{generated_filename}",
+              filename: "#{generated_filename}",
+              type: "application/pdf")
   end
 
   def exam_template_params
