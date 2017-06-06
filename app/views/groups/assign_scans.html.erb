@@ -33,7 +33,7 @@
           console.log(JSON.stringify(item));
           return $( "<li>" )
               .data( "ui-autocomplete-item", item )
-              .append( item.label + "<br>" + item.id_number )
+              .append("<div>" + item.label + "<br><span class='stuid'>" + item.id_number + "</span></div>")
               .appendTo( ul );
       };
       $("#assign_student").submit(function (e) {

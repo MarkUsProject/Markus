@@ -60,7 +60,7 @@
 
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {
-  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+  background: white url('assets/spinner.gif') right center no-repeat;
 }
 
 /* scroll results */
@@ -75,6 +75,9 @@
 
 .ui-autocomplete li {
   font-size: 16px;
+  .stuid {
+    font-size: 12px;
+  }
 }
 
 /* IE 6 doesn't support max-height
