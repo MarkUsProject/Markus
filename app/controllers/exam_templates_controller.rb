@@ -75,7 +75,6 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id])
     exam_template.generate_copies(copies, index)
-    #flash_message(:success, "Successfully generated #{copies} exam copies")
     flash_message(:success, t('exam_templates.generate', copies: copies))
     redirect_to action: 'index'
   end
