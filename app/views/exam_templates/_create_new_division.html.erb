@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'create_new_division' %>
-<%= content_for :modal_title, 'Add new template division' %>
+<%= content_for :modal_title, t('template_divisions.create.add_new') %>
 <%= content_for :modal_content do %>
   <%= form_for :create_division,
                url: create_template_division_assignment_exam_templates_path(@assignment),

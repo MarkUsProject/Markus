@@ -89,9 +89,9 @@ class ExamTemplatesController < ApplicationController
     )
     # sending flash message if saved
     if new_template_division.save
-      flash_message(:success, 'Template Division successfully created')
+      flash_message(:success, t('template_divisions.create.success'))
     else
-      flash_message(:error, 'Template Division not successfully created')
+      flash_message(:error, t('template_divisions.create.failure'))
     end
     redirect_to action: 'index'
   end

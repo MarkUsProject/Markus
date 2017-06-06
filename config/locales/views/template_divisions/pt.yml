@@ -1,0 +1,9 @@
+pt:
+  template_divisions:
+    create:
+      add_new:
+        "Add Template Division"
+      success:
+        "Exam Template successfully created"
+      failure:
+        "Exam Template not successfully created"
