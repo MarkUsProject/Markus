@@ -6,8 +6,10 @@
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
     </p>
+    <br>
+
     <h3><%= 'Exam Template Information'%></h3>
-    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= exam_template.filename %></p>
+    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %></p>
     <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
     <br>
 
