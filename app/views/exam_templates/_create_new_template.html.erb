@@ -5,7 +5,7 @@
                url: assignment_exam_templates_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div>
-      <p class="alignleft"><%= f.label ExamTemplate.human_attribute_name('name') + ' (optional)' %></p>
+      <p class="alignleft"><%= f.label ExamTemplate.human_attribute_name('name') + ' (' + t(:optional) + ')' %></p>
       <p class="clear-alignment">
         <%= f.text_field :name %>
       </p>
