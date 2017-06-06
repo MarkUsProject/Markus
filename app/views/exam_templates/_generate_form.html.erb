@@ -1,6 +1,5 @@
-<%= form_for [@assignment, exam_template], url: generate_assignment_exam_template_path(id: exam_template.id),
-             html: { multipart: true } do |f| %>
-    <%= f.error_messages%>
+<%= form_for [@assignment, exam_template],
+             url: generate_assignment_exam_template_path(id: exam_template.id) do |f| %>
 
     <fieldset>
       <legend><%= 'Generate Exam Copies' %></legend>
