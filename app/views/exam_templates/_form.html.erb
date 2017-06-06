@@ -6,9 +6,9 @@
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
     </p>
-    <p><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></p>
-    <p><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></p>
-    <p><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></p>
+    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('name') %></span>: <%= exam_template.name %></p>
+    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
+    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= exam_template.filename %></p>
 
     <strong><%= t('exam_templates.update.general') %></strong>
     <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
