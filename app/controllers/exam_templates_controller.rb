@@ -87,6 +87,10 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
+  def split
+
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(

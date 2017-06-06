@@ -1,0 +1,9 @@
+<%= form_for [@assignment, exam_template], url: split_assignment_exam_template_path(id: exam_template.id),
+             html: { multipart: true } do |f| %>
+
+    <fieldset>
+      <legend><%= "Split Exam" %></legend>
+      <%= f.label "Upload PDF Exam" %>
+      <%= f.file_field :pdf_to_split %>
+    </fieldset>
+<% end %>
