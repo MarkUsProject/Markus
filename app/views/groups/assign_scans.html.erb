@@ -28,7 +28,12 @@
           select: function(event, ui) {
               $("#student_id").val(ui.item.id);
           }
-      });
+      }).data("ui-autocomplete")._renderItem = function(ul, item) {
+          return $("<li>")
+              .data("ui-autocomplete-item", item)
+              .append("<div>" + item.label + "<br><span class='stuid'>" + item.id_number + "</span></div>")
+              .appendTo(ul);
+      };
       $("#assign_student").submit(function (e) {
           e.preventDefault();
           $.ajax({
