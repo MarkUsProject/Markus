@@ -6,11 +6,12 @@
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
     </p>
-    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('name') %></span>: <%= exam_template.name %></p>
-    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
+    <h3><%= 'Exam Template Information'%></h3>
     <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= exam_template.filename %></p>
+    <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
+    <br>
 
-    <strong><%= t('exam_templates.update.general') %></strong>
+    <h3><%= t('exam_templates.update.general') %></h3>
     <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <p>
       <%= f.label ExamTemplate.human_attribute_name('name') %>
@@ -21,7 +22,8 @@
       <%= f.file_field :new_template %>
     </p>
 
-    <strong><%= ExamTemplate.human_attribute_name('template_divisions') %></strong>
+    <br>
+    <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
     <%= render partial: 'template_division_pane',
                locals: { f: f } %>
   </fieldset>
