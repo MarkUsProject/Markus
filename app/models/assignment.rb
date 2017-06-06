@@ -775,12 +775,12 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_num_valid
-    groupings.select(&:is_valid?).count
+    groupings.includes(:current_submission_used).select(&:is_valid?).count
   end
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.select(&:marking_completed?).count
+      groupings.includes(current_submission_used: :submitted_remark).select(&:marking_completed?).count
     else
       if is_criteria_mark?(ta_id)
         n = 0
