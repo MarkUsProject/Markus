@@ -4,7 +4,7 @@ es:
       general:
         "Actualizar plantilla de examen"
       success:
-        "La plantilla de examen se ha cargado correctamente"
+        "Plantilla de examen se ha actualizado correctamente"
       failure:
         "Exam Template has not been successfully updated"
       instruction:
@@ -33,5 +33,5 @@ es:
   flash:
     exam_templates:
       update:
-        success: 'Exam Template se actualizó correctamente.'
-        error: 'Exam Template no se pudo actualizar.'
+        success: "Plantilla de examen se ha actualizado correctamente"
+        error: "Exam Template has not been successfully updated"

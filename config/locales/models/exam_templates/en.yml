@@ -8,3 +8,4 @@ en:
         filename: "Name of file"
         num_pages: "Number of pages"
         template_divisions: "Template Divisions"
+        name: "Name"
