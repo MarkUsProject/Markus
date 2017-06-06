@@ -69,6 +69,21 @@ class ExamTemplatesController < ApplicationController
     redirect_to action: 'index'
   end
 
+  def create_template_division
+    assignment = Assignment.find(params[:assignment_id])
+    exam_templates = assignment.exam_templates
+    template = exam_templates[0]
+    division_start = params[:create_division][:start]
+    division_end = params[:create_division][:end]
+    division_label = params[:create_division][:label]
+
+    template.template_divisions.create_with_associations(assignment.id,
+                                                         label: division_label,
+                                                         start: division_start,
+                                                         end: division_end)
+    redirect_to action: 'index'
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(
