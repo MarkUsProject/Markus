@@ -1,4 +1,6 @@
 class ExamTemplatesController < ApplicationController
+  include ExamTemplatesHelper
+
   # responders setup
   responders :flash, :http_cache
   respond_to :html
@@ -10,6 +12,13 @@ class ExamTemplatesController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @exam_templates = @assignment.exam_templates
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: get_template_divisions_table_info
+      end
+    end
   end
 
   # Creates a new instance of the exam template.
@@ -66,6 +75,14 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.update.failure'))
       end
     end
+    redirect_to action: 'index'
+  end
+
+  def destroy_template_division
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates[0] # because only first exam template is rendered in a page
+    template_division = exam_template.template_divisions.find_by(id: params[:id])
+    template_division.destroy
     redirect_to action: 'index'
   end
 
