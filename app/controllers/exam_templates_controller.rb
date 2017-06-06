@@ -81,10 +81,18 @@ class ExamTemplatesController < ApplicationController
     division_end = params[:create_division][:end]
     division_label = params[:create_division][:label]
 
-    template.template_divisions.create_with_associations(assignment.id,
-                                                         label: division_label,
-                                                         start: division_start,
-                                                         end: division_end)
+    new_template_division = template.template_divisions.create_with_associations(
+      assignment.id,
+      label: division_label,
+      start: division_start,
+      end: division_end
+    )
+    # sending flash message if saved
+    if new_template_division.save
+      flash_message(:success, 'Template Division successfully created')
+    else
+      flash_message(:error, 'Template Division not successfully created')
+    end
     redirect_to action: 'index'
   end
 
