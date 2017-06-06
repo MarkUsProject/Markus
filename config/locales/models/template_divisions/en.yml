@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    models:
+      template_division:
+        one: "Template Division"
+    attributes:
+      template_division:
+        label: "Label"
+        start: "Start"
+        end: "End"
