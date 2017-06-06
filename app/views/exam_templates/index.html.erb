@@ -17,7 +17,9 @@
 <%= render partial: 'create_new_template',
            layout: 'layouts/modal_dialog'  %>
 
-<%= render partial: 'form',
-           locals: { exam_template: @exam_templates[0] }%>
-<%= render partial: 'generate_form',
-           locals: { exam_template: @exam_templates[0] }%>
+<% @exam_templates.each do |exam_template| %>
+  <%= render partial: 'form',
+             locals: { exam_template: exam_template }%>
+  <%= render partial: 'generate_form',
+             locals: { exam_template: exam_template }%>
+<% end %>
