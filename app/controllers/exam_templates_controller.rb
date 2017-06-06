@@ -73,14 +73,12 @@ class ExamTemplatesController < ApplicationController
     copies = params[:numCopies].to_i
     index = params[:examTemplateIndex].to_i
     assignment = Assignment.find(params[:assignment_id])
-    assignment_name = assignment.short_identifier
-
     exam_template = assignment.exam_templates.find(params[:id])
     exam_template.generate_copies(copies, index)
     flash_message(:success, t('exam_templates.generate.success', copies: copies))
 
     generated_filename = "#{index}-#{index + copies - 1}.pdf"
-    send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{generated_filename}",
+    send_file("#{exam_template.base_path}/#{generated_filename}",
               filename: "#{generated_filename}",
               type: "application/pdf")
   end

@@ -146,6 +146,11 @@ class ExamTemplate < ActiveRecord::Base
     save_pages partial_exams
   end
 
+  def base_path
+    File.join MarkusConfigurator.markus_exam_template_dir,
+              assignment.short_identifier
+  end
+
   private
 
   # Save the pages into groups for this assignment
@@ -216,11 +221,6 @@ class ExamTemplate < ActiveRecord::Base
         repo.commit(txn)
       end
     end
-  end
-
-  def base_path
-    File.join MarkusConfigurator.markus_exam_template_dir,
-              assignment.short_identifier
   end
 
   def group_name_for(exam_num)
