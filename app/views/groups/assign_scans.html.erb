@@ -29,10 +29,11 @@
           select: function(event, ui) {
               $("#student_id").val(ui.item.id);
           }
-      }).data( "autocomplete" )._renderItem = function( ul, item ) {
-          return $( "<li></li>" )
-              .data( "item.autocomplete", item )
-              .append( "<a>" + item.label + "<br>" + item.id_number + "</a>" )
+      }).data("ui-autocomplete")._renderItem = function( ul, item ) {
+          console.log(JSON.stringify(item));
+          return $( "<li>" )
+              .data( "ui-autocomplete-item", item )
+              .append( item.label + "<br>" + item.id_number )
               .appendTo( ul );
       };
       $("#assign_student").submit(function (e) {
