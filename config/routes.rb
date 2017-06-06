@@ -98,6 +98,10 @@ Markus::Application.routes.draw do
         member do
           get 'download'
         end
+
+        collection do
+          post 'create_template_division'
+        end
       end
 
       resources :groups do
