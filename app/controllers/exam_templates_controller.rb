@@ -16,7 +16,8 @@ class ExamTemplatesController < ApplicationController
   def create
     assignment = Assignment.find(params[:assignment_id])
     new_uploaded_io = params[:create_template][:file_io]
-    filename = new_uploaded_io.original_filename
+    name_input = params[:create_template][:name]
+    filename = name_input.nil ? new_uploaded_io.original_filename : name_input
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
     if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.create.failure'))
