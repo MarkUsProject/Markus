@@ -1,31 +1,29 @@
 <%= form_for [@assignment, exam_template],
              html: { multipart: true } do |f| %>
-    <%= f.error_messages%>
-    <div class='template-pane'>
-      <h4>
-        <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
-      </h4>
-      <h4><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></h4>
-      <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
-      <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
-    </div>
+  <%= f.error_messages%>
 
-    <fieldset>
-      <legend><%= t('exam_templates.update.general') %></legend>
-      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
-      <p>
-        <%= f.label ExamTemplate.human_attribute_name('name') %>
-        <%= f.text_field :name %>
-      </p>
+  <fieldset>
+    <p class="alignright">
+      <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
+    </p>
+    <p><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></p>
+    <p><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></p>
+    <p><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></p>
+
+    <strong><%= t('exam_templates.update.general') %></strong>
+    <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+    <p>
+      <%= f.label ExamTemplate.human_attribute_name('name') %>
+      <%= f.text_field :name %>
+    </p>
+    <p>
       <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
-    </fieldset>
+    </p>
 
-    <fieldset>
-      <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
-      <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
-      <%= render partial: 'template_division_pane',
-                 locals: { f: f } %>
-    </fieldset>
-    <p><%= submit_tag t(:submit)%></p>
+    <strong><%= ExamTemplate.human_attribute_name('template_divisions') %></strong>
+    <%= render partial: 'template_division_pane',
+               locals: { f: f } %>
+  </fieldset>
+  <p><%= submit_tag t(:submit)%></p>
 <% end %>
