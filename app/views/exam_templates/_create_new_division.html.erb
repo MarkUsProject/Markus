@@ -2,21 +2,14 @@
 <%= content_for :modal_title, 'Add new template division' %>
 <%= content_for :modal_content do %>
   <%= form_for :create_division,
-               url: assignment_exam_templates_path(@assignment),
+               url: create_template_division_assignment_exam_templates_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div>
-      <p class="alignleft">Label <span class='required_field'>*</span></p>
-      <p class="clear-alignment">
-        <%= f.text_field :label, required: true %>
-      </p>
+      <p>Label <span class='required_field'>*</span> <%= f.text_field :label, required: true %></p>
     </div>
     <div>
-      <p class="alignleft">
-        Start: <%= f.number_field :start, min: 1 %>
-      </p>
-      <p class="alignleft">
-        End: <%= f.number_field :end, min: 1 %>
-      </p>
+      <p>Start <span class='required_field'>*</span> <%= f.number_field :start, value: 1, min: 1 %></p>
+      <p>End <span class='required_field'>*</span> <%= f.number_field :end, value: 1, min: 1 %></p>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t(:save_changes),
