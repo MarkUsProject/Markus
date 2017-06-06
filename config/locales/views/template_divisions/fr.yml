@@ -2,8 +2,8 @@ fr:
   template_divisions:
     create:
       add_new:
-        "Add Template Division"
+        "Ajouter une division de modèle"
       success:
-        "Exam Template successfully created"
+        "Modèle d'examen créé avec succès"
       failure:
-        "Exam Template not successfully created"
+        "Le modèle d'examen n'a pas été créé avec succès"

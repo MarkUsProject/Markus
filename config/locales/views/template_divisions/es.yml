@@ -2,8 +2,8 @@ es:
   template_divisions:
     create:
       add_new:
-        "Add Template Division"
+        "Agregar división de plantillas"
       success:
-        "Exam Template successfully created"
+        "Plantilla de examen creada correctamente"
       failure:
-        "Exam Template not successfully created"
+        "Plantilla de examen no creada correctamente"
