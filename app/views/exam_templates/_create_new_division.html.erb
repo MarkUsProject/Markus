@@ -5,7 +5,17 @@
                url: assignment_exam_templates_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div>
+      <p class="alignleft">Label <span class='required_field'>*</span></p>
       <p class="clear-alignment">
+        <%= f.text_field :label, required: true %>
+      </p>
+    </div>
+    <div>
+      <p class="alignleft">
+        Start: <%= f.number_field :start, min: 1 %>
+      </p>
+      <p class="alignleft">
+        End: <%= f.number_field :end, min: 1 %>
       </p>
     </div>
     <section class='dialog-actions'>
