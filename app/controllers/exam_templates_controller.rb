@@ -81,7 +81,7 @@ class ExamTemplatesController < ApplicationController
 
     generated_filename = "#{index}-#{index + copies - 1}.pdf"
     send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{generated_filename}",
-              filename: "#{filename}",
+              filename: "#{generated_filename}",
               type: "application/pdf")
   end
 
