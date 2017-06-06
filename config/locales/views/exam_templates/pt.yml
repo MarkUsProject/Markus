@@ -30,6 +30,9 @@ pt:
 
     download: "Download do modelo de exame"
 
+    generate:
+        "%{copies} cópias de exame geradas com sucesso"
+
   flash:
     exam_templates:
       update:

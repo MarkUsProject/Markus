@@ -30,6 +30,9 @@ fr:
 
     download: "Télécharger le modèle d'examen"
 
+    generate:
+        "Exemples de copies de %{copies} examens réalisés avec succès"
+
   flash:
     exam_templates:
       update:

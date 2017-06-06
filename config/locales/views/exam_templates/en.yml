@@ -30,6 +30,9 @@ en:
 
     download: "Download Exam Template"
 
+    generate:
+        "Successfully generated %{copies} exam copies"
+
   flash:
     exam_templates:
       update:
