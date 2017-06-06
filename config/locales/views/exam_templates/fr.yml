@@ -30,6 +30,16 @@ fr:
 
     download: "Télécharger le modèle d'examen"
 
+    generate:
+      success:
+        "Exemples de copies de %{copies} examens réalisés avec succès"
+      title:
+        "Générer des copies d'examen"
+      copies_label:
+        "Nombre de copies:"
+      index_label:
+        "Index de départ:"
+
   flash:
     exam_templates:
       update:
