@@ -5,6 +5,10 @@
                url: assignment_exam_templates_path(@assignment),
                html: { multipart: true, size: 1 } do |f| %>
     <div>
+      <p class="alignleft"><%= f.label ExamTemplate.human_attribute_name('name') + ' (optional)' %></p>
+      <p class="clear-alignment">
+        <%= f.text_field :name %>
+      </p>
       <p class="alignleft"><%= t('exam_templates.create.upload') %> <span class='required_field'>*</span></p>
       <p class="clear-alignment">
         <%= f.file_field :file_io %>
