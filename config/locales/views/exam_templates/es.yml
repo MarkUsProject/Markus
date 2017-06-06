@@ -31,7 +31,14 @@ es:
     download: "Descargar plantilla de examen"
 
     generate:
+      success:
         "Exitosamente generó %{copies} copias del examen"
+      title:
+          "Generar copias de exámenes"
+      copies_label:
+          "Número de copias: "
+      index_label:
+          "Índice de comienzo: "
 
   flash:
     exam_templates:

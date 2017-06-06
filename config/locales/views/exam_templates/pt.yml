@@ -31,7 +31,14 @@ pt:
     download: "Download do modelo de exame"
 
     generate:
+      success:
         "%{copies} cópias de exame geradas com sucesso"
+      title:
+        "Gerar cópias de exame"
+      copies_label:
+        "Número de cópias: "
+      index_label:
+        "Índice inicial: "
 
   flash:
     exam_templates:
