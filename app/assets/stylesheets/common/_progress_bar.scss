@@ -12,13 +12,12 @@
   width: 20%;
 }
 
-.progress_meter > span {
+.progress_span {
   display: block;
   height: 100%;
-  background-color: $red;
+  background-color: $light-red;
   position: relative;
   overflow: hidden;
-  color: $white;
   text-align: right;
   line-height: 24px;
   width: 0px;
@@ -29,4 +28,11 @@
   transition: width 1s linear,background-color 200ms linear;
   margin: 0;
   padding: 0 10px;
+}
+
+.progress_text {
+  position: absolute;
+  left: 5px;
+  z-index: 999;
+  top: 4px;
 }
