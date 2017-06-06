@@ -6,3 +6,28 @@
   border-radius: $radius;
   padding: 1.2em;
 }
+
+.label {
+  float: left;
+  min-width: 55%;
+  min-height: 33%;
+}
+
+.start {
+  display: inline-block;
+  min-width: 13%;
+  min-height: 33%;
+}
+
+.end {
+  display: inline-block;
+  min-width: 13%;
+  min-height: 33%;
+}
+
+.delete {
+  display: inline-block;
+  min-width: 5%;
+  min-height: 33%;
+}
+
