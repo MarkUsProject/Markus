@@ -42,6 +42,7 @@ class ExamTemplate < ActiveRecord::Base
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename]
+    name_input = attributes[:name_input]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name
@@ -52,11 +53,20 @@ class ExamTemplate < ActiveRecord::Base
     end
     pdf = CombinePDF.parse blob
     num_pages = pdf.pages.length
-    new_template = ExamTemplate.new(
-      filename: filename,
-      num_pages: num_pages,
-      assignment: assignment
-    )
+    unless name_input == ''
+      new_template = ExamTemplate.new(
+        name: name_input,
+        filename: filename,
+        num_pages: num_pages,
+        assignment: assignment
+      )
+    else
+      new_template = ExamTemplate.new(
+        filename: filename,
+        num_pages: num_pages,
+        assignment: assignment
+      )
+    end
     return new_template
   end
 
