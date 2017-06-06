@@ -10,11 +10,16 @@
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
-      html_options: { onclick:'modal_create_new.open()' } }
+      html_options: { onclick:'modal_create_new.open()' } },
+    { link_text: 'Add new template division',
+      link_path: '#',
+      html_options: { id: 'createNewDivision' } }
 ] %>
 
 <!-- Modals -->
 <%= render partial: 'create_new_template',
+           layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'create_new_division',
            layout: 'layouts/modal_dialog'  %>
 
 <%= render partial: 'form',
