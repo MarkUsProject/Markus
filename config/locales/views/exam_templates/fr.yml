@@ -18,6 +18,8 @@ fr:
         "Modèle d'examen non supprimé avec succès"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
+      confirm:
+        "Êtes-vous sûr de vouloir supprimer %{name}?"
     create:
       add_new:
         "Ajouter un modèle d'examen"
