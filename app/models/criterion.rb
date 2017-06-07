@@ -7,6 +7,9 @@ class Criterion < ActiveRecord::Base
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
 
+  # Every time a criterion is updated (peer_visible / ta_visible) or created
+  after_save :replace_marks
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
@@ -134,6 +137,49 @@ class Criterion < ActiveRecord::Base
       Array(criterion_ids_by_type[type])
                                    .map { |criterion_id| connection.quote(criterion_id) }
                                    .join(',')
+    end
+  end
+
+  def replace_marks
+    mark_objects = []
+    # results with specific assignment
+    results = Result.joins(submission: :grouping)
+                    .where(groupings: {assignment_id: self.assignment_id})
+    if self.ta_visible_changed? || self.id_changed? # if visibility changes or if criterion is created
+      if self.ta_visible # The criterion has changed from not visible to visible
+        results.each do |r|
+          unless r.is_a_review? # filter results that are not peer reviews
+            mark_objects << self.marks.new(result_id: r.id) # create mark object for TA review result
+            r.update_total_mark
+          end
+        end
+        Mark.import mark_objects
+      else # the criterion has changed from visible to not visible.
+        results.each do |r|
+          unless r.is_a_review? # filter results that are not peer reviews
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+            r.update_total_mark
+          end
+        end
+      end
+    end
+    if self.peer_visible_changed? || self.id_changed? # if visibility changes or if criterion is created
+      if self.peer_visible # The criterion has changed from not visible to visible
+        results.each do |r|
+          if r.is_a_review? # filter results that are peer reviews
+            mark_objects << self.marks.new(result_id: r.id) # create mark object for peer review result
+            r.update_total_mark
+          end
+        end
+        Mark.import mark_objects
+      else # the criterion has changed from visible to not visible.
+        results.each do |r|
+          if r.is_a_review? # filter results that are peer reviews
+            self.marks.where(result_id: r.id).destroy_all # delete existing marks when hidden
+            r.update_total_mark
+          end
+        end
+      end
     end
   end
 end

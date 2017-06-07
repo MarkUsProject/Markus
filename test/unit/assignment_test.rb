@@ -193,7 +193,9 @@ class AssignmentTest < ActiveSupport::TestCase
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
-          Mark.make({mark: 4, result: @result, markable: RubricCriterion.make({assignment: @assignment, max_mark: weight * 4})})
+          crit = RubricCriterion.make({assignment: @assignment, max_mark: weight * 4})
+          mark_object = crit.marks.find_by(result: @result)
+          mark_object.update(mark: 4)
           @sum += weight
         end
         @total = @sum * 4
@@ -571,7 +573,9 @@ class AssignmentTest < ActiveSupport::TestCase
             s = Submission.make(grouping: g)
             r = s.get_latest_result
             (1..2).each do
-              Mark.make(result: r)
+              crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
+              mark_object = crit.marks.find_by(result: r)
+              mark_object.update(mark: 1)
             end
             r.reload
             r.marking_state = Result::MARKING_STATES[:complete]
@@ -619,7 +623,9 @@ class AssignmentTest < ActiveSupport::TestCase
               s = Submission.make(grouping: g)
               r = s.get_latest_result
               (1..2).each do
-                Mark.make(result: r)
+                crit = RubricCriterion.make(assignment: r.submission.grouping.assignment)
+                mark_object = crit.marks.find_by(result: r)
+                mark_object.update(mark: 1)
               end
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]

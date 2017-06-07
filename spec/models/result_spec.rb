@@ -201,9 +201,15 @@ describe Result do
                     let!(:prev_subtotal) { incomp_result.get_subtotal }
                     let!(:flex_criteria_first) { create(:flexible_criterion, assignment: assignment) }
                     let!(:flex_criteria_second) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment) }
+
+                    # When we create flex_criteria_first and flex_criteria_second, it goes through callback function
+                    # called replace_marks, which creates marks or deletes marks depending on whether criterion is
+                    # peer_visible or ta_visible. We have to find mark with specific crtierion and result.
                     before do
-                      create(:flexible_mark, result: incomp_result, mark: 1, markable: flex_criteria_first)
-                      create(:flexible_mark, result: incomp_result, mark: 2, markable: flex_criteria_second)
+                      mark_1 = flex_criteria_first.marks.find_by(result: incomp_result)
+                      mark_1.update(mark: 1)
+                      mark_2 = flex_criteria_second.marks.find_by(result: incomp_result)
+                      mark_2.update(mark: 2)
                     end
 
                     it 'gets a subtotal' do

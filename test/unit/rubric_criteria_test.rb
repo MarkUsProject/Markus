@@ -48,9 +48,6 @@ class RubricCriterionTest < ActiveSupport::TestCase
     result = Result.make(submission: submission)
 
     rubric = RubricCriterion.make(assignment: assignment)
-
-    mark = Mark.make(result: result,
-                    markable: rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
 

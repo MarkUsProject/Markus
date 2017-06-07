@@ -466,7 +466,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'and the result is available' do
             SubmissionFile.make(submission: @submission)
-            Mark.make(criterion_type.to_sym, result: @result)
+            # creating this criterion will create marks
+            if criterion_type == 'rubric'
+              crit = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
+            else
+              crit = FlexibleCriterion.make(assignment: @result.submission.grouping.assignment)
+            end
+            mark_object = crit.marks.find_by(result: @result)
+            mark_object.update(mark: 1)
             AnnotationCategory.make(assignment: @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
@@ -698,8 +705,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             s = Submission.make(grouping: g)
             @result = s.get_latest_result
-            Mark.make(criterion_type.to_sym, result: @result)
-
+            # creating this criterion will create marks
+            if criterion_type == 'rubric'
+              crit = RubricCriterion.make(assignment: @result.submission.grouping.assignment)
+            else
+              crit = FlexibleCriterion.make(assignment: @result.submission.grouping.assignment)
+            end
+            mark_object = crit.marks.find_by(result: @result)
+            mark_object.update(mark: 1)
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
 
@@ -947,7 +960,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
-            @mark =  Mark.make(criterion_type.to_sym, result: @submission.get_latest_result)
+            if criterion_type == 'rubric'
+              crit = RubricCriterion.make(assignment: @submission.grouping.assignment)
+            else
+              crit = FlexibleCriterion.make(assignment: @submission.grouping.assignment)
+            end
+            @mark = crit.marks.find_by(result: @submission.get_latest_result)
+            @mark.update(mark: 1)
             @result = @mark.result
           end
 
@@ -1302,7 +1321,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            @mark = Mark.make
+            @result_object = Result.make
+            @rubric_crit = RubricCriterion.make(assignment: @result_object.submission.grouping.assignment)
+            @mark = @rubric_crit.marks.find_by(result: @result_object)
+            @mark.update(mark: 1)
           end
 
           should 'fails validation' do
