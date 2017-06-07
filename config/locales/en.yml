@@ -967,6 +967,8 @@ en:
 
     user:
         id:             "ID"
+        id_number:      "ID number"
+        email:          "Email"
         user_name:      "User Name"
         user_names:     "User Name"
         first_name:     "First Name"

@@ -5,7 +5,7 @@ en:
         one: "Exam Template"
     attributes:
       exam_template:
-        filename: "Name of file"
+        filename: "Filename"
         num_pages: "Number of pages"
         template_divisions: "Template Divisions"
         name: "Name"

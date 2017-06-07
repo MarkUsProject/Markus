@@ -36,9 +36,11 @@ pt:
       title:
         "Gerar cópias de exame"
       copies_label:
-        "Número de cópias:"
+        "Número de cópias"
       index_label:
-        "Índice inicial:"
+        "Índice inicial"
+      generate:
+        "Gerar"
 
   flash:
     exam_templates:
