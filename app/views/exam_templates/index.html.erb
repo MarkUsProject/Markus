@@ -19,6 +19,7 @@
 
 <% @exam_templates.each do |exam_template| %>
   <fieldset>
+    <legend> <%= exam_template.name.upcase %> </legend>
     <%= render partial: 'form',
                locals: { exam_template: exam_template } %>
     <hr>
