@@ -1,14 +1,10 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+require 'spec_helper'
 
-require 'shoulda'
-
-include MarkusConfigurator
-class AdminTest < ActiveSupport::TestCase
+describe Admin do
   context 'If repo admin' do
 
-    setup do
-            @repo = Repository.get_class(markus_config_repository_type)
+    before(:each) do
+      @repo = Repository.get_class(markus_config_repository_type)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
     end
 
@@ -16,7 +12,7 @@ class AdminTest < ActiveSupport::TestCase
       destroy_repos
     end
 
-    should 'grant repository_permissions when admin is added' do
+    it 'grant repository_permissions when admin is added' do
       admin = Admin.new
       admin.user_name = 'just_another_admin'
       admin.last_name = 'doe'
@@ -24,16 +20,15 @@ class AdminTest < ActiveSupport::TestCase
 
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {admin.user_name => Repository::Permission::READ_WRITE})
-      assert admin.save
+      expect(admin.save).to be true
     end
 
-    should 'revoke repository permissions when destroying an admin object' do
-      admin = Admin.make
+    it 'revoke repository permissions when destroying an admin object' do
+      admin = FactoryGirl.create(:admin)
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
-      admin.destroy
+      expect{admin.destroy}.to change {Admin.count}.by(-1)
     end
-
   end # end context
 
   # This test only make sense if we have external repositories, and we aren't using externally managed repos
@@ -65,5 +60,4 @@ class AdminTest < ActiveSupport::TestCase
   #     assert admin.save
   #   end
   # end
-
 end

@@ -2,6 +2,10 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
+require 'rails/test_help'
+require 'minitest/unit'
+require 'mocha/mini_test'
+require 'sham'
 # Loads lib repo stuff.
 require 'repo/repository'
 require 'repo/git_repository'
