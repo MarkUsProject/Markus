@@ -80,7 +80,7 @@ class ExamTemplatesController < ApplicationController
     division_end = params[:create_division][:end]
     division_label = params[:create_division][:label]
 
-    new_template_division = template.template_divisions.create_with_associations(
+    new_template_division = template.template_divisions.new_with_input(
       assignment.id,
       label: division_label,
       start: division_start,
