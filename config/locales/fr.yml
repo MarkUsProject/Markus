@@ -912,6 +912,8 @@ fr:
 
     user:
         id:             "ID"
+        id_number:      "Numéro d'identification"
+        email:          "Email"
         user_name:      "Nom d'utilisateur"
         user_names:     "Nom(s) d'utilisateur"
         first_name:     "Prénom"
