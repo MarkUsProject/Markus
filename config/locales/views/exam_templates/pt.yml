@@ -39,6 +39,8 @@ pt:
         "Número de cópias:"
       index_label:
         "Índice inicial:"
+      generate:
+        "gerar"
 
   flash:
     exam_templates:

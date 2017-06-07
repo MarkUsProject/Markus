@@ -39,6 +39,8 @@ en:
         "Number of Copies:"
       index_label:
         "Start Index:"
+      generate:
+        "Generate"
 
   flash:
     exam_templates:
