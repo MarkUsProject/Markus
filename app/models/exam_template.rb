@@ -215,10 +215,23 @@ class ExamTemplate < ActiveRecord::Base
           )
         end
 
+        cover_pdf = CombinePDF.new
+        pages.each do |page_num, page|
+          if page_num == 1
+            cover_pdf << page
+            break
+          end
+        end
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_pdf,
+                'application/pdf'
+        )
+
         # Pages that don't belong to any division
         extra_pages = pages.reject do |page_num, _|
           template_divisions.any? do |division|
-            division.start <= page_num && page_num <= division.end
+            (division.start <= page_num && page_num <= division.end) || page_num == 1
           end
         end
         extra_pdf = CombinePDF.new
