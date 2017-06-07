@@ -39,6 +39,8 @@ fr:
         "Nombre de copies"
       index_label:
         "Index de départ"
+      generate:
+        "Générer"
 
   flash:
     exam_templates:

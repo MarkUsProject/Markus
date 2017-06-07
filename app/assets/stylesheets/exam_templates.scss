@@ -1,12 +1,5 @@
 @import "assignments";
 
-.template-pane {
-  background: $light-grey;
-  border: 1px solid $blue;
-  border-radius: $radius;
-  padding: 1.2em;
-}
-
 /** Sortable lists */
 
 .division-table {
@@ -59,4 +52,18 @@
       }
     }
   }
+}
+
+.exam-template-info {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.exam-template-section {
+  padding-bottom: 0.6em;
+}
+
+.generate-section {
+  padding-top: 1em;
+  padding-bottom: 0.7em;
 }
