@@ -1,6 +1,7 @@
 <%= form_for :create_division,
              url: create_template_division_assignment_exam_template_path(@assignment, id: @exam_template.id),
              html: { multipart: true, size: 1 } do |f| %>
+  <h2><%= I18n.t('template_divisions.create.add_new') %></h2>
   <div>
     <p>Label <span class='required_field'>*</span> <%= f.text_field :label, required: true %></p>
   </div>
