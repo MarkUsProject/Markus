@@ -70,7 +70,6 @@ class TasController < ApplicationController
       output = MarkusCSV.generate(tas) do |ta|
         [ta.user_name,ta.last_name,ta.first_name,ta.email]
       end
-
       format = 'text/csv'
     when 'xml'
       output = tas.to_xml
