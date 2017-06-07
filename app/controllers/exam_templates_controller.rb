@@ -89,7 +89,7 @@ class ExamTemplatesController < ApplicationController
 
   def destroy
     assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find_by(id: params[:id])
+    exam_template = assignment.exam_templates.find(params[:id])
     if exam_template.destroy
       flash_message(:success, t('exam_templates.delete.success'))
     else
