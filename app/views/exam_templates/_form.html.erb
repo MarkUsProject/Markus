@@ -2,17 +2,19 @@
              html: { multipart: true } do |f| %>
   <%= f.error_messages%>
 
-  <fieldset>
+  <div class="exam-template-section">
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
     </p>
-    <br>
+  </div>
 
+  <div class="exam-template-section">
     <h3><%= 'Exam Template Information'%></h3>
     <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %></p>
     <p><span class="exam-template-info"><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
-    <br>
+  </div>
 
+  <div class="exam-template-section">
     <h3><%= t('exam_templates.update.general') %></h3>
     <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <p>
@@ -23,11 +25,12 @@
       <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
     </p>
+  </div>
 
-    <br>
+  <div class="exam-template-section">
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
     <%= render partial: 'template_division_pane',
                locals: { f: f } %>
-  </fieldset>
+  </div>
   <p><%= submit_tag t(:submit)%></p>
 <% end %>

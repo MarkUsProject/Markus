@@ -18,8 +18,16 @@
            layout: 'layouts/modal_dialog'  %>
 
 <% @exam_templates.each do |exam_template| %>
-  <%= render partial: 'form',
-             locals: { exam_template: exam_template }%>
-  <%= render partial: 'generate_form',
-             locals: { exam_template: exam_template }%>
+  <fieldset>
+    <%= render partial: 'form',
+               locals: { exam_template: exam_template } %>
+    <hr>
+    <div class="generate-section">
+      <h3><%= t('exam_templates.generate.title') %></h3>
+      <p>
+        <%= render partial: 'generate_form',
+                   locals: { exam_template: exam_template } %>
+      </p>
+    </div>
+  </fieldset>
 <% end %>
