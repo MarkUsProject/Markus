@@ -23,10 +23,12 @@
 
     <fieldset>
       <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
-      <%= link_to(
-              t('template_divisions.create.add_new'),
-              create_template_division_dialog_assignment_exam_template_path(@assignment, id: exam_template.id),
-              remote: true ) %>
+      <p class="alignright">
+        <%= link_to(
+                t('template_divisions.create.add_new'),
+                create_template_division_dialog_assignment_exam_template_path(@assignment, id: exam_template.id),
+                remote: true ) %>
+      </p>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
       <%= render partial: 'template_division_pane',
                  locals: { f: f } %>
