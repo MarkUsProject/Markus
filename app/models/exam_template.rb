@@ -190,7 +190,7 @@ class ExamTemplate < ActiveRecord::Base
         repo_name: group_name_for(exam_num)
       )
 
-      Grouping.create(
+      grouping = Grouping.create(
         group: group,
         assignment: assignment
       )
@@ -230,6 +230,9 @@ class ExamTemplate < ActiveRecord::Base
         )
         repo.commit(txn)
       end
+      SubmissionsJob.perform_now([grouping],
+                                 apply_late_penalty: false,
+                                 revision_number: 2)
     end
   end
 
