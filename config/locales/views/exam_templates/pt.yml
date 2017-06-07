@@ -40,7 +40,7 @@ pt:
       index_label:
         "Índice inicial:"
       generate:
-        "gerar"
+        "Gerar"
 
   flash:
     exam_templates:
