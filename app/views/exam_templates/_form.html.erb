@@ -24,7 +24,7 @@
     <fieldset>
       <legend><%= ExamTemplate.human_attribute_name('template_divisions') %></legend>
       <%= link_to(
-              'Create Template Division',
+              t('template_divisions.create.add_new'),
               create_template_division_dialog_assignment_exam_template_path(@assignment, id: exam_template.id),
               remote: true ) %>
       <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
