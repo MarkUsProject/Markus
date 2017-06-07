@@ -201,9 +201,35 @@ describe Result do
                     let!(:prev_subtotal) { incomp_result.get_subtotal }
                     let!(:flex_criteria_first) { create(:flexible_criterion, assignment: assignment) }
                     let!(:flex_criteria_second) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment) }
+
+                    # When we create flex_criteria_first and flex_criteria_second, it goes through callback function
+                    # called replace_marks, which creates marks or deletes marks depending on whether criterion is
+                    # peer_visible or ta_visible. We have to undo the process.
                     before do
-                      create(:flexible_mark, result: incomp_result, mark: 1, markable: flex_criteria_first)
-                      create(:flexible_mark, result: incomp_result, mark: 2, markable: flex_criteria_second)
+                      results = Result.joins(submission: :grouping)
+                                  .where(groupings: {assignment_id: flex_criteria_first.assignment_id})
+                      results.each do |r|
+                        unless r.is_a_review? # filter results that are not peer reviews
+                          flex_criteria_first.marks.where(result_id: r.id).destroy_all # create mark object for TA review result
+                          r.update_total_mark
+                        else
+                          flex_criteria_first.marks.create(result_id: r.id) # create mark object for peer review result
+                          r.update_total_mark
+                        end
+                      end
+                      results = Result.joins(submission: :grouping)
+                                  .where(groupings: {assignment_id: flex_criteria_second.assignment_id})
+                      results.each do |r|
+                        unless r.is_a_review? # filter results that are not peer reviews
+                          flex_criteria_second.marks.where(result_id: r.id).destroy_all # create mark object for TA review result
+                          r.update_total_mark
+                        else
+                          flex_criteria_second.marks.create(result_id: r.id) # create mark object for peer review result
+                          r.update_total_mark
+                        end
+                      end
+                      flex_criteria_first.marks.create!(result: incomp_result, mark: 1)
+                      flex_criteria_second.marks.create!(result: incomp_result, mark: 2)
                     end
 
                     it 'gets a subtotal' do
