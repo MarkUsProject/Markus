@@ -75,7 +75,7 @@ class ExamTemplatesController < ApplicationController
 
   def create_template_division
     assignment = Assignment.find(params[:assignment_id])
-    template = assignment.exam_templates.find_by(id: params[:id])
+    template = assignment.exam_templates.find(params[:id])
     division_start = params[:create_division][:start]
     division_end = params[:create_division][:end]
     division_label = params[:create_division][:label]
@@ -98,7 +98,7 @@ class ExamTemplatesController < ApplicationController
   # Dialog to create template division.
   def create_template_division_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_template = @assignment.exam_templates.find_by(id: params[:id])
+    @exam_template = @assignment.exam_templates.find(params[:id])
 
     render partial: 'exam_templates/create_division_dialog',
            formats: [:js], handlers: [:erb]
