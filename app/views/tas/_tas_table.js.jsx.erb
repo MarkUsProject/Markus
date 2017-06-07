@@ -23,6 +23,12 @@
           searchable: true
         },
         {
+            id: 'email',
+            content: '<%= j raw I18n.t(:'user.email') %>',
+            sortable: true,
+            searchable: true
+        },
+        {
           id: 'edit_link',
           content: '<%= j raw I18n.t(:edit) %>',
           sortable: false,
@@ -70,6 +76,7 @@
         t['last_name'] = ta.last_name;
         t['user_name'] = ta.user_name;
         t['first_name'] = ta.first_name;
+        t['email'] = ta.email;
         t['edit_link'] = <a href={ta.edit_link}><%= j raw I18n.t(:edit) %></a>
         t['delete_link'] = <a href={ta.delete_link} data-method="delete" rel="nofollow" data-confirm="<%= j raw I18n.t('tas.delete.confirm') %>"><%= j raw I18n.t(:delete) %></a>
 
