@@ -130,7 +130,7 @@ describe TasController do
 
       it 'expects a call to send_data' do
         csv_data = ''
-        @tas.pluck(:user_name, :last_name, :first_name).each do |ta|
+        @tas.pluck(:user_name, :last_name, :first_name, :email).each do |ta|
           csv_data.concat("#{ta.join(',')}\n")
         end
         expect(@controller).to receive(:send_data)

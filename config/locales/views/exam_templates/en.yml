@@ -36,9 +36,9 @@ en:
       title:
         "Generate Exam Copies"
       copies_label:
-        "Number of Copies:"
+        "Number of Copies"
       index_label:
-        "Start Index:"
+        "Start Index"
       generate:
         "Generate"
 
