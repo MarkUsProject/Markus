@@ -28,6 +28,18 @@
             sortable: true,
             searchable: true
           },
+          {
+              id: 'id_number',
+              content: '<%= j raw I18n.t(:'user.id_number') %>',
+              sortable: true,
+              searchable: true
+          },
+          {
+              id: 'email',
+              content: '<%= j raw I18n.t(:'user.email') %>',
+              sortable: true,
+              searchable: true
+          },
           <%= raw @section_column  %>
           {
             id: 'grace_credits',
@@ -109,6 +121,8 @@
         s['user_name'] = student.user_name;
         s['last_name'] = student.last_name;
         s['first_name'] = student.first_name;
+        s['id_number'] = student.id_number;
+        s['email'] = student.email;
         s['section'] = student.section_name ? student.section_name : '-';
         s['grace_credits'] = student.grace_credits_remaining + ' / ' + student.grace_credits;
         s['notes'] = <span>
