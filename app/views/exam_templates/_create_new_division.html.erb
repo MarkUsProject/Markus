@@ -1,22 +1,18 @@
-<%= content_for :modal_id, 'create_new_division' %>
-<%= content_for :modal_title, t('template_divisions.create.add_new') %>
-<%= content_for :modal_content do %>
-  <%= form_for :create_division,
-               url: create_template_division_assignment_exam_templates_path(@assignment),
-               html: { multipart: true, size: 1 } do |f| %>
-    <div>
-      <p>Label <span class='required_field'>*</span> <%= f.text_field :label, required: true %></p>
-    </div>
-    <div>
-      <p>Start <span class='required_field'>*</span> <%= f.number_field :start, value: 1, min: 1 %></p>
-      <p>End <span class='required_field'>*</span> <%= f.number_field :end, value: 1, min: 1 %></p>
-    </div>
-    <section class='dialog-actions'>
-      <%= f.submit t(:save_changes),
-                   name: 'submit',
-                   data: { disable_with: t('working') },
-                   class: 'button' %>
-      <input type='reset' value='<%= t(:cancel) %>' onclick='modal_template_create_new.close();'/>
-    </section>
-  <% end %>
+<%= form_for :create_division,
+             url: create_template_division_assignment_exam_template_path(@assignment, id: @exam_template.id),
+             html: { multipart: true, size: 1 } do |f| %>
+  <div>
+    <p>Label <span class='required_field'>*</span> <%= f.text_field :label, required: true %></p>
+  </div>
+  <div>
+    <p>Start <span class='required_field'>*</span> <%= f.number_field :start, value: 1, min: 1 %></p>
+    <p>End <span class='required_field'>*</span> <%= f.number_field :end, value: 1, min: 1 %></p>
+  </div>
+  <section class='dialog-actions'>
+    <%= f.submit t(:save_changes),
+                 name: 'submit',
+                 data: { disable_with: t('working') },
+                 class: 'button' %>
+    <input type='reset' value='<%= t(:cancel) %>' onclick='modal_create_new_division.close();'/>
+  </section>
 <% end %>
