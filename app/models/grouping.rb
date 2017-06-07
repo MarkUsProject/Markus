@@ -690,7 +690,7 @@ class Grouping < ActiveRecord::Base
       groupings = user_group.peer_reviews_to_others
       groupings.map {|p| Result.find(p.result_id).submission.grouping}
     elsif user.admin? && assignment.scanned_exam?
-      assignment.groupings
+      assignment.groupings.includes(:group)
     else
       assignment.groupings.joins(:memberships)
           .includes(:assignment,

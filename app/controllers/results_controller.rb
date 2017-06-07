@@ -113,7 +113,7 @@ class ResultsController < ApplicationController
     end
 
     groupings = Grouping.get_groupings_for_assignment(assignment,
-                                                      current_user).includes(:group)
+                                                      current_user)
 
     unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
       # We sort by group name by default
