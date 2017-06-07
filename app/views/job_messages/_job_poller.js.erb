@@ -1,4 +1,4 @@
- $('#notice').find('#job-messenger').html("<div class='warning'> <%= "#{I18n.t('job_poller.processing_message')} #{processing_message}" %> </div> ");
+$('#notice').find('#job-messenger').html("<div class='warning'> <%= "#{I18n.t('job_poller.processing_message')} #{processing_message}" %> </div> ");
 
 function poll() {
 	$.ajax({
