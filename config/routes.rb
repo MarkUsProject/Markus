@@ -98,7 +98,7 @@ Markus::Application.routes.draw do
         member do
           get 'download'
           patch 'generate'
-          get 'create_template_division_dialog'
+          get 'create_division_dialog'
           post 'create_template_division'
         end
       end
