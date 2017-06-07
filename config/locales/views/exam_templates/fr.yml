@@ -36,9 +36,9 @@ fr:
       title:
         "Générer des copies d'examen"
       copies_label:
-        "Nombre de copies:"
+        "Nombre de copies"
       index_label:
-        "Index de départ:"
+        "Index de départ"
 
   flash:
     exam_templates:
