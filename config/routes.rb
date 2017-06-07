@@ -98,7 +98,6 @@ Markus::Application.routes.draw do
         member do
           get 'download'
           patch 'generate'
-          get 'destroy'
         end
       end
 

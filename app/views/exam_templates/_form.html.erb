@@ -1,21 +1,14 @@
 <%= form_for [@assignment, exam_template],
              html: { multipart: true } do |f| %>
   <%= f.error_messages%>
-  <div class='template-pane'>
-    <h4>
-      <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
-    </h4>
-    <h4>
-      <%= link_to t('exam_templates.delete.general'), action: 'destroy', id: exam_template.id %>
-    </h4>
-    <h4><%= ExamTemplate.human_attribute_name('name') %>: <%= exam_template.name %></h4>
-    <h4><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></h4>
-    <h4><%= ExamTemplate.human_attribute_name('filename') %>: <%= exam_template.filename %></h4>
-  </div>
 
   <div class="exam-template-section">
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
+      <%= link_to t('exam_templates.delete.general'),
+                  [@assignment, exam_template],
+                  method: :delete,
+                  data: { confirm: 'Are you sure you want to delete #{exam_template.name}?' } %>
     </p>
   </div>
 
