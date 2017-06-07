@@ -229,10 +229,10 @@ class ExamTemplate < ActiveRecord::Base
                 'application/pdf'
         )
         repo.commit(txn)
+        SubmissionsJob.perform_now([grouping],
+                                   apply_late_penalty: false,
+                                   revision_number: repo.get_latest_revision.revision_number)
       end
-      SubmissionsJob.perform_now([grouping],
-                                 apply_late_penalty: false,
-                                 revision_number: 2)
     end
   end
 
