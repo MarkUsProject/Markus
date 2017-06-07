@@ -10,19 +10,18 @@
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
-      html_options: { onclick:'modal_create_new.open()' } },
-    { link_text:  t('template_divisions.create.add_new'),
-      link_path: '#',
-      html_options: { id: 'createNewDivision' } }
+      html_options: { onclick:'modal_create_new.open()' } }
 ] %>
 
 <!-- Modals -->
 <%= render partial: 'create_new_template',
            layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'create_new_division',
-           layout: 'layouts/modal_dialog'  %>
 
-<%= render partial: 'form',
-           locals: { exam_template: @exam_templates[0] }%>
-<%= render partial: 'generate_form',
-           locals: { exam_template: @exam_templates[0] }%>
+<% @exam_templates.each do |exam_template| %>
+    <%= render partial: 'form',
+               locals: { exam_template: exam_template }%>
+    <%= render partial: 'generate_form',
+               locals: { exam_template: exam_template }%>
+<% end %>
+
+<aside class='dialog' id='create_new_division'></aside>
