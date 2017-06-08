@@ -3,17 +3,15 @@ $(document).ready(function() {
   window.modal_create_new_division = new ModalMarkus('#create_new_division');
 
   $("form").submit(function(event){
+      var start;
+      var label;
+      var end;
       $(this).find('.new').each(
           function(index){
-              var label, start, end;
-              if ($(this).attr("id") == 'new_label') {
-                  label = $(this).val();
-              } else if ($(this).attr("id") == 'new_start') {
-                  start = parseInt($(this).val());
-              } else {
-                  end = parseInt($(this).val());
-              }
-
+              label = $(this).find('#new_label').val();
+              start = $(this).find('#new_start').val();
+              end = $(this).find('#new_end').val();
+              
               $.ajax({
                   url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template.id) %>',
                   method: 'POST',
@@ -21,10 +19,13 @@ $(document).ready(function() {
                       label: label,
                       start: start,
                       end: end
-                  }
+                  },
+                  dataType: 'json',
+                  success: 'success'
               });
           }
       );
+
   });
 });
 
@@ -32,15 +33,15 @@ function add_template_division() {
     var new_id = new Date().getTime();
     var input_id = 'exam_template_template_divisions_attributes' + new_id;
     var new_division_row = `
-        <li id="${input_id}_holder">
+        <li id="${input_id}_holder" class="new">
           <span class="label">
-            <input type="text" required="required" class="new" id="new_label">
+            <input type="text" required="required" id="new_label">
           </span>
           <span class="start">
-            <input type="number" required="required" class="new" id="new_start">
+            <input type="number" required="required" id="new_start">
           </span>
           <span class="end">
-            <input type="number" required="required" class="new" id="new_end">
+            <input type="number" required="required" id="new_end">
           </span>
           <span class="delete">
             <a onclick="remove_template_division(\'${input_id}\'); return false;">
