@@ -215,30 +215,25 @@ class ExamTemplate < ActiveRecord::Base
           )
         end
 
-        cover_pdf = CombinePDF.new
-        pages.each do |page_num, page|
-          if page_num == 1
-            cover_pdf << page
-            break
-          end
-        end
-        txn.add(File.join(assignment_folder,
-                          "COVER.pdf"),
-                cover_pdf.to_pdf,
-                'application/pdf'
-        )
-
         # Pages that don't belong to any division
         extra_pages = pages.reject do |page_num, _|
           template_divisions.any? do |division|
-            (division.start <= page_num && page_num <= division.end) || page_num == 1
+            (division.start <= page_num && page_num <= division.end)
           end
         end
+        extra_pages.sort_by! { |page_num, _| page_num }
         extra_pdf = CombinePDF.new
-        extra_pdf << extra_pages.collect { |_, page| page }
+        cover_pdf = CombinePDF.new
+        cover_pdf << extra_pages[0][1]
+        extra_pdf << extra_pages[1..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
                 extra_pdf.to_pdf,
+                'application/pdf'
+        )
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_pdf,
                 'application/pdf'
         )
         repo.commit(txn)
