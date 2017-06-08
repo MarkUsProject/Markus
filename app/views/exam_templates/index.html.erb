@@ -2,7 +2,8 @@
   <% @exam_templates.each do |exam_template| %>
     <script>
       <%= render partial: 'boot',
-                 formats: [:js] %>
+                 formats: [:js],
+                 locals: { exam_template: exam_template } %>
     </script>
   <% end %>
 <% end %>
