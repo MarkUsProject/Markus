@@ -315,6 +315,9 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    if params[:scanned].present?
+      @assignment.scanned_exam = true
+    end
     @clone_assignments = Assignment.where(allow_web_submits: false)
                                    .order(:id)
     @sections = Section.all
