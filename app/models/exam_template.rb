@@ -227,17 +227,17 @@ class ExamTemplate < ActiveRecord::Base
         start_page = 0
         if extra_pages[0][0] == 1
           cover_pdf << extra_pages[0][1]
-          txn.add(File.join(assignment_folder,
-                            "COVER.pdf"),
-                  cover_pdf.to_pdf,
-                  'application/pdf'
-          )
           start_page = 1
         end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
                 extra_pdf.to_pdf,
+                'application/pdf'
+        )
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_pdf,
                 'application/pdf'
         )
         repo.commit(txn)
