@@ -4,8 +4,10 @@ $(document).ready(function() {
 });
 
 function add_template_division() {
+    var new_id = new Date().getTime();
+    var input_id = 'template_division_start_end_label_' + new_id;
     var new_division_row =
-        '<li>' +
+        '<li id="' + input_id + '_holder">' +
         '<span class="label">' +
         '<input type="text">' +
         '</span>' +
@@ -16,8 +18,13 @@ function add_template_division() {
         '<input type="number">' +
         '</span>' +
         '<span class="delete">' +
-        '<a href="https://google.com">remove</a>' +
+        '<a onclick="remove_template_division(\''+input_id+'\'); return false;">' +
+        '<%= t(:remove) %></a>' +
         '</span>' +
         '</li>';
     $('.template-division-section').append($(new_division_row));
+}
+
+function remove_template_division(input_id) {
+    $('#' + input_id + '_holder').remove();
 }
