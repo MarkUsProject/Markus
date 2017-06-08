@@ -1066,6 +1066,7 @@ class AssignmentsController < ApplicationController
         :invalid_override,
         :section_groups_only,
         :only_required_files,
+        :scanned_exam,
         section_due_dates_attributes: [:_destroy,
                                        :id,
                                        :section_id,
