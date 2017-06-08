@@ -1,8 +1,10 @@
 <% content_for :head do %>
-  <script>
-    <%= render partial: 'boot',
-               formats: [:js] %>
-  </script>
+  <% @exam_templates.each do |exam_template| %>
+    <script>
+      <%= render partial: 'boot',
+                 formats: [:js] %>
+    </script>
+  <% end %>
 <% end %>
 
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
