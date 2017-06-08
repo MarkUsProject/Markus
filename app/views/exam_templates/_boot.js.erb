@@ -2,3 +2,22 @@ $(document).ready(function() {
   window.modal_create_new   = new ModalMarkus('#create_new_template');
   window.modal_create_new_division = new ModalMarkus('#create_new_division');
 });
+
+function add_template_division() {
+    var new_division_row =
+        '<li>' +
+        '<span class="label">' +
+        '<input type="text">' +
+        '</span>' +
+        '<span class="start">' +
+        '<input type="number">' +
+        '</span>' +
+        '<span class="end">' +
+        '<input type="number">' +
+        '</span>' +
+        '<span class="delete">' +
+        '<a href="https://google.com">remove</a>' +
+        '</span>' +
+        '</li>';
+    $('.template-division-section').append($(new_division_row));
+}

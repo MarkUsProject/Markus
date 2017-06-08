@@ -30,10 +30,9 @@
   <div class="exam-template-section">
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
     <p class="alignright">
-      <%= link_to(
-              t('template_divisions.create.add_new'),
-              create_division_dialog_assignment_exam_template_path(@assignment, id: exam_template.id),
-              remote: true ) %>
+      <%= link_to 'Add Template Division',
+                  '#',
+                  onClick: 'add_template_division(); return false;' %>
     </p>
     <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <%= render partial: 'template_division_pane',
