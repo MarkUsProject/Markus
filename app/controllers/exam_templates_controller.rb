@@ -83,8 +83,8 @@ class ExamTemplatesController < ApplicationController
     new_template_division = template.template_divisions.new_with_input(
       assignment.id,
       label: division_label,
-      start: division_start,
-      end: division_end
+      start: division_start.to_i,
+      end: division_end.to_i
     )
     # sending flash message if saved
     if new_template_division.save
