@@ -17,6 +17,8 @@
 
 <%= form_for @assignment do |f| %>
 
+  <input type="hidden" name="assignment[scanned_exam]" value="<%= @is_scanned %>">
+
   <label class='required'><%= t('assignment.required_fields') %></label>
 
   <%# Assignment properties %>
@@ -123,6 +125,7 @@
                        placeholder: t('date.formats.datetime_placeholder') %>
     </div>
 
+    <% if !@is_scanned %>
     <div>
       <%= f.check_box :allow_web_submits,
                       onclick: 'set_onbeforeunload(true);' %>
@@ -136,6 +139,7 @@
       <%= f.label :vcs_submit,
                   t('assignment.vcs_submit') %>
     </div>
+    <% end %>
 
     <div>
       <%= f.check_box :display_grader_names_to_students,
@@ -157,6 +161,7 @@
     </div>
   </fieldset>
 
+  <% if !@is_scanned %>
   <%# Required files %>
   <fieldset>
     <legend>
@@ -387,6 +392,7 @@
       </div>
     <% end %>
   </fieldset>
+  <% end %>
 
   <%# Remark request rules %>
   <fieldset>
