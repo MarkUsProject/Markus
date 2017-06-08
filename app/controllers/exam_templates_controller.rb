@@ -95,15 +95,6 @@ class ExamTemplatesController < ApplicationController
     redirect_to action: 'index'
   end
 
-  # Dialog to create template division.
-  def create_division_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    @exam_template = @assignment.exam_templates.find(params[:id])
-
-    render partial: 'exam_templates/create_division_dialog',
-           formats: [:js], handlers: [:erb]
-  end
-
   def generate
     copies = params[:numCopies].to_i
     index = params[:examTemplateIndex].to_i
