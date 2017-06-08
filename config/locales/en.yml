@@ -107,6 +107,7 @@ en:
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
     create_new_assignment:      "Add Assignment"
+    create_new_scanned_assignment:  "Add Scanned Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     incorrect_format:   "Incorrect format"

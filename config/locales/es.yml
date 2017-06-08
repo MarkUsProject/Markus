@@ -114,6 +114,7 @@ es:
     deadline_grace_tokens:     "Fecha límite utilizando todos los <br> aplazamientos de gracia restantes <br>"
     deadline_max_penalty:      "Fecha límite incluyendo la <br> máxima penalidad por demora <br>"
     create_new_assignment:     "Añadir proyecto"
+    create_new_scanned_assignment:  "Añadir proyecto escaneado"
     manage_course_work:        "Administrar trabajos del curso"
     repository_folder:         "Carpeta del repositorio"
     incorrect_format:          "Formato incorrecto"
