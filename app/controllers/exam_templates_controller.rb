@@ -76,9 +76,9 @@ class ExamTemplatesController < ApplicationController
   def create_template_division
     assignment = Assignment.find(params[:assignment_id])
     template = assignment.exam_templates.find(params[:id])
-    division_start = params[:create_division][:start]
-    division_end = params[:create_division][:end]
-    division_label = params[:create_division][:label]
+    division_start = params[:start]
+    division_end = params[:end]
+    division_label = params[:label]
 
     new_template_division = template.template_divisions.new_with_input(
       assignment.id,
