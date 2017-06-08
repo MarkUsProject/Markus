@@ -9,11 +9,14 @@
 
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
-      link_path: '#',
+      #link_path: '#',
       html_options: { onclick:'modal_create_new.open()' } }
 ] %>
 
 <!-- Modals -->
+<%= render partial: 'create_new_template',
+           layout: 'layouts/modal_dialog'  %>
+
 <% @exam_templates.each do |exam_template| %>
   <fieldset>
     <legend> <%= exam_template.name.upcase %> </legend>
