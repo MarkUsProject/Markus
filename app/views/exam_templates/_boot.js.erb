@@ -11,7 +11,6 @@ $(document).ready(function() {
               label = $(this).find('#new_label').val();
               start = $(this).find('#new_start').val();
               end = $(this).find('#new_end').val();
-              
               $.ajax({
                   url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template.id) %>',
                   method: 'POST',
