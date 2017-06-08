@@ -118,6 +118,17 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
+  def destroy
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    if exam_template.destroy
+      flash_message(:success, t('exam_templates.delete.success'))
+    else
+      flash_message(:failure, t('exam_templates.delete.failure'))
+    end
+    redirect_to action: 'index'
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(

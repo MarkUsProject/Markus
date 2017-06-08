@@ -5,6 +5,10 @@
   <div class="exam-template-section">
     <p class="alignright">
       <%= link_to t('exam_templates.download'), download_assignment_exam_template_path(id: exam_template.id) %>
+      <%= link_to t('exam_templates.delete.general'),
+                  [@assignment, exam_template],
+                  method: :delete,
+                  data: { confirm: t('exam_templates.delete.confirm', name: exam_template.name) } %>
     </p>
   </div>
 

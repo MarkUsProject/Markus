@@ -1,5 +1,11 @@
 <div class='title_bar'>
-  <h1><%= t(:create_new_assignment) %></h1>
+  <h1><%=
+    if @assignment.scanned_exam
+      t(:create_new_scanned_assignment)
+    else
+      t(:create_new_assignment)
+    end
+  %></h1>
 </div>
 
 <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
