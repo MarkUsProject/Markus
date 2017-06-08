@@ -88,7 +88,20 @@ class ExamTemplatesController < ApplicationController
   end
 
   def split
-
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    split_exam = params[:exam_template][:pdf_to_split]
+    unless split_exam.nil?
+      if split_exam.content_type != 'application/pdf'
+        flash_message(:error, 'Invalid file type')
+      else
+        exam_template.split_pdf(split_exam.path)
+        flash_message(:success, 'Exam successfully split')
+        redirect_to action: 'index'
+      end
+    else
+      flash_message(:error, 'Missing File')
+    end
   end
 
   def exam_template_params
