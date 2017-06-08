@@ -32,7 +32,7 @@
     <p class="alignright">
       <%= link_to 'Add Template Division',
                   '#',
-                  onClick: 'add_template_division(); return false;' %>
+                  onClick: 'add_template_division(' + exam_template.id.to_s + '); return false;' %>
     </p>
     <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <%= render partial: 'template_division_pane',

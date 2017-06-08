@@ -3,7 +3,8 @@ $(document).ready(function() {
   window.modal_create_new_division = new ModalMarkus('#create_new_division');
 });
 
-function add_template_division() {
+function add_template_division(exam_template_id) {
+    var exam_template_id = parseInt(exam_template_id);
     var new_id = new Date().getTime();
     var input_id = 'exam_template_template_divisions_attributes' + new_id;
     var new_division_row = `
@@ -22,11 +23,12 @@ function add_template_division() {
               <%= t(:remove) %>
             </a>
           </span>
-        </li>`
-        ;
+        </li>
+      `;
     $('.template-division-section').append($(new_division_row));
 }
 
 function remove_template_division(input_id) {
     $('#' + input_id + '_holder').remove();
 }
+
