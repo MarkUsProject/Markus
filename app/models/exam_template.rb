@@ -224,8 +224,12 @@ class ExamTemplate < ActiveRecord::Base
         extra_pages.sort_by! { |page_num, _| page_num }
         extra_pdf = CombinePDF.new
         cover_pdf = CombinePDF.new
-        cover_pdf << extra_pages[0][1]
-        extra_pdf << extra_pages[1..extra_pages.size].collect { |_, page| page }
+        start_page = 0
+        if extra_pages[0][0] == 1
+          cover_pdf << extra_pages[0][1]
+          start_page = 1
+        end
+        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
                 extra_pdf.to_pdf,
