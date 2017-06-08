@@ -44,6 +44,20 @@ en:
       generate:
         "Generate"
 
+    split:
+      success:
+        "Exam successfully split"
+      invalid:
+        "Invalid file type"
+      missing:
+        "Missing File"
+      title:
+        "Split Exam"
+      instruction:
+        "Upload PDF Exam"
+      split:
+        "Split"
+
   flash:
     exam_templates:
       update:
