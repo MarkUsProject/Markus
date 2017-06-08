@@ -168,6 +168,7 @@ class ExamTemplate < ActiveRecord::Base
     complete_dir = File.join(base_path, 'complete')
     incomplete_dir = File.join(base_path, 'incomplete')
 
+    groupings = []
     partial_exams.each do |exam_num, pages|
       next if pages.empty?
       pages.sort_by! { |page_num, _| page_num }
@@ -190,7 +191,7 @@ class ExamTemplate < ActiveRecord::Base
         repo_name: group_name_for(exam_num)
       )
 
-      Grouping.create(
+      groupings << Grouping.create(
         group: group,
         assignment: assignment
       )
@@ -231,6 +232,7 @@ class ExamTemplate < ActiveRecord::Base
         repo.commit(txn)
       end
     end
+    SubmissionsJob.perform_now(groupings)
   end
 
   def group_name_for(exam_num)
