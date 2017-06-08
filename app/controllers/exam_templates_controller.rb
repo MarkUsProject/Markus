@@ -97,11 +97,11 @@ class ExamTemplatesController < ApplicationController
       else
         exam_template.split_pdf(split_exam.path)
         flash_message(:success,t('exam_templates.split.success'))
-        redirect_to action: 'index'
       end
     else
       flash_message(:error, t('exam_templates.split.missing'))
     end
+    redirect_to action: 'index'
   end
 
   def destroy
