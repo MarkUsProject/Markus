@@ -93,14 +93,14 @@ class ExamTemplatesController < ApplicationController
     split_exam = params[:exam_template][:pdf_to_split]
     unless split_exam.nil?
       if split_exam.content_type != 'application/pdf'
-        flash_message(:error, 'Invalid file type')
+        flash_message(:error, t('exam_templates.split.invalid'))
       else
         exam_template.split_pdf(split_exam.path)
-        flash_message(:success, 'Exam successfully split')
+        flash_message(:success,t('exam_templates.split.success'))
         redirect_to action: 'index'
       end
     else
-      flash_message(:error, 'Missing File')
+      flash_message(:error, t('exam_templates.split.missing'))
     end
   end
 

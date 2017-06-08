@@ -40,6 +40,18 @@ fr:
       index_label:
         "Index de départ:"
 
+    split:
+      success:
+        "Examen divisé avec succès"
+      invalid:
+        "type de fichier invalide"
+      missing:
+        "Fichier manquant"
+      title:
+        "Examen partagé"
+      instruction:
+        "Télécharger l'examen PDF"
+
   flash:
     exam_templates:
       update:

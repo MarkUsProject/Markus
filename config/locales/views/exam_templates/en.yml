@@ -40,6 +40,18 @@ en:
       index_label:
         "Start Index:"
 
+    split:
+      success:
+        "Exam successfully split"
+      invalid:
+        "Invalid file type"
+      missing:
+        "Missing File"
+      title:
+        "Split Exam"
+      instruction:
+        "Upload PDF Exam"
+
   flash:
     exam_templates:
       update:

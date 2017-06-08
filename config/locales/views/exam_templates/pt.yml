@@ -40,6 +40,18 @@ pt:
       index_label:
         "Índice inicial:"
 
+    split:
+      success:
+        "Exame dividido com êxito"
+      invalid:
+        "Tipo de arquivo inválido"
+      missing:
+        "Arquivo desaparecido"
+      title:
+        "Exame dividido"
+      instruction:
+        "Carregar Exame PDF"
+
   flash:
     exam_templates:
       update:

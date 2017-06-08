@@ -2,8 +2,8 @@
              html: { multipart: true } do |f| %>
 
     <fieldset>
-      <legend><%= "Split Exam" %></legend>
-      <%= f.label "Upload PDF Exam" %>
+      <legend><%= t('exam_templates.split.title') %></legend>
+      <%= f.label t('exam_templates.split.instruction') %>
       <%= f.file_field :pdf_to_split %>
       <p><%= submit_tag t(:submit) %></p>
     </fieldset>
