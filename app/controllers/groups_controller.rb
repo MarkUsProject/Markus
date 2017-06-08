@@ -176,7 +176,7 @@ class GroupsController < ApplicationController
         group_name: next_grouping.group.group_name,
         grouping_id: next_grouping.id,
         filelink: download_assignment_groups_path(
-          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'EXTRA.pdf').id,
+          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
           show_in_browser: true ),
         students: names,
         num_total: num_total,

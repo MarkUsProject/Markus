@@ -168,6 +168,7 @@ class ExamTemplate < ActiveRecord::Base
     complete_dir = File.join(base_path, 'complete')
     incomplete_dir = File.join(base_path, 'incomplete')
 
+    groupings = []
     partial_exams.each do |exam_num, pages|
       next if pages.empty?
       pages.sort_by! { |page_num, _| page_num }
@@ -190,7 +191,7 @@ class ExamTemplate < ActiveRecord::Base
         repo_name: group_name_for(exam_num)
       )
 
-      Grouping.create(
+      groupings << Grouping.create(
         group: group,
         assignment: assignment
       )
@@ -221,16 +222,29 @@ class ExamTemplate < ActiveRecord::Base
             division.start <= page_num && page_num <= division.end
           end
         end
+        extra_pages.sort_by! { |page_num, _| page_num }
         extra_pdf = CombinePDF.new
-        extra_pdf << extra_pages.collect { |_, page| page }
+        cover_pdf = CombinePDF.new
+        start_page = 0
+        if extra_pages[0][0] == 1
+          cover_pdf << extra_pages[0][1]
+          start_page = 1
+        end
+        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
                 extra_pdf.to_pdf,
                 'application/pdf'
         )
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_pdf,
+                'application/pdf'
+        )
         repo.commit(txn)
       end
     end
+    SubmissionsJob.perform_now(groupings)
   end
 
   def group_name_for(exam_num)

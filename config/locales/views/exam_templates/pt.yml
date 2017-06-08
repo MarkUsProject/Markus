@@ -18,6 +18,8 @@ pt:
         "Modelo de exame não foi excluído com sucesso"
       template_divisions:
         "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
+      confirm:
+        "Tem certeza de que deseja excluir %{name}?"
     create:
       add_new:
         "Adicionar modelo de exame"
@@ -36,9 +38,11 @@ pt:
       title:
         "Gerar cópias de exame"
       copies_label:
-        "Número de cópias:"
+        "Número de cópias"
       index_label:
-        "Índice inicial:"
+        "Índice inicial"
+      generate:
+        "Gerar"
 
     split:
       success:

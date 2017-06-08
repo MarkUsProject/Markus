@@ -19,6 +19,11 @@
               { controller: 'assignments',
                 action: 'new' },
               class: 'button' %>
+  <%= link_to t(:create_new_scanned_assignment),
+              { controller: 'assignments',
+                scanned: true,
+                action: 'new' },
+              class: 'button' %>
   <%= link_to t(:create_new_grade_entry_form),
               { controller: 'grade_entry_forms',
                 action: 'new' },

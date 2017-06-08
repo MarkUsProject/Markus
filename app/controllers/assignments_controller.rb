@@ -315,6 +315,9 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    if params[:scanned].present?
+      @assignment.scanned_exam = true
+    end
     @clone_assignments = Assignment.where(allow_web_submits: false)
                                    .order(:id)
     @sections = Section.all
@@ -1066,6 +1069,7 @@ class AssignmentsController < ApplicationController
         :invalid_override,
         :section_groups_only,
         :only_required_files,
+        :scanned_exam,
         section_due_dates_attributes: [:_destroy,
                                        :id,
                                        :section_id,

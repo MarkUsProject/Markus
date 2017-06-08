@@ -18,6 +18,8 @@ en:
         "Exam Template not successfully deleted"
       template_divisions:
         "Add/edit template divisions(s) of the exam template:"
+      confirm:
+        "Are you sure you want to delete %{name}?"
     create:
       add_new:
         "Add Exam Template"
@@ -36,9 +38,11 @@ en:
       title:
         "Generate Exam Copies"
       copies_label:
-        "Number of Copies:"
+        "Number of Copies"
       index_label:
-        "Start Index:"
+        "Start Index"
+      generate:
+        "Generate"
 
     split:
       success:

@@ -18,6 +18,8 @@ es:
         "Plantilla de examen no eliminada correctamente"
       template_divisions:
         "Añadir / editar divisiones de plantilla de la plantilla de examen:"
+      confirm:
+        "Está seguro de que desea eliminar %{name}?"
     create:
       add_new:
         "Añadir plantilla de examen"
@@ -34,11 +36,13 @@ es:
       success:
         "Exitosamente generó %{copies} copias del examen"
       title:
-          "Generar copias de exámenes"
+        "Generar copias de exámenes"
       copies_label:
-          "Número de copias:"
+        "Número de copias"
       index_label:
-          "Índice de comienzo:"
+        "Índice de comienzo"
+      generate:
+        "Gerar"
 
     split:
       success:
