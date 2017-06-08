@@ -55,6 +55,8 @@ es:
         "Dividir el examen"
       instruction:
         "Subir un examen PDF"
+      split:
+        "División"
 
   flash:
     exam_templates:

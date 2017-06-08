@@ -14,16 +14,6 @@
 ] %>
 
 <!-- Modals -->
-<%= render partial: 'create_new_template',
-           layout: 'layouts/modal_dialog'  %>
-
-<%= render partial: 'form',
-           locals: { exam_template: @exam_templates[0] }%>
-<%= render partial: 'generate_form',
-           locals: { exam_template: @exam_templates[0] }%>
-<%= render partial: 'split_form',
-           locals: { exam_template: @exam_templates[0] }%>
-
 <% @exam_templates.each do |exam_template| %>
   <fieldset>
     <legend> <%= exam_template.name.upcase %> </legend>
@@ -34,6 +24,13 @@
       <h3><%= t('exam_templates.generate.title') %></h3>
       <p>
         <%= render partial: 'generate_form',
+                   locals: { exam_template: exam_template } %>
+      </p>
+    </div>
+    <div class="split-section">
+      <h3><%= t('exam_templates.split.title') %></h3>
+      <p>
+        <%= render partial: 'split_form',
                    locals: { exam_template: exam_template } %>
       </p>
     </div>

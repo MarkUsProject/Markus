@@ -55,6 +55,8 @@ fr:
         "Examen partagé"
       instruction:
         "Télécharger l'examen PDF"
+      split:
+        "Divisé"
 
   flash:
     exam_templates:

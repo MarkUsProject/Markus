@@ -55,6 +55,8 @@ en:
         "Split Exam"
       instruction:
         "Upload PDF Exam"
+      split:
+        "Split"
 
   flash:
     exam_templates:

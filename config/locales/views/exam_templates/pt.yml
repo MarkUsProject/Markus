@@ -55,6 +55,8 @@ pt:
         "Exame dividido"
       instruction:
         "Carregar Exame PDF"
+      split:
+        "Dividido"
 
   flash:
     exam_templates:
