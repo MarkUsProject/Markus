@@ -218,7 +218,7 @@ class ExamTemplate < ActiveRecord::Base
         # Pages that don't belong to any division
         extra_pages = pages.reject do |page_num, _|
           template_divisions.any? do |division|
-            (division.start <= page_num && page_num <= division.end)
+            division.start <= page_num && page_num <= division.end
           end
         end
         extra_pages.sort_by! { |page_num, _| page_num }
