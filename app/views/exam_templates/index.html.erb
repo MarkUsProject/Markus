@@ -1,11 +1,11 @@
 <% content_for :head do %>
-  <% @exam_templates.each do |exam_template| %>
-    <script>
-      <%= render partial: 'boot',
-                 formats: [:js],
-                 locals: { exam_template: exam_template } %>
-    </script>
-  <% end %>
+    <% @exam_templates.each do |exam_template| %>
+        <script>
+            <%= render partial: 'boot',
+                       formats: [:js],
+                       locals: { exam_template_id: exam_template.id } %>
+        </script>
+    <% end %>
 <% end %>
 
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>

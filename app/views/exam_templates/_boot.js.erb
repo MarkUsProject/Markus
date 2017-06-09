@@ -1,33 +1,33 @@
 $(document).ready(function() {
-  window.modal_create_new   = new ModalMarkus('#create_new_template');
+    window.modal_create_new   = new ModalMarkus('#create_new_template');
 
-  $("form").submit(function(event){
-      var start;
-      var label;
-      var end;
-      $(this).find('.new').each(
-          function(index){
-              label = $(this).find('#new_label').val();
-              start = $(this).find('#new_start').val();
-              end = $(this).find('#new_end').val();
-              $.ajax({
-                  url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template.id) %>',
-                  method: 'POST',
-                  data: {
-                      label: label,
-                      start: start,
-                      end: end
-                  },
-                  dataType: 'json',
-                  success: 'success'
-              });
-          }
-      );
+    $('.template-form-' + '2').submit(function(event){
+        var start;
+        var label;
+        var end;
+        $(this).find('.new').each(
+            function(index){
+                label = $(this).find('#new_label').val();
+                start = $(this).find('#new_start').val();
+                end = $(this).find('#new_end').val();
+                $.ajax({
+                    url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: 2) %>',
+                    method: 'POST',
+                    data: {
+                        label: label,
+                        start: start,
+                        end: end
+                    },
+                    dataType: 'json',
+                    success: 'success'
+                });
+            }
+        );
 
-  });
+    });
 });
 
-function add_template_division() {
+function add_template_division(id) {
     var new_id = new Date().getTime();
     var input_id = 'exam_template_template_divisions_attributes' + new_id;
     var new_division_row = `
@@ -48,7 +48,7 @@ function add_template_division() {
           </span>
         </li>
       `;
-    $('.template-division-section').append($(new_division_row));
+    $('.template-division-section-' + id).append($(new_division_row));
 }
 
 function remove_template_division(input_id) {
