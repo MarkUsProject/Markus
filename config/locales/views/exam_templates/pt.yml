@@ -44,6 +44,20 @@ pt:
       generate:
         "Gerar"
 
+    split:
+      success:
+        "Exame dividido com êxito"
+      invalid:
+        "Tipo de arquivo inválido"
+      missing:
+        "Arquivo desaparecido"
+      title:
+        "Exame dividido"
+      instruction:
+        "Carregar Exame PDF"
+      split:
+        "Dividido"
+
   flash:
     exam_templates:
       update:

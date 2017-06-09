@@ -33,5 +33,12 @@
                    locals: { exam_template: exam_template } %>
       </p>
     </div>
+    <div class="split-section">
+      <h3><%= t('exam_templates.split.title') %></h3>
+      <p>
+        <%= render partial: 'split_form',
+                   locals: { exam_template: exam_template } %>
+      </p>
+    </div>
   </fieldset>
 <% end %>

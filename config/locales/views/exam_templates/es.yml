@@ -44,6 +44,20 @@ es:
       generate:
         "Gerar"
 
+    split:
+      success:
+        "Examen con éxito dividido"
+      invalid:
+        "tipo de archivo invalido"
+      missing:
+        "Archivo perdido"
+      title:
+        "Dividir el examen"
+      instruction:
+        "Subir un examen PDF"
+      split:
+        "División"
+
   flash:
     exam_templates:
       update:
