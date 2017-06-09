@@ -2,13 +2,13 @@
     <script>
         <%= render partial: 'boot',
                    formats: [:js],
-                   locals: { exam_template_id: exam_template.id } %>
+                   locals: { exam_template: exam_template } %>
     </script>
 <% end %>
 
 <%= form_for [@assignment, exam_template],
              html: { multipart: true,
-                     class: exam_template.id.to_s} do |f| %>
+                     class: 'form_' + exam_template.id.to_s} do |f| %>
   <%= f.error_messages%>
 
   <div class="exam-template-section">

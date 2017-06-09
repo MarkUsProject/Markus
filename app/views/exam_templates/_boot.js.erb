@@ -1,7 +1,7 @@
 $(document).ready(function() {
     window.modal_create_new   = new ModalMarkus('#create_new_template');
 
-    $('form').submit(function(event){
+    $('.form_' + '<%= exam_template.id %>').submit(function(event){
         var label;
         var start;
         var end;
@@ -12,7 +12,7 @@ $(document).ready(function() {
                 end = $(this).find('#new_end').val();
                 $.ajax({
                     method: 'POST',
-                    url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template_id) %>',
+                    url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template.id) %>',
                     data: {
                         label: label,
                         start: start,
