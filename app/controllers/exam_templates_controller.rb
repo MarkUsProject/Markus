@@ -51,8 +51,8 @@ class ExamTemplatesController < ApplicationController
     old_exam_template = assignment.exam_templates.find_by(id: params[:id])
     # updating exam template file
     new_uploaded_io = params[:exam_template][:new_template]
-    new_uploaded_filename = new_uploaded_io.original_filename
     unless new_uploaded_io.nil?
+      new_uploaded_filename = new_uploaded_io.original_filename
       # error checking when new_uploaded_io is not pdf
       if new_uploaded_io.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.update.failure'))
