@@ -79,12 +79,12 @@ class ExamTemplate < ActiveRecord::Base
       assignment_name
     )
 
-    File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
+    File.open(File.join(template_path, attributes[:old_filename]), 'wb') do |f|
       f.write blob
     end
 
     pdf = CombinePDF.parse blob
-    self.update(num_pages: pdf.pages.length)
+    self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
   end
 
   # Generate copies of the given exam template, with the given start number.
