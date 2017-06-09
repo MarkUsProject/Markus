@@ -17,11 +17,11 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     new_uploaded_io = params[:create_template][:file_io]
     name_input = params[:create_template][:name]
-    filename = new_uploaded_io.original_filename
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
-    if filename.nil? || new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
+    if new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.create.failure'))
     else
+      filename = new_uploaded_io.original_filename
       new_template = ExamTemplate.new_with_file(new_uploaded_io.read,
                                                 assignment_id: assignment.id,
                                                 filename: filename,
