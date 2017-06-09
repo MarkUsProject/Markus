@@ -1,6 +1,14 @@
+<% content_for :head do %>
+    <script>
+        <%= render partial: 'boot',
+                   formats: [:js],
+                   locals: { exam_template_id: exam_template.id } %>
+    </script>
+<% end %>
+
 <%= form_for [@assignment, exam_template],
              html: { multipart: true,
-                     class: 'template-form-' + exam_template.id.to_s} do |f| %>
+                     class: exam_template.id.to_s} do |f| %>
   <%= f.error_messages%>
 
   <div class="exam-template-section">
