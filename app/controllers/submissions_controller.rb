@@ -135,7 +135,7 @@ class SubmissionsController < ApplicationController
 
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
-    @revision_identifier = params[:current_revision_identifier].to_i
+    @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ?
                          false : params[:apply_late_penalty]
     SubmissionsJob.perform_now([@grouping],
