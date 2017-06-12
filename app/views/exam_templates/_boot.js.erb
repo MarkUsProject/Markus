@@ -1,7 +1,7 @@
 $(document).ready(function() {
     window.modal_create_new   = new ModalMarkus('#create_new_template');
 
-    $('.form_' + '<%= exam_template.id %>').submit(function(event){
+    $('.' + '<%= exam_template.id %>').submit(function(event){
         var label;
         var start;
         var end;
@@ -48,7 +48,7 @@ function add_template_division(id) {
           </span>
         </li>
       `;
-    $('.template-division-section-' + id).append($(new_division_row));
+    $('.template-division-section-' + id).append(new_division_row);
 }
 
 function remove_template_division(input_id) {
