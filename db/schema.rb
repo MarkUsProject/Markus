@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605184307) do
+ActiveRecord::Schema.define(version: 20170612181938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -453,6 +453,16 @@ ActiveRecord::Schema.define(version: 20170605184307) do
 
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
+
+  create_table "split_pdf_logs", force: :cascade do |t|
+    t.string   "state",          null: false
+    t.string   "split_filetype", null: false
+    t.string   "split_filename", null: false
+    t.string   "user",           null: false
+    t.string   "host",           null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
 
   create_table "submission_collectors", force: :cascade do |t|
     t.integer "child_pid"
