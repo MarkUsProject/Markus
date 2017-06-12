@@ -31,6 +31,9 @@
 <% # This file can't be cached %>
 <%= javascript_include_tag 'Grader/tabs_boot'%>
 
+<% # Mouse bindings %>
+<%= javascript_include_tag 'mousetrap.min' %>
+
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
            formats: [:html],
@@ -77,6 +80,9 @@
       end
     %>
     update_bar(<%= num_marked %>, <%= num_assigned %>);
+
+    <%= render partial: 'results/marker/keybinding',
+               formats: [:js] %>
   });
 
   function check_working() {

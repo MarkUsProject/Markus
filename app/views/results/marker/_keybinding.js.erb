@@ -1,0 +1,35 @@
+$criteria_list = $('#mark_criteria_pane_list>li:not(.unassigned)');
+
+Mousetrap.bind('shift+,', function(){
+  $('#student_selector>.left>a')[0].click();
+});
+Mousetrap.bind('shift+.', function(){
+  $('#student_selector>.right>a')[0].click();
+});
+Mousetrap.bind('tab', function(e){
+  e.preventDefault();
+  $next_criteria = $criteria_list.first();
+  $criteria_list.each(function(){
+      if($(this).hasClass('active-criteria')){
+          $next_criteria = $(this).next('li:not(.unassigned)');
+      }
+  });
+  activeCriteria($next_criteria);
+  return false;
+});
+Mousetrap.bind('right', function () {
+  $current_criteria = $('.active-criteria.assigned');
+  if($current_criteria.length){
+     if($current_criteria.hasClass('checkbox_criterion')){
+         $current_criteria.find('.mark_grade_input_checkbox:not(:checked)').click();
+     }
+  }
+});
+Mousetrap.bind('left', function () {
+    $current_criteria = $('.active-criteria.assigned');
+    if($current_criteria.length){
+        if($current_criteria.hasClass('checkbox_criterion')){
+            $current_criteria.find('.mark_grade_input_checkbox:not(:checked)').click();
+        }
+    }
+});

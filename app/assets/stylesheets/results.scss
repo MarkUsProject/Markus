@@ -112,3 +112,9 @@
     background-image: url(markus_logo_small@2x.png);
   }
 }
+
+.active-criteria {
+  -webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
+  -moz-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
+  box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
+}

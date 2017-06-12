@@ -231,6 +231,21 @@ function expand_unmarked(elem, criterion_class) {
   }
 }
 
+function activeCriteria($next_criteria){
+    if(!$next_criteria.hasClass('active-criteria')){
+        console.log($next_criteria.attr('id'));
+        $criteria_list = $('#mark_criteria_pane_list>li');
+        $criteria_list.removeClass('active-criteria');
+        $('#mark_viewer').animate({
+            scrollTop: ($next_criteria.offset().top - $criteria_list.first().offset().top)
+        }, 100);
+        $next_criteria.addClass('active-criteria');
+        if(!$next_criteria.hasClass('expanded')){
+            $next_criteria.children('.criterion_title').trigger('click');
+        }
+    }
+};
+
 // NOTE: This function is only called by rubric/flexible, not checkbox.
 // It should be upgraded to focus_mark_criterion_type() in the future.
 function focus_mark_criterion(id) {
@@ -278,6 +293,7 @@ function hide_criterion(id, criterion_class) {
     }
 
     document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+    $('#' + criterionPrefix + '_criterion_' + id).removeClass('active-criteria');
 
     if (nodeToHide !== null) {
         nodeToHide.removeClass('expanded');
@@ -300,6 +316,8 @@ function show_criterion(id, criterion_class) {
     document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
+    // alert('#' + classAddRemovePrefix + '_criterion_' + id);
+    activeCriteria($('#' + classAddRemovePrefix + '_criterion_' + id));
 }
 
 function select_mark(mark_id, mark) {
