@@ -1006,42 +1006,6 @@ class AssignmentsController < ApplicationController
     assignment
   end
 
-  def find_submission_for_test(grouping_id, revision_identifier)
-    Submission.find_by(grouping_id: grouping_id, revision_identifier: revision_identifier)
-  end
-
-  # Used every time a student access to the assignment page
-  # It checks if the due date is passed, and if not, it
-  # collect the last submission revision
-  def automatically_collect_and_prepare_test(grouping, revision_identifier)
-    # if there is no result for this grouping,
-    # do nothing, because a student of the grouping
-    # must run collec_and_test manually first
-    return if grouping.submissions.empty?
-    # Once it is time to collect files, student should'nt start to do tests
-    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
-      current_submission_used = grouping.submissions.find_by_submission_version_used(true)
-      if current_submission_used.revision_identifier < revision_identifier
-        new_submission = Submission.create_by_revision_identifier(grouping, revision_identifier)
-        new_submission.get_latest_result
-      else
-        current_submission_used.get_latest_result
-      end
-    end
-  end
-
-  # Used the first time a student from a grouping wanted
-  # to do test on his code
-  def manually_collect_and_prepare_test(grouping, revision_identifier)
-    # We check if it not the time to collect files
-    # Once it is time to collect files, student should'nt start to do tests
-    # And we create a submission with the latest revision of the svn
-    unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
-      new_submission = Submission.create_by_revision_identifier(grouping, revision_identifier)
-      new_submission.get_latest_result
-    end
-  end
-
   def assignment_params
     params.require(:assignment).permit(
         :short_identifier,
