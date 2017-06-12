@@ -2,6 +2,10 @@ namespace :db do
   desc 'Create a populated exam template assignment'
   task scanned_exam: :environment do
     puts 'Assignment 5: Scanned Exam'
+
+    # remove previously existing pdfs to create room for new ones
+    FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/*'))
+
     a = Assignment.create(
       short_identifier: 'midterm1',
       description: 'The first midterm',
