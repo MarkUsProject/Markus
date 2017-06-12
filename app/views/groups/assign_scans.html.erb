@@ -31,7 +31,8 @@
       }).data("ui-autocomplete")._renderItem = function(ul, item) {
           return $("<li>")
               .data("ui-autocomplete-item", item)
-              .append("<div>" + item.label + "<br><span class='stuid'>" + item.id_number + "</span></div>")
+              .append("<div>" + item.label + "<br>" +
+                  "<span class='stuid'>" + item.id_number + " | " + item.user_name + "</span></div>")
               .appendTo(ul);
       };
       $("#assign_student").submit(function (e) {
