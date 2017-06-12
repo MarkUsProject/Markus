@@ -111,8 +111,8 @@ class SubmissionFile < ActiveRecord::Base
   def retrieve_file(include_annotations=false)
     student_group = submission.grouping.group
     repo = student_group.repo
-    revision_number = submission.revision_number
-    revision = repo.get_revision(revision_number)
+    revision_identifier = submission.revision_identifier
+    revision = repo.get_revision(revision_identifier)
     if revision.files_at_path(path)[filename].nil?
       raise I18n.t('results.could_not_find_file',
                    filename: filename,
@@ -140,10 +140,10 @@ class SubmissionFile < ActiveRecord::Base
         FileUtils.rm(File.join(storage_path, self.filename))
       end
       repo = submission.grouping.group.repo
-      revision_number = submission.revision_number
+      revision_identifier = submission.revision_identifier
       repo.export(File.join(storage_path, self.filename),
                   File.join(self.path, self.filename),
-                  revision_number)
+                  revision_identifier)
     end
 
     # Let's check the file exists befor claiming the file has been exported

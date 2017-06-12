@@ -126,7 +126,7 @@ class AssignmentsController < ApplicationController
     else
       # We look for the information on this group...
       # The members
-      @studentmemberships =  @grouping.student_memberships
+      @studentmemberships = @grouping.student_memberships
       # The group name
       @group = @grouping.group
       # The inviter
@@ -134,8 +134,8 @@ class AssignmentsController < ApplicationController
 
       # Look up submission information
       repo = @grouping.group.repo
-      @revision  = repo.get_latest_revision
-      @revision_number = @revision.revision_number
+      @revision = repo.get_latest_revision
+      @revision_identifier = @revision.revision_identifier
 
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
@@ -654,14 +654,14 @@ class AssignmentsController < ApplicationController
     assignment = Assignment.find(params[:id])
     path = '/'
     revision = assignment.repo.get_latest_revision
-    revision_number = revision.revision_number
+    revision_identifier = revision.revision_identifier
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
       files = revision.files_at_path(full_path)
-      files_info = get_files_info(files, assignment.id, revision_number, path)
+      files_info = get_files_info(files, assignment.id, revision_identifier, path)
       directories = revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_number,
+      directories_info = get_directories_info(directories, revision_identifier,
                                               path, assignment.id, 'populate_file_manager')
       render json: files_info + directories_info
     else
@@ -749,7 +749,7 @@ class AssignmentsController < ApplicationController
           if filenames.include? filename
             file_object.rewind
             txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, revision.revision_number)
+                        file_object.content_type, revision.revision_identifier)
             log_messages.push("Replaced content of file '#{filename}'" +
                               ' for assignment' +
                               " '#{@assignment.short_identifier}' starter code.")
@@ -806,13 +806,13 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
 
-    revision_number = params[:revision_number]
+    revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
     @assignment.access_repo do |repo|
-      if revision_number.nil?
+      if revision_identifier.nil?
         @revision = repo.get_latest_revision
       else
-        @revision = repo.get_revision(revision_number.to_i)
+        @revision = repo.get_revision(revision_identifier)
       end
 
       begin
@@ -867,14 +867,14 @@ class AssignmentsController < ApplicationController
     end
 
 
-    def get_files_info(files, assignment_id, revision_number, path)
+    def get_files_info(files, assignment_id, revision_identifier, path)
       files.map do |file_name, file|
         f = {}
         f[:id] = file.object_id
         f[:filename] = view_context.image_tag('icons/page_white_text.png') +
             view_context.link_to(" #{file_name}", action: 'download',
                                  id: assignment_id,
-                                 revision_number: revision_number,
+                                 revision_identifier: revision_identifier,
                                  file_name: file_name,
                                  path: path)
         f[:raw_name] = file_name
@@ -886,7 +886,7 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    def get_directories_info(directories, revision_number, path, assignment_id, action)
+    def get_directories_info(directories, revision_identifier, path, assignment_id, action)
       directories.map do |directory_name, directory|
         d = {}
         d[:id] = directory.object_id
@@ -897,7 +897,7 @@ class AssignmentsController < ApplicationController
             view_context.link_to(" #{directory_name}/",
                                  action: action,
                                  id: assignment_id,
-                                 revision_number: revision_number,
+                                 revision_identifier: revision_identifier,
                                  path: File.join(path, directory_name))
         d[:last_revised_date] = I18n.l(directory.last_modified_date,
                                        format: :long_date)
@@ -1006,14 +1006,14 @@ class AssignmentsController < ApplicationController
     assignment
   end
 
-  def find_submission_for_test(grouping_id, revision_number)
-    Submission.find_by_grouping_id_and_revision_number(grouping_id, revision_number)
+  def find_submission_for_test(grouping_id, revision_identifier)
+    Submission.find_by(grouping_id: grouping_id, revision_identifier: revision_identifier)
   end
 
   # Used every time a student access to the assignment page
   # It checks if the due date is passed, and if not, it
   # collect the last submission revision
-  def automatically_collect_and_prepare_test(grouping, revision_number)
+  def automatically_collect_and_prepare_test(grouping, revision_identifier)
     # if there is no result for this grouping,
     # do nothing, because a student of the grouping
     # must run collec_and_test manually first
@@ -1021,8 +1021,8 @@ class AssignmentsController < ApplicationController
     # Once it is time to collect files, student should'nt start to do tests
     unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
       current_submission_used = grouping.submissions.find_by_submission_version_used(true)
-      if current_submission_used.revision_number < revision_number
-        new_submission = Submission.create_by_revision_number(grouping, revision_number)
+      if current_submission_used.revision_identifier < revision_identifier
+        new_submission = Submission.create_by_revision_identifier(grouping, revision_identifier)
         new_submission.get_latest_result
       else
         current_submission_used.get_latest_result
@@ -1032,12 +1032,12 @@ class AssignmentsController < ApplicationController
 
   # Used the first time a student from a grouping wanted
   # to do test on his code
-  def manually_collect_and_prepare_test(grouping, revision_number)
+  def manually_collect_and_prepare_test(grouping, revision_identifier)
     # We check if it not the time to collect files
     # Once it is time to collect files, student should'nt start to do tests
     # And we create a submission with the latest revision of the svn
     unless grouping.assignment.submission_rule.can_collect_now?(grouping.inviter.section)
-      new_submission = Submission.create_by_revision_number(grouping, revision_number)
+      new_submission = Submission.create_by_revision_identifier(grouping, revision_identifier)
       new_submission.get_latest_result
     end
   end

@@ -34,102 +34,48 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_user, only: [:download, :downloads]
 
   def repo_browser
-    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
-    @assignment = @grouping.assignment
-    @path = params[:path] || '/'
-    @previous_path = File.split(@path).first
-    @repository_name = @grouping.group.repository_name
+    @path = params[:path] || File::SEPARATOR
+    @collected_revision = nil
     repo = @grouping.group.repo
+    collected_submission = @grouping.current_submission_used
 
+    # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
+    assignment_path = File.join(@grouping.assignment.repository_folder, @path)
+    @revisions_history = []
+    all_revisions = []
+    repo.get_all_revisions.each do |revision|
+      if collected_submission && collected_submission.revision_identifier == revision.revision_identifier
+        @collected_revision = revision
+      end
+      all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
+                         date: revision.timestamp }
+      next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
+      @revisions_history << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
+                              date: revision.timestamp }
+    end
+    @revisions_history = all_revisions if @revisions_history.empty?
+
+    # get revision to show
     begin
-      if params[:revision_number]
-        @revision_number = params[:revision_number].to_i
+      if params[:revision_identifier]
+        @revision = repo.get_revision(params[:revision_identifier])
       elsif params[:revision_timestamp]
-        @revision_number = repo.get_revision_by_timestamp(
-            Time.parse(params[:revision_timestamp])).revision_number
-      else
-        @revision_number = repo.get_latest_revision.revision_number
+        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
+      else # latest relevant revision
+        @revision = repo.get_revision(@revisions_history[0][:id])
       end
-      if @revision_number == 0
-        @revision_number = 1
-      end
-      @revision = repo.get_revision(@revision_number)
-      @revision_timestamp = @revision.timestamp
     rescue Exception => e
       flash[:error] = e.message
-      @revision_number = repo.get_latest_revision.revision_number
-      @revision_timestamp = repo.get_latest_revision.timestamp
-    end
-    # Generate a revisions' history with date and num
-    @revisions_history = []
-
-    # Good idea from git branch. But SubversionRepository has
-    # no get_all_revisions method... yet (TODO)
-    # hmm. Let's make rev_number a method and have it return an array.
-    # repo.get_all_revisions.each do |revision|
-    #  @revisions_history << {num: revision.revision_number,
-    #                         date: revision.timestamp}
-    rev_number = repo.get_latest_revision.revision_number + 1
-    assign_path = File.join(@assignment.repository_folder, @path)
-    rev_number.times do |rev|
-      begin
-        revision = repo.get_revision(rev)
-        unless revision.path_exists?(assign_path)
-          raise 'error'
-        end
-      rescue Exception
-        revision = nil
-      end
-      if revision && (!revision.changed_files_at_path(assign_path).empty? ||
-                      !revision.changed_filenames_at_path(assign_path).empty?)
-        @revisions_history << { num: revision.revision_number,
-                                date: revision.timestamp }
-        unless params[:revision_number] || params[:revision_timestamp]
-          @revision_number = revision.revision_number
-          @revision_timestamp = revision.timestamp
-        end
-      end
-    end
-
-    if @revisions_history.empty?
-      rev_number.times do |rev|
-        begin
-          revision = repo.get_revision(rev)
-          unless revision.path_exists?(assign_path)
-            raise 'error'
-          end
-        rescue Exception
-          revision = nil
-        end
-        if revision
-          @revisions_history << { num: revision.revision_number,
-                                  date: revision.timestamp }
-          unless params[:revision_number] || params[:revision_timestamp]
-            @revision_number = revision.revision_number
-            @revision_timestamp = revision.timestamp
-          end
-        end
-      end
-    end
-
-    last_rev = @grouping.submissions
-    @last_submission = nil
-    if !last_rev.empty?
-      selected = @revisions_history.select do |rev|
-        rev[:num] == last_rev.last.revision_number
-      end
-
-      @last_submission = selected.empty? ? nil : last_rev.last
+      @revision = repo.get_latest_revision
     end
 
     respond_to do |format|
       format.html
       format.json do
-        render json: get_repo_browser_table_info(@assignment, @revision,
-                                                 @revision_number, @path,
-                                                 @previous_path,
-                                                 @grouping.id)
+        previous_path = File.split(@path).first
+        render json: get_repo_browser_table_info(@grouping.assignment, @revision, @revision.revision_identifier, @path,
+                                                 previous_path, @grouping.id)
       end
     end
 
@@ -158,28 +104,28 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
-    revision_number= params[:revision_number]
+    revision_identifier = params[:revision_identifier]
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
 
     repo = user_group.repo
-    if revision_number.nil?
+    if revision_identifier.nil?
       @revision = repo.get_latest_revision
     else
-      @revision = repo.get_revision(revision_number.to_i)
+      @revision = repo.get_revision(revision_identifier)
     end
     exit_directory = get_exit_directory(@previous_path, @grouping.id,
-                                        revision_number, @revision,
+                                        revision_identifier, @revision,
                                         @assignment.repository_folder,
                                         'file_manager')
     full_path = File.join(@assignment.repository_folder, @path)
     if @revision.path_exists?(full_path)
       files = @revision.files_at_path(full_path)
-      files_info = get_files_info(files, @assignment.id, revision_number, @path,
+      files_info = get_files_info(files, @assignment.id, revision_identifier, @path,
                                   @grouping.id)
 
       directories = @revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_number,
+      directories_info = get_directories_info(directories, revision_identifier,
                                               @path, @grouping.id, 'file_manager')
       render json: exit_directory + files_info + directories_info
     else
@@ -189,12 +135,12 @@ class SubmissionsController < ApplicationController
 
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
-    @revision_number = params[:current_revision_number].to_i
+    @revision_identifier = params[:current_revision_identifier].to_i
     apply_late_penalty = params[:apply_late_penalty].nil? ?
                          false : params[:apply_late_penalty]
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
-                               revision_number: @revision_number)
+                               revision_identifier: @revision_identifier)
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
@@ -463,7 +409,7 @@ class SubmissionsController < ApplicationController
           if filenames.include? filename
             file_object.rewind
             txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, revision.revision_number)
+                        file_object.content_type, revision.revision_identifier)
             log_messages.push("Student '#{current_user.user_name}'" +
                               " replaced content of file '#{filename}'" +
                               ' for assignment' +
@@ -542,13 +488,13 @@ class SubmissionsController < ApplicationController
     # find_appropriate_grouping can be found in SubmissionsHelper
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
-    revision_number = params[:revision_number]
+    revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
     @grouping.group.access_repo do |repo|
-      if revision_number.nil?
+      if revision_identifier.nil?
         @revision = repo.get_latest_revision
       else
-        @revision = repo.get_revision(revision_number.to_i)
+        @revision = repo.get_revision(revision_identifier)
       end
 
       begin
@@ -649,20 +595,20 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
-    revision_number = params[:revision_number]
+    revision_identifier = params[:revision_identifier]
     repo_folder = @assignment.repository_folder
     full_path = File.join(repo_folder, params[:path] || '/')
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
     @grouping.group.access_repo do |repo|
-      @revision = if revision_number.nil?
+      @revision = if revision_identifier.nil?
                     repo.get_latest_revision
                   else
-                    repo.get_revision(revision_number.to_i)
+                    repo.get_revision(revision_identifier)
                   end
       zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@grouping.group.group_name}_r#{@revision.revision_number}.zip"
+          "#{@grouping.group.group_name}_r#{@revision.revision_identifier}.zip"
 
-      if revision_number && revision_number.to_i == 0
+      if revision_identifier && revision_identifier == 0
         render text: t('student.submission.no_revision_available')
         return
       end

@@ -188,21 +188,21 @@ module SubmissionsHelper
     end
   end
 
-  def get_repo_browser_table_info(assignment, revision, revision_number, path,
+  def get_repo_browser_table_info(assignment, revision, revision_identifier, path,
                                   previous_path, grouping_id)
     exit_directory = get_exit_directory(previous_path, grouping_id,
-                                        revision_number, revision,
+                                        revision_identifier, revision,
                                         assignment.repository_folder,
                                         'repo_browser')
 
     full_path = File.join(assignment.repository_folder, path)
     if revision.path_exists?(full_path)
       files = revision.files_at_path(full_path)
-      files_info = get_files_info(files, assignment.id, revision_number, path,
+      files_info = get_files_info(files, assignment.id, revision_identifier, path,
                                   grouping_id)
 
       directories = revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_number,
+      directories_info = get_directories_info(directories, revision_identifier,
                                               path, grouping_id, 'repo_browser')
       return exit_directory + files_info + directories_info
     else
@@ -210,7 +210,7 @@ module SubmissionsHelper
     end
   end
 
-  def get_exit_directory(previous_path, grouping_id, revision_number,
+  def get_exit_directory(previous_path, grouping_id, revision_identifier,
                          revision, folder, action)
     full_previous_path = File.join('/', folder, previous_path)
     parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
@@ -222,21 +222,21 @@ module SubmissionsHelper
     e[:filename] = view_context.image_tag('icons/folder.png') +
         view_context.link_to( ' ../', action: action,
                                         id: grouping_id, path: previous_path,
-                                        revision_number: revision_number)
+                              revision_identifier: revision_identifier)
     e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
                                    format: :long_date)
     e[:revision_by] = directories[prev_dir].user_id
     [e]
   end
 
-  def get_files_info(files, assignment_id, revision_number, path, grouping_id)
+  def get_files_info(files, assignment_id, revision_identifier, path, grouping_id)
     files.map do |file_name, file|
       f = {}
       f[:id] = file.object_id
       f[:filename] = view_context.image_tag('icons/page_white_text.png') +
           view_context.link_to(" #{file_name}", action: 'download',
                                id: assignment_id,
-                               revision_number: revision_number,
+                               revision_identifier: revision_identifier,
                                file_name: file_name,
                                path: path, grouping_id: grouping_id)
       f[:raw_name] = file_name
@@ -248,7 +248,7 @@ module SubmissionsHelper
     end
   end
 
-  def get_directories_info(directories, revision_number, path, grouping_id, action)
+  def get_directories_info(directories, revision_identifier, path, grouping_id, action)
     directories.map do |directory_name, directory|
       d = {}
       d[:id] = directory.object_id
@@ -259,7 +259,7 @@ module SubmissionsHelper
           view_context.link_to(" #{directory_name}/",
                                action: action,
                                id: grouping_id,
-                               revision_number: revision_number,
+                               revision_identifier: revision_identifier,
                                path: File.join(path, directory_name))
       d[:last_revised_date] = I18n.l(directory.last_modified_date,
                                      format: :long_date)

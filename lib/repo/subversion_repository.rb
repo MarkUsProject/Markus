@@ -230,7 +230,7 @@ module Repository
     # Returns revision_number wrapped
     # as a SubversionRevision instance
     def get_revision(revision_number)
-      return Repository::SubversionRevision.new(revision_number, self)
+      Repository::SubversionRevision.new(revision_number, self)
     end
 
     # Returns a SubversionRevision instance representing
@@ -256,6 +256,14 @@ module Repository
         return get_revision(get_revision_number_by_timestamp(target_timestamp))
       end
 
+    end
+
+    def get_all_revisions
+      revisions = []
+      1.upto(latest_revision_number) do |revision_number|
+        revisions << get_revision(revision_number)
+      end
+      revisions
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
@@ -290,13 +298,13 @@ module Repository
           end
         when :remove
           begin
-            txn = remove_file(txn, job[:path], job[:expected_revision_number])
+            txn = remove_file(txn, job[:path], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -951,6 +959,7 @@ module Repository
     # Constructor; Check if revision is actually present in
     # repository
     def initialize(revision_number, repo)
+      revision_number = revision_number.to_i if revision_number.is_a? String
       @repo = repo
       begin
         @timestamp = @repo.__get_property(:date, revision_number)
@@ -971,24 +980,24 @@ module Repository
     end
 
     def path_exists?(path)
-      @repo.__path_exists?(path, @revision_number)
+      @repo.__path_exists?(path, @revision_identifier)
     end
 
     # Return all directories at 'path' (including subfolders?!)
     def directories_at_path(path='/')
       result = Hash.new(nil)
-      raw_contents = @repo.__get_files(path, @revision_number)
+      raw_contents = @repo.__get_files(path, @revision_identifier)
       raw_contents.each do |file_name, type|
         if type == :directory
           last_modified_revision = @repo.__get_history(File.join(path, file_name)).last
-          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
-          new_directory = Repository::RevisionDirectory.new(@revision_number, {
+          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_identifier)
+          new_directory = Repository::RevisionDirectory.new(@revision_identifier, {
             name: file_name,
             path: path,
             last_modified_revision: last_modified_revision,
             last_modified_date: last_modified_date,
-            changed: (last_modified_revision == @revision_number),
-            user_id: @repo.__get_property(:author, @revision_number)
+            changed: (last_modified_revision == @revision_identifier),
+            user_id: @repo.__get_property(:author, @revision_identifier)
           })
           result[file_name] = new_directory
         end
@@ -996,14 +1005,13 @@ module Repository
       return result
     end
 
-    # Return changed files at 'path' (recursively)
-    def changed_files_at_path(path)
-      return files_at_path_helper(path, true)
+    def changes_at_path?(path)
+      !files_at_path_helper(path, true).empty?
     end
 
     # Return the names of changed files at this revision at 'path'
     def changed_filenames_at_path(path)
-      paths = @repo.__get_file_paths(@revision_number)
+      paths = @repo.__get_file_paths(@revision_identifier)
       paths.select { |p| p.start_with? ('/' + path) }
     end
 
@@ -1014,18 +1022,18 @@ module Repository
         path = '/'
       end
       result = Hash.new(nil)
-      raw_contents = @repo.__get_files(path, @revision_number)
+      raw_contents = @repo.__get_files(path, @revision_identifier)
       raw_contents.each do |file_name, type|
         if type == :file
-          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
-          last_modified_revision = @repo.__get_history(File.join(path, file_name), nil, @revision_number).last
+          last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_identifier)
+          last_modified_revision = @repo.__get_history(File.join(path, file_name), nil, @revision_identifier).last
 
-          if(!only_changed || (last_modified_revision == @revision_number))
-            new_file = Repository::RevisionFile.new(@revision_number, {
+          if(!only_changed || (last_modified_revision == @revision_identifier))
+            new_file = Repository::RevisionFile.new(@revision_identifier, {
               name: file_name,
               path: path,
               last_modified_revision: last_modified_revision,
-              changed: (last_modified_revision == @revision_number),
+              changed: (last_modified_revision == @revision_identifier),
               user_id: @repo.__get_property(:author, last_modified_revision),
               mime_type: @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
               last_modified_date: last_modified_date

@@ -485,7 +485,7 @@ ActiveRecord::Schema.define(version: 20170605184307) do
     t.datetime "created_at"
     t.integer  "submission_version"
     t.boolean  "submission_version_used"
-    t.integer  "revision_number",          null: false
+    t.text     "revision_identifier",      null: false
     t.datetime "revision_timestamp",       null: false
     t.text     "remark_request"
     t.datetime "remark_request_timestamp"
@@ -529,7 +529,7 @@ ActiveRecord::Schema.define(version: 20170605184307) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
-    t.integer  "repo_revision"
+    t.text     "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
