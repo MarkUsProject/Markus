@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170612181938) do
+ActiveRecord::Schema.define(version: 20170613202222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -455,13 +455,22 @@ ActiveRecord::Schema.define(version: 20170612181938) do
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "split_pdf_logs", force: :cascade do |t|
-    t.string   "state",          null: false
-    t.string   "split_filetype", null: false
-    t.string   "split_filename", null: false
-    t.string   "user",           null: false
-    t.string   "host",           null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "split_pdf_console_log"
+    t.string   "error_description"
+    t.string   "uploaded_filetype"
+    t.string   "uploaded_filename"
+    t.string   "user"
+    t.string   "host"
+    t.string   "list_of_new_files_in_raw_dir"
+    t.string   "list_of_new_files_in_complete_dir"
+    t.string   "list_of_new_files_in_incomplete_dir"
+    t.string   "list_of_new_files_in_error_dir"
+    t.integer  "original_num_pages"
+    t.integer  "split_into_how_many_pages"
+    t.boolean  "qr_code_found"
+    t.boolean  "missing_pages"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   create_table "submission_collectors", force: :cascade do |t|
