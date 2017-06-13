@@ -191,7 +191,7 @@ class ExamTemplate < ActiveRecord::Base
         repo_name: group_name_for(exam_num)
       )
 
-      groupings << Grouping.create(
+      groupings << Grouping.find_or_create_by(
         group: group,
         assignment: assignment
       )
