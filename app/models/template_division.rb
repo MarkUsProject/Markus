@@ -10,7 +10,7 @@ class TemplateDivision < ActiveRecord::Base
   validates :end, numericality: { only_integer: true }
   validate :end_should_be_less_than_or_equal_to_num_pages
   validates_uniqueness_of :label,
-                          scope: [:exam_template],
+                          scope: :exam_template,
                           allow_blank: false
 
   after_destroy :destroy_associated_objects
