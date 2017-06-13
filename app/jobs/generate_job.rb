@@ -3,7 +3,7 @@ class GenerateJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
-  def perform(num_copies, start, options = {})
+  def perform(base_path, filename, num_pages, assignment, num_copies, start, options = {})
     m_logger = MarkusLogger.instance
     begin
       progress.total = 0
@@ -42,4 +42,3 @@ class GenerateJob < ActiveJob::Base
       raise e
     end
   end
-end

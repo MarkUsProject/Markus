@@ -363,4 +363,12 @@ module MarkusConfigurator
       return 'job_uncollect'
     end
   end
+  def markus_job_generate_queue_name
+    if defined? JOB_GENERATE_QUEUE_NAME
+      return JOB_GENERATE_QUEUE_NAME
+    else
+      return 'job_generate'
+    end
+  end
+
 end
