@@ -86,6 +86,7 @@ class ExamTemplatesController < ApplicationController
 
     new_template_division = template.template_divisions.create_with_associations(
       assignment.id,
+      template: template,
       label: division_label,
       start: division_start.to_i,
       end: division_end.to_i
