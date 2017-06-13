@@ -126,7 +126,12 @@ module Repository
       walker.each do |commit|
         return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
       end
-      raise 'No revision found before supplied timestamp.'
+
+      # Return the first revision
+      walker.reset
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+      walker.push(@repos.last_commit)
+      get_revision(walker.first.oid)
     end
 
     def get_all_revisions
