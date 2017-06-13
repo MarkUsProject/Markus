@@ -17,19 +17,19 @@ class TemplateDivision < ActiveRecord::Base
 
   def self.create_with_associations(assignment_id, attributes)
     exam_template = attributes[:template]
-    exam_template_id = exam_template.id
     attributes.merge! ({
       criteria_assignment_files_join_attributes: {
         assignment_file_attributes: {
-          filename: "#{exam_template_id}-#{attributes[:label]}.pdf",
+          filename: exam_template.nil? ? "#{attributes[:label]}.pdf" : "#{exam_template.id}-#{attributes[:label]}.pdf",
           assignment_id: assignment_id
         },
         criterion_attributes: {
-          name: "#{exam_template_id}-#{attributes[:label]}",
+          name: exam_template.nil? ? "#{attributes[:label]}" : "#{exam_template.id}-#{attributes[:label]}",
           assignment_id: assignment_id
         }
       }
     })
+    byebug
     create(attributes.except(:template))
   end
 
