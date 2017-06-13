@@ -29,23 +29,6 @@ class TemplateDivision < ActiveRecord::Base
     create(attributes)
   end
 
-  def self.new_with_input(assignment_id, attributes)
-    attributes.merge! ({
-      criteria_assignment_files_join_attributes: {
-        assignment_file_attributes: {
-          filename: "#{attributes[:label]}.pdf",
-          assignment_id: assignment_id
-        },
-        criterion_attributes: {
-          name: attributes[:label],
-          assignment_id: assignment_id
-        }
-      }
-    })
-    new_template_division = TemplateDivision.new(attributes)
-    return new_template_division
-  end
-
   def hash
     [self.start, self.end, self.label].hash
   end
