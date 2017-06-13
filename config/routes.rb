@@ -98,6 +98,7 @@ Markus::Application.routes.draw do
         member do
           get 'download'
           patch 'generate'
+          post 'create_template_division'
           patch 'split'
         end
       end

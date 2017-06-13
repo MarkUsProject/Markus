@@ -1,5 +1,13 @@
+<% content_for :head do %>
+    <script>
+        <%= render partial: 'boot.js',
+                   locals: { exam_template: exam_template } %>
+    </script>
+<% end %>
+
 <%= form_for [@assignment, exam_template],
-             html: { multipart: true } do |f| %>
+             html: { multipart: true,
+                     class: exam_template.id.to_s} do |f| %>
   <%= f.error_messages%>
 
   <div class="exam-template-section">
@@ -33,11 +41,18 @@
 
   <div class="exam-template-section">
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
+    <p class="alignright">
+      <%= link_to 'Add Template Division',
+                  '#',
+                  onClick: 'add_template_division(' + exam_template.id.to_s + '); return false;' %>
+    </p>
+    <p><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <%= render partial: 'template_division_pane',
-               locals: { f: f } %>
+               locals: { f: f,
+                         exam_template: exam_template } %>
   </div>
 
   <div class="exam-template-section">
-    <p><%= submit_tag t(:submit)%></p>
+    <p><%= submit_tag t(:submit) %></p>
   </div>
 <% end %>
