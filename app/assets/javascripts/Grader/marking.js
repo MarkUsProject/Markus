@@ -233,15 +233,22 @@ function expand_unmarked(elem, criterion_class) {
 
 function activeCriteria($next_criteria){
     if(!$next_criteria.hasClass('active-criteria')){
-        console.log($next_criteria.attr('id'));
         $criteria_list = $('#mark_criteria_pane_list>li');
         $criteria_list.removeClass('active-criteria');
         $('#mark_viewer').animate({
-            scrollTop: ($next_criteria.offset().top - $criteria_list.first().offset().top)
+            scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top
         }, 100);
         $next_criteria.addClass('active-criteria');
-        if(!$next_criteria.hasClass('expanded')){
+        if($next_criteria.hasClass('not_expanded')){
             $next_criteria.children('.criterion_title').trigger('click');
+        }
+        if($next_criteria.hasClass('flexible_criterion')){
+            var $input = $next_criteria.find('.mark_grade_input')
+            // This step is necessary for focusing the cursor at the end of input
+            $input.focus().val($input.val());
+        }else{
+            // Unfocus any exisiting textfields
+            $('.mark_grade_input').blur();
         }
     }
 };
