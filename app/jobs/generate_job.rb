@@ -3,21 +3,21 @@ class GenerateJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
-  def perform(base_path, filename, num_pages, assignment, num_copies, start, options = {})
+  def perform(exam_template, num_copies, start=1)
     m_logger = MarkusLogger.instance
     begin
       progress.total = 0
       template_path = File.join(
-        base_path,
-        filename
+        exam_template.base_path,
+        exam_template.filename
       )
       template_pdf = CombinePDF.load template_path
       generated_pdf = CombinePDF.new
       (start..start + num_copies - 1).each do |exam_num|
         m_logger.log("Now generating: #{exam_num}")
         pdf = Prawn::Document.new(margin: 20)
-        num_pages.times do |page_num|
-          qrcode_content = "#{assignment.short_identifier}-#{exam_num}-#{page_num + 1}"
+        exam_template.num_pages.times do |page_num|
+          qrcode_content = "#{exam_template.assignment.short_identifier}-#{exam_num}-#{page_num + 1}"
           qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
           alignment = page_num % 2 == 0 ? :right : :left
           pdf.render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)
@@ -32,7 +32,7 @@ class GenerateJob < ActiveJob::Base
       end
 
       generated_pdf.save File.join(
-        base_path,
+        exam_template.base_path,
         "#{start}-#{start + num_copies - 1}.pdf"
       )
      end
