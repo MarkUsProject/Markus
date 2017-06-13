@@ -3,7 +3,7 @@ class GenerateJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
-  def perform(exam_template, num_copies, start=1)
+  def perform(exam_template, num_copies, start)
     m_logger = MarkusLogger.instance
     begin
       progress.total = 0
