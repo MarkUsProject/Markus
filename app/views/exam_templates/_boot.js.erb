@@ -1,30 +1,5 @@
 $(document).ready(function() {
     window.modal_create_new   = new ModalMarkus('#create_new_template');
-
-    $('.' + '<%= exam_template.id %>').submit(function(event){
-        var label;
-        var start;
-        var end;
-        $(this).find('.new').each(
-            function(index){
-                label = $(this).find('#new_label').val();
-                start = $(this).find('#new_start').val();
-                end = $(this).find('#new_end').val();
-                $.ajax({
-                    method: 'POST',
-                    url: '<%= create_template_division_assignment_exam_template_path(@assignment, id: exam_template.id) %>',
-                    data: {
-                        label: label,
-                        start: start,
-                        end: end
-                    },
-                    dataType: 'json',
-                    success: 'success'
-                });
-            }
-        );
-
-    });
 });
 
 function add_template_division(id) {
@@ -33,13 +8,13 @@ function add_template_division(id) {
     var new_division_row = `
         <li id="${input_id}_holder" class="new">
           <span class="label">
-            <input type="text" required="required" id="new_label">
+            <input type="text" required="required" name="exam_template[template_divisions_attributes][${new_id}][label]">
           </span>
           <span class="start">
-            <input type="number" required="required" id="new_start">
+            <input type="number" required="required" name="exam_template[template_divisions_attributes][${new_id}][start]">
           </span>
           <span class="end">
-            <input type="number" required="required" id="new_end">
+            <input type="number" required="required" name="exam_template[template_divisions_attributes][${new_id}][end]">
           </span>
           <span class="delete">
             <a onclick="remove_template_division(\'${input_id}\'); return false;">
