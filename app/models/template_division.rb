@@ -29,7 +29,6 @@ class TemplateDivision < ActiveRecord::Base
         }
       }
     })
-    byebug
     create(attributes.except(:template))
   end
 
