@@ -643,6 +643,9 @@ module Repository
       # phase 1: collect all entries
       entries = {}
       path_tree = get_entry(path)
+      if path_tree.nil?
+        return entries
+      end
       path_tree.each do |entry_hash|
         entry_type = entry_hash[:type]
         next unless type.nil? || type == entry_type
