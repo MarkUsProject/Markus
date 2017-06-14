@@ -223,9 +223,14 @@ module SubmissionsHelper
         view_context.link_to( ' ../', action: action,
                                         id: grouping_id, path: previous_path,
                               revision_identifier: revision_identifier)
-    e[:last_revised_date] = I18n.l(directories[prev_dir].last_modified_date,
-                                   format: :long_date)
-    e[:revision_by] = directories[prev_dir].user_id
+    e[:last_revised_date] = I18n.l(
+      directories[prev_dir].nil? ?
+        revision.timestamp :
+        directories[prev_dir].last_modified_date,
+      format: :long_date)
+    e[:revision_by] =
+      directories[prev_dir].nil? ? '' :
+      directories[prev_dir].user_id
     [e]
   end
 
