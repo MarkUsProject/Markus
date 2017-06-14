@@ -7,8 +7,6 @@ class ExamTemplatesController < ApplicationController
 
   layout 'assignment_content'
 
-  @@template_divisions_saved = true
-
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @exam_templates = @assignment.exam_templates
@@ -66,36 +64,13 @@ class ExamTemplatesController < ApplicationController
       end
     else
       # updating template division
-      if old_exam_template.update(exam_template_params) && @@template_divisions_saved
+      if old_exam_template.update(exam_template_params)
         flash_message(:success, t('exam_templates.update.success'))
       else
         flash_message(:error, t('exam_templates.update.failure'))
       end
     end
-    # resetting @@template_divisions_saved back to true
-    @@template_divisions_saved = true
     redirect_to action: 'index'
-  end
-
-  def create_template_division
-    assignment = Assignment.find(params[:assignment_id])
-    template = assignment.exam_templates.find(params[:id])
-    division_start = params[:start]
-    division_end = params[:end]
-    division_label = params[:label]
-
-    new_template_division = template.template_divisions.create_with_associations(
-      assignment.id,
-      template: template,
-      label: division_label,
-      start: division_start.to_i,
-      end: division_end.to_i
-    )
-
-    # set @saved to false if errors occur
-    unless new_template_division.errors.messages.empty?
-      @@template_divisions_saved = false
-    end
   end
 
   def generate
