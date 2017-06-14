@@ -5,7 +5,7 @@
     title_class = 'criterion_title unexpandable' -%>
 <% end -%>
 
-<li id="<%= "checkbox_criterion_#{mark_criterion.id}" %>" class="checkbox_criterion expanded">
+<li id="<%= "checkbox_criterion_#{mark_criterion.id}" %>" class="checkbox_criterion expanded" tabindex="<%= tabindex %>">
 
   <%# Used by the 'expand all' button to determine if it should expand on click. %>
   <div class="mark_grade_input_checkbox_container" data-id="<%=mark_criterion.id%>">

@@ -6,24 +6,20 @@ Mousetrap.bind('shift+,', function(){
 Mousetrap.bind('shift+.', function(){
   $('#student_selector>.right>a')[0].click();
 });
-Mousetrap.bind('tab', function(e){
-  if($('.active-criteria').length){
-    $next_criteria = $('.active-criteria').next('li:not(.unassigned)');
-  }else{
-    $next_criteria = $criteria_list.first();
+$(document).on('focus', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function (e) {
+  if(!$(this).hasClass('unassigned')){
+      activeCriteria($(this));
   }
-  activeCriteria($next_criteria);
-  return false;
 });
 Mousetrap.bind('shift+tab', function(e){
-    activeCriteria($criteria_list.first());
+    $criteria_list.first().focus();
     return false;
 });
 // Mousetrap is incapable of capturing a TAB event while focused on an input field
 $('body').on('keydown', '.mark_grade_input, .mark_grade_input_checkbox', function(e) {
     if (e.which == 9) {
         e.preventDefault();
-        Mousetrap.trigger('tab');
+        Mousetrap.trigger('tab')  ;
     }
 });
 Mousetrap.bind('up', function(e){
@@ -66,5 +62,6 @@ Mousetrap.bind('enter', function (e) {
     if($('.active-rubric').length){
         e.preventDefault();
         $('.active-rubric').trigger('onclick');
+//        $('.active-criteria').find('.criterion_title').trigger('click');
     }
 })

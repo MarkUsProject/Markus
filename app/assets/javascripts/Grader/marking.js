@@ -239,9 +239,6 @@ function activeCriteria($next_criteria){
             scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top
         }, 100);
         $next_criteria.addClass('active-criteria');
-        if($next_criteria.hasClass('not_expanded')){
-            $next_criteria.children('.criterion_title').trigger('click');
-        }
         // Unfocus any exisiting textfields/radio buttons
         $('.mark_grade_input, .mark_grade_input_checkbox').blur();
         // Remove any active rubrics
@@ -259,6 +256,9 @@ function activeCriteria($next_criteria){
             }
         }else if($next_criteria.hasClass('checkbox_criterion')){
             $next_criteria.find('.mark_grade_input_checkbox').focus();
+        }
+        if($next_criteria.hasClass('not_expanded')){
+            $next_criteria.find('.criterion_expand').trigger('click');
         }
     }
 };
@@ -334,7 +334,6 @@ function show_criterion(id, criterion_class) {
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
     // alert('#' + classAddRemovePrefix + '_criterion_' + id);
-    activeCriteria($('#' + classAddRemovePrefix + '_criterion_' + id));
 }
 
 function select_mark(mark_id, mark) {
