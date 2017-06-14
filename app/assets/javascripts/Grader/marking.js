@@ -242,13 +242,23 @@ function activeCriteria($next_criteria){
         if($next_criteria.hasClass('not_expanded')){
             $next_criteria.children('.criterion_title').trigger('click');
         }
+        // Unfocus any exisiting textfields/radio buttons
+        $('.mark_grade_input, .mark_grade_input_checkbox').blur();
+        // Remove any active rubrics
+        $('.active-rubric').removeClass('active-rubric');
         if($next_criteria.hasClass('flexible_criterion')){
             var $input = $next_criteria.find('.mark_grade_input')
             // This step is necessary for focusing the cursor at the end of input
             $input.focus().val($input.val());
-        }else{
-            // Unfocus any exisiting textfields
-            $('.mark_grade_input').blur();
+        }else if($next_criteria.hasClass('rubric_criterion')){
+            $selected = $next_criteria.find('.rubric_criterion_level_selected');
+            if($selected.length){
+                $selected.addClass('active-rubric');
+            }else{
+                $next_criteria.find('tr>td')[0].addClass('active-rubric');
+            }
+        }else if($next_criteria.hasClass('checkbox_criterion')){
+            $next_criteria.find('.mark_grade_input_checkbox').focus();
         }
     }
 };
