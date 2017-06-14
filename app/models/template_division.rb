@@ -16,20 +16,19 @@ class TemplateDivision < ActiveRecord::Base
   after_destroy :destroy_associated_objects
 
   def self.create_with_associations(assignment_id, attributes)
-    exam_template = attributes[:template]
     attributes.merge! ({
       criteria_assignment_files_join_attributes: {
         assignment_file_attributes: {
-          filename: exam_template.nil? ? "#{attributes[:label]}.pdf" : "#{exam_template.id}-#{attributes[:label]}.pdf",
+          filename: "#{attributes[:label]}.pdf",
           assignment_id: assignment_id
         },
         criterion_attributes: {
-          name: exam_template.nil? ? "#{attributes[:label]}" : "#{exam_template.id}-#{attributes[:label]}",
+          name: attributes[:label],
           assignment_id: assignment_id
         }
       }
     })
-    create(attributes.except(:template))
+    create(attributes)
   end
 
   def hash
