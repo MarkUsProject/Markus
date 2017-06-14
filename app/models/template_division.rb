@@ -11,8 +11,6 @@ class TemplateDivision < ActiveRecord::Base
   validate :end_should_be_less_than_or_equal_to_num_pages
   validates :label, uniqueness: true, allow_blank: false
 
-  after_destroy :destroy_associated_objects
-
   def self.create_with_associations(assignment_id, attributes)
     attributes.merge! ({
       criteria_assignment_files_join_attributes: {
@@ -35,15 +33,6 @@ class TemplateDivision < ActiveRecord::Base
 
   def end_should_be_less_than_or_equal_to_num_pages
     errors.add(:end, "should be less than or equal to num_pages") unless self.end <= self.exam_template.num_pages
-  end
-
-  private
-  def destroy_associated_objects
-    assignment_file = criteria_assignment_files_join.assignment_file
-    criterion = criteria_assignment_files_join.criterion
-    # Note: this destroys the join record as well.
-    assignment_file.destroy
-    criterion.destroy
   end
 
 end
