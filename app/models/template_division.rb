@@ -11,7 +11,7 @@ class TemplateDivision < ActiveRecord::Base
   validate :end_should_be_less_than_or_equal_to_num_pages
   validates :label, uniqueness: true, allow_blank: false
 
-  after_save :set_defaults_for_associated_criteria_assignment_files_join # when template division is create or updated
+  after_save :set_defaults_for_associated_criteria_assignment_files_join # when template division is created or updated
 
   def hash
     [self.start, self.end, self.label].hash
@@ -34,7 +34,7 @@ class TemplateDivision < ActiveRecord::Base
       if criterion.new_record?
         criterion.update(max_mark: 1.0)
       end
-      criteria_assignment_files_join_object = CriteriaAssignmentFilesJoin.new(
+      criteria_assignment_files_join_object = CriteriaAssignmentFilesJoin.create(
         assignment_file: assignment_file,
         criterion: criterion
       )
