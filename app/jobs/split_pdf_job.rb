@@ -18,6 +18,7 @@ class SplitPDFJob < ActiveJob::Base
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
+      num_pages_qr_scan_error = 0
       pdf.pages.each_index do |i|
         page = pdf.pages[i]
         new_page = CombinePDF.new
@@ -35,6 +36,7 @@ class SplitPDFJob < ActiveJob::Base
         m = qrcode_regex.match qrcode_string
         if m.nil?
           new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+          num_pages_qr_scan_error += 1
         else
           partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
@@ -42,6 +44,19 @@ class SplitPDFJob < ActiveJob::Base
       end
 
       save_pages(exam_template, partial_exams)
+
+      # creating an instance of split_pdf_log
+      filename = File.basename path
+      num_pages = pdf.pages.length
+      complete_dir = File.join(exam_template.base_path, 'complete')
+      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
+      num_groups_in_complete = get_num_groups_in_dir(complete_dir)
+      num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
+      split_pdf_log = SplitPdfLog.create(filename: filename,
+                         original_num_pages: num_pages,
+                         num_groups_in_complete: num_groups_in_complete,
+                         num_groups_in_incomplete: num_groups_in_incomplete,
+                         num_pages_qr_scan_error: num_pages_qr_scan_error)
       progress.increment
     end
      m_logger.log('Split pdf process done')
@@ -136,5 +151,17 @@ class SplitPDFJob < ActiveJob::Base
 
   def group_name_for(exam_template, exam_num)
     "#{exam_template.assignment.short_identifier}_paper_#{exam_num}"
+  end
+
+  def get_num_groups_in_dir(dir)
+    num_groups_in_dir = 0
+    if Dir.exists?(dir)
+      Dir.foreach(dir) do |filename|
+        if File.directory?(File.join(dir, filename)) && !filename.start_with?('.')
+          num_groups_in_dir += 1
+        end
+      end
+    end
+    return num_groups_in_dir
   end
 end
