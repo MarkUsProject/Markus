@@ -21,15 +21,6 @@ class TemplateDivision < ActiveRecord::Base
     errors.add(:end, "should be less than or equal to num_pages") unless self.end <= self.exam_template.num_pages
   end
 
-  private
-  def destroy_associated_objects
-    assignment_file = criteria_assignment_files_join.assignment_file
-    criterion = criteria_assignment_files_join.criterion
-    # Note: this destroys the join record as well.
-    assignment_file.destroy
-    criterion.destroy
-  end
-
   def set_defaults_for_associated_criteria_assignment_files_join
     if criteria_assignment_files_join.nil?
       assignment_file = AssignmentFile.find_or_initialize_by(
