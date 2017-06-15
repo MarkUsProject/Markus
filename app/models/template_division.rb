@@ -39,7 +39,7 @@ class TemplateDivision < ActiveRecord::Base
         assignment_id: exam_template.assignment.id
       )
       criterion = FlexibleCriterion.find_or_initialize_by(
-        name: "#{label}",
+        name: label,
         assignment_id: exam_template.assignment.id
       )
       if criterion.new_record?
@@ -52,7 +52,7 @@ class TemplateDivision < ActiveRecord::Base
       self.update(criteria_assignment_files_join: criteria_assignment_files_join_object)
     else
       criteria_assignment_files_join.assignment_file.filename = "#{exam_template.name}-#{label}.pdf"
-      criteria_assignment_files_join.criterion.name = "#{exam_template.name}-#{label}"
+      criteria_assignment_files_join.criterion.name = label
       criteria_assignment_files_join.save!
     end
   end
