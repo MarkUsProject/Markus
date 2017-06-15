@@ -370,5 +370,11 @@ module MarkusConfigurator
       return 'job_generate'
     end
   end
-
+  def markus_job_split_pdf_queue_name
+    if defined? JOB_SPLIT_PDF_QUEUE_NAME
+      return JOB_SPLIT_PDF_QUEUE_NAME
+    else
+      return 'job_split_pdf'
+    end
+  end
 end

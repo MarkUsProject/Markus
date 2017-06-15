@@ -11,7 +11,6 @@ class TemplateDivision < ActiveRecord::Base
   validate :end_should_be_less_than_or_equal_to_num_pages
   validates :label, uniqueness: true, allow_blank: false
 
-  after_destroy :destroy_associated_objects
   after_save :set_defaults_for_associated_criteria_assignment_files_join # when template division is create or updated
 
   def hash
