@@ -31,7 +31,6 @@ class TemplateDivision < ActiveRecord::Base
     criterion.destroy
   end
 
-
   def set_defaults_for_associated_criteria_assignment_files_join
     if criteria_assignment_files_join.nil?
       assignment_file = AssignmentFile.find_or_initialize_by(
@@ -45,7 +44,7 @@ class TemplateDivision < ActiveRecord::Base
       if criterion.new_record?
         criterion.update(max_mark: 1.0)
       end
-      criteria_assignment_files_join_object = CriteriaAssignmentFilesJoin.create(
+      criteria_assignment_files_join_object = CriteriaAssignmentFilesJoin.new(
         assignment_file: assignment_file,
         criterion: criterion
       )
