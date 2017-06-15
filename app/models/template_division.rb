@@ -9,7 +9,9 @@ class TemplateDivision < ActiveRecord::Base
                                     only_integer: true }
   validates :end, numericality: { only_integer: true }
   validate :end_should_be_less_than_or_equal_to_num_pages
-  validates :label, uniqueness: true, allow_blank: false
+  validates_uniqueness_of :label,
+                          scope: :exam_template,
+                          allow_blank: false
 
   def self.create_with_associations(assignment_id, attributes)
     attributes.merge! ({
