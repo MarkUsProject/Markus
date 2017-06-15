@@ -119,6 +119,6 @@
   box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
 }
 
-:focus {
+input:focus {
   border: 5px solid $blue;
 }

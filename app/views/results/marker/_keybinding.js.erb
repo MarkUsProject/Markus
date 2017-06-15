@@ -15,13 +15,6 @@ Mousetrap.bind('shift+tab', function(e){
     $criteria_list.first().focus();
     return false;
 });
-// Mousetrap is incapable of capturing a TAB event while focused on an input field
-$('body').on('keydown', '.mark_grade_input, .mark_grade_input_checkbox', function(e) {
-    if (e.which == 9) {
-        e.preventDefault();
-        Mousetrap.trigger('tab')  ;
-    }
-});
 Mousetrap.bind('up', function(e){
   $current_criteria = $('.active-criteria');
   if($current_criteria.length && !$current_criteria.hasClass('unassigned')){
