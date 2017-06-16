@@ -279,14 +279,16 @@ function activeCriterion($next_criteria) {
 	}
 }
 
-// Toggle the expansion of the current active-criterion
-function toggleActiveCriterion() {
+// Hide the expansion of the current active-criterion
+function hideActiveCriterion() {
 	$active = $('.active-criterion');
-	if ($active.hasClass('rubric_criterion')) {
-		$active.children('.criterion_title').trigger('onclick');
-	} else {
-		$active.find('.criterion_expand').click();
-	}
+	if($active.hasClass('expanded')){
+        if ($active.hasClass('rubric_criterion')) {
+            $active.children('.criterion_title').trigger('onclick');
+        } else {
+            $active.find('.criterion_expand').trigger('onclick');
+        }
+    }
 }
 
 // Set the active-criterion to the next sibling
@@ -362,7 +364,7 @@ function hide_criterion(id, criterion_class) {
 		nodeToHide.addClass('not_expanded');
 	}
 }
-i = 0;
+
 function show_criterion(id, criterion_class) {
 	var criterionPrefix = 'mark';
 	var classAddRemovePrefix = 'mark';
@@ -421,9 +423,7 @@ function update_rubric_mark(elem, mark_id, value) {
 function update_total_mark(total_mark) {
 	document.getElementById('current_mark_div').innerHTML = total_mark;
 	document.getElementById('current_total_mark_div').innerHTML = total_mark;
-	if(!$('.active-criterion').hasClass('rubric_criterion')){
-	    toggleActiveCriterion();
-    }
+    hideActiveCriterion();
 	nextCriterion();
 }
 
