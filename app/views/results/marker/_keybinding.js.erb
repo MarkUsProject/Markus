@@ -1,6 +1,3 @@
-// a list of all the different marking criterias
-$criteria_list = $('#mark_criteria_pane_list>li:not(.unassigned)');
-
 // go to the last submission with SHIFT + >
 Mousetrap.bind('shift+,', function(){
   $('#student_selector>.left>a')[0].click();
@@ -11,17 +8,10 @@ Mousetrap.bind('shift+.', function(){
   $('#student_selector>.right>a')[0].click();
 });
 
-// trigger active selection on a criteria when focused on by the TAB key or mouse
-$(document).on('focus', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function (e) {
+$(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function (e) {
   if(!$(this).hasClass('unassigned')){
     activeCriteria($(this));
   }
-});
-
-// focus on the first element in the list
-Mousetrap.bind('shift+tab', function(e){
-    $criteria_list.first().focus();
-    return false;
 });
 
 // when on rubric criteria, use the arrow keys to hover over the next rubric
@@ -72,4 +62,4 @@ Mousetrap.bind('enter', function (e) {
         e.preventDefault();
         $('.active-rubric').trigger('onclick');
     }
-})
+});
