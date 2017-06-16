@@ -773,6 +773,10 @@ module Repository
       end
     end
 
+    def changed_filenames_at_path(path)
+      []
+    end
+
     def last_modified_date()
       return self.timestamp
     end
