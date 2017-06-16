@@ -8,12 +8,6 @@ Mousetrap.bind('shift+.', function(){
   $('#student_selector>.right>a')[0].click();
 });
 
-$(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function (e) {
-  if(!$(this).hasClass('unassigned')){
-    activeCriteria($(this));
-  }
-});
-
 // when on rubric criteria, use the arrow keys to hover over the next rubric
 Mousetrap.bind('up', function(e){
   $current_criteria = $('.active-criteria');
