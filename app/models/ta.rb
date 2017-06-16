@@ -30,7 +30,7 @@ class Ta < User
 
   def get_criterion_associations_by_assignment(assignment)
     if assignment.assign_graders_to_criteria
-      criterion_ta_associations.select do |association|
+      criterion_ta_associations.includes(:assignment, :criterion).select do |association|
         association.assignment == assignment
       end
     else
