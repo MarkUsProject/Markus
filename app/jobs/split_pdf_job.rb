@@ -3,7 +3,7 @@ class SplitPDFJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
-  def perform(exam_template, path, current_user)
+  def perform(exam_template, path)
     m_logger = MarkusLogger.instance
     begin
       progress.total = 0
@@ -42,7 +42,6 @@ class SplitPDFJob < ActiveJob::Base
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
         end
       end
-
       save_pages(exam_template, partial_exams)
 
       # creating an instance of split_pdf_log
@@ -52,12 +51,13 @@ class SplitPDFJob < ActiveJob::Base
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
-      split_pdf_log = current_user.split_pdf_logs.create(
+      split_pdf_log = SplitPdfLog.create(
         filename: filename,
         original_num_pages: num_pages,
         num_groups_in_complete: num_groups_in_complete,
         num_groups_in_incomplete: num_groups_in_incomplete,
-        num_pages_qr_scan_error: num_pages_qr_scan_error)
+        num_pages_qr_scan_error: num_pages_qr_scan_error
+      )
       progress.increment
     end
      m_logger.log('Split pdf process done')
