@@ -306,7 +306,6 @@ function focus_mark_criterion_type(id, class_name) {
 }
 
 function hide_criterion(id, criterion_class) {
-    console.log('HIDE ' + Math.random());
     var nodeToHide = null;
     var criterionPrefix = 'mark';
     if (criterion_class === 'RubricCriterion') {
@@ -328,7 +327,6 @@ function hide_criterion(id, criterion_class) {
 }
 
 function show_criterion(id, criterion_class) {
-    console.log('SHOW ' + Math.random());
     var criterionPrefix = 'mark';
     var classAddRemovePrefix = 'mark';
 
