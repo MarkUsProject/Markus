@@ -231,10 +231,13 @@ function expand_unmarked(elem, criterion_class) {
   }
 }
 
+// designate $next_criteria as the currently selected criteria
 function activeCriteria($next_criteria){
     if(!$next_criteria.hasClass('active-criteria')){
         $criteria_list = $('#mark_criteria_pane_list>li');
+        // remove all previous active-criteria (there should only be one)
         $criteria_list.removeClass('active-criteria');
+        // scroll the $next_criteria to the top of the criterion bar
         $('#mark_viewer').animate({
             scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top
         }, 100);
@@ -257,6 +260,7 @@ function activeCriteria($next_criteria){
         }else if($next_criteria.hasClass('checkbox_criterion')){
             $next_criteria.find('.mark_grade_input_checkbox').focus();
         }
+        // if this current criteria is not expanded, expand it
         if($next_criteria.hasClass('not_expanded')){
             if($next_criteria.hasClass('rubric_criterion')){
                 $next_criteria.children('.criterion_title').click();
@@ -302,6 +306,7 @@ function focus_mark_criterion_type(id, class_name) {
 }
 
 function hide_criterion(id, criterion_class) {
+    console.log('HIDE ' + Math.random());
     var nodeToHide = null;
     var criterionPrefix = 'mark';
     if (criterion_class === 'RubricCriterion') {
@@ -323,6 +328,7 @@ function hide_criterion(id, criterion_class) {
 }
 
 function show_criterion(id, criterion_class) {
+    console.log('SHOW ' + Math.random());
     var criterionPrefix = 'mark';
     var classAddRemovePrefix = 'mark';
 
@@ -337,8 +343,7 @@ function show_criterion(id, criterion_class) {
     document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
-    // document.getElementById(classAddRemovePrefix + '_criterion_' + id).focus();
-    // alert('#' + classAddRemovePrefix + '_criterion_' + id);
+    // activeCriteria($('#' + classAddRemovePrefix + '_criterion_' + id));
 }
 
 function select_mark(mark_id, mark) {
