@@ -8,16 +8,16 @@
                     class: 'title' %>
       </h2>
 
+      <div id='course_summary_graph' class='ta_grade_distribution'>
+        <%= render partial: 'course_summaries/course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments } %>
+      </div>
+
       <div class='right'>
         <p>
           <%= link_to I18n.t(:refresh_graph),
                       refresh_graph_course_summary_path('course_summary'),
                       remote: true %>
         </p>
-      </div>
-
-      <div id='course_summary_graph' class='ta_grade_distribution'>
-        <%= render partial: 'course_summaries/course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments } %>
       </div>
 
       <br>
