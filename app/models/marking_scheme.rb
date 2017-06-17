@@ -1,3 +1,6 @@
+require 'descriptive_statistics'
+require 'histogram/array'
+
 class MarkingScheme < ActiveRecord::Base
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
@@ -12,50 +15,71 @@ class MarkingScheme < ActiveRecord::Base
     return total
   end
 
-  # Get the maximum weight of all marking weights
-  def max_weight
-    max = 0
-    marking_weights.each do |mw|
-      if max < mw.weight
-        max = mw.weight
-      end
+  # Adds new_value to the key's current_value in hash
+  def add_hash_value(hash, key, new_value)
+    if hash.key?(key)
+      current_value = hash.fetch(key)
+      current_value += new_value
+      hash[key] = current_value
+    else
+      hash[key] = new_value
     end
-
-    return max
   end
 
-  # Gets the marking weights for all assignments in the correct order
-  def get_assignments_marking_weights(assignments)
-    assignments_mw = marking_weights.where(is_assignment: true)
+  # Returns an array of all students' weighted grades that are not nil
+  def students_weighted_grades_array
+    student_marks = Hash.new
 
-    assignments.each_with_index do |a, index|
-      assignments_mw.each_with_index do |mw, i|
-        if mw.get_gradable_item.id == a.id
-          temp = assignments_mw[index]
-          assignments_mw[index] = mw
-          assignments_mw[i] = temp
+    Student.all.each do |student|
+      marking_weights.each do |mw|
+        gradable_item = mw.get_gradable_item
+        if mw.is_assignment
+          grouping = student.accepted_grouping_for(gradable_item.id)
+          unless grouping.nil?
+            result = grouping.current_result
+            unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
+              weighted_mark = result.total_mark / gradable_item.max_mark * mw.weight
+              add_hash_value(student_marks, student, weighted_mark)
+            end
+          end
+        else
+          grade_entry_student = find_grade_entry_student(gradable_item, student)
+          unless grade_entry_student.nil?
+            # byebug
+            result = grade_entry_student.total_grade
+            unless result.nil?
+              weighted_mark = result / gradable_item.out_of_total * mw.weight
+              add_hash_value(student_marks, student, weighted_mark)
+            end
+          end
         end
       end
     end
 
-    return assignments_mw
+    return student_marks.values
   end
 
-  # Gets the marking weights for all grade entry forms in the correct order
-  def get_gefs_marking_weights(gefs)
-    gefs_mw = marking_weights.where(is_assignment: false)
-
-    gefs.each_with_index do |gef, index|
-      gefs_mw.each_with_index do |mw, i|
-        if mw.get_gradable_item.id == gef.id
-          temp = gefs_mw[index]
-          gefs_mw[index] = mw
-          gefs_mw[i] = temp
-        end
+  # Find the grade entry student that belongs to the grade entry form which is represented by a marking weight
+  def find_grade_entry_student(gradable_item, student)
+    student.grade_entry_students.each do |grade_entry_student|
+      # byebug
+      if grade_entry_student.grade_entry_form.id == gradable_item.id
+        # byebug
+        return grade_entry_student
+      else
+        return nil
       end
     end
+  end
 
-    return gefs_mw
+  # Returns a weighted grade distribution for all students' total weighted grades
+  def students_weighted_grade_distribution_array(intervals = 20)
+    data = students_weighted_grades_array
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+    return distribution
   end
 
   # Calculates the weighted average mark for all assignments and grade entry forms
