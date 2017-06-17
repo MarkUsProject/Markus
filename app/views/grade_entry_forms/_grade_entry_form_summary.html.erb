@@ -18,11 +18,6 @@
 
       <div class='right'>
         <%= render partial: 'grade_entry_forms/grade_entry_form_info_summary', locals: { grade_entry_form: @grade_entry_form } %>
-        <p>
-          <%= link_to I18n.t(:refresh_graph),
-                      refresh_graph_grade_entry_form_path(id: @grade_entry_form.id),
-                      remote: true %>
-        </p>
       </div>
 
       <br>
