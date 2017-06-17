@@ -1,6 +1,5 @@
-
 <% unless @marking_schemes.nil? %>
-  <% @marking_schemes.each do |marking_scheme| %>
+  <% @marking_schemes.each_with_index do |marking_scheme, index| %>
 
   <canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='400' height='350'></canvas>
 
@@ -10,27 +9,14 @@
 
     // Set up data
     var data = {
-      labels: Array.apply(null, Array(<%= marking_scheme.max_weight / marking_scheme.total_weights * 100 / 5 + 1 %>)).map(function (_, i) {
-        return i * 5;
-      }),
+      labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
       datasets: [
-        <% unless assignments.nil? %>
-          <% marking_scheme.get_assignments_marking_weights(assignments).each_with_index do |mw, index| %>
-            {
-              label: "Weighted <%= mw.get_gradable_item.short_identifier %>",
-              backgroundColor: colours[<%= index %>],
-              data: <%= mw.get_gradable_item.weighted_grade_distribution_array(20, mw.get_weight) %>
-            },
-          <% end %>
-        <% end %>
-        <% unless grade_entry_forms.nil? %>
-          <% marking_scheme.get_gefs_marking_weights(grade_entry_forms).each_with_index do |mw, index| %>
-            {
-              label: "Weighted <%= mw.get_gradable_item.short_identifier %>",
-              backgroundColor: colours[<%= assignments.count + index %>],
-              data: <%= mw.get_gradable_item.weighted_grade_distribution_array(20, mw.get_weight) %>
-            },
-          <% end %>
+        <% unless assignments.nil? && grade_entry_forms.nil? %>
+          {
+            label: "Weighted Grades <%= marking_scheme.id %>",
+            backgroundColor: colours[<%= index %>],
+            data: <%= marking_scheme.students_weighted_grade_distribution_array(20) %>
+          }
         <% end %>
       ]
     };
