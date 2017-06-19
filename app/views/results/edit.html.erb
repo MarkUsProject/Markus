@@ -134,6 +134,39 @@
                        can_download: true } %>
 
 </aside>
+<aside class='dialog' id='help_dialog'>
+  <h1>Keyboard Shortcut Help</h1>
+  <table class="help_table">
+    <tr>
+      <td>Shift + ></td>
+      <td>Next Submission</td>
+    </tr>
+    <tr>
+      <td>Shift + <</td>
+      <td>Previous Submission</td>
+    </tr>
+    <tr>
+      <td>Shift + ⬆</td>
+      <td>Select previous Criterion</td>
+    </tr>
+    <tr>
+      <td>Shift + ⬇</td>
+      <td>Select next Criterion</td>
+    </tr>
+    <tr>
+      <td>⬆</td>
+      <td>(When on rubric) Select previous level</td>
+    </tr>
+    <tr>
+      <td>⬇</td>
+      <td>(When on rubric) Select next level</td>
+    </tr>
+    <tr>
+      <td>Enter/return</td>
+      <td>(When on rubric) Confirm level</td>
+    </tr>
+  </table>
+</aside>
 <% if @current_user.admin? %>
   <aside class='dialog' id='create_new_tag'>
     <%= javascript_include_tag 'Tags/text_updater.js',

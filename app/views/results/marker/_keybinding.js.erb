@@ -1,3 +1,8 @@
+// Open the keyboard shortcuts help modal
+Mousetrap.bind('?', function () {
+  modal_help.open();
+});
+
 // Go to the previous submission with <
 Mousetrap.bind('<', function() {
   $('#student_selector>.left>a')[0].click();
