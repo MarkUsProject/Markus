@@ -163,6 +163,6 @@ class SplitPDFJob < ActiveJob::Base
         end
       end
     end
-    return num_groups_in_dir
+    num_groups_in_dir
   end
 end
