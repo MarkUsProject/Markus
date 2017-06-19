@@ -122,3 +122,16 @@
 input:focus {
   border: 5px solid $blue;
 }
+
+input[type='radio']:focus {
+  border: 5px solid $black;
+}
+
+.help_table{
+  width: 100%;
+  margin-top: 20px;
+  td{
+    height: 24px;
+    width: 50%;
+  }
+}

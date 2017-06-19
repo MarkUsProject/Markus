@@ -266,7 +266,7 @@ function activeCriterion($next_criteria) {
 				$next_criteria.find('tr>td')[0].addClass('active-rubric');
 			}
 		} else if ($next_criteria.hasClass('checkbox_criterion')) {
-			$next_criteria.find('.mark_grade_input_checkbox').focus();
+			$next_criteria.find('.mark_grade_input_checkbox').first().focus();
 		}
 		// If this current criteria is not expanded, expand it
 		if ($next_criteria.hasClass('not_expanded')) {
