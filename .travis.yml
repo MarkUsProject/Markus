@@ -4,10 +4,7 @@ rvm:
 
 before_install:
   - sudo apt-get install -y cmake libssh2-1-dev
-  - sudo add-apt-repository -y ppa:moti-p/cc
-  - sudo apt-get update
-  - sudo apt-get -y --reinstall install imagemagick
-  - printf "\n" | pecl install imagick-beta
+  - sudo apt-get install imagemagick libmagickwand-dev
 
 install:
   - travis_wait bundle install --path=~/.bundle --jobs=3 --retry=3 --without development production console
