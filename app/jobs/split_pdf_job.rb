@@ -59,6 +59,7 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error
       )
       progress.increment
+      return split_pdf_log
     end
      m_logger.log('Split pdf process done')
     rescue => e
