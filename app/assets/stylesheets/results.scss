@@ -113,7 +113,7 @@
   }
 }
 
-.active-criteria, .active-rubric {
+.active-criterion, .active-rubric {
   -webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
   -moz-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
   box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
@@ -121,4 +121,17 @@
 
 input:focus {
   border: 5px solid $blue;
+}
+
+input[type='radio']:focus {
+  border: 5px solid $black;
+}
+
+.help_table{
+  width: 100%;
+  margin-top: 20px;
+  td{
+    height: 24px;
+    width: 50%;
+  }
 }
