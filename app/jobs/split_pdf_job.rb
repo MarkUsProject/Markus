@@ -101,50 +101,51 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        txn = repo.get_transaction(Admin.first.user_name)
+        unless Admin.first.nil?
+          txn = repo.get_transaction(Admin.first.user_name)
 
+          # Pages that belong to a division
+          exam_template.template_divisions.each do |division|
+            new_pdf = CombinePDF.new
+            pages.each do |page_num, page|
+              if division.start <= page_num && page_num <= division.end
+                new_pdf << page
+              end
+            end
+            txn.add(File.join(assignment_folder,
+                              "#{division.label}.pdf"),
+                    new_pdf.to_pdf,
+                    'application/pdf'
+            )
+          end
 
-        # Pages that belong to a division
-        exam_template.template_divisions.each do |division|
-          new_pdf = CombinePDF.new
-          pages.each do |page_num, page|
-            if division.start <= page_num && page_num <= division.end
-              new_pdf << page
+          # Pages that don't belong to any division
+          extra_pages = pages.reject do |page_num, _|
+            exam_template.template_divisions.any? do |division|
+              division.start <= page_num && page_num <= division.end
             end
           end
+          extra_pages.sort_by! { |page_num, _| page_num }
+          extra_pdf = CombinePDF.new
+          cover_pdf = CombinePDF.new
+          start_page = 0
+          if extra_pages[0][0] == 1
+            cover_pdf << extra_pages[0][1]
+            start_page = 1
+          end
+          extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
           txn.add(File.join(assignment_folder,
-                            "#{division.label}.pdf"),
-                  new_pdf.to_pdf,
+                            "EXTRA.pdf"),
+                  extra_pdf.to_pdf,
                   'application/pdf'
           )
+          txn.add(File.join(assignment_folder,
+                            "COVER.pdf"),
+                  cover_pdf.to_pdf,
+                  'application/pdf'
+          )
+          repo.commit(txn)
         end
-
-        # Pages that don't belong to any division
-        extra_pages = pages.reject do |page_num, _|
-          exam_template.template_divisions.any? do |division|
-            division.start <= page_num && page_num <= division.end
-          end
-        end
-        extra_pages.sort_by! { |page_num, _| page_num }
-        extra_pdf = CombinePDF.new
-        cover_pdf = CombinePDF.new
-        start_page = 0
-        if extra_pages[0][0] == 1
-          cover_pdf << extra_pages[0][1]
-          start_page = 1
-        end
-        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
-        txn.add(File.join(assignment_folder,
-                          "EXTRA.pdf"),
-                extra_pdf.to_pdf,
-                'application/pdf'
-        )
-        txn.add(File.join(assignment_folder,
-                          "COVER.pdf"),
-                cover_pdf.to_pdf,
-                'application/pdf'
-        )
-        repo.commit(txn)
       end
     end
     SubmissionsJob.perform_later(groupings)
