@@ -40,11 +40,11 @@ $(document).ready(function() {
   });
 
   // Event handlers for the flexible criteria grades
-  $('.mark_grade_input').each(function (index, input) {
+  $('.mark_grade_input').each(function(index, input) {
     var mark_id = input.id.substr(5);
 
     // Prevent clicks from hiding the grade
-    $(this).click(function (event) {
+    $(this).click(function(event) {
       event.preventDefault();
       return false;
     });
@@ -61,15 +61,15 @@ $(document).ready(function() {
         data: params,
         beforeSend: function () {
           document.getElementById('mark_verify_result_' + mark_id)
-            .style.display = 'none';
+                  .style.display = 'none';
         },
-        error: function (err) {
+        error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
           error_div.style.display = '';
           error_div.innerHTML = err.responseText;
         },
-        success: function (data) {
+        success: function(data) {
           var items = data.split(',');
           var mark = items[0];
           var subtotal = items[1];
@@ -86,12 +86,12 @@ $(document).ready(function() {
     });
   });
 
-  $('.mark_grade_input_checkbox').each(function (index, input) {
+  $('.mark_grade_input_checkbox').each(function(index, input) {
     var tokens = input.id.split('_');
     var mark_id = tokens[1];
     var yes_or_no_type = tokens[2];
 
-    $(this).click(function (event) {
+    $(this).click(function(event) {
       var params = {
         'mark': this.value || '',
         'authenticity_token': AUTH_TOKEN
@@ -101,15 +101,15 @@ $(document).ready(function() {
         url: this.getAttribute('data-action'),
         type: 'POST',
         data: params,
-        beforeSend: function () {
+        beforeSend: function() {
           document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
         },
-        error: function (err) {
+        error: function(err) {
           var error_div = document.getElementById('mark_verify_result_' + mark_id);
           error_div.style.display = '';
           error_div.innerHTML = err.responseText;
         },
-        success: function (data) {
+        success: function(data) {
           var items = data.split(',');
           var mark = items[0];
           var subtotal = items[1];
@@ -132,18 +132,18 @@ $(document).ready(function() {
   });
 
   // Handle indenting in the new annotation textarea (2 spaces)
-  $('#new_annotation_content').keydown(function (e) {
+  $('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
 
     if (keyCode == 9) {
       e.preventDefault();
       var start = this.selectionStart;
-      var end = this.selectionEnd;
+      var end   = this.selectionEnd;
 
       // Add the 2 spaces
       this.value = this.value.substring(0, start)
-        + '  '
-        + this.value.substring(end);
+                   + '  '
+                   + this.value.substring(end);
 
       // Put caret in correct position
       this.selectionStart = this.selectionEnd = start + 2;
@@ -151,44 +151,44 @@ $(document).ready(function() {
   });
 
   // Handle the expand/collapse buttons
-  $('#expand_all').click(function () {
-    $('.mark_criterion_level_container').each(function () {
+  $('#expand_all').click(function() {
+    $('.mark_criterion_level_container').each(function() {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function() {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox').each(function () {
+    $('.mark_grade_input_checkbox').each(function() {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
 
-  $('#collapse_all').click(function () {
-    $('.mark_criterion_level_container').each(function () {
+  $('#collapse_all').click(function() {
+    $('.mark_criterion_level_container').each(function() {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function() {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox').each(function () {
+    $('.mark_grade_input_checkbox').each(function() {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
 
-  $('#expand_unmarked').click(function () {
-    $('.mark_criterion_level_container').each(function () {
+  $('#expand_unmarked').click(function() {
+    $('.mark_criterion_level_container').each(function() {
       expand_unmarked(this, 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function () {
+    $('.mark_grade_input').each(function() {
       expand_unmarked(this, 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox_container').each(function () {
+    $('.mark_grade_input_checkbox_container').each(function() {
       expand_unmarked(this, 'CheckboxCriterion');
     });
   });
 
   // Handle showing old mark when mark is updated in remark
-  $('.mark_grade_input').keypress(function () {
+  $('.mark_grade_input').keypress(function() {
     var criterion_id = parseInt(this.getAttribute('data-id'), 10);
     var mark_id = parseInt(this.getAttribute('data-mark'), 10);
     var old_mark_elem = document.getElementById('flexible_' + criterion_id + '_old_mark');
@@ -211,7 +211,7 @@ $(document).ready(function() {
   );
 
   // Capture the mouse event to add "active-criterion" to the clicked element
-  $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function (e) {
+  $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function(e) {
     if (!$(this).hasClass('unassigned')) {
       e.preventDefault();
       activeCriterion($(this));
@@ -403,7 +403,7 @@ function update_rubric_mark(elem, mark_id, value) {
     url: elem.getAttribute('data-action'),
     type: 'POST',
     data: {'authenticity_token': AUTH_TOKEN},
-    success: function (data) {
+    success: function(data) {
       var items = data.split(',');
       var mark = items[0];
       var subtotal = items[1];
@@ -434,7 +434,7 @@ function compact_view_toggle(init) {
     $('.title_bar'),
     $('#footer_wrapper')
   ];
-  $.each(toggle_elements, function (idx, element) {
+  $.each(toggle_elements, function(idx, element) {
     element.toggle();
   });
   $('#content').toggleClass('expanded_view');
