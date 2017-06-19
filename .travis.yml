@@ -4,6 +4,7 @@ rvm:
 
 before_install:
   - sudo apt-get install -y cmake libssh2-1-dev
+  - sudo apt-get install -y ghostscript
   - sudo apt-get install imagemagick libmagickwand-dev
 
 install:
