@@ -282,7 +282,7 @@ function activeCriterion($next_criteria) {
 // Hide the expansion of the current active-criterion
 function hideActiveCriterion() {
   $active = $('.active-criterion');
-  if($active.hasClass('expanded')){
+  if($active.hasClass('expanded')) {
     if ($active.hasClass('rubric_criterion')) {
       $active.children('.criterion_title').trigger('onclick');
     } else {

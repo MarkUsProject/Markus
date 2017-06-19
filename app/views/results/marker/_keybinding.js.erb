@@ -9,16 +9,16 @@ Mousetrap.bind('>', function() {
 });
 
 // Go to the previous criterion with shift + up
-Mousetrap.bindGlobal('shift+up', function(e) {
+Mousetrap.bind('shift+up', function(e) {
   e.preventDefault();
   prevCriterion();
   return false;
 });
 
 // Go to the next criterion with shift + down
-Mousetrap.bindGlobal('shift+down', function(e) {
+Mousetrap.bind('shift+down', function(e) {
   e.preventDefault();
-  nextCriterion()
+  nextCriterion();
   return false;
 });
 
