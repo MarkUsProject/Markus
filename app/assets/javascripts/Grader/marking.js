@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	// Maintain compact view if toggled on
+  // Maintain compact view if toggled on
 	if (typeof(Storage) !== 'undefined' &&
 		localStorage.getItem('compact_view') === 'on') {
 		compact_view_toggle(true);
