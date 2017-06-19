@@ -1,73 +1,73 @@
 // Go to the previous submission with <
 Mousetrap.bind('<', function() {
-    $('#student_selector>.left>a')[0].click();
+  $('#student_selector>.left>a')[0].click();
 });
 
 // Go to next submission with >
 Mousetrap.bind('>', function() {
-    $('#student_selector>.right>a')[0].click();
+  $('#student_selector>.right>a')[0].click();
 });
 
 // Go to the previous criterion with shift + up
 Mousetrap.bindGlobal('shift+up', function(e) {
-    e.preventDefault();
-    prevCriterion();
-    return false;
+  e.preventDefault();
+  prevCriterion();
+  return false;
 });
 
 // Go to the next criterion with shift + down
 Mousetrap.bindGlobal('shift+down', function(e) {
-    e.preventDefault();
-    nextCriterion()
-    return false;
+  e.preventDefault();
+  nextCriterion()
+  return false;
 });
 
 // When on rubric criterion, use the arrow keys to hover over the next rubric
 Mousetrap.bind('up', function(e) {
-    $current_criteria = $('.active-criterion');
-    if ($current_criteria.length &&
-        $current_criteria.hasClass('rubric_criterion') &&
-        !$current_criteria.hasClass('unassigned')) {
-        e.preventDefault();
-        $selected = $('.active-rubric');
-        if ($selected.length) {
-            $next = $selected.parent().prev();
-            if (!$next.length) {
-                // if no next element exists, loop back to the last of the list
-                $next = $selected.parent().siblings().last();
-            }
-            $selected.removeClass('active-rubric');
-            $next.children().addClass('active-rubric');
-        }
-        return false;
+  $current_criteria = $('.active-criterion');
+  if ($current_criteria.length &&
+    $current_criteria.hasClass('rubric_criterion') &&
+    !$current_criteria.hasClass('unassigned')) {
+    e.preventDefault();
+    $selected = $('.active-rubric');
+    if ($selected.length) {
+      $next = $selected.parent().prev();
+      if (!$next.length) {
+        // if no next element exists, loop back to the last of the list
+        $next = $selected.parent().siblings().last();
+      }
+      $selected.removeClass('active-rubric');
+      $next.children().addClass('active-rubric');
     }
+    return false;
+  }
 });
 
 // when on rubric criteria, use the arrow keys to hover over the next rubric
 Mousetrap.bind('down', function(e) {
-    $current_criteria = $('.active-criterion');
-    if ($current_criteria.length &&
-        $current_criteria.hasClass('rubric_criterion') &&
-        !$current_criteria.hasClass('unassigned')) {
-        e.preventDefault();
-        $selected = $('.active-rubric');
-        if ($selected.length) {
-            $next = $selected.parent().next();
-            if (!$next.length) {
-                // if no next element exists, loop back to the front of the list
-                $next = $selected.parent().siblings().first();
-            }
-            $selected.removeClass('active-rubric');
-            $next.children().addClass('active-rubric');
-        }
-        return false;
+  $current_criteria = $('.active-criterion');
+  if ($current_criteria.length &&
+    $current_criteria.hasClass('rubric_criterion') &&
+    !$current_criteria.hasClass('unassigned')) {
+    e.preventDefault();
+    $selected = $('.active-rubric');
+    if ($selected.length) {
+      $next = $selected.parent().next();
+      if (!$next.length) {
+        // if no next element exists, loop back to the front of the list
+        $next = $selected.parent().siblings().first();
+      }
+      $selected.removeClass('active-rubric');
+      $next.children().addClass('active-rubric');
     }
+    return false;
+  }
 });
 
 // when enter is pressed, and there is an active rubric selected, trigger select and collapse
 Mousetrap.bind('enter', function(e) {
-    if ($('.active-rubric').length) {
-        e.preventDefault();
-        $('.active-rubric').trigger('onclick');
-    }
+  if ($('.active-rubric').length) {
+    e.preventDefault();
+    $('.active-rubric').trigger('onclick');
+  }
 });
