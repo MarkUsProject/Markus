@@ -122,3 +122,15 @@
 input:focus {
   border: 5px solid $blue;
 }
+
+#help_dialog table{
+  margin-top: 10px;
+
+  tr{
+    height: 24px;
+
+    td{
+      width: 50%;
+    }
+  }
+}
