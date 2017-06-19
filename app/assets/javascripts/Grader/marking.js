@@ -17,7 +17,7 @@ $(document).ready(function() {
     };
 
     $.ajax({
-      url: element.getAttribute('data-action'),
+      url:  element.getAttribute('data-action'),
       type: 'POST',
       data: params
     });
@@ -31,7 +31,7 @@ $(document).ready(function() {
     };
 
     $.ajax({
-      url: this.getAttribute('data-action'),
+      url:  this.getAttribute('data-action'),
       type: 'POST',
       data: params
     }).done(function() {
@@ -56,7 +56,7 @@ $(document).ready(function() {
       };
 
       $.ajax({
-        url: this.getAttribute('data-action'),
+        url:  this.getAttribute('data-action'),
         type: 'POST',
         data: params,
         beforeSend: function () {
@@ -155,10 +155,10 @@ $(document).ready(function() {
     $('.mark_criterion_level_container').each(function() {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function() {
+    $('.mark_grade_input').each(function () {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox').each(function() {
+    $('.mark_grade_input_checkbox').each(function () {
       show_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
@@ -167,22 +167,22 @@ $(document).ready(function() {
     $('.mark_criterion_level_container').each(function() {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function() {
+    $('.mark_grade_input').each(function () {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox').each(function() {
+    $('.mark_grade_input_checkbox').each(function () {
       hide_criterion(parseInt(this.getAttribute('data-id'), 10), 'CheckboxCriterion');
     });
   });
 
   $('#expand_unmarked').click(function() {
-    $('.mark_criterion_level_container').each(function() {
+    $('.mark_criterion_level_container').each(function () {
       expand_unmarked(this, 'RubricCriterion');
     });
-    $('.mark_grade_input').each(function() {
+    $('.mark_grade_input').each(function () {
       expand_unmarked(this, 'FlexibleCriterion');
     });
-    $('.mark_grade_input_checkbox_container').each(function() {
+    $('.mark_grade_input_checkbox_container').each(function () {
       expand_unmarked(this, 'CheckboxCriterion');
     });
   });
@@ -192,7 +192,7 @@ $(document).ready(function() {
     var criterion_id = parseInt(this.getAttribute('data-id'), 10);
     var mark_id = parseInt(this.getAttribute('data-mark'), 10);
     var old_mark_elem = document.getElementById('flexible_' + criterion_id + '_old_mark');
-    var mark_elem = document.getElementById('mark_' + mark_id);
+    var mark_elem =  document.getElementById('mark_' + mark_id);
     var old_mark = this.getAttribute('data-oldmark');
 
     if (old_mark != 'none') {
@@ -400,7 +400,7 @@ function select_mark(mark_id, mark) {
 // Function for AJAX request for rubric levels
 function update_rubric_mark(elem, mark_id, value) {
   $.ajax({
-    url: elem.getAttribute('data-action'),
+    url:  elem.getAttribute('data-action'),
     type: 'POST',
     data: {'authenticity_token': AUTH_TOKEN},
     success: function(data) {
@@ -421,7 +421,7 @@ function update_rubric_mark(elem, mark_id, value) {
 }
 
 function update_total_mark(total_mark) {
-  document.getElementById('current_mark_div').innerHTML = total_mark;
+  document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
   hideActiveCriterion();
   nextCriterion();
@@ -434,7 +434,7 @@ function compact_view_toggle(init) {
     $('.title_bar'),
     $('#footer_wrapper')
   ];
-  $.each(toggle_elements, function(idx, element) {
+  $.each(toggle_elements, function(idx, element){
     element.toggle();
   });
   $('#content').toggleClass('expanded_view');
