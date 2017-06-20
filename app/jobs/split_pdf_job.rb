@@ -75,7 +75,6 @@ class SplitPDFJob < ActiveJob::Base
         success: success
       )
       progress.increment
-      byebug
       return split_pdf_log
     end
      m_logger.log('Split pdf process done')
