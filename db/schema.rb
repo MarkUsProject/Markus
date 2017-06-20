@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170615150045) do
+ActiveRecord::Schema.define(version: 20170620144136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -466,8 +466,10 @@ ActiveRecord::Schema.define(version: 20170615150045) do
     t.boolean  "qr_code_found"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.integer  "exam_template_id"
   end
 
+  add_index "split_pdf_logs", ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id", using: :btree
   add_index "split_pdf_logs", ["user_id"], name: "index_split_pdf_logs_on_user_id", using: :btree
 
   create_table "submission_collectors", force: :cascade do |t|
@@ -629,6 +631,7 @@ ActiveRecord::Schema.define(version: 20170615150045) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
+  add_foreign_key "split_pdf_logs", "exam_templates"
   add_foreign_key "split_pdf_logs", "users"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
