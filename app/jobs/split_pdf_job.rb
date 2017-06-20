@@ -53,6 +53,9 @@ class SplitPDFJob < ActiveJob::Base
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
 
       success = true
+      if partial_exams.empty?
+        success = false
+      end
       partial_exams.each do |exam_num, pages|
         if pages.empty?
           success = false
