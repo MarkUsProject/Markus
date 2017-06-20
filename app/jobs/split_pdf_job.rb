@@ -74,7 +74,6 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error,
         success: success
       )
-      byebug
       progress.increment
       return split_pdf_log
     end
