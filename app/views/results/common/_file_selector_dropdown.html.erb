@@ -14,8 +14,20 @@
         first_file_id = null;
         first_file_path = null;
         <% else %>
-        first_file_id = <%= files[0].id %>;
-        first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
+          first_file_id = <%= files[0].id %>;
+          first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
+          <% if @current_user.ta? %>
+            <% if assignmentfile =
+                AssignmentFile.select(:filename)
+                .joins('JOIN criteria_assignment_files_joins c ON c.assignment_file_id = assignment_files.id')
+                .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
+                .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
+                .first %>
+              <% index = files.find_index{|x| x.filename == assignmentfile.filename} %>
+              first_file_id = <%= files[index].id %>;
+              first_file_path = '<%= files[index].path %>/<%= files[index].filename %>';
+            <% end %>
+          <% end %>
         <% end %>
       </script>
 
