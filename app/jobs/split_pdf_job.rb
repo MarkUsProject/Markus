@@ -52,7 +52,7 @@ class SplitPDFJob < ActiveJob::Base
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
 
-      success = true
+      success = !partial_exams.empty?
       if partial_exams.empty?
         success = false
       end
