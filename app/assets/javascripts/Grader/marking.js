@@ -231,6 +231,46 @@ function expand_unmarked(elem, criterion_class) {
   }
 }
 
+// designate $next_criteria as the currently selected criteria
+function activeCriteria($next_criteria){
+  if (!$next_criteria.hasClass('active-criteria')) {
+    $criteria_list = $('#mark_criteria_pane_list>li');
+    // remove all previous active-criteria (there should only be one)
+    $criteria_list.removeClass('active-criteria');
+    // scroll the $next_criteria to the top of the criterion bar
+    $('#mark_viewer').animate({
+      scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top
+    }, 100);
+    $next_criteria.addClass('active-criteria');
+    // Unfocus any exisiting textfields/radio buttons
+    $('.mark_grade_input, .mark_grade_input_checkbox').blur();
+    // Remove any active rubrics
+    $('.active-rubric').removeClass('active-rubric');
+    if ($next_criteria.hasClass('flexible_criterion')) {
+      var $input = $next_criteria.find('.mark_grade_input');
+      // This step is necessary for focusing the cursor at the end of input
+      $input.focus().val($input.val());
+    } else if ($next_criteria.hasClass('rubric_criterion')) {
+      $selected = $next_criteria.find('.rubric_criterion_level_selected');
+      if ($selected.length) {
+        $selected.addClass('active-rubric');
+      } else {
+        $next_criteria.find('tr>td')[0].addClass('active-rubric');
+      }
+    } else if ($next_criteria.hasClass('checkbox_criterion')) {
+      $next_criteria.find('.mark_grade_input_checkbox').focus();
+    }
+    // if this current criteria is not expanded, expand it
+    // if($next_criteria.hasClass('not_expanded')){
+    //     if($next_criteria.hasClass('rubric_criterion')){
+    //         $next_criteria.children('.criterion_title').click();
+    //     }else{
+    //         $next_criteria.find('.criterion_expand').click();
+    //     }
+    // }
+  }
+};
+
 // NOTE: This function is only called by rubric/flexible, not checkbox.
 // It should be upgraded to focus_mark_criterion_type() in the future.
 function focus_mark_criterion(id) {
@@ -278,6 +318,7 @@ function hide_criterion(id, criterion_class) {
     }
 
     document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+    $('#' + criterionPrefix + '_criterion_' + id).removeClass('active-criteria');
 
     if (nodeToHide !== null) {
         nodeToHide.removeClass('expanded');
@@ -300,6 +341,7 @@ function show_criterion(id, criterion_class) {
     document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
     document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
+    activeCriteria($('#' + classAddRemovePrefix + '_criterion_' + id));
 }
 
 function select_mark(mark_id, mark) {

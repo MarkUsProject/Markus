@@ -9,7 +9,7 @@ class ExamTemplatesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = @assignment.exam_templates
+    @exam_templates = @assignment.exam_templates.includes(:template_divisions)
   end
 
   # Creates a new instance of the exam template.
