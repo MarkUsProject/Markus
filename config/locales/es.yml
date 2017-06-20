@@ -1660,6 +1660,17 @@ es:
       prev:   "Previo"
       close:  "Cerrar"
 
+    keybinding:
+      keyboard_help:          "Ayuda del acceso directo del teclado"
+      next_submission:        "Siguiente Entrega"
+      previous_submission:    "Entrega Anterior"
+      next_criterion:         "Seleccione el siguiente criterio"
+      previous_criterion:     "Seleccione el criterio anterior"
+      next_level:             "Seleccione el siguiente nivel"
+      previous_level:         "Seleccionar nivel anterior"
+      confirm_level:          "Confirmar nivel"
+      when_rubric:            "(Cuándo en Rúbrica) "
+
     #app/views/assignments/_read.html.erb
     no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
     locale_not_available:                  "La traducción %{locale} no esta disponible!"
