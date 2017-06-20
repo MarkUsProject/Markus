@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620144136) do
+ActiveRecord::Schema.define(version: 20170620184146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -467,6 +467,7 @@ ActiveRecord::Schema.define(version: 20170620144136) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "exam_template_id"
+    t.boolean  "success"
   end
 
   add_index "split_pdf_logs", ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id", using: :btree
