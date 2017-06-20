@@ -11,8 +11,8 @@
         var first_file_id;
         var first_file_path;
         <% if files.empty? %>
-        first_file_id = null;
-        first_file_path = null;
+          first_file_id = null;
+          first_file_path = null;
         <% else %>
           first_file_id = <%= files[0].id %>;
           first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
