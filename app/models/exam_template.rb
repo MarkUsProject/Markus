@@ -14,6 +14,7 @@ class ExamTemplate < ActiveRecord::Base
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
+  has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy
   accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
 
