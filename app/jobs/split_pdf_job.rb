@@ -51,20 +51,6 @@ class SplitPDFJob < ActiveJob::Base
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
-
-      success = !partial_exams.empty?
-      partial_exams.each do |exam_num, pages|
-        if pages.empty?
-          success = false
-          next
-        end
-        destination = File.join complete_dir, "#{exam_num}"
-        expected_entries = %w[. ..]
-        (1..exam_template.num_pages).each do |i|
-          expected_entries.push("#{i}.pdf")
-        end
-        success = success && Dir.exists?(destination) && Dir.entries(destination).sort == expected_entries.sort
-      end
       split_pdf_log = SplitPdfLog.create(
         exam_template: exam_template,
         filename: filename,
@@ -72,7 +58,6 @@ class SplitPDFJob < ActiveJob::Base
         num_groups_in_complete: num_groups_in_complete,
         num_groups_in_incomplete: num_groups_in_incomplete,
         num_pages_qr_scan_error: num_pages_qr_scan_error,
-        success: success
       )
       progress.increment
       return split_pdf_log
