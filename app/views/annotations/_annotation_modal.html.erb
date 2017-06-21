@@ -12,7 +12,9 @@
       <p>
         <%= f.text_area :content, id: 'new_annotation_content', name: 'content', value: content, required: true %>
       </p>
-      <%= button_tag t('marker.annotation.preview'), type: 'button', onclick: 'updateAnnotationPreview();' %>
+      <h3 id="annotation_preview_title"><%= t('marker.annotation.preview_title') %></h3>
+      <div id="annotation_preview" style="word-wrap: break-word;"></div>
+      <!--<%= button_tag t('marker.annotation.preview'), type: 'button', onclick: 'updateAnnotationPreview();' %>-->
       <% if new_annotation %>
         <% if current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
           <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
@@ -34,10 +36,5 @@
         <%= button_tag t('cancel'), type: 'button', onclick: 'close_annotation_modal();' %>
       </section>
     </div>
-    <div style="float: right">
-      <h2 id="annotation_preview_title" style="display: none"><%= t('marker.annotation.preview_title') %></h2>
-      <p id="annotation_preview" style="display: none; word-wrap: break-word;"></p>
-    </div>
-    <div style="clear:both;"></div>
   </div>
 <% end %>

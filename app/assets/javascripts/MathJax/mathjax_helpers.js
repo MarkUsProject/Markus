@@ -33,3 +33,5 @@ function updateAnnotationPreview() {
     // typeset the preview
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
 }
+
+$(document).on("keyup", "#new_annotation_content", updateAnnotationPreview);
