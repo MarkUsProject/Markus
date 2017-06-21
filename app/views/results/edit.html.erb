@@ -43,6 +43,7 @@
   var modalNotesGroup = null;
 
   $(document).ready(function() {
+    localStorage.setItem('assignment_id', <%= @assignment.id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
 
