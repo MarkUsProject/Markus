@@ -118,7 +118,7 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        return if Admin.first.nil?
+        return if Admin.blank?
         txn = repo.get_transaction(Admin.first.user_name)
 
         # Pages that belong to a division
