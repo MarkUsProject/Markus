@@ -90,12 +90,12 @@ class ExamTemplate < ActiveRecord::Base
 
   # Generate copies of the given exam template, with the given start number.
   def generate_copies(num_copies, start=1)
-    GenerateJob.perform_now(self, num_copies, start)
+    GenerateJob.perform_later(self, num_copies, start)
   end
 
   # Split up PDF file based on this exam template.
   def split_pdf(path)
-    SplitPDFJob.perform_now(self, path)
+    SplitPDFJob.perform_later(self, path)
   end
 
   def base_path
