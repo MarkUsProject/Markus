@@ -1278,6 +1278,17 @@ fr:
       prev:   "Précédente"
       close:  "Fermer"
 
+    keybinding:
+      keyboard_help:          "Aide sur le raccourci clavier"
+      next_submission:        "Envoi suivant"
+      previous_submission:    "Envoi précédent"
+      next_criterion:         "Sélectionnez le prochain critère"
+      previous_criterion:     "Sélectionnez le critère précédent"
+      next_level:             "Sélectionnez le prochain niveau"
+      previous_level:         "Sélectionnez le niveau précédent"
+      confirm_level:          "Quand à la rubrique"
+      when_rubric:            "(When on rubric) "
+
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
     locale_not_available: "La traduction %{locale} n'est pas disponible"
