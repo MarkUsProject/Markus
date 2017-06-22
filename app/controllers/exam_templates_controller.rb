@@ -119,6 +119,13 @@ class ExamTemplatesController < ApplicationController
     redirect_to action: 'index'
   end
 
+  def view_logs
+    @assignment = Assignment.find(params[:assignment_id])
+    @split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
+                                 .where(assignments: {id: @assignment.id})
+                                 .includes(:exam_template)
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(
