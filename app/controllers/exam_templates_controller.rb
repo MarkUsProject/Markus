@@ -82,13 +82,19 @@ class ExamTemplatesController < ApplicationController
     index = params[:examTemplateIndex].to_i
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    exam_template.generate_copies(copies, index)
-    flash_message(:success, t('exam_templates.generate.success', copies: copies))
 
-    generated_filename = "#{index}-#{index + copies - 1}.pdf"
-    send_file("#{exam_template.base_path}/#{generated_filename}",
-              filename: "#{generated_filename}",
-              type: "application/pdf")
+    current_job = exam_template.generate_copies(copies, index)
+    respond_to do |format|
+      format.js { render 'exam_templates/_poll_job.js.erb', locals: {job_id: current_job.job_id } }
+    end
+
+    #success = I18n.t('exam_templates.generate.success', copies: copies)
+    #flash_message(:success, t('exam_templates.generate.success', copies: copies))
+
+    # generated_filename = "#{index}-#{index + copies - 1}.pdf"
+    # send_file("#{exam_template.base_path}/#{generated_filename}",
+    #           filename: "#{generated_filename}",
+    #           type: "application/pdf")
   end
 
   def split
