@@ -366,6 +366,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         old: "Antiga:&nbsp;"
         show_old_marks: "Mostrar antigo resumo de notas"
       annotation:
+        placeholder: "A notação Markdown e LaTeX é suportada"
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
         new_annotation: "Criar nova anotação"

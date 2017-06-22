@@ -246,10 +246,11 @@
     height: 175px;
     margin-top: 1em;
     width: 100%;
+    padding: 10px;
   }
 
   #annotation_preview {
-    max-width: 175px;
+    width: 450px;
     margin: 1em 0 20px 0;
     border: 1px dashed $grey;
     padding: 0px 10px;

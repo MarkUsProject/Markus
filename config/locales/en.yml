@@ -399,6 +399,7 @@ en:
         old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
+        placeholder: "Markdown and basic LaTeX notation is supported"
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
         new_annotation: "Create new annotation"

@@ -530,6 +530,7 @@ es:
         old:                       "Anterior: "
         show_old_marks:            "Ver el Resumen de Notas Anteriores"
       annotation:
+        placeholder:                    "Notación de Markdown y LaTeX"
         from_line_to:                   "%{file_path}: Línea %{line_start} hasta la %{line_end}"
         remark_flag:                    "(Recalificación)"
         new_annotation:                 "Crear una nueva anotación"

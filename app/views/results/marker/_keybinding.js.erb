@@ -76,3 +76,18 @@ Mousetrap.bind('enter', function(e) {
     $('.active-rubric').trigger('onclick');
   }
 });
+
+// press n for new annotation modal to appear
+Mousetrap.bind('shift+n', function(e) {
+  if ($('#annotation_dialog:visible').length == 0) {
+    make_new_annotation();
+  }
+});
+
+// when shift+enter is pressed and the annotation modal is open, submit it
+Mousetrap.bind('shift+enter', function(e) {
+  if ($('#annotation_dialog:visible').length) {
+    e.preventDefault();
+    $('#submit_annotation').click();
+  }
+});

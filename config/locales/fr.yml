@@ -390,6 +390,7 @@ fr:
         old: "Précédent : "
         show_old_marks: "Afficher la note précédente "
       annotation:
+        placeholder: "La notation Markdown et LaTeX est prise en charge"
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
         new_annotation: "Nouvelle annotation"
