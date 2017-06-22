@@ -15,4 +15,13 @@
         <p><%= t('exam_templates.split.failure') %>. <%= t('exam_templates.split_pdf_log.failure_missing_pages_log', num_pages_qr_scan_error: split_pdf_log.num_pages_qr_scan_error, filename: split_pdf_log.filename) %>.</p>
     <% end %>
   <% end %>
+  <% unless split_pdf_log.user.nil? %>
+      <p><span class="exam-template-info">User</span>: <%= split_pdf_log.user.user_name %></p>
+  <% end %>
+  <p><span class="exam-template-info">Exam Template</span>: <%= split_pdf_log.exam_template.name %></p>
+  <p><span class="exam-template-info">Filename</span>: <%= split_pdf_log.filename %></p>
+  <p><span class="exam-template-info">Number of groups in complete</span>: <%= split_pdf_log.num_groups_in_complete %></p>
+  <p><span class="exam-template-info">Number of groups in incomplete</span>: <%= split_pdf_log.num_groups_in_incomplete %></p>
+  <p><span class="exam-template-info">Number of pages</span>: <%= split_pdf_log.original_num_pages %></p>
+  <p><span class="exam-template-info">Number of pages with QR scan errors</span>: <%= split_pdf_log.num_pages_qr_scan_error %></p>
 </div>
