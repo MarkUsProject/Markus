@@ -1,0 +1,17 @@
+<% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
+
+<% @heading_buttons = [
+    { link_text: t('exam_templates.back_to_exam_template_page'),
+      link_path: assignment_exam_templates_path }
+] %>
+
+<% i = 1 %>
+<% previous_incomplete_num_groups = @split_pdf_logs[0].num_groups_in_incomplete %>
+<% @split_pdf_logs.each do |split_pdf_log| %>
+    <%= render partial: 'split_pdf_log',
+               locals: { split_pdf_log: split_pdf_log,
+                         i: i,
+                         previous_incomplete_num_groups: previous_incomplete_num_groups } %>
+    <% i += 1 %>
+    <% previous_incomplete_num_groups = split_pdf_log.num_groups_in_incomplete %>
+<% end %>
