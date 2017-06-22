@@ -24,9 +24,9 @@
             first_file_id = <%= files[index].id %>;
             first_file_path = '<%= files[index].path %>/<%= files[index].filename %>';
           <% else %>
-            if(localStorage.getItem('assignment_id') == <%= @assignment.id %>) {
-              first_file_id = localStorage.getItem('file_id');
-              first_file_path = localStorage.getItem('file_path');
+            if (localStorage.getItem('assignment_id') == <%= @assignment.id %>) {
+              first_file_id = localStorage.getItem('file_id') || <%= files[0].id %>;
+              first_file_path = localStorage.getItem('file_path') || '<%= files[0].path %>/<%= files[0].filename %>';
             } else {
               first_file_id = <%= files[0].id %>;
               first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
