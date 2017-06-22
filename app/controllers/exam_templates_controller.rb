@@ -124,6 +124,7 @@ class ExamTemplatesController < ApplicationController
     @split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                  .where(assignments: {id: @assignment.id})
                                  .includes(:exam_template)
+                                 .includes(:user)
   end
 
   def exam_template_params
