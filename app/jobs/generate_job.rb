@@ -6,7 +6,7 @@ class GenerateJob < ActiveJob::Base
   def perform(exam_template, num_copies, start)
     m_logger = MarkusLogger.instance
     begin
-      progress.total = 0
+      progress.total = num_copies
       template_path = File.join(
         exam_template.base_path,
         exam_template.filename
