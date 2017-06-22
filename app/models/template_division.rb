@@ -1,6 +1,6 @@
 class TemplateDivision < ActiveRecord::Base
   belongs_to :exam_template
-  belongs_to :assignment_file
+  belongs_to :assignment_file, dependent: :destroy
 
   validates :start, numericality: { greater_than_or_equal_to: 1,
                                     less_than_or_equal_to: :end,
