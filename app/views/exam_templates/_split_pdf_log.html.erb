@@ -4,15 +4,15 @@
     <p class="log-green-message">
       <%= "#{t('exam_templates.split_pdf_log.log')} ##{i}" %> - <%= split_pdf_log.uploaded_when.strftime("%d %b %y at %I:%M:%S %p") %>
     </p>
-    <p><%= t('exam_templates.split.success') %>. <%= t('exam_templates.split_pdf_log.success_log', filename: split_pdf_log.filename, original_num_pages: split_pdf_log.original_num_pages) %>.</p>
+    <p><%= t('exam_templates.split_pdf_log.success_log', filename: split_pdf_log.filename, original_num_pages: split_pdf_log.original_num_pages) %>.</p>
   <% else %>
     <p class="log-red-message">
       <%= "#{t('exam_templates.split_pdf_log.log')} ##{i}" %> - <%= split_pdf_log.uploaded_when.strftime("%d %b %y at %I:%M:%S %p") %>
     </p>
     <% if split_pdf_log.num_pages_qr_scan_error > 0 %>
-        <p><%= t('exam_templates.split.failure') %>. <%= t('exam_templates.split_pdf_log.failure_general_log', filename: split_pdf_log.filename, original_num_pages: split_pdf_log.original_num_pages, num_pages_qr_scan_error: split_pdf_log.num_pages_qr_scan_error) %>.</p>
+        <p><%= t('exam_templates.split_pdf_log.failure_general_log', filename: split_pdf_log.filename, original_num_pages: split_pdf_log.original_num_pages, num_pages_qr_scan_error: split_pdf_log.num_pages_qr_scan_error) %>.</p>
     <% else %>
-        <p><%= t('exam_templates.split.failure') %>. <%= t('exam_templates.split_pdf_log.failure_missing_pages_log', num_pages_qr_scan_error: split_pdf_log.num_pages_qr_scan_error, filename: split_pdf_log.filename) %>.</p>
+        <p><%= t('exam_templates.split_pdf_log.failure_missing_pages_log', num_pages_qr_scan_error: split_pdf_log.num_pages_qr_scan_error, filename: split_pdf_log.filename) %>.</p>
     <% end %>
   <% end %>
   <% unless split_pdf_log.user.nil? %>
