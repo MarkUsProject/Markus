@@ -1,0 +1,5 @@
+es:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "división Pdf Iniciar sesión"

@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "Split Pdf Log"

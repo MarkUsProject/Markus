@@ -1,0 +1,5 @@
+pt:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "Dividido Pdf registro"
