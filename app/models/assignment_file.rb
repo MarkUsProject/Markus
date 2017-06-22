@@ -3,6 +3,8 @@ class AssignmentFile < ActiveRecord::Base
   belongs_to :assignment
   has_many :criteria_assignment_files_joins, dependent: :destroy
 
+  has_one :template_division
+
   validates_presence_of :filename
   validates_uniqueness_of :filename, scope: :assignment_id
   validates_format_of :filename,
