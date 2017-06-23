@@ -15,10 +15,7 @@ function poll_job(job_id, onSuccess, onComplete, interval) {
         onSuccess(data);
       }
       if (data.status === 'completed') {
-          console.log("here");
         if (onComplete) {
-            console.log("here2");
-            console.log(data);
           onComplete(data);
         }
       } else {
