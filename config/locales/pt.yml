@@ -74,7 +74,7 @@ pt:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "apenas letras, números, '.', '-' ou '_'"
+      format_of_assignment_file: "apenas letras, números, '.', '-', '(', ')', ou '_'"
 
     # app/views/main/index.html.erb
     switch_role:         "Trocar de papel"
