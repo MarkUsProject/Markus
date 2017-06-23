@@ -36,7 +36,9 @@ class CriteriaController < ApplicationController
   end
 
   def edit
+    assignment = Assignment.find(params[:assignment_id])
     @criterion = params[:criterion_type].constantize.find(params[:id])
+    @assignment_files = assignment.assignment_files
   end
 
   def destroy

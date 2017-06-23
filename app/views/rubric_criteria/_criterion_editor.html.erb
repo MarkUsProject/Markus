@@ -38,6 +38,11 @@
      <%= f.text_field :max_mark, value: "#{criterion.max_mark}" %>
     </span>
     <br>
+    <span>
+     <%= f.label :assignment_files, 'Assignment File', class: 'bold_inline_label' %>
+     <%= f.select :assignment_files, @assignment_files.collect {|file| [file.filename, file] } %>
+    </span>
+    <br>
     <span class='criteria_edit_total_mark'>
      <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.max_mark) %>
     </span>
