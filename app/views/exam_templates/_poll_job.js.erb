@@ -1,4 +1,4 @@
-function open_generate_pdf() {
-  window.open("<%= file_name %>");
+function download_generate_pdf() {
+    window.location="<%= download_generate_assignment_exam_template_path(file_path: file_path) %>";
 }
-poll_job("<%= job_id %>", undefined, open_generate_pdf);
+poll_job("<%= job_id %>", undefined, download_generate_pdf);

@@ -88,16 +88,15 @@ class ExamTemplatesController < ApplicationController
     current_job = exam_template.generate_copies(copies, index)
     respond_to do |format|
       format.js { render 'exam_templates/_poll_job.js.erb',
-                         locals: { file_name: "#{exam_template.base_path}/#{generated_filename}",
-                                      job_id: current_job.job_id} }
+                         locals: { file_path: "#{exam_template.base_path}/#{generated_filename}",
+                                   job_id: current_job.job_id} }
     end
+  end
 
-    # exam_template.generate_copies(copies, index)
-    # flash_message(:success, t('exam_templates.generate.success', copies: copies))
-    # generated_filename = "#{index}-#{index + copies - 1}.pdf"
-    # send_file("#{exam_template.base_path}/#{generated_filename}",
-    #           filename: "#{generated_filename}",
-    #           type: "application/pdf")
+  def download_generate
+    send_file(params[:file_path],
+              filename: File.basename(params[:file_path]),
+              type: "application/pdf")
   end
 
   def split
