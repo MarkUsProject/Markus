@@ -100,6 +100,10 @@ Markus::Application.routes.draw do
           patch 'generate'
           patch 'split'
         end
+
+        collection do
+          get 'view_logs'
+        end
       end
 
       resources :groups do

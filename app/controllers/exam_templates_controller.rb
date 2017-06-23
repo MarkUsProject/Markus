@@ -99,7 +99,7 @@ class ExamTemplatesController < ApplicationController
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
       else
-        exam_template.split_pdf(split_exam.path, split_exam.original_filename)
+        exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
         flash_message(:success,t('exam_templates.split.success'))
       end
     else
@@ -117,6 +117,14 @@ class ExamTemplatesController < ApplicationController
       flash_message(:failure, t('exam_templates.delete.failure'))
     end
     redirect_to action: 'index'
+  end
+
+  def view_logs
+    @assignment = Assignment.find(params[:assignment_id])
+    @split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
+                                 .where(assignments: {id: @assignment.id})
+                                 .includes(:exam_template)
+                                 .includes(:user)
   end
 
   def exam_template_params

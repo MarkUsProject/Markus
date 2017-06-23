@@ -1,0 +1,14 @@
+es:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "división Pdf Iniciar sesión"
+    attributes:
+      split_pdf_log:
+        filename: "Nombre del archivo"
+        exam_template: "Plantilla de examen"
+        num_groups_in_complete: "Número de grupos en total"
+        num_groups_in_incomplete: "Número de grupos incompletos"
+        num_pages_qr_scan_error: "Número de páginas con errores de análisis QR"
+        original_num_pages: "número de páginas"
+        user: "usuario"
