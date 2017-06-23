@@ -19,6 +19,7 @@ class CriteriaController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
+    @assignment_files = @assignment.assignment_files
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
