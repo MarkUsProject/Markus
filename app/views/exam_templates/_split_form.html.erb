@@ -1,5 +1,6 @@
 <%= form_for [@assignment, exam_template], url: split_assignment_exam_template_path(id: exam_template.id),
-             html: { multipart: true } do |f| %>
+             html: { multipart: true },
+             remote: true do |f| %>
 
     <p>
       <%= f.label t('exam_templates.split.instruction') %>
