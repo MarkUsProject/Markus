@@ -53,13 +53,17 @@ class CriteriaController < ApplicationController
 
   def update
     criterion_type = params[:criterion_type]
+    byebug
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
-      properly_updated = @criterion.update(rubric_criterion_params)
+      properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
+      assignment_file = AssignmentFile.find(rubric_criterion_params[:assignment_files].to_i)
     elsif criterion_type == 'FlexibleCriterion'
-      properly_updated = @criterion.update(flexible_criterion_params)
+      properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
+      assignment_file = AssignmentFile.find(flexible_criterion_params[:assignment_files].to_i)
     else
-      properly_updated = @criterion.update(checkbox_criterion_params)
+      properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
+      assignment_file = AssignmentFile.find(checkbox_criterion_params[:assignment_files].to_i)
     end
     unless properly_updated
       @errors = @criterion.errors
@@ -132,6 +136,7 @@ class CriteriaController < ApplicationController
 
   def flexible_criterion_params
     params.require(:flexible_criterion).permit(:name,
+                                               :assignment_files,
                                                :description,
                                                :position,
                                                :max_mark,
@@ -141,6 +146,7 @@ class CriteriaController < ApplicationController
 
   def rubric_criterion_params
     params.require(:rubric_criterion).permit(:name,
+                                             :assignment_files,
                                              :assignment,
                                              :position,
                                              :level_0_name,
@@ -160,6 +166,7 @@ class CriteriaController < ApplicationController
 
   def checkbox_criterion_params
     params.require(:checkbox_criterion).permit(:name,
+                                               :assignment_files,
                                                :description,
                                                :position,
                                                :max_mark,
