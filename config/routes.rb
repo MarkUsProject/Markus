@@ -293,7 +293,6 @@ Markus::Application.routes.draw do
         get 'populate_grades_table'
         get 'get_mark_columns'
         get 'view_summary'
-        get 'refresh_graph'
         get 'grades'
         get 'csv_download'
         post 'csv_upload'

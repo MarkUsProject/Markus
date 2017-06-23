@@ -1267,6 +1267,17 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       close:  "Fechar"
       now:    "Atualmente"
 
+    keybinding:
+      keyboard_help:          "Ajuda de atalho de teclado"
+      next_submission:        "Próxima submissão"
+      previous_submission:    "Apresentação anterior"
+      next_criterion:         "Selecione o próximo critério"
+      previous_criterion:     "Selecione o critério anterior"
+      next_level:             "Selecione o próximo nível"
+      previous_level:         "Selecione o nível anterior"
+      confirm_level:          "Confirme o nível"
+      when_rubric:            "(Quando na rubrica) "
+
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
     locale_not_available: "%{locale} tradução não disponível!"
