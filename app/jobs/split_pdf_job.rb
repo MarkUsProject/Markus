@@ -3,7 +3,7 @@ class SplitPDFJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
-  def perform(exam_template, path)
+  def perform(exam_template, path, original_filename=nil)
     m_logger = MarkusLogger.instance
     begin
       progress.total = 0
@@ -18,6 +18,7 @@ class SplitPDFJob < ActiveJob::Base
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
+      num_pages_qr_scan_error = 0
       pdf.pages.each_index do |i|
         page = pdf.pages[i]
         new_page = CombinePDF.new
@@ -35,14 +36,31 @@ class SplitPDFJob < ActiveJob::Base
         m = qrcode_regex.match qrcode_string
         if m.nil?
           new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+          num_pages_qr_scan_error += 1
         else
           partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
         end
       end
-
       save_pages(exam_template, partial_exams)
+
+      # creating an instance of split_pdf_log
+      filename = original_filename.nil? ? File.basename(path) : original_filename
+      num_pages = pdf.pages.length
+      complete_dir = File.join(exam_template.base_path, 'complete')
+      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
+      num_groups_in_complete = get_num_groups_in_dir(complete_dir)
+      num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
+      split_pdf_log = SplitPdfLog.create(
+        exam_template: exam_template,
+        filename: filename,
+        original_num_pages: num_pages,
+        num_groups_in_complete: num_groups_in_complete,
+        num_groups_in_incomplete: num_groups_in_incomplete,
+        num_pages_qr_scan_error: num_pages_qr_scan_error,
+      )
       progress.increment
+      return split_pdf_log
     end
      m_logger.log('Split pdf process done')
     rescue => e
@@ -85,8 +103,8 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
+        return unless Admin.exists?
         txn = repo.get_transaction(Admin.first.user_name)
-
 
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|
@@ -136,5 +154,17 @@ class SplitPDFJob < ActiveJob::Base
 
   def group_name_for(exam_template, exam_num)
     "#{exam_template.assignment.short_identifier}_paper_#{exam_num}"
+  end
+
+  def get_num_groups_in_dir(dir)
+    num_groups_in_dir = 0
+    if Dir.exists?(dir)
+      Dir.foreach(dir) do |filename|
+        if File.directory?(File.join(dir, filename)) && !filename.start_with?('.')
+          num_groups_in_dir += 1
+        end
+      end
+    end
+    num_groups_in_dir
   end
 end

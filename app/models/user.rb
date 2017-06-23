@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
            class_name: 'Membership'
   has_many :annotations, as: :creator
   has_many :test_script_results, foreign_key: 'requested_by_id', dependent: :delete_all, inverse_of: :requested_by
+  has_many :split_pdf_logs
 
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
