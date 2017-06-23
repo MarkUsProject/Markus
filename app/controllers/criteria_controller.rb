@@ -19,7 +19,6 @@ class CriteriaController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment_files = @assignment.assignment_files
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
@@ -37,9 +36,8 @@ class CriteriaController < ApplicationController
   end
 
   def edit
-    assignment = Assignment.find(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
     @criterion = params[:criterion_type].constantize.find(params[:id])
-    @assignment_files = assignment.assignment_files
   end
 
   def destroy
@@ -52,8 +50,7 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    assignment = Assignment.find(params[:assignment_id])
-    @assignment_files = assignment.assignment_files
+    @assignment = Assignment.find(params[:assignment_id])
     criterion_type = params[:criterion_type]
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
