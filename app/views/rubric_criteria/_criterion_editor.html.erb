@@ -29,22 +29,22 @@
 
   <div class='main_rubric_criteria_edit'>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-     <%= f.label :name, t(:criterion), class: 'bold_inline_label' %>
-     <%= f.text_field :name %>
+      <%= f.label :name, t(:criterion), class: 'bold_inline_label' %>
+      <%= f.text_field :name %>
     </span>
     <br>
     <span id='criterion_weight_edit_<%= criterion.id %>' class='criterion_weight_edit'>
-     <%= f.label :max_mark, t(:max_mark), class: 'bold_inline_label' %>
-     <%= f.text_field :max_mark, value: "#{criterion.max_mark}" %>
+      <%= f.label :max_mark, t(:max_mark), class: 'bold_inline_label' %>
+      <%= f.text_field :max_mark, value: "#{criterion.max_mark}" %>
     </span>
     <br>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-     <%= f.label :assignment_files, 'Assignment File', class: 'bold_inline_label' %>
-     <%= f.select :assignment_files, @assignment_files.collect {|file| [file.filename, file] } %>
+      <%= f.label :assignment_files, 'Assignment File', class: 'bold_inline_label' %>
+      <%= f.select :assignment_files, @assignment_files.collect {|file| [file.filename, file] } %>
     </span>
     <br>
     <span class='criteria_edit_total_mark'>
-     <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.max_mark) %>
+      <%= t('criteria_edit_total_mark', criterion_total_mark: criterion.max_mark) %>
     </span>
     <br>
     <h4><span><%= t('visibility') %></span></h4>
