@@ -24,7 +24,7 @@ class TemplateDivision < ActiveRecord::Base
   end
 
   def set_defaults_for_associated_criteria_assignment_files_join
-    filename =  "#{exam_template.name}-#{label}.pdf".delete(' ')
+    filename =  "#{exam_template.name}-#{label}.pdf".tr(' ', '_')
     if criteria_assignment_files_join.nil?
       assignment_file = AssignmentFile.find_or_initialize_by(
         filename: filename,
