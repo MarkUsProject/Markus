@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      assignment:
+        one: "Fichier d'affectation"

@@ -39,7 +39,7 @@
     </span>
     <br>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-      <%= f.label :assignment_files, 'Assignment File', class: 'bold_inline_label' %>
+      <%= f.label :assignment_files, AssignmentFile.model_name.human, class: 'bold_inline_label' %>
       <%= f.select :assignment_files, @assignment_files.collect {|file| [file.filename, file.id] } %>
     </span>
     <br>
