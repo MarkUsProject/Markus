@@ -1447,6 +1447,9 @@ en:
       previous_level:         "Select previous level"
       confirm_level:          "Confirm level"
       when_rubric:            "(When on rubric) "
+      open_annotation:        "Open annotation modal"
+      confirm_annotation:     "Confirm annotation"
+
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"

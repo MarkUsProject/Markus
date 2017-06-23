@@ -1278,6 +1278,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       previous_level:         "Selecione o nível anterior"
       confirm_level:          "Confirme o nível"
       when_rubric:            "(Quando na rubrica) "
+      open_annotation:        "Abrir tela de anotação"
+      confirm_annotation:     "Confirmar anotação"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"

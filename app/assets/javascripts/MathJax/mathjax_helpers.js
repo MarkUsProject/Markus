@@ -10,34 +10,32 @@ function hideAnnotationPreview() {
 
     // recenter dialog
     var dialog = $('#annotation_dialog');
-    dialog.css('margin-left', -1 * dialog.width() / 2);
+    dialog.css('margin-leftN', -1 * dialog.width() / 2);
 }
 
 function updateAnnotationPreview() {
-    var newAnnotation = document.getElementById('new_annotation_content').value;
+    delay(function() {
+        var newAnnotation = document.getElementById('new_annotation_content').value;
 
-    var preview = document.getElementById('annotation_preview');
-    preview.innerHTML = marked(newAnnotation);
+        var preview = document.getElementById('annotation_preview');
+        preview.innerHTML = marked(newAnnotation);
 
-    // typeset the preview
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+        // typeset the preview
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+    }, 300);
 }
 
 // Allow inline single dollar sign notation
 MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']]}
 });
 
-var delay = (function(){
+var delay = (function() {
   var timer = 0;
-  return function(callback, ms){
-    clearTimeout (timer);
+  return function (callback, ms) {
+    clearTimeout(timer);
     timer = setTimeout(callback, ms);
   };
 })();
 
-$(document).on("keyup", "#new_annotation_content", function () {
-  delay(function(){
-    updateAnnotationPreview();
-  }, 300 );
-});
+$(document).on("keyup", "#new_annotation_content", updateAnnotationPreview);
