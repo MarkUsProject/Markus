@@ -88,7 +88,7 @@ class ExamTemplatesController < ApplicationController
     generated_filename = "#{index}-#{index + copies - 1}.pdf"
     current_job = exam_template.generate_copies(copies, index)
     respond_to do |format|
-      format.js { render 'exam_templates/_poll_job.js.erb',
+      format.js { render 'exam_templates/_poll_generate_job.js.erb',
                          locals: { file_path: "#{exam_template.base_path}/#{generated_filename}",
                                    job_id: current_job.job_id} }
     end
