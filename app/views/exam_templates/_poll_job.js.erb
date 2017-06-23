@@ -1,1 +1,4 @@
-poll_job("<%= job_id %>", undefined, console.log("done"));
+function open_generate_pdf() {
+  window.open("<%= file_name %>");
+}
+poll_job("<%= job_id %>", undefined, open_generate_pdf);
