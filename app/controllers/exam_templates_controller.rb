@@ -108,7 +108,7 @@ class ExamTemplatesController < ApplicationController
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
       else
-        exam_template.split_pdf(split_exam.path)
+        exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
         flash_message(:success,t('exam_templates.split.success'))
       end
     else

@@ -74,7 +74,7 @@ en:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
+      format_of_assignment_file: "must be alphanumeric, '.', '-', '(', ')', or '_' only"
 
     # app/views/main/index.html.erb
     switch_role:         "Switch Role"
@@ -1435,6 +1435,17 @@ en:
       next:   "Next"
       prev:   "Previous"
       close:  "Close"
+
+    keybinding:
+      keyboard_help:          "Keyboard Shortcut Help"
+      next_submission:        "Next submission"
+      previous_submission:    "Previous submission"
+      next_criterion:         "Select next criterion"
+      previous_criterion:     "Select previous criterion"
+      next_level:             "Select next level"
+      previous_level:         "Select previous level"
+      confirm_level:          "Confirm level"
+      when_rubric:            "(When on rubric) "
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
