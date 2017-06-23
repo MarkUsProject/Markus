@@ -10,7 +10,7 @@ function hideAnnotationPreview() {
 
     // recenter dialog
     var dialog = $('#annotation_dialog');
-    dialog.css('margin-leftN', -1 * dialog.width() / 2);
+    dialog.css('margin-left', -1 * dialog.width() / 2);
 }
 
 function updateAnnotationPreview() {
