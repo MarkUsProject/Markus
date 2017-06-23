@@ -95,8 +95,8 @@ class ExamTemplate < ActiveRecord::Base
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename=nil)
-    SplitPDFJob.perform_now(self, path, original_filename)
+  def split_pdf(path, original_filename=nil, current_user=nil)
+    SplitPDFJob.perform_now(self, path, original_filename, current_user)
   end
 
   def base_path
