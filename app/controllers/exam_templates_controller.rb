@@ -85,18 +85,20 @@ class ExamTemplatesController < ApplicationController
 
     flash_message(:success, t('exam_templates.generate.generate_job_started',
                               exam_name: exam_template.assignment.short_identifier))
-    generated_filename = "#{index}-#{index + copies - 1}.pdf"
     current_job = exam_template.generate_copies(copies, index)
     respond_to do |format|
       format.js { render 'exam_templates/_poll_generate_job.js.erb',
-                         locals: { file_path: "#{exam_template.base_path}/#{generated_filename}",
+                         locals: { file_name: "#{index}-#{index + copies - 1}.pdf",
+                                   exam_id: exam_template.id,
                                    job_id: current_job.job_id} }
     end
   end
 
   def download_generate
-    send_file(params[:file_path],
-              filename: File.basename(params[:file_path]),
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    send_file(exam_template.base_path + '/' + params[:file_name],
+              filename: params[:file_name],
               type: "application/pdf")
   end
 

@@ -1,3 +1,4 @@
 poll_job("<%= job_id %>", undefined, function() {
-    window.location="<%= download_generate_assignment_exam_template_path(file_path: file_path) %>";
+    window.location="<%= download_generate_assignment_exam_template_path(file_name: file_name,
+                                                                         id: exam_id) %>";
 });
