@@ -43,6 +43,8 @@ pt:
         "Índice inicial"
       generate:
         "Gerar"
+      generate_job_started:
+        "Gerando pdfs de exame para exame %{exam_name} começou"
 
     split:
       success:

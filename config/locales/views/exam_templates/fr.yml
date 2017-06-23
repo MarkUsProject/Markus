@@ -43,6 +43,8 @@ fr:
         "Index de départ"
       generate:
         "Générer"
+      generate_job_started:
+        "La génération de pdfs d'examen pour examen %{exam_name} a commencé"
 
     split:
       success:

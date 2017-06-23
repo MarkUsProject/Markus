@@ -83,7 +83,8 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
 
-    flash_message(:success, "Generating exam pdfs for exam %{exam_template.assignment.short_identifier} has begun.")
+    flash_message(:success, t('exam_templates.generate.generate_job_started',
+                              exam_name: exam_template.assignment.short_identifier))
     generated_filename = "#{index}-#{index + copies - 1}.pdf"
     current_job = exam_template.generate_copies(copies, index)
     respond_to do |format|
