@@ -40,8 +40,10 @@
     </span>
     <br>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
+      <% selected_file = criterion.criteria_assignment_files_joins.exists? ? criterion.criteria_assignment_files_joins[0].assignment_file : @assignment.assignment_files[0] %>
       <%= f.label :assignment_files, AssignmentFile.model_name.human, class: 'bold_inline_label' %>
-      <%= f.select :assignment_files, @assignment.assignment_files.collect {|file| [file.filename, file.id] } %>
+      <%= f.select :assignment_files, @assignment.assignment_files.collect {|file| [file.filename, file.id] },
+                   selected: [selected_file.filename, selected_file.id] %>
     </span>
     <br>
     <span id='criterion_description_edit_<%= criterion.id %>' class='criterion_description_edit'>
