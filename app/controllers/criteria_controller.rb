@@ -69,7 +69,7 @@ class CriteriaController < ApplicationController
       old_criteria_assignment_files_join.destroy_all
     end
     # create new corresponding criteria_assignment_files_join
-    new_criteria_assignment_files_join = CriteriaAssignmentFilesJoin.find_or_initialize_by(
+    new_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins.create(
       assignment_file: assignment_file,
       criterion: @criterion
     )
