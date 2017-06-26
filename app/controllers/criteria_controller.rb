@@ -61,12 +61,12 @@ class CriteriaController < ApplicationController
     elsif criterion_type == 'FlexibleCriterion'
       properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
       unless flexible_criterion_params[:assignment_files].nil?
-        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+        assignment_files = flexible_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
       end
     else
       properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
       unless checkbox_criterion_params[:assignment_files].nil?
-        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+        assignment_files = checkbox_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
       end
     end
     # delete old associated criteria_assignment_files_join
