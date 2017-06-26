@@ -1,0 +1,13 @@
+<div>
+  <%= "#{t('exam_templates.split_pdf_log.log')} ##{i}" %> - <%= split_pdf_log.uploaded_when.strftime("%d %b %y at %I:%M:%S %p") %>
+  <% unless split_pdf_log.user.nil? %>
+      <p><span class="exam-template-info">User</span>: <%= split_pdf_log.user.user_name %></p>
+  <% end %>
+  <p><strong><%= SplitPdfLog.human_attribute_name('exam_template') %></strong>: <%= split_pdf_log.exam_template.name %></p>
+  <p><strong><%= SplitPdfLog.human_attribute_name('filename') %></strong>: <%= split_pdf_log.filename %></p>
+  <p><strong><%= SplitPdfLog.human_attribute_name('num_groups_in_complete') %></strong>: <%= split_pdf_log.num_groups_in_complete %></p>
+  <p><strong><%= SplitPdfLog.human_attribute_name('num_groups_in_incomplete') %></strong>: <%= split_pdf_log.num_groups_in_incomplete %></p>
+  <p><strong><%= SplitPdfLog.human_attribute_name('original_num_pages') %></strong>: <%= split_pdf_log.original_num_pages %></p>
+  <p><strong><%= SplitPdfLog.human_attribute_name('num_pages_qr_scan_error') %></strong>: <%= split_pdf_log.num_pages_qr_scan_error %></p>
+</div>
+<hr>

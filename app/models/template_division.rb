@@ -24,9 +24,10 @@ class TemplateDivision < ActiveRecord::Base
   end
 
   def set_defaults_for_associated_criteria_assignment_files_join
+    filename =  "#{exam_template.name}-#{label}.pdf".tr(' ', '_')
     if criteria_assignment_files_join.nil?
       assignment_file = AssignmentFile.find_or_initialize_by(
-        filename: "#{exam_template.name}-#{label}.pdf",
+        filename: filename,
         assignment_id: exam_template.assignment.id
       )
       criterion = FlexibleCriterion.find_or_initialize_by(
@@ -42,7 +43,7 @@ class TemplateDivision < ActiveRecord::Base
       )
       self.update(criteria_assignment_files_join: criteria_assignment_files_join_object)
     else
-      criteria_assignment_files_join.assignment_file.filename = "#{exam_template.name}-#{label}.pdf"
+      criteria_assignment_files_join.assignment_file.filename = filename
       criteria_assignment_files_join.criterion.name = label
       criteria_assignment_files_join.save!
     end
