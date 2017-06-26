@@ -69,11 +69,10 @@ class CriteriaController < ApplicationController
       old_criteria_assignment_files_join.destroy_all
     end
     # create new corresponding criteria_assignment_files_join
-    new_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins.create(
+    @criterion.criteria_assignment_files_joins.create(
       assignment_file: assignment_file,
       criterion: @criterion
     )
-    new_criteria_assignment_files_join.save
     unless properly_updated
       @errors = @criterion.errors
       render :errors
