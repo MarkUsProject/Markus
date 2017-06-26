@@ -1,5 +1,11 @@
 <% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
 
+<% if flash[:split] %>
+    <script type="text/javascript">
+        poll_job("<%= flash[:split] %>", undefined, function() {window.location.reload()});
+    </script>
+<% end %>
+
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_template_page'),
     link_path: assignment_exam_templates_path }

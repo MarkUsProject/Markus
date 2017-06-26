@@ -100,14 +100,10 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.split.invalid'))
         redirect_to action: 'index'
       else
-        flash_message(:success, "test")
         current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
+        flash[:split] = current_job.job_id
         respond_to do |format|
-          format.html do
-            redirect_to view_logs_assignment_exam_templates_path
-          end
-          format.js { render 'exam_templates/_poll_split_job.js.erb',
-                             locals: { job_id: current_job.job_id} }
+          format.html { redirect_to view_logs_assignment_exam_templates_path }
         end
       end
     else
