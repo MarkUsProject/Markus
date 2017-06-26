@@ -65,9 +65,7 @@ class CriteriaController < ApplicationController
     end
     # delete old associated criteria_assignment_files_join
     old_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins
-    if old_criteria_assignment_files_join.exists?
-      old_criteria_assignment_files_join.destroy_all
-    end
+    old_criteria_assignment_files_join.destroy_all
     # create new corresponding criteria_assignment_files_join
     @criterion.criteria_assignment_files_joins.create(
       assignment_file: assignment_file,
