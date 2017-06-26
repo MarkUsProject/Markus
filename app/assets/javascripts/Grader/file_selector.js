@@ -3,6 +3,8 @@ function open_file(id, path, downloading) {
         document.getElementById('file_id').value = id;
         document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
     } else {
+        localStorage.setItem('file_id', id);
+        localStorage.setItem('file_path', path);
         load_submitted_file(id);
         document.getElementById('select_file_id').value = id;
         document.getElementById('file_selector_dropdown_text').innerHTML = path;
