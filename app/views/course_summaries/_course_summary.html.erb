@@ -8,11 +8,6 @@
                     class: 'title' %>
       </h2>
 
-      <div id='course_summary_graph' class='ta_grade_distribution'>
-        <%= render partial: 'course_summaries/course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments } %>
-      </div>
-
-      <br>
       <div id='weighted_course_summary_graph' class='ta_grade_distribution'>
         <%= render partial: 'course_summaries/weighted_course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments,
                                                                                         marking_schemes: @marking_schemes } %>

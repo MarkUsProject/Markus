@@ -2,14 +2,8 @@ document.getElementById('assignment_summaries').innerHTML =
   "<%= escape_javascript(render partial: 'course_summaries/course_summary',
                                 locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments, marking_schemes: @marking_schemes }).html_safe %>";
 
-$('#course_summary_graph').html(
-  "<%= escape_javascript(render partial: 'course_summaries/course_summary_graph',
-                                locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments }) %>");
-
 $('#weighted_course_summary_graph').html(
     "<%= escape_javascript(render partial: 'course_summaries/weighted_course_summary_graph',
                                 locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments, marking_schemes: @marking_schemes }) %>");
 
 $('a[data-id]').removeClass('link_disabled');
-
-$('a[data-id="summary"]').addClass('link_disabled');
