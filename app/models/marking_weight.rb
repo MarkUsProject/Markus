@@ -3,14 +3,9 @@ class MarkingWeight < ActiveRecord::Base
 
   def get_gradable_item
     if self.is_assignment
-      gradable_item = Assignment.where(id: gradable_item_id).first
+      Assignment.find(gradable_item_id)
     else
-      gradable_item = GradeEntryForm.where(id: gradable_item_id).first
+      GradeEntryForm.find(gradable_item_id)
     end
-    return gradable_item
-  end
-
-  def get_weight
-    return weight
   end
 end

@@ -35,7 +35,7 @@
       tooltips: {
         callbacks: {
           title: function (tooltipItems) {
-            var baseNum = parseInt(tooltipItems[0].xLabel);
+            var baseNum = parseInt(tooltipItems[0].xLabel, 10);
             if (baseNum === 0) {
               return '0-5';
             } else {
