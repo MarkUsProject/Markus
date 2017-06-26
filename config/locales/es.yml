@@ -530,6 +530,7 @@ es:
         old:                       "Anterior: "
         show_old_marks:            "Ver el Resumen de Notas Anteriores"
       annotation:
+        placeholder:                    "Notación de Markdown y LaTeX"
         from_line_to:                   "%{file_path}: Línea %{line_start} hasta la %{line_end}"
         remark_flag:                    "(Recalificación)"
         new_annotation:                 "Crear una nueva anotación"
@@ -1670,6 +1671,8 @@ es:
       previous_level:         "Seleccionar nivel anterior"
       confirm_level:          "Confirmar nivel"
       when_rubric:            "(Cuándo en Rúbrica) "
+      open_annotation:        "Modalidad de anotación abierta"
+      confirm_annotation:     "Confirmar anotación"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"

@@ -399,6 +399,7 @@ en:
         old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
+        placeholder: "Markdown and basic LaTeX notation is supported"
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
         new_annotation: "Create new annotation"
@@ -1446,6 +1447,9 @@ en:
       previous_level:         "Select previous level"
       confirm_level:          "Confirm level"
       when_rubric:            "(When on rubric) "
+      open_annotation:        "Open annotation modal"
+      confirm_annotation:     "Confirm annotation"
+
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
