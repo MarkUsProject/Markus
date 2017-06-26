@@ -21,7 +21,7 @@ class GenerateJob < ActiveJob::Base
           qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
           alignment = page_num % 2 == 0 ? :right : :left
           pdf.render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)
-          pdf.text("Exam #{exam_num}-#{page_num + 1}", align: alignment)
+          pdf.text("#{exam_template.name} #{exam_num}-#{page_num + 1}", align: alignment)
           pdf.start_new_page
         end
         combine_pdf_qr = CombinePDF.parse(pdf.render)
