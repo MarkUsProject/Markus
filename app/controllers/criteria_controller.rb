@@ -55,19 +55,25 @@ class CriteriaController < ApplicationController
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
-      assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      unless rubric_criterion_params[:assignment_files].nil?
+        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      end
     elsif criterion_type == 'FlexibleCriterion'
       properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
-      assignment_files = flexible_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      unless flexible_criterion_params[:assignment_files].nil?
+        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      end
     else
       properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
-      assignment_files = checkbox_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      unless checkbox_criterion_params[:assignment_files].nil?
+        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+      end
     end
     # delete old associated criteria_assignment_files_join
     old_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins
     old_criteria_assignment_files_join.destroy_all
     # create new corresponding criteria_assignment_files_join
-    assignment_files.each do |assignment_file|
+    assignment_files.to_a.each do |assignment_file|
       unless assignment_file.nil?
         @criterion.criteria_assignment_files_joins.create(
           assignment_file: assignment_file,
