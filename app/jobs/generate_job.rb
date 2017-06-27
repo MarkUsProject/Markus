@@ -33,7 +33,7 @@ class GenerateJob < ActiveJob::Base
 
       generated_pdf.save File.join(
         exam_template.base_path,
-        "#{start}-#{start + num_copies - 1}.pdf"
+        "#{exam_template.assignment.short_identifier}-#{start}-#{start + num_copies - 1}.pdf"
       )
      end
      m_logger.log('Generate pdf copies process done')
