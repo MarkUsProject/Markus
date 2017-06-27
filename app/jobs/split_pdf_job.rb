@@ -44,6 +44,7 @@ class SplitPDFJob < ActiveJob::Base
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             error_description = "QR code doesn't contain corresponding exam template."
+            new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
           end
         end
       end
