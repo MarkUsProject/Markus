@@ -19,16 +19,17 @@
   padding: 0;
   width: 100%;
 }
-.ui-menu .ui-menu-item a {
+.ui-menu .ui-menu-item div {
   text-decoration: none;
   display: block;
   padding: 5px .4em;
   line-height: 1.5;
   min-height: 0; /* support: IE7 */
   font-weight: normal;
+  cursor: pointer;
 }
-.ui-menu .ui-menu-item a.ui-state-focus,
-.ui-menu .ui-menu-item a.ui-state-active {
+.ui-menu .ui-menu-item div.ui-state-focus,
+.ui-menu .ui-menu-item div.ui-state-active {
   color: white;
   background-color: #89b1dd;
 }
@@ -37,7 +38,7 @@
   font-weight: normal;
   line-height: 1.5;
 }
-.ui-menu .ui-state-disabled a {
+.ui-menu .ui-state-disabled div {
   color: lightgrey;
   cursor: default;
 }
@@ -46,7 +47,7 @@
 .ui-menu-icons {
   position: relative;
 }
-.ui-menu-icons .ui-menu-item a {
+.ui-menu-icons .ui-menu-item div {
   position: relative;
   padding-left: 2em;
 }
