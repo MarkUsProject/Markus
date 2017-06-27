@@ -13,20 +13,6 @@
           searchable: true
         },
         {
-          id: 'repository',
-          content: '<%= j raw I18n.t('summaries_index.repository') %>',
-          sortable: true,
-          compare: compare_anchor_text,
-          searchable: true
-        },
-        {
-          id: 'commit_date',
-          content: '<%= j raw I18n.t('summaries_index.commit_date') %>',
-          sortable: true,
-          compare: compare_dates,
-          searchable: true
-        },
-        {
           id: 'marking_state',
           content: '<%= j raw I18n.t('summaries_index.marking_state') %>',
           sortable: true,
@@ -182,17 +168,6 @@
         } else {
           s['group_name'] = <a href={summary.name_url}>{summary.name}</a>;
         };
-        if (summary.late_commit) {
-          s['commit_date'] = (<span>
-            <%= image_tag('icons/error.png',
-                          title: t(:past_due_date_edit_result_warning,
-                                   href: t(:last_commit))) %>
-            {summary.commit_date}
-          </span>);
-        } else {
-          s['commit_date'] = summary.commit_date;
-        }
-        s['repository'] = <a href={summary.repo_url}>{summary.repo_name}</a>;
         s['marking_state'] = this.renderMarkingState(summary.state);
         s['final_grade'] = summary.final_grade;
         s['section'] = summary.section;
