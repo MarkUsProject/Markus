@@ -1,8 +1,11 @@
 <% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
 
-<% if flash[:split] %>
+<% if session[:job_id] %>
     <script type="text/javascript">
-        poll_job("<%= flash[:split] %>", undefined, function() {window.location.reload()});
+        poll_job("<%= session[:job_id] %>", undefined, function() {
+            <% session[:job_id] = nil %>
+            window.location.reload();
+        });
     </script>
 <% end %>
 
