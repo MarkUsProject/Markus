@@ -159,6 +159,7 @@
       <% else %>
         var ta_filters = null;
       <% end %>
+      var render_bonus_deductions = false;
       var summaries_data = this.state.summaries.map(function(summary) {
         var s = {};
         s['id'] = summary.id;
@@ -173,6 +174,9 @@
         s['section'] = summary.section;
         s['state'] = summary.state;
         s['total_extra_points'] = summary.total_extra_points;
+        if(summary.total_extra_points > 0) {
+          render_bonus_deductions = true;
+        }
         s['tas'] = summary.tas;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
@@ -180,6 +184,10 @@
         <% end %>
         return s;
       }.bind(this));
+
+      if (render_bonus_deductions == false) {
+        this.props.columns.splice(3, 1);
+      }
 
       return (
         <Table data={summaries_data}
