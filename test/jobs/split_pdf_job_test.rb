@@ -287,5 +287,35 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_empty error_generated_files-error_dir
       end
     end
+
+    context 'Multiple exam template made up of different page numbers in randomized order' do
+      setup do
+        assignment = Assignment.make(short_identifier: 'midterm2')
+        f = File.open('db/data/scanned_exams/midterm1.pdf')
+        @exam_template_2 = ExamTemplate.create_with_file(f.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
+        path = 'db/data/scanned_exams/mixed-midterm.pdf'
+        @split_pdf_log = SplitPDFJob.perform_now(@exam_template_2, path)
+        byebug
+      end
+
+      should 'have zero QR scan errors' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 0
+      end
+
+      should 'saves all the exam template with exam number 27 that are error free in corresponding complete directory' do
+        assert_equal Dir.entries(@exam_template_2.base_path + '/complete/27/').sort,
+                     %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
+      end
+
+      should 'saves all the exam template with exam number 29 that are error free in corresponding complete directory' do
+        assert_equal Dir.entries(@exam_template_2.base_path + '/complete/29/').sort,
+                     %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
+      end
+
+      should 'saves all the exam template with exam number 44 that are error free in corresponding complete directory' do
+        assert_equal Dir.entries(@exam_template_2.base_path + '/complete/44/').sort,
+                     %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
+      end
+    end
   end
 end
