@@ -1,28 +1,6 @@
 module SummariesHelper
   include SubmissionsHelper
-  def get_summaries_table_info(assignment, grader_id=nil)
-    if grader_id.nil?
-      groupings = assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_result: :marks,
-                  accepted_student_memberships: :user)
-        .select { |g| g.non_rejected_student_memberships.size > 0 }
-    else
-      ta = Ta.find(grader_id)
-      groupings = assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_result: :marks,
-                  accepted_student_memberships: :user)
-        .select do |g|
-          g.non_rejected_student_memberships.size > 0 and
-          ta.is_assigned_to_grouping?(g.id)
-        end
-    end
-
+  def get_summaries_table_info(assignment, groupings, render_bonus_deductions_column)
     groupings.map do |grouping|
       result = grouping.current_result
       final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
@@ -40,7 +18,9 @@ module SummariesHelper
       g[:grace_credits_used] = grouping.grace_period_deduction_single
       g[:final_grade] = grouping.final_grade(result)
       g[:criteria] = get_grouping_criteria(assignment, grouping)
-      g[:total_extra_points] = grouping.total_extra_points(result)
+      if render_bonus_deductions_column # send extra points only if we are rendering bonus/deductions column
+        g[:total_extra_points] = grouping.total_extra_points(result)
+      end
       g[:tas] = grouping.tas.pluck(:user_name)
       g
     end
