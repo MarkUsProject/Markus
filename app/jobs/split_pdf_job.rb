@@ -154,7 +154,7 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   def group_name_for(exam_template, exam_num)
-    "#{exam_template.assignment.short_identifier}_paper_#{exam_num}"
+    "#{exam_template.name}_paper_#{exam_num}"
   end
 
   def get_num_groups_in_dir(dir)
