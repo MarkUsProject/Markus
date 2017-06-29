@@ -1,10 +1,5 @@
 <script>
-console.log("test");
-console.log("<%= session[:job_id] %>");
-  <% if session[:job_id] %>
-  poll_job("<%= session[:job_id] %>", undefined, function() {
-    <%= session[:job_id] = nil %>
-    window.location.reload();
-  });
+<% if session[:job_id] %>
+  poll_job("<%= session[:job_id] %>", undefined, window.location.reload);
 <% end %>
 </script>
