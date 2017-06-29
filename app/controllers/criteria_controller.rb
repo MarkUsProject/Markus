@@ -71,7 +71,7 @@ class CriteriaController < ApplicationController
     old_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins
     old_criteria_assignment_files_join.destroy_all
     # create new corresponding criteria_assignment_files_join
-    assignment_files.each do |assignment_file|
+    assignment_files.to_a.each do |assignment_file|
       @criterion.criteria_assignment_files_joins.create(
         assignment_file: assignment_file
       )
