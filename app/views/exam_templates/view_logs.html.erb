@@ -1,14 +1,5 @@
 <% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
 
-<% if session[:job_id] %>
-    <script type="text/javascript">
-        poll_job("<%= session[:job_id] %>", undefined, function() {
-            <% session[:job_id] = nil %>
-            window.location.reload();
-        });
-    </script>
-<% end %>
-
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_template_page'),
     link_path: assignment_exam_templates_path }
