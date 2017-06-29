@@ -20,17 +20,11 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_equal @split_pdf_log.num_pages_qr_scan_error, 0
       end
 
-      should 'saves all the exam template with exam number 27 that are error free in corresponding complete directory' do
+      should 'saves all the exam templates with page numbers that are error free in corresponding complete directory' do
         assert_equal Dir.entries(@exam_template.base_path + '/complete/27/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
-      end
-
-      should 'saves all the exam template with exam number 29 that are error free in corresponding complete directory' do
         assert_equal Dir.entries(@exam_template.base_path + '/complete/29/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
-      end
-
-      should 'saves all the exam template with exam number 44 that are error free in corresponding complete directory' do
         assert_equal Dir.entries(@exam_template.base_path + '/complete/44/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
       end
