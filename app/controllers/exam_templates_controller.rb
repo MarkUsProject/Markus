@@ -154,10 +154,9 @@ class ExamTemplatesController < ApplicationController
 
   def download_error
     @assignment = Assignment.find(params[:assignment_id])
-    send_file(File.join(
-      MarkusConfigurator.markus_exam_template_dir,
-      @assignment.short_identifier, 'error'
-    ) + '/' + params[:file_name],
+    send_file(File.join(MarkusConfigurator.markus_exam_template_dir,
+                        @assignment.short_identifier, 'error') +
+              '/' + params[:file_name],
               filename: params[:file_name],
               type: "application/pdf")
   end
