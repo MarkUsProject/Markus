@@ -2,7 +2,9 @@
 
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_template_page'),
-    link_path: assignment_exam_templates_path }
+    link_path: assignment_exam_templates_path },
+  { link_text: 'Fix Scan Errors',
+    link_path: assign_errors_assignment_exam_templates_path }
 ] %>
 
 <% @split_pdf_logs.sort { |a, b| b.uploaded_when <=> a.uploaded_when }.map.with_index do |split_pdf_log, i| %>
