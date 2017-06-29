@@ -6,6 +6,7 @@ require 'zxing'
 require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
+  before_save :set_formats_for_name_and_filename
   after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   belongs_to :assignment
   validates :assignment, :filename, :num_pages, :name, presence: true
@@ -105,6 +106,12 @@ class ExamTemplate < ActiveRecord::Base
   end
 
   private
+
+  # name and filename shouldn't include whitespace
+  def set_formats_for_name_and_filename
+    self.name = self.name.tr(' ', '_')
+    self.filename = self.filename.tr(' ', '_')
+  end
 
   def set_defaults_for_name
     # Attribute 'name' of exam template is by default set to filename without extension
