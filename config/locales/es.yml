@@ -81,7 +81,7 @@ es:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-' o '_'"
+      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '(', ')', o '_'"
 
     # app/views/main/index.html.erb
     switch_role:                   "Cambio de rol"
@@ -530,6 +530,7 @@ es:
         old:                       "Anterior: "
         show_old_marks:            "Ver el Resumen de Notas Anteriores"
       annotation:
+        placeholder:                    "Notación de Markdown y LaTeX"
         from_line_to:                   "%{file_path}: Línea %{line_start} hasta la %{line_end}"
         remark_flag:                    "(Recalificación)"
         new_annotation:                 "Crear una nueva anotación"
@@ -1659,6 +1660,19 @@ es:
       next:   "Siquiente"
       prev:   "Previo"
       close:  "Cerrar"
+
+    keybinding:
+      keyboard_help:          "Ayuda del acceso directo del teclado"
+      next_submission:        "Siguiente Entrega"
+      previous_submission:    "Entrega Anterior"
+      next_criterion:         "Seleccione el siguiente criterio"
+      previous_criterion:     "Seleccione el criterio anterior"
+      next_level:             "Seleccione el siguiente nivel"
+      previous_level:         "Seleccionar nivel anterior"
+      confirm_level:          "Confirmar nivel"
+      when_rubric:            "(Cuándo en Rúbrica) "
+      open_annotation:        "Modalidad de anotación abierta"
+      confirm_annotation:     "Confirmar anotación"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"

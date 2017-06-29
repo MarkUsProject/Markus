@@ -9,7 +9,7 @@ class ExamTemplatesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @exam_templates = @assignment.exam_templates
+    @exam_templates = @assignment.exam_templates.includes(:template_divisions)
   end
 
   # Creates a new instance of the exam template.
@@ -82,12 +82,23 @@ class ExamTemplatesController < ApplicationController
     index = params[:examTemplateIndex].to_i
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    exam_template.generate_copies(copies, index)
-    flash_message(:success, t('exam_templates.generate.success', copies: copies))
 
-    generated_filename = "#{index}-#{index + copies - 1}.pdf"
-    send_file("#{exam_template.base_path}/#{generated_filename}",
-              filename: "#{generated_filename}",
+    flash_message(:success, t('exam_templates.generate.generate_job_started',
+                              exam_name: exam_template.assignment.short_identifier))
+    current_job = exam_template.generate_copies(copies, index)
+    respond_to do |format|
+      format.js { render 'exam_templates/_poll_generate_job.js.erb',
+                         locals: { file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
+                                   exam_id: exam_template.id,
+                                   job_id: current_job.job_id} }
+    end
+  end
+
+  def download_generate
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    send_file(exam_template.base_path + '/' + params[:file_name],
+              filename: params[:file_name],
               type: "application/pdf")
   end
 
@@ -99,7 +110,7 @@ class ExamTemplatesController < ApplicationController
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
       else
-        exam_template.split_pdf(split_exam.path)
+        exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
         flash_message(:success,t('exam_templates.split.success'))
       end
     else
@@ -117,6 +128,14 @@ class ExamTemplatesController < ApplicationController
       flash_message(:failure, t('exam_templates.delete.failure'))
     end
     redirect_to action: 'index'
+  end
+
+  def view_logs
+    @assignment = Assignment.find(params[:assignment_id])
+    @split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
+                                 .where(assignments: {id: @assignment.id})
+                                 .includes(:exam_template)
+                                 .includes(:user)
   end
 
   def exam_template_params

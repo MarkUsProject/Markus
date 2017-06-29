@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605184307) do
+ActiveRecord::Schema.define(version: 20170623163309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -454,6 +454,24 @@ ActiveRecord::Schema.define(version: 20170605184307) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
+  create_table "split_pdf_logs", force: :cascade do |t|
+    t.datetime "uploaded_when"
+    t.string   "error_description"
+    t.string   "filename"
+    t.integer  "user_id"
+    t.integer  "num_groups_in_complete"
+    t.integer  "num_groups_in_incomplete"
+    t.integer  "num_pages_qr_scan_error"
+    t.integer  "original_num_pages"
+    t.boolean  "qr_code_found"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "exam_template_id"
+  end
+
+  add_index "split_pdf_logs", ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id", using: :btree
+  add_index "split_pdf_logs", ["user_id"], name: "index_split_pdf_logs_on_user_id", using: :btree
+
   create_table "submission_collectors", force: :cascade do |t|
     t.integer "child_pid"
     t.boolean "stop_child",               default: false
@@ -503,12 +521,12 @@ ActiveRecord::Schema.define(version: 20170605184307) do
 
   create_table "template_divisions", force: :cascade do |t|
     t.integer  "exam_template_id"
-    t.integer  "start",                             null: false
-    t.integer  "end",                               null: false
-    t.string   "label",                             null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "criteria_assignment_files_join_id"
+    t.integer  "start",              null: false
+    t.integer  "end",                null: false
+    t.string   "label",              null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "assignment_file_id"
   end
 
   add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
@@ -613,9 +631,11 @@ ActiveRecord::Schema.define(version: 20170605184307) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
+  add_foreign_key "split_pdf_logs", "exam_templates"
+  add_foreign_key "split_pdf_logs", "users"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
-  add_foreign_key "template_divisions", "criteria_assignment_files_joins"
+  add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "test_script_results", "users", column: "requested_by_id"
   add_foreign_key "tokens", "groupings"

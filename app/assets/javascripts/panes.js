@@ -80,6 +80,7 @@ $(window).load(function() {
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   resize_col();
   $("*[role='tab']").on('click', fix_panes);
+  window.addEventListener('resize', fix_panes);
 });
 
 /* Handle window resizing */
@@ -100,4 +101,3 @@ function fix_panes(){
     2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
 }
-window.addEventListener('resize', fix_panes);

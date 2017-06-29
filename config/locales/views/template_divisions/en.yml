@@ -1,0 +1,9 @@
+en:
+  template_divisions:
+    create:
+      add_new:
+        "Add Template Division"
+      success:
+        "Template Division successfully created"
+      failure:
+        "Template Division not successfully created"

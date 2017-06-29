@@ -31,6 +31,9 @@
 <% # This file can't be cached %>
 <%= javascript_include_tag 'Grader/tabs_boot'%>
 
+<% # Mouse bindings %>
+<%= javascript_include_tag 'mousetrap.min' %>
+
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
            formats: [:html],
@@ -40,8 +43,10 @@
   var modalNotesGroup = null;
 
   $(document).ready(function() {
+    localStorage.setItem('assignment_id', <%= @assignment.id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
+    window.modal_help = new ModalMarkus('#help_dialog');
 
     // Set up the 'working' notices
     $('#working').ajaxStart(function() {
@@ -77,6 +82,9 @@
       end
     %>
     update_bar(<%= num_marked %>, <%= num_assigned %>);
+
+    <%= render partial: 'results/marker/keybinding',
+               formats: [:js] %>
   });
 
   function check_working() {
@@ -127,6 +135,47 @@
              locals: { files: @files,
                        can_download: true } %>
 
+</aside>
+<aside class='dialog' id='help_dialog'>
+  <h1><%=t('keybinding.keyboard_help')%></h1>
+  <table class="help_table">
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>&gt;</kbd></td>
+      <td><%=t('keybinding.next_submission')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>&lt;</kbd></td>
+      <td><%=t('keybinding.previous_submission')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>⬆</kbd></td>
+      <td><%=t('keybinding.previous_criterion')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>⬇</kbd></td>
+      <td><%=t('keybinding.next_criterion')%></td>
+    </tr>
+    <tr>
+      <td><kbd>⬆</kbd></td>
+      <td><%=t('keybinding.when_rubric') + t('keybinding.previous_level')%></td>
+    </tr>
+    <tr>
+      <td><kbd>⬇</kbd></td>
+      <td><%=t('keybinding.when_rubric') + t('keybinding.next_level')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Enter/return</kbd></td>
+      <td><%=t('keybinding.when_rubric') + t('keybinding.confirm_level')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>n</kbd></td>
+      <td><%=t('keybinding.open_annotation')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Cmd/Ctrl</kbd> + <kbd>Enter/return</kbd></td>
+      <td><%=t('keybinding.confirm_annotation')%></td>
+    </tr>
+  </table>
 </aside>
 <% if @current_user.admin? %>
   <aside class='dialog' id='create_new_tag'>

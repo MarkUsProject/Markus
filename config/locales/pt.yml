@@ -74,7 +74,7 @@ pt:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "apenas letras, números, '.', '-' ou '_'"
+      format_of_assignment_file: "apenas letras, números, '.', '-', '(', ')', ou '_'"
 
     # app/views/main/index.html.erb
     switch_role:         "Trocar de papel"
@@ -366,6 +366,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         old: "Antiga:&nbsp;"
         show_old_marks: "Mostrar antigo resumo de notas"
       annotation:
+        placeholder: "A notação Markdown e LaTeX é suportada"
         from_line_to: "%{file_path}: Linha %{line_start} até %{line_end}"
         remark_flag: "(Reavaliado)"
         new_annotation: "Criar nova anotação"
@@ -1266,6 +1267,19 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       prev:   "Anterior"
       close:  "Fechar"
       now:    "Atualmente"
+
+    keybinding:
+      keyboard_help:          "Ajuda de atalho de teclado"
+      next_submission:        "Próxima submissão"
+      previous_submission:    "Apresentação anterior"
+      next_criterion:         "Selecione o próximo critério"
+      previous_criterion:     "Selecione o critério anterior"
+      next_level:             "Selecione o próximo nível"
+      previous_level:         "Selecione o nível anterior"
+      confirm_level:          "Confirme o nível"
+      when_rubric:            "(Quando na rubrica) "
+      open_annotation:        "Abrir tela de anotação"
+      confirm_annotation:     "Confirmar anotação"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"

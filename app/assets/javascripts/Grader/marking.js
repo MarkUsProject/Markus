@@ -209,6 +209,14 @@ $(document).ready(function() {
       onclick: '$(this).parent().hide()'
     })
   );
+
+  // Capture the mouse event to add "active-criterion" to the clicked element
+  $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', function(e) {
+    if (!$(this).hasClass('unassigned')) {
+      e.preventDefault();
+      activeCriterion($(this));
+    }
+  });
 });
 
 function expand_unmarked(elem, criterion_class) {
@@ -231,6 +239,78 @@ function expand_unmarked(elem, criterion_class) {
   }
 }
 
+// designate $next_criteria as the currently selected criteria
+function activeCriterion($next_criteria) {
+  if (!$next_criteria.hasClass('active-criterion')) {
+    $criteria_list = $('#mark_criteria_pane_list>li');
+    // remove all previous active-criterion (there should only be one)
+    $criteria_list.removeClass('active-criterion');
+    // scroll the $next_criteria to the top of the criterion bar
+    $('#mark_viewer').animate({
+      scrollTop: $next_criteria.offset().top - $criteria_list.first().offset().top
+    }, 100);
+    $next_criteria.addClass('active-criterion');
+    // Unfocus any exisiting textfields/radio buttons
+    $('.mark_grade_input, .mark_grade_input_checkbox').blur();
+    // Remove any active rubrics
+    $('.active-rubric').removeClass('active-rubric');
+    if ($next_criteria.hasClass('flexible_criterion')) {
+      var $input = $next_criteria.find('.mark_grade_input');
+      // This step is necessary for focusing the cursor at the end of input
+      $input.focus().val($input.val());
+    } else if ($next_criteria.hasClass('rubric_criterion')) {
+      $selected = $next_criteria.find('.rubric_criterion_level_selected');
+      if ($selected.length) {
+        $selected.addClass('active-rubric');
+      } else {
+        $next_criteria.find('tr>td')[0].addClass('active-rubric');
+      }
+    } else if ($next_criteria.hasClass('checkbox_criterion')) {
+      $next_criteria.find('.mark_grade_input_checkbox').focus();
+    }
+    // If this current criteria is not expanded, expand it
+    if ($next_criteria.hasClass('not_expanded')) {
+      if ($next_criteria.hasClass('rubric_criterion')) {
+        $next_criteria.children('.criterion_title').click();
+      } else {
+        $next_criteria.find('.criterion_expand').click();
+      }
+    }
+  }
+}
+
+// Hide the expansion of the current active-criterion
+function hideActiveCriterion() {
+  $active = $('.active-criterion');
+  if ($active.hasClass('expanded')) {
+    if ($active.hasClass('rubric_criterion')) {
+      $active.children('.criterion_title').trigger('onclick');
+    } else {
+      $active.find('.criterion_expand').trigger('onclick');
+    }
+  }
+}
+
+// Set the active-criterion to the next sibling
+function nextCriterion() {
+  $next_criterion = $('.active-criterion').next('li:not(.unassigned)');
+  // If no next criterion exists, loop back to the first one
+  if (!$next_criterion.length) {
+    $next_criterion = $('#mark_criteria_pane_list>li:not(.unassigned)').first();
+  }
+  activeCriterion($next_criterion);
+}
+
+// Set the active-criterion to the previous sibling
+function prevCriterion() {
+  $prev_criterion = $('.active-criterion').prev('li:not(.unassigned)');
+  // If no previous criterion exists, loop back to the last one
+  if (!$prev_criterion.length) {
+    $prev_criterion = $('#mark_criteria_pane_list>li:not(.unassigned)').last();
+  }
+  activeCriterion($prev_criterion);
+}
+
 // NOTE: This function is only called by rubric/flexible, not checkbox.
 // It should be upgraded to focus_mark_criterion_type() in the future.
 function focus_mark_criterion(id) {
@@ -251,55 +331,55 @@ function focus_mark_criterion(id) {
 
 // Handles the class name now instead of assuming it is of a certain type.
 function focus_mark_criterion_type(id, class_name) {
-    var criterionClassPrefix = 'mark';
-    if (class_name == 'FlexibleCriterion') {
-        criterionClassPrefix = 'flexible';
-    } else if (class_name == 'CheckboxCriterion') {
-        criterionClassPrefix = 'checkbox';
-    }
+  var criterionClassPrefix = 'mark';
+  if (class_name == 'FlexibleCriterion') {
+    criterionClassPrefix = 'flexible';
+  } else if (class_name == 'CheckboxCriterion') {
+    criterionClassPrefix = 'checkbox';
+  }
 
-    var node = $('#' + criterionClassPrefix + '_criterion_' + id);
-    if (node.length != 0) {
-        var showOrHideCriterion = node.hasClass('expanded') ? hide_criterion : show_criterion;
-        showOrHideCriterion(id, class_name);
-    }
+  var node = $('#' + criterionClassPrefix + '_criterion_' + id);
+  if (node.length != 0) {
+    var showOrHideCriterion = node.hasClass('expanded') ? hide_criterion : show_criterion;
+    showOrHideCriterion(id, class_name);
+  }
 }
 
 function hide_criterion(id, criterion_class) {
-    var nodeToHide = null;
-    var criterionPrefix = 'mark';
-    if (criterion_class === 'RubricCriterion') {
-        nodeToHide = document.getElementById('mark_criterion_' + id);
-    } else if (criterion_class === 'FlexibleCriterion') {
-        nodeToHide = document.getElementById('flexible_criterion_' + id);
-    } else {
-        nodeToHide = document.getElementById('checkbox_criterion_' + id);
-        criterionPrefix = 'checkbox';
-    }
+  var nodeToHide = null;
+  var criterionPrefix = 'mark';
+  if (criterion_class === 'RubricCriterion') {
+    nodeToHide = document.getElementById('mark_criterion_' + id);
+  } else if (criterion_class === 'FlexibleCriterion') {
+    nodeToHide = document.getElementById('flexible_criterion_' + id);
+  } else {
+    nodeToHide = document.getElementById('checkbox_criterion_' + id);
+    criterionPrefix = 'checkbox';
+  }
 
-    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
 
-    if (nodeToHide !== null) {
-        nodeToHide.removeClass('expanded');
-        nodeToHide.addClass('not_expanded');
-    }
+  if (nodeToHide !== null) {
+    nodeToHide.removeClass('expanded');
+    nodeToHide.addClass('not_expanded');
+  }
 }
 
 function show_criterion(id, criterion_class) {
-    var criterionPrefix = 'mark';
-    var classAddRemovePrefix = 'mark';
+  var criterionPrefix = 'mark';
+  var classAddRemovePrefix = 'mark';
 
-    if (criterion_class == 'FlexibleCriterion') {
-        // TODO - This should also set the criterionPrefix when we refactor the flexible HTML/CSS later.
-        classAddRemovePrefix = 'flexible';
-    } else if (criterion_class == 'CheckboxCriterion') {
-        criterionPrefix = 'checkbox';
-        classAddRemovePrefix = 'checkbox';
-    }
+  if (criterion_class == 'FlexibleCriterion') {
+    // TODO - This should also set the criterionPrefix when we refactor the flexible HTML/CSS later.
+    classAddRemovePrefix = 'flexible';
+  } else if (criterion_class == 'CheckboxCriterion') {
+    criterionPrefix = 'checkbox';
+    classAddRemovePrefix = 'checkbox';
+  }
 
-    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
-    document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
-    document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
+  document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '- &nbsp;';
+  document.getElementById(classAddRemovePrefix + '_criterion_' + id).removeClass('not_expanded');
+  document.getElementById(classAddRemovePrefix + '_criterion_' + id).addClass('expanded');
 }
 
 function select_mark(mark_id, mark) {
@@ -343,6 +423,8 @@ function update_rubric_mark(elem, mark_id, value) {
 function update_total_mark(total_mark) {
   document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
+  hideActiveCriterion();
+  nextCriterion();
 }
 
 function compact_view_toggle(init) {
