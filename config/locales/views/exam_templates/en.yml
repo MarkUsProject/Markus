@@ -43,10 +43,14 @@ en:
         "Start Index"
       generate:
         "Generate"
+      generate_job_started:
+        "Generating exam pdfs for exam %{exam_name} has begun."
 
     split:
       success:
-        "Exam successfully split"
+        "Exam Template is successfully split"
+      failure:
+        "Exam Template is not successfully split"
       invalid:
         "Invalid file type"
       missing:
@@ -57,6 +61,20 @@ en:
         "Upload PDF Exam"
       split:
         "Split"
+
+    split_pdf_log:
+      view_logs:
+        "View Logs"
+      log:
+        "Log"
+      success_log:
+        "%{filename} is split into %{original_num_pages} pages"
+      failure_general_log:
+        "While %{filename} is made up of %{original_num_pages} pages, there are %{num_pages_qr_scan_error} pages with QR scan errors"
+      failure_missing_pages_log:
+        "While there are %{num_pages_qr_scan_error} QR scan errors with %{filename}, there might be missing pages"
+
+    back_to_exam_template_page: "Back to Exam Template page"
 
   flash:
     exam_templates:

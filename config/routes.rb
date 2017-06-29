@@ -20,7 +20,7 @@ Markus::Application.routes.draw do
             resources :test_results, except: [:new, :edit]
           end
           member do
-            put 'add_annotations'
+            post 'add_annotations'
             put 'update_marks'
             put 'update_marking_state'
           end
@@ -97,8 +97,13 @@ Markus::Application.routes.draw do
       resources :exam_templates do
         member do
           get 'download'
+          get 'download_generate'
           patch 'generate'
           patch 'split'
+        end
+
+        collection do
+          get 'view_logs'
         end
       end
 

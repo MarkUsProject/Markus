@@ -390,6 +390,7 @@ fr:
         old: "Précédent : "
         show_old_marks: "Afficher la note précédente "
       annotation:
+        placeholder: "La notation Markdown et LaTeX est prise en charge"
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         remark_flag: "(retour)"
         new_annotation: "Nouvelle annotation"
@@ -1286,8 +1287,10 @@ fr:
       previous_criterion:     "Sélectionnez le critère précédent"
       next_level:             "Sélectionnez le prochain niveau"
       previous_level:         "Sélectionnez le niveau précédent"
-      confirm_level:          "Quand à la rubrique"
-      when_rubric:            "(When on rubric) "
+      confirm_level:          "Confirmer le niveau"
+      when_rubric:            "(Quand à la rubrique) "
+      open_annotation:        "Modem d'annotation ouverte"
+      confirm_annotation:     "Confirmer l'annotation"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."

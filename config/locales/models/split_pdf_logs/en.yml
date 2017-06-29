@@ -1,0 +1,15 @@
+en:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "Split Pdf Log"
+    attributes:
+      split_pdf_log:
+        filename: "Filename"
+        exam_template: "Exam Template"
+        num_groups_in_complete: "Number of groups in complete"
+        num_groups_in_incomplete: "Number of groups in incomplete"
+        num_pages_qr_scan_error: "Number of pages with QR scan errors"
+        original_num_pages: "Number of pages"
+        user: "User"
+

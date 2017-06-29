@@ -43,6 +43,7 @@
   var modalNotesGroup = null;
 
   $(document).ready(function() {
+    localStorage.setItem('assignment_id', <%= @assignment.id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
@@ -139,11 +140,11 @@
   <h1><%=t('keybinding.keyboard_help')%></h1>
   <table class="help_table">
     <tr>
-      <td><kbd>Shift</kbd> + <kbd>></kbd></td>
+      <td><kbd>Shift</kbd> + <kbd>&gt;</kbd></td>
       <td><%=t('keybinding.next_submission')%></td>
     </tr>
     <tr>
-      <td><kbd>Shift</kbd> + <kbd><</kbd></td>
+      <td><kbd>Shift</kbd> + <kbd>&lt;</kbd></td>
       <td><%=t('keybinding.previous_submission')%></td>
     </tr>
     <tr>
@@ -165,6 +166,14 @@
     <tr>
       <td><kbd>Enter/return</kbd></td>
       <td><%=t('keybinding.when_rubric') + t('keybinding.confirm_level')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Shift</kbd> + <kbd>n</kbd></td>
+      <td><%=t('keybinding.open_annotation')%></td>
+    </tr>
+    <tr>
+      <td><kbd>Cmd/Ctrl</kbd> + <kbd>Enter/return</kbd></td>
+      <td><%=t('keybinding.confirm_annotation')%></td>
     </tr>
   </table>
 </aside>
