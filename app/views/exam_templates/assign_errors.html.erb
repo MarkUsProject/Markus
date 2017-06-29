@@ -211,6 +211,7 @@
       var files = <%= raw @error_files %>;
 
       function getFile(filename) {
+        checkLastFile();
         $.ajax({
           method: "GET",
           url: "download_error_path",
@@ -228,13 +229,24 @@
         });
       }
 
+      function checkLastFile(){
+        if(files.length <= 1){
+          $('#next_file').addClass('disable');
+          $('#previous_file').addClass('disable');
+          return true;
+        }
+        return false;
+      }
+
       function nextFile() {
         if(index < files.length - 1){
           index += 1;
         }else{
           index = 0;
         }
-        getFile(files[index]);
+        if(!checkLastFile()){
+          getFile(files[index]);
+        }
       }
 
       function previousFile() {
@@ -243,7 +255,9 @@
         }else{
           index = files.length - 1;
         }
-        getFile(files[index]);
+        if(!checkLastFile()){
+          getFile(files[index]);
+        }
       }
       getFile(files[0]);
 

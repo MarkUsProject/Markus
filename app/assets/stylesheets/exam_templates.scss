@@ -114,3 +114,9 @@
 .form_label {
   min-width: initial;
 }
+
+.disable {
+  cursor: default;
+  color: #8d8d8d !important;
+  font-style: italic;
+}
