@@ -4,11 +4,22 @@ en:
       general:
         "Update Exam Template"
       success:
-        "Exam Template has been successfully uploaded"
+        "Exam Template has been successfully updated"
       failure:
         "Exam Template has not been successfully updated"
       instruction:
         "Upload"
+    delete:
+      general:
+        "Delete Exam Template"
+      success:
+        "Exam Template successfully deleted"
+      failure:
+        "Exam Template not successfully deleted"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
+      confirm:
+        "Are you sure you want to delete %{name}?"
     create:
       add_new:
         "Add Exam Template"
@@ -21,8 +32,34 @@ en:
 
     download: "Download Exam Template"
 
+    generate:
+      success:
+        "Successfully generated %{copies} exam copies"
+      title:
+        "Generate Exam Copies"
+      copies_label:
+        "Number of Copies"
+      index_label:
+        "Start Index"
+      generate:
+        "Generate"
+
+    split:
+      success:
+        "Exam successfully split"
+      invalid:
+        "Invalid file type"
+      missing:
+        "Missing File"
+      title:
+        "Split Exam"
+      instruction:
+        "Upload PDF Exam"
+      split:
+        "Split"
+
   flash:
     exam_templates:
       update:
-        success: 'Successfully updated Exam Template'
-        error: 'Exam Template could not be updated'
+        success: "Exam Template has been successfully updated"
+        error: "Exam Template has not been successfully updated"

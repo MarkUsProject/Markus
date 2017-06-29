@@ -107,6 +107,7 @@ pt:
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"
     deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
     create_new_assignment:      "Inserir projeto"
+    create_new_scanned_assignment:  "Inserir novo projeto digitalizado"
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório"
     incorrect_format:   "Formato incorreto"
@@ -580,6 +581,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       search_groups: "Pesquisar os grupos"
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
+      assign_scans: "Atribuir varreduras"
       all_students: "Todos os alunos"
       unassigned_students: "Não-atribuíd"
       assigned_students: "Atribuíds"
@@ -598,6 +600,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalidate_confirm: "Isso irá impedir que o grupo envie mesmo com o número exigido de alunos. Você tem certeza disso?"
       is_valid: "Grupo válido"
       is_not_valid: "Grupo inválido"
+      done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
       rename_group:
         title: "Renomear grupo"
         link: "Renomear grupo"
@@ -878,6 +881,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     user:
         id:             "ID"
+        id_number:      "Número de identidade"
+        email:          "Email"
         user_name:      "Nome de usuário"
         user_names:     "Nome(s) de usuário"
         first_name:     "Primeiro nome"

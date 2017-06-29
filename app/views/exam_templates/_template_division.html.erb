@@ -1,0 +1,16 @@
+<%= f.fields_for :template_divisions do |form| %>
+  <li>
+    <span class="label">
+      <%= form.text_field :label, required: true %>
+    </span>
+    <span class="start">
+      <%= form.number_field :start, min: 1 %>
+    </span>
+    <span class="end">
+      <%= form.number_field :end, min: 1 %>
+    </span>
+    <span class="delete">
+      <%= form.check_box :_destroy %>
+    </span>
+  </li>
+<% end %>

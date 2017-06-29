@@ -110,6 +110,7 @@ fr:
     deadline_grace_tokens: "Date limite en <br> utilisant tous les <br> jetons de grâce <br> restants"
     deadline_max_penalty: "Date limite y <br> compris peine <br> maximale fin"
     create_new_assignment:      "Créer un nouveau projet"
+    create_new_scanned_assignment:  "Créer un nouveau projet scanné"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet"
     incorrect_format:   "Le format est incorrect"
@@ -614,6 +615,7 @@ fr:
       search_groups: "Rechercher les groupes"
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
+      assign_scans: "Affecter des scans"
       all_students: "Tous les étudiant"
       unassigned_students: "Non assigné(s)"
       assigned_students: "Assigné(s"
@@ -632,6 +634,7 @@ fr:
       invalidate_confirm: "Ceci va empêcher ce groupe de poster, même avec le bon nombre d'étudiants. Est-ce correct ?"
       is_valid: "Groupe valide"
       is_not_valid: "Groupe invalide"
+      done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
       rename_group:
         title: "Renommer le groupe"
         link: "Renommer le groupe"
@@ -910,6 +913,8 @@ fr:
 
     user:
         id:             "ID"
+        id_number:      "Numéro d'identification"
+        email:          "Email"
         user_name:      "Nom d'utilisateur"
         user_names:     "Nom(s) d'utilisateur"
         first_name:     "Prénom"

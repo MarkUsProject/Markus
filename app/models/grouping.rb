@@ -690,7 +690,7 @@ class Grouping < ActiveRecord::Base
       groupings = user_group.peer_reviews_to_others
       groupings.map {|p| Result.find(p.result_id).submission.grouping}
     elsif user.admin? && assignment.scanned_exam?
-      assignment.groupings
+      assignment.groupings.includes(:group)
     else
       assignment.groupings.joins(:memberships)
           .includes(:assignment,
@@ -710,6 +710,19 @@ class Grouping < ActiveRecord::Base
                                      StudentMembership::STATUSES[:pending],
                                      StudentMembership::STATUSES[:accepted]] })
           .distinct
+    end
+  end
+
+  def self.get_assign_scans_grouping(assignment)
+    if assignment.scanned_exam?
+      grouping = nil
+      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.id asc').each do |a|
+        grouping = a
+        if !a.is_valid?
+          break
+        end
+      end
+      grouping
     end
   end
 

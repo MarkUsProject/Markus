@@ -2,12 +2,13 @@ class TemplateDivision < ActiveRecord::Base
   belongs_to :exam_template
   belongs_to :criteria_assignment_files_join, dependent: :destroy
 
-  accepts_nested_attributes_for :criteria_assignment_files_join
+  accepts_nested_attributes_for :criteria_assignment_files_join, allow_destroy: true
 
   validates :start, numericality: { greater_than_or_equal_to: 1,
+                                    less_than_or_equal_to: :end,
                                     only_integer: true }
-  validates :end, numericality: { greater_than_or_equal_to: 1,
-                                  only_integer: true }
+  validates :end, numericality: { only_integer: true }
+  validate :end_should_be_less_than_or_equal_to_num_pages
   validates :label, uniqueness: true, allow_blank: false
 
   after_destroy :destroy_associated_objects
@@ -30,6 +31,10 @@ class TemplateDivision < ActiveRecord::Base
 
   def hash
     [self.start, self.end, self.label].hash
+  end
+
+  def end_should_be_less_than_or_equal_to_num_pages
+    errors.add(:end, "should be less than or equal to num_pages") unless self.end <= self.exam_template.num_pages
   end
 
   private

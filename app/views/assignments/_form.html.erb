@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag 'common/jquery-ui', 'common/jquery-ui-timepicker-addon' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'create_assignment',
                              'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
@@ -16,6 +16,8 @@
            locals: { model: @assignment } %>
 
 <%= form_for @assignment do |f| %>
+
+  <input type="hidden" name="assignment[scanned_exam]" value="<%= @assignment.scanned_exam %>">
 
   <label class='required'><%= t('assignment.required_fields') %></label>
 
@@ -123,6 +125,7 @@
                        placeholder: t('date.formats.datetime_placeholder') %>
     </div>
 
+    <% if !@assignment.scanned_exam %>
     <div>
       <%= f.check_box :allow_web_submits,
                       onclick: 'set_onbeforeunload(true);' %>
@@ -136,6 +139,7 @@
       <%= f.label :vcs_submit,
                   t('assignment.vcs_submit') %>
     </div>
+    <% end %>
 
     <div>
       <%= f.check_box :display_grader_names_to_students,
@@ -157,6 +161,7 @@
     </div>
   </fieldset>
 
+  <% if !@assignment.scanned_exam %>
   <%# Required files %>
   <fieldset>
     <legend>
@@ -387,6 +392,7 @@
       </div>
     <% end %>
   </fieldset>
+  <% end %>
 
   <%# Remark request rules %>
   <fieldset>

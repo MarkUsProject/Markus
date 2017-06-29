@@ -107,6 +107,7 @@ en:
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
     create_new_assignment:      "Add Assignment"
+    create_new_scanned_assignment:  "Add Scanned Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     incorrect_format:   "Incorrect format"
@@ -220,6 +221,7 @@ en:
             submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
             groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
+            assign_scans: "Assign students to scanned exam groups based on printed student names."
         allow_web_submits: "Allow web submits"
         vcs_submit: "Allow submits through version control"
         is_hidden: "Hide assignment from students"
@@ -652,6 +654,7 @@ en:
       search_groups:    "Search Groups"
       add_new:          "Add new group"
       manage_groups:    "Manage Groups"
+      assign_scans:     "Assign Scans"
       all_students:     "All students"
       unassigned_students: "Unassigned"
       assigned_students: "Assigned"
@@ -670,6 +673,7 @@ en:
       invalidate_confirm: "This will prevent this group from submitting, even with the required number of students. Are you sure?"
       is_valid: "Group is valid"
       is_not_valid: "Group is not valid"
+      done_assign: "All groups have been successfully assigned students"
       rename_group:
         title: "Rename Group"
         link: "Rename Group"
@@ -964,6 +968,8 @@ en:
 
     user:
         id:             "ID"
+        id_number:      "ID number"
+        email:          "Email"
         user_name:      "User Name"
         user_names:     "User Name"
         first_name:     "First Name"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419153405) do
+ActiveRecord::Schema.define(version: 20170605184307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -166,6 +166,7 @@ ActiveRecord::Schema.define(version: 20170419153405) do
     t.integer  "num_pages",     null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "name",          null: false
   end
 
   add_index "exam_templates", ["assignment_id"], name: "index_exam_templates_on_assignment_id", using: :btree
@@ -528,10 +529,10 @@ ActiveRecord::Schema.define(version: 20170419153405) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.text     "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
-    t.text     "repo_revision"
     t.integer  "requested_by_id"
   end
 
@@ -585,6 +586,8 @@ ActiveRecord::Schema.define(version: 20170419153405) do
     t.string   "api_key"
     t.integer  "section_id"
     t.integer  "notes_count",   default: 0
+    t.string   "email"
+    t.string   "id_number"
   end
 
   add_index "users", ["api_key"], name: "index_users_on_api_key", unique: true, using: :btree

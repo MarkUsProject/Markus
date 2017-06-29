@@ -1,10 +1,7 @@
 class SubmissionsJob < ActiveJob::Base
-  queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
+  include ActiveJob::Status
 
-  before_enqueue do |_job|
-    job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
-    PopulateCache.populate_for_job(job_messenger, job_id)
-  end
+  queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
   def perform(groupings, options = {})
     return if groupings.empty?
@@ -12,17 +9,9 @@ class SubmissionsJob < ActiveJob::Base
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
 
-    begin
-      job_messenger = JobMessenger.where(job_id: job_id).first
-      unless job_messenger.nil?
-        job_messenger.update(status: :running)
-        PopulateCache.populate_for_job(job_messenger, job_id)
-      end
-
-      m_logger.log('Submission collection process established database' +
-                   ' connection successfully')
-
-      groupings.each do |grouping|
+    progress.total = groupings.size
+    groupings.each do |grouping|
+      begin
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
         if options[:revision_identifier].nil?
@@ -47,19 +36,12 @@ class SubmissionsJob < ActiveJob::Base
         end
 
         grouping.save
+      rescue => e
+        Rails.logger.error e.message
+      ensure
+        progress.increment
       end
-      m_logger.log('Submission collection process done')
-    rescue => e
-      Rails.logger.error e.message
-      unless job_messenger.nil?
-        job_messenger.update(status: :failed, message: e.message)
-        PopulateCache.populate_for_job(job_messenger, job_id)
-      end
-      raise e
     end
-    unless job_messenger.nil?
-      job_messenger.update(status: :succeeded)
-      PopulateCache.populate_for_job(job_messenger, job_id)
-    end
+    m_logger.log('Submission collection process done')
   end
 end

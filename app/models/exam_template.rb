@@ -6,12 +6,15 @@ require 'zxing'
 require 'rmagick'
 
 class ExamTemplate < ActiveRecord::Base
+  after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   belongs_to :assignment
-  validates :assignment, :filename, :num_pages, presence: true
+  validates :assignment, :filename, :num_pages, :name, presence: true
+  validates :name, uniqueness: true
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,
                                         only_integer: true }
 
   has_many :template_divisions, dependent: :destroy
+  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
@@ -39,6 +42,7 @@ class ExamTemplate < ActiveRecord::Base
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename]
+    name_input = attributes[:name_input]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name
@@ -49,11 +53,20 @@ class ExamTemplate < ActiveRecord::Base
     end
     pdf = CombinePDF.parse blob
     num_pages = pdf.pages.length
-    new_template = ExamTemplate.new(
-      filename: filename,
-      num_pages: num_pages,
-      assignment: assignment
-    )
+    unless name_input == ''
+      new_template = ExamTemplate.new(
+        name: name_input,
+        filename: filename,
+        num_pages: num_pages,
+        assignment: assignment
+      )
+    else
+      new_template = ExamTemplate.new(
+        filename: filename,
+        num_pages: num_pages,
+        assignment: assignment
+      )
+    end
     return new_template
   end
 
@@ -66,12 +79,12 @@ class ExamTemplate < ActiveRecord::Base
       assignment_name
     )
 
-    File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
+    File.open(File.join(template_path, attributes[:old_filename]), 'wb') do |f|
       f.write blob
     end
 
     pdf = CombinePDF.parse blob
-    self.update(num_pages: pdf.pages.length)
+    self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
   end
 
   # Generate copies of the given exam template, with the given start number.
@@ -143,6 +156,11 @@ class ExamTemplate < ActiveRecord::Base
     save_pages partial_exams
   end
 
+  def base_path
+    File.join MarkusConfigurator.markus_exam_template_dir,
+              assignment.short_identifier
+  end
+
   private
 
   # Save the pages into groups for this assignment
@@ -150,6 +168,7 @@ class ExamTemplate < ActiveRecord::Base
     complete_dir = File.join(base_path, 'complete')
     incomplete_dir = File.join(base_path, 'incomplete')
 
+    groupings = []
     partial_exams.each do |exam_num, pages|
       next if pages.empty?
       pages.sort_by! { |page_num, _| page_num }
@@ -172,7 +191,7 @@ class ExamTemplate < ActiveRecord::Base
         repo_name: group_name_for(exam_num)
       )
 
-      Grouping.create(
+      groupings << Grouping.find_or_create_by(
         group: group,
         assignment: assignment
       )
@@ -203,24 +222,39 @@ class ExamTemplate < ActiveRecord::Base
             division.start <= page_num && page_num <= division.end
           end
         end
+        extra_pages.sort_by! { |page_num, _| page_num }
         extra_pdf = CombinePDF.new
-        extra_pdf << extra_pages.collect { |_, page| page }
+        cover_pdf = CombinePDF.new
+        start_page = 0
+        if extra_pages[0][0] == 1
+          cover_pdf << extra_pages[0][1]
+          start_page = 1
+        end
+        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
                 extra_pdf.to_pdf,
                 'application/pdf'
         )
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_pdf,
+                'application/pdf'
+        )
         repo.commit(txn)
       end
     end
-  end
-
-  def base_path
-    File.join MarkusConfigurator.markus_exam_template_dir,
-              assignment.short_identifier
+    SubmissionsJob.perform_now(groupings)
   end
 
   def group_name_for(exam_num)
     "#{assignment.short_identifier}_paper_#{exam_num}"
+  end
+
+  def set_defaults_for_name
+    # Attribute 'name' of exam template is by default set to filename without extension
+    extension = File.extname self.filename
+    basename = File.basename self.filename, extension
+    self.name ||= basename
   end
 end

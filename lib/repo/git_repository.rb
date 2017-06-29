@@ -100,8 +100,7 @@ module Repository
 
     # static method that should yield to a git repo and then close it
     def self.access(connect_string)
-      repo = GitRepository.open(connect_string)
-      yield repo
+      yield GitRepository.open(connect_string)
     end
 
     # static method that deletes the git repo
@@ -127,18 +126,21 @@ module Repository
       walker.each do |commit|
         return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
       end
-      raise 'No revision found before supplied timestamp.'
+
+      # Return the first revision
+      walker.reset
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+      walker.push(@repos.last_commit)
+      get_revision(walker.first.oid)
     end
 
     def get_all_revisions
-      revisions = []
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
       walker.push(@repos.last_commit)
-      walker.each do |commit|
-        revisions << get_revision(commit.oid)
+      walker.map do |commit|
+        get_revision(commit.oid)
       end
-      revisions
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -641,6 +643,9 @@ module Repository
       # phase 1: collect all entries
       entries = {}
       path_tree = get_entry(path)
+      if path_tree.nil?
+        return entries
+      end
       path_tree.each do |entry_hash|
         entry_type = entry_hash[:type]
         next unless type.nil? || type == entry_type
@@ -692,6 +697,5 @@ module Repository
     def last_modified_date
       self.timestamp
     end
-
   end
 end

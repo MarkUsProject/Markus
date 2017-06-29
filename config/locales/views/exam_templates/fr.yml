@@ -4,11 +4,22 @@ fr:
       general:
         "Modèle d'examen de mise à jour"
       success:
-        "Le modèle d'examen a été téléchargé avec succès"
+        "Le modèle d'examen a été mis à jour avec succès"
       failure:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
         "télécharger"
+    delete:
+      general:
+        "Supprimer le modèle d'examen"
+      success:
+        "Modèle d'examen supprimé avec succès"
+      failure:
+        "Modèle d'examen non supprimé avec succès"
+      template_divisions:
+        "Add/edit template divisions(s) of the exam template:"
+      confirm:
+        "Êtes-vous sûr de vouloir supprimer %{name}?"
     create:
       add_new:
         "Ajouter un modèle d'examen"
@@ -21,8 +32,34 @@ fr:
 
     download: "Télécharger le modèle d'examen"
 
+    generate:
+      success:
+        "Exemples de copies de %{copies} examens réalisés avec succès"
+      title:
+        "Générer des copies d'examen"
+      copies_label:
+        "Nombre de copies"
+      index_label:
+        "Index de départ"
+      generate:
+        "Générer"
+
+    split:
+      success:
+        "Examen divisé avec succès"
+      invalid:
+        "type de fichier invalide"
+      missing:
+        "Fichier manquant"
+      title:
+        "Examen partagé"
+      instruction:
+        "Télécharger l'examen PDF"
+      split:
+        "Divisé"
+
   flash:
     exam_templates:
       update:
-        success: 'Exam Template a été mis à jour avec succès.'
-        error: "Exam Template n'a pas pu être mis à jour."
+        success: "Le modèle d'examen a été mis à jour avec succès"
+        error: "Le modèle d'examen n'a pas été mis à jour avec succès"

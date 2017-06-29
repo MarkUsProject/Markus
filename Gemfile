@@ -39,6 +39,8 @@ gem 'json'
 gem 'minitest'
 gem 'autoprefixer-rails'
 gem 'resque'
+gem 'redis-rails'
+gem 'activejob-status', github: 'inkstak/activejob-status'
 gem 'net-ssh'
 gem 'net-scp'
 

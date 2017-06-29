@@ -4,11 +4,22 @@ es:
       general:
         "Actualizar plantilla de examen"
       success:
-        "La plantilla de examen se ha cargado correctamente"
+        "Plantilla de examen se ha actualizado correctamente"
       failure:
         "Exam Template has not been successfully updated"
       instruction:
         "subir"
+    delete:
+      general:
+        "Eliminar plantilla de examen"
+      success:
+        "Plantilla de examen eliminada correctamente"
+      failure:
+        "Plantilla de examen no eliminada correctamente"
+      template_divisions:
+        "Añadir / editar divisiones de plantilla de la plantilla de examen:"
+      confirm:
+        "Está seguro de que desea eliminar %{name}?"
     create:
       add_new:
         "Añadir plantilla de examen"
@@ -21,8 +32,34 @@ es:
 
     download: "Descargar plantilla de examen"
 
+    generate:
+      success:
+        "Exitosamente generó %{copies} copias del examen"
+      title:
+        "Generar copias de exámenes"
+      copies_label:
+        "Número de copias"
+      index_label:
+        "Índice de comienzo"
+      generate:
+        "Gerar"
+
+    split:
+      success:
+        "Examen con éxito dividido"
+      invalid:
+        "tipo de archivo invalido"
+      missing:
+        "Archivo perdido"
+      title:
+        "Dividir el examen"
+      instruction:
+        "Subir un examen PDF"
+      split:
+        "División"
+
   flash:
     exam_templates:
       update:
-        success: 'Exam Template se actualizó correctamente.'
-        error: 'Exam Template no se pudo actualizar.'
+        success: "Plantilla de examen se ha actualizado correctamente"
+        error: "Exam Template has not been successfully updated"

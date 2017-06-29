@@ -117,6 +117,74 @@ class GroupsController < ApplicationController
                                    .order(:id)
   end
 
+  def assign_scans
+    @assignment = Assignment.find(params[:assignment_id])
+    @current_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    if @current_grouping.nil?
+      redirect_to(:back)
+    end
+  end
+
+  def get_names
+    names = Student
+              .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
+              .where("(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)",
+                     "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
+                     Membership.select(:user_id).joins(:grouping).where("groupings.assignment_id = ?", params[:assignment]));
+    render json: names
+  end
+
+  def assign_student_and_next
+    # if the user has selected a name from the dropdown, s_id is set
+    if params[:s_id].present?
+      student = Student.find(params[:s_id])
+    end
+    # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
+    if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
+      student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+                               params[:names].downcase, params[:names].downcase).first
+    end
+    @grouping = Grouping.find(params[:g_id])
+    StudentMembership
+      .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
+    @assignment = @grouping.assignment
+    next_grouping
+  end
+
+  def next_grouping
+    if params[:a_id].present?
+      @assignment = Assignment.find(params[:a_id])
+    end
+    next_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    names = next_grouping.memberships.map do |u|
+      u.user.first_name + ' ' + u.user.last_name
+    end
+    num_valid = @assignment.get_num_valid
+    num_total = @assignment.get_num_assigned
+    if num_valid == num_total
+      flash_message(:success, t('groups.done_assign'))
+    end
+    if !@grouping.nil? && next_grouping.id == @grouping.id
+      render json: {
+        grouping_id: next_grouping.id,
+        students: names,
+        num_total: num_total,
+        num_valid: num_valid
+      }
+    else
+      render json: {
+        group_name: next_grouping.group.group_name,
+        grouping_id: next_grouping.id,
+        filelink: download_assignment_groups_path(
+          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
+          show_in_browser: true ),
+        students: names,
+        num_total: num_total,
+        num_valid: num_valid
+      }
+    end
+  end
+
   def populate
     @assignment = Assignment.find(params[:assignment_id])
     students_table_info = get_students_table_info
@@ -171,6 +239,14 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.js {}
     end
+  end
+
+  def download
+    file = SubmissionFile.find(params[:select_file_id])
+    file_contents = file.retrieve_file
+
+    filename = file.filename
+    send_data file_contents, filename: filename
   end
 
   def download_grouplist
@@ -261,7 +337,7 @@ class GroupsController < ApplicationController
 
   private
   # These methods are called through global actions.
-  
+
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
     if groupings.blank?

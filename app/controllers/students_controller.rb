@@ -105,7 +105,7 @@ class StudentsController < ApplicationController
     case params[:format]
       when 'csv'
         output = MarkusCSV.generate(students) do |student|
-          info = [student.user_name, student.last_name, student.first_name]
+          info = [student.user_name, student.last_name, student.first_name, student.id_number, student.email]
           unless student.section.nil?
             info << student.section.name
           end
