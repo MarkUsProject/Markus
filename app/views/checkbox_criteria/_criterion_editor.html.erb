@@ -40,9 +40,9 @@
     </span>
     <br>
     <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-      <% selected_files = criterion.criteria_assignment_files_joins.exists? ? criterion.criteria_assignment_files_joins.map { |join| join.assignment_file }: [] %>
+      <% selected_files = criterion.criteria_assignment_files_joins.map { |join| join.assignment_file } %>
       <p><%= f.label :assignment_files, AssignmentFile.model_name.human, class: 'bold_inline_label' %></p>
-      <%= f.collection_select(:assignment_files, @assignment.assignment_files, :id, :filename,
+      <%= f.collection_select(:assignment_files, criterion.assignment.assignment_files, :id, :filename,
                               { selected: selected_files.map { |file| file.id } },
                               { multiple: true }) %>
     </span>

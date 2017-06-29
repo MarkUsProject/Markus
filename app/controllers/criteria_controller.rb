@@ -36,7 +36,6 @@ class CriteriaController < ApplicationController
   end
 
   def edit
-    @assignment = Assignment.find(params[:assignment_id])
     @criterion = params[:criterion_type].constantize.find(params[:id])
   end
 
@@ -50,36 +49,32 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    @assignment = Assignment.find(params[:assignment_id])
     criterion_type = params[:criterion_type]
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
-        assignment_files = rubric_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+        assignment_files = AssignmentFile.where(id: rubric_criterion_params[:assignment_files].map { |id| id })
       end
     elsif criterion_type == 'FlexibleCriterion'
       properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
       unless flexible_criterion_params[:assignment_files].nil?
-        assignment_files = flexible_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+        assignment_files = AssignmentFile.where(id: flexible_criterion_params[:assignment_files].map { |id| id })
       end
     else
       properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
       unless checkbox_criterion_params[:assignment_files].nil?
-        assignment_files = checkbox_criterion_params[:assignment_files].map { |id| AssignmentFile.find_by(id: id.to_i) }
+        assignment_files = AssignmentFile.where(id: checkbox_criterion_params[:assignment_files].map { |id| id })
       end
     end
     # delete old associated criteria_assignment_files_join
     old_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins
     old_criteria_assignment_files_join.destroy_all
     # create new corresponding criteria_assignment_files_join
-    assignment_files.to_a.each do |assignment_file|
-      unless assignment_file.nil?
-        @criterion.criteria_assignment_files_joins.create(
-          assignment_file: assignment_file,
-          criterion: @criterion
-        )
-      end
+    assignment_files.each do |assignment_file|
+      @criterion.criteria_assignment_files_joins.create(
+        assignment_file: assignment_file
+      )
     end
     unless properly_updated
       @errors = @criterion.errors
