@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620144136) do
+ActiveRecord::Schema.define(version: 20170623163309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -521,12 +521,12 @@ ActiveRecord::Schema.define(version: 20170620144136) do
 
   create_table "template_divisions", force: :cascade do |t|
     t.integer  "exam_template_id"
-    t.integer  "start",                             null: false
-    t.integer  "end",                               null: false
-    t.string   "label",                             null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "criteria_assignment_files_join_id"
+    t.integer  "start",              null: false
+    t.integer  "end",                null: false
+    t.string   "label",              null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "assignment_file_id"
   end
 
   add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
@@ -635,7 +635,7 @@ ActiveRecord::Schema.define(version: 20170620144136) do
   add_foreign_key "split_pdf_logs", "users"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
-  add_foreign_key "template_divisions", "criteria_assignment_files_joins"
+  add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "test_script_results", "users", column: "requested_by_id"
   add_foreign_key "tokens", "groupings"
