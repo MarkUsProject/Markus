@@ -42,7 +42,7 @@ class SplitPDFJob < ActiveJob::Base
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
         end
       end
-      save_pages(exam_template, partial_exams)
+      save_pages(exam_template, partial_exams, basename)
 
       # creating an instance of split_pdf_log
       filename = original_filename.nil? ? File.basename(path) : original_filename
@@ -70,9 +70,10 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams)
+  def save_pages(exam_template, partial_exams, basename=nil)
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
+    error_dir = File.join(exam_template.base_path, 'error')
 
     groupings = []
     partial_exams.each do |exam_num, pages|
@@ -89,7 +90,12 @@ class SplitPDFJob < ActiveJob::Base
       pages.each do |page_num, page|
         new_pdf = CombinePDF.new
         new_pdf << page
-        new_pdf.save File.join(destination, "#{page_num}.pdf")
+        # if a page already exists, move the page to error directory instead of overwriting it
+        if File.exists?(File.join(destination, "#{page_num}.pdf"))
+          new_pdf.save File.join(error_dir, "#{basename}-#{page_num}.pdf")
+        else
+          new_pdf.save File.join(destination, "#{page_num}.pdf")
+        end
       end
 
       group = Group.find_or_create_by(
