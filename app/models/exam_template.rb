@@ -100,6 +100,23 @@ class ExamTemplate < ActiveRecord::Base
     SplitPDFJob.perform_later(self, path, original_filename, current_user)
   end
 
+  def fix_error(filename, exam_num, page_num)
+    error_file = File.join(
+      base_path, 'error', filename
+    )
+    complete_dir = File.join(
+      base_path, 'complete', exam_num
+    )
+    # if file is missing from complete group
+    unless File.exists?(File.join(complete_dir, page_num))
+      incomplete_dir = File.join(
+        base_path, exam_num, 'incomplete'
+      )
+      # move the file into incomplete group
+      FileUtils.mv(error_file, incomplete_dir)
+    end
+  end
+
   def base_path
     File.join MarkusConfigurator.markus_exam_template_dir,
               assignment.short_identifier
