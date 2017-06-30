@@ -113,9 +113,7 @@ class ExamTemplatesController < ApplicationController
       else
         current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
         session[:job_id] = current_job.job_id
-        respond_to do |format|
-          format.html { redirect_to view_logs_assignment_exam_templates_path }
-        end
+        redirect_to view_logs_assignment_exam_templates_path
       end
     else
       flash_message(:error, t('exam_templates.split.missing'))
