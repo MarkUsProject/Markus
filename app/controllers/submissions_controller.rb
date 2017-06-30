@@ -593,7 +593,7 @@ class SubmissionsController < ApplicationController
   ##
   def downloads
     revision_identifier = params[:revision_identifier]
-    if revision_identifier && revision_identifier == 0
+    if revision_identifier && revision_identifier == '0'
       render text: t('student.submission.no_revision_available')
       return
     end
