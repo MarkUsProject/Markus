@@ -1,6 +1,7 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
+  var render_bonus_column = false;
   var SummariesTable = React.createClass({
 
     getDefaultProps: function() {
@@ -38,7 +39,7 @@
         });
       <% end %>
 
-      <% if @render_bonus_deductions_column %>
+      if (render_bonus_column) {
         columns.splice(3, 0, {
           id: 'total_extra_points',
           content: '<%= j raw I18n.t('marker.marks.bonus_deductions') %>',
@@ -46,7 +47,7 @@
           compare: compare_numeric_values,
           searchable: true
         })
-      <% end %>
+      }
 
       var filters = [
         {
@@ -176,6 +177,9 @@
         s['section'] = summary.section;
         s['state'] = summary.state;
         s['total_extra_points'] = summary.total_extra_points;
+        if (summary.total_extra_points > 0) {
+          render_bonus_column = true;
+        }
         s['tas'] = summary.tas;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
