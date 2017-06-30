@@ -89,6 +89,11 @@ module Repository
       repo.index.add(path: 'README.md', oid: oid, mode: 0100644)
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
+      # Set up hooks
+      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'block_forced_push_master.py').to_s,
+                     File.join(bare_path, 'hooks', 'update'))
+      # TODO Add more flexibility with multiple scripts
+
       true
     end
 
