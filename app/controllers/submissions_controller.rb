@@ -592,10 +592,14 @@ class SubmissionsController < ApplicationController
   # Download all files from a repository folder in a Zip file.
   ##
   def downloads
+    revision_identifier = params[:revision_identifier]
+    if revision_identifier && revision_identifier == 0
+      render text: t('student.submission.no_revision_available')
+      return
+    end
+
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = find_appropriate_grouping(@assignment.id, params)
-
-    revision_identifier = params[:revision_identifier]
     repo_folder = @assignment.repository_folder
     full_path = File.join(repo_folder, params[:path] || '/')
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
@@ -607,11 +611,6 @@ class SubmissionsController < ApplicationController
                   end
       zip_path = "tmp/#{@assignment.short_identifier}_" +
           "#{@grouping.group.group_name}_r#{@revision.revision_identifier}.zip"
-
-      if revision_identifier && revision_identifier == 0
-        render text: t('student.submission.no_revision_available')
-        return
-      end
 
       no_files = false
 

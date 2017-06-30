@@ -194,6 +194,10 @@ module Repository
       return get_revision_number_by_timestamp(timestamp, path)
     end
 
+    def get_all_revisions
+      @revision_history + @current_revision
+    end
+
     # Adds a user to the repository and grants him/her the provided permissions
     def add_user(user_id, permissions)
       if @users.key?(user_id)
