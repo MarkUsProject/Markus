@@ -590,7 +590,7 @@ describe SubmissionsController do
              assignment_id: @assignment.id,
              id: @submission.id,
              grouping_id: @grouping.id,
-             revision_identifier: '0'
+             revision_identifier: 0
 
       expect(response.body).to eq(
         I18n.t('student.submission.no_revision_available'))

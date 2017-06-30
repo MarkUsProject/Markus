@@ -195,7 +195,7 @@ module Repository
     end
 
     def get_all_revisions
-      @revision_history + @current_revision
+      @revision_history + [@current_revision]
     end
 
     # Adds a user to the repository and grants him/her the provided permissions
