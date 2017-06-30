@@ -1,0 +1,5 @@
+<script>
+<% if session[:job_id] %>
+  poll_job("<%= session[:job_id] %>", undefined, window.location.reload.bind(window.location));
+<% end %>
+</script>

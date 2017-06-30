@@ -6,7 +6,6 @@ class SplitPDFJob < ActiveJob::Base
   def perform(exam_template, path, original_filename=nil, current_user=nil)
     m_logger = MarkusLogger.instance
     begin
-      progress.total = 0
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
@@ -15,6 +14,7 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       pdf = CombinePDF.load path
+      progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
@@ -41,6 +41,7 @@ class SplitPDFJob < ActiveJob::Base
           partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
           m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
         end
+        progress.increment
       end
       save_pages(exam_template, partial_exams, basename)
 
@@ -60,7 +61,6 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error,
         user: current_user
       )
-      progress.increment
       return split_pdf_log
     end
      m_logger.log('Split pdf process done')
