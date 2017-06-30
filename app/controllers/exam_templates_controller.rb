@@ -141,28 +141,24 @@ class ExamTemplatesController < ApplicationController
   def assign_errors
     @assignment = Assignment.find(params[:assignment_id])
     @error_files = []
-    Dir.foreach(File.join(
-      MarkusConfigurator.markus_exam_template_dir,
+    Dir.foreach(File.join(MarkusConfigurator.markus_exam_template_dir,
       @assignment.short_identifier, 'error'
-    )) { |file|
+    )) do |file|
       @error_files << file unless file =~ /^\.\.?$/
-    }
-    @error_files = @error_files.sort do |a, b|
-      a <=> b
     end
+    @error_files = @error_files.sort
   end
 
-  def download_error
+  def download_error_file
     @assignment = Assignment.find(params[:assignment_id])
     send_file(File.join(MarkusConfigurator.markus_exam_template_dir,
-                        @assignment.short_identifier, 'error') +
-              '/' + params[:file_name],
+                        @assignment.short_identifier, 'error', params[:file_name]),
               filename: params[:file_name],
-              type: "application/pdf")
+              type: 'application/pdf')
   end
 
-  def download_error_path
-    render text: download_error_assignment_exam_templates_path(
+  def download_error_file_path
+    render text: download_error_file_assignment_exam_templates_path(
                 assignment_id: params[:assignment_id],
                 file_name: params[:file_name],
                 show_in_browser: true )

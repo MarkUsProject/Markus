@@ -5,7 +5,7 @@
     link_path: assignment_exam_templates_path }]
   if !Dir[File.join(MarkusConfigurator.markus_exam_template_dir,
                     @assignment.short_identifier, 'error/*')].empty?
-    @heading_buttons.push({ link_text: 'Fix Scan Errors',
+    @heading_buttons.push({ link_text: t('exam_templates.assign_errors.fix_errors'),
                             link_path: assign_errors_assignment_exam_templates_path })
   end
 %>
