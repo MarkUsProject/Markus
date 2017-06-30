@@ -5,7 +5,8 @@ require 'shoulda'
 class SplitPDFJobTest < ActiveJob::TestCase
   context 'split PDF job' do
     setup do
-      @assignment = Assignment.make()
+      Admin.make
+      @assignment = Assignment.make
       f = File.open('db/data/scanned_exams/midterm1.pdf')
       @exam_template = ExamTemplate.create_with_file(f.read, assignment_id: @assignment.id, filename: 'midterm1.pdf')
     end

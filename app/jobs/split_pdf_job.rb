@@ -71,6 +71,7 @@ class SplitPDFJob < ActiveJob::Base
 
   # Save the pages into groups for this assignment
   def save_pages(exam_template, partial_exams)
+    return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
 
@@ -104,7 +105,6 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        next unless Admin.exists?
         txn = repo.get_transaction(Admin.first.user_name)
 
         # Pages that belong to a division
