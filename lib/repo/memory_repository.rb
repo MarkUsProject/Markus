@@ -92,7 +92,7 @@ module Repository
         if (!file.kind_of? Repository::RevisionFile)
           raise TypeError.new("Expected a Repository::RevisionFile")
         end
-        rev = get_revision(file.from_revision)
+        rev = get_revision(file.from_revision.to_s)
         content = rev.files_content[file.to_s]
         if content.nil?
           raise FileDoesNotExistConflict.new(File.join(file.path, file.name))
@@ -173,11 +173,11 @@ module Repository
 
     # Return a RepositoryRevision for a given rev_num (int)
     def get_revision(rev_num)
-      if (@current_revision.revision_identifier == rev_num)
+      if (@current_revision.revision_identifier.to_s == rev_num)
         return @current_revision
       end
       @revision_history.each do |revision|
-        if (revision.revision_identifier == rev_num)
+        if (revision.revision_identifier.to_s == rev_num)
           return revision
         end
       end
@@ -388,7 +388,7 @@ module Repository
       # copy files objects
       original.files.each do |object|
         if object.instance_of?(RevisionFile)
-          new_object = RevisionFile.new(object.from_revision, {
+          new_object = RevisionFile.new(object.from_revision.to_s, {
             name: object.name,
             path: object.path,
             last_modified_revision: object.last_modified_revision,
@@ -398,7 +398,7 @@ module Repository
           })
           new_revision.files_content[new_object.to_s] = original.files_content[object.to_s]
         else
-          new_object = RevisionDirectory.new(object.from_revision, {
+          new_object = RevisionDirectory.new(object.from_revision.to_s, {
             name: object.name,
             path: object.path,
             last_modified_revision: object.last_modified_revision,
@@ -604,7 +604,7 @@ module Repository
           alt_path = object.path + '/'
         end
         if (object.path == path || alt_path == path)
-          if (object.from_revision + 1) == @revision_identifier
+          if (object.from_revision.to_i + 1) == @revision_identifier
             return true
           end
         end
