@@ -9,16 +9,16 @@ class SubmissionsJob < ActiveJob::Base
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
 
-    begin
-      progress.total = groupings.size
-      groupings.each do |grouping|
+    progress.total = groupings.size
+    groupings.each do |grouping|
+      begin
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
-        if options[:revision_number].nil?
+        if options[:revision_identifier].nil?
           time = assignment.submission_rule.calculate_collection_time.localtime
           new_submission = Submission.create_by_timestamp(grouping, time)
         else
-          new_submission = Submission.create_by_revision_number(grouping, options[:revision_number])
+          new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
         end
 
         if assignment.submission_rule.is_a? GracePeriodSubmissionRule
@@ -36,12 +36,12 @@ class SubmissionsJob < ActiveJob::Base
         end
 
         grouping.save
+      rescue => e
+        Rails.logger.error e.message
+      ensure
         progress.increment
       end
-      m_logger.log('Submission collection process done')
-    rescue => e
-      Rails.logger.error e.message
-      raise e
     end
+    m_logger.log('Submission collection process done')
   end
 end

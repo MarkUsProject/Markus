@@ -846,7 +846,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
-                    get_latest_revision.revision_number}_ann.zip"
+                    get_latest_revision.revision_identifier}_ann.zip"
             Zip::File.open(zip_path) do |zip_file|
               file1_path = File.join("#{@assignment.repository_folder}-" +
                                          "#{@grouping.group.repo_name}",
@@ -868,7 +868,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
-                    get_latest_revision.revision_number}.zip"
+                    get_latest_revision.revision_identifier}.zip"
             Zip::File.open(zip_path) do |zip_file|
               file1_path = File.join("#{@assignment.repository_folder}-" +
                                          "#{@grouping.group.repo_name}",

@@ -586,7 +586,7 @@ class AssignmentTest < ActiveSupport::TestCase
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
           assert_equal expected_array, @assignment.get_svn_checkout_commands
@@ -603,7 +603,7 @@ class AssignmentTest < ActiveSupport::TestCase
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
           assert_equal expected_array, @assignment.get_svn_checkout_commands
@@ -636,7 +636,7 @@ class AssignmentTest < ActiveSupport::TestCase
             submission = grouping.current_submission_used
             if submission
               group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
           end
           assert_equal expected_array, @assignment.get_svn_checkout_commands
