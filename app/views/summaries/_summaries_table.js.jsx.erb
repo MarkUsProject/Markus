@@ -1,6 +1,7 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
+  var render_bonus_column = false;
   var SummariesTable = React.createClass({
 
     getDefaultProps: function() {
@@ -13,20 +14,6 @@
           searchable: true
         },
         {
-          id: 'repository',
-          content: '<%= j raw I18n.t('summaries_index.repository') %>',
-          sortable: true,
-          compare: compare_anchor_text,
-          searchable: true
-        },
-        {
-          id: 'commit_date',
-          content: '<%= j raw I18n.t('summaries_index.commit_date') %>',
-          sortable: true,
-          compare: compare_dates,
-          searchable: true
-        },
-        {
           id: 'marking_state',
           content: '<%= j raw I18n.t('summaries_index.marking_state') %>',
           sortable: true,
@@ -35,13 +22,6 @@
         {
           id: 'final_grade',
           content: '<%= j raw I18n.t('summaries_index.final_grade') %>',
-          sortable: true,
-          compare: compare_numeric_values,
-          searchable: true
-        },
-        {
-          id: 'total_extra_points',
-          content: '<%= j raw I18n.t('marker.marks.bonus_deductions') %>',
           sortable: true,
           compare: compare_numeric_values,
           searchable: true
@@ -58,6 +38,16 @@
           searchable: false
         });
       <% end %>
+
+      if (render_bonus_column) {
+        columns.splice(3, 0, {
+          id: 'total_extra_points',
+          content: '<%= j raw I18n.t('marker.marks.bonus_deductions') %>',
+          sortable: true,
+          compare: compare_numeric_values,
+          searchable: true
+        })
+      }
 
       var filters = [
         {
@@ -182,22 +172,14 @@
         } else {
           s['group_name'] = <a href={summary.name_url}>{summary.name}</a>;
         };
-        if (summary.late_commit) {
-          s['commit_date'] = (<span>
-            <%= image_tag('icons/error.png',
-                          title: t(:past_due_date_edit_result_warning,
-                                   href: t(:last_commit))) %>
-            {summary.commit_date}
-          </span>);
-        } else {
-          s['commit_date'] = summary.commit_date;
-        }
-        s['repository'] = <a href={summary.repo_url}>{summary.repo_name}</a>;
         s['marking_state'] = this.renderMarkingState(summary.state);
         s['final_grade'] = summary.final_grade;
         s['section'] = summary.section;
         s['state'] = summary.state;
         s['total_extra_points'] = summary.total_extra_points;
+        if (summary.total_extra_points > 0) {
+          render_bonus_column = true;
+        }
         s['tas'] = summary.tas;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';

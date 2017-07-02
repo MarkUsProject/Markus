@@ -31,10 +31,6 @@ module SummariesHelper
       g[:name] = grouping.get_group_name
       g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
-      g[:repo_name] = grouping.group.repository_name
-      g[:repo_url] = repo_browser_assignment_submission_path(assignment,
-                                                             grouping)
-      g[:commit_date] = grouping.last_commit_date
       g[:late_commit] = grouping.past_due_date?
       g[:state] = grouping.marking_state(result, assignment, current_user)
       g[:grace_credits_used] = grouping.grace_period_deduction_single
