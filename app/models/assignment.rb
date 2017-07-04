@@ -580,7 +580,7 @@ class Assignment < ActiveRecord::Base
       submission = grouping.current_submission_used
       if submission
         svn_commands.push(
-          "svn checkout -r #{submission.revision_number} " +
+          "svn checkout -r #{submission.revision_identifier} " +
           "#{grouping.group.repository_external_access_url}/" +
           "#{repository_folder} \"#{grouping.group.group_name}\"")
       end

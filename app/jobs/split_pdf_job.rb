@@ -38,8 +38,13 @@ class SplitPDFJob < ActiveJob::Base
           new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
         else
-          partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
-          m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
+          if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+            m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
+          else # if QR code doesn't contain corresponding exam template
+            new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+            m_logger.log('QR code does not contain corresponding exam template.')
+          end
         end
         progress.increment
       end
@@ -71,6 +76,7 @@ class SplitPDFJob < ActiveJob::Base
 
   # Save the pages into groups for this assignment
   def save_pages(exam_template, partial_exams, basename=nil)
+    return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
@@ -110,7 +116,6 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        return unless Admin.exists?
         txn = repo.get_transaction(Admin.first.user_name)
 
         # Pages that belong to a division

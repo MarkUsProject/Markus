@@ -6,6 +6,7 @@ class Criterion < ActiveRecord::Base
            dependent: :destroy
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
+  accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
 
   self.abstract_class = true
 
