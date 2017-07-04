@@ -941,6 +941,7 @@ en:
         document_info:  "Document Info"
         copy_number:    "Copy Number"
         page_number:    "Page Number"
+        upside_down:    "Page Upside Down?"
 
     add_student:
       success: "Student %{user_name} added."

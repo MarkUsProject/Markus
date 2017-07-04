@@ -1116,6 +1116,7 @@ es:
         document_info:  "Información del documento"
         copy_number:    "Número de copia"
         page_number:    "número de página"
+        upside_down:    "Página al revés?"
 
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."

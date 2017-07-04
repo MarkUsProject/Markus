@@ -209,17 +209,20 @@
         <div class="side_header">
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
-        <%= form_tag(class:'side_header') do %>
+        <%= form_tag(nil, id: 'info_form', class:'side_header') do %>
           <div class="side_header">
             <%= label_tag(:exam_template, ExamTemplate.model_name.human + ':') %>
             <%= select_tag(:exam_template,
                            options_from_collection_for_select(ExamTemplate.where(assignment_id: @assignment.id), :id, :name))
             %>
           </div>
-            <%= label_tag(:copy, t('exam_templates.assign_errors.copy_number') + ':') %>
-            <%= text_field_tag(:copy, nil) %><br>
-            <%= label_tag(:copy, t('exam_templates.assign_errors.page_number') + ':') %>
-            <%= text_field_tag(:page, nil) %><br>
+            <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number') + ':') %>
+            <%= text_field_tag(:copy_number, nil) %><br>
+            <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number') + ':') %>
+            <%= text_field_tag(:page_number, nil) %><br>
+            <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
+            <%= check_box_tag(:upside_down, nil) %><br>
+            <br>
             <%= submit_tag(t('save')) %>
         <% end %>
       </div>

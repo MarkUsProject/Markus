@@ -854,6 +854,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         document_info:  "Informação do documento"
         copy_number:    "Numero de cópia"
         page_number:    "Número de página"
+        upside_down:    "Página de cabeça para baixo?"
 
     add_student:
       success: "Aluno %{user_name} adicionado."

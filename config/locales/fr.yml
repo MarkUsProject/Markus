@@ -886,6 +886,7 @@ fr:
         document_info:  "Information sur la documentation"
         copy_number:    "Numéro de copie"
         page_number:    "Numéro de page"
+        upside_down:    "Page à l'envers?"
 
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
