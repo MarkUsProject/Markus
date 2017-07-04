@@ -104,16 +104,27 @@ class ExamTemplate < ActiveRecord::Base
     error_file = File.join(
       base_path, 'error', filename
     )
-    complete_dir = File.join(
-      base_path, 'complete', exam_num
-    )
-    # if file is missing from complete group
-    unless File.exists?(File.join(complete_dir, page_num))
-      incomplete_dir = File.join(
-        base_path, exam_num, 'incomplete'
+    if File.exists? error_file
+      complete_dir = File.join(
+        base_path, 'complete', exam_num
       )
-      # move the file into incomplete group
-      FileUtils.mv(error_file, incomplete_dir)
+      incomplete_dir = File.join(
+        base_path, 'incomplete', exam_num
+      )
+      # if file is missing from complete group
+      unless File.exists? File.join(complete_dir, page_num)
+        # if there isn't corresponding file in incomplete group
+        unless File.exists? File.join(incomplete_dir, page_num)
+          # if incomplete directory doesn't exist yet
+          FileUtils.mkdir_p incomplete_dir unless Dir.exists? incomplete_dir
+          # move the file into incomplete group
+          FileUtils.mv(error_file, incomplete_dir)
+          # rename the error file into page_num.pdf
+          error_file_old_name = File.join(incomplete_dir, filename)
+          error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
+          File.rename(error_file_old_name, error_file_new_name)
+        end
+      end
     end
   end
 
