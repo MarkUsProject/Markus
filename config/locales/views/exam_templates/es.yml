@@ -72,6 +72,16 @@ es:
       failure_missing_pages_log:
         "Si bien hay %{num_pages_qr_scan_error} errores de análisis QR con %{filename}, es posible que falten páginas"
 
+    assign_errors:
+      fix_errors:
+        "Corregir errores de análisis"
+      document_info:
+        "Información del documento"
+      copy_number:
+        "Número de copia"
+      page_number:
+        "número de página"
+
     back_to_exam_template_page: "Volver a la página de plantillas de examen"
 
   flash:
