@@ -72,6 +72,16 @@ pt:
       failure_missing_pages_log:
         "Embora existam %{num_pages_qr_scan_error} erros de varredura QR com %{filename}, pode haver páginas perdidas"
 
+    assign_errors:
+      fix_errors:
+        "Corrigir erros de varredura"
+      document_info:
+        "Informação do documento"
+      copy_number:
+        "Numero de cópia"
+      page_number:
+        "Número de página"
+
     back_to_exam_template_page: "De volta à página do modelo do exame"
 
   flash:
