@@ -100,6 +100,59 @@ class ExamTemplate < ActiveRecord::Base
     SplitPDFJob.perform_later(self, path, original_filename, current_user)
   end
 
+  def fix_error(filename, exam_num, page_num)
+    error_file = File.join(
+      base_path, 'error', filename
+    )
+    if File.exists? error_file
+      complete_dir = File.join(
+        base_path, 'complete', exam_num
+      )
+      incomplete_dir = File.join(
+        base_path, 'incomplete', exam_num
+      )
+      # if file is missing from complete group
+      unless File.exists? File.join(complete_dir, page_num)
+        # if there isn't corresponding file in incomplete group
+        unless File.exists? File.join(incomplete_dir, page_num)
+          # if incomplete directory doesn't exist yet
+          FileUtils.mkdir_p incomplete_dir unless Dir.exists? incomplete_dir
+          # move the file into incomplete group
+          FileUtils.mv(error_file, incomplete_dir)
+          # rename the error file into page_num.pdf
+          error_file_old_name = File.join(incomplete_dir, filename)
+          error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
+          File.rename(error_file_old_name, error_file_new_name)
+          group = Group.find_or_create_by(
+            group_name: "#{self.name}_paper_#{exam_num}",
+            repo_name: "#{self.name}_paper_#{exam_num}"
+          )
+          # add assignment files based on template divisions
+          group.access_repo do |repo|
+            assignment_folder = self.assignment.repository_folder
+            txn = repo.get_transaction(Admin.first.user_name)
+            txn.add_path(assignment_folder)
+            self.template_divisions.each do |template_division|
+              submission_file = CombinePDF.new
+              (template_division.start..template_division.end).each do |i|
+                path = File.join(incomplete_dir, "#{i}.pdf")
+                pdf = CombinePDF.load path
+                submission_file << pdf.pages[0]
+              end
+              txn.replace(
+                File.join(assignment_folder, "#{template_division.label}.pdf"),
+                submission_file.to_pdf,
+                'application/pdf',
+                repo.get_latest_revision().revision_identifier
+              )
+            end
+            repo.commit(txn)
+          end
+        end
+      end
+    end
+  end
+
   def base_path
     File.join MarkusConfigurator.markus_exam_template_dir,
               assignment.short_identifier
