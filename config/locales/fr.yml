@@ -1291,6 +1291,7 @@ fr:
       when_rubric:            "(Quand à la rubrique) "
       open_annotation:        "Modem d'annotation ouverte"
       confirm_annotation:     "Confirmer l'annotation"
+      next_file:              "Prochain fichier"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."

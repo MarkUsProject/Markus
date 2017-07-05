@@ -91,3 +91,26 @@ Mousetrap.bind('mod+enter', function(e) {
     $('#submit_annotation').click();
   }
 });
+
+// When shift+f is pressed, go to the next file in the list
+Mousetrap.bind('shift+f', function(e) {
+    if (files !== null) {
+        var i;
+        for (i = 0; i < files.length; i++) {
+            if(file_id == files[i].id){
+                break;
+            }
+        }
+        // If it the current file exists in files, it would break the loop
+        if(i != files.length){
+            // Set i to the next index, loop around if at end
+            if(i == files.length - 1){
+                i = 0;
+            }else{
+                i++;
+            }
+            file_id = files[i].id;
+            open_file(files[i].id, files[i].path+"/"+files[i].filename);
+        }
+    }
+});

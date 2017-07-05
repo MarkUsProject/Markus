@@ -1673,6 +1673,7 @@ es:
       when_rubric:            "(Cuándo en Rúbrica) "
       open_annotation:        "Modalidad de anotación abierta"
       confirm_annotation:     "Confirmar anotación"
+      next_file:              "Siguiente archivo"
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
