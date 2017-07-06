@@ -3,6 +3,10 @@ class SplitPDFJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
+  def self.on_complete_js
+    puts "function() {window.location.reload.bind(window.location);}"
+  end
+
   def perform(exam_template, path, original_filename=nil, current_user=nil)
     m_logger = MarkusLogger.instance
     begin
