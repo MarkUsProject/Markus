@@ -2,10 +2,6 @@
   function rotate() {
     PDFView.rotatePages(180);
   }
-  PDFView.onLoadComplete = function () {
-    annotation_manager = new PdfAnnotationManager(PDFView, 'viewer');
-    annotation_manager.resetAngle();
-  };
   var index = 0;
   var files = <%= raw @error_files %>;
 
