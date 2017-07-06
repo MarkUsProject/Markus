@@ -8,6 +8,9 @@ class Criterion < ActiveRecord::Base
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
 
+  # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
+  after_save :scale_marks_when_max_mark_updated
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
@@ -135,6 +138,25 @@ class Criterion < ActiveRecord::Base
       Array(criterion_ids_by_type[type])
                                    .map { |criterion_id| connection.quote(criterion_id) }
                                    .join(',')
+    end
+  end
+
+  def scale_marks_when_max_mark_updated
+    if self.max_mark_changed? # if max_mark is updated
+      # results with specific assignment
+      results = Result.joins(submission: :grouping)
+                      .where(groupings: {assignment_id: self.assignment_id})
+      results.each do |r|
+        # all associated marks should have their mark value scaled to the change.
+        marks = self.marks.where(result_id: r.id)
+        marks.each do |m|
+          if m.mark != 0
+            new_mark = m.mark * (self.max_mark.to_f / self.max_mark_was)
+            m.update_attributes(mark: new_mark)
+          end
+        end
+        r.update_total_mark
+      end
     end
   end
 end

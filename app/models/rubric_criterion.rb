@@ -10,6 +10,7 @@ class RubricCriterion < Criterion
   after_save :update_existing_results
 
   has_many :marks, as: :markable, dependent: :destroy
+  accepts_nested_attributes_for :marks
 
   has_many :criterion_ta_associations,
            as: :criterion,
