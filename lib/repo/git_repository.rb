@@ -90,9 +90,9 @@ module Repository
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
       # Set up hooks
-      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'block_forced_push_master.py').to_s,
+      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'multihook.py'),
                      File.join(bare_path, 'hooks', 'update'))
-      # TODO Add more flexibility with multiple scripts
+      # TODO Add config option for script dir
 
       true
     end
