@@ -1871,3 +1871,6 @@ es:
 
     poll_job:
       working_message: "%{progress} fuera de %{total}"
+      queued: "En cola"
+      completed: "Terminado"
+      failed: "Ha fallado"

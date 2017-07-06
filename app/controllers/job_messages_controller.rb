@@ -13,7 +13,14 @@ class JobMessagesController < ApplicationController
     if status.working?
       flash_now(:success, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
     else
-      flash_now(:success, "#{status.status}")
+      if status.queued?
+        status_msg = t('poll_job.queued')
+      elsif status.completed?
+        status_msg = t('poll_job.completed')
+      else
+        status_msg = t('poll_job.failed')
+      end
+      flash_now(:success, status_msg)
       if status.completed?
         session[:job_id] = nil
       end

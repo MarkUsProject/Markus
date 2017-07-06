@@ -1445,3 +1445,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     poll_job:
       working_message: "%{progress} fora de %{total}"
+      queued: "Enfileiradas"
+      completed: "Completado"
+      failed: "Falhou"

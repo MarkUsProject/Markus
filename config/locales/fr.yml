@@ -1598,3 +1598,6 @@ fr:
 
     poll_job:
       working_message: "%{progress} hors de %{total}"
+      queued: "Mis en file d'attente"
+      completed: "Terminé"
+      failed: "échoué"

@@ -1637,3 +1637,6 @@ en:
 
     poll_job:
       working_message: "%{progress} out of %{total}"
+      queued: "Queued"
+      completed: "Completed"
+      failed: "Failed"
