@@ -1,37 +1,35 @@
 <% content_for :head do %>
-    <%= stylesheet_link_tag('grader') %>
-    <%= stylesheet_link_tag('pdfjs/viewer') %>
-    <%= stylesheet_link_tag('context_menu') %>
+  <%= stylesheet_link_tag('grader') %>
+  <%= stylesheet_link_tag('pdfjs/viewer') %>
+  <%= stylesheet_link_tag('context_menu') %>
 
-    <%= javascript_include_tag 'Results/file_selector',
-                               'panes',
-                               'pdfjs',
-                               'testresults_config',
-                               'Results/context_menu' %>
+  <%= javascript_include_tag 'Results/file_selector',
+                             'panes',
+                             'pdfjs',
+                             'testresults_config',
+                             'Results/context_menu' %>
 
-    <%= javascript_tag do -%>
-        PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
-    <% end -%>
+  <%= javascript_tag do -%>
+    PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+  <% end -%>
 <% end %>
 
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
-                                         formats: [:html],
-                                         handlers: [:erb] %>
+           formats: [:html],
+           handlers: [:erb] %>
 <%= render partial: 'exam_templates/assign_errors',
-                                 formats: [:js],
-                                 handlers: [:erb] %>
+           formats: [:js],
+           handlers: [:erb] %>
 
 <% content_for :title do %>
-    <%= t('exam_templates.assign_errors.fix_errors') %>
-    <span class='title-help assignment_groups_help'>
-      <p class='help-message-title assignment_groups_help'>
-        <%= t('assignment.help.assign_scans') %>
-      </p>
-    </span>
+  <%= t('exam_templates.assign_errors.fix_errors') %>
+  <span class='title-help assignment_groups_help'>
+    <p class='help-message-title assignment_groups_help'>
+      <%= t('assignment.help.assign_scans') %>
+    </p>
+  </span>
 <% end %>
-
-<div id='criterion_incomplete_error' class='error' style='display:none'></div>
 
 <div id='student_selector'>
   <span class='left'>
@@ -211,19 +209,19 @@
         </div>
         <%= form_tag(nil, id: 'info_form', class:'side_header') do %>
           <div class="side_header">
-            <%= label_tag(:exam_template, ExamTemplate.model_name.human + ':') %>
+            <%= label_tag(:exam_template, @assignment.exam_templates.model_name.human + ':') %>
             <%= select_tag(:exam_template,
-                           options_from_collection_for_select(ExamTemplate.where(assignment_id: @assignment.id), :id, :name))
+                           options_from_collection_for_select(@assignment.exam_templates.where(assignment_id: @assignment.id), :id, :name))
             %>
           </div>
-            <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number') + ':') %>
-            <%= text_field_tag(:copy_number, nil) %><br>
-            <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number') + ':') %>
-            <%= text_field_tag(:page_number, nil) %><br>
-            <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
-            <%= check_box_tag(:upside_down, nil) %><br>
-            <br>
-            <%= submit_tag(t('save')) %>
+          <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
+          <%= text_field_tag(:copy_number, nil) %><br>
+          <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
+          <%= text_field_tag(:page_number, nil) %><br>
+          <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
+          <%= check_box_tag(:upside_down, nil) %><br>
+          <br>
+          <%= submit_tag(t('save')) %>
         <% end %>
       </div>
     </div>

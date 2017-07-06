@@ -1,67 +1,67 @@
 <script>
   function rotate() {
-      PDFView.rotatePages(180);
+    PDFView.rotatePages(180);
   }
-  PDFView.onLoadComplete = function() {
-      annotation_manager = new PdfAnnotationManager(PDFView, 'viewer');
-      annotation_manager.resetAngle();
+  PDFView.onLoadComplete = function () {
+    annotation_manager = new PdfAnnotationManager(PDFView, 'viewer');
+    annotation_manager.resetAngle();
   };
   var index = 0;
   var files = <%= raw @error_files %>;
 
   function getFile(filename) {
-      checkLastFile();
-      $.ajax({
-          method: "GET",
-          url: "download_error_file_path",
-          dataType: "text",
-          data: {
-              assignment_id: <%= @assignment.id %>,
-              file_name: filename
-          },
-          success: function(data){
-              webViewerLoad(data);
-          },
-          error: function(err){
-              console.log(err);
-          }
-      });
+    checkLastFile();
+    $.ajax({
+      method: 'GET',
+      url: 'download_error_file_path',
+      dataType: 'text',
+      data: {
+        assignment_id: <%= @assignment.id %>,
+        file_name: filename
+      },
+      success: function (data) {
+        webViewerLoad(data);
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
   }
 
-  function checkLastFile(){
-      if(files.length <= 1){
-          $('#next_file').addClass('disable');
-          $('#previous_file').addClass('disable');
-          return true;
-      }
-      return false;
+  function checkLastFile() {
+    if (files.length <= 1) {
+      $('#next_file').addClass('disable');
+      $('#previous_file').addClass('disable');
+      return true;
+    }
+    return false;
   }
 
   function nextFile() {
-      if(index < files.length - 1){
-          index += 1;
-      }else{
-          index = 0;
-      }
-      if(!checkLastFile()){
-          getFile(files[index]);
-      }
+    if (index < files.length - 1) {
+      index += 1;
+    } else {
+      index = 0;
+    }
+    if (!checkLastFile()) {
+      getFile(files[index]);
+    }
   }
 
   function previousFile() {
-      if(index > 0){
-          index -= 1;
-      }else{
-          index = files.length - 1;
-      }
-      if(!checkLastFile()){
-          getFile(files[index]);
-      }
+    if (index > 0) {
+      index -= 1;
+    } else {
+      index = files.length - 1;
+    }
+    if (!checkLastFile()) {
+      getFile(files[index]);
+    }
   }
 
-  $(document).ready(function() {
-    $('#upside_down').click(function() {
-        rotate();
+  $(document).ready(function () {
+    $('#upside_down').click(function () {
+      rotate();
     })
   });
 
