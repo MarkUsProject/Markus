@@ -1,7 +1,6 @@
 require 'rugged'
-require 'digest/md5'
 
-require File.join(File.dirname(__FILE__),'repository') # load repository module
+require File.join(File.dirname(__FILE__), 'repository') # load repository module
 
 module Repository
 
@@ -18,16 +17,13 @@ module Repository
 
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
-        raise ConfigurationError.new(
-            "Required config 'IS_REPOSITORY_ADMIN' not set")
+        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if MarkusConfigurator.markus_config_repository_storage.nil?
-        raise ConfigurationError.new(
-            "Required config 'REPOSITORY_STORAGE' not set")
+        raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
-        raise ConfigurationError.new(
-            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       begin
         super(connect_string) # dummy call to super
@@ -56,7 +52,7 @@ module Repository
           committer: commit_author,
           message: message,
           tree: commit_tree,
-          parents: repo.empty? ? [] : [repo.head.target].compact, # compact in case target returns nil? (suggested upstream)
+          parents: repo.empty? ? [] : [repo.head.target].compact, # compact if target returns nil (suggested upstream)
           update_ref: 'HEAD'
       }
       Rugged::Commit.create(repo, commit_options)
@@ -71,16 +67,15 @@ module Repository
     # location 'connect_string'
     def self.create(connect_string)
       if GitRepository.repository_exists?(connect_string)
-        raise RepositoryCollision.new(
-                "There is already a repository at #{connect_string}")
+        raise RepositoryCollision.new("There is already a repository at #{connect_string}")
       end
       if File.exists?(connect_string)
-        raise IOError.new("Could not create a repository at #{connect_string}:
-                          some directory with same name exists already")
+        raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
+                           already")
       end
 
       # Repo is created bare, then clone it in the repository storage location
-      repo_path, sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+      repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       Rugged::Repository.init_at(bare_path, :bare)
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
@@ -94,28 +89,63 @@ module Repository
       repo.index.add(path: 'README.md', oid: oid, mode: 0100644)
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
+      # Set up hooks
+      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'block_forced_push_master.py').to_s,
+                     File.join(bare_path, 'hooks', 'update'))
+      # TODO Add more flexibility with multiple scripts
+
       true
     end
 
     # Static method: Opens an existing Git repository
     # at location 'connect_string'
     def self.open(connect_string)
-      repo = GitRepository.new(connect_string)
+      GitRepository.new(connect_string)
     end
 
     # static method that should yield to a git repo and then close it
     def self.access(connect_string)
-      repo = self.open(connect_string)
-      yield repo
+      yield GitRepository.open(connect_string)
     end
 
     # static method that deletes the git repo
     # rm everything? or only .git?
     def self.delete(repo_path)
-      #repo = Rugged::Repository.new(repo_path)
-      #ref = Rugged::Reference.lookup(repo, "refs/heads/master")
-      #ref.delete!
       FileUtils.rm_rf(repo_path)
+    end
+
+    def get_revision(revision_hash)
+      Repository::GitRevision.new(revision_hash, self)
+    end
+
+    def get_latest_revision
+      get_revision(@repos.last_commit.oid)
+    end
+
+    def get_revision_by_timestamp(target_timestamp, _path = nil)
+      # returns a Git instance representing the revision at the
+      # current timestamp, should be a ruby time stamp instance
+      walker = Rugged::Walker.new(@repos)
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(@repos.last_commit)
+      walker.each do |commit|
+        return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
+      end
+
+      # Return the first revision
+      walker.reset
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+      walker.push(@repos.last_commit)
+      get_revision(walker.first.oid)
+    end
+
+    def get_all_revisions
+      walker = Rugged::Walker.new(@repos)
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+      walker.push(@repos.last_commit)
+      walker.map do |commit|
+        get_revision(commit.oid)
+      end
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -182,7 +212,7 @@ module Repository
 
     def get_repos
       # Get rugged repository from GitRepository
-      return @repos
+      @repos
     end
 
     def get_repos_workdir
@@ -202,20 +232,11 @@ module Repository
       @repos_path.rpartition(File::SEPARATOR)[2]
     end
 
-    # Given a File object, perform a lookup for the Rugged::Tree
-    # object which contains the directory information for the
-    # folder where this file resides, then return the specific
-    # file contents that we are interested in.
+    # Given a RevisionFile object, returns its content as a string.
     def stringify(file)
       revision = get_revision(file.from_revision)
-      blob = revision.find_object_at_path(file.path)
-
-      # From the returned Tree blob, find the file in the collection
-      blob.entries.each do |file_entry|
-        if file_entry[:name] == file.name
-          return get_blob(file_entry[:oid]).content
-        end
-      end
+      blob = revision.get_entry(File.join(file.path, file.name))
+      blob.content
     end
     alias download_as_string stringify # create alias
 
@@ -246,44 +267,6 @@ module Repository
         break if commit.oid == hash
       end
       return start
-    end
-
-    # Returns a Repository::SubversionRevision instance
-    # holding the latest Subversion repository revision
-    # number
-    def get_latest_revision
-      return get_revision(latest_revision_number)
-    end
-
-    # Returns hash wrapped
-    # as a Git instance
-    def get_revision(revision_number)
-      return Repository::GitRevision.new(revision_number, self)
-    end
-
-    def get_all_revisions
-      youngest_revision = latest_revision_number
-      log = []
-      (1..youngest_revision).each do |num|
-        log.push(Repository::GitRevision.new(num, self))
-      end
-      return log
-    end
-
-    def get_revision_by_timestamp(target_timestamp, _path = nil)
-      # returns a Git instance representing the revision at the
-      # current timestamp, should be a ruby time stamp instance
-      walker = Rugged::Walker.new(self.get_repos)
-      walker.push(self.get_repos.head.target)
-      walker.each do |c|
-        if c.time <= target_timestamp
-          @revision_number = get_revision_number(c)
-          return get_revision(@revision_number)
-        end
-      end
-      # If no revision number was found, display the latest revision
-      # with an error message
-      raise 'No revision found before supplied timestamp.'
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
@@ -318,14 +301,14 @@ module Repository
         when :remove
           begin
             remove_file(job[:path], transaction.user_id,
-                        job[:expected_revision_number])
+                        job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
             replace_file(job[:path], job[:file_data], transaction.user_id,
-                         job[:expected_revision_number])
+                         job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -484,8 +467,9 @@ module Repository
     ####################################################################
 
     private
+
     def latest_revision_number(_path = nil, _revision_number = nil)
-      return get_revision_number(@repos.head.target)
+      get_revision_number(@repos.last_commit.oid)
     end
 
     def path_exists_for_latest_revision?(path)
@@ -501,8 +485,8 @@ module Repository
     end
 
     # Removes a file from the repository
-    def remove_file(path, author, expected_revision_number = 0)
-      if latest_revision_number != expected_revision_number
+    def remove_file(path, author, expected_revision_identifier = 0)
+      if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       if !path_exists_for_latest_revision?(path)
@@ -515,8 +499,8 @@ module Repository
     end
 
     # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, expected_revision_number = 0)
-      if latest_revision_number != expected_revision_number
+    def replace_file(path, file_data, author, expected_revision_identifier = 0)
+      if latest_revision_number != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       if !path_exists_for_latest_revision?(path)
@@ -583,239 +567,140 @@ module Repository
   # than repositories
   class GitRevision < Repository::AbstractRevision
 
-    # Constructor; Check if revision is actually present in
-    # repository
-    def initialize(revision_number, repo)
-      # Get rugged repository
+    # Constructor; checks if +revision_hash+ is actually present in +repo+.
+    def initialize(revision_hash, repo)
+      super(revision_hash)
+      @revision_identifier_ui = @revision_identifier[0..6]
       @repo = repo.get_repos
-      @revision_number = revision_number
-      @hash = get_hash_of_revision(revision_number)
-      @commit = @repo.lookup(@hash)
+      @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
-
-      # TODO: get correct version of time
-      @timestamp = @commit.time
-      if @timestamp.instance_of?(String)
-        @timestamp = Time.parse(@timestamp).localtime
-      elsif @timestamp.instance_of?(Time)
-        @timestamp = @timestamp.localtime
-      end
+      @timestamp = @commit.time.in_time_zone
     end
 
-    def get_hash_of_revision(revision_number)
+    # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.
+    # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
+    def get_entry_hash(path, commit=@commit)
+      if path.start_with?(File::SEPARATOR) # transform from absolute to relative
+        path = path[1..-1]
+      end
+      if path == '' # root Tree
+        entry_hash = {name: path, oid: commit.tree_id, type: :tree, filemode: 0} # mimic Tree#path output
+      else # Tree or Blob
+        begin
+          entry_hash = commit.tree.path(path)
+        rescue Rugged::TreeError # path not valid
+          entry_hash = nil
+        end
+      end
+      entry_hash
+    end
+
+    # Gets a file or directory at +path+ from a +commit+ as a Rugged::Blob or Rugged::Tree respectively.
+    # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
+    def get_entry(path, commit=@commit)
+      entry_hash = get_entry_hash(path, commit)
+      if entry_hash.nil?
+        entry = nil
+      else
+        entry = @repo.lookup(entry_hash[:oid])
+      end
+      entry
+    end
+
+    def path_exists?(path)
+      !get_entry_hash(path).nil?
+    end
+
+    # Checks if a file or directory at +path+ (relative to the repo root) was changed by +commit+.
+    # The +commit+ can be omitted to default to this revision.
+    # (optimizations based on Rugged bug #343)
+    def entry_changed?(path, commit=@commit)
+      entry = get_entry_hash(path, commit)
+      # if at a root commit, consider it changed if we have this file;
+      # i.e. if we added it in the initial commit
+      if commit.parents.empty?
+        return entry != nil
+      end
+      # check each parent commit (a merge has 2+ parents)
+      commit.parents.each do |parent|
+        parent_entry = get_entry_hash(path, parent)
+        # neither exists, no change
+        if not entry and not parent_entry
+          next
+        # only in one of them, change
+        elsif not entry or not parent_entry then
+          return true
+        # otherwise it's changed if their ids aren't the same
+        elsif entry[:oid] != parent_entry[:oid]
+          return true
+        end
+      end
+      false
+    end
+
+    def changes_at_path?(path)
+      entry_changed?(path)
+    end
+
+    # Gets all entries at directory +path+ of a specified +type+ (:blob, :tree, or nil for both), as
+    # Repository::RevisionFile and Repository::RevisionDirectory.
+    def entries_at_path(path, type=nil)
+      # phase 1: collect all entries
+      entries = {}
+      path_tree = get_entry(path)
+      if path_tree.nil?
+        return entries
+      end
+      path_tree.each do |entry_hash|
+        entry_type = entry_hash[:type]
+        next unless type.nil? || type == entry_type
+        entry_name = entry_hash[:name]
+        # wrap in a RevisionFile or RevisionDirectory (paths without filename to be consistent with SVN)
+        if entry_type == :blob
+          mime_types = MIME::Types.type_for(entry_name)
+          if mime_types.empty?
+            mime_type = 'text'
+          else
+            mime_type = mime_types.first.content_type
+          end
+          entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name, path: path,
+                                                             mime_type: mime_type)
+        elsif entry_type == :tree
+          entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
+        end
+      end
+      if entries.empty?
+        return entries
+      end
+      # phase 2: walk the git history once and collect the last commits that modified each entry
+      walker_entries = entries.dup
       walker = Rugged::Walker.new(@repo)
-      walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE)
-      walker.push(@repo.head.target)
-      return walker.take(revision_number).last.oid
-    end
-
-    # Returns all files (incl. folders) in this repository
-    # at path `path` for the current revision file.
-    def objects_at_path(path)
-      current_tree = find_object_at_path(path)
-      # current_tree is now at the path we were looking for
-      objects = []
-      current_tree.each do |obj|
-        file_path = File.join(path, obj[:name])
-        @last_modified_date_author = find_last_modified_date_author(file_path)
-        if obj[:type] == :blob
-          # This object is a file
-          file = Repository::RevisionFile.new(
-            @revision_number,
-            name: obj[:name],
-            # Is the path with or without filename?
-            # -- Answer: The path is WITHOUT the filename to be consistent
-            # with SVN implementation
-            path: path,
-            # The following is placeholder information.
-            last_modified_revision: @revision_number,
-            # Last modified date fix here
-            last_modified_date: @last_modified_date_author[0],
-
-            changed: true,
-            user_id: @last_modified_date_author[1][:name],
-            mime_type: 'text'
-          )
-          objects << file
-        elsif obj[:type] == :tree
-          # This object is a directory
-          directory = Repository::RevisionDirectory.new(
-            @revision_number,
-            name: obj[:name],
-            # Same comments as above in RevisionFile
-            path: path,
-            last_modified_revision: @revision_number,
-            last_modified_date: @last_modified_date_author[0],
-            changed: true,
-            user_id: @last_modified_date_author[1][:name]
-          )
-          objects << directory
-        else
-          # raise unrecognized object
+      walker.sorting(Rugged::SORT_DATE)
+      walker.push(@commit)
+      walker.each do |commit|
+        mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
+        mod_entries = walker_entries.extract!(*mod_keys)
+        mod_entries.each do |_, mod_entry|
+          mod_entry.last_modified_revision = commit.oid
+          mod_entry.last_modified_date = commit.time.in_time_zone
+          mod_entry.changed = commit.oid == @revision_identifier
+          mod_entry.user_id = commit.author[:name]
         end
+        break if walker_entries.empty?
       end
-
-      objects
-      # TODO: make a rescue to controller, when repo_browser moves to React
-      # we can return a 400 with a message so react knows how to handle
+      entries
     end
 
-    # Takes in a path (that should be a dir) and returns the Rugged tree object
-    # at that path.
-    def find_object_at_path(path)
-      # Get directory names for path in a nice array
-      # like ['A1', 'src', 'core'] for '/A1/src/core'
-      path = path.split('/')
-
-      # Account for the files in the root directory with an extra '/' on end
-      path.reject!(&:empty?)
-
-      # current_tree is the current directory object we are going through
-      # Look at rugged documentation for more info on tree objects
-      current_object = @commit.tree
-      # While there are still directories to go through to get to path,
-      # find the dirname
-      path.each do |level|
-        # This loop finds the object we're currently looking
-        # for in `level` and then looks it up to return
-        # a Rugged object (either a tree or a blob)
-        current_object = @repo.lookup(
-          current_object.detect do |obj|
-            obj[:name] == level
-          end[:oid])
-      end
-      # This returns the actual object.
-      current_object
-    end
-
-    # Return all of the files in this repository in a hash where
-    # key: filename and value: RevisionFile object
     def files_at_path(path)
-      # In order to deal with the empty assignment folder case we must check
-      # to see if the lookup fails as the directory tree is traversed to the
-      # very top
-      begin
-        file_array = objects_at_path(path).select do |obj|
-          obj.instance_of?(Repository::RevisionFile)
-        end
-      rescue
-        file_array = {}
-      end
-
-      files = Hash.new
-      file_array.each do |file|
-        files[file.name] = file
-      end
-      # exception should be cast if file is not found
-      files
+      entries_at_path(path, :blob)
     end
 
     def directories_at_path(path)
-      # In order to deal with the empty assignment folder case we must check
-      # to see if the lookup fails as the directory tree is traversed to the
-      # very top
-      begin
-        dir_array = objects_at_path(path).select do |obj|
-          obj.instance_of?(Repository::RevisionDirectory)
-        end
-      rescue
-        dir_array = {}
-      end
-
-      directories = Hash.new
-      dir_array.each do |dir|
-        directories[dir.name] = dir
-      end
-
-      directories
+      entries_at_path(path, :tree)
     end
 
-    # Returns true if the path given to this function reflects an
-    # actual file in the repository, false otherwise
-    def path_exists?(path)
-      # Chop the forward-slash off the end
-      if path[-1] == '/'
-        path = path[0..-2]
-      end
-
-      # Split the path into parts
-      parts = path.split('/')
-
-      tree_ptr = @commit.tree
-
-      # Follow the 'tree-path' and return false if we cannot find
-      # each part along the way
-      parts.each do |path_part|
-        found = false
-        tree_ptr.each do |current_tree|
-          # For each object in this tree check for our part
-          if current_tree[:name] == path_part
-            # Move to next part of path (next tree / subdirectory)
-            tree_ptr = @repo.lookup(current_tree[:oid])
-            found = true
-            break
-          end
-        end
-        if !found
-          return found
-        end
-      end
-      # If we made it this far, the path was traversed successfully
-      true
-    end
-
-    # Return changed files at 'path'
-    def changed_files_at_path(path)
-      files = files_at_path(path)
-
-      files.select do |_name, file|
-        file.changed
-      end
-    end
-
-    def changed_filenames_at_path(path)
-      files = files_at_path(path)
-
-      files.select do |_name, file|
-        file.changed
-      end
-      return files.keys
-    end
-
-
-    def last_modified_date()
-      return self.timestamp
-    end
-
-    private
-
-    # Returns the last modified date and author in an array given
-    # the path to the file as a string
-    def find_last_modified_date_author(path_to_file)
-      # Remove starting forward slash, if present
-      if path_to_file[0] == '/'
-        path_to_file = path_to_file[1..-1]
-      end
-
-      # Create a walker to start looking the commit tree.
-      walker = Rugged::Walker.new(@repo)
-      # Since we are concerned with finding the last modified time,
-      # need to sort by date
-      walker.sorting(Rugged::SORT_DATE)
-      walker.push(@repo.head.target)
-      commit = walker.find do |current_commit|
-        current_commit.parents.size == 1 && current_commit.diff(paths:
-            [path_to_file]).size > 0
-      end
-
-      # Return the date of the last commit that affected this file
-      # with the author details
-      if commit.nil?
-        # To let rspec tests pass - Placeholder code
-        return Time.now, { name: nil }
-      else
-        return commit.time, commit.author
-      end
+    def last_modified_date
+      self.timestamp
     end
   end
 end

@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      assignment_file:
+        one: "Assignment File"

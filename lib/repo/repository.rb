@@ -133,9 +133,9 @@ module Repository
             'Repository.get_all_revisions: Not yet implemented'
     end
 
-    # Return a Repository::AbstractRevision for a given revision_number
+    # Return a Repository::AbstractRevision for a given revision_identifier
     # if it exists
-    def get_revision(revision_number)
+    def get_revision(revision_identifier)
       raise NotImplementedError,  'Repository.get_revision: Not yet implemented'
     end
 
@@ -240,27 +240,31 @@ module Repository
   class RevisionOutOfSyncConflict < Conflict; end
 
   class AbstractRevision
-    attr_reader :revision_number, :timestamp, :user_id, :comment
+    attr_reader :revision_identifier, :revision_identifier_ui, :timestamp, :user_id, :comment
 
-    def initialize(revision_number)
-      @revision_number = revision_number
+    def initialize(revision_identifier)
+      @revision_identifier = revision_identifier
+      @revision_identifier_ui = @revision_identifier
     end
 
+    # Checks if +path+ is a file or directory in this revision of the repository.
     def path_exists?(path)
       raise NotImplementedError, "Revision.path_exists? not yet implemented"
     end
 
-    # Return all of the files in this repository at the root directory
+    # Checks if there are changes under +path+ (subdirectories included) due to this revision.
+    def changes_at_path?(path)
+      raise NotImplementedError, "Revision.changes_at_path? not yet implemented"
+    end
+
+    # Returns all the files under +path+ (but not in subdirectories) in this revision of the repository.
     def files_at_path(path)
       raise NotImplementedError, "Revision.files_at_path not yet implemented"
     end
 
+    # Returns all the directories under +path+ (but not in subdirectories) in this revision of the repository.
     def directories_at_path(path)
       raise NotImplementedError, "Revision.directories_at_path not yet implemented"
-    end
-
-    def changed_files_at_path(path)
-      raise NotImplementedError, "Revision.changed_files_at_path not yet implemented"
     end
 
   end
@@ -337,12 +341,12 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_number)
-      @jobs.push(action: :remove, path: path, expected_revision_number: expected_revision_number)
+    def remove(path, expected_revision_identifier)
+      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier)
     end
 
-    def replace(path, file_data, mime_type, expected_revision_number)
-      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_number: expected_revision_number)
+    def replace(path, file_data, mime_type, expected_revision_identifier)
+      @jobs.push(action: :replace, path: path, file_data: file_data, mime_type: mime_type, expected_revision_identifier: expected_revision_identifier)
     end
 
     def add_conflict(conflict)

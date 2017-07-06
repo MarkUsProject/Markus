@@ -6,7 +6,6 @@ class SplitPDFJob < ActiveJob::Base
   def perform(exam_template, path, original_filename=nil, current_user=nil)
     m_logger = MarkusLogger.instance
     begin
-      progress.total = 0
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
@@ -15,6 +14,7 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       pdf = CombinePDF.load path
+      progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
@@ -38,11 +38,17 @@ class SplitPDFJob < ActiveJob::Base
           new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
         else
-          partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
-          m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
+          if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+            m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
+          else # if QR code doesn't contain corresponding exam template
+            new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+            m_logger.log('QR code does not contain corresponding exam template.')
+          end
         end
+        progress.increment
       end
-      save_pages(exam_template, partial_exams)
+      save_pages(exam_template, partial_exams, basename)
 
       # creating an instance of split_pdf_log
       filename = original_filename.nil? ? File.basename(path) : original_filename
@@ -60,7 +66,6 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error,
         user: current_user
       )
-      progress.increment
       return split_pdf_log
     end
      m_logger.log('Split pdf process done')
@@ -70,9 +75,11 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams)
+  def save_pages(exam_template, partial_exams, basename=nil)
+    return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
+    error_dir = File.join(exam_template.base_path, 'error')
 
     groupings = []
     partial_exams.each do |exam_num, pages|
@@ -89,7 +96,12 @@ class SplitPDFJob < ActiveJob::Base
       pages.each do |page_num, page|
         new_pdf = CombinePDF.new
         new_pdf << page
-        new_pdf.save File.join(destination, "#{page_num}.pdf")
+        # if a page already exists, move the page to error directory instead of overwriting it
+        if File.exists?(File.join(destination, "#{page_num}.pdf"))
+          new_pdf.save File.join(error_dir, "#{basename}-#{page_num}.pdf")
+        else
+          new_pdf.save File.join(destination, "#{page_num}.pdf")
+        end
       end
 
       group = Group.find_or_create_by(
@@ -104,7 +116,6 @@ class SplitPDFJob < ActiveJob::Base
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
-        return unless Admin.exists?
         txn = repo.get_transaction(Admin.first.user_name)
 
         # Pages that belong to a division
@@ -154,7 +165,7 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   def group_name_for(exam_template, exam_num)
-    "#{exam_template.assignment.short_identifier}_paper_#{exam_num}"
+    "#{exam_template.name}_paper_#{exam_num}"
   end
 
   def get_num_groups_in_dir(dir)

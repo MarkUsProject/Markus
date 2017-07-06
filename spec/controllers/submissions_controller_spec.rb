@@ -250,8 +250,8 @@ describe SubmissionsController do
              :repo_browser,
              assignment_id: @assignment.id,
              id: Grouping.last.id,
-             revision_number:
-               Grouping.last.group.repo.get_latest_revision.revision_number,
+             revision_identifier:
+               Grouping.last.group.repo.get_latest_revision.revision_identifier,
              path: '/'
       is_expected.to respond_with(:success)
     end
@@ -539,7 +539,7 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
       zip_path = "tmp/#{@assignment.short_identifier}_" +
                  "#{@grouping.group.group_name}_r#{@grouping.group.repo
-                     .get_latest_revision.revision_number}.zip"
+                     .get_latest_revision.revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.repository_folder}-" +
                                    "#{@grouping.group.repo_name}",
@@ -590,7 +590,7 @@ describe SubmissionsController do
              assignment_id: @assignment.id,
              id: @submission.id,
              grouping_id: @grouping.id,
-             revision_number: '0'
+             revision_identifier: 0
 
       expect(response.body).to eq(
         I18n.t('student.submission.no_revision_available'))

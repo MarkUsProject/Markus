@@ -140,8 +140,6 @@ var annotation_context_menu = {
         menu_items.download_annotated
       ],
       beforeOpen: function (event, ui) {
-        ui.menu.zIndex($(event.target).zIndex() + 1);
-
         // Enable annotation menu items only if a selection has been made
         var selection_exists = (function() {
           if (annotation_type === ANNOTATION_TYPES.CODE) {
