@@ -1663,6 +1663,7 @@ es:
 
     keybinding:
       keyboard_help:          "Ayuda del acceso directo del teclado"
+      toggle_compact:         "Cambiar vista compacta"
       next_submission:        "Siguiente Entrega"
       previous_submission:    "Entrega Anterior"
       next_criterion:         "Seleccione el siguiente criterio"

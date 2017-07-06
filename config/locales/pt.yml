@@ -1270,6 +1270,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     keybinding:
       keyboard_help:          "Ajuda de atalho de teclado"
+      toggle_compact:         "Alternar vista compacta"
       next_submission:        "Próxima submissão"
       previous_submission:    "Apresentação anterior"
       next_criterion:         "Selecione o próximo critério"
