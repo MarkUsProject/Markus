@@ -1868,3 +1868,6 @@ es:
         skip_last_comma:    true
 
     server_time: "Tiempo Servidor:"
+
+    poll_job:
+      working_message: "%{progress} fuera de %{total}"

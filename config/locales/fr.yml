@@ -1595,3 +1595,6 @@ fr:
         full_messages:
           format: "%{attribute} %{message}"
     server_time: "Heure du serveur :"
+
+    poll_job:
+      working_message: "%{progress} hors de %{total}"

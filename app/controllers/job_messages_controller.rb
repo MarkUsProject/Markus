@@ -11,7 +11,7 @@ class JobMessagesController < ApplicationController
   def get
     status = ActiveJob::Status.get(params[:job_id])
     if status.working?
-      flash_now(:success, "#{status[:progress]} out of #{status[:total]}")
+      flash_now(:success, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
     else
       flash_now(:success, "#{status.status}")
       if status.completed?
