@@ -52,11 +52,29 @@ class CriteriaController < ApplicationController
     criterion_type = params[:criterion_type]
     @criterion = criterion_type.constantize.find(params[:id])
     if criterion_type == 'RubricCriterion'
-      properly_updated = @criterion.update(rubric_criterion_params)
+      properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
+      unless rubric_criterion_params[:assignment_files].nil?
+        assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].select { |id| !id.empty? })
+      end
     elsif criterion_type == 'FlexibleCriterion'
-      properly_updated = @criterion.update(flexible_criterion_params)
+      properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
+      unless flexible_criterion_params[:assignment_files].nil?
+        assignment_files = AssignmentFile.find(flexible_criterion_params[:assignment_files].select { |id| !id.empty? })
+      end
     else
-      properly_updated = @criterion.update(checkbox_criterion_params)
+      properly_updated = @criterion.update(checkbox_criterion_params.except(:assignment_files))
+      unless checkbox_criterion_params[:assignment_files].nil?
+        assignment_files = AssignmentFile.find(checkbox_criterion_params[:assignment_files].select { |id| !id.empty? })
+      end
+    end
+    # delete old associated criteria_assignment_files_join
+    old_criteria_assignment_files_join = @criterion.criteria_assignment_files_joins
+    old_criteria_assignment_files_join.destroy_all
+    # create new corresponding criteria_assignment_files_join
+    assignment_files.to_a.each do |assignment_file|
+      @criterion.criteria_assignment_files_joins.create(
+        assignment_file: assignment_file
+      )
     end
     unless properly_updated
       @errors = @criterion.errors
@@ -133,7 +151,8 @@ class CriteriaController < ApplicationController
                                                :position,
                                                :max_mark,
                                                :ta_visible,
-                                               :peer_visible)
+                                               :peer_visible,
+                                               assignment_files: [])
   end
 
   def rubric_criterion_params
@@ -151,7 +170,8 @@ class CriteriaController < ApplicationController
                                              :level_4_name,
                                              :level_4_description,
                                              :ta_visible,
-                                             :peer_visible).deep_merge(params.require(:rubric_criterion)
+                                             :peer_visible,
+                                             assignment_files: []).deep_merge(params.require(:rubric_criterion)
                                                                            .permit(:max_mark))
   end
 
@@ -161,6 +181,7 @@ class CriteriaController < ApplicationController
                                                :position,
                                                :max_mark,
                                                :ta_visible,
-                                               :peer_visible)
+                                               :peer_visible,
+                                               assignment_files: [])
   end
 end

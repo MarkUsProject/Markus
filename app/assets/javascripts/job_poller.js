@@ -14,7 +14,7 @@ function poll_job(job_id, onSuccess, onComplete, interval) {
       if (onSuccess) {
         onSuccess(data);
       }
-      if (data.status === 'completed') {
+      if (data.status === 'completed' || data.status === 'failed') {
         if (onComplete) {
           onComplete(data);
         }

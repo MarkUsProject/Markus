@@ -158,24 +158,24 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       revision = @repo.get_latest_revision()
       assert_not_nil(revision, "Could not retrieve latest revision")
       assert_instance_of(Repository::SubversionRevision, revision, "Revision is of wrong type!")
-      assert_equal(revision.revision_number, 0, "Wrong revision number")
+      assert_equal(revision.revision_identifier, 0, "Wrong revision number")
       @repo.close()
     end
 
     should "be able to retrieve a revision given a valid revision as integer number" do
       r = @repo.get_latest_revision()
       assert_not_nil(r, "Could not retrieve latest revision")
-      rev_int = r.revision_number
+      rev_int = r.revision_identifier
       new_revision = @repo.get_revision(rev_int)
       assert_instance_of(Repository::SubversionRevision, new_revision, "Revision not of class SubversionRevision")
-      assert_equal(new_revision.revision_number, rev_int, "Revision numbers (int values) should be equal")
+      assert_equal(new_revision.revision_identifier, rev_int, "Revision numbers (int values) should be equal")
       @repo.close()
     end
 
     should "raise a RevisionDoesNotExist exception" do
       r = @repo.get_latest_revision()
       assert_not_nil(r, "Could not retrieve latest revision")
-      revision_non_existent = r.revision_number + 3
+      revision_non_existent = r.revision_identifier + 3
       assert_raise(RevisionDoesNotExist) do
         @repo.get_revision(revision_non_existent) # raises exception
       end
@@ -210,15 +210,15 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
     add_file_test = "add a new file to an empty repository"
     should(add_file_test) do
-      rev_num = @repo.get_latest_revision().revision_number
+      rev_num = @repo.get_latest_revision().revision_identifier
       txn = @repo.get_transaction(TEST_USER)
       filename = "MyClass.java"
       file_contents = File.read(RESOURCE_DIR + "/" + filename)
       txn.add(filename, file_contents)
-      latest_revision = @repo.get_latest_revision().revision_number
+      latest_revision = @repo.get_latest_revision().revision_identifier
       assert_equal(rev_num, latest_revision, "Revision # should be the same!")
       @repo.commit(txn) # svn commit
-      latest_revision = @repo.get_latest_revision().revision_number
+      latest_revision = @repo.get_latest_revision().revision_identifier
 
       assert_not_equal(rev_num, latest_revision, "Revision # has not changed!")
 
@@ -239,7 +239,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       filename = "MyClass.java"
       add_file_helper(@repo, filename)
       txn = @repo.get_transaction(TEST_USER)
-      txn.remove(filename, @repo.get_latest_revision().revision_number)
+      txn.remove(filename, @repo.get_latest_revision().revision_identifier)
       @repo.commit(txn)
 
       # filename should not be available in repo now
@@ -256,7 +256,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
       assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should increase by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should increase by 1")
       # repository should know of the added files, now
       files = new_revision.files_at_path("/")
       files_to_add.each do |file|
@@ -278,13 +278,13 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       file_contents = File.read(RESOURCE_DIR + "/" + filename)
       txn.add(filename, file_contents)
       # remove a file
-      txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+      txn.remove("test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
       assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       files_to_add << filename # push filename to files_to_add
@@ -313,13 +313,13 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       repo_timestamp = Time.now
 
       # remove a file
-      txn.remove("test.xml", @repo.get_latest_revision().revision_number) # remove a file previously existent in current rev.
+      txn.remove("test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
       @repo.commit(txn)
 
       new_revision = @repo.get_latest_revision()
       assert_instance_of(Repository::SubversionRevision, old_revision, "Should be of type SubversionRevision")
       assert_instance_of(Repository::SubversionRevision, new_revision, "Should be of type SubversionRevision")
-      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      assert_equal(old_revision.revision_identifier + 1, new_revision.revision_identifier, "Revision number should have been increased by 1")
       # test repository on its correct content
       files = new_revision.files_at_path("/")
       files_to_add << filename # push filename to files_to_add
@@ -337,7 +337,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::SubversionRevision, latest_rev, "Revision number is of wrong type")
-      assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
+      assert_equal(rev_num_by_timestamp.revision_identifier, latest_rev.revision_identifier, "Revision number (int values) do not match")
 
       # test.xml should be in the repository for the timestamp "repo_timestamp"
       rev_num_by_timestamp = @repo.get_revision_by_timestamp(repo_timestamp)

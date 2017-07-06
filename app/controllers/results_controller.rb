@@ -349,7 +349,7 @@ class ResultsController < ApplicationController
     submission = Submission.find(params[:submission_id])
     grouping = Grouping.find(submission.grouping_id)
 
-    revision_number = submission.revision_number
+    revision_identifier = submission.revision_identifier
     repo_folder = assignment.repository_folder
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
@@ -360,10 +360,10 @@ class ResultsController < ApplicationController
 
     zip_path = if params[:include_annotations] == 'true'
                  "tmp/#{assignment.short_identifier}_" +
-                     "#{grouping.group.group_name}_r#{revision_number}_ann.zip"
+                     "#{grouping.group.group_name}_r#{revision_identifier}_ann.zip"
                else
                  "tmp/#{assignment.short_identifier}_" +
-                     "#{grouping.group.group_name}_r#{revision_number}.zip"
+                     "#{grouping.group.group_name}_r#{revision_identifier}.zip"
                end
 
     files = submission.submission_files

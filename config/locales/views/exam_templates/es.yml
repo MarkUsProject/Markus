@@ -43,6 +43,8 @@ es:
         "Índice de comienzo"
       generate:
         "Gerar"
+      generate_job_started:
+        "Generación de pdfs de examen para el examen %{exam_name} ha comenzado"
 
     split:
       success:
@@ -57,6 +59,20 @@ es:
         "Subir un examen PDF"
       split:
         "División"
+
+    split_pdf_log:
+      view_logs:
+        "ver los registros"
+      log:
+        "Iniciar sesión"
+      success_log:
+        "%{filename} se divide enm %{original_num_pages} páginas"
+      failure_general_log:
+        "Mientras %{filename} está formado por páginas %{original_num_pages}, hay páginas %{num_pages_qr_scan_error} con errores de análisis QR"
+      failure_missing_pages_log:
+        "Si bien hay %{num_pages_qr_scan_error} errores de análisis QR con %{filename}, es posible que falten páginas"
+
+    back_to_exam_template_page: "Volver a la página de plantillas de examen"
 
   flash:
     exam_templates:

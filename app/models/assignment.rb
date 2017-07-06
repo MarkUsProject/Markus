@@ -580,7 +580,7 @@ class Assignment < ActiveRecord::Base
       submission = grouping.current_submission_used
       if submission
         svn_commands.push(
-          "svn checkout -r #{submission.revision_number} " +
+          "svn checkout -r #{submission.revision_identifier} " +
           "#{grouping.group.repository_external_access_url}/" +
           "#{repository_folder} \"#{grouping.group.group_name}\"")
       end
@@ -775,7 +775,7 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_num_valid
-    groupings.includes(:current_submission_used).select(&:is_valid?).count
+    groupings.includes(current_submission_used: :submitted_remark).select(&:is_valid?).count
   end
 
   def get_num_marked(ta_id = nil)
@@ -784,7 +784,7 @@ class Assignment < ActiveRecord::Base
     else
       if is_criteria_mark?(ta_id)
         n = 0
-        ta_memberships.includes(grouping: :current_submission_used).where(user_id: ta_id).find_each do |x|
+        ta_memberships.includes(grouping: [current_submission_used: :submitted_remark]).where(user_id: ta_id).find_each do |x|
           x.grouping.current_submission_used.get_latest_result.marks
             .joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type')
             .where('c.ta_id': ta_id, mark: nil).empty? && n += 1

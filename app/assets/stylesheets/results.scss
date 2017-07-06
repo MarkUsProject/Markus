@@ -113,7 +113,7 @@
   }
 }
 
-.active-criteria, .active-rubric {
+.active-criterion, .active-rubric {
   -webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
   -moz-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
   box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
@@ -121,4 +121,35 @@
 
 input:focus {
   border: 5px solid $blue;
+}
+
+#help_dialog table {
+  margin-top: 10px;
+
+  tr {
+    height: 28px;
+
+    td {
+      width: 50%;
+
+      kbd {
+        padding:0.2em 0.6em;
+        -moz-border-radius:3px;
+        -moz-box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+        -webkit-border-radius:3px;
+        -webkit-box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+        background-color:#f7f7f7;
+        border:1px solid #ccc;
+        border-radius:3px;
+        box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+        color:#333;
+        display:inline-block;
+        font-family: Arial,Helvetica,sans-serif;
+        font-size:11px;
+        line-height:1.4;
+        margin:0 .1em;
+        text-shadow:0 1px 0 #fff;
+      }
+    }
+  }
 }

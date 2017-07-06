@@ -42,9 +42,9 @@ class Submission < ActiveRecord::Base
      submission
   end
 
-  def self.create_by_revision_number(grouping, revision_number)
+  def self.create_by_revision_identifier(grouping, revision_identifier)
     repo = grouping.group.repo
-    revision = repo.get_revision(revision_number)
+    revision = repo.get_revision(revision_identifier)
     submission = self.generate_new_submission(grouping, revision)
     repo.close
     submission
@@ -56,7 +56,7 @@ class Submission < ActiveRecord::Base
     new_submission.submission_version = 1
     new_submission.submission_version_used = true
     new_submission.revision_timestamp = revision.timestamp
-    new_submission.revision_number = revision.revision_number
+    new_submission.revision_identifier = revision.revision_identifier
     new_submission.transaction do
       begin
         new_submission.populate_with_submission_files(revision)

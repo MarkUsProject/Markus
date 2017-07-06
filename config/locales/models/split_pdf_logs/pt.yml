@@ -1,0 +1,14 @@
+pt:
+  activerecord:
+    models:
+      split_pdf_log:
+        one: "Dividido Pdf registro"
+    attributes:
+      split_pdf_log:
+        filename: "Nome do arquivo"
+        exam_template: "Modelo de exame"
+        num_groups_in_complete: "Número de grupos em completo"
+        num_groups_in_incomplete: "Número de grupos incompletos"
+        num_pages_qr_scan_error: "Número de páginas com erros de varredura QR"
+        original_num_pages: "número de páginas"
+        user: "do utilizador"

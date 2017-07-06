@@ -288,9 +288,9 @@ module AutomatedTestsClientHelper
   end
 
   def self.create_test_script_result(script_name, assignment, grouping, submission, requested_by)
-    revision_number = submission.nil? ?
-        grouping.group.repo.get_latest_revision.revision_number :
-        submission.revision_number
+    revision_identifier = submission.nil? ?
+        grouping.group.repo.get_latest_revision.revision_identifier :
+        submission.revision_identifier
     submission_id = submission.nil? ? nil : submission.id
     test_script = TestScript.find_by(assignment_id: assignment.id, script_name: script_name)
 
@@ -298,7 +298,7 @@ module AutomatedTestsClientHelper
         test_script_id: test_script.id,
         submission_id: submission_id,
         marks_earned: 0,
-        repo_revision: revision_number,
+        repo_revision: revision_identifier,
         requested_by_id: requested_by.id)
   end
 

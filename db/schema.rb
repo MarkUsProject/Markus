@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170615150045) do
+ActiveRecord::Schema.define(version: 20170623163309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -466,8 +466,10 @@ ActiveRecord::Schema.define(version: 20170615150045) do
     t.boolean  "qr_code_found"
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+    t.integer  "exam_template_id"
   end
 
+  add_index "split_pdf_logs", ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id", using: :btree
   add_index "split_pdf_logs", ["user_id"], name: "index_split_pdf_logs_on_user_id", using: :btree
 
   create_table "submission_collectors", force: :cascade do |t|
@@ -501,7 +503,7 @@ ActiveRecord::Schema.define(version: 20170615150045) do
     t.datetime "created_at"
     t.integer  "submission_version"
     t.boolean  "submission_version_used"
-    t.integer  "revision_number",          null: false
+    t.text     "revision_identifier",      null: false
     t.datetime "revision_timestamp",       null: false
     t.text     "remark_request"
     t.datetime "remark_request_timestamp"
@@ -519,12 +521,12 @@ ActiveRecord::Schema.define(version: 20170615150045) do
 
   create_table "template_divisions", force: :cascade do |t|
     t.integer  "exam_template_id"
-    t.integer  "start",                             null: false
-    t.integer  "end",                               null: false
-    t.string   "label",                             null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "criteria_assignment_files_join_id"
+    t.integer  "start",              null: false
+    t.integer  "end",                null: false
+    t.string   "label",              null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "assignment_file_id"
   end
 
   add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
@@ -545,7 +547,7 @@ ActiveRecord::Schema.define(version: 20170615150045) do
     t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
-    t.integer  "repo_revision"
+    t.text     "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
@@ -629,10 +631,11 @@ ActiveRecord::Schema.define(version: 20170615150045) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
+  add_foreign_key "split_pdf_logs", "exam_templates"
   add_foreign_key "split_pdf_logs", "users"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
-  add_foreign_key "template_divisions", "criteria_assignment_files_joins"
+  add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "test_script_results", "users", column: "requested_by_id"
   add_foreign_key "tokens", "groupings"

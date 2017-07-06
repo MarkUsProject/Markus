@@ -1,0 +1,5 @@
+pt:
+  activerecord:
+    models:
+      assignment:
+        one: "Arquivo de Atribuição"

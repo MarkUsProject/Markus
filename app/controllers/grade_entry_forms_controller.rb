@@ -87,15 +87,6 @@ class GradeEntryFormsController < ApplicationController
     @date = params[:date]
   end
 
-  # Refreshes the grade distribution graph
-  def refresh_graph
-    @grade_entry_form = GradeEntryForm.find(params[:id])
-    @grade_entry_form.grade_distribution_array
-    respond_to do |format|
-      format.js
-    end
-  end
-
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])
