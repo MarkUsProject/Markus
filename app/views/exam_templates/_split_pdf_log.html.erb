@@ -9,5 +9,8 @@
   <p><strong><%= SplitPdfLog.human_attribute_name('num_groups_in_incomplete') %></strong>: <%= split_pdf_log.num_groups_in_incomplete %></p>
   <p><strong><%= SplitPdfLog.human_attribute_name('original_num_pages') %></strong>: <%= split_pdf_log.original_num_pages %></p>
   <p><strong><%= SplitPdfLog.human_attribute_name('num_pages_qr_scan_error') %></strong>: <%= split_pdf_log.num_pages_qr_scan_error %></p>
+  <% unless split_pdf_log.error_description.blank? %>
+    <p><strong><%= SplitPdfLog.human_attribute_name('error_description') %></strong>: <%= split_pdf_log.error_description %></p>
+  <% end %>
 </div>
 <hr>
