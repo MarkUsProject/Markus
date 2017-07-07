@@ -19,6 +19,7 @@ class SplitPDFJob < ActiveJob::Base
         hash[key] = []
       end
       num_pages_qr_scan_error = 0
+      wrong_template_pages = []
       pdf.pages.each_index do |i|
         page = pdf.pages[i]
         new_page = CombinePDF.new
@@ -43,6 +44,7 @@ class SplitPDFJob < ActiveJob::Base
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+            wrong_template_pages << i + 1
             m_logger.log('QR code does not contain corresponding exam template.')
           end
         end
@@ -57,6 +59,8 @@ class SplitPDFJob < ActiveJob::Base
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
+      error_description = wrong_template_pages.empty? ? '' : "QR code of page #{wrong_template_pages.join(', ')} from #{filename} does not contain corresponding exam template."
+
       split_pdf_log = SplitPdfLog.create(
         exam_template: exam_template,
         filename: filename,
@@ -64,7 +68,8 @@ class SplitPDFJob < ActiveJob::Base
         num_groups_in_complete: num_groups_in_complete,
         num_groups_in_incomplete: num_groups_in_incomplete,
         num_pages_qr_scan_error: num_pages_qr_scan_error,
-        user: current_user
+        user: current_user,
+        error_description: error_description
       )
       return split_pdf_log
     end
