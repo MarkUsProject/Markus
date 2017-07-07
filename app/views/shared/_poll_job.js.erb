@@ -1,6 +1,6 @@
 <script>
 <% if session[:job_id] %>
-  <% current_job = ActiveJob::Status.get(session[:job_id]) if local_assigns[:current_job].nil? %>
+  <% current_job = ActiveJob::Status.get(session[:job_id]) %>
   poll_job("<%= session[:job_id] %>", undefined, <%= current_job[:job_class].on_complete_js %>);
 <% end %>
 </script>

@@ -4,13 +4,16 @@ class SplitPDFJob < ActiveJob::Base
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
   def self.on_complete_js
-    "function() {window.location.reload.bind(window.location);}"
+    "window.location.reload.bind(window.location)"
+  end
+
+  before_enqueue do |job|
+    status.update(job_class: self.class)
   end
 
   def perform(exam_template, path, original_filename=nil, current_user=nil)
     m_logger = MarkusLogger.instance
     begin
-      status.update(job_class: self.class)
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
