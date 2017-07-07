@@ -1109,6 +1109,15 @@ es:
         manage_admins: "Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs,
                         incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas."
 
+    #app/views/exam_templates
+    exam_templates:
+      assign_errors:
+        fix_errors:     "Corregir errores de análisis"
+        document_info:  "Información del documento"
+        copy_number:    "Número de copia"
+        page_number:    "número de página"
+        upside_down:    "Página al revés?"
+
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
       fail:

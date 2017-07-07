@@ -77,3 +77,46 @@
   color: #cb2431;
   font-weight: bold;
 }
+
+.toolbar {
+  //display: none;
+}
+
+#viewerContainer {
+  top: 0;
+}
+
+#codeviewer {
+  border-radius: 0;
+}
+
+.display_pane {
+  border: 1px solid $light-grey;
+}
+
+.input_pane {
+  padding: 15px !important;
+}
+
+.input_pane {
+  input[type="text"] {
+    margin-bottom: 5px;
+  }
+}
+
+.side_header {
+  border-bottom: 1px solid $light-grey;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+#info_form label {
+  //min-width: initial;
+  margin-bottom: 3px;
+}
+
+.disable {
+  cursor: default;
+  color: #8d8d8d !important;
+  font-style: italic;
+}

@@ -847,6 +847,15 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         success: "Administrador %{user_name} atualizado com sucesso."
         error:   "Impossível  atualizar o administrador."
 
+    #app/views/exam_templates
+    exam_templates:
+      assign_errors:
+        fix_errors:     "Corrigir erros de varredura"
+        document_info:  "Informação do documento"
+        copy_number:    "Numero de cópia"
+        page_number:    "Número de página"
+        upside_down:    "Página de cabeça para baixo?"
+
     add_student:
       success: "Aluno %{user_name} adicionado."
       fail:
