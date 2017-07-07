@@ -123,6 +123,9 @@ module Repository
     end
 
     def get_revision_by_timestamp(target_timestamp, _path = nil)
+      # TODO Look if there's an entry for this repo and commit.oid in table X and get its push timestamp
+      # TODO Sort TOPO instead of DATE
+      # TODO Make the web interface create an entry in table X too when pushing? Should be covered by the hook transparently
       # returns a Git instance representing the revision at the
       # current timestamp, should be a ruby time stamp instance
       walker = Rugged::Walker.new(@repos)
