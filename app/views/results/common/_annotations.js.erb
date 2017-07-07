@@ -119,6 +119,11 @@
   function get_mouse_positions() {
     var mouseSelection = window.getSelection();
 
+    if (mouseSelection.anchorNode === null || mouseSelection.focusNode === null) {
+      alert("<%= I18n.t('marker.annotation.select_some_text') %>");
+      return false;
+    }
+
     // Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
     var mouse_anchor = mouseSelection.anchorNode;
     var mouse_focus  = mouseSelection.focusNode;
@@ -212,6 +217,11 @@
       var temp_column = column_start;
       column_start = column_end;
       column_end = temp_column;
+    }
+
+    if (line_start == line_end && column_start == column_end) {
+      alert("<%= I18n.t('marker.annotation.select_some_text') %>");
+      return false;
     }
 
     // Return positions as an object
