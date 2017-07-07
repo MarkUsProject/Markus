@@ -157,6 +157,7 @@ class ExamTemplatesController < ApplicationController
                         @assignment.short_identifier, 'error', params[:file_name]),
               filename: params[:file_name],
               type: 'application/pdf')
+    session[:filename] = params[:file_name]
   end
 
   def download_error_file_path
@@ -164,6 +165,15 @@ class ExamTemplatesController < ApplicationController
                 assignment_id: params[:assignment_id],
                 file_name: params[:file_name],
                 show_in_browser: true )
+  end
+
+  def fix_error
+    exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
+    copy_number = params[:fix_error][:copy]
+    page_number = params[:fix_error][:page]
+    filename = session[:filename]
+    exam_template.fix_error(filename, copy_number, page_number)
+    redirect_to action: 'assign_errors'
   end
 
   def exam_template_params
