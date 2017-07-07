@@ -90,9 +90,9 @@ module Repository
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
       # Set up hooks
-      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'multihook.py'),
-                     File.join(bare_path, 'hooks', 'update'))
-      # TODO Add config option for script dir
+      MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
+        FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
+      end
 
       true
     end
