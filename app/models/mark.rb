@@ -37,6 +37,11 @@ class Mark < ActiveRecord::Base
     end
   end
 
+  def scale_mark(curr_max_mark, prev_max_mark)
+    new_mark = self.mark * (curr_max_mark.to_f / prev_max_mark)
+    update_attributes(mark: new_mark)
+  end
+
   private
 
   def ensure_not_released_to_students

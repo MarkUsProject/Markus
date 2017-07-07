@@ -207,9 +207,8 @@ class CheckboxCriterion < Criterion
         # all associated marks should have their mark value scaled to the change.
         marks = self.marks.where(result_id: r.id)
         marks.each do |m|
-          if m.mark != 0
-            new_mark = m.mark * (self.max_mark.to_f / self.max_mark_was)
-            m.update_attributes(mark: new_mark)
+          unless m.mark.nil?
+            m.scale_mark(self.max_mark, self.max_mark_was)
           end
         end
         r.update_total_mark
