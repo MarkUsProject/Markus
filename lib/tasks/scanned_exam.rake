@@ -40,6 +40,15 @@ namespace :db do
 
     template.generate_copies 5
     template_path  = File.join(File.dirname(__FILE__), '/../../db/data/scanned_exams/midterm1_scanned_sample.pdf')
-    template.split_pdf(template_path, nil, Admin.find_by(user_name: 'a'))
+    template.split_pdf(template_path, 'midterm1_scanned_sample.pdf', Admin.find_by(user_name: 'a'))
+
+    template_path = File.join(File.dirname(__FILE__,), '/../../db/data/scanned_exams/midterm33.pdf')
+    template.split_pdf(template_path, 'midterm33.pdf', Admin.find_by(user_name: 'a'))
+
+    template_path = File.join(File.dirname(__FILE__,), '/../../db/data/scanned_exams/midterm35.pdf')
+    template.split_pdf(template_path, 'midterm35.pdf', Admin.find_by(user_name: 'a'))
+
+    template_path = File.join(File.dirname(__FILE__,), '/../../db/data/scanned_exams/midterm42.pdf')
+    template.split_pdf(template_path, 'midterm42.pdf', Admin.find_by(user_name: 'a'))
   end
 end
