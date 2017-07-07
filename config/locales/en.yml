@@ -1448,6 +1448,7 @@ en:
 
     keybinding:
       keyboard_help:          "Keyboard Shortcut Help"
+      toggle_compact:         "Toggle compact view"
       next_submission:        "Next submission"
       previous_submission:    "Previous submission"
       next_criterion:         "Select next criterion"

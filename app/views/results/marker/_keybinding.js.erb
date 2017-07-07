@@ -84,10 +84,15 @@ Mousetrap.bind('shift+n', function(e) {
   }
 });
 
-// When shift+enter is pressed and the annotation modal is open, submit it
+// When mod+enter is pressed and the annotation modal is open, submit it
 Mousetrap.bind('mod+enter', function(e) {
   if ($('#annotation_dialog:visible').length) {
     e.preventDefault();
     $('#submit_annotation').click();
   }
+});
+
+// When alt+enter is pressed, toggle compact mode
+Mousetrap.bind('alt+enter', function(e) {
+    compact_view_toggle();
 });

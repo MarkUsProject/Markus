@@ -1290,6 +1290,7 @@ fr:
 
     keybinding:
       keyboard_help:          "Aide sur le raccourci clavier"
+      toggle_compact:         "Basculer affichage compact"
       next_submission:        "Envoi suivant"
       previous_submission:    "Envoi précédent"
       next_criterion:         "Sélectionnez le prochain critère"
