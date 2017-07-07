@@ -24,12 +24,12 @@ class SplitPDFJob < ActiveJob::Base
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
-        new_page.save File.join(raw_dir, "#{basename}-#{i}.pdf")
+        new_page.save File.join(raw_dir, "#{filename}-#{i}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
         img = Magick::Image::read(File.join(raw_dir, "#{basename}-#{i}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
-        qr_img.write File.join(raw_dir, "#{basename}-#{i}.png")
+        qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdf
         qrcode_string = ZXing.decode qr_img.to_blob
