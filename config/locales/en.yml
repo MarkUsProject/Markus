@@ -1459,6 +1459,7 @@ en:
       when_rubric:            "(When on rubric) "
       open_annotation:        "Open annotation modal"
       confirm_annotation:     "Confirm annotation"
+      next_file:              "Next file"
 
 
     #app/views/assignments/_read.html.erb
