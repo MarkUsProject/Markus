@@ -13,7 +13,7 @@ class SplitPDFJob < ActiveJob::Base
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
       basename = File.basename path, '.pdf'
-      filename = original_filename.nil? ? basename : original_filename
+      filename = original_filename.nil? ? basename : File.basename(original_filename)
       pdf = CombinePDF.load path
       progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
@@ -27,7 +27,7 @@ class SplitPDFJob < ActiveJob::Base
         new_page.save File.join(raw_dir, "#{filename}-#{i}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{basename}-#{i}.pdf")).first
+        img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
         qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
 
@@ -161,7 +161,11 @@ class SplitPDFJob < ActiveJob::Base
         repo.commit(txn)
       end
     end
-    SubmissionsJob.perform_later(groupings)
+    groupings.each do |grouping|
+      grouping.group.access_repo do |repo|
+        SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
+      end
+    end
   end
 
   def group_name_for(exam_template, exam_num)
