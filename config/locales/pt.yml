@@ -1452,3 +1452,9 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         skip_last_comma: true
 
     server_time: "Data servidor:"
+
+    poll_job:
+      working_message: "%{progress} fora de %{total}"
+      queued: "Enfileiradas"
+      completed: "Completado"
+      failed: "Falhou"
