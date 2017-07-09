@@ -14,7 +14,7 @@ class JobMessagesController < ApplicationController
       flash_now(:success, "#{status[:progress]} out of #{status[:total]}")
     else
       flash_now(:success, "#{status.status}")
-      if status.completed?
+      if status.completed? or status.failed?
         session[:job_id] = nil
       end
     end
