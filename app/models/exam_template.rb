@@ -17,6 +17,7 @@ class ExamTemplate < ActiveRecord::Base
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy
+  has_many :split_pages, dependent: :destroy
   accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
 
   # Create an ExamTemplate with the correct file
