@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170623163309) do
+ActiveRecord::Schema.define(version: 20170710203836) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -454,6 +454,19 @@ ActiveRecord::Schema.define(version: 20170623163309) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
+  create_table "split_pages", force: :cascade do |t|
+    t.integer  "page_number"
+    t.string   "filename"
+    t.string   "error_description"
+    t.integer  "exam_template_id"
+    t.integer  "group_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "split_pages", ["exam_template_id"], name: "index_split_pages_on_exam_template_id", using: :btree
+  add_index "split_pages", ["group_id"], name: "index_split_pages_on_group_id", using: :btree
+
   create_table "split_pdf_logs", force: :cascade do |t|
     t.datetime "uploaded_when"
     t.string   "error_description"
@@ -631,6 +644,8 @@ ActiveRecord::Schema.define(version: 20170623163309) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assignments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
+  add_foreign_key "split_pages", "exam_templates"
+  add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pdf_logs", "exam_templates"
   add_foreign_key "split_pdf_logs", "users"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
