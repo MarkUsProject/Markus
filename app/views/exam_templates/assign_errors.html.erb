@@ -207,20 +207,22 @@
         <div class="side_header">
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
-        <%= form_for :fix_error,
-                     url: fix_error_assignment_exam_templates_path(@assignment),
-                     html: { multipart: true, size: 1, class: 'side_header' } do |f| %>
+        <%= form_tag fix_error_assignment_exam_templates_path(@assignment),
+                     { id: 'info_form', class: 'side_header' } do %>
           <div class="side_header">
-            <%= f.label(:exam_template, ExamTemplate.model_name.human) %>
-            <%= f.select(:exam_template,
-                         options_from_collection_for_select(ExamTemplate.where(assignment_id: @assignment.id), :id, :name))
+            <%= label_tag(:exam_template, @assignment.exam_templates.model_name.human + ':') %>
+            <%= select_tag(:exam_template,
+                           options_from_collection_for_select(@assignment.exam_templates, :id, :name))
             %>
           </div>
-          <%= f.label(:copy, t('exam_templates.assign_errors.copy_number') + ':') %>
-          <%= f.number_field :copy, value: 1 %><br>
-          <%= f.label(:page, t('exam_templates.assign_errors.page_number') + ':') %>
-          <%= f.number_field :page, value: 1 %><br>
-          <%= f.submit t(:save) %>
+          <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
+          <%= text_field_tag(:copy_number, nil) %><br>
+          <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
+          <%= text_field_tag(:page_number, nil) %><br>
+          <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
+          <%= check_box_tag(:upside_down, nil) %><br>
+          <br>
+          <%= submit_tag(t('save')) %>
         <% end %>
       </div>
     </div>

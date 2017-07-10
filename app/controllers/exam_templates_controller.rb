@@ -168,9 +168,9 @@ class ExamTemplatesController < ApplicationController
   end
 
   def fix_error
-    exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
-    copy_number = params[:fix_error][:copy]
-    page_number = params[:fix_error][:page]
+    exam_template = ExamTemplate.find(params[:exam_template])
+    copy_number = params[:copy_number]
+    page_number = params[:page_number]
     filename = session[:filename]
     exam_template.fix_error(filename, copy_number, page_number)
     redirect_to action: 'assign_errors'
