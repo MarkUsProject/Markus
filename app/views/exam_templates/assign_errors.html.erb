@@ -207,8 +207,7 @@
         <div class="side_header">
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
-        <%= form_tag fix_error_assignment_exam_templates_path(@assignment),
-                     { id: 'info_form', class: 'side_header' } do %>
+        <%= form_tag id: 'info_form', class: 'side_header' do %>
           <div class="side_header">
             <%= label_tag(:exam_template, @assignment.exam_templates.model_name.human + ':') %>
             <%= select_tag(:exam_template,

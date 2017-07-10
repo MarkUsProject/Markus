@@ -58,7 +58,32 @@
   $(document).ready(function () {
     $('#upside_down').click(function () {
       rotate();
-    })
+    });
+
+    $("form").submit(function(e) {
+      e.preventDefault();
+      var data = $(this).serializeArray().reduce(function(obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+      }, {});
+      // appending filename to existing form data
+      var filename = files[index];
+      data['filename'] = filename;
+      $.ajax({
+        method: 'POST',
+        url: '<%= fix_error_assignment_exam_templates_path(@assignment) %>',
+        dataType: 'text',
+        data: {
+          data: data
+        },
+        success: function (data) {
+          console.log("success");
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      })
+    });
   });
 
   getFile(files[0]);
