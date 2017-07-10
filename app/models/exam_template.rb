@@ -44,7 +44,7 @@ class ExamTemplate < ActiveRecord::Base
     return unless attributes.has_key? :assignment_id
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
-    filename = attributes[:filename]
+    filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name_input]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
@@ -82,7 +82,7 @@ class ExamTemplate < ActiveRecord::Base
       assignment_name
     )
 
-    File.open(File.join(template_path, attributes[:old_filename]), 'wb') do |f|
+    File.open(File.join(template_path, attributes[:old_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
