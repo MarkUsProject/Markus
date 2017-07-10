@@ -16,6 +16,10 @@
 
 <script>
   $(document).ready(function() {
+      PDFView.isViewerEmbedded = true;
+      PDFView.onLoadComplete = function () {
+          $('input#names').focus();
+      };
       $("#names").autocomplete({
           source: function(request, response) {
               $.getJSON("get_names",
@@ -181,6 +185,9 @@
                 <textarea id="errorMoreInfo" hidden='true' readonly="readonly"></textarea>
               </div>
             </div> <!-- mainContainer -->
+            <div id="overlayContainer" class="hidden">
+              <div id="documentPropertiesOverlay" class="container hidden"></div>
+            </div>
           </div>
         </div>
     </div>
