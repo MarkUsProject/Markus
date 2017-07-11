@@ -1885,4 +1885,4 @@ es:
       completed: "Terminado"
       failed: "Ha fallado"
       #Job queue name: "progress message"
-      job_split_pdf: "%{job_prefix} - Procesamiento página %{progress} fuera de %{total} para %{job_suffix}"
+      job_split_pdf: "Procesamiento página %{progress} fuera de %{total} para %{job_suffix}"

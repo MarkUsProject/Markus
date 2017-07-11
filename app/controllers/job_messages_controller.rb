@@ -13,7 +13,6 @@ class JobMessagesController < ApplicationController
     if status.working?
       if status[:job_class]
         flash_now(:notice,t('poll_job.' + status[:job_class].queue_name,
-                            job_prefix: status[:message_prefix],
                             progress: status[:progress],
                             total: status[:total],
                             job_suffix: status[:message_suffix]))

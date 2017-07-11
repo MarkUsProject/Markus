@@ -1651,4 +1651,6 @@ en:
       completed: "Completed"
       failed: "Failed"
       #Job queue name: "progress message"
-      job_split_pdf: "%{job_prefix} - Processing page %{progress} out of %{total} for %{job_suffix}"
+      job_split_pdf: "Processing page %{progress} out of %{total} for %{job_suffix}"
+      #job_generate: "Generating copy %{progress} of %{total} for %{job_suffix}"
+      #job_collect_submissions: "Collecting for group %{progress} out of %{total} for %{job_suffix}"
