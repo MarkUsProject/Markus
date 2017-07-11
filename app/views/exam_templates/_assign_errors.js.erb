@@ -67,6 +67,8 @@
         obj[item.name] = item.value;
         return obj;
       }, {});
+      // appending checkbox data to determine whether we should flip the PDF or not
+      data['upside_down'] = document.getElementById('upside_down').checked;
       // appending filename to existing form data
       var filename = files[index];
       data['filename'] = filename;

@@ -100,7 +100,7 @@ class ExamTemplate < ActiveRecord::Base
     SplitPDFJob.perform_later(self, path, original_filename, current_user)
   end
 
-  def fix_error(filename, exam_num, page_num)
+  def fix_error(filename, exam_num, page_num, upside_down)
     error_file = File.join(
       base_path, 'error', filename
     )
@@ -123,6 +123,11 @@ class ExamTemplate < ActiveRecord::Base
         error_file_old_name = File.join(incomplete_dir, filename)
         error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
         File.rename(error_file_old_name, error_file_new_name)
+        if upside_down
+          temporary_name = File.join(incomplete_dir, "temp-#{page_num}.pdf")
+          File.rename(error_file_new_name, temporary_name)
+          `pdftk #{temporary_name} cat 1-endsouth output #{error_file_new_name}`
+        end
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
           repo_name: "#{self.name}_paper_#{exam_num}"

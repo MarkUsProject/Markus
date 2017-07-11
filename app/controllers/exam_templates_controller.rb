@@ -171,7 +171,8 @@ class ExamTemplatesController < ApplicationController
     copy_number = params[:data][:copy_number]
     page_number = params[:data][:page_number]
     filename = params[:data][:filename]
-    exam_template.fix_error(filename, copy_number, page_number)
+    upside_down = params[:data][:upside_down]
+    exam_template.fix_error(filename, copy_number, page_number, upside_down)
     redirect_to action: 'assign_errors'
   end
 

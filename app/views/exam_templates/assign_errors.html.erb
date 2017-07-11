@@ -219,7 +219,7 @@
           <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
           <%= text_field_tag(:page_number, nil) %><br>
           <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
-          <%= check_box_tag(:upside_down, nil) %><br>
+          <%= check_box_tag(:upside_down, id: 'upside_down') %><br>
           <br>
           <%= submit_tag(t('save')) %>
         <% end %>
