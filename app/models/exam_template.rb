@@ -137,8 +137,10 @@ class ExamTemplate < ActiveRecord::Base
           submission_file = CombinePDF.new
           (template_division.start..template_division.end).each do |i|
             path = File.join(incomplete_dir, "#{i}.pdf")
-            pdf = CombinePDF.load path
-            submission_file << pdf.pages[0]
+            if File.exists? path
+              pdf = CombinePDF.load path
+              submission_file << pdf.pages[0]
+            end
           end
           txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
                       'application/pdf', revision.revision_identifier)
