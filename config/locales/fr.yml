@@ -1613,4 +1613,4 @@ fr:
       failed: "échoué"
       #Job queue name: "progress message"
       job_split_pdf: "Traitement page %{progress} sur %{total} pour %{job_suffix}"
-      #job_generate: "Génération de la copie %{progress} de %{total} pour %{job_suffix}"
+      job_generate: "Génération de la copie %{progress} de %{total} pour %{job_suffix}"

@@ -3,6 +3,11 @@ class GenerateJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
+  before_enqueue do |job|
+    status.update(job_class: self.class)
+    status.update(message_suffix: job.arguments[0].name)
+  end
+
   def perform(exam_template, num_copies, start)
     m_logger = MarkusLogger.instance
     begin

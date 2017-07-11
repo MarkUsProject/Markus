@@ -1652,4 +1652,4 @@ en:
       failed: "Failed"
       #Job queue name: "progress message"
       job_split_pdf: "Processing page %{progress} out of %{total} for %{job_suffix}"
-      #job_generate: "Generating copy %{progress} of %{total} for %{job_suffix}"
+      job_generate: "Generating copy %{progress} of %{total} for %{job_suffix}"
