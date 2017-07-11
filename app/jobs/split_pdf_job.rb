@@ -9,6 +9,7 @@ class SplitPDFJob < ActiveJob::Base
 
   before_enqueue do |job|
     status.update(job_class: self.class)
+    #Pass exam template name and uploaded file name
     status.update(message_suffix: job.arguments[0].name + ' (' + job.arguments[2] + ')')
   end
 
