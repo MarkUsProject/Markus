@@ -139,6 +139,10 @@
 
   tbody {
 
+    td:first-of-type {
+      color: $grey;
+    }
+
     tr:nth-child(even) {
       background-color: #eee;
     }

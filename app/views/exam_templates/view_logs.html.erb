@@ -1,4 +1,4 @@
-<% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize.downcase}" %>
+<% content_for :title, "#{SplitPdfLog.model_name.human.pluralize} - #{@assignment.short_identifier}" %>
 
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_template_page'),
