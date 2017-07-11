@@ -9,6 +9,8 @@ class SplitPDFJob < ActiveJob::Base
 
   before_enqueue do |job|
     status.update(job_class: self.class)
+    status.update(message_prefix: self.class.name + ' ' + job.arguments[0].name)
+    status.update(message_suffix: job.arguments[2])
   end
 
   def perform(exam_template, path, original_filename=nil, current_user=nil)

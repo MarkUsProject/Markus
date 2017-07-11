@@ -1458,3 +1458,5 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       queued: "Enfileiradas"
       completed: "Completado"
       failed: "Falhou"
+      #Job queue name: "progress message"
+      job_split_pdf: "%{job_prefix} - Processando a página %{progress} em %{total} para %{job_suffix}"

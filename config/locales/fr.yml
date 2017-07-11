@@ -1611,3 +1611,5 @@ fr:
       queued: "Mis en file d'attente"
       completed: "Terminé"
       failed: "échoué"
+      #Job queue name: "progress message"
+      job_split_pdf: "%{job_prefix} - Traitement page %{progress} sur %{total} pour %{job_suffix}"

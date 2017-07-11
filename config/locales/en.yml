@@ -1650,3 +1650,5 @@ en:
       queued: "Queued"
       completed: "Completed"
       failed: "Failed"
+      #Job queue name: "progress message"
+      job_split_pdf: "%{job_prefix} - Processing page %{progress} out of %{total} for %{job_suffix}"
