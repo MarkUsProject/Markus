@@ -11,16 +11,15 @@ class JobMessagesController < ApplicationController
   def get
     status = ActiveJob::Status.get(params[:job_id])
     if status.working?
-      flash_now(:success, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
+      flash_now(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
     else
       if status.queued?
-        status_msg = t('poll_job.queued')
+        flash_now(:notice,t('poll_job.queued'))
       elsif status.completed?
-        status_msg = t('poll_job.completed')
+        flash_now(:success, t('poll_job.completed'))
       else
-        status_msg = t('poll_job.failed')
+        flash_now(:error, t('poll_job.failed'))
       end
-      flash_now(:success, status_msg)
       if status.completed? || status.failed?
         session[:job_id] = nil
       end
