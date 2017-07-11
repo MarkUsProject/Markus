@@ -1460,3 +1460,4 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       failed: "Falhou"
       #Job queue name: "progress message"
       job_split_pdf: "Processando a página %{progress} em %{total} para %{job_suffix}"
+      #job_generate: "Gerando cópia %{progress} de %{total} para %{job_suffix}"
