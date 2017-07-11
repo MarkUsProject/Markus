@@ -167,7 +167,7 @@ class ExamTemplatesController < ApplicationController
   end
 
   def fix_error
-    exam_template = ExamTemplate.find(params[:exam_template])
+    exam_template = ExamTemplate.find(params[:data][:exam_template])
     copy_number = params[:data][:copy_number]
     page_number = params[:data][:page_number]
     filename = params[:data][:filename]
