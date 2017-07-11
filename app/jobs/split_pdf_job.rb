@@ -3,6 +3,14 @@ class SplitPDFJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
+  def self.on_complete_js
+    "window.location.reload.bind(window.location)"
+  end
+
+  before_enqueue do |job|
+    status.update(job_class: self.class)
+  end
+
   def perform(exam_template, path, original_filename=nil, current_user=nil)
     m_logger = MarkusLogger.instance
     begin
@@ -13,6 +21,7 @@ class SplitPDFJob < ActiveJob::Base
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
       basename = File.basename path, '.pdf'
+      filename = original_filename.nil? ? basename : File.basename(original_filename)
       pdf = CombinePDF.load path
       progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
@@ -23,35 +32,34 @@ class SplitPDFJob < ActiveJob::Base
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
-        new_page.save File.join(raw_dir, "#{basename}-#{i}.pdf")
+        new_page.save File.join(raw_dir, "#{filename}-#{i}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{basename}-#{i}.pdf")).first
+        img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
-        qr_img.write File.join(raw_dir, "#{basename}-#{i}.png")
+        qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdf
         qrcode_string = ZXing.decode qr_img.to_blob
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
         if m.nil?
-          new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+          new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
         else
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
-            new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
+            new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
             m_logger.log('QR code does not contain corresponding exam template.')
           end
         end
         progress.increment
       end
-      save_pages(exam_template, partial_exams, basename)
+      save_pages(exam_template, partial_exams, filename)
 
       # creating an instance of split_pdf_log
-      filename = original_filename.nil? ? File.basename(path) : original_filename
       num_pages = pdf.pages.length
       complete_dir = File.join(exam_template.base_path, 'complete')
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -75,7 +83,7 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, basename=nil)
+  def save_pages(exam_template, partial_exams, filename=nil)
     return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -98,7 +106,7 @@ class SplitPDFJob < ActiveJob::Base
         new_pdf << page
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{basename}-#{page_num}.pdf")
+          new_pdf.save File.join(error_dir, "#{filename}-#{page_num}.pdf")
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
         end
@@ -161,7 +169,11 @@ class SplitPDFJob < ActiveJob::Base
         repo.commit(txn)
       end
     end
-    SubmissionsJob.perform_later(groupings)
+    groupings.each do |grouping|
+      grouping.group.access_repo do |repo|
+        SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
+      end
+    end
   end
 
   def group_name_for(exam_template, exam_num)

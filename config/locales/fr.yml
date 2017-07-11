@@ -1290,6 +1290,7 @@ fr:
 
     keybinding:
       keyboard_help:          "Aide sur le raccourci clavier"
+      toggle_compact:         "Basculer affichage compact"
       next_submission:        "Envoi suivant"
       previous_submission:    "Envoi précédent"
       next_criterion:         "Sélectionnez le prochain critère"
@@ -1604,3 +1605,9 @@ fr:
         full_messages:
           format: "%{attribute} %{message}"
     server_time: "Heure du serveur :"
+
+    poll_job:
+      working_message: "%{progress} hors de %{total}"
+      queued: "Mis en file d'attente"
+      completed: "Terminé"
+      failed: "échoué"
