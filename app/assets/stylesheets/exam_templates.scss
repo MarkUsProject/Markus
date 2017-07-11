@@ -120,3 +120,31 @@
   color: #8d8d8d !important;
   font-style: italic;
 }
+
+#log_entries {
+  width: 100%;
+
+  td, th {
+    padding: 20px 15px;
+    text-align: right;
+  }
+
+  td:nth-child(-n+4), th:nth-child(-n+4){
+    text-align: left;
+  }
+
+  thead {
+    border-bottom: 1px solid $grey;
+  }
+
+  tbody {
+
+    tr:nth-child(even) {
+      background-color: #eee;
+    }
+
+    .scan_error {
+      background-color: $light-yellow !important;
+    }
+  }
+}

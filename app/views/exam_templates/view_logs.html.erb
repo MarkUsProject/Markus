@@ -1,4 +1,4 @@
-<% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
+<% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize.downcase}" %>
 
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_template_page'),
@@ -10,8 +10,24 @@
   end
 %>
 
-<% @split_pdf_logs.sort { |a, b| b.uploaded_when <=> a.uploaded_when }.map.with_index do |split_pdf_log, i| %>
-  <%= render partial: 'split_pdf_log',
-             locals: { split_pdf_log: split_pdf_log,
-                       i: i + 1 } %>
-<% end %>
+<table id="log_entries">
+  <thead>
+    <tr>
+      <th><%= t('exam_templates.split_pdf_log.log') %></th>
+      <th><%= t('user.user_name').split.first %></th>
+      <th><%= SplitPdfLog.human_attribute_name('exam_template') %></th>
+      <th><%= SplitPdfLog.human_attribute_name('filename') %></th>
+      <th><%= SplitPdfLog.human_attribute_name('num_groups_in_complete') %></th>
+      <th><%= SplitPdfLog.human_attribute_name('num_groups_in_incomplete') %></th>
+      <th><%= SplitPdfLog.human_attribute_name('original_num_pages') %></th>
+      <th><%= SplitPdfLog.human_attribute_name('num_pages_qr_scan_error') %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @split_pdf_logs.sort { |a, b| b.uploaded_when <=> a.uploaded_when }.map.with_index do |split_pdf_log, i| %>
+        <%= render partial: 'split_pdf_log',
+                   locals: { split_pdf_log: split_pdf_log,
+                             i: i + 1 } %>
+    <% end %>
+  </tbody>
+</table>
