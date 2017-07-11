@@ -60,8 +60,9 @@
       rotate();
     });
 
-    $("form").submit(function(e) {
+    $('form').submit(function(e) {
       e.preventDefault();
+      // grabbing existing user input data such as copy number, page number, and exam template
       var data = $(this).serializeArray().reduce(function(obj, item) {
         obj[item.name] = item.value;
         return obj;
@@ -77,7 +78,7 @@
           data: data
         },
         success: function (data) {
-          console.log("success");
+          console.log('success');
         },
         error: function (err) {
           console.log(err);
