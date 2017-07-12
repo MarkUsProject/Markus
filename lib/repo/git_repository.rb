@@ -78,6 +78,9 @@ module Repository
       repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       Rugged::Repository.init_at(bare_path, :bare)
+      bare_config = Rugged::Config.new(File.join(bare_path, 'config'))
+      bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
+      bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
 
       # Do an initial commit with a README.md file.
@@ -122,24 +125,30 @@ module Repository
       get_revision(@repos.last_commit.oid)
     end
 
-    def get_revision_by_timestamp(target_timestamp, _path = nil)
-      # TODO Look if there's an entry for this repo and commit.oid in table X and get its push timestamp
-      # TODO Sort TOPO instead of DATE
-      # TODO Make the web interface create an entry in table X too when pushing? Should be covered by the hook transparently
-      # returns a Git instance representing the revision at the
-      # current timestamp, should be a ruby time stamp instance
+    # Gets the first revision before +target_timestamp+. If +path+ is not nil, then gets the first revision before
+    # +target_timestamp+ with changes under +path+. The +target_timestamp+ is matched with push dates in the git reflog,
+    # because a commit date can be arbitrarily crafted.
+    def get_revision_by_timestamp(target_timestamp, path = nil)
+      repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
+      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+      # TODO Change reflog command to only output shas?
+      out, _err, status = Open3.capture3( # use the git reflog to get a list of pushes
+        "cd #{bare_path} && git reflog --no-abbrev --date=iso --before='#{target_timestamp.in_time_zone}' master")
       walker = Rugged::Walker.new(@repos)
-      walker.sorting(Rugged::SORT_DATE)
-      walker.push(@repos.last_commit)
-      walker.each do |commit|
-        return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
+      if status != 0 || out.empty?
+        # Return the first revision
+        walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+        walker.push(@repos.last_commit)
+        return get_revision(walker.first.oid)
       end
-
-      # Return the first revision
+      commit_sha = out.lines.first.partition(' ')[0]
       walker.reset
-      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
-      walker.push(@repos.last_commit)
-      get_revision(walker.first.oid)
+      walker.sorting(Rugged::SORT_TOPO)
+      walker.push(commit_sha)
+      walker.each do |commit|
+        revision = get_revision(commit.oid)
+        return revision if revision.changes_at_path?(path)
+      end
     end
 
     def get_all_revisions
