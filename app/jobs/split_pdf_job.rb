@@ -51,7 +51,7 @@ class SplitPDFJob < ActiveJob::Base
           SplitPage.create(filename: filename, raw_page_number: i + 1, status: status)
         else
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
-            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
@@ -120,7 +120,7 @@ class SplitPDFJob < ActiveJob::Base
         destination = File.join incomplete_dir, "#{exam_num}"
       end
       FileUtils.mkdir_p destination unless Dir.exists? destination
-      pages.each do |page_num, page|
+      pages.each do |page_num, page, raw_page_num|
         new_pdf = CombinePDF.new
         new_pdf << page
         # if a page already exists, move the page to error directory instead of overwriting it
@@ -129,7 +129,7 @@ class SplitPDFJob < ActiveJob::Base
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
-          if File.dirname(destination) == 'complete' # if parent directory of destination is complete
+          if File.basename(File.dirname(destination)) == 'complete' # if parent directory of destination is complete
             status = 'Saved to complete directory'
           else # if parent directory of destination is incomplete
             status = 'Saved to incomplete directory'
@@ -139,6 +139,7 @@ class SplitPDFJob < ActiveJob::Base
           filename: filename,
           status: status,
           exam_page_number: exam_num.to_i,
+          raw_page_number: raw_page_num,
           group: group
         )
       end
