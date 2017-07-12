@@ -1,17 +1,44 @@
-<% content_for :title, "#{@assignment.short_identifier} #{SplitPdfLog.model_name.human.pluralize}" %>
+<% content_for :head do %>
+    <%= javascript_include_tag 'table_sorter' %>
+<% end %>
+
+<% content_for :title, "#{SplitPdfLog.model_name.human.pluralize} - #{@assignment.short_identifier}" %>
 
 <% @heading_buttons = [
-  { link_text: t('exam_templates.back_to_exam_template_page'),
-    link_path: assignment_exam_templates_path }]
-  unless Dir[File.join(MarkusConfigurator.markus_exam_template_dir,
-                       @assignment.short_identifier, 'error/*')].empty?
-    @heading_buttons.push({ link_text: t('exam_templates.assign_errors.fix_errors'),
-                            link_path: assign_errors_assignment_exam_templates_path })
-  end
+    {link_text: t('exam_templates.back_to_exam_template_page'),
+     link_path: assignment_exam_templates_path}]
+   unless Dir[File.join(MarkusConfigurator.markus_exam_template_dir,
+                        @assignment.short_identifier, 'error/*')].empty?
+     @heading_buttons.push({link_text: t('exam_templates.assign_errors.fix_errors'),
+                            link_path: assign_errors_assignment_exam_templates_path})
+   end
 %>
 
-<% @split_pdf_logs.sort { |a, b| b.uploaded_when <=> a.uploaded_when }.map.with_index do |split_pdf_log, i| %>
-  <%= render partial: 'split_pdf_log',
-             locals: { split_pdf_log: split_pdf_log,
-                       i: i + 1 } %>
-<% end %>
+<table id="log_entries" class="tablesorter">
+  <thead>
+  <tr>
+    <th><%= t('exam_templates.split_pdf_log.log') %></th>
+    <th><%= t('user.user_name').split.first %></th>
+    <th><%= SplitPdfLog.human_attribute_name('exam_template') %></th>
+    <th><%= SplitPdfLog.human_attribute_name('filename') %></th>
+    <th><%= SplitPdfLog.human_attribute_name('num_groups_in_complete') %></th>
+    <th><%= SplitPdfLog.human_attribute_name('num_groups_in_incomplete') %></th>
+    <th><%= SplitPdfLog.human_attribute_name('original_num_pages') %></th>
+    <th><%= SplitPdfLog.human_attribute_name('num_pages_qr_scan_error') %></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @split_pdf_logs.sort {|a, b| b.uploaded_when <=> a.uploaded_when}.map.with_index do |split_pdf_log, i| %>
+      <%= render partial: 'split_pdf_log',
+                 locals: {split_pdf_log: split_pdf_log,
+                          i: i + 1} %>
+  <% end %>
+  </tbody>
+</table>
+
+<script>
+  $(document).ready(function () {
+      $("#log_entries").tablesorter();
+    }
+  );
+</script>
