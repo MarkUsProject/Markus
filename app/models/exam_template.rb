@@ -124,9 +124,15 @@ class ExamTemplate < ActiveRecord::Base
         error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
         File.rename(error_file_old_name, error_file_new_name)
         if upside_down
-          temporary_name = File.join(incomplete_dir, "temp-#{page_num}.pdf")
-          File.rename(error_file_new_name, temporary_name)
-          `pdftk #{temporary_name} cat 1-endsouth output #{error_file_new_name}`
+          file_to_upside_down = File.open(error_file_new_name).read
+          pdf_to_upside_down = CombinePDF.parse file_to_upside_down
+          pdf_to_upside_down.pages.each do |page|
+            page[:Rotate] = page[:Rotate].to_f + 180
+            page.fix_rotation
+          end
+          File.open(error_file_new_name, 'wb') do |f|
+            f.write pdf_to_upside_down.to_pdf
+          end
         end
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
