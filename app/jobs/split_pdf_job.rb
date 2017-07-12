@@ -129,11 +129,8 @@ class SplitPDFJob < ActiveJob::Base
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
-          if File.basename(File.dirname(destination)) == 'complete' # if parent directory of destination is complete
-            status = 'Saved to complete directory'
-          else # if parent directory of destination is incomplete
-            status = 'Saved to incomplete directory'
-          end
+          # set status depending on whether parent directory of destination is complete or incomplete
+          status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
         SplitPage.create(
           filename: filename,
