@@ -4,5 +4,6 @@ class SplitPage < ActiveRecord::Base
   validates :filename, :raw_page_number, presence: true
   validates :raw_page_number, :exam_page_number,
             numericality: { greater_than_or_equal_to: 0,
-                            only_integer: true }
+                            only_integer: true,
+                            allow_blank: true }
 end
