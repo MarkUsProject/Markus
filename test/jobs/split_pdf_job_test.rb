@@ -59,7 +59,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       should 'have 1 pdf in error directory' do
         error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = ['midterm21-1.pdf']
+        error_generated_files = ['midterm21-2.pdf']
         assert_empty error_generated_files-error_dir
       end
     end
@@ -127,8 +127,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
         should 'generate error in each page' do
           error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm26-0.pdf midterm26-1.pdf midterm26-2.pdf midterm26-3.pdf
-                                    midterm26-4.pdf midterm26-5.pdf midterm26-6.pdf midterm26-7.pdf] # Page 1 ~ 8
+          error_generated_files = %w[midterm26-1.pdf midterm26-2.pdf midterm26-3.pdf midterm26-4.pdf
+                                    midterm26-5.pdf midterm26-6.pdf midterm26-7.pdf midterm26-8.pdf] # Page 1 ~ 8
           assert_empty error_generated_files-error_dir
         end
       end
@@ -150,7 +150,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
         should 'generate error in page 2 and page 3' do
           error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm28-1.pdf midterm28-2.pdf] # Page 2 and Page 3
+          error_generated_files = %w[midterm28-2.pdf midterm28-3.pdf] # Page 2 and Page 3
           assert_empty error_generated_files-error_dir
         end
       end
@@ -185,7 +185,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
         should 'have Page 3 in error directory' do
           error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm30-2.pdf] # Page 3
+          error_generated_files = %w[midterm30-3.pdf] # Page 3
           assert_empty error_generated_files-error_dir
         end
       end
@@ -202,7 +202,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
         should 'have Page 3 and Page 8 in error directory' do
           error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm33-2.pdf midterm33-7.pdf] # Page 3 and Page 8
+          error_generated_files = %w[midterm33-3.pdf midterm33-8.pdf] # Page 3 and Page 8
           assert_empty error_generated_files-error_dir
         end
 
@@ -240,7 +240,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       should 'have pdf of Page 2 in error directory' do
         error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm34-1.pdf] # Page 2
+        error_generated_files = %w[midterm34-2.pdf] # Page 2
         assert_empty error_generated_files-error_dir
       end
 
@@ -262,7 +262,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       should 'have Page 3 and Page 6 in error directory' do
         error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm35-2.pdf midterm35-5.pdf] # Page 3 and Page 6
+        error_generated_files = %w[midterm35-3.pdf midterm35-6.pdf] # Page 3 and Page 6
         assert_empty error_generated_files-error_dir
       end
 
@@ -304,7 +304,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       should 'have Page 1, 2, 3, 5 in error directory' do
         error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm42-0.pdf midterm42-1.pdf midterm42-2.pdf midterm42-4.pdf] # Page 1, 2, 3, 5
+        error_generated_files = %w[midterm42-1.pdf midterm42-2.pdf midterm42-3.pdf midterm42-5.pdf] # Page 1, 2, 3, 5
         assert_empty error_generated_files-error_dir
       end
     end
