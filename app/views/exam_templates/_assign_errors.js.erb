@@ -58,7 +58,35 @@
   $(document).ready(function () {
     $('#upside_down').click(function () {
       rotate();
-    })
+    });
+
+    $('form').submit(function(e) {
+      e.preventDefault();
+      // grabbing existing user input data such as copy number, page number, and exam template
+      var fix_error = $(this).serializeArray().reduce(function(obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+      }, {});
+      // appending checkbox data to determine whether we should flip the PDF or not
+      fix_error['upside_down'] = document.getElementById('upside_down').checked;
+      // appending filename to existing form data
+      var filename = files[index];
+      fix_error['filename'] = filename;
+      $.ajax({
+        method: 'POST',
+        url: '<%= fix_error_assignment_exam_templates_path(@assignment) %>',
+        dataType: 'text',
+        data: {
+          fix_error: fix_error
+        },
+        success: function (data) {
+          document.location.reload();
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      })
+    });
   });
 
   getFile(files[0]);
