@@ -126,10 +126,9 @@ class ExamTemplate < ActiveRecord::Base
         if upside_down
           file_to_upside_down = File.open(error_file_new_name).read
           pdf_to_upside_down = CombinePDF.parse file_to_upside_down
-          pdf_to_upside_down.pages.each do |page|
-            page[:Rotate] = page[:Rotate].to_f + 180
-            page.fix_rotation
-          end
+          page_to_upside_down = pdf_to_upside_down.pages[0]
+          page_to_upside_down[:Rotate] = page_to_upside_down[:Rotate].to_f + 180
+          page_to_upside_down.fix_rotation
           File.open(error_file_new_name, 'wb') do |f|
             f.write pdf_to_upside_down.to_pdf
           end

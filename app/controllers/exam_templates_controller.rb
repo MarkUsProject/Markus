@@ -167,11 +167,11 @@ class ExamTemplatesController < ApplicationController
   end
 
   def fix_error
-    exam_template = ExamTemplate.find(params[:data][:exam_template])
-    copy_number = params[:data][:copy_number]
-    page_number = params[:data][:page_number]
-    filename = params[:data][:filename]
-    upside_down = params[:data][:upside_down]
+    exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
+    copy_number = params[:fix_error][:copy_number]
+    page_number = params[:fix_error][:page_number]
+    filename = params[:fix_error][:filename]
+    upside_down = params[:fix_error][:upside_down]
     exam_template.fix_error(filename, copy_number, page_number, upside_down)
     redirect_to action: 'assign_errors'
   end
