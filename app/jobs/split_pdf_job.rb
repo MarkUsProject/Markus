@@ -37,6 +37,7 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: 0,
         user: current_user
       )
+
       progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
@@ -57,13 +58,20 @@ class SplitPDFJob < ActiveJob::Base
         qrcode_string = ZXing.decode qr_img.to_blob
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
+        status = ''
         if m.nil?
           new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
-          split_pdf_log.split_pages.create(filename: filename, raw_page_number: i + 1, status: status)
+          split_pdf_log.split_pages.create(filename: filename,
+                                           raw_page_number: i + 1,
+                                           status: status)
         else
+          group = Group.find_or_create_by(
+            group_name: group_name_for(exam_template, m[:exam_num].to_i),
+            repo_name: group_name_for(exam_template, m[:exam_num].to_i)
+          )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
@@ -71,8 +79,12 @@ class SplitPDFJob < ActiveJob::Base
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
-            split_pdf_log.split_pages.create(filename: filename, raw_page_number: i + 1, status: status, exam_page_number: m[:exam_num].to_i)
           end
+          split_pdf_log.split_pages.create(filename: filename,
+                                           raw_page_number: i + 1,
+                                           status: status,
+                                           group: group,
+                                           exam_page_number: m[:exam_num].to_i)
         end
         progress.increment
       end
@@ -135,13 +147,14 @@ class SplitPDFJob < ActiveJob::Base
           # set status depending on whether parent directory of destination is complete or incomplete
           status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
-        split_pdf_log.split_pages.create(
+        page = split_pdf_log.split_pages.find_or_create_by(
           filename: filename,
-          status: status,
           exam_page_number: exam_num.to_i,
           raw_page_number: raw_page_num,
           group: group
         )
+        # update status of page
+        page.update_attributes(status: status)
       end
 
       group.access_repo do |repo|
