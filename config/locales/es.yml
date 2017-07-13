@@ -1884,6 +1884,5 @@ es:
       queued: "En cola"
       completed: "Terminado"
       failed: "Ha fallado"
-      #Job queue name: "progress message"
-      job_split_pdf: "Procesamiento página %{progress} fuera de %{total} para %{job_suffix}"
+      split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       job_generate: "Generación de la copia %{progress} de %{total} para %{job_suffix}"

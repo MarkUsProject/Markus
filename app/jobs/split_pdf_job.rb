@@ -8,13 +8,14 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   def self.show_status(status)
-    I18n.t('split_pdf_job', progress: status[:progress],
+    I18n.t('poll_job.split_pdf_job', progress: status[:progress],
                             total: status[:total],
-                            exam_name: job.arguments[0].name + ' (' + job.arguments[2] + ')')
+                            exam_name: status[:exam_name])
   end
 
   before_enqueue do |job|
     status.update(job_class: self.class)
+    status.update(exam_name: job.arguments[0].name + ' (' + job.arguments[2] + ')')
   end
 
   def perform(exam_template, path, original_filename=nil, current_user=nil)
