@@ -24,12 +24,27 @@ class SplitPDFJob < ActiveJob::Base
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
+      complete_dir = File.join(exam_template.base_path, 'complete')
+      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       FileUtils.mkdir error_dir unless Dir.exists? error_dir
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
       pdf = CombinePDF.load path
+      num_pages = pdf.pages.length
+
+      # creating an instance of split_pdf_log
+      split_pdf_log = SplitPdfLog.create(
+        exam_template: exam_template,
+        filename: filename,
+        original_num_pages: num_pages,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        user: current_user
+      )
+
       progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
@@ -50,37 +65,46 @@ class SplitPDFJob < ActiveJob::Base
         qrcode_string = ZXing.decode qr_img.to_blob
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
+        status = ''
         if m.nil?
           new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
+          status = 'ERROR: QR code not found'
+          m_logger.log(status)
+          split_pdf_log.split_pages.create(filename: filename,
+                                           raw_page_number: i + 1,
+                                           status: status)
         else
+          group = Group.find_or_create_by(
+            group_name: group_name_for(exam_template, m[:exam_num].to_i),
+            repo_name: group_name_for(exam_template, m[:exam_num].to_i)
+          )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
-            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
-            m_logger.log('QR code does not contain corresponding exam template.')
+            status = 'ERROR: QR code does not contain corresponding exam template.'
+            m_logger.log(status)
           end
+          split_pdf_log.split_pages.create(filename: filename,
+                                           raw_page_number: i + 1,
+                                           status: status,
+                                           group: group,
+                                           exam_page_number: m[:exam_num].to_i)
         end
         progress.increment
       end
-      save_pages(exam_template, partial_exams, filename)
+      save_pages(exam_template, partial_exams, filename, split_pdf_log)
 
-      # creating an instance of split_pdf_log
-      num_pages = pdf.pages.length
-      complete_dir = File.join(exam_template.base_path, 'complete')
-      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
-      split_pdf_log = SplitPdfLog.create(
-        exam_template: exam_template,
-        filename: filename,
-        original_num_pages: num_pages,
+      split_pdf_log.update_attributes(
         num_groups_in_complete: num_groups_in_complete,
         num_groups_in_incomplete: num_groups_in_incomplete,
-        num_pages_qr_scan_error: num_pages_qr_scan_error,
-        user: current_user
+        num_pages_qr_scan_error: num_pages_qr_scan_error
       )
+
       return split_pdf_log
     end
      m_logger.log('Split pdf process done')
@@ -90,7 +114,7 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, filename=nil)
+  def save_pages(exam_template, partial_exams, filename=nil, split_pdf_log=nil)
     return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -101,24 +125,6 @@ class SplitPDFJob < ActiveJob::Base
       next if pages.empty?
       pages.sort_by! { |page_num, _| page_num }
 
-      # Save raw pages
-      if pages.length == exam_template.num_pages
-        destination = File.join complete_dir, "#{exam_num}"
-      else
-        destination = File.join incomplete_dir, "#{exam_num}"
-      end
-      FileUtils.mkdir_p destination unless Dir.exists? destination
-      pages.each do |page_num, page|
-        new_pdf = CombinePDF.new
-        new_pdf << page
-        # if a page already exists, move the page to error directory instead of overwriting it
-        if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{filename}-#{page_num}.pdf")
-        else
-          new_pdf.save File.join(destination, "#{page_num}.pdf")
-        end
-      end
-
       group = Group.find_or_create_by(
         group_name: group_name_for(exam_template, exam_num),
         repo_name: group_name_for(exam_template, exam_num)
@@ -128,6 +134,35 @@ class SplitPDFJob < ActiveJob::Base
         group: group,
         assignment: exam_template.assignment
       )
+
+      # Save raw pages
+      if pages.length == exam_template.num_pages
+        destination = File.join complete_dir, "#{exam_num}"
+      else
+        destination = File.join incomplete_dir, "#{exam_num}"
+      end
+      FileUtils.mkdir_p destination unless Dir.exists? destination
+      pages.each do |page_num, page, raw_page_num|
+        new_pdf = CombinePDF.new
+        new_pdf << page
+        # if a page already exists, move the page to error directory instead of overwriting it
+        if File.exists?(File.join(destination, "#{page_num}.pdf"))
+          new_pdf.save File.join(error_dir, "#{filename}-#{page_num}.pdf")
+          status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
+        else
+          new_pdf.save File.join(destination, "#{page_num}.pdf")
+          # set status depending on whether parent directory of destination is complete or incomplete
+          status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
+        end
+        page = split_pdf_log.split_pages.find_or_create_by(
+          filename: filename,
+          exam_page_number: exam_num.to_i,
+          raw_page_number: raw_page_num,
+          group: group
+        )
+        # update status of page
+        page.update_attributes(status: status)
+      end
 
       group.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
