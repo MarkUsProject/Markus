@@ -1650,6 +1650,6 @@ en:
       queued: "Queued"
       completed: "Completed"
       failed: "Failed"
-      #Job queue name: "progress message"
       job_split_pdf: "Processing page %{progress} out of %{total} for %{job_suffix}"
       job_generate: "Generating copy %{progress} of %{total} for %{job_suffix}"
+      split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"

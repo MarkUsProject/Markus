@@ -12,10 +12,7 @@ class JobMessagesController < ApplicationController
     status = ActiveJob::Status.get(params[:job_id])
     if status.working?
       if status[:job_class]
-        flash_now(:notice,t('poll_job.' + status[:job_class].queue_name,
-                            progress: status[:progress],
-                            total: status[:total],
-                            job_suffix: status[:message_suffix]))
+        flash_now(:notice,status[:job_class].show_status(status))
       else #default x out of y message
         flash_now(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
       end
