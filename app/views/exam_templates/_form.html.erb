@@ -21,22 +21,16 @@
   </div>
 
   <div class='exam-template-section'>
-    <h3><%= 'Exam Template Information'%></h3>
-    <p><span class='exam-template-info'><%= ExamTemplate.human_attribute_name('filename') %></span>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %></p>
-    <p><span class='exam-template-info'><%= ExamTemplate.human_attribute_name('num_pages') %></span>: <%= exam_template.num_pages %></p>
-  </div>
-
-  <div class='exam-template-section'>
-    <h3><%= t('exam_templates.update.general') %></h3>
-    <p class='required'><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
     <p>
       <%= f.label ExamTemplate.human_attribute_name('name') %>
       <%= f.text_field :name %>
     </p>
     <p>
-      <%= f.label t('exam_templates.update.instruction') %>
+      <span class='exam-template-info'>
+        <%= t('key_pairs.file') %>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %>
+      </span>
       <%= f.file_field :new_template %>
-    </p>
+    <p><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></p>
   </div>
 
   <div class='exam-template-section'>
