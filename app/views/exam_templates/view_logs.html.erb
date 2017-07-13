@@ -1,13 +1,13 @@
 <% content_for :title, "#{SplitPdfLog.model_name.human.pluralize} - #{@assignment.short_identifier}" %>
 
 <% @heading_buttons = [
-    { link_text: t('exam_templates.back_to_exam_template_page'),
-      link_path: assignment_exam_templates_path }]
-   unless Dir[File.join(MarkusConfigurator.markus_exam_template_dir,
-                        @assignment.short_identifier, 'error/*')].empty?
-     @heading_buttons.push({ link_text: t('exam_templates.assign_errors.fix_errors'),
-                             link_path: assign_errors_assignment_exam_templates_path })
-   end
+  { link_text: t('exam_templates.back_to_exam_template_page'),
+    link_path: assignment_exam_templates_path }]
+ unless Dir[File.join(MarkusConfigurator.markus_exam_template_dir,
+                      @assignment.short_identifier, 'error/*')].empty?
+   @heading_buttons.push({ link_text: t('exam_templates.assign_errors.fix_errors'),
+                           link_path: assign_errors_assignment_exam_templates_path })
+ end
 %>
 
 <table id="log_entries" class="tablesorter">
