@@ -17,12 +17,26 @@ class SplitPDFJob < ActiveJob::Base
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
+      complete_dir = File.join(exam_template.base_path, 'complete')
+      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       FileUtils.mkdir error_dir unless Dir.exists? error_dir
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
       pdf = CombinePDF.load path
+      num_pages = pdf.pages.length
+
+      # creating an instance of split_pdf_log
+      split_pdf_log = SplitPdfLog.create(
+        exam_template: exam_template,
+        filename: filename,
+        original_num_pages: num_pages,
+        num_groups_in_complete: 0,
+        num_groups_in_incomplete: 0,
+        num_pages_qr_scan_error: 0,
+        user: current_user
+      )
       progress.total = pdf.pages.length
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
@@ -48,7 +62,7 @@ class SplitPDFJob < ActiveJob::Base
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
-          SplitPage.create(filename: filename, raw_page_number: i + 1, status: status)
+          split_pdf_log.split_pages.create(filename: filename, raw_page_number: i + 1, status: status)
         else
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
@@ -57,31 +71,20 @@ class SplitPDFJob < ActiveJob::Base
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
-            SplitPage.create(filename: filename, raw_page_number: i + 1, status: status, exam_page_number: m[:exam_num].to_i)
+            split_pdf_log.split_pages.create(filename: filename, raw_page_number: i + 1, status: status, exam_page_number: m[:exam_num].to_i)
           end
         end
         progress.increment
       end
-      save_pages(exam_template, partial_exams, filename)
+      save_pages(exam_template, partial_exams, filename, split_pdf_log)
 
-      # creating an instance of split_pdf_log
-      num_pages = pdf.pages.length
-      complete_dir = File.join(exam_template.base_path, 'complete')
-      incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       num_groups_in_complete = get_num_groups_in_dir(complete_dir)
       num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
-      split_pdf_log = SplitPdfLog.create(
-        exam_template: exam_template,
-        filename: filename,
-        original_num_pages: num_pages,
+      split_pdf_log.update_attributes(
         num_groups_in_complete: num_groups_in_complete,
         num_groups_in_incomplete: num_groups_in_incomplete,
-        num_pages_qr_scan_error: num_pages_qr_scan_error,
-        user: current_user
+        num_pages_qr_scan_error: num_pages_qr_scan_error
       )
-      # associate split_page with corresponding split_pdf_log
-      split_pages = SplitPage.where(filename: filename)
-      split_pages.each { |split_page| split_page.update_attributes(split_pdf_log: split_pdf_log) }
 
       return split_pdf_log
     end
@@ -92,7 +95,7 @@ class SplitPDFJob < ActiveJob::Base
   end
 
   # Save the pages into groups for this assignment
-  def save_pages(exam_template, partial_exams, filename=nil)
+  def save_pages(exam_template, partial_exams, filename=nil, split_pdf_log=nil)
     return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
@@ -132,7 +135,7 @@ class SplitPDFJob < ActiveJob::Base
           # set status depending on whether parent directory of destination is complete or incomplete
           status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
-        SplitPage.create(
+        split_pdf_log.split_pages.create(
           filename: filename,
           status: status,
           exam_page_number: exam_num.to_i,
