@@ -47,12 +47,13 @@ class SplitPDFJob < ActiveJob::Base
           new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
         else
-          if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
+          if m[:short_id] == exam_template.assignment.short_identifier # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
             m_logger.log('QR code does not contain corresponding exam template.')
+            num_pages_qr_scan_error += 1
           end
         end
         progress.increment
