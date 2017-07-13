@@ -922,6 +922,7 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     user:
+        user:           "Utilisateur"
         id:             "ID"
         id_number:      "Numéro d'identification"
         email:          "Email"

@@ -1157,6 +1157,7 @@ es:
       success: "Sus cambios han sido realizados."
 
     user:
+        user:                             "Usuario"
         id:                               "ID"
         id_number:                        "Número de Identificación"
         email:                            "Email"

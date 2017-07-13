@@ -1,8 +1,5 @@
-<tr <%= if split_pdf_log.num_pages_qr_scan_error > 0
-          'class=scan_error'
-        end
-    %>>
-  <td class="log_info"><%= "#{t('exam_templates.split_pdf_log.log')} ##{i}" %> - <%= split_pdf_log.uploaded_when.strftime("%d %b %y at %I:%M:%S %p") %></td>
+<tr>
+  <td class="log_info"><%= split_pdf_log.uploaded_when.strftime("%d %b %y at %I:%M:%S %p") %></td>
   <td>
     <% unless split_pdf_log.user.nil? %>
       <%= split_pdf_log.user.user_name %>
@@ -13,5 +10,9 @@
   <td><%= split_pdf_log.num_groups_in_complete %></td>
   <td><%= split_pdf_log.num_groups_in_incomplete %></td>
   <td><%= split_pdf_log.original_num_pages %></td>
-  <td><%= split_pdf_log.num_pages_qr_scan_error %></td>
+  <td><%= split_pdf_log.num_pages_qr_scan_error %>
+    <% if split_pdf_log.num_pages_qr_scan_error > 0 %>
+        <img title="Some files have not been scanned properly." src="/assets/icons/error.png" alt="Scan error">
+    <% end %>
+  </td>
 </tr>

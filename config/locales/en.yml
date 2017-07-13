@@ -977,6 +977,7 @@ en:
       success:  "Your changes have been made."
 
     user:
+        user:           "User"
         id:             "ID"
         id_number:      "ID number"
         email:          "Email"

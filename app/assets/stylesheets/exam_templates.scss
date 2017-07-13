@@ -140,19 +140,4 @@
   thead {
     border-bottom: 1px solid $grey;
   }
-
-  tbody {
-
-    td:first-of-type {
-      color: $grey;
-    }
-
-    tr:nth-child(even) {
-      background-color: #eee;
-    }
-
-    .scan_error {
-      background-color: $light-yellow !important;
-    }
-  }
 }

@@ -890,6 +890,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       success:  "As alterações foram feitas."
 
     user:
+        user:           "Usuário"
         id:             "ID"
         id_number:      "Número de identidade"
         email:          "Email"
