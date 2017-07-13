@@ -131,24 +131,37 @@ module Repository
     def get_revision_by_timestamp(target_timestamp, path = nil)
       repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-      # TODO Change reflog command to only output shas?
-      out, _err, status = Open3.capture3( # use the git reflog to get a list of pushes
-        "cd #{bare_path} && git reflog --no-abbrev --date=iso --before='#{target_timestamp.in_time_zone}' master")
+      # use the git reflog to get a list of pushes
+      out, _err, status = Open3.capture3("cd #{bare_path} && git reflog --no-abbrev --date=iso master")
       walker = Rugged::Walker.new(@repos)
-      if status != 0 || out.empty?
-        # Return the first revision
-        walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
-        walker.push(@repos.last_commit)
-        return get_revision(walker.first.oid)
+      if status == 0 && !out.empty?
+        # find first push_time <= target_timestamp
+        commit_sha = nil
+        out.each_line do |line| # format: 'commit_sha master@{push_time}: optional_event'
+          sha, _, other = line.partition(' ')
+          time, _, _ = other.rpartition(':')
+          push_time = Time.zone.parse(time[8..-2])
+          if push_time <= target_timestamp.in_time_zone
+            commit_sha = sha
+            break
+          end
+        end
+        unless commit_sha.nil?
+          # find first commit that changes path, topologically equal or before the tip of the push
+          walker.sorting(Rugged::SORT_TOPO)
+          walker.push(commit_sha)
+          walker.each do |commit|
+            revision = get_revision(commit.oid)
+            return revision if path.nil? || revision.changes_at_path?(path)
+          end
+        end
       end
-      commit_sha = out.lines.first.partition(' ')[0]
+
+      # return the first revision as a backup plan
       walker.reset
-      walker.sorting(Rugged::SORT_TOPO)
-      walker.push(commit_sha)
-      walker.each do |commit|
-        revision = get_revision(commit.oid)
-        return revision if revision.changes_at_path?(path)
-      end
+      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+      walker.push(@repos.last_commit)
+      get_revision(walker.first.oid)
     end
 
     def get_all_revisions
