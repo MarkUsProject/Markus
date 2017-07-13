@@ -32,26 +32,26 @@ class SplitPDFJob < ActiveJob::Base
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
-        new_page.save File.join(raw_dir, "#{filename}-#{i}.pdf")
+        new_page.save File.join(raw_dir, "#{filename}-#{i + 1}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
+        img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i + 1}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
-        qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
+        qr_img.write File.join(raw_dir, "#{filename}-#{i + 1}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdf
         qrcode_string = ZXing.decode qr_img.to_blob
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
         if m.nil?
-          new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
+          new_page.save File.join(error_dir, "#{filename}-#{i + 1}.pdf")
           num_pages_qr_scan_error += 1
         else
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
-            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page]
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
-            new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
+            new_page.save File.join(error_dir, "#{filename}-#{i + 1}.pdf")
             m_logger.log('QR code does not contain corresponding exam template.')
           end
         end
@@ -101,12 +101,12 @@ class SplitPDFJob < ActiveJob::Base
         destination = File.join incomplete_dir, "#{exam_num}"
       end
       FileUtils.mkdir_p destination unless Dir.exists? destination
-      pages.each do |page_num, page|
+      pages.each do |page_num, page, raw_page_num|
         new_pdf = CombinePDF.new
         new_pdf << page
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{filename}-#{page_num}.pdf")
+          new_pdf.save File.join(error_dir, "#{filename}-#{raw_page_num}.pdf")
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
         end
