@@ -119,9 +119,34 @@ class GroupsController < ApplicationController
 
   def assign_scans
     @assignment = Assignment.find(params[:assignment_id])
-    @current_grouping = Grouping.get_assign_scans_grouping(@assignment)
-    if @current_grouping.nil?
+    if params.has_key?(:group)
+      next_grouping = Grouping.find(params[:group])
+    else
+      next_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    end
+    if next_grouping.nil?
       redirect_to(:back)
+    end
+    names = next_grouping.memberships.map do |u|
+      u.user.first_name + ' ' + u.user.last_name
+    end
+    num_valid = @assignment.get_num_valid
+    num_total = @assignment.get_num_assigned
+    if num_valid == num_total
+      flash_message(:success, t('groups.done_assign'))
+    end
+    @data = {
+      group_name: next_grouping.group.group_name,
+      grouping_id: next_grouping.id,
+      students: names,
+      num_total: num_total,
+      num_valid: num_valid
+    }
+    next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
+    unless next_file.nil?
+      @data[:filelink] = download_assignment_groups_path(
+        select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
+        show_in_browser: true )
     end
   end
 
@@ -172,16 +197,20 @@ class GroupsController < ApplicationController
         num_valid: num_valid
       }
     else
-      render json: {
+      data = {
         group_name: next_grouping.group.group_name,
         grouping_id: next_grouping.id,
-        filelink: download_assignment_groups_path(
-          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
-          show_in_browser: true ),
         students: names,
         num_total: num_total,
         num_valid: num_valid
       }
+      next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
+      unless next_file.nil?
+          data[:filelink] = download_assignment_groups_path(
+          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
+          show_in_browser: true )
+      end
+      render json: data
     end
   end
 

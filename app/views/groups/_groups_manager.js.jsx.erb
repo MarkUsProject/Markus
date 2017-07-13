@@ -280,7 +280,11 @@
       var groups_data = this.props.groups.map(function(group) {
         var g = {};
         g['id'] = group.id;
+        <% if @assignment.scanned_exam %>
+        g['name'] = <a href={'groups/assign_scans?group=' + group.id}>{group.name}</a>;
+        <% else %>
         g['name'] = group.name;
+        <% end %>
         var links = [];
         if (group.valid) {
           links.push(group.invalidate_link);
