@@ -14,6 +14,7 @@ class Group < ActiveRecord::Base
            class_name: 'TaMembership',
            through: :groupings
   has_many :assignments, through: :groupings
+  has_many :split_pages
 
 
   validates_presence_of :group_name
