@@ -1651,4 +1651,4 @@ en:
       completed: "Completed"
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
-      job_generate: "Generating copy %{progress} of %{total} for %{job_suffix}"
+      generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
