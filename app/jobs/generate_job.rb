@@ -28,7 +28,7 @@ class GenerateJob < ActiveJob::Base
         m_logger.log("Now generating: #{exam_num}")
         pdf = Prawn::Document.new(margin: 20)
         exam_template.num_pages.times do |page_num|
-          qrcode_content = "#{exam_template.assignment.short_identifier}-#{exam_num}-#{page_num + 1}"
+          qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
           qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
           alignment = page_num % 2 == 0 ? :right : :left
           pdf.render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)

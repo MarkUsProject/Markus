@@ -171,7 +171,7 @@ class ExamTemplatesController < ApplicationController
     copy_number = params[:fix_error][:copy_number]
     page_number = params[:fix_error][:page_number]
     filename = params[:fix_error][:filename]
-    upside_down = params[:fix_error][:upside_down]
+    upside_down = params[:fix_error][:upside_down] == 'true' # because params[:fix_error][:upside_down] is passed as string
     exam_template.fix_error(filename, copy_number, page_number, upside_down)
     redirect_to action: 'assign_errors'
   end
