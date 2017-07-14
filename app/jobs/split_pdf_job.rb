@@ -86,6 +86,7 @@ class SplitPDFJob < ActiveJob::Base
             new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
+            num_pages_qr_scan_error += 1
           end
           split_pdf_log.split_pages.create(filename: filename,
                                            raw_page_number: i + 1,
