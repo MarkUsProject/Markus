@@ -166,6 +166,16 @@ class ExamTemplatesController < ApplicationController
                 show_in_browser: true )
   end
 
+  def fix_error
+    exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
+    copy_number = params[:fix_error][:copy_number]
+    page_number = params[:fix_error][:page_number]
+    filename = params[:fix_error][:filename]
+    upside_down = params[:fix_error][:upside_down]
+    exam_template.fix_error(filename, copy_number, page_number, upside_down)
+    redirect_to action: 'assign_errors'
+  end
+
   def exam_template_params
     params.require(:exam_template)
        .permit(

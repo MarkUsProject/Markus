@@ -922,6 +922,7 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     user:
+        user:           "Utilisateur"
         id:             "ID"
         id_number:      "Numéro d'identification"
         email:          "Email"
@@ -1611,3 +1612,5 @@ fr:
       queued: "Mis en file d'attente"
       completed: "Terminé"
       failed: "échoué"
+      split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"
+      generate_job: "Génération de la copie %{progress} de %{total} pour %{exam_name}"
