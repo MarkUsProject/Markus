@@ -133,25 +133,35 @@ module Repository
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       # use the git reflog to get a list of pushes, then find first push_time <= target_timestamp
       bare_repo = Rugged::Repository.new(bare_path)
-      reflog = bare_repo.ref('refs/heads/master').log
-      commit_sha = nil
-      reflog.reverse_each do |reflog_entry|
+      reflog = bare_repo.ref('refs/heads/master').log.reverse
+      push_info = nil
+      reflog.each_with_index do |reflog_entry, i|
         push_time = reflog_entry[:committer][:time]
         if push_time <= target_timestamp.in_time_zone
-          commit_sha = reflog_entry[:id_new]
+          push_info = OpenStruct.new
+          push_info.sha = reflog_entry[:id_new]
+          push_info.time = push_time
+          push_info.index = i
           break
         end
       end
       walker = Rugged::Walker.new(@repos)
-      unless commit_sha.nil?
+      unless push_info.nil?
         # find first commit that changes path, topologically equal or before the tip of the push
         walker.sorting(Rugged::SORT_TOPO)
-        walker.push(commit_sha)
+        walker.push(push_info.sha)
         walker.each do |commit|
+          if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+            next_reflog_entry = reflog[push_info.index + 1]
+            if commit.oid == next_reflog_entry[:id_new]
+              push_info.sha = next_reflog_entry[:id_new]
+              push_info.time = next_reflog_entry[:committer][:time]
+              push_info.index += 1
+            end
+          end
           revision = get_revision(commit.oid)
           if path.nil? || revision.changes_at_path?(path)
-            # TODO could not be accurate, i.e. the revision could come from a previous push because the chosen push did not modify path
-            #revision.timestamp = push_time # TODO check how it interacts with the rest of the world
+            revision.timestamp = push_info.time
             return revision
           end
         end
