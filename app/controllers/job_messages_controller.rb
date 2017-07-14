@@ -18,7 +18,7 @@ class JobMessagesController < ApplicationController
       end
     else
       if status.queued?
-        flash_now(:notice,t('poll_job.queued'))
+        flash_now(:notice, t('poll_job.queued'))
       elsif status.completed?
         flash_now(:success, t('poll_job.completed'))
       else
