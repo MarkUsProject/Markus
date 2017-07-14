@@ -10,7 +10,7 @@
       <%= render partial: 'exam_templates/template_division',
                  locals: { f: f } %>
       <li class="add_template">
-        <%= link_to 'Add Template Division',
+        <%= link_to t('exam_templates.create.add_division'),
                       '#',
                       onClick: "add_template_division(#{exam_template.id.to_s}); return false;"%>
       </li>

@@ -29,6 +29,8 @@ es:
         "Plantilla de examen no creada correctamente"
       upload:
         "Cargar plantilla"
+      add_division:
+        "añadir División plantilla"
 
     download: "Descargar plantilla de examen"
 
@@ -77,5 +79,6 @@ es:
   flash:
     exam_templates:
       update:
-        success: "Plantilla de examen se ha actualizado correctamente"
+        success: "Plantilla-examen no se ha actualizado con éxito"
         error: "Exam Template has not been successfully updated"
+

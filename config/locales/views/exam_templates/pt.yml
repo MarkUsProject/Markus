@@ -29,6 +29,8 @@ pt:
         "Modelo de exame não criado com sucesso"
       upload:
         "Carregar o modelo"
+      add_division:
+        "Adicionar divisão template"
 
     download: "Download do modelo de exame"
 
@@ -79,3 +81,4 @@ pt:
       update:
         success: "Modelo de exame foi atualizado com sucesso"
         error: "Modelo de exame não foi atualizado com sucesso"
+
