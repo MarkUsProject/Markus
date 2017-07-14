@@ -157,7 +157,7 @@ class ExamTemplate < ActiveRecord::Base
         end
 
         # update COVER.pdf if error page given is first page of exam template
-        if page_num == 1
+        if page_num.to_i == 1
           path = File.join(incomplete_dir, "#{page_num}.pdf")
           if File.exists? path
             cover_pdf = CombinePDF.new
@@ -169,15 +169,17 @@ class ExamTemplate < ActiveRecord::Base
         end
 
         # update EXTRA.pdf if error page given doesn't belong to any template division
-        update_extra_pdf = self.template_divisions.all? { |division| division.start > page_num || division.end < page_num }
+        update_extra_pdf = self.template_divisions.all? { |division| division.start > page_num.to_i || division.end < page_num.to_i }
         if update_extra_pdf
           extra_pdf = CombinePDF.new
           if Dir.exists?(incomplete_dir)
-            Dir.foreach(incomplete_dir) do |filename|
+            Dir.entries(incomplete_dir).sort.each do |filename|
               path = File.join(incomplete_dir, filename)
-              basename = File.basename filename
-              page_num = basename.to_i
-              if File.exists? path && !filename.start_with?('.') && template_divisions.all? { |division| division.start > page_num || division.end < page_num }
+              basename = File.basename filename # For example, 3 from 3.pdf
+              page_number = basename.to_i
+              # if it is an extra page, add it to extra_pdf
+              if File.exists?(path) && !filename.start_with?('.') &&
+                template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
                 pdf = CombinePDF.load path
                 extra_pdf << pdf.pages[0]
               end
