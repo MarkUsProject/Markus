@@ -168,8 +168,8 @@ class ExamTemplatesController < ApplicationController
 
   def fix_error
     exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
-    copy_number = params[:fix_error][:copy_number]
-    page_number = params[:fix_error][:page_number]
+    copy_number = params[:fix_error][:copy_number].to_i
+    page_number = params[:fix_error][:page_number].to_i
     filename = params[:fix_error][:filename]
     upside_down = params[:fix_error][:upside_down] == 'true' # because params[:fix_error][:upside_down] is passed as string
     exam_template.fix_error(filename, copy_number, page_number, upside_down)

@@ -155,6 +155,37 @@ class ExamTemplate < ActiveRecord::Base
           txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
                       'application/pdf', revision.revision_identifier)
         end
+
+        # update COVER.pdf if error page given is first page of exam template
+        if page_num == 1
+          path = File.join(incomplete_dir, "#{page_num}.pdf")
+          if File.exists? path
+            cover_pdf = CombinePDF.new
+            pdf = CombinePDF.load path
+            cover_pdf << pdf.pages[0]
+          end
+          txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
+                      'application/pdf', revision.revision_identifier)
+        end
+
+        # update EXTRA.pdf if error page given doesn't belong to any template division
+        update_extra_pdf = self.template_divisions.all? { |division| division.start > page_num || division.end < page_num }
+        if update_extra_pdf
+          extra_pdf = CombinePDF.new
+          if Dir.exists?(incomplete_dir)
+            Dir.foreach(incomplete_dir) do |filename|
+              path = File.join(incomplete_dir, filename)
+              basename = File.basename filename
+              page_num = basename.to_i
+              if File.exists? path && !filename.start_with?('.') && template_divisions.all? { |division| division.start > page_num || division.end < page_num }
+                pdf = CombinePDF.load path
+                extra_pdf << pdf.pages[0]
+              end
+            end
+          end
+          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
+                      'application/pdf', revision.revision_identifier)
+        end
         repo.commit(txn)
 
         groupings = []
