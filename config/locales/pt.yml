@@ -890,6 +890,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       success:  "As alterações foram feitas."
 
     user:
+        user:           "Usuário"
         id:             "ID"
         id_number:      "Número de identidade"
         email:          "Email"
@@ -1458,3 +1459,5 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       queued: "Enfileiradas"
       completed: "Completado"
       failed: "Falhou"
+      split_pdf_job: "Processando a página %{progress} em %{total} para %{exam_name}"
+      generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"

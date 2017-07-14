@@ -977,6 +977,7 @@ en:
       success:  "Your changes have been made."
 
     user:
+        user:           "User"
         id:             "ID"
         id_number:      "ID number"
         email:          "Email"
@@ -1650,3 +1651,5 @@ en:
       queued: "Queued"
       completed: "Completed"
       failed: "Failed"
+      split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
+      generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
