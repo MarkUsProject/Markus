@@ -622,6 +622,10 @@ en:
 
     course_summary_link: "Course Summary"
 
+    #app/views/main/_summary.erb
+
+    course_summary_link: "Course Summary"
+
     #app/views/course_summaries/_course_summary_info_summary.html.erb
 
     marking_scheme: "Marking Scheme %{marking_scheme_id}"

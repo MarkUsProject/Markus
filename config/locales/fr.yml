@@ -568,7 +568,6 @@ fr:
         student_title: "Feuille de notes : "
         total: "Total : "
         no_grade_entry_items_message: "Il n'y a pas de colonne pour cette table."
-        no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
         must_select_a_student: "Vous devez sélectionner au moins un(e) étudiant(e)."
         expected_filter: "Expected a filter on select full." #TODO: À traduire
         successfully_changed: "Mise à jour de %{numGradeEntryStudentsChanged} étudiant(s)."
@@ -598,6 +597,7 @@ fr:
       is_hidden: "Masquer Spreadsheet"
 
     no_grade_entry_forms_message: "Il n'y a pas de feuille de notes pour le moment."
+    no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
     current_grade_entry_forms_title: "Feuilles de notes existantes"
     spreadsheet_item: "Feuille de notes"
     spreadsheet_date: "Date"
@@ -611,6 +611,9 @@ fr:
     converting_pdfs: "Conversion des PDF… %{converted}/%{total}"
 
     #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Résumé du cours"
+
+    #app/views/main/_summary.erb
     course_summary_link: "Résumé du cours"
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
