@@ -1,8 +1,0 @@
-$('#course_summary_graph').html(
-    "<%= escape_javascript(render partial: 'course_summaries/course_summary_graph',
-                                locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments }) %>");
-
-$('#weighted_course_summary_graph').html(
-    "<%= escape_javascript(render partial: 'course_summaries/weighted_course_summary_graph',
-                                locals: { grade_entry_forms: @grade_entry_forms, assignments: @assignments,
-                                          marking_schemes: @marking_schemes }) %>");
