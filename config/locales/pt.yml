@@ -533,6 +533,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         student_title: "Notas:"
         total: "Total:"
         no_grade_entry_items_message: "Atualmente não há colunas para esta tabela."
+        no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
         must_select_a_student: "Você deve selecionar pelo menos um aluno para atualizar."
         expected_filter: "Esperado um filtro na seleção completa."
         successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
@@ -657,6 +658,15 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     mark:
       error:
         validate_criteria: "deve ser entre 0 e a nota máxima do critério"
+
+    #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Resumo do curso"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+    marking_scheme: "Esquema de marcação %{marking_scheme_id}"
+    course_summary_weighted_average: "Média da classe ponderada:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Mediana da classe ponderada:"
 
     # Student's View (admin)
     students:

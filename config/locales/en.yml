@@ -618,11 +618,9 @@ en:
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
-    #app/views/course_summaries/index.html.erb
+    #app/views/course_summaries/_course_summary.html.erb
 
     course_summary_link: "Course Summary"
-
-    grade_entry_form_link: "%{short_id}: %{description}"
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
 

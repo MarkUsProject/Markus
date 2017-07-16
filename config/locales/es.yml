@@ -701,6 +701,15 @@ es:
       how_many_marked_short:                "%{num_marked}/%{num_assigned} calificados"
       average_annotations:                  "%{average_annotations} anotaciones por entrega calificada"
 
+    #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Resumen del curso"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+    marking_scheme: "Esquema de puntuación %{marking_scheme_id}"
+    course_summary_weighted_average: "Promedio ponderado de la clase:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Mediana ponderada de la clase:"
+
     summaries_index:
       group_name:         "Nombre del Grupo"
       repository_name:    "Repositorio: %{repository}"
@@ -751,6 +760,7 @@ es:
         student_title:                "Notas:"
         total:                        "Total:"
         no_grade_entry_items_message: "No hay columnas para esta tabla."
+        no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
         must_select_a_student:        "Usted debe seleccionar al menos un estudiante para lanzar la actualización."
         expected_filter:              "Se esperaba un filtro cuando se realizó una selección completa."
         successfully_changed:         "Se han actualizado %{numGradeEntryStudentsChanged} estudiantes

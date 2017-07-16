@@ -568,6 +568,7 @@ fr:
         student_title: "Feuille de notes : "
         total: "Total : "
         no_grade_entry_items_message: "Il n'y a pas de colonne pour cette table."
+        no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
         must_select_a_student: "Vous devez sélectionner au moins un(e) étudiant(e)."
         expected_filter: "Expected a filter on select full." #TODO: À traduire
         successfully_changed: "Mise à jour de %{numGradeEntryStudentsChanged} étudiant(s)."
@@ -608,6 +609,15 @@ fr:
 
     stopping_collection_process: "Arrêt du processus de récupération…"
     converting_pdfs: "Conversion des PDF… %{converted}/%{total}"
+
+    #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Résumé du cours"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+    marking_scheme: "Barème %{marking_scheme_id}"
+    course_summary_weighted_average: "Moyenne pondérée de la classe:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Médiation de classe pondérée:"
 
     groups:
       groups: "Groupes"
