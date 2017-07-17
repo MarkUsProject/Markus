@@ -41,7 +41,7 @@ class Mark < ActiveRecord::Base
     return if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
     if markable.is_a? RubricCriterion
       new_mark = mark * (curr_max_mark / prev_max_mark)
-      update_attributes(mark: new_mark)
+      update_attributes(mark: new_mark.round(2))
     elsif markable.is_a? FlexibleCriterion
       new_mark = mark * (curr_max_mark.to_f / prev_max_mark)
       update_attributes(mark: new_mark.round(2))
