@@ -29,8 +29,9 @@ class SplitPDFJob < ActiveJob::Base
       FileUtils.mkdir error_dir unless Dir.exists? error_dir
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
-      basename = File.basename path, '.pdf'
-      filename = original_filename.nil? ? basename : File.basename(original_filename)
+      raw_basename = File.basename path, '.pdf'
+      filename = original_filename.nil? ? raw_basename : File.basename(original_filename)
+      basename = File.basename(filename, '.pdf')
       pdf = CombinePDF.load path
       num_pages = pdf.pages.length
 
@@ -54,12 +55,12 @@ class SplitPDFJob < ActiveJob::Base
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
-        new_page.save File.join(raw_dir, "#{filename}-#{i}.pdf")
+        new_page.save File.join(raw_dir, "#{basename}-#{i}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
         img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
-        qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
+        qr_img.write File.join(raw_dir, "#{basename}-#{i}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdf
         qrcode_string = ZXing.decode qr_img.to_blob
@@ -67,7 +68,7 @@ class SplitPDFJob < ActiveJob::Base
         m = qrcode_regex.match qrcode_string
         status = ''
         if m.nil?
-          new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
+          new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
@@ -83,7 +84,7 @@ class SplitPDFJob < ActiveJob::Base
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
-            new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
+            new_page.save File.join(error_dir, "#{basename}-#{i}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
             num_pages_qr_scan_error += 1
@@ -120,6 +121,7 @@ class SplitPDFJob < ActiveJob::Base
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
+    basename = File.basename(filename, '.pdf')
 
     groupings = []
     partial_exams.each do |exam_num, pages|
@@ -148,7 +150,7 @@ class SplitPDFJob < ActiveJob::Base
         new_pdf << page
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{filename}-#{page_num}.pdf")
+          new_pdf.save File.join(error_dir, "#{basename}-#{page_num}.pdf")
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
