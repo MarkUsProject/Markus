@@ -144,16 +144,18 @@ class ExamTemplate < ActiveRecord::Base
         txn = repo.get_transaction(Admin.first.user_name)
         txn.add_path(assignment_folder)
         self.template_divisions.each do |template_division|
-          submission_file = CombinePDF.new
-          (template_division.start..template_division.end).each do |i|
-            path = File.join(incomplete_dir, "#{i}.pdf")
-            if File.exists? path
-              pdf = CombinePDF.load path
-              submission_file << pdf.pages[0]
+          if template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
+            submission_file = CombinePDF.new
+            (template_division.start..template_division.end).each do |i|
+              path = File.join(incomplete_dir, "#{i}.pdf")
+              if File.exists? path
+                pdf = CombinePDF.load path
+                submission_file << pdf.pages[0]
+              end
             end
+            txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+                           'application/pdf', revision.revision_identifier)
           end
-          txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
-                      'application/pdf', revision.revision_identifier)
         end
         repo.commit(txn)
 
