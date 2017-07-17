@@ -30,7 +30,7 @@ class SplitPDFJob < ActiveJob::Base
       FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
 
       raw_basename = File.basename path, '.pdf'
-      filename = original_filename.nil? ? basename : File.basename(original_filename)
+      filename = original_filename.nil? ? raw_basename : File.basename(original_filename)
       basename = File.basename(filename, '.pdf')
       pdf = CombinePDF.load path
       num_pages = pdf.pages.length
