@@ -5,6 +5,7 @@ class FlexibleCriterion < Criterion
   self.table_name = 'flexible_criteria' # set table name correctly
 
   has_many :marks, as: :markable, dependent: :destroy
+  accepts_nested_attributes_for :marks
 
   has_many :criterion_ta_associations,
            as: :criterion,
@@ -214,5 +215,4 @@ class FlexibleCriterion < Criterion
     end
     mark_to_change.save
   end
-
 end
