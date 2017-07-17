@@ -168,26 +168,24 @@ class ExamTemplate < ActiveRecord::Base
                       'application/pdf', revision.revision_identifier)
         end
 
-        # update EXTRA.pdf if error page given doesn't belong to any template division
-        update_extra_pdf = self.template_divisions.all? { |division| division.start > page_num.to_i || division.end < page_num.to_i }
-        if update_extra_pdf
-          extra_pdf = CombinePDF.new
-          if Dir.exists?(incomplete_dir)
-            Dir.entries(incomplete_dir).sort.each do |filename|
-              path = File.join(incomplete_dir, filename)
-              basename = File.basename filename # For example, 3 from 3.pdf
-              page_number = basename.to_i
-              # if it is an extra page, add it to extra_pdf
-              if File.exists?(path) && !filename.start_with?('.') &&
-                template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
-                pdf = CombinePDF.load path
-                extra_pdf << pdf.pages[0]
-              end
+        # update EXTRA.pdf
+        extra_pdf = CombinePDF.new
+        if Dir.exists?(incomplete_dir)
+          Dir.entries(incomplete_dir).sort.each do |filename|
+            path = File.join(incomplete_dir, filename)
+            basename = File.basename filename # For example, 3 from 3.pdf
+            page_number = basename.to_i
+            # if it is an extra page, add it to extra_pdf
+            if File.exists?(path) && !filename.start_with?('.') &&
+              template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
+              pdf = CombinePDF.load path
+              extra_pdf << pdf.pages[0]
             end
           end
-          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
-                      'application/pdf', revision.revision_identifier)
         end
+        txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
+                    'application/pdf', revision.revision_identifier)
+        
         repo.commit(txn)
 
         groupings = []
