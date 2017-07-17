@@ -1,6 +1,6 @@
 <script>
-<% if session[:job][:job_id] %>
-  <% current_job = ActiveJob::Status.get(session[:job][:job_id]) %>
-  poll_job("<%= session[:job][:job_id] %>", undefined, <%= raw current_job[:job_class].on_complete_js %>);
+<% if session[:job] %>
+  <% current_job = ActiveJob::Status.get(session[:job]["job_id"]) %>
+  poll_job("<%= session[:job]["job_id"] %>", undefined, <%= raw current_job[:job_class].on_complete_js %>);
 <% end %>
 </script>
