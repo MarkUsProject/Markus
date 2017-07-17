@@ -153,8 +153,12 @@ class ExamTemplate < ActiveRecord::Base
                 submission_file << pdf.pages[0]
               end
             end
-            txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
-                           'application/pdf', revision.revision_identifier)
+            unless revision.files_at_path(assignment_folder)["#{template_division.label}.pdf"].nil? # if submission file exists, replace it
+              txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+                          'application/pdf', revision.revision_identifier)
+            else
+              txn.add(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf, 'application/pdf')
+            end
           end
         end
         repo.commit(txn)
