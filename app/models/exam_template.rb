@@ -141,6 +141,7 @@ class ExamTemplate < ActiveRecord::Base
         repo = group.repo
         revision = repo.get_latest_revision
         assignment_folder = self.assignment.repository_folder
+        submission_files = revision.files_at_path(assignment_folder)
         txn = repo.get_transaction(Admin.first.user_name)
         txn.add_path(assignment_folder)
         self.template_divisions.each do |template_division|
@@ -153,7 +154,7 @@ class ExamTemplate < ActiveRecord::Base
                 submission_file << pdf.pages[0]
               end
             end
-            unless revision.files_at_path(assignment_folder)["#{template_division.label}.pdf"].nil? # if submission file exists, replace it
+            unless submission_files["#{template_division.label}.pdf"].nil? # if submission file exists, replace it
               txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
                           'application/pdf', revision.revision_identifier)
             else
