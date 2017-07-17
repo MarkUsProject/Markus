@@ -163,9 +163,9 @@ class ExamTemplate < ActiveRecord::Base
             cover_pdf = CombinePDF.new
             pdf = CombinePDF.load path
             cover_pdf << pdf.pages[0]
+            txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
+                        'application/pdf', revision.revision_identifier)
           end
-          txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
-                      'application/pdf', revision.revision_identifier)
         end
 
         # update EXTRA.pdf
@@ -182,10 +182,10 @@ class ExamTemplate < ActiveRecord::Base
               extra_pdf << pdf.pages[0]
             end
           end
+          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
+                      'application/pdf', revision.revision_identifier)
         end
-        txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
-                    'application/pdf', revision.revision_identifier)
-        
+
         repo.commit(txn)
 
         groupings = []
