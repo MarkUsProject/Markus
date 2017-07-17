@@ -141,6 +141,7 @@ class ExamTemplate < ActiveRecord::Base
         repo = group.repo
         revision = repo.get_latest_revision
         assignment_folder = self.assignment.repository_folder
+        submission_files = revision.files_at_path(assignment_folder)
         txn = repo.get_transaction(Admin.first.user_name)
         txn.add_path(assignment_folder)
         self.template_divisions.each do |template_division|
@@ -157,6 +158,18 @@ class ExamTemplate < ActiveRecord::Base
                            'application/pdf', revision.revision_identifier)
           end
         end
+
+        # go through all the submission files in assignment folder and delete ones if corresponding division doesn't exist anymore
+        submission_files.keys.each do |file| # e.g. Q1.pdf Q1.pdf ... EXTRA.pdf COVER.pdf
+          unless file == 'EXTRA.pdf' || file == 'COVER.pdf'
+            label = File.basename file, '.pdf'
+            division = self.template_divisions.find_by(label: label)
+            if division.nil? # if template division is not found, remove it from submission files
+              txn.remove(File.join(assignment_folder, file), revision.revision_identifier)
+            end
+          end
+        end
+
         repo.commit(txn)
 
         groupings = []
