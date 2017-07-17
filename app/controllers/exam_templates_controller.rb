@@ -86,12 +86,17 @@ class ExamTemplatesController < ApplicationController
     flash_message(:success, t('exam_templates.generate.generate_job_started',
                               exam_name: exam_template.assignment.short_identifier))
     current_job = exam_template.generate_copies(copies, index)
-    session[:job_id] = current_job.job_id
+    session[:job] = {:job_id=>current_job.job_id,
+                     :file_name=>"#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
+                     :exam_id=> exam_template.id}
     respond_to do |format|
-      format.js { render 'exam_templates/_poll_generate_job.js.erb',
-                         locals: { file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
-                                   exam_id: exam_template.id}}
+      format.js {render inline: "location.reload();" }
     end
+    # respond_to do |format|
+    #   format.js { render 'exam_templates/_poll_generate_job.js.erb',
+    #                      locals: { file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
+    #                                exam_id: exam_template.id}}
+    # end
   end
 
   def download_generate

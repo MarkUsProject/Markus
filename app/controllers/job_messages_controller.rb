@@ -25,7 +25,7 @@ class JobMessagesController < ApplicationController
         flash_now(:error, t('poll_job.failed'))
       end
       if status.completed? || status.failed?
-        session[:job_id] = nil
+        session[:job] = nil
       end
     end
     render json: status.read
