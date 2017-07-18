@@ -40,8 +40,7 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
     filename = exam_template.filename
-    assignment_name = assignment.short_identifier
-    send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{filename}",
+    send_file(exam_template.base_path + '/' + filename,
               filename: "#{filename}",
               type: "application/pdf")
   end
