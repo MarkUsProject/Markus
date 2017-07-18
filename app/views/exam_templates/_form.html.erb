@@ -29,6 +29,7 @@
       <span class='exam-template-info'>
         <%= t('key_pairs.file') %>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %>
       </span>
+      <%= f.label t('exam_templates.update.instruction') %>
       <%= f.file_field :new_template %>
     <p><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></p>
   </div>

@@ -8,7 +8,7 @@ pt:
       failure:
         "Modelo de exame não foi atualizado com sucesso"
       instruction:
-        "Envio"
+        "Substitua o arquivo de modelo"
     delete:
       general:
         "Apagar modelo de exame"

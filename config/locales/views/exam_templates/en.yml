@@ -8,7 +8,7 @@ en:
       failure:
         "Exam Template has not been successfully updated"
       instruction:
-        "Upload"
+        "Replace template file"
     delete:
       general:
         "Delete Exam Template"

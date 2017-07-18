@@ -8,7 +8,7 @@ es:
       failure:
         "Exam Template has not been successfully updated"
       instruction:
-        "subir"
+        "Reemplazar archivo de plantilla"
     delete:
       general:
         "Eliminar plantilla de examen"

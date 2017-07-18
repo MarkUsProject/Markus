@@ -8,7 +8,7 @@ fr:
       failure:
         "Le modèle d'examen n'a pas été mis à jour avec succès"
       instruction:
-        "télécharger"
+        "Remplacer le fichier modèle"
     delete:
       general:
         "Supprimer le modèle d'examen"
