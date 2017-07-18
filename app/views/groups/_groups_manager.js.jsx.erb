@@ -281,7 +281,7 @@
         var g = {};
         g['id'] = group.id;
         <% if @assignment.scanned_exam %>
-        g['name'] = <a href={'groups/assign_scans?group=' + group.id}>{group.name}</a>;
+        g['name'] = <a href={'groups/assign_scans?grouping=' + group.id}>{group.name}</a>;
         <% else %>
         g['name'] = group.name;
         <% end %>

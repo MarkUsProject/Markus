@@ -119,8 +119,8 @@ class GroupsController < ApplicationController
 
   def assign_scans
     @assignment = Assignment.find(params[:assignment_id])
-    if params.has_key?(:group)
-      next_grouping = Grouping.find(params[:group])
+    if params.has_key?(:grouping)
+      next_grouping = Grouping.find(params[:grouping])
     else
       next_grouping = Grouping.get_assign_scans_grouping(@assignment)
     end
