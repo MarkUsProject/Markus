@@ -67,7 +67,7 @@ namespace :db do
 
     f = File.open(File.join(file_dir, 't2a.pdf'))
     template = ExamTemplate.create_with_file(f.read, assignment_id: a.id, filename: 't2a.pdf')
-    template.tempalte_divisions.create(label: 'Q1', start: 2, end: 3)
+    template.template_divisions.create(label: 'Q1', start: 2, end: 3)
     template.template_divisions.create(label: 'Q2', start: 4, end: 7)
     template.template_divisions.create(label: 'Q3', start: 8, end: 11)
 
