@@ -25,9 +25,10 @@ class ExamTemplate < ActiveRecord::Base
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      self.name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
 
     File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
       f.write blob
@@ -48,9 +49,10 @@ class ExamTemplate < ActiveRecord::Base
     name_input = attributes[:name_input]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      self.name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
     File.open(File.join(template_path, filename), 'wb') do |f|
       f.write blob
     end
@@ -79,7 +81,8 @@ class ExamTemplate < ActiveRecord::Base
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      self.name
     )
 
     File.open(File.join(template_path, attributes[:old_filename].tr(' ', '_')), 'wb') do |f|
@@ -189,7 +192,7 @@ class ExamTemplate < ActiveRecord::Base
 
   def base_path
     File.join MarkusConfigurator.markus_exam_template_dir,
-              assignment.short_identifier
+              assignment.short_identifier, name
   end
 
   private
