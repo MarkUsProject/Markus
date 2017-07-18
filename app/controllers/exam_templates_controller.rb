@@ -86,17 +86,13 @@ class ExamTemplatesController < ApplicationController
     flash_message(:success, t('exam_templates.generate.generate_job_started',
                               exam_name: exam_template.assignment.short_identifier))
     current_job = exam_template.generate_copies(copies, index)
-    session[:job] = {:job_id => current_job.job_id,
-                     :file_name => "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
-                     :exam_id => exam_template.id}
+    current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
+    current_job.status.update(exam_id: exam_template.id)
+    session[:job_id] = current_job.job_id
+
     respond_to do |format|
-      format.js {render inline: "location.reload();" }
+      format.js { render 'exam_templates/_poll_generate_job.js.erb'}
     end
-    # respond_to do |format|
-    #   format.js { render 'exam_templates/_poll_generate_job.js.erb',
-    #                      locals: { file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf",
-    #                                exam_id: exam_template.id}}
-    # end
   end
 
   def download_generate
@@ -117,7 +113,7 @@ class ExamTemplatesController < ApplicationController
         redirect_to action: 'index'
       else
         current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
-        session[:job] = {:job_id => current_job.job_id}
+        session[:job_id] = current_job.job_id
         redirect_to view_logs_assignment_exam_templates_path
       end
     else
