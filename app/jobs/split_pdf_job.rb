@@ -52,7 +52,8 @@ class SplitPDFJob < ActiveJob::Base
       num_pages_qr_scan_error = 0
       pdf.pages.each_index do |i|
         split_page = SplitPage.create(filename: filename,
-                                      raw_page_number: i + 1)
+                                      raw_page_number: i + 1,
+                                      split_pdf_log: split_pdf_log)
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
