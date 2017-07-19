@@ -20,7 +20,7 @@ class MarkingScheme < ActiveRecord::Base
       gradable_item = mw.get_gradable_item
       students.each do |student|
         if mw.is_assignment && !gradable_item.max_mark.nil? && gradable_item.max_mark != 0
-          grouping = student.accepted_grouping_for(gradable_item.id) #########################################################
+          grouping = student.accepted_grouping_for(gradable_item.id)
           unless grouping.nil?
             result = grouping.current_result
             unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
@@ -29,7 +29,7 @@ class MarkingScheme < ActiveRecord::Base
             end
           end
         elsif !mw.is_assignment && !gradable_item.out_of_total.nil? && gradable_item.out_of_total != 0
-          grade_entry_student = GradeEntryStudent.find_by(user: student, grade_entry_form: gradable_item) #######
+          grade_entry_student = GradeEntryStudent.find_by(user: student, grade_entry_form: gradable_item)
           unless grade_entry_student.nil?
             result = grade_entry_student.total_grade
             unless result.nil?
