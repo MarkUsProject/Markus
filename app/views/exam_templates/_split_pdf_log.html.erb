@@ -12,6 +12,10 @@
   <td><%= split_pdf_log.original_num_pages %></td>
   <td><%= split_pdf_log.num_pages_qr_scan_error %>
     <% if split_pdf_log.num_pages_qr_scan_error > 0 %>
+        <% unless Dir[File.join(split_pdf_log.exam_template.base_path, 'error/*')].empty? %>
+            <%= link_to t('exam_templates.assign_errors.fix_errors'),
+                        assign_errors_assignment_exam_template_path(id: split_pdf_log.exam_template.id) %>
+        <% end %>
         <img title="Some files have not been scanned properly." src="/assets/icons/error.png" alt="Scan error">
     <% end %>
   </td>

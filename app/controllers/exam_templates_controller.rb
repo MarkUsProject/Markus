@@ -141,9 +141,9 @@ class ExamTemplatesController < ApplicationController
 
   def assign_errors
     @assignment = Assignment.find(params[:assignment_id])
+    exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
-    Dir.foreach(File.join(MarkusConfigurator.markus_exam_template_dir,
-      @assignment.short_identifier, 'error'
+    Dir.foreach(File.join(exam_template.base_path, 'error'
     )) do |file|
       @error_files << file unless file =~ /^\.\.?$/
     end
