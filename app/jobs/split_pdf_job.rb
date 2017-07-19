@@ -22,10 +22,8 @@ class SplitPDFJob < ActiveJob::Base
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
-      error_dir = File.join(MarkusConfigurator.markus_exam_template_dir,
-                            exam_template.assignment.short_identifier, 'error')
-      raw_dir = File.join(MarkusConfigurator.markus_exam_template_dir,
-                          exam_template.assignment.short_identifier, 'raw')
+      error_dir = File.join(exam_template.base_path, 'error')
+      raw_dir = File.join(exam_template.base_path, 'raw')
       complete_dir = File.join(exam_template.base_path, 'complete')
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
       FileUtils.mkdir_p error_dir unless Dir.exists? error_dir
@@ -121,8 +119,7 @@ class SplitPDFJob < ActiveJob::Base
     return unless Admin.exists?
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
-    error_dir = File.join(MarkusConfigurator.markus_exam_template_dir,
-                          exam_template.assignment.short_identifier, 'error')
+    error_dir = File.join(exam_template.base_path, 'error')
 
     groupings = []
     partial_exams.each do |exam_num, pages|
@@ -145,7 +142,7 @@ class SplitPDFJob < ActiveJob::Base
       else
         destination = File.join incomplete_dir, "#{exam_num}"
       end
-      FileUtils.mkdir_p destination unless Dir.exists? destination
+      FileUtils.mkdir_p destination
       pages.each do |page_num, page, raw_page_num|
         new_pdf = CombinePDF.new
         new_pdf << page
