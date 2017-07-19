@@ -23,6 +23,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_repository_hooks
+    if defined? REPOSITORY_HOOKS && markus_config_repository_type == 'git'
+      REPOSITORY_HOOKS
+    else
+      {}
+    end
+  end
+
   def markus_config_pdf_conv_memory_allowance
     if defined? PDF_CONV_MEMORY_ALLOWANCE
       return PDF_CONV_MEMORY_ALLOWANCE

@@ -125,6 +125,12 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root}/data/test/repos"
 
   ###################################################################
+  # A hash of repository hook scripts (used only when REPOSITORY_TYPE
+  # is 'git'): the key is the hook id, the value is the hook script.
+  # Make sure MarkUs is allowed to execute the hook scripts.
+  REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+
+  ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root}/data/test/keys"
