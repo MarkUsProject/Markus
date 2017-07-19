@@ -86,6 +86,9 @@ class ExamTemplate < ActiveRecord::Base
       f.write blob
     end
 
+    File.rename(File.join(template_path, attributes[:old_filename].tr(' ', '_')),
+                File.join(template_path, attributes[:new_filename]))
+
     pdf = CombinePDF.parse blob
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
   end
