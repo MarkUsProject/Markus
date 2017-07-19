@@ -8,7 +8,6 @@ class MarkingScheme < ActiveRecord::Base
   # Get the total weights of all marking weights
   def total_weights
     marking_weights.sum(:weight).round(2)
-
   end
 
   # Returns an array of all students' weighted grades that are not nil
