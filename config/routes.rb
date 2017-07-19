@@ -101,13 +101,13 @@ Markus::Application.routes.draw do
           get 'assign_errors'
           patch 'generate'
           patch 'split'
+          post 'fix_error'
         end
 
         collection do
           get 'download_error_file'
           get 'download_error_file_path'
           get 'view_logs'
-          post 'fix_error'
         end
       end
 
