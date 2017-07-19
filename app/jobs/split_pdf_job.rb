@@ -4,7 +4,7 @@ class SplitPDFJob < ActiveJob::Base
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
   def self.on_complete_js(status)
-    "window.location.reload.bind(window.location)"
+    "window.location.reload.bind(window.location)()"
   end
 
   def self.show_status(status)
