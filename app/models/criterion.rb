@@ -1,6 +1,8 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
 class Criterion < ActiveRecord::Base
+  after_save :scale_marks_when_max_mark_updated
+
   has_many :criteria_assignment_files_joins,
            as: :criterion,
            dependent: :destroy
@@ -135,6 +137,25 @@ class Criterion < ActiveRecord::Base
       Array(criterion_ids_by_type[type])
                                    .map { |criterion_id| connection.quote(criterion_id) }
                                    .join(',')
+    end
+  end
+
+  # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
+  def scale_marks_when_max_mark_updated
+    if self.max_mark_changed? # if max_mark is updated
+      # results with specific assignment
+      results = Result.joins(submission: :grouping)
+                      .where(groupings: {assignment_id: self.assignment_id})
+      results.each do |r|
+        # all associated marks should have their mark value scaled to the change.
+        marks = self.marks.where(result_id: r.id)
+        marks.each do |m|
+          unless m.mark.nil?
+            m.scale_mark(max_mark, max_mark_was)
+          end
+        end
+        r.update_total_mark
+      end
     end
   end
 end

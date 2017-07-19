@@ -478,10 +478,10 @@ en:
 
     browse_submissions:
       find_different_revision: "Find a different revision"
-      find_by_revision_timestamp: "Find by Revision Timestamp"
-      find_by_revision_number:    "Find by Revision Number"
+      find_by_revision_timestamp: "Find by Submission Date"
+      find_by_revision_number:    "Find by Revision Identifier"
       viewing_revision:           "Viewing Revision: <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
-      currently_collected:  "Collected version:"
+      currently_collected:  "Collected Revision:"
       no_rev_before_deadline: 	"No revision submitted before deadline"
       current_path:         "Current Path:"
       all_files:            "all files"
@@ -498,7 +498,7 @@ en:
       reviewee_name:        "Reviewee"
       repository_name:      "Repository: %{repository}"
       repository:           "Repository"
-      commit_date:          "Commit Date"
+      commit_date:          "Submission Date"
       marking_state:        "Marking State"
       review_state:         "Review State"
       grace_credits_used:   "Grace Credits Used"

@@ -78,6 +78,9 @@ module Repository
       repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
       Rugged::Repository.init_at(bare_path, :bare)
+      bare_config = Rugged::Config.new(File.join(bare_path, 'config'))
+      bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
+      bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
 
       # Do an initial commit with a README.md file.
@@ -90,9 +93,9 @@ module Repository
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
 
       # Set up hooks
-      FileUtils.ln_s(Rails.root.join('lib', 'repo', 'git_hooks', 'block_forced_push_master.py').to_s,
-                     File.join(bare_path, 'hooks', 'update'))
-      # TODO Add more flexibility with multiple scripts
+      MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
+        FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
+      end
 
       true
     end
@@ -122,17 +125,49 @@ module Repository
       get_revision(@repos.last_commit.oid)
     end
 
-    def get_revision_by_timestamp(target_timestamp, _path = nil)
-      # returns a Git instance representing the revision at the
-      # current timestamp, should be a ruby time stamp instance
+    # Gets the first revision before +target_timestamp+. If +path+ is not nil, then gets the first revision before
+    # +target_timestamp+ with changes under +path+. The +target_timestamp+ is matched with push dates in the git reflog,
+    # because a commit date can be arbitrarily crafted.
+    def get_revision_by_timestamp(target_timestamp, path = nil)
+      repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
+      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+      # use the git reflog to get a list of pushes, then find first push_time <= target_timestamp
+      bare_repo = Rugged::Repository.new(bare_path)
+      reflog = bare_repo.ref('refs/heads/master').log.reverse
+      push_info = nil
+      reflog.each_with_index do |reflog_entry, i|
+        push_time = reflog_entry[:committer][:time]
+        if push_time <= target_timestamp.in_time_zone
+          push_info = OpenStruct.new
+          push_info.sha = reflog_entry[:id_new]
+          push_info.time = push_time
+          push_info.index = i
+          break
+        end
+      end
       walker = Rugged::Walker.new(@repos)
-      walker.sorting(Rugged::SORT_DATE)
-      walker.push(@repos.last_commit)
-      walker.each do |commit|
-        return get_revision(commit.oid) if commit.time.in_time_zone <= target_timestamp.in_time_zone
+      unless push_info.nil?
+        # find first commit that changes path, topologically equal or before the tip of the push
+        walker.sorting(Rugged::SORT_TOPO)
+        walker.push(push_info.sha)
+        walker.each do |commit|
+          if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+            next_reflog_entry = reflog[push_info.index + 1]
+            if commit.oid == next_reflog_entry[:id_new]
+              push_info.sha = next_reflog_entry[:id_new]
+              push_info.time = next_reflog_entry[:committer][:time]
+              push_info.index += 1
+            end
+          end
+          revision = get_revision(commit.oid)
+          if path.nil? || revision.changes_at_path?(path)
+            revision.timestamp = push_info.time
+            return revision
+          end
+        end
       end
 
-      # Return the first revision
+      # return the first revision as a backup plan
       walker.reset
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
       walker.push(@repos.last_commit)
