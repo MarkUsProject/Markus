@@ -328,6 +328,15 @@ module MarkusConfigurator
     end
   end
 
+  # Whether to allow the creation of scanned exams
+  def markus_exam_scanned_exam
+    if defined? SCANNED_EXAM_ON
+      SCANNED_EXAM_ON
+    else
+      false
+    end
+  end
+
   ##########################################
   # Resque Configuration
   ##########################################
