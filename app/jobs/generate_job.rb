@@ -4,8 +4,9 @@ class GenerateJob < ActiveJob::Base
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
   def self.on_complete_js(status)
-    "window.location='download_generate_assignment_exam_template_path(file_name: #{status[:file_name]},
-                                                                      id: #{status[:exam_id]})'"
+    path = Rails.application.routes.url_helpers.download_generate_assignment_exam_template_path(assignment_id: status[:id],
+                                                                                                id: status[:exam_id])
+    "window.location=\"#{path}?file_name=#{status[:file_name]}\""
   end
 
   def self.show_status(status)

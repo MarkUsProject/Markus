@@ -88,6 +88,7 @@ class ExamTemplatesController < ApplicationController
     current_job = exam_template.generate_copies(copies, index)
     current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
     current_job.status.update(exam_id: exam_template.id)
+    current_job.status.update(id: assignment.id)
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
