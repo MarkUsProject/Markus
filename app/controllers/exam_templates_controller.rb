@@ -96,7 +96,7 @@ class ExamTemplatesController < ApplicationController
   def download_generate
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    send_file(exam_template.base_path + '/' + params[:file_name],
+    send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
               type: "application/pdf")
   end
