@@ -29,7 +29,7 @@ class MarkingScheme < ActiveRecord::Base
             end
           end
         elsif !mw.is_assignment && !gradable_item.out_of_total.nil? && gradable_item.out_of_total != 0
-          grade_entry_student = GradeEntryStudent.find_by(user: student, grade_entry_form: gradable_item)
+          grade_entry_student = student.grade_entry_students.find_by(grade_entry_form_id: gradable_item.id)
           unless grade_entry_student.nil?
             result = grade_entry_student.total_grade
             unless result.nil?
