@@ -74,7 +74,7 @@
       fix_error['filename'] = filename;
       $.ajax({
         method: 'POST',
-        url: '<%= fix_error_assignment_exam_template_path(@assignment) %>',
+        url: '<%= fix_error_assignment_exam_template_path(id: @exam_template.id) %>',
         dataType: 'text',
         data: {
           fix_error: fix_error
