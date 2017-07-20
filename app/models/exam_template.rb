@@ -82,7 +82,7 @@ class ExamTemplate < ActiveRecord::Base
       assignment_name
     )
 
-    File.open(File.join(template_path, attributes[:old_filename].tr(' ', '_')), 'wb') do |f|
+    File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
