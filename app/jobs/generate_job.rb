@@ -6,7 +6,7 @@ class GenerateJob < ActiveJob::Base
   def self.on_complete_js(status)
     path = Rails.application.routes.url_helpers.download_generate_assignment_exam_template_path(assignment_id: status[:id],
                                                                                                 id: status[:exam_id])
-    "window.location=\"#{path}?file_name=#{status[:file_name]}\""
+    "function(){window.location='#{path}?file_name=#{status[:file_name]}'}"
   end
 
   def self.show_status(status)
