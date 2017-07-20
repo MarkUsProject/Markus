@@ -6,13 +6,15 @@ function reloadDOM() {
 
 function updatePreview(source, des) {
   delay(function () {
-    var newAnnotation = document.getElementById(source).value;
+    var newAnnotation = document.getElementById(source);
 
     var preview = document.getElementById(des);
-    preview.innerHTML = marked(newAnnotation);
 
-    // typeset the preview
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+    if(preview != null && newAnnotation != null){
+      preview.innerHTML = marked(newAnnotation.value);
+      // typeset the preview
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
+    }
   }, 300);
 }
 
