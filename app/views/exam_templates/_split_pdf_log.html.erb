@@ -10,9 +10,13 @@
   <td><%= split_pdf_log.num_groups_in_complete %></td>
   <td><%= split_pdf_log.num_groups_in_incomplete %></td>
   <td><%= split_pdf_log.original_num_pages %></td>
-  <td><%= split_pdf_log.num_pages_qr_scan_error %>
+  <td>
     <% if split_pdf_log.num_pages_qr_scan_error > 0 %>
-        <img title="Some files have not been scanned properly." src="/assets/icons/error.png" alt="Scan error">
+      <%= link_to split_pdf_log.num_pages_qr_scan_error,
+                  assign_errors_assignment_exam_template_path(id: split_pdf_log.exam_template.id) %>
+      <img title="Some files have not been scanned properly." src="/assets/icons/error.png" alt="Scan error">
+    <% else %>
+      <%= split_pdf_log.num_pages_qr_scan_error %>
     <% end %>
   </td>
 </tr>
