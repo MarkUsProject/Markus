@@ -90,6 +90,16 @@ class ExamTemplate < ActiveRecord::Base
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
   end
 
+  def delete_with_file
+    template_path = File.join(
+      MarkusConfigurator.markus_exam_template_dir,
+      self.assignment.short_identifier,
+      self.name
+    )
+    FileUtils.rm(template_path)
+    return self.destroy
+  end
+
   # Generate copies of the given exam template, with the given start number.
   def generate_copies(num_copies, start=1)
     GenerateJob.perform_later(self, num_copies, start)

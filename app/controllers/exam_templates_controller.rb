@@ -126,7 +126,7 @@ class ExamTemplatesController < ApplicationController
   def destroy
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    if exam_template.destroy
+    if exam_template.delete_with_file
       flash_message(:success, t('exam_templates.delete.success'))
     else
       flash_message(:failure, t('exam_templates.delete.failure'))
