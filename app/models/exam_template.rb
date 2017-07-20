@@ -87,7 +87,8 @@ class ExamTemplate < ActiveRecord::Base
       assignment_name,
       exam_template_name
     )
-    File.open(File.join(template_path, attributes[:old_filename].tr(' ', '_')), 'wb') do |f|
+
+    File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
@@ -162,6 +163,37 @@ class ExamTemplate < ActiveRecord::Base
                            'application/pdf', revision.revision_identifier)
           end
         end
+
+        # update COVER.pdf if error page given is first page of exam template
+        if page_num.to_i == 1
+          path = File.join(incomplete_dir, "#{page_num}.pdf")
+          if File.exists? path
+            cover_pdf = CombinePDF.new
+            pdf = CombinePDF.load path
+            cover_pdf << pdf.pages[0]
+            txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
+                        'application/pdf', revision.revision_identifier)
+          end
+        end
+
+        # update EXTRA.pdf
+        extra_pdf = CombinePDF.new
+        if Dir.exists?(incomplete_dir)
+          Dir.entries(incomplete_dir).sort.each do |filename|
+            path = File.join(incomplete_dir, filename)
+            basename = File.basename filename # For example, 3 from 3.pdf
+            page_number = basename.to_i
+            # if it is an extra page, add it to extra_pdf
+            if File.exists?(path) && !filename.start_with?('.') &&
+              template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
+              pdf = CombinePDF.load path
+              extra_pdf << pdf.pages[0]
+            end
+          end
+          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
+                      'application/pdf', revision.revision_identifier)
+        end
+
         repo.commit(txn)
 
         groupings = []
