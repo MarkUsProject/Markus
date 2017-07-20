@@ -3,6 +3,12 @@ class GenerateJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
+  def self.on_complete_js(status)
+    path = Rails.application.routes.url_helpers.download_generate_assignment_exam_template_path(assignment_id: status[:id],
+                                                                                                id: status[:exam_id])
+    "function(){window.location='#{path}?file_name=#{status[:file_name]}'}"
+  end
+
   def self.show_status(status)
     I18n.t('poll_job.generate_job', progress: status[:progress],
            total: status[:total],
