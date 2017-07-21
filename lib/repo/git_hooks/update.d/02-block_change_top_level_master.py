@@ -20,8 +20,8 @@ if __name__ == '__main__':
             print('[MARKUS] Error: creating/deleting top level files and directories is not allowed on master!')
             exit(1)
         # check 2: modified top level files
-        changes = subprocess.run(['git', 'diff', '--name-only', old_commit, new_commit], stdout=subprocess.PIPE,
-                                 universal_newlines=True)
+        changes = subprocess.run(['git', 'diff', '--name-only', '--no-renames', old_commit, new_commit],
+                                 stdout=subprocess.PIPE, universal_newlines=True)
         if any(os.sep not in change for change in changes.stdout.splitlines()):
             print('[MARKUS] Error: modifying top level files is not allowed on master!')
             exit(1)
