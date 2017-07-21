@@ -129,10 +129,14 @@
                                         action: target_action),
                         title: assignment.description %>
           <% else %>
-            <%= link_to h(assignment.short_identifier),
-                        polymorphic_url([assignment, target_controller],
-                                        action: target_action),
-                        title: assignment.description %>
+            <% if target_action == 'assign_errors' %>
+              <%= link_to assign_errors_assignment_exam_template_path(id: params[:id]) %>
+            <% else %>
+              <%= link_to h(assignment.short_identifier),
+                          polymorphic_url([assignment, target_controller],
+                                          action: target_action),
+                          title: assignment.description %>
+            <% end %>
           <% end %>
         <% # student user, so show only non-hidden assignments
            else %>

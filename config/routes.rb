@@ -98,16 +98,16 @@ Markus::Application.routes.draw do
         member do
           get 'download'
           get 'download_generate'
+          get 'assign_errors'
+          get 'download_error_file'
+          get 'download_error_file_path'
           patch 'generate'
           patch 'split'
+          post 'fix_error'
         end
 
         collection do
-          get 'download_error_file'
-          get 'download_error_file_path'
-          get 'assign_errors'
           get 'view_logs'
-          post 'fix_error'
         end
       end
 

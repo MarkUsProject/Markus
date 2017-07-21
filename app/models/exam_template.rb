@@ -23,11 +23,13 @@ class ExamTemplate < ActiveRecord::Base
   def self.create_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
 
     File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
       f.write blob
@@ -45,12 +47,14 @@ class ExamTemplate < ActiveRecord::Base
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
-    name_input = attributes[:name_input]
+    name_input = attributes[:name]
+    exam_template_name = name_input == '' ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
     File.open(File.join(template_path, filename), 'wb') do |f|
       f.write blob
     end
@@ -77,9 +81,11 @@ class ExamTemplate < ActiveRecord::Base
   def replace_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:old_filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
 
     File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
@@ -220,7 +226,7 @@ class ExamTemplate < ActiveRecord::Base
 
   def base_path
     File.join MarkusConfigurator.markus_exam_template_dir,
-              assignment.short_identifier
+              assignment.short_identifier, self.name
   end
 
   private
