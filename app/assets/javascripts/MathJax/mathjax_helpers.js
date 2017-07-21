@@ -10,7 +10,7 @@ function updatePreview(source, des) {
 
     var preview = document.getElementById(des);
 
-    if(preview != null && newAnnotation != null){
+    if (preview !== null && newAnnotation !== null) {
       preview.innerHTML = marked(newAnnotation.value);
       // typeset the preview
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
@@ -42,8 +42,11 @@ $(document).on("keyup", "#overall_remark_comment_text_area", function () {
 });
 
 // Update when the document loads so preview is available for existing comments/annotations
-updatePreview('new_annotation_content', 'annotation_preview');
-updatePreview('overall_comment_text_area', 'overall_comment_preview');
-updatePreview('overall_remark_comment_text_area', 'overall_remark_comment_preview');
+$(document).ready(function () {
+  updatePreview('new_annotation_content', 'annotation_preview');
+  updatePreview('overall_comment_text_area', 'overall_comment_preview');
+  updatePreview('overall_remark_comment_text_area', 'overall_remark_comment_preview');
+});
+
 
 
