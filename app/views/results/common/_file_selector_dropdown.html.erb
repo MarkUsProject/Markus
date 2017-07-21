@@ -6,30 +6,6 @@
                          true,
                          id: 'download_include_annotations' %>
     <div class='file_selector'>
-
-      <% def show_folder_recursive(dir) %>
-          <% dir.each do |name, contents|  %>
-              <% if name != :files %>
-                  <li class="nested-submenu">
-                    <a onmouseenter='open_submenu(this)'>
-                      <b><%= name %></b>
-                    </a>
-                    <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
-                  </li>
-              <% end %>
-          <% end %>
-          <% if dir[:files] != nil %>
-              <% dir[:files].each do |file| %>
-                  <li class="file_item" data-path="<%= file.path %>/<%= file.filename %>" data-id="<%= file.id %>">
-                    <a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
-                         onmouseover='close_submenu_recursive(
-                             this.parentNode.parentNode, null)'>
-                    <%= file.filename %>
-                  </a></li>
-              <% end %>
-          <% end %>
-      <% end %>
-
       <!-- so jQuery knows which file to autoload when the page loads -->
       <script>
         var first_file_id;
@@ -68,6 +44,29 @@
         <% end %>
         <% end %>
       </script>
+
+      <% def show_folder_recursive(dir) %>
+          <% dir.each do |name, contents|  %>
+              <% if name != :files %>
+                  <li class="nested-submenu">
+                    <a onmouseenter='open_submenu(this)'>
+                      <b><%= name %></b>
+                    </a>
+                    <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
+                  </li>
+              <% end %>
+          <% end %>
+          <% if dir[:files] != nil %>
+              <% dir[:files].each do |file| %>
+                  <li class="file_item" data-path="<%= file.path %>/<%= file.filename %>" data-id="<%= file.id %>">
+                    <a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
+                         onmouseover='close_submenu_recursive(
+                             this.parentNode.parentNode, null)'>
+                    <%= file.filename %>
+                  </a></li>
+              <% end %>
+          <% end %>
+      <% end %>
 
       <div class="dropdown" id="select_file_id">
         <% outermost_dir = create_nested_files_hash_table(files) %>
