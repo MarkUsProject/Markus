@@ -341,10 +341,6 @@ Markus::Application.routes.draw do
         get 'download_csv_grades_report'
         get 'view_summary'
       end
-
-      member do
-        get 'refresh_graph'
-      end
     end
 
     resources :marking_schemes do
