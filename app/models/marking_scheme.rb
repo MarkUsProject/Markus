@@ -18,7 +18,7 @@ class MarkingScheme < ActiveRecord::Base
 
     marking_weights.each do |mw|
       gradable_item = mw.get_gradable_item
-      students.each do |student|
+      students.find_each do |student|
         if mw.is_assignment && !gradable_item.max_mark.nil? && gradable_item.max_mark != 0
           grouping = student.accepted_grouping_for(gradable_item.id)
           unless grouping.nil?
