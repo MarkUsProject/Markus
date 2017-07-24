@@ -81,7 +81,7 @@ class ExamTemplate < ActiveRecord::Base
   def replace_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
-    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : attributes[:name]
+    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:old_filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name,
