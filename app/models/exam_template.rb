@@ -8,6 +8,7 @@ require 'rmagick'
 class ExamTemplate < ActiveRecord::Base
   before_save :set_formats_for_name_and_filename
   after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
+  after_update :rename_exam_template_directory
   belongs_to :assignment
   validates :assignment, :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
@@ -81,11 +82,10 @@ class ExamTemplate < ActiveRecord::Base
   def replace_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
-    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:old_filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name,
-      exam_template_name
+      self.name
     )
 
     File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
@@ -242,5 +242,23 @@ class ExamTemplate < ActiveRecord::Base
     extension = File.extname self.filename
     basename = File.basename self.filename, extension
     self.name ||= basename
+  end
+
+  # when name of exam template is changed, exam template directory in server should be renamed
+  def rename_exam_template_directory
+    if self.name_changed?
+      assignment_name = self.assignment.short_identifier
+      old_directory_name = File.join(
+        MarkusConfigurator.markus_exam_template_dir,
+        assignment_name,
+        name_was
+      )
+      new_directory_name = File.join(
+        MarkusConfigurator.markus_exam_template_dir,
+        assignment_name,
+        name
+      )
+      File.rename old_directory_name, new_directory_name
+    end
   end
 end
