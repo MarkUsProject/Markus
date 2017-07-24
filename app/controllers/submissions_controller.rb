@@ -61,7 +61,7 @@ class SubmissionsController < ApplicationController
       if params[:revision_identifier]
         @revision = repo.get_revision(params[:revision_identifier])
       elsif params[:revision_timestamp]
-        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
+        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]), assignment_path)
       else # latest relevant revision
         @revision = repo.get_revision(@revisions_history[0][:id])
       end

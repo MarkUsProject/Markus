@@ -23,6 +23,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_repository_hooks
+    if defined? REPOSITORY_HOOKS && markus_config_repository_type == 'git'
+      REPOSITORY_HOOKS
+    else
+      {}
+    end
+  end
+
   def markus_config_pdf_conv_memory_allowance
     if defined? PDF_CONV_MEMORY_ALLOWANCE
       return PDF_CONV_MEMORY_ALLOWANCE
@@ -317,6 +325,15 @@ module MarkusConfigurator
       EXAM_TEMPLATE_DIR
     else
       File.join(::Rails.root.to_s, 'data', 'dev', 'exam_templates')
+    end
+  end
+
+  # Whether to allow the creation of scanned exams
+  def markus_exam_scanned_exam
+    if defined? SCANNED_EXAM_ON
+      SCANNED_EXAM_ON
+    else
+      false
     end
   end
 

@@ -23,11 +23,13 @@ class ExamTemplate < ActiveRecord::Base
   def self.create_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
 
     File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
       f.write blob
@@ -45,12 +47,14 @@ class ExamTemplate < ActiveRecord::Base
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
-    name_input = attributes[:name_input]
+    name_input = attributes[:name]
+    exam_template_name = name_input == '' ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
-    FileUtils.mkdir template_path unless Dir.exists? template_path
+    FileUtils.mkdir_p template_path unless Dir.exists? template_path
     File.open(File.join(template_path, filename), 'wb') do |f|
       f.write blob
     end
@@ -77,12 +81,14 @@ class ExamTemplate < ActiveRecord::Base
   def replace_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
     assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:old_filename].tr(' ', '_'), '.pdf') : attributes[:name]
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
-      assignment_name
+      assignment_name,
+      exam_template_name
     )
 
-    File.open(File.join(template_path, attributes[:old_filename].tr(' ', '_')), 'wb') do |f|
+    File.open(File.join(template_path, attributes[:new_filename].tr(' ', '_')), 'wb') do |f|
       f.write blob
     end
 
@@ -144,17 +150,50 @@ class ExamTemplate < ActiveRecord::Base
         txn = repo.get_transaction(Admin.first.user_name)
         txn.add_path(assignment_folder)
         self.template_divisions.each do |template_division|
-          submission_file = CombinePDF.new
-          (template_division.start..template_division.end).each do |i|
-            path = File.join(incomplete_dir, "#{i}.pdf")
-            if File.exists? path
+          if template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
+            submission_file = CombinePDF.new
+            (template_division.start..template_division.end).each do |i|
+              path = File.join(incomplete_dir, "#{i}.pdf")
+              if File.exists? path
+                pdf = CombinePDF.load path
+                submission_file << pdf.pages[0]
+              end
+            end
+            txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+                           'application/pdf', revision.revision_identifier)
+          end
+        end
+
+        # update COVER.pdf if error page given is first page of exam template
+        if page_num.to_i == 1
+          path = File.join(incomplete_dir, "#{page_num}.pdf")
+          if File.exists? path
+            cover_pdf = CombinePDF.new
+            pdf = CombinePDF.load path
+            cover_pdf << pdf.pages[0]
+            txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
+                        'application/pdf', revision.revision_identifier)
+          end
+        end
+
+        # update EXTRA.pdf
+        extra_pdf = CombinePDF.new
+        if Dir.exists?(incomplete_dir)
+          Dir.entries(incomplete_dir).sort.each do |filename|
+            path = File.join(incomplete_dir, filename)
+            basename = File.basename filename # For example, 3 from 3.pdf
+            page_number = basename.to_i
+            # if it is an extra page, add it to extra_pdf
+            if File.exists?(path) && !filename.start_with?('.') &&
+              template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
               pdf = CombinePDF.load path
-              submission_file << pdf.pages[0]
+              extra_pdf << pdf.pages[0]
             end
           end
-          txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
                       'application/pdf', revision.revision_identifier)
         end
+
         repo.commit(txn)
 
         groupings = []
@@ -187,7 +226,7 @@ class ExamTemplate < ActiveRecord::Base
 
   def base_path
     File.join MarkusConfigurator.markus_exam_template_dir,
-              assignment.short_identifier
+              assignment.short_identifier, self.name
   end
 
   private

@@ -4,7 +4,7 @@
 
 .division-table {
   background: $white;
-  border: 1px solid $grey;
+  max-width: 54em;
   border-radius: $radius;
   user-select: none;
 
@@ -12,7 +12,7 @@
     border-bottom: 1px solid $grey;
     border-radius: $radius $radius 0 0;
     font-weight: 600;
-    padding: 0.5em;
+    padding: 0.5em 2em;
     text-align: center;
     text-transform: uppercase;
   }
@@ -21,6 +21,7 @@
     float: left;
     min-width: 35%;
     min-height: 33%;
+    text-align: left;
   }
 
   .start, .end {
@@ -33,6 +34,8 @@
     display: inline-block;
     min-width: 8%;
     min-height: 33%;
+    text-align: right;
+    float: right;
   }
 
   ul {
@@ -40,10 +43,9 @@
     padding: 0;
 
     li {
-      border-top: 1px solid $grey;
       list-style: none;
       min-height: 2.5em;
-      padding: 0.5em 0.5em 0.5em 2em;
+      padding: 0.5em 2em;
       transition: background-color $time-quick;
       text-align: center;
 
@@ -52,18 +54,48 @@
       }
     }
   }
+
+  .add_template {
+    margin-top: 10px;
+    background-color: $light-blue !important;
+
+    a{
+      display: block;
+      width: 100%;
+      padding: 10px;
+    }
+  }
 }
 
-.exam-template-info {
-  font-weight: 600;
-  text-transform: uppercase;
+.exam-template-section, .generate-section, .split-section {
+
+  p + p {
+    margin: 1.5em 0;
+  }
+
+  .required {
+    margin-top: 3px;
+  }
+
+  a {
+    margin-left: 0;
+  }
+
+  label, .exam-template-info {
+    display: block;
+    margin-bottom: 3px;
+  }
 }
 
 .exam-template-section {
   padding-bottom: 0.6em;
+
+  #exam_template_name, #exam_template_new_template {
+    width: 16em;
+  }
 }
 
-.generate-section {
+.generate-section, .split-section {
   padding-top: 1em;
   padding-bottom: 0.7em;
 }

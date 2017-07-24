@@ -3,8 +3,8 @@ class SplitPDFJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
-  def self.on_complete_js
-    "window.location.reload.bind(window.location)"
+  def self.on_complete_js(status)
+    'window.location.reload.bind(window.location)'
   end
 
   def self.show_status(status)
@@ -26,8 +26,8 @@ class SplitPDFJob < ActiveJob::Base
       raw_dir = File.join(exam_template.base_path, 'raw')
       complete_dir = File.join(exam_template.base_path, 'complete')
       incomplete_dir = File.join(exam_template.base_path, 'incomplete')
-      FileUtils.mkdir error_dir unless Dir.exists? error_dir
-      FileUtils.mkdir raw_dir unless Dir.exists? raw_dir
+      FileUtils.mkdir_p error_dir unless Dir.exists? error_dir
+      FileUtils.mkdir_p raw_dir unless Dir.exists? raw_dir
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
@@ -139,7 +139,7 @@ class SplitPDFJob < ActiveJob::Base
       else
         destination = File.join incomplete_dir, "#{exam_num}"
       end
-      FileUtils.mkdir_p destination unless Dir.exists? destination
+      FileUtils.mkdir_p destination
       pages.each do |page_num, page, raw_page_num|
         new_pdf = CombinePDF.new
         new_pdf << page

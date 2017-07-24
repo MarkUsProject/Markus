@@ -125,6 +125,12 @@ Markus::Application.configure do
   REPOSITORY_STORAGE = "#{::Rails.root}/data/test/repos"
 
   ###################################################################
+  # A hash of repository hook scripts (used only when REPOSITORY_TYPE
+  # is 'git'): the key is the hook id, the value is the hook script.
+  # Make sure MarkUs is allowed to execute the hook scripts.
+  REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+
+  ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root}/data/test/keys"
@@ -263,6 +269,7 @@ Markus::Application.configure do
   # Global flag to enable/disable all exam plugin features.
   EXPERIMENTAL_EXAM_PLUGIN_ON = true
   EXAM_TEMPLATE_DIR = "#{::Rails.root.to_s}/data/dev/exam_templates"
+  SCANNED_EXAM_ON = true
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

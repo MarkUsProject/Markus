@@ -6,6 +6,7 @@ class CheckboxCriterion < Criterion
   belongs_to :assignment, counter_cache: true
   has_many :criterion_ta_associations, as: :criterion, dependent: :destroy
   has_many :marks, as: :markable, dependent: :destroy
+  accepts_nested_attributes_for :marks
   has_many :tas, through: :criterion_ta_associations
   has_many :test_scripts, as: :criterion
 
