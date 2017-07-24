@@ -23,7 +23,7 @@
            handlers: [:erb] %>
 
 <% content_for :title do %>
-  <%= t('exam_templates.assign_errors.fix_errors') %>
+  <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
   <span class='title-help assignment_groups_help'>
     <p class='help-message-title assignment_groups_help'>
       <%= t('assignment.help.assign_scans') %>
@@ -208,10 +208,6 @@
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
         <%= form_tag id: 'info_form', class: 'side_header' do %>
-          <div class="side_header">
-            <%= label_tag(:exam_template, @assignment.exam_templates.model_name.human) %>
-            <strong><%= label_tag(:upside_down,  @exam_template.name) %></strong>
-          </div>
           <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
           <%= text_field_tag(:copy_number, nil) %><br>
           <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
