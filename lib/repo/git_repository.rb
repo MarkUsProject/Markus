@@ -83,14 +83,15 @@ module Repository
       bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
 
-      # Do an initial commit with a README.md file.
-      readme_path = File.join(connect_string, 'README.md')
-      File.open(readme_path, 'w') do |readme|
-        readme.write('Initial commit.')
+      # Do an initial commit with the .required_files.json
+      required = Assignment.get_required_files
+      required_path = File.join(connect_string, '.required.json')
+      File.open(required_path, 'w') do |req|
+        req.write(required.to_json)
       end
-      oid = Rugged::Blob.from_workdir(repo, 'README.md')
-      repo.index.add(path: 'README.md', oid: oid, mode: 0100644)
-      GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
+      oid = Rugged::Blob.from_workdir(repo, '.required.json')
+      repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
+      GitRepository.do_commit_and_push(repo, 'Markus', 'Initial commit.')
 
       # Set up hooks
       MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
