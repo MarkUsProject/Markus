@@ -57,12 +57,12 @@ class SplitPDFJob < ActiveJob::Base
         page = pdf.pages[i]
         new_page = CombinePDF.new
         new_page << page
-        new_page.save File.join(raw_dir, "#{filename}-#{split_page.id}.pdf")
+        new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{split_page.id}.pdf")).first
+        img = Magick::Image::read(File.join(raw_dir, "#{split_page.id}.pdf")).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
-        qr_img.write File.join(raw_dir, "#{filename}-#{split_page.id}.png")
+        qr_img.write File.join(raw_dir, "#{split_page.id}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdf
         qrcode_string = ZXing.decode qr_img.to_blob
@@ -70,7 +70,7 @@ class SplitPDFJob < ActiveJob::Base
         m = qrcode_regex.match qrcode_string
         status = ''
         if m.nil?
-          new_page.save File.join(error_dir, "#{filename}-#{split_page.id}.pdf")
+          new_page.save File.join(error_dir, "#{split_page.id}.pdf")
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
@@ -84,7 +84,7 @@ class SplitPDFJob < ActiveJob::Base
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
-            new_page.save File.join(error_dir, "#{filename}-#{split_page.id}.pdf")
+            new_page.save File.join(error_dir, "#{split_page.id}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
             num_pages_qr_scan_error += 1
@@ -152,7 +152,7 @@ class SplitPDFJob < ActiveJob::Base
         )
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{filename}-#{split_page.id}.pdf")
+          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
           new_pdf.save File.join(destination, "#{page_num}.pdf")
