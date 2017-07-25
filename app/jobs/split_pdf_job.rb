@@ -60,6 +60,8 @@ class SplitPDFJob < ActiveJob::Base
         img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
         top_left_qr_img = img.crop 0, 10, img.columns / 4.5, img.rows / 5.7
         top_right_qr_img = img.crop 470, 10, img.columns / 4.5, img.rows / 5.7
+        top_left_qr_img.write File.join(raw_dir, "left-#{i}.png")
+        top_right_qr_img.write File.join(raw_dir, "right-#{i}.png")
 
         # qrcode_string = ZXing.decode new_page.to_pdfs
         left_qrcode_string = ZXing.decode top_left_qr_img.to_blob
@@ -67,9 +69,8 @@ class SplitPDFJob < ActiveJob::Base
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         left_m = qrcode_regex.match left_qrcode_string
         right_m = qrcode_regex.match right_qr_code_string
-        top_left_qr_img.write File.join(raw_dir, "exp-left-#{i}.png")
-        top_right_qr_img.write File.join(raw_dir, "exp-right-#{i}.png")
         m = left_m.nil? ? right_m : left_m
+
         status = ''
         if m.nil?
           new_page.save File.join(error_dir, "#{filename}-#{i}.pdf")
