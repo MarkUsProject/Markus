@@ -293,7 +293,7 @@ class AssignmentsController < ApplicationController
 
     begin
       @assignment.transaction do
-        @assignment = process_assignment_form(@assignment)
+        @assignment, @new_files_required = process_assignment_form(@assignment)
       end
     rescue SubmissionRule::InvalidRuleType => e
       @assignment.errors.add(:base, t('assignment.error', message: e.message))
@@ -303,6 +303,7 @@ class AssignmentsController < ApplicationController
     end
 
     if @assignment.save
+      # TODO trigger repo .required.json update in a job only if HOOKS setting exists
       flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
     else
@@ -342,7 +343,7 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     @assignment.transaction do
       begin
-        @assignment = process_assignment_form(@assignment)
+        @assignment, _ = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
@@ -920,7 +921,13 @@ class AssignmentsController < ApplicationController
     end
 
   def process_assignment_form(assignment)
-    assignment.update_attributes(assignment_params)
+    num_files_before = assignment.assignment_files.length
+    assignment.assign_attributes(assignment_params)
+    new_files_required = assignment.only_required_files_changed? ||
+                         assignment.assignment_files.any? { |file| file.changed? }
+    assignment.save
+    new_files_required = new_files_required ||
+                         num_files_before != assignment.assignment_files.length
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'
@@ -1003,7 +1010,7 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    assignment
+    return assignment, new_files_required
   end
 
   def assignment_params
