@@ -48,7 +48,7 @@ describe Token do
         end
 
         it 'update the token used date' do
-          expect(Time.now.strftime('%Y-%m-%d %H:%M')).to eq(@token.last_used.strftime('%Y-%m-%d %H:%M'))
+          expect(Time.zone.now.strftime('%Y-%m-%d %H:%M')).to eq(@token.last_used.strftime('%Y-%m-%d %H:%M'))
         end
       end
 
