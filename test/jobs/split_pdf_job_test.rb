@@ -6,13 +6,14 @@ class SplitPDFJobTest < ActiveJob::TestCase
   context 'split PDF job' do
     setup do
       Admin.make
-      @file = File.open('db/data/scanned_exams/midterm1.pdf')
+      FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/mdt'))
+      file = File.open('db/data/scanned_exams/midterm1.pdf')
+      assignment = Assignment.make(short_identifier: 'mdt')
+      @exam_template = ExamTemplate.create_with_file(file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
     end
 
     context 'Multiple exam template made up of different page numbers in randomized order' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt46')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm46.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -33,8 +34,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'error-free exam template' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt27')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm27.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -51,8 +50,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'made up of only 3 duplicate pages' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt21')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm21.pdf'
         SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -61,17 +58,15 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/21/').sort, %w[. .. 1.pdf].sort
       end
 
-      should 'have 1 pdf in error directory' do
+      should 'have 2 pdf in error directory' do
         error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
-        assert_equal error_dir_entries.length, 1
+        assert_equal error_dir_entries.length, 2
       end
     end
 
     context 'missing page' do
       context 'missing one page: Page 2' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt37')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm37.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -88,8 +83,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       context 'missing multiple pages: Page 2 and Page 5' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt25')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm25.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -106,8 +99,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       context 'missing every page except for the first page' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt45')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm45.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -126,8 +117,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
     context 'pages are upside down' do
       context 'all pages upside down' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt26')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm26.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -144,8 +133,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       context 'page 2 and page 3 are upside down' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt28')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm28.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -168,8 +155,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'shuffled pages' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt29')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm29.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -187,8 +172,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
     context 'scratched out' do
       context 'scratched out QR code in one page: Page 3' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt30')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm30.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -205,8 +188,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
       context 'scratched out QR code in multiple pages: Page 3 and Page 8' do
         setup do
-          assignment = Assignment.make(short_identifier: 'mdt33')
-          @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
           path = 'db/data/scanned_exams/midterm33.pdf'
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
@@ -228,8 +209,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'shuffled pages and missing page 1 and page 5' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt31')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm31.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -246,8 +225,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'only Page 1 and Page 2 are present Page 2 is upside down' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt34')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm34.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -269,8 +246,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'Page 3 is upside down and QR code in Page 6 is scratched out' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt35')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm35.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -291,8 +266,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'Page 1 and Page 2 are missing, QR code in Page 7 is scratched out, pages are shuffled' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt36')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm36.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
@@ -309,8 +282,6 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
     context 'Page 3 and 5 are upside down, QR code in Page 1 and 2 is scratched out, pages are shuffled' do
       setup do
-        assignment = Assignment.make(short_identifier: 'mdt42')
-        @exam_template = ExamTemplate.create_with_file(@file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
         path = 'db/data/scanned_exams/midterm42.pdf'
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
