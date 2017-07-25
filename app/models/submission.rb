@@ -288,8 +288,8 @@ class Submission < ActiveRecord::Base
     end
 
     remark_assignment.get_criteria(:ta).each do |criterion|
-      remark_mark = Mark.where(markable_id: criterion.id, result_id: remark.id)
-      original_mark = Mark.where(markable_id: criterion.id, result_id: original_result.id)
+      remark_mark = Mark.where(markable: criterion, result_id: remark.id)
+      original_mark = Mark.where(markable: criterion, result_id: original_result.id)
       remark_mark.first.update!(mark: original_mark.first.mark)
     end
 

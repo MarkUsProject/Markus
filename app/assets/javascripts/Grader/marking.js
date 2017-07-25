@@ -187,7 +187,7 @@ $(document).ready(function() {
     });
   });
 
-  // Handle showing old mark when mark is updated in remark
+  // Handle showing old mark when mark is updated in remark for flexible criterion
   $('.mark_grade_input').keypress(function() {
     var criterion_id = parseInt(this.getAttribute('data-id'), 10);
     var mark_id = parseInt(this.getAttribute('data-mark'), 10);
@@ -199,6 +199,23 @@ $(document).ready(function() {
       old_mark_elem.innerHTML = '(Old Mark: ' + old_mark + ')';
       mark_elem.removeClass('not_remarked');
       mark_elem.addClass('remarked');
+    }
+  });
+
+  // Handle showing old mark when mark is updated in remark for checkbox criterion
+  $('.mark_checkbox input[type=radio]').change(function() {
+    var criterion_id = parseInt(this.getAttribute('data-id'), 10);
+    var mark_id = parseInt(this.getAttribute('data-mark'), 10);
+    var old_mark_elem = document.getElementById('checkbox_' + criterion_id + '_old_mark');
+    var mark_elems =  document.getElementsByName('mark_' + mark_id);
+    var old_mark = this.getAttribute('data-oldmark');
+
+    if (old_mark != 'none') {
+      old_mark_elem.innerHTML = '(Old Mark: ' + old_mark + ')';
+      for (var i = 0; i < mark_elems; i++) {
+        mark_elems[i].removeClass('not_remarked');
+        mark_elems[i].addClass('remarked');
+      }
     }
   });
 
