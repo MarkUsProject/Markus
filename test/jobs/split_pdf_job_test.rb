@@ -6,10 +6,10 @@ class SplitPDFJobTest < ActiveJob::TestCase
   context 'split PDF job' do
     setup do
       Admin.make
-      FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/mdt'))
-      file = File.open('db/data/scanned_exams/midterm1.pdf')
       assignment = Assignment.make(short_identifier: 'mdt')
+      file = File.open('db/data/scanned_exams/midterm1.pdf')
       @exam_template = ExamTemplate.create_with_file(file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
+      FileUtils.rm_rf(@exam_template.base_path)
     end
 
     context 'Multiple exam template made up of different page numbers in randomized order' do
@@ -58,7 +58,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/21/').sort, %w[. .. 1.pdf].sort
       end
 
-      should 'have 2 pdf in error directory' do
+      should 'have 2 pdfs in error directory' do
         error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
         assert_equal error_dir_entries.length, 2
       end
