@@ -58,8 +58,8 @@ class SplitPDFJob < ActiveJob::Base
 
         # Snip out the part of the PDF that contains the QR code.
         img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
-        top_left_qr_img = img.crop 0, 10, img.columns / 4.5, img.rows / 5.7
-        top_right_qr_img = img.crop 470, 10, img.columns / 4.5, img.rows / 5.7
+        top_left_qr_img = img.crop 0, 25, img.columns / 3.8, img.rows / 6.2
+        top_right_qr_img = img.crop 470, 25, img.columns / 3.8, img.rows / 6.2
         top_left_qr_img.write File.join(raw_dir, "left-#{i}.png")
         top_right_qr_img.write File.join(raw_dir, "right-#{i}.png")
 
