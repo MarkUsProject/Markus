@@ -58,18 +58,22 @@ class SplitPDFJob < ActiveJob::Base
 
         # Snip out the part of the PDF that contains the QR code.
         img = Magick::Image::read(File.join(raw_dir, "#{filename}-#{i}.pdf")).first
-        top_left_qr_img = img.crop 0, 25, img.columns / 3.8, img.rows / 6.2
-        top_right_qr_img = img.crop 470, 25, img.columns / 3.8, img.rows / 6.2
-        top_left_qr_img.write File.join(raw_dir, "left-#{i}.png")
-        top_right_qr_img.write File.join(raw_dir, "right-#{i}.png")
-
-        # qrcode_string = ZXing.decode new_page.to_pdfs
-        left_qrcode_string = ZXing.decode top_left_qr_img.to_blob
-        right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-        left_m = qrcode_regex.match left_qrcode_string
-        right_m = qrcode_regex.match right_qr_code_string
-        m = left_m.nil? ? right_m : left_m
+
+        # Snip out the top left corner of PDF that contains the QR code
+        top_left_qr_img = img.crop 0, 25, img.columns / 3.8, img.rows / 6.2
+        left_qr_code_string = ZXing.decode top_left_qr_img.to_blob
+        left_m = qrcode_regex.match left_qr_code_string
+        unless left_m.nil?
+          m = left_m
+          top_left_qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
+        else # if parsing fails, try the top right corner of the PDF
+          top_right_qr_img = img.crop 470, 25, img.columns / 3.8, img.rows / 6.2
+          right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
+          right_m = qrcode_regex.match right_qr_code_string
+          m = right_m
+          top_right_qr_img.write File.join(raw_dir, "#{filename}-#{i}.png")
+        end
 
         status = ''
         if m.nil?
