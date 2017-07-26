@@ -311,7 +311,7 @@ module Repository
       if user_id.nil?
         raise 'Expected a user_id (Repository.get_transaction(user_id))'
       end
-      return Repository::Transaction.new(user_id, comment)
+      Repository::Transaction.new(user_id, comment)
     end
 
     def commit(transaction)
@@ -504,28 +504,20 @@ module Repository
 
     private
 
-    def latest_revision_number(_path = nil, _revision_number = nil)
-      get_revision_number(@repos.last_commit.oid)
-    end
-
-    def path_exists_for_latest_revision?(path)
-      get_latest_revision.path_exists?(path)
-    end
-
     # Creates and commits a file to the repository
     def add_file(path, file_data = nil, author)
-      if path_exists_for_latest_revision?(path)
+      if get_latest_revision.path_exists?(path)
         raise Repository::FileExistsConflict.new(path)
       end
       write_file(path, file_data, author)
     end
 
     # Removes a file from the repository
-    def remove_file(path, author, expected_revision_identifier = 0)
-      if latest_revision_number != expected_revision_identifier
+    def remove_file(path, author, expected_revision_identifier)
+      if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
-      if !path_exists_for_latest_revision?(path)
+      unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
 
@@ -535,11 +527,11 @@ module Repository
     end
 
     # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, expected_revision_identifier = 0)
-      if latest_revision_number != expected_revision_identifier
+    def replace_file(path, file_data, author, expected_revision_identifier)
+      if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
-      if !path_exists_for_latest_revision?(path)
+      unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
       write_file(path, file_data, author)
