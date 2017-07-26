@@ -31,6 +31,13 @@
   </span>
 <% end %>
 
+<% @heading_buttons = [
+    { link_text: t('exam_templates.back_to_exam_template_page'),
+      link_path: assignment_exam_templates_path },
+    { link_text: t('exam_templates.back_to_log_page'),
+      link_path: view_logs_assignment_exam_templates_path },
+] %>
+
 <div id='student_selector'>
   <span class='left'>
       <a id='previous_file' onclick='previousFile(); return false'><%= t('marker.previous_submission') %></a>
