@@ -658,6 +658,7 @@ class ResultsController < ApplicationController
       elsif params[:submit]
         unless @submission.remark_result
           @submission.make_remark_result
+          @submission.non_pr_results.reload
         end
         @submission.remark_result.update_attributes(
           marking_state: Result::MARKING_STATES[:incomplete])

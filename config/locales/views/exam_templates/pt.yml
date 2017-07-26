@@ -73,6 +73,8 @@ pt:
         "Enquanto %{filename} é composto de páginas %{original_num_pages}, existem páginas %{num_pages_qr_scan_error} com erros de varredura QR"
       failure_missing_pages_log:
         "Embora existam %{num_pages_qr_scan_error} erros de varredura QR com %{filename}, pode haver páginas perdidas"
+      scan_error:
+        "Alguns arquivos não foram digitalizados corretamente."
 
     back_to_exam_template_page: "De volta à página do modelo do exame"
 

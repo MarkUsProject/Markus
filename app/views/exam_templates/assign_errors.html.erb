@@ -23,7 +23,7 @@
            handlers: [:erb] %>
 
 <% content_for :title do %>
-  <%= t('exam_templates.assign_errors.fix_errors') %>
+  <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
   <span class='title-help assignment_groups_help'>
     <p class='help-message-title assignment_groups_help'>
       <%= t('assignment.help.assign_scans') %>
