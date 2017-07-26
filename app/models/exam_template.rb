@@ -264,6 +264,6 @@ class ExamTemplate < ActiveRecord::Base
 
   # any changes to template divisions should be rejected once exams have been uploaded
   def exam_been_uploaded?
-    SplitPdfLog.where(exam_template: self).length > 0
+    self.split_pdf_logs.any?
   end
 end
