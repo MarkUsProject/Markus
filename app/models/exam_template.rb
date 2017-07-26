@@ -18,7 +18,7 @@ class ExamTemplate < ActiveRecord::Base
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy
-  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true
+  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true, reject_if: :exam_been_uploaded?
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
@@ -260,5 +260,10 @@ class ExamTemplate < ActiveRecord::Base
       )
       File.rename old_directory_name, new_directory_name
     end
+  end
+
+  # any changes to template divisions should be rejected once exams have been uploaded
+  def exam_been_uploaded?
+    SplitPdfLog.where(exam_template: self).length > 0
   end
 end
