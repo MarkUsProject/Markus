@@ -173,6 +173,7 @@ class SubmissionsController < ApplicationController
     error = ''
     if partition[0].count > 0
       current_job = SubmissionsJob.perform_later(partition[0])
+      session[:job_id] = current_job.job_id
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
