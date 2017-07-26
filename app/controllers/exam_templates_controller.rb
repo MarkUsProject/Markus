@@ -139,6 +139,7 @@ class ExamTemplatesController < ApplicationController
                                  .where(assignments: {id: @assignment.id})
                                  .includes(:exam_template)
                                  .includes(:user)
+                                 .includes(:split_pages)
   end
 
   def assign_errors

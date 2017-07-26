@@ -19,4 +19,7 @@
       <%= split_pdf_log.num_pages_qr_scan_error %>
     <% end %>
   </td>
+  <td>
+    <%= split_pdf_log.split_pages.where(status: 'FIXED').length %>
+  </td>
 </tr>
