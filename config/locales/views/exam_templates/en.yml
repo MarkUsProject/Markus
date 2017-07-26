@@ -79,6 +79,7 @@ en:
         "Some files have not been scanned properly."
 
     back_to_exam_template_page: "Back to Exam Template page"
+    back_to_log_page: "Back to Log page"
 
   flash:
     exam_templates:

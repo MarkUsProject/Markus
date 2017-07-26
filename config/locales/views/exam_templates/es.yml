@@ -77,6 +77,7 @@ es:
         "Algunos archivos no se han escaneado correctamente."
 
     back_to_exam_template_page: "Volver a la página de plantillas de examen"
+    back_to_log_page: "Volver a la página de registro"
 
   flash:
     exam_templates:
