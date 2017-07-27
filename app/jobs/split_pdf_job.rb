@@ -64,14 +64,14 @@ class SplitPDFJob < ActiveJob::Base
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
 
         # Snip out the top left corner of PDF that contains the QR code
-        top_left_qr_img = img.crop 0, 25, img.columns / 3.8, img.rows / 6.2
+        top_left_qr_img = img.crop 0, 10, img.columns / 4.5, img.rows / 5.7
         left_qr_code_string = ZXing.decode top_left_qr_img.to_blob
         left_m = qrcode_regex.match left_qr_code_string
         unless left_m.nil?
           m = left_m
           top_left_qr_img.write File.join(raw_dir, "#{split_page.id}.png")
         else # if parsing fails, try the top right corner of the PDF
-          top_right_qr_img = img.crop 470, 25, img.columns / 3.8, img.rows / 6.2
+          top_right_qr_img = img.crop 470, 10, img.columns / 4.5, img.rows / 5.7
           right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
           right_m = qrcode_regex.match right_qr_code_string
           m = right_m
