@@ -11,48 +11,60 @@
         var first_file_id;
         var first_file_path;
         <% if files.empty? %>
-        first_file_id = null;
-        first_file_path = null;
+          first_file_id = null;
+          first_file_path = null;
         <% else %>
           <% if @current_user.ta? && (assignmentfile =
-                AssignmentFile.select(:filename)
-                .joins('JOIN criteria_assignment_files_joins c ON c.assignment_file_id = assignment_files.id')
-                .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
-                .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
-                .first) %>
-            <% index = files.find_index{|x| x.filename == assignmentfile.filename} %>
+                    AssignmentFile.select(:filename)
+                    .joins('JOIN criteria_assignment_files_joins c ON c.assignment_file_id = assignment_files.id')
+                    .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
+                    .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
+                    .first) %>
+            <% index = files.find_index{|x| x.filename === assignmentfile.filename} %>
             first_file_id = <%= files[index].id %>;
             first_file_path = '<%= files[index].path %>/<%= files[index].filename %>';
           <% else %>
-            if (localStorage.getItem('assignment_id') == <%= @assignment.id %>) {
-              first_file_id = localStorage.getItem('file_id') || <%= files[0].id %>;
-              first_file_path = localStorage.getItem('file_path') || '<%= files[0].path %>/<%= files[0].filename %>';
-            } else {
+            $(document).ready(function () {
               first_file_id = <%= files[0].id %>;
               first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
-            }
-        <% end %>
+              if (localStorage.getItem('assignment_id') === '<%= @assignment.id %>' && localStorage.getItem('file_path')) {
+                var file = $('.file_item[data-path="' + localStorage.getItem('file_path') + '"');
+                if (file.length === 1) {
+                  first_file_id = file.data("id");
+                  first_file_path = file.data("path");
+                }
+              }
+              if (first_file_id !== null && first_file_path !== null) {
+                // for code viewer
+                open_file(first_file_id, first_file_path, false);
+                // for download modal
+                open_file(first_file_id, first_file_path, true);
+              }
+            });
+          <% end %>
         <% end %>
       </script>
 
       <% def show_folder_recursive(dir) %>
-          <% dir.each do |name, contents|  %>
+          <% dir.each do |name, contents| %>
               <% if name != :files %>
                   <li class="nested-submenu">
                     <a onmouseenter='open_submenu(this)'>
                       <b><%= name %></b>
                     </a>
-                    <ul class="nested-folder" style="display: none;"><% show_folder_recursive(contents) %></ul>
+                    <ul class="nested-folder" style="display: none;">
+                      <% show_folder_recursive(contents) %></ul>
                   </li>
               <% end %>
           <% end %>
           <% if dir[:files] != nil %>
               <% dir[:files].each do |file| %>
-                  <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
-                         onmouseover='close_submenu_recursive(
-                             this.parentNode.parentNode, null)'>
-                    <%= file.filename %>
-                  </a></li>
+                  <li class="file_item" data-path="<%= file.path %>/<%= file.filename %>" data-id="<%= file.id %>">
+                    <a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
+                       onmouseover='close_submenu_recursive(
+                           this.parentNode.parentNode, null)'>
+                      <%= file.filename %>
+                    </a></li>
               <% end %>
           <% end %>
       <% end %>

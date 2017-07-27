@@ -151,8 +151,7 @@ module Api
       if group.grouping_for_assignment(params[:assignment_id])
            .has_submission?
         result = group.grouping_for_assignment(params[:assignment_id])
-                   .current_submission_used
-                   .get_latest_result
+                      .current_result
       else
         render 'shared/http_status', locals: { code: '404', message:
           'No submissions exist for that group' }, status: 404
@@ -166,31 +165,46 @@ module Api
         return
       end
 
-      params[:annotations].each do |annot_params|
-        annotation_category = assignment.annotation_categories.find_or_create_by(
-          annotation_category_name: annot_params[:annotation_category_name]
-        )
-        text = AnnotationText.create(
+      annotation_texts = []
+      annotations = []
+      count = result.submission.annotations.count + 1
+      annotation_category = nil
+      submission_file = nil
+      params[:annotations].each_with_index do |annot_params, i|
+        if annotation_category.nil? || annotation_category.annotation_category_name != annot_params[:annotation_category_name]
+          annotation_category = assignment.annotation_categories.find_or_create_by(
+            annotation_category_name: annot_params[:annotation_category_name]
+          )
+        end
+        if submission_file.nil? || submission_file.filename != annot_params[:filename]
+          submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
+        end
+
+        annotation_texts << AnnotationText.new(
           content: annot_params[:content],
           annotation_category_id: annotation_category.id,
           creator_id: @current_user.id,
           last_editor_id: @current_user.id
         )
-        submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
-        TextAnnotation.create(
+        annotations << TextAnnotation.new(
           line_start: annot_params[:line_start],
           line_end: annot_params[:line_end],
           column_start: annot_params[:column_start],
           column_end: annot_params[:column_end],
-          annotation_text_id: text.id,
+          annotation_text_id: nil,
           submission_file_id: submission_file.id,
           creator_id: @current_user.id,
           creator_type: @current_user.type,
           is_remark: !result.remark_request_submitted_at.nil?,
-          annotation_number: result.submission.annotations.count + 1,
+          annotation_number: count + i,
           result_id: result.id
         )
       end
+      AnnotationText.import annotation_texts, validate: false
+      annotation_texts.zip(annotations) do |t, a|
+        a.annotation_text_id = t.id
+      end
+      TextAnnotation.import annotations, validate: false
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
