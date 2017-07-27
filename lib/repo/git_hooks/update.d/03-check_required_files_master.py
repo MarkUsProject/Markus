@@ -20,6 +20,7 @@ if __name__ == '__main__':
         # check if the assignment forbids adding non-required files; everything else is allowed, which is safe against
         # changes to the assignment after students already pushed some work:
         # A required is ok
+        # A non-required is rejected
         # D required is warned
         # D non-required is ok
         # M required is ok
