@@ -75,8 +75,11 @@ en:
         "While %{filename} is made up of %{original_num_pages} pages, there are %{num_pages_qr_scan_error} pages with QR scan errors"
       failure_missing_pages_log:
         "While there are %{num_pages_qr_scan_error} QR scan errors with %{filename}, there might be missing pages"
+      scan_error:
+        "Some files have not been scanned properly."
 
     back_to_exam_template_page: "Back to Exam Template page"
+    back_to_log_page: "Back to Log page"
 
   flash:
     exam_templates:

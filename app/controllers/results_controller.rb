@@ -414,8 +414,8 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = @file.annotations.select{|a| a.result_id == @result.id}
-    @all_annots = @result.annotations
+    @annots = @file.annotations.includes(:creator, :annotation_text).select{|a| a.result_id == @result.id}
+    @all_annots = @result.annotations.includes(:submission_file, :creator, :annotation_text)
     if @result.submission.remark_submitted?
       original_result = @result.submission.get_original_result
       @all_annots += original_result.annotations
@@ -658,6 +658,7 @@ class ResultsController < ApplicationController
       elsif params[:submit]
         unless @submission.remark_result
           @submission.make_remark_result
+          @submission.non_pr_results.reload
         end
         @submission.remark_result.update_attributes(
           marking_state: Result::MARKING_STATES[:incomplete])

@@ -3,7 +3,6 @@ function open_file(id, path, downloading) {
         document.getElementById('file_id').value = id;
         document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
     } else {
-        localStorage.setItem('file_id', id);
         localStorage.setItem('file_path', path);
         load_submitted_file(id);
         document.getElementById('select_file_id').value = id;
@@ -37,12 +36,3 @@ function close_submenu_recursive(dir_element, orig_dir_element) {
     }
   }
 }
-
-$(document).ready(function() {
-  if (first_file_id !== null && first_file_path !== null) {
-    // for code viewer
-    open_file(first_file_id, first_file_path, false);
-    // for download modal
-    open_file(first_file_id, first_file_path, true);
-  }
-});
