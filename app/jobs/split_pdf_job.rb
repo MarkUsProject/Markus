@@ -33,6 +33,7 @@ class SplitPDFJob < ActiveJob::Base
       filename = original_filename.nil? ? basename : File.basename(original_filename)
       pdf = CombinePDF.load path
       num_pages = pdf.pages.length
+      #pdf2 = Magick::ImageList.new(path)
 
       # creating an instance of split_pdf_log
       split_pdf_log = SplitPdfLog.create(
@@ -50,6 +51,55 @@ class SplitPDFJob < ActiveJob::Base
         hash[key] = []
       end
       num_pages_qr_scan_error = 0
+
+      # pdf2.each_with_index do |page_img, i|
+      #   split_page = SplitPage.create(filename: filename,
+      #                                 raw_page_number: i + 1,
+      #                                 split_pdf_log: split_pdf_log)
+      #
+      #   page = pdf.pages[i]
+      #   new_page = CombinePDF.new
+      #   new_page << page
+      #   new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
+      #
+      #   #Extracting QR Image
+      #   qr_img = page_img.crop 0, 10, page_img.columns, page_img.rows / 5
+      #   qr_img.write File.join(raw_dir, "#{split_page.id}.png")
+      #
+      #   begin
+      #   qrcode_string = ZXing.decode qr_img.to_blob
+      #   qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+      #   m = qrcode_regex.match qrcode_string
+      #   rescue Exception => e
+      #     byebug
+      #   end
+      #   status = ''
+      #   if m.nil?
+      #     new_page.save File.join(error_dir, "#{split_page.id}.pdf")
+      #     num_pages_qr_scan_error += 1
+      #     status = 'ERROR: QR code not found'
+      #     m_logger.log(status)
+      #     split_page.update_attributes(status: status)
+      #   else
+      #     group = Group.find_or_create_by(
+      #       group_name: group_name_for(exam_template, m[:exam_num].to_i),
+      #       repo_name: group_name_for(exam_template, m[:exam_num].to_i)
+      #     )
+      #     if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
+      #       partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
+      #       m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
+      #     else # if QR code doesn't contain corresponding exam template
+      #       new_page.save File.join(error_dir, "#{split_page.id}.pdf")
+      #       status = 'ERROR: QR code does not contain corresponding exam template.'
+      #       m_logger.log(status)
+      #       num_pages_qr_scan_error += 1
+      #     end
+      #     split_page.update_attributes(status: status, group: group, exam_page_number: m[:exam_num].to_i)
+      #   end
+      #   progress.increment
+      #
+      # end
+
       pdf.pages.each_index do |i|
         split_page = SplitPage.create(filename: filename,
                                       raw_page_number: i + 1,
