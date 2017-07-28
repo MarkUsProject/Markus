@@ -40,9 +40,9 @@ class GenerateJob < ActiveJob::Base
             text = "#{exam_template.name} #{exam_num}-#{page_num + 1}"
             if alignment == :right
               text_width = width_of(text)
-              draw_text(text, :at => [465 - text_width, 660])
+              draw_text(text, :at => [445 - text_width, 690])
             else
-              draw_text(text, :at => [110, 660])
+              draw_text(text, :at => [130, 690])
             end
             render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)
             start_new_page
