@@ -32,14 +32,21 @@ class GenerateJob < ActiveJob::Base
       generated_pdf = CombinePDF.new
       (start..start + num_copies - 1).each do |exam_num|
         m_logger.log("Now generating: #{exam_num}")
-        pdf = Prawn::Document.new(margin: 20)
-        exam_template.num_pages.times do |page_num|
-          qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
-          qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
-          alignment = page_num % 2 == 0 ? :right : :left
-          pdf.render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)
-          pdf.text("#{exam_template.name} #{exam_num}-#{page_num + 1}", align: alignment)
-          pdf.start_new_page
+        pdf = Prawn::Document::new(margin: 20) do
+          exam_template.num_pages.times do |page_num|
+            qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
+            qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
+            alignment = page_num % 2 == 0 ? :right : :left
+            text = "#{exam_template.name} #{exam_num}-#{page_num + 1}"
+            if alignment == :right
+              text_width = width_of(text)
+              draw_text(text, :at => [465 - text_width, 660])
+            else
+              draw_text(text, :at => [110, 660])
+            end
+            render_qr_code(qrcode, align: alignment, dot: 3.2, stroke: false)
+            start_new_page
+          end
         end
         combine_pdf_qr = CombinePDF.parse(pdf.render)
         template_pdf.pages.zip(combine_pdf_qr.pages) do |template_page, qr_page|
