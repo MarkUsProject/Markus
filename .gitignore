@@ -62,3 +62,6 @@
 
 # Ignore redis dump file
 .dump.rdb
+
+# Ignore installed ruby gems
+/vendor/

@@ -1,0 +1,160 @@
+exec { 'apt-get update':
+	command => "/usr/bin/apt-get update",
+}
+
+package { 'ruby-full':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'cmake':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'pkg-config':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'build-essential':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'ruby':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'rake':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'libsvn-ruby1.8':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'subversion':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'ruby-dev':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'libruby':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'libmysqlclient-dev':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'libpq-dev':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'libsqlite3-dev':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'postgresql':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+
+package { 'postgresql-contrib':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'git':
+	ensure => installed,
+	require => [
+		Exec['apt-get update'],
+	]
+}
+
+package { 'git gem':
+	ensure => installed,
+	name => 'git',
+	provider => gem,
+}
+
+bundler::install { '/vagrant':
+	require => [
+		Package['ruby-full'],
+		Package['cmake'],
+		Package['pkg-config'],
+		Package['build-essential'],
+		Package['ruby'],
+		Package['rake'],
+		Package['libsvn-ruby1.8'],
+		Package['subversion'],
+		Package['ruby-dev'],
+		Package['libruby'],
+		Package['libmysqlclient-dev'],
+		Package['libpq-dev'],
+		Package['libsqlite3-dev'],
+	]
+}
+
+class { 'postgresql::server':
+ }
+
+postgresql::server::role { 'markus':
+	password_hash => postgresql_password('markus', 'markus'),
+	superuser => true,
+}
+
+file { '/vagrant/config/database.yml':
+    content => template('/tmp/vagrant-puppet/environments/testenv/templates/config/database.yml'),
+    mode    => '600',
+}
+
+file { '/home/vagrant/markus.sh':
+    content => template('/tmp/vagrant-puppet/environments/testenv/templates/markus.sh'),
+    owner => vagrant,
+    group => vagrant,
+    mode    => '700',
+}
