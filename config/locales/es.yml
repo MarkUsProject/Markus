@@ -704,6 +704,18 @@ es:
       how_many_marked_short:                "%{num_marked}/%{num_assigned} calificados"
       average_annotations:                  "%{average_annotations} anotaciones por entrega calificada"
 
+    #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Resumen del curso"
+
+    #app/views/main/_summary.erb
+    course_summary_link: "Resumen del curso"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+    marking_scheme: "Esquema de puntuación %{marking_scheme_id}"
+    course_summary_weighted_average: "Promedio ponderado de la clase:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Mediana ponderada de la clase:"
+
     summaries_index:
       group_name:         "Nombre del Grupo"
       repository_name:    "Repositorio: %{repository}"
@@ -786,6 +798,7 @@ es:
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
     no_grade_entry_forms_message:    "No existen hojas de notas por el momento."
+    no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
     current_grade_entry_forms_title: "Hojas de notas recientes"
     spreadsheet_item:                "Hoja de Notas"
     spreadsheet_date:                "Fecha"

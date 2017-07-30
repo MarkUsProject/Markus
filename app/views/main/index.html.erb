@@ -19,6 +19,11 @@
         <%= render partial: 'spreadsheet_list',
                    locals: { controller: 'main' } %>
       </div>
+      <div id='summary'>
+        <h3 class='title'><%= 'Course Summary' %></h3>
+        <%= render partial: 'summary',
+                   locals: { controller: 'main' } %>
+      </div>
     </div>
     <div id='assignment_summaries'>
       <%= render partial: 'assignments/assignment_summary', locals: { assignment: @current_assignment, tas: @tas } %>

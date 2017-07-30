@@ -1,0 +1,18 @@
+<% unless @grade_entry_forms.nil? && @assignments.nil? %>
+  <div class='assignment_summary'>
+    <h2 class='title'>
+      <%= link_to I18n.t(:course_summary_link,
+                         short_id: 'summary',
+                         description: 'Course Summary'),
+                  course_summaries_path,
+                  class: 'title' %>
+    </h2>
+
+    <div id='weighted_course_summary_graph' class='ta_grade_distribution'>
+      <%= render partial: 'weighted_course_summary_graph', locals: { grade_entry_forms: @grade_entry_forms,
+                                                                     assignments: @assignments,
+                                                                     marking_schemes: @marking_schemes } %>
+    </div>
+
+  </div>
+<% end %>
