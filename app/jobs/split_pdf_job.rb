@@ -31,10 +31,8 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
-      #pdf = CombinePDF.load path
-      #num_pages = pdf.pages.length
-      pdf2 = Magick::ImageList.new(path)
-      num_pages = pdf2.length
+      pdf = Magick::ImageList.new(path)
+      num_pages = pdf.length
 
       # creating an instance of split_pdf_log
       split_pdf_log = SplitPdfLog.create(
@@ -47,13 +45,13 @@ class SplitPDFJob < ActiveJob::Base
         user: current_user
       )
 
-      progress.total = pdf2.length
+      progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
       num_pages_qr_scan_error = 0
 
-      pdf2.each_with_index do |page_img, i|
+      pdf.each_with_index do |page_img, i|
         split_page = SplitPage.create(filename: filename,
                                       raw_page_number: i + 1,
                                       split_pdf_log: split_pdf_log)
@@ -62,10 +60,11 @@ class SplitPDFJob < ActiveJob::Base
         #Try loading from page_img? convert page_img to string or pdf etc
         page = CombinePDF.load(File.join(raw_dir, "#{split_page.id}.pdf"))
 
-        #Extracting QR Image
+        #Crop and save QR Image from pdf
         qr_img = page_img.crop 0, 10, page_img.columns, page_img.rows / 5
         qr_img.write File.join(raw_dir, "#{split_page.id}.png")
 
+        #Decode QR code
         qrcode_string = ZXing.decode (qr_img.to_blob{ self.format = "png" })
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
