@@ -55,15 +55,13 @@ class SplitPDFJob < ActiveJob::Base
         split_page = SplitPage.create(filename: filename,
                                       raw_page_number: i + 1,
                                       split_pdf_log: split_pdf_log)
-
         page_img.write File.join(raw_dir, "#{split_page.id}.pdf")
         page = CombinePDF.load(File.join(raw_dir, "#{split_page.id}.pdf"))
 
-        #Crop and save QR Image from pdf
+        # Snip out the part of the PDF that contains the QR code.
         qr_img = page_img.crop 0, 10, page_img.columns, page_img.rows / 5
         qr_img.write File.join(raw_dir, "#{split_page.id}.png")
 
-        #Decode QR code
         qrcode_string = ZXing.decode (qr_img.to_blob{ self.format = "png" })
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
