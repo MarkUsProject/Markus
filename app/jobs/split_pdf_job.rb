@@ -31,7 +31,7 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
-      pdf = Magick::ImageList.new(path)
+      pdf = (Magick::ImageList.new(path) { self.density = 125 })
       num_pages = pdf.length
 
       # creating an instance of split_pdf_log
