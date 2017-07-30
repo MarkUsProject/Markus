@@ -57,7 +57,6 @@ class SplitPDFJob < ActiveJob::Base
                                       split_pdf_log: split_pdf_log)
 
         page_img.write File.join(raw_dir, "#{split_page.id}.pdf")
-        #Try loading from page_img? convert page_img to string or pdf etc
         page = CombinePDF.load(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         #Crop and save QR Image from pdf
