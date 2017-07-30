@@ -69,7 +69,10 @@ module CourseSummariesHelper
 
     student.accepted_groupings.each do |g|
       sub = g.current_submission_used
-      if current_user.admin?
+      # TODO: remove this defined? call. This is currently used because
+      # this method is used in the MarkingScheme model, which does not define
+      # current_user.
+      if (!defined? current_user) || current_user.admin?
         marks[g.assignment_id] = sub ? sub.get_latest_result.total_mark : 0
       else
         if sub && sub.has_remark? && sub.remark_result.released_to_students

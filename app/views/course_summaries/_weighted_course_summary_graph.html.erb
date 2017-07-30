@@ -48,7 +48,9 @@
   </script>
 
   <div class='course_summary'>
-    <%= render partial: 'course_summaries/course_summary_info_summary', locals: { marking_scheme: marking_scheme } %>
+    <%= render partial: 'course_summaries/course_summary_info_summary',
+               locals: { marking_scheme: marking_scheme,
+                         grades: marking_scheme.students_weighted_grades_array } %>
   </div>
   <% end %>
 <% end %>
