@@ -670,7 +670,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     course_summary_link: "Resumo do curso"
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme: "Esquema de marcação %{marking_scheme_id}"
+    marking_scheme_with_id: "Esquema de marcação %{marking_scheme_id}"
     course_summary_weighted_average: "Média da classe ponderada:"
     percentage: "%{percentage}%"
     course_summary_weighted_median: "Mediana da classe ponderada:"

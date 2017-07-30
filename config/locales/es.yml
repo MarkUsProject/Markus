@@ -711,7 +711,7 @@ es:
     course_summary_link: "Resumen del curso"
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme: "Esquema de puntuación %{marking_scheme_id}"
+    marking_scheme_with_id: "Esquema de puntuación %{marking_scheme_id}"
     course_summary_weighted_average: "Promedio ponderado de la clase:"
     percentage: "%{percentage}%"
     course_summary_weighted_median: "Mediana ponderada de la clase:"

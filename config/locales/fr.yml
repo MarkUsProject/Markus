@@ -619,7 +619,7 @@ fr:
     course_summary_link: "Résumé du cours"
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme: "Barème %{marking_scheme_id}"
+    marking_scheme_with_id: "Barème %{marking_scheme_id}"
     course_summary_weighted_average: "Moyenne pondérée de la classe:"
     percentage: "%{percentage}%"
     course_summary_weighted_median: "Médiation de classe pondérée:"

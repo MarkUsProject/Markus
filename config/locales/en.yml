@@ -631,7 +631,7 @@ en:
 
     #app/views/course_summaries/_course_summary_info_summary.html.erb
 
-    marking_scheme: "Marking Scheme %{marking_scheme_id}"
+    marking_scheme_with_id: "Marking Scheme %{marking_scheme_id}"
     course_summary_weighted_average: "Weighted Class Average:"
     percentage: "%{percentage}%"
     course_summary_weighted_median: "Weighted Class Median:"
