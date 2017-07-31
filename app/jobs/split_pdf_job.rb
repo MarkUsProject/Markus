@@ -56,7 +56,6 @@ class SplitPDFJob < ActiveJob::Base
                                       raw_page_number: i + 1,
                                       split_pdf_log: split_pdf_log)
         page_img.write File.join(raw_dir, "#{split_page.id}.pdf")
-        page = CombinePDF.load(File.join(raw_dir, "#{split_page.id}.pdf"))
 
         # Snip out the part of the PDF that contains the QR code.
         qr_img = page_img.crop 0, 10, page_img.columns, page_img.rows / 5
@@ -79,7 +78,7 @@ class SplitPDFJob < ActiveJob::Base
             repo_name: group_name_for(exam_template, m[:exam_num].to_i)
           )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
-            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page_img, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
             page_img.write File.join(error_dir, "#{split_page.id}.pdf")
@@ -139,8 +138,6 @@ class SplitPDFJob < ActiveJob::Base
       end
       FileUtils.mkdir_p destination
       pages.each do |page_num, page, raw_page_num|
-        new_pdf = CombinePDF.new
-        new_pdf << page
         split_page = SplitPage.find_by(
           filename: filename,
           exam_page_number: exam_num.to_i,
@@ -150,10 +147,10 @@ class SplitPDFJob < ActiveJob::Base
         )
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
+          page.write File.join(error_dir, "#{split_page.id}.pdf")
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
-          new_pdf.save File.join(destination, "#{page_num}.pdf")
+          page.write File.join(destination, "#{page_num}.pdf")
           # set status depending on whether parent directory of destination is complete or incomplete
           status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
@@ -167,44 +164,44 @@ class SplitPDFJob < ActiveJob::Base
 
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|
-          new_pdf = CombinePDF.new
+          new_pdf = Magick::ImageList.new
           pages.each do |page_num, page|
             if division.start <= page_num && page_num <= division.end
-              new_pdf << page
+              new_pdf.push page
             end
           end
           txn.add(File.join(assignment_folder,
                             "#{division.label}.pdf"),
-                  new_pdf.to_pdf,
+                  new_pdf.to_blob,
                   'application/pdf'
           )
         end
 
-        # Pages that don't belong to any division
-        extra_pages = pages.reject do |page_num, _|
-          exam_template.template_divisions.any? do |division|
-            division.start <= page_num && page_num <= division.end
-          end
-        end
-        extra_pages.sort_by! { |page_num, _| page_num }
-        extra_pdf = CombinePDF.new
-        cover_pdf = CombinePDF.new
-        start_page = 0
-        if extra_pages[0][0] == 1
-          cover_pdf << extra_pages[0][1]
-          start_page = 1
-        end
-        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
-        txn.add(File.join(assignment_folder,
-                          "EXTRA.pdf"),
-                extra_pdf.to_pdf,
-                'application/pdf'
-        )
-        txn.add(File.join(assignment_folder,
-                          "COVER.pdf"),
-                cover_pdf.to_pdf,
-                'application/pdf'
-        )
+        # # Pages that don't belong to any division
+        # extra_pages = pages.reject do |page_num, _|
+        #   exam_template.template_divisions.any? do |division|
+        #     division.start <= page_num && page_num <= division.end
+        #   end
+        # end
+        # extra_pages.sort_by! { |page_num, _| page_num }
+        # extra_pdf = CombinePDF.new
+        # cover_pdf = CombinePDF.new
+        # start_page = 0
+        # if extra_pages[0][0] == 1
+        #   cover_pdf << extra_pages[0][1]
+        #   start_page = 1
+        # end
+        # extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
+        # txn.add(File.join(assignment_folder,
+        #                   "EXTRA.pdf"),
+        #         extra_pdf.to_pdf,
+        #         'application/pdf'
+        # )
+        # txn.add(File.join(assignment_folder,
+        #                   "COVER.pdf"),
+        #         cover_pdf.to_pdf,
+        #         'application/pdf'
+        # )
         repo.commit(txn)
       end
     end
