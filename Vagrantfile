@@ -7,6 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Set this to your private key if you're having trouble
   # ssh-ing into Vagrant (it's requiring a password)
   # config.ssh.private_key_path = "/home/.ssh/id_rsa"
+  config.ssh.password = "vagrant"
 
   # Allow instance to see project folder.
   # Warning: This may cause problems with your Vagrant box!

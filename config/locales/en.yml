@@ -621,6 +621,21 @@ en:
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
 
+    #app/views/course_summaries/_course_summary.html.erb
+
+    course_summary_link: "Course Summary"
+
+    #app/views/main/_summary.erb
+
+    course_summary_link: "Course Summary"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+
+    marking_scheme_with_id: "Marking Scheme %{marking_scheme_id}"
+    course_summary_weighted_average: "Weighted Class Average:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Weighted Class Median:"
+
     #app/views/grade_entry_forms/_grade_entry_form_summary.html.erb
 
     grade_entry_form_link: "%{short_id}: %{description}"
@@ -638,6 +653,7 @@ en:
     refresh_graph: "Refresh the graph"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
+    no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
     current_grade_entry_forms_title: "Current marks spreadsheets"
     spreadsheet_item: "Marks spreadsheet"
     spreadsheet_date: "Date"
