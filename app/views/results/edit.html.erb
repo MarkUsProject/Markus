@@ -43,7 +43,7 @@
   var modalNotesGroup = null;
 
   $(document).ready(function() {
-    localStorage.setItem('assignment_id', <%= @assignment.id %>);
+    localStorage.setItem('assignment_id', <%= @result.submission.grouping.assignment_id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
@@ -117,7 +117,7 @@
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],
-           locals: { first_file: @first_file } %>
+           locals: { first_file: @files.first } %>
 
 <%= render partial: 'results/common/context_menu',
            formats: [:js],
@@ -276,8 +276,8 @@
 
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
-               locals: { extra_marks_points: @extra_marks_points,
-                         extra_marks_percentage: @extra_marks_percentage,
+               locals: { extra_marks_points: @result.extra_marks.points,
+                         extra_marks_percentage: @result.extra_marks.percentage,
                          annotation_categories:
                            @assignment.annotation_categories.includes(:annotation_texts),
                          result: @result,
@@ -293,6 +293,10 @@
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
-               handlers: [:erb] %>
+               handlers: [:erb],
+               locals: { extra_marks_points: @result.extra_marks.points,
+                         extra_marks_percentage: @result.extra_marks.percentage
+               }
+    %>
   <% end %>
 </div>

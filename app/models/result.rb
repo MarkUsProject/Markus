@@ -51,22 +51,19 @@ class Result < ActiveRecord::Base
     user_visibility = is_a_review? ? :peer : :ta
     update_attributes(total_mark:
       [0, get_subtotal(user_visibility) + get_total_extra_points +
-          get_total_extra_percentage_as_points].max)
+          get_total_extra_percentage_as_points(user_visibility)].max)
   end
 
   # The sum of the marks not including bonuses/deductions
   def get_subtotal(user_visibility = :ta)
-    new_marks = 0
-    unless marks.empty?
+    if marks.empty?
+      0
+    else
       assignment = submission.grouping.assignment
-      assignment.get_criteria(user_visibility).each do |criterion|
-        mark = marks.find_by(markable: criterion)
-        unless mark.nil?
-          new_marks += mark.mark.to_f
-        end
-      end
+      criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
+      marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
+      marks_array.sum || 0
     end
-    new_marks
   end
 
   # The sum of the bonuses and deductions, other than late penalty
@@ -90,8 +87,8 @@ class Result < ActiveRecord::Base
   end
 
   # Point deduction for late penalty
-  def get_total_extra_percentage_as_points
-    (get_total_extra_percentage * submission.assignment.max_mark / 100).round(1)
+  def get_total_extra_percentage_as_points(user_visibility = :ta)
+    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(1)
   end
 
   def get_total_test_script_marks
@@ -149,7 +146,8 @@ class Result < ActiveRecord::Base
   end
 
   def check_for_nil_marks(user_visibility = :ta)
-    nil_marks = false
+    # This check is only required when the marking state is complete.
+    return true unless marking_state == Result::MARKING_STATES[:complete]
 
     # peer review result is a special case because when saving a pr result
     # we can't pass in a parameter to the before_save filter, so we need
@@ -157,16 +155,20 @@ class Result < ActiveRecord::Base
     # want the peer-visible criteria
     visibility = is_a_review? ? :peer : user_visibility
 
-    criteria = submission.assignment.get_criteria(visibility)
-    # criteria = submission.assignment.get_criteria(user_visibility)
-    criteria.each do |criterion|
-      unless marks.where(markable_id: criterion.id, mark: nil).empty?
-        nil_marks = true
+    criteria = submission.assignment.get_criteria(visibility).map { |c| [c.class.to_s, c.id] }
+    nil_marks = false
+    num_marks = 0
+    marks.each do |mark|
+      if criteria.member? [mark.markable_type, mark.markable_id]
+        num_marks += 1
+        if mark.mark.nil?
+          nil_marks = true
+          break
+        end
       end
     end
-    # Check that the marking state is incomplete or all marks are entered
-    # Count can be greater if criteria with previously filled in mark is switched to be not ta_visible
-    if (nil_marks || marks.count < criteria.count) && marking_state == Result::MARKING_STATES[:complete]
+
+    if nil_marks || num_marks < criteria.count
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
       return false
     end

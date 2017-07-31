@@ -22,6 +22,10 @@ class Grouping < ActiveRecord::Base
   has_many :accepted_student_memberships,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'StudentMembership'
+  has_many :accepted_students,
+           class_name: 'Student',
+           through: :accepted_student_memberships,
+           source: :user
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
@@ -183,10 +187,9 @@ class Grouping < ActiveRecord::Base
 
   def get_group_name
     name = group.group_name
-    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
-      name += ' ('
-      name += accepted_students.collect{ |student| student.user_name}.join(', ')
-      name += ')'
+    student_names = accepted_students.map &:user_name
+    unless student_names == [name] then
+      name += ' (' + student_names.join(', ') + ')'
     end
     name
   end
@@ -440,7 +443,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def marking_completed?
-    has_submission? && current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
+    !current_result.nil? && current_result.marking_state == Result::MARKING_STATES[:complete]
   end
 
   # EDIT METHODS
