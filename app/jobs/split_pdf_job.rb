@@ -177,31 +177,31 @@ class SplitPDFJob < ActiveJob::Base
           )
         end
 
-        # # Pages that don't belong to any division
-        # extra_pages = pages.reject do |page_num, _|
-        #   exam_template.template_divisions.any? do |division|
-        #     division.start <= page_num && page_num <= division.end
-        #   end
-        # end
-        # extra_pages.sort_by! { |page_num, _| page_num }
-        # extra_pdf = CombinePDF.new
-        # cover_pdf = CombinePDF.new
-        # start_page = 0
-        # if extra_pages[0][0] == 1
-        #   cover_pdf << extra_pages[0][1]
-        #   start_page = 1
-        # end
-        # extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
-        # txn.add(File.join(assignment_folder,
-        #                   "EXTRA.pdf"),
-        #         extra_pdf.to_pdf,
-        #         'application/pdf'
-        # )
-        # txn.add(File.join(assignment_folder,
-        #                   "COVER.pdf"),
-        #         cover_pdf.to_pdf,
-        #         'application/pdf'
-        # )
+        # Pages that don't belong to any division
+        extra_pages = pages.reject do |page_num, _|
+          exam_template.template_divisions.any? do |division|
+            division.start <= page_num && page_num <= division.end
+          end
+        end
+        extra_pages.sort_by! { |page_num, _| page_num }
+        extra_pdf = Magick::ImageList.new
+        cover_pdf = Magick::ImageList.new
+        start_page = 0
+        if extra_pages[0][0] == 1
+          cover_pdf.push extra_pages[0][1]
+          start_page = 1
+        end
+        extra_pdf += extra_pages[start_page..extra_pages.size].collect { |_, page| page }
+        txn.add(File.join(assignment_folder,
+                          "EXTRA.pdf"),
+                extra_pdf.to_blob,
+                'application/pdf'
+        )
+        txn.add(File.join(assignment_folder,
+                          "COVER.pdf"),
+                cover_pdf.to_blob,
+                'application/pdf'
+        )
         repo.commit(txn)
       end
     end
