@@ -31,8 +31,8 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
-      pdf = CombinePDF.load path
-      num_pages = pdf.pages.length
+      pdf = Magick::ImageList.new(path) #{ self.density = 100 }
+      num_pages = pdf.length
 
       # creating an instance of split_pdf_log
       split_pdf_log = SplitPdfLog.create(
@@ -45,32 +45,29 @@ class SplitPDFJob < ActiveJob::Base
         user: current_user
       )
 
-      progress.total = pdf.pages.length
+      progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
       num_pages_qr_scan_error = 0
-      pdf.pages.each_index do |i|
+
+      pdf.each_with_index do |page_img, i|
         split_page = SplitPage.create(filename: filename,
                                       raw_page_number: i + 1,
                                       split_pdf_log: split_pdf_log)
-        page = pdf.pages[i]
-        new_page = CombinePDF.new
-        new_page << page
-        new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
+        page_img.write File.join(raw_dir, "#{split_page.id}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{split_page.id}.pdf")).first
-        qr_img = img.crop 0, 10, img.columns, img.rows / 5
+        qr_img = page_img.crop 0, 10, page_img.columns, page_img.rows / 5
         qr_img.write File.join(raw_dir, "#{split_page.id}.png")
 
-        # qrcode_string = ZXing.decode new_page.to_pdf
-        qrcode_string = ZXing.decode qr_img.to_blob
+        qrcode_string = ZXing.decode (qr_img.to_blob{ self.format = "png" })
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
         m = qrcode_regex.match qrcode_string
+
         status = ''
         if m.nil?
-          new_page.save File.join(error_dir, "#{split_page.id}.pdf")
+          page_img.write File.join(error_dir, "#{split_page.id}.pdf")
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
@@ -81,10 +78,10 @@ class SplitPDFJob < ActiveJob::Base
             repo_name: group_name_for(exam_template, m[:exam_num].to_i)
           )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
-            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
+            partial_exams[m[:exam_num]] << [m[:page_num].to_i, page_img, i + 1]
             m_logger.log("#{m[:short_id]}: exam number #{m[:exam_num]}, page #{m[:page_num]}")
           else # if QR code doesn't contain corresponding exam template
-            new_page.save File.join(error_dir, "#{split_page.id}.pdf")
+            page_img.write File.join(error_dir, "#{split_page.id}.pdf")
             status = 'ERROR: QR code does not contain corresponding exam template.'
             m_logger.log(status)
             num_pages_qr_scan_error += 1
@@ -141,8 +138,6 @@ class SplitPDFJob < ActiveJob::Base
       end
       FileUtils.mkdir_p destination
       pages.each do |page_num, page, raw_page_num|
-        new_pdf = CombinePDF.new
-        new_pdf << page
         split_page = SplitPage.find_by(
           filename: filename,
           exam_page_number: exam_num.to_i,
@@ -152,10 +147,10 @@ class SplitPDFJob < ActiveJob::Base
         )
         # if a page already exists, move the page to error directory instead of overwriting it
         if File.exists?(File.join(destination, "#{page_num}.pdf"))
-          new_pdf.save File.join(error_dir, "#{split_page.id}.pdf")
+          page.write File.join(error_dir, "#{split_page.id}.pdf")
           status = "ERROR: #{exam_template.name}: exam number #{exam_num}, page #{page_num} already exists"
         else
-          new_pdf.save File.join(destination, "#{page_num}.pdf")
+          page.write File.join(destination, "#{page_num}.pdf")
           # set status depending on whether parent directory of destination is complete or incomplete
           status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
@@ -169,15 +164,15 @@ class SplitPDFJob < ActiveJob::Base
 
         # Pages that belong to a division
         exam_template.template_divisions.each do |division|
-          new_pdf = CombinePDF.new
+          new_pdf = Magick::ImageList.new
           pages.each do |page_num, page|
             if division.start <= page_num && page_num <= division.end
-              new_pdf << page
+              new_pdf.push page
             end
           end
           txn.add(File.join(assignment_folder,
                             "#{division.label}.pdf"),
-                  new_pdf.to_pdf,
+                  ( new_pdf.blank? ? '' : new_pdf.to_blob ),
                   'application/pdf'
           )
         end
@@ -189,22 +184,22 @@ class SplitPDFJob < ActiveJob::Base
           end
         end
         extra_pages.sort_by! { |page_num, _| page_num }
-        extra_pdf = CombinePDF.new
-        cover_pdf = CombinePDF.new
+        extra_pdf = Magick::ImageList.new
+        cover_pdf = Magick::ImageList.new
         start_page = 0
         if extra_pages[0][0] == 1
-          cover_pdf << extra_pages[0][1]
+          cover_pdf.push extra_pages[0][1]
           start_page = 1
         end
-        extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
+        extra_pdf += extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
-                extra_pdf.to_pdf,
+                ( extra_pdf.blank? ? '' : extra_pdf.to_blob ),
                 'application/pdf'
         )
         txn.add(File.join(assignment_folder,
                           "COVER.pdf"),
-                cover_pdf.to_pdf,
+                ( cover_pdf.blank? ? '' : cover_pdf.to_blob ),
                 'application/pdf'
         )
         repo.commit(txn)
