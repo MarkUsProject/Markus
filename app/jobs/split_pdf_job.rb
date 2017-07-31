@@ -31,7 +31,7 @@ class SplitPDFJob < ActiveJob::Base
 
       basename = File.basename path, '.pdf'
       filename = original_filename.nil? ? basename : File.basename(original_filename)
-      pdf = (Magick::ImageList.new(path) { self.density = 125 })
+      pdf = Magick::ImageList.new(path) #{ self.density = 100 }
       num_pages = pdf.length
 
       # creating an instance of split_pdf_log
@@ -172,7 +172,7 @@ class SplitPDFJob < ActiveJob::Base
           end
           txn.add(File.join(assignment_folder,
                             "#{division.label}.pdf"),
-                  new_pdf.to_blob,
+                  ( new_pdf.blank? ? '' : new_pdf.to_blob ),
                   'application/pdf'
           )
         end
@@ -194,12 +194,12 @@ class SplitPDFJob < ActiveJob::Base
         extra_pdf += extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
-                extra_pdf.to_blob,
+                ( extra_pdf.blank? ? '' : extra_pdf.to_blob ),
                 'application/pdf'
         )
         txn.add(File.join(assignment_folder,
                           "COVER.pdf"),
-                cover_pdf.to_blob,
+                ( cover_pdf.blank? ? '' : cover_pdf.to_blob ),
                 'application/pdf'
         )
         repo.commit(txn)
