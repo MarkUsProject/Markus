@@ -192,9 +192,11 @@ class SplitPDFJob < ActiveJob::Base
         extra_pdf = CombinePDF.new
         cover_pdf = CombinePDF.new
         start_page = 0
-        if extra_pages[0][0] == 1
-          cover_pdf << extra_pages[0][1]
-          start_page = 1
+        unless extra_pages[0][0].nil? || extra_pages[0][1].nil?
+          if extra_pages[0][0] == 1
+            cover_pdf << extra_pages[0][1]
+            start_page = 1
+          end
         end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
