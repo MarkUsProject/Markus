@@ -60,6 +60,27 @@
       rotate();
     });
 
+    $('#copy_number').on('keydown', function () {
+      $('#page_number').empty();
+      $.ajax({
+        method: 'GET',
+        url: 'error_pages',
+        dataType: 'text',
+        data: {
+          assignment_id: <%= @assignment.id %>
+          group_id: $('#copy_number').val();
+        },
+          success: function (data) {
+          for (var i = 0; i < 10; i++) {
+          $('#page_number').append('<option>' + i + '</option>')
+        }
+        },
+          error: function (err) {
+          console.log(err);
+        }
+      });
+    });
+
     $('form').submit(function(e) {
       e.preventDefault();
       // grabbing existing user input data such as copy number, page number, and exam template
@@ -90,4 +111,33 @@
   });
 
   getFile(files[0]);
+
+  var error_groups = [];
+
+  function fetch_error_groups() {
+    $.ajax({
+      method: 'GET',
+      url: 'error_groups',
+      dataType: 'json',
+      data: {
+        assignment_id: <%= @assignment.id %>
+      },
+      success: function (data) {
+//        alert(data);
+        $('#copy_number').autocomplete({
+          source: data,
+          minLength: 0,
+          select: function() {
+            $(this).trigger('keydown');
+          }
+        }).focus(function(){
+          $(this).autocomplete('search');
+        });
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  }
+  fetch_error_groups();
 </script>

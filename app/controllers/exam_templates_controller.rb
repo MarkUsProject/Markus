@@ -146,10 +146,33 @@ class ExamTemplatesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
-    Dir.foreach(File.join(@exam_template.base_path, 'error')) do |file|
-      @error_files << file unless file =~ /^\.\.?$/
+    error_path = File.join(@exam_template.base_path, 'error')
+    if(File.directory?(error_path))
+      Dir.foreach(error_path) do |file|
+        @error_files << file unless file =~ /^\.\.?$/
+      end
+      @error_files = @error_files.sort
     end
-    @error_files = @error_files.sort
+  end
+
+  def error_groups
+    @assignment = Assignment.find(params[:assignment_id])
+    exam_templates = @assignment.exam_templates
+    @incomplete_groups = []
+    exam_templates.each do |template|
+      incomplete_path = File.join(template.base_path, 'incomplete')
+      if(File.directory?(incomplete_path))
+        Dir.foreach(incomplete_path) do |file|
+          @incomplete_groups << file unless file =~ /^\.\.?$/
+        end
+      end
+    end
+    render json: @incomplete_groups
+  end
+
+  def error_pages
+    @assignment = Assignment.find(params[:assignment_id])
+    render text: 'test'
   end
 
   def download_error_file

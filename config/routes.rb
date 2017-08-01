@@ -101,6 +101,8 @@ Markus::Application.routes.draw do
           get 'assign_errors'
           get 'download_error_file'
           get 'download_error_file_path'
+          get 'error_groups'
+          get 'error_pages'
           patch 'generate'
           patch 'split'
           post 'fix_error'
