@@ -565,6 +565,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         is_hidden: "Ocultar Planilha"
 
     no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
+    no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
     current_grade_entry_forms_title: "Planilha atual de notas"
     spreadsheet_item: "Notas nas planilhas"
     spreadsheet_date: "Data"
@@ -661,6 +662,18 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     mark:
       error:
         validate_criteria: "deve ser entre 0 e a nota máxima do critério"
+
+    #app/views/course_summaries/_course_summary.html.erb
+    course_summary_link: "Resumo do curso"
+
+    #app/views/main/_summary.erb
+    course_summary_link: "Resumo do curso"
+
+    #app/views/course_summaries/_course_summary_info_summary.html.erb
+    marking_scheme_with_id: "Esquema de marcação %{marking_scheme_id}"
+    course_summary_weighted_average: "Média da classe ponderada:"
+    percentage: "%{percentage}%"
+    course_summary_weighted_median: "Mediana da classe ponderada:"
 
     # Student's View (admin)
     students:

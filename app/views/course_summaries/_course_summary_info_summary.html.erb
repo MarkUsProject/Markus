@@ -1,0 +1,21 @@
+<% unless marking_scheme.nil? %>
+  <p class="due_date">
+    <%= t(:marking_scheme_with_id, marking_scheme_id: marking_scheme.id) %>
+  </p>
+
+  <table>
+    <tr>
+      <td><%= t(:course_summary_weighted_average) %></td>
+      <td>
+        <%= t(:percentage, percentage: number_with_precision(grades.mean, precision: 1) || '0') %>
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= t(:course_summary_weighted_median) %></td>
+      <td>
+        <%= t(:percentage, percentage: number_with_precision(grades.median, precision: 1) || '0') %>
+      </td>
+    </tr>
+  </table>
+<% end %>
