@@ -1,0 +1,24 @@
+<div class='section'>
+  <% if @grade_entry_forms.empty? && @assignments.empty? %>
+      <p><%= t(:no_assignments_and_grade_entry_forms_message) %></p>
+  <% else %>
+    <div class="table">
+      <table>
+        <thead>
+        <tr>
+          <th><%= t(:name) %></th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <%= link_to I18n.t(:course_summary_link),
+                          view_summary_course_summaries_path,
+                          data: { remote: true } %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
