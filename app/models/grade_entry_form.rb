@@ -7,6 +7,8 @@ require 'histogram/array'
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
+  attr_accessor             :released_grades_array
+  attr_accessor             :grades_array
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy
@@ -43,45 +45,44 @@ class GradeEntryForm < ActiveRecord::Base
   end
 
   # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(grade_entry_student)
-    unless grade_entry_student.nil?
-      total = grade_entry_student.total_grade
-    end
+  def calculate_total_percent(grade_entry_student, grades)
+    total_grade = grade_entry_student.total_grade
 
-    percent = BLANK_MARK
-    out_of = self.out_of_total
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
+    if !total_grade.nil?
+      grades.push(total_grade / out_of_total * 100)
     end
-    percent
   end
 
   # An array of all grade_entry_students' released percentage total grades that are not nil
   def released_percentage_grades_array
     grades = Array.new()
-    grade_entry_students = self.grade_entry_students
-                             .where(released_to_student: true)
-    grade_entry_students.each do |grade_entry_student|
-      if !grade_entry_student.total_grade.nil?
-        grades.push(calculate_total_percent(grade_entry_student))
+    ges = GradeEntryStudent.includes(grades: :grade_entry_item).where(released_to_student: true)
+
+    ges.each do |grade_entry_student|
+      if !grade_entry_student.nil? && out_of_total > 0
+        calculate_total_percent(grade_entry_student, grades)
       end
     end
 
-    return grades
+    self.released_grades_array = grades
+
+    grades
   end
 
   # An array of all grade_entry_students' percentage total grades that are not nil
   def percentage_grades_array
-    grades = Array.new
-    grade_entry_students.each do |grade_entry_student|
-      if !grade_entry_student.total_grade.nil? && out_of_total > 0
-        grades.push(calculate_total_percent(grade_entry_student))
+    grades = Array.new()
+    ges = GradeEntryStudent.includes(grades: :grade_entry_item)
+
+    ges.each do |grade_entry_student|
+      if !grade_entry_student.nil? && out_of_total > 0
+        calculate_total_percent(grade_entry_student, grades)
       end
     end
 
-    return grades
+    self.grades_array = grades
+
+    grades
   end
 
   # Returns grade distribution for a grade entry form for all students
@@ -99,32 +100,32 @@ class GradeEntryForm < ActiveRecord::Base
   # released so far (return a percentage).
   def calculate_released_average
     percentage_grades = released_percentage_grades_array
-    percentage_grades.blank? ? 0 :  percentage_grades.mean
+    percentage_grades.blank? ? 0 : percentage_grades.mean
   end
 
   # Determine the median of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_median
-    released_percentage_grades_array.median
+    released_grades_array.blank? ? 0 : released_grades_array.median
   end
 
   # Determine the number of grade_entry_forms that have been released
   def calculate_released_grade_entry_forms
-    released_percentage_grades_array.count
+    released_grades_array.blank? ? 0 : released_grades_array.count
   end
 
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted
-    return percentage_grades_array.number.round
+    grades_array.number.round
   end
 
   def calculate_released_failed
-    return released_percentage_grades_array.count { |mark| mark < 50 }
+    released_grades_array.blank? ? 0 : released_grades_array.count { |mark| mark < 50 }
   end
 
   def calculate_released_zeros
-    return released_percentage_grades_array.count(&:zero?)
+    released_grades_array.blank? ? 0 : released_grades_array.count(&:zero?)
   end
 
   # Create grade_entry_student for each student in the course
