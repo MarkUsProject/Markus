@@ -60,25 +60,27 @@
       rotate();
     });
 
-    $('#copy_number').on('keydown', function () {
-      $('#page_number').empty();
-      $.ajax({
-        method: 'GET',
-        url: 'error_pages',
-        dataType: 'text',
-        data: {
-          assignment_id: <%= @assignment.id %>
-          group_id: $('#copy_number').val();
-        },
-          success: function (data) {
-          for (var i = 0; i < 10; i++) {
-          $('#page_number').append('<option>' + i + '</option>')
+    $('#copy_number').on('keyup', function () {
+      if($(this).val() !== ""){
+        $('#page_number').empty();
+        $.ajax({
+          method: 'GET',
+          url: 'error_pages',
+          dataType: 'text',
+          data: {
+          exam_number: $('#copy_number').val()
+          },
+            success: function (data) {
+            console.log("TEST" + data);
+            for (var i = 0; i < 10; i++) {
+            $('#page_number').append('<option>' + i + '</option>')
+          }
+          },
+            error: function (err) {
+            console.log(err);
         }
-        },
-          error: function (err) {
-          console.log(err);
-        }
-      });
+        });
+      }
     });
 
     $('form').submit(function(e) {
@@ -128,7 +130,7 @@
           source: data,
           minLength: 0,
           select: function() {
-            $(this).trigger('keydown');
+            $(this).trigger('keyup');
           }
         }).focus(function(){
           $(this).autocomplete('search');
