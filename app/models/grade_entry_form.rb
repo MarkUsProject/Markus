@@ -117,7 +117,7 @@ class GradeEntryForm < ActiveRecord::Base
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted
-    grades_array.number.round
+    grades_array.blank? ? 0 : grades_array.number.round
   end
 
   def calculate_released_failed
