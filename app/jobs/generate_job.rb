@@ -35,7 +35,7 @@ class GenerateJob < ActiveJob::Base
         pdf = Prawn::Document::new(margin: 20) do
           exam_template.num_pages.times do |page_num|
             qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
-            qrcode = RQRCode::QRCode.new qrcode_content, level: :m, size: 5
+            qrcode = RQRCode::QRCode.new qrcode_content, level: :h, size: 4
             alignment = page_num % 2 == 0 ? :right : :left
             text = "#{exam_template.name} #{exam_num}-#{page_num + 1}"
             if alignment == :right
