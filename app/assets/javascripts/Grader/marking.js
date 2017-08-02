@@ -60,13 +60,12 @@ $(document).ready(function() {
         type: 'POST',
         data: params,
         beforeSend: function () {
-          document.getElementById('mark_verify_result_' + mark_id)
-                  .style.display = 'none';
+          document.getElementById('mark_verify_result_' + mark_id).addClass('hidden');
         },
         error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
-          error_div.style.display = '';
+          error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },
         success: function(data) {
@@ -102,11 +101,11 @@ $(document).ready(function() {
         type: 'POST',
         data: params,
         beforeSend: function() {
-          document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
+          document.getElementById('mark_verify_result_' + mark_id).addClass('hidden');
         },
         error: function(err) {
           var error_div = document.getElementById('mark_verify_result_' + mark_id);
-          error_div.style.display = '';
+          error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },
         success: function(data) {

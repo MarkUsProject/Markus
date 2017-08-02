@@ -1,5 +1,5 @@
 /** @jsx React.DOM */
-
+if (typeof React !== 'undefined') {
 /* This is the component that implements a filterable,
  * sortable, and searchable table.
  *
@@ -643,3 +643,4 @@ function sort_by_column(data, column, direction, compare) {
   });
 }
 
+}  // End React-undefined if

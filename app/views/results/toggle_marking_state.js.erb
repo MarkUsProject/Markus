@@ -1,5 +1,5 @@
 <%# Hide error message (if any) %>
-document.getElementById('criterion_incomplete_error').style.display = 'none';
+document.getElementById('criterion_incomplete_error').addClass('hidden');
 <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
   var revert = "<%= t('marker.revert_to_incomplete') %>";
   document.getElementById('toggle_marking_state').firstChild.value = revert;

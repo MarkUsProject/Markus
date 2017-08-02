@@ -93,6 +93,10 @@ strong a {
   border: 1px solid $red;
 }
 
+.error.hidden {
+  background: none;
+}
+
 .warning {
   @extend .alert;
   background: $light-yellow url(icons/error.png) no-repeat 5px center;
