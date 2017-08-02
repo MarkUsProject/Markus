@@ -373,7 +373,9 @@ function hide_criterion(id, criterion_class) {
     criterionPrefix = 'checkbox';
   }
 
-  document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  if (document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand')) {
+    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  }
 
   if (nodeToHide !== null) {
     nodeToHide.removeClass('expanded');
