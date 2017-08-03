@@ -52,6 +52,7 @@ end
 AnnotationText.blueprint do
   annotation_category {AnnotationCategory.make}
   content {'content'}
+  user {Admin.make}
 end
 
 Assignment.blueprint do
@@ -348,7 +349,6 @@ TextAnnotation.blueprint do
   is_remark { false }
   annotation_text
       AnnotationText.make(
-          user: Admin.make,
           annotation_category: AnnotationCategory.make(
               assignment: submission_file.submission.grouping.assignment))
   annotation_number { rand(1000) + 1 }

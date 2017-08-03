@@ -884,7 +884,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(assignment: @assignment)
             @submission = Submission.make(grouping: g)
             @file = SubmissionFile.make(submission: @submission)
-            annotation = TextAnnotation.make(submission_file_id: @file.id, user: Admin.make)
+            annotation = TextAnnotation.make(submission_file_id: @file.id)
             SubmissionFile.stubs(:find).returns(@file)
             @result = Result.make
           end
