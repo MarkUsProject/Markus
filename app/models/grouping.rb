@@ -32,7 +32,10 @@ class Grouping < ActiveRecord::Base
            class_name: 'Student',
            through: :student_memberships,
            source: :user
-
+  has_many :accepted_students,
+           class_name: 'Student',
+           through: :accepted_student_memberships,
+           source: :user
   has_many :submissions
   has_one :current_submission_used,
           -> { where submission_version_used: true },
@@ -162,12 +165,6 @@ class Grouping < ActiveRecord::Base
         WHERE assignment_id = #{assignment.id}
           #{"AND id IN (#{grouping_ids_str})" unless grouping_ids_str.empty?}
     UPDATE_SQL
-  end
-
-  def accepted_students
-    self.accepted_student_memberships.includes(user: :grace_period_deductions).collect do |memb|
-      memb.user
-    end
   end
 
   def get_all_students_in_group

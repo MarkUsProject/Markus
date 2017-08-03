@@ -923,7 +923,8 @@ class AssignmentsController < ApplicationController
     assignment.update_attributes(assignment_params)
 
     # if there are no section due dates, destroy the objects that were created
-    if params[:assignment][:section_due_dates_type] == '0'
+    if params[:assignment][:section_due_dates_type].nil? ||
+        params[:assignment][:section_due_dates_type] == '0'
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
