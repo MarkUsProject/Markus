@@ -85,7 +85,14 @@ Mousetrap.bind('shift+n', function(e) {
 });
 
 // When mod+enter is pressed and the annotation modal is open, submit it
-Mousetrap.bind('mod+enter', function(e) {
+var _oldStopCallback = Mousetrap.prototype.stopCallback;
+Mousetrap.prototype.stopCallback = function(e, element, combo) {
+  if (combo === 'mod+enter') {
+    return element !== $('#new_annotation_content')[0];
+  }
+  return _oldStopCallback(e, element, combo);
+}
+Mousetrap().bind('mod+enter', function(e) {
   if ($('#annotation_dialog:visible').length) {
     e.preventDefault();
     $('#submit_annotation').click();
