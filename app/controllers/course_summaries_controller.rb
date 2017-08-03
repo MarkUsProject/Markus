@@ -21,6 +21,13 @@ class CourseSummariesController < ApplicationController
     end
   end
 
+  def view_summary
+    @assignments = Assignment.all
+    @marking_schemes = MarkingScheme.all
+    @marking_weights = MarkingWeight.all
+    @grade_entry_forms = GradeEntryForm.all
+  end
+
   def get_marking_scheme_details
     redirect_to url_for(controller: 'marking_schemes', action: 'populate')
   end
