@@ -372,14 +372,14 @@ module AutomatedTestsClientHelper
     files_path = MarkusConfigurator.markus_ate_server_files_dir
     results_path = MarkusConfigurator.markus_ate_server_results_dir
     file_username = MarkusConfigurator.markus_ate_server_files_username
-    test_username = tests_config.user
+    test_username = tests_config[:user]
     if test_server_host == 'localhost' || file_username == test_username
       test_username = nil
     end
-    server_queue = "queue:#{tests_config.queue}"
+    server_queue = "queue:#{tests_config[:queue]}"
     resque_params = {:class => 'AutomatedTestsServer',
                      :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
-                               'files_path_placeholder', tests_config.dir, results_path, assignment.id, group.id,
+                               'files_path_placeholder', tests_config[:dir], results_path, assignment.id, group.id,
                                group.repo_name, submission_id]}
 
     begin

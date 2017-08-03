@@ -259,8 +259,8 @@ Markus::Application.configure do
   ATE_SERVER_FILES_USERNAME = 'localhost'
   ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/test/automated_tests/files"
   ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/test/automated_tests/test_runs"
-  ATETest = Struct.new(:user, :dir, :queue)
-  ATE_SERVER_TESTS = [ATETest.new('localhost', "#{::Rails.root.to_s}/data/test/automated_tests/tests", 'ate_tests')]
+  ATE_SERVER_TESTS = [
+    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/test/automated_tests/tests", queue: 'ate_tests'}]
 
   ###################################################################
   # Exam Plugin settings

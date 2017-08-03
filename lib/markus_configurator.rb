@@ -296,7 +296,7 @@ module MarkusConfigurator
     if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS)
       ATE_SERVER_TESTS
     else
-      [ATETest.new('localhost', File.join(::Rails.root.to_s, 'automated_tests', 'tests'), 'ate_tests')]
+      [{user: 'localhost', dir: File.join(::Rails.root.to_s, 'automated_tests', 'tests'), queue: 'ate_tests'}]
     end
   end
 
