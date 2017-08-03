@@ -153,19 +153,13 @@ class ExamTemplatesController < ApplicationController
       end
       @error_files = @error_files.sort
     end
-  end
-
-  def error_groups
-    @assignment = Assignment.find(params[:assignment_id])
-    exam_template = @assignment.exam_templates.find(params[:id])
-    incomplete_path = File.join(exam_template.base_path, 'incomplete')
-    incomplete_groups = []
+    incomplete_path = File.join(@exam_template.base_path, 'incomplete')
+    @incomplete_groups = []
     if(File.directory?(incomplete_path))
       Dir.foreach(incomplete_path) do |file|
-        incomplete_groups << file unless file =~ /^\.\.?$/
+        @incomplete_groups << file unless file =~ /^\.\.?$/
       end
     end
-    render json: incomplete_groups
   end
 
   def error_pages

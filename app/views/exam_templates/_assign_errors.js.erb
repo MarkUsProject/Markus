@@ -93,21 +93,11 @@
 
     var error_groups = [];
 
-    $.ajax({
-      method: 'GET',
-      url: 'error_groups',
-      dataType: 'json',
-      success: function (data) {
-        $('#copy_number').autocomplete({
-          source: data,
-          minLength: 0,
-          select: function (e, ui) {
-            getPages(ui.item.value);
-          }
-        })
-      },
-      error: function (err) {
-        console.log(err);
+    $('#copy_number').autocomplete({
+      source: <%= raw @incomplete_groups.to_json %>,
+      minLength: 0,
+      select: function (e, ui) {
+        getPages(ui.item.value);
       }
     });
 
