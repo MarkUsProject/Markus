@@ -182,7 +182,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
 
         should 'have 3 pdfs in error directory' do
           error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
-          assert_equal error_dir_entries.length, 3
+          assert_equal error_dir_entries.length, 2
         end
       end
 
