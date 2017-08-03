@@ -287,7 +287,7 @@ module AutomatedTestsClientHelper
     return true
   end
 
-  def self.create_test_script_result(script_name, assignment, grouping, submission, requested_by)
+  def self.create_test_script_result(script_name, assignment, grouping, submission, requested_by, time)
     revision_identifier = submission.nil? ?
         grouping.group.repo.get_latest_revision.revision_identifier :
         submission.revision_identifier
@@ -299,13 +299,14 @@ module AutomatedTestsClientHelper
         submission_id: submission_id,
         marks_earned: 0,
         repo_revision: revision_identifier,
-        requested_by_id: requested_by.id)
+        requested_by_id: requested_by.id,
+        time: time)
   end
 
   def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
                                                 result_name, result_message)
     test_scripts.each do |script_name|
-      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by)
+      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0)
       add_test_error_result(test_script_result, result_name, result_message)
       test_script_result.save
     end
@@ -451,8 +452,13 @@ module AutomatedTestsClientHelper
       if script_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
         next
       end
+      time = test_script['time']
+      if time.nil?
+        time = 0
+      end
       total_marks = 0
-      new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by)
+      new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
+                                                         time)
       new_test_script_results[script_name] = new_test_script_result
       tests = test_script['test']
       if tests.nil?
@@ -490,7 +496,8 @@ module AutomatedTestsClientHelper
     # try to recover from malformed xml at the test script level
     test_scripts_ran.each do |script_name|
       if new_test_script_results[script_name].nil?
-        new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by)
+        new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
+                                                           0)
         add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
                               I18n.t('automated_tests.test_result.bad_results', {xml: result}))
       end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170710203836) do
+ActiveRecord::Schema.define(version: 20170803155637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -566,6 +566,7 @@ ActiveRecord::Schema.define(version: 20170710203836) do
     t.datetime "updated_at"
     t.integer  "submission_id"
     t.integer  "requested_by_id"
+    t.integer  "time",            limit: 8, null: false
   end
 
   add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree
