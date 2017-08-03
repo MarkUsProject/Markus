@@ -94,7 +94,7 @@ Mousetrap.prototype.stopCallback = function(e, element, combo) {
 }
 
 // When mod+enter is pressed and the annotation modal is open, submit it
-Mousetrap().bind('mod+enter', function(e) {
+Mousetrap.bind('mod+enter', function(e) {
   if ($('#annotation_dialog:visible').length) {
     e.preventDefault();
     $('#submit_annotation').click();
