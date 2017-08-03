@@ -226,7 +226,7 @@ module AutomatedTestsClientHelper
   end
 
   # Verify that MarkUs has test scripts to run the test and get them.
-  def self.get_test_scripts_and_timeouts(assignment, user)
+  def self.get_test_scripts(assignment, user)
 
     # No test directory or test files
     test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
@@ -238,11 +238,11 @@ module AutomatedTestsClientHelper
     if user.admin?
       test_scripts = assignment.instructor_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name, :timeout)
+                               .pluck_to_hash(:script_name, :timeout)
     elsif user.student?
       test_scripts = assignment.student_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name, :timeout)
+                               .pluck_to_hash(:script_name, :timeout)
     else
       test_scripts = []
     end
@@ -261,9 +261,7 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.not_enabled')
     end
     test_server_user = get_test_server_user
-    scripts_timeouts = get_test_scripts_and_timeouts(assignment, current_user)
-    test_scripts = scripts_timeouts.map { |st| st[0] }
-    test_timeouts = scripts_timeouts.map { |st| st[1] }
+    test_scripts = get_test_scripts(assignment, current_user)
     check_user_permission(current_user, grouping)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
@@ -272,7 +270,7 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, submission)
-    Resque.enqueue(AutomatedTestsClientHelper, host_with_port, test_scripts, test_timeouts, current_user.api_key,
+    Resque.enqueue(AutomatedTestsClientHelper, host_with_port, test_scripts, current_user.api_key,
                    test_server_user.api_key, grouping_id, submission_id)
   end
 
@@ -332,8 +330,7 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, test_scripts, test_timeouts, user_api_key, server_api_key, grouping_id,
-                   submission_id)
+  def self.perform(host_with_port, test_scripts, user_api_key, server_api_key, grouping_id, submission_id)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -369,7 +366,7 @@ module AutomatedTestsClientHelper
         nil : MarkusConfigurator.markus_ate_server_tests_username
     server_queue = "queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
     resque_params = {:class => 'AutomatedTestsServer',
-                     :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts, test_timeouts,
+                     :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
                                'files_path_placeholder', tests_path, results_path, assignment.id, group.id, group.repo_name,
                                submission_id]}
 
