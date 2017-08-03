@@ -180,9 +180,9 @@ class SplitPDFJobTest < ActiveJob::TestCase
           assert @split_pdf_log.num_pages_qr_scan_error >= 1
         end
 
-        should 'have 3 pdfs in error directory' do
+        should 'have 2 pdfs in error directory' do
           error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
-          assert_equal error_dir_entries.length, 3
+          assert_equal error_dir_entries.length, 2
         end
       end
 

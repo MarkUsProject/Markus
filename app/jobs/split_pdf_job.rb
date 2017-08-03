@@ -45,7 +45,7 @@ class SplitPDFJob < ActiveJob::Base
         user: current_user
       )
 
-      progress.total = pdf.pages.length
+      progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
@@ -60,7 +60,7 @@ class SplitPDFJob < ActiveJob::Base
         new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{split_page.id}.pdf")).first
+        img = Magick::Image.from_blob(new_page.to_pdf).first
         qr_img = img.crop 0, 10, img.columns, img.rows / 5
         qr_img.write File.join(raw_dir, "#{split_page.id}.png")
 
