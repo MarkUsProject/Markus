@@ -45,7 +45,7 @@ class SplitPDFJob < ActiveJob::Base
         user: current_user
       )
 
-      progress.total = pdf.pages.length
+      progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
       end
@@ -58,27 +58,23 @@ class SplitPDFJob < ActiveJob::Base
         new_page = CombinePDF.new
         new_page << page
         new_page.save File.join(raw_dir, "#{split_page.id}.pdf")
+        original_pdf = File.open(File.join(raw_dir, "#{split_page.id}.pdf"), 'rb').read
 
         # Snip out the part of the PDF that contains the QR code.
-        img = Magick::Image::read(File.join(raw_dir, "#{split_page.id}.pdf")).first
-        qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-
-        # Snip out the top left corner of PDF that contains the QR code
-        top_left_qr_img = img.crop 0, 10, img.columns / 4.5, img.rows / 5.7
-        left_qr_code_string = ZXing.decode top_left_qr_img.to_blob
-        left_m = qrcode_regex.match left_qr_code_string
-        unless left_m.nil?
-          m = left_m
-          top_left_qr_img.write File.join(raw_dir, "#{split_page.id}.png")
-        else # if parsing fails, try the top right corner of the PDF
-          top_right_qr_img = img.crop 470, 10, img.columns / 4.5, img.rows / 5.7
-          right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
-          right_m = qrcode_regex.match right_qr_code_string
-          m = right_m
-          top_right_qr_img.write File.join(raw_dir, "#{split_page.id}.png")
+        Magick::Image.from_blob(original_pdf) do
+          self.quality = 100
+          self.density = '300'
+        end.each_with_index do |img, i|
+          img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
+          cropped_qr_img = img.crop 0, 30, img.columns, img.rows / 5
+          cropped_qr_img.write(File.join(raw_dir, "crop-#{split_page.id}.jpg"))
         end
-
+        blob = File.open(File.join(raw_dir, "crop-#{split_page.id}.jpg"), 'rb').read
+        qrcode_string = ZXing.decode blob
+        qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+        m = qrcode_regex.match qrcode_string
         status = ''
+
         if m.nil?
           new_page.save File.join(error_dir, "#{split_page.id}.pdf")
           num_pages_qr_scan_error += 1
@@ -202,10 +198,10 @@ class SplitPDFJob < ActiveJob::Base
         extra_pdf = CombinePDF.new
         cover_pdf = CombinePDF.new
         start_page = 0
-        if extra_pages[0][0] == 1
-          cover_pdf << extra_pages[0][1]
-          start_page = 1
-        end
+       # if extra_pages[0][0] == 1
+       #   cover_pdf << extra_pages[0][1]
+       #   start_page = 1
+       # end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
@@ -222,7 +218,7 @@ class SplitPDFJob < ActiveJob::Base
     end
     groupings.each do |grouping|
       grouping.group.access_repo do |repo|
-        SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
+        #SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
       end
     end
   end
