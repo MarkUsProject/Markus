@@ -61,18 +61,31 @@ class SplitPDFJob < ActiveJob::Base
         original_pdf = File.open(File.join(raw_dir, "#{split_page.id}.pdf"), 'rb').read
 
         # Snip out the part of the PDF that contains the QR code.
-        Magick::Image.from_blob(original_pdf) do
-          self.quality = 100
-          self.density = '300'
-        end.each_with_index do |img, i|
-          img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-          cropped_qr_img = img.crop 0, 30, img.columns, img.rows / 5
-          cropped_qr_img.write(File.join(raw_dir, "crop-#{split_page.id}.jpg"))
+        imglist = Magick::Image.from_blob(original_pdf) do
+          self.quality = 90
+          self.density = '83'
         end
-        blob = File.open(File.join(raw_dir, "crop-#{split_page.id}.jpg"), 'rb').read
-        qrcode_string = ZXing.decode blob
+        imglist.each do |img|
+          # Snip out the top left corner of PDF that contains the QR code
+          top_left_qr_img = img.crop 20, 35, img.columns / 4.0, img.rows / 5.0
+          top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
+        end
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-        m = qrcode_regex.match qrcode_string
+        blob = File.open(File.join(raw_dir, "#{split_page.id}.jpg"), 'rb').read
+        left_qr_code_string = ZXing.decode blob
+        left_m = qrcode_regex.match left_qr_code_string
+        unless left_m.nil?
+          m = left_m
+        else # if parsing fails, try the top right corner of the PDF
+          imglist.each do |img|
+            # Snip out the top left corner of PDF that contains the QR code
+            top_right_qr_img = img.crop 490, 35, img.columns / 4.0, img.rows / 5.0
+            top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
+            right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
+            right_m = qrcode_regex.match right_qr_code_string
+            m = right_m
+          end
+        end
         status = ''
 
         if m.nil?
