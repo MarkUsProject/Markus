@@ -379,9 +379,9 @@ module AutomatedTestsClientHelper
         FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
         FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
         # enqueue locally using redis api
-        resque_params[:args][6] = files_path
+        resque_params[:args][5] = files_path
         if same_path
-          resque_params[:args][7] = files_path
+          resque_params[:args][6] = files_path
         end
         Resque.redis.rpush(server_queue, JSON.generate(resque_params))
       else
@@ -403,9 +403,9 @@ module AutomatedTestsClientHelper
             ssh.scp.upload!(file_path, files_path)
           end
           # enqueue remotely directly with redis-cli, resque does not allow for multiple redis servers
-          resque_params[:args][6] = files_path
+          resque_params[:args][5] = files_path
           if same_path
-            resque_params[:args][7] = files_path
+            resque_params[:args][6] = files_path
           end
           ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
