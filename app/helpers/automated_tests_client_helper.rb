@@ -226,7 +226,7 @@ module AutomatedTestsClientHelper
   end
 
   # Verify that MarkUs has test scripts to run the test and get them.
-  def self.get_test_scripts(assignment, user)
+  def self.get_test_scripts_and_timeouts(assignment, user)
 
     # No test directory or test files
     test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
@@ -238,11 +238,11 @@ module AutomatedTestsClientHelper
     if user.admin?
       test_scripts = assignment.instructor_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name)
+                               .pluck(:script_name, :timeout)
     elsif user.student?
       test_scripts = assignment.student_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name)
+                               .pluck(:script_name, :timeout)
     else
       test_scripts = []
     end
@@ -261,7 +261,9 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.not_enabled')
     end
     test_server_user = get_test_server_user
-    test_scripts = get_test_scripts(assignment, current_user)
+    scripts_timeouts = get_test_scripts_and_timeouts(assignment, current_user)
+    test_scripts = scripts_timeouts.map { |st| st[0] }
+    test_timeouts = scripts_timeouts.map { |st| st[1] }
     check_user_permission(current_user, grouping)
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
@@ -270,7 +272,7 @@ module AutomatedTestsClientHelper
     repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, submission)
-    Resque.enqueue(AutomatedTestsClientHelper, host_with_port, test_scripts, current_user.api_key,
+    Resque.enqueue(AutomatedTestsClientHelper, host_with_port, test_scripts, test_timeouts, current_user.api_key,
                    test_server_user.api_key, grouping_id, submission_id)
   end
 
@@ -330,7 +332,8 @@ module AutomatedTestsClientHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(host_with_port, test_scripts, user_api_key, server_api_key, grouping_id, submission_id)
+  def self.perform(host_with_port, test_scripts, test_timeouts, user_api_key, server_api_key, grouping_id,
+                   submission_id)
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -366,7 +369,7 @@ module AutomatedTestsClientHelper
         nil : MarkusConfigurator.markus_ate_server_tests_username
     server_queue = "queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
     resque_params = {:class => 'AutomatedTestsServer',
-                     :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
+                     :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts, test_timeouts,
                                'files_path_placeholder', tests_path, results_path, assignment.id, group.id, group.repo_name,
                                submission_id]}
 
@@ -379,9 +382,9 @@ module AutomatedTestsClientHelper
         FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
         FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
         # enqueue locally using redis api
-        resque_params[:args][5] = files_path
+        resque_params[:args][6] = files_path
         if same_path
-          resque_params[:args][6] = files_path
+          resque_params[:args][7] = files_path
         end
         Resque.redis.rpush(server_queue, JSON.generate(resque_params))
       else
@@ -403,9 +406,9 @@ module AutomatedTestsClientHelper
             ssh.scp.upload!(file_path, files_path)
           end
           # enqueue remotely directly with redis-cli, resque does not allow for multiple redis servers
-          resque_params[:args][5] = files_path
+          resque_params[:args][6] = files_path
           if same_path
-            resque_params[:args][6] = files_path
+            resque_params[:args][7] = files_path
           end
           ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
