@@ -7,6 +7,8 @@
 
   function getFile(filename) {
     checkLastFile();
+    $('#copy_number').val('')
+    $('#page_number').empty()
     $.ajax({
       method: 'GET',
       url: 'download_error_file_path',
@@ -55,35 +57,61 @@
     }
   }
 
+  function getPages(value) {
+    $('#page_number').empty();
+    if(value !== null){
+      $.ajax({
+        method: 'GET',
+        url: 'error_pages',
+        dataType: 'json',
+        data: {
+          exam_number: value
+        },
+        success: function (data) {
+          $('#page_number').append('<option disabled selected value></option>');
+          data.forEach(function(page) {
+            $('#page_number').append('<option>' + page + '</option>');
+          });
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      });
+    }
+  }
+
   $(document).ready(function () {
     $('#upside_down').click(function () {
       rotate();
     });
 
     $('#copy_number').on('keyup', function () {
-      if($(this).val() !== ""){
-        $('#page_number').empty();
-        $.ajax({
-          method: 'GET',
-          url: 'error_pages',
-          dataType: 'text',
-          data: {
-          exam_number: $('#copy_number').val()
-          },
-            success: function (data) {
-            console.log("TEST" + data);
-            for (var i = 0; i < 10; i++) {
-            $('#page_number').append('<option>' + i + '</option>')
+      getPages($('#copy_number').val());
+    });
+
+    getFile(files[0]);
+
+    var error_groups = [];
+
+    $.ajax({
+      method: 'GET',
+      url: 'error_groups',
+      dataType: 'json',
+      success: function (data) {
+        $('#copy_number').autocomplete({
+          source: data,
+          minLength: 0,
+          select: function (e, ui) {
+            getPages(ui.item.value);
           }
-          },
-            error: function (err) {
-            console.log(err);
-        }
-        });
+        })
+      },
+      error: function (err) {
+        console.log(err);
       }
     });
 
-    $('form').submit(function(e) {
+    $('#info_form').submit(function(e) {
       e.preventDefault();
       // grabbing existing user input data such as copy number, page number, and exam template
       var fix_error = $(this).serializeArray().reduce(function(obj, item) {
@@ -103,7 +131,10 @@
           fix_error: fix_error
         },
         success: function (data) {
-          document.location.reload();
+          files.splice(index, 1);
+          index -= 1;
+          nextFile();
+          $('#copy_number').focus();
         },
         error: function (err) {
           console.log(err);
@@ -111,35 +142,4 @@
       })
     });
   });
-
-  getFile(files[0]);
-
-  var error_groups = [];
-
-  function fetch_error_groups() {
-    $.ajax({
-      method: 'GET',
-      url: 'error_groups',
-      dataType: 'json',
-      data: {
-        assignment_id: <%= @assignment.id %>
-      },
-      success: function (data) {
-//        alert(data);
-        $('#copy_number').autocomplete({
-          source: data,
-          minLength: 0,
-          select: function() {
-            $(this).trigger('keyup');
-          }
-        }).focus(function(){
-          $(this).autocomplete('search');
-        });
-      },
-      error: function (err) {
-        console.log(err);
-      }
-    });
-  }
-  fetch_error_groups();
 </script>
