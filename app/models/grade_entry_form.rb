@@ -45,13 +45,20 @@ class GradeEntryForm < ActiveRecord::Base
   end
 
   # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(grade_entry_student, grades)
+  def calculate_total_percent(grade_entry_student)
     unless grade_entry_student.nil?
-      total_grade = grade_entry_student.total_grade
-      if !total_grade.nil? && out_of_total > 0
-        grades.push(total_grade / out_of_total * 100)
-      end
+      total = grade_entry_student.total_grade
     end
+
+    percent = BLANK_MARK
+    out_of = self.out_of_total
+
+    # Check for NA mark or division by 0
+    unless total.nil? || out_of == 0
+      percent = (total / out_of) * 100
+    end
+
+    percent
   end
 
   # An array of all grade_entry_students' released percentage total grades that are not nil
@@ -60,7 +67,7 @@ class GradeEntryForm < ActiveRecord::Base
     ges = GradeEntryStudent.includes(grades: :grade_entry_item).where(released_to_student: true)
 
     ges.each do |grade_entry_student|
-      calculate_total_percent(grade_entry_student, grades)
+      grades.push(calculate_total_percent(grade_entry_student))
     end
 
     self.released_grades_array = grades
@@ -74,7 +81,7 @@ class GradeEntryForm < ActiveRecord::Base
     ges = GradeEntryStudent.includes(grades: :grade_entry_item)
 
     ges.each do |grade_entry_student|
-      calculate_total_percent(grade_entry_student, grades)
+      grades.push(calculate_total_percent(grade_entry_student))
     end
 
     self.grades_array = grades
