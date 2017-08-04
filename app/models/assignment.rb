@@ -883,11 +883,9 @@ class Assignment < ActiveRecord::Base
     groupings.includes(:current_result).map(&:current_result)
   end
 
-  # TODO: This is currently disabled until starter code is automatically added
-  # to groups.
+  # TODO Make it more robust, to accept uploads after groupings are created
   def can_upload_starter_code?
-    #groups.size == 0
-    false
+    groups.size == 0
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,
@@ -955,8 +953,9 @@ class Assignment < ActiveRecord::Base
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    if Repository.get_class(MarkusConfigurator.markus_config_repository_type).repository_exists?(repo_loc)
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type).open(repo_loc)
+    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    if repo_class.repository_exists?(repo_loc)
+      repo_class.open(repo_loc)
     else
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end
@@ -964,8 +963,9 @@ class Assignment < ActiveRecord::Base
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo
-    yield repo
-    repo.close()
+    repository = repo
+    yield repository
+    repository.close
   end
 
   ### /REPO ###

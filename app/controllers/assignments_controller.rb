@@ -772,7 +772,7 @@ class AssignmentsController < ApplicationController
           flash[:transaction_warning] =
               I18n.t('student.submission.no_action_detected')
           # can't use redirect_to here. See comment of this action for details.
-          set_filebrowser_vars(@grouping.group, @assignment)
+          set_filebrowser_vars(@assignment)
           render :file_manager, id: assignment_id
           return
         end
