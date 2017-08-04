@@ -46,16 +46,13 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
+    percent = BLANK_MARK
+
     unless grade_entry_student.nil?
       total = grade_entry_student.total_grade
-    end
-
-    percent = BLANK_MARK
-    out_of = self.out_of_total
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
+      unless total.nil? || out_of_total == 0
+        percent = (total / out_of_total) * 100
+      end
     end
 
     percent
