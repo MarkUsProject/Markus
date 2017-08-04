@@ -610,7 +610,7 @@ class Grouping < ActiveRecord::Base
         rescue
           # repo for starter code does not exist, just continue
         end
-        result
+        return result
       end
     end
   end
