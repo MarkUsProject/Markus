@@ -30,6 +30,9 @@
     if (files.length <= 1) {
       $('#next_file').addClass('disable');
       $('#previous_file').addClass('disable');
+      if (files.length == 0) {
+        $('#panes-content').remove();
+      }
       return true;
     }
     return false;

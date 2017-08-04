@@ -151,7 +151,11 @@ class ExamTemplatesController < ApplicationController
       Dir.foreach(error_path) do |file|
         @error_files << file unless file =~ /^\.\.?$/
       end
-      @error_files = @error_files.sort
+      if @error_files.empty?
+        flash_message(:success, t('groups.done_assign'))
+      else
+        @error_files = @error_files.sort
+      end
     end
     incomplete_path = File.join(@exam_template.base_path, 'incomplete')
     @incomplete_groups = []
