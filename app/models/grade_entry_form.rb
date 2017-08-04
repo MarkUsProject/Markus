@@ -63,7 +63,7 @@ class GradeEntryForm < ActiveRecord::Base
     grades = Array.new()
     ges = GradeEntryStudent.includes(:grades)
                            .where(released_to_student: true,
-                                  grade_entry_form_id: self.id)
+                                  grade_entry_form: self)
 
     ges.each do |grade_entry_student|
       unless grade_entry_student.nil?
@@ -80,7 +80,7 @@ class GradeEntryForm < ActiveRecord::Base
   def percentage_grades_array
     grades = Array.new()
     ges = GradeEntryStudent.includes(:grades)
-                           .where(grade_entry_form_id: self.id)
+                           .where(grade_entry_form: self)
 
     ges.each do |grade_entry_student|
       unless grade_entry_student.nil?
