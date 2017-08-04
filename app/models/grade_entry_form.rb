@@ -64,12 +64,17 @@ class GradeEntryForm < ActiveRecord::Base
   # An array of all grade_entry_students' released percentage total grades that are not nil
   def released_percentage_grades_array
     grades = Array.new()
-
     ges = self.grade_entry_students
             .where(released_to_student: true)
 
     ges.each do |grade_entry_student|
-      grades.push(calculate_total_percent(grade_entry_student))
+      unless grade_entry_student.nil?
+        total = grade_entry_student.total_grade
+        unless total.nil? || out_of_total == 0
+          grades.push((total / out_of_total) * 100)
+        end
+      end
+
     end
 
     self.released_grades_array = grades
