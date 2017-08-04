@@ -600,12 +600,15 @@ class Grouping < ActiveRecord::Base
         end
         begin
           self.assignment.access_repo do |starter_repo|
-            txn = repo.get_transaction('Markus')
-            starter_repo.get_latest_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
-              starter_file_path = File.join(assignment_folder, starter_file_name)
-              txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
+            starter_revision = starter_repo.get_latest_revision
+            if starter_revision.path_exists?(assignment_folder)
+              txn = repo.get_transaction('Markus')
+              starter_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
+                starter_file_path = File.join(assignment_folder, starter_file_name)
+                txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
+              end
+              result = repo.commit(txn)
             end
-            result = repo.commit(txn)
           end
         rescue
           # repo for starter code does not exist, just continue
