@@ -581,7 +581,7 @@ module Repository
     # path should be a directory
     def make_directory(path)
       gitkeep_filename = File.join(path, '.gitkeep')
-      add_file(gitkeep_filename, '', 'markus')
+      add_file(gitkeep_filename, '', 'Markus')
     end
 
     # Helper method to check file permissions of git auth file
