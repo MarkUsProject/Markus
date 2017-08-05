@@ -16,7 +16,6 @@ class SubmissionsJob < ActiveJob::Base
     status.update(job_class: self.class)
   end
 
-
   def perform(groupings, options = {})
     return if groupings.empty?
 
