@@ -23,13 +23,20 @@
            handlers: [:erb] %>
 
 <% content_for :title do %>
-  <%= t('exam_templates.assign_errors.fix_errors') %>
+  <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
   <span class='title-help assignment_groups_help'>
     <p class='help-message-title assignment_groups_help'>
       <%= t('assignment.help.assign_scans') %>
     </p>
   </span>
 <% end %>
+
+<% @heading_buttons = [
+    { link_text: t('exam_templates.back_to_exam_template_page'),
+      link_path: assignment_exam_templates_path },
+    { link_text: t('exam_templates.back_to_log_page'),
+      link_path: view_logs_assignment_exam_templates_path },
+] %>
 
 <div id='student_selector'>
   <span class='left'>
@@ -208,12 +215,6 @@
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
         <%= form_tag id: 'info_form', class: 'side_header' do %>
-          <div class="side_header">
-            <%= label_tag(:exam_template, @assignment.exam_templates.model_name.human + ':') %>
-            <%= select_tag(:exam_template,
-                           options_from_collection_for_select(@assignment.exam_templates, :id, :name))
-            %>
-          </div>
           <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
           <%= text_field_tag(:copy_number, nil) %><br>
           <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>

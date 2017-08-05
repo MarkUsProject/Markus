@@ -113,9 +113,14 @@ module SubmissionsHelper
             else
               grouping.past_due_date?
             end
-          g[:grace_credits_used] = grouping.grace_period_deduction_single
+          g[:grace_credits_used] =
+            if assignment.submission_rule.is_a? GracePeriodSubmissionRule
+              grouping.grace_period_deduction_single
+            else
+              0
+            end
           g[:section] = grouping.section
-          g[:tas] = grouping.tas.pluck(:user_name)
+          g[:tas] = grouping.tas.map &:user_name
         end
         if assignment.is_peer_review?
           # create a array of hashes, where each hash represents a reviewee with the reviewee grouping's

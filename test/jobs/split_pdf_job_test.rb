@@ -6,9 +6,10 @@ class SplitPDFJobTest < ActiveJob::TestCase
   context 'split PDF job' do
     setup do
       Admin.make
-      @assignment = Assignment.make(short_identifier: 'midterm1')
-      f = File.open('db/data/scanned_exams/midterm1.pdf')
-      @exam_template = ExamTemplate.create_with_file(f.read, assignment_id: @assignment.id, filename: 'midterm1.pdf')
+      assignment = Assignment.make(short_identifier: 'mdt')
+      file = File.open('db/data/scanned_exams/midterm1.pdf')
+      @exam_template = ExamTemplate.create_with_file(file.read, assignment_id: assignment.id, filename: 'midterm1.pdf')
+      FileUtils.rm_rf(@exam_template.base_path)
     end
 
     context 'Multiple exam template made up of different page numbers in randomized order' do
@@ -57,10 +58,9 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/21/').sort, %w[. .. 1.pdf].sort
       end
 
-      should 'have 1 pdf in error directory' do
-        error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = ['midterm21-1.pdf']
-        assert_empty error_generated_files-error_dir
+      should 'have 2 pdfs in error directory' do
+        error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+        assert_equal error_dir_entries.length, 2
       end
     end
 
@@ -126,10 +126,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
         end
 
         should 'generate error in each page' do
-          error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm26-0.pdf midterm26-1.pdf midterm26-2.pdf midterm26-3.pdf
-                                    midterm26-4.pdf midterm26-5.pdf midterm26-6.pdf midterm26-7.pdf] # Page 1 ~ 8
-          assert_empty error_generated_files-error_dir
+          error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+          assert_equal error_dir_entries.length, 8
         end
       end
 
@@ -148,10 +146,9 @@ class SplitPDFJobTest < ActiveJob::TestCase
                        %w[. .. 1.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
         end
 
-        should 'generate error in page 2 and page 3' do
-          error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm28-1.pdf midterm28-2.pdf] # Page 2 and Page 3
-          assert_empty error_generated_files-error_dir
+        should 'have 2 pdfs in error directory' do
+          error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+          assert_equal error_dir_entries.length, 2
         end
       end
     end
@@ -183,10 +180,9 @@ class SplitPDFJobTest < ActiveJob::TestCase
           assert @split_pdf_log.num_pages_qr_scan_error >= 1
         end
 
-        should 'have Page 3 in error directory' do
-          error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm30-2.pdf] # Page 3
-          assert_empty error_generated_files-error_dir
+        should 'have 2 pdfs in error directory' do
+          error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+          assert_equal error_dir_entries.length, 2
         end
       end
 
@@ -200,14 +196,13 @@ class SplitPDFJobTest < ActiveJob::TestCase
           assert @split_pdf_log.num_pages_qr_scan_error >= 2
         end
 
-        should 'have Page 3 and Page 8 in error directory' do
-          error_dir = Dir.entries(@exam_template.base_path + '/error')
-          error_generated_files = %w[midterm33-2.pdf midterm33-7.pdf] # Page 3 and Page 8
-          assert_empty error_generated_files-error_dir
-        end
-
         should 'have other pages that are error free in incomplete directory' do
           assert Dir.exists?(@exam_template.base_path + '/incomplete/33/')
+        end
+
+        should 'have 2 pdfs in error directory' do
+          error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+          assert_equal error_dir_entries.length, 2
         end
       end
     end
@@ -238,15 +233,14 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert @split_pdf_log.num_pages_qr_scan_error >= 1
       end
 
-      should 'have pdf of Page 2 in error directory' do
-        error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm34-1.pdf] # Page 2
-        assert_empty error_generated_files-error_dir
-      end
-
       should 'have Page 1 in incomplete directory' do
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/34/').sort,
                      %w[. .. 1.pdf].sort
+      end
+
+      should 'have 1 pdf in error directory' do
+        error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+        assert_equal error_dir_entries.length, 1
       end
     end
 
@@ -260,14 +254,13 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert @split_pdf_log.num_pages_qr_scan_error >= 2
       end
 
-      should 'have Page 3 and Page 6 in error directory' do
-        error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm35-2.pdf midterm35-5.pdf] # Page 3 and Page 6
-        assert_empty error_generated_files-error_dir
-      end
-
       should 'have other pages that are error free in incomplete directory' do
         assert Dir.exists?(@exam_template.base_path + '/incomplete/35/')
+      end
+
+      should 'have 3 pdfs in error directory' do
+        error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+        assert_equal error_dir_entries.length, 3
       end
     end
 
@@ -302,10 +295,9 @@ class SplitPDFJobTest < ActiveJob::TestCase
                      %w[. .. 4.pdf 6.pdf 7.pdf 8.pdf].sort
       end
 
-      should 'have Page 1, 2, 3, 5 in error directory' do
-        error_dir = Dir.entries(@exam_template.base_path + '/error')
-        error_generated_files = %w[midterm42-0.pdf midterm42-1.pdf midterm42-2.pdf midterm42-4.pdf] # Page 1, 2, 3, 5
-        assert_empty error_generated_files-error_dir
+      should 'have 4 pdfs in error directory' do
+        error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
+        assert_equal error_dir_entries.length, 4
       end
     end
   end

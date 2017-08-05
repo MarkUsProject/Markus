@@ -215,7 +215,13 @@ class Assignment < ActiveRecord::Base
   end
 
   def past_all_collection_dates?
-    Time.zone.now > latest_due_date
+    if section_due_dates_type
+      Section.all.all? do |s|
+        past_collection_date? s
+      end
+    else
+      past_collection_date?
+    end
   end
 
   def past_remark_due_date?

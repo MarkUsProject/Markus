@@ -16,7 +16,7 @@ class ExamTemplatesController < ApplicationController
   def create
     assignment = Assignment.find(params[:assignment_id])
     new_uploaded_io = params[:create_template][:file_io]
-    name_input = params[:create_template][:name]
+    name = params[:create_template][:name]
     # error checking when new_uploaded_io is not pdf, nil, or when filename is not given
     if new_uploaded_io.nil? || new_uploaded_io.content_type != 'application/pdf'
       flash_message(:error, t('exam_templates.create.failure'))
@@ -25,7 +25,7 @@ class ExamTemplatesController < ApplicationController
       new_template = ExamTemplate.new_with_file(new_uploaded_io.read,
                                                 assignment_id: assignment.id,
                                                 filename: filename,
-                                                name_input: name_input)
+                                                name: name)
       # sending flash message if saved
       if new_template.save
         flash_message(:success, t('exam_templates.create.success'))
@@ -40,8 +40,7 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find_by(id: params[:id]) # look up a specific exam template based on the params[:id]
     filename = exam_template.filename
-    assignment_name = assignment.short_identifier
-    send_file("#{EXAM_TEMPLATE_DIR}/#{assignment_name}/#{filename}",
+    send_file(File.join(exam_template.base_path, filename),
               filename: "#{filename}",
               type: "application/pdf")
   end
@@ -99,7 +98,7 @@ class ExamTemplatesController < ApplicationController
   def download_generate
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    send_file(exam_template.base_path + '/' + params[:file_name],
+    send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
               type: "application/pdf")
   end
@@ -126,7 +125,7 @@ class ExamTemplatesController < ApplicationController
   def destroy
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    if exam_template.destroy
+    if exam_template.delete_with_file
       flash_message(:success, t('exam_templates.delete.success'))
     else
       flash_message(:failure, t('exam_templates.delete.failure'))
@@ -140,14 +139,14 @@ class ExamTemplatesController < ApplicationController
                                  .where(assignments: {id: @assignment.id})
                                  .includes(:exam_template)
                                  .includes(:user)
+                                 .includes(:split_pages)
   end
 
   def assign_errors
     @assignment = Assignment.find(params[:assignment_id])
+    @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
-    Dir.foreach(File.join(MarkusConfigurator.markus_exam_template_dir,
-      @assignment.short_identifier, 'error'
-    )) do |file|
+    Dir.foreach(File.join(@exam_template.base_path, 'error')) do |file|
       @error_files << file unless file =~ /^\.\.?$/
     end
     @error_files = @error_files.sort
@@ -155,21 +154,23 @@ class ExamTemplatesController < ApplicationController
 
   def download_error_file
     @assignment = Assignment.find(params[:assignment_id])
-    send_file(File.join(MarkusConfigurator.markus_exam_template_dir,
-                        @assignment.short_identifier, 'error', params[:file_name]),
+    exam_template = @assignment.exam_templates.find(params[:id])
+    send_file(File.join(exam_template.base_path, 'error', params[:file_name]),
               filename: params[:file_name],
               type: 'application/pdf')
   end
 
   def download_error_file_path
-    render text: download_error_file_assignment_exam_templates_path(
+    render text: download_error_file_assignment_exam_template_path(
                 assignment_id: params[:assignment_id],
+                id: params[:id],
                 file_name: params[:file_name],
                 show_in_browser: true )
   end
 
   def fix_error
-    exam_template = ExamTemplate.find(params[:fix_error][:exam_template])
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
     copy_number = params[:fix_error][:copy_number]
     page_number = params[:fix_error][:page_number]
     filename = params[:fix_error][:filename]

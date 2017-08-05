@@ -20,6 +20,10 @@
   padding-top: 15px;
 }
 
+#summary {
+  padding-top: 15px;
+}
+
 #assignment_summaries {
   position: relative;
   min-height: 1px;
@@ -51,6 +55,13 @@
     margin-left: 1em;
     vertical-align: top;
     width: 250px;
+  }
+
+  .course_summary {
+    display: inline-block;
+    font-size: 0.95em;
+    margin-left: 1em;
+    vertical-align: top;
   }
 
   .ta_grade_distribution {
@@ -152,4 +163,3 @@
   top: 50%;
   width: 100%;
 }
-

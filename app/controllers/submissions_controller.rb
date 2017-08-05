@@ -294,7 +294,10 @@ class SubmissionsController < ApplicationController
 
   def populate_submissions_table
     assignment = Assignment.find(params[:assignment_id])
-    groupings = Grouping.includes(:current_result)
+    groupings = Grouping.includes(:current_result,
+                                  :tas,
+                                  :accepted_students
+    )
                         .get_groupings_for_assignment(assignment,
                                                       current_user)
 

@@ -248,16 +248,7 @@
     width: 100%;
     padding: 10px;
   }
-
-  #annotation_preview {
-    width: 450px;
-    margin: 1em 0 20px 0;
-    border: 1px dashed $grey;
-    padding: 0px 10px;
-    min-height: 43px;
-  }
 }
-
 
 /* Annotations menus */
 
@@ -416,6 +407,18 @@ ul.annotation_text_list {
   font-size: 0.85em !important;
 }
 
+/* MathJAX previews */
+
+#annotation_preview, #overall_comment_preview, #overall_remark_comment_preview {
+  margin: 1em 0 20px 0;
+  border: 1px dashed $grey;
+  padding: 0px 10px;
+  min-height: 43px;
+}
+
+#annotation_preview {
+  width: 450px;
+}
 
 /* Remark request pane */
 
