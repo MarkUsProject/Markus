@@ -390,12 +390,6 @@
         url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {
-          if (data.success) {
-              var job_id = <%= session[:job_id] %>;
-              if (job_id) {
-                poll_job(job_id, undefined, <%= raw ActiveJob::Status.get(session[:job_id])[:job_class].on_complete_js(ActiveJob::Status.get(session[:job_id])) %>);
-              }
-          }
         }.bind(this)
       });
     },
