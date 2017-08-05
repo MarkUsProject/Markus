@@ -180,6 +180,12 @@ Markus::Application.configure do
   IS_REPOSITORY_ADMIN = true
 
   ###################################################################
+  # Starter code settings
+  ###################################################################
+  # Global flag to enable/disable starter code feature.
+  EXPERIMENTAL_STARTER_CODE_ON = true
+
+  ###################################################################
   # Set this to the desired default language MarkUs should load if
   # nothing else tells it otherwise. At the moment valid values are
   # 'en', 'fr'. Please make sure that proper locale files are present

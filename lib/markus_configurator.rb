@@ -309,6 +309,18 @@ module MarkusConfigurator
   end
 
   ###################################################################
+  # Starter code configuration
+  ###################################################################
+  # Global flag to enable/disable starter code feature.
+  def markus_starter_code_on
+    if defined? EXPERIMENTAL_STARTER_CODE_ON
+      EXPERIMENTAL_STARTER_CODE_ON
+    else
+      false
+    end
+  end
+
+  ###################################################################
   # Exam Plugin configuration
   ###################################################################
   # Global flag to enable/disable all exam plugin features.

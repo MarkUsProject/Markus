@@ -885,7 +885,7 @@ class Assignment < ActiveRecord::Base
 
   # TODO Make it more robust, to accept uploads after groupings are created
   def can_upload_starter_code?
-    groups.size == 0
+    MarkusConfigurator.markus_starter_code_on && groups.size == 0
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,
