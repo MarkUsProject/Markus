@@ -3,14 +3,7 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
-  <%# React stuff (compressed version + JSX transformer) %>
-  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
-                             'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
   <%= javascript_include_tag 'application' %>
-  <% # UI LIBRARIES %>
-  <%= javascript_include_tag 'menu',
-                             'layouts',
-                             'help-system' %>
   <%= yield :head %>
 </head>
 <body>
@@ -75,5 +68,10 @@
     }, 120000);
   });
 </script>
+<% # UI LIBRARIES %>
+<%= javascript_include_tag 'menu',
+                           'layouts',
+                           'help-system' %>
+
 </body>
 </html>

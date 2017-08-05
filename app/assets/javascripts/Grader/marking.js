@@ -60,13 +60,12 @@ $(document).ready(function() {
         type: 'POST',
         data: params,
         beforeSend: function () {
-          document.getElementById('mark_verify_result_' + mark_id)
-                  .style.display = 'none';
+          document.getElementById('mark_verify_result_' + mark_id).addClass('hidden');
         },
         error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
-          error_div.style.display = '';
+          error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },
         success: function(data) {
@@ -102,11 +101,11 @@ $(document).ready(function() {
         type: 'POST',
         data: params,
         beforeSend: function() {
-          document.getElementById('mark_verify_result_' + mark_id).style.display = 'none';
+          document.getElementById('mark_verify_result_' + mark_id).addClass('hidden');
         },
         error: function(err) {
           var error_div = document.getElementById('mark_verify_result_' + mark_id);
-          error_div.style.display = '';
+          error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },
         success: function(data) {
@@ -374,7 +373,9 @@ function hide_criterion(id, criterion_class) {
     criterionPrefix = 'checkbox';
   }
 
-  document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  if (document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand')) {
+    document.getElementById(criterionPrefix + '_criterion_title_' + id + '_expand').innerHTML = '+ &nbsp;';
+  }
 
   if (nodeToHide !== null) {
     nodeToHide.removeClass('expanded');

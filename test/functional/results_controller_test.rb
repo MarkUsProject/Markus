@@ -486,7 +486,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :annotation_categories
             assert_not_nil assigns :group
             assert_not_nil assigns :files
-            assert_not_nil assigns :first_file
             assert_not_nil assigns :extra_marks_points
             assert_not_nil assigns :extra_marks_percentage
             assert_not_nil assigns :marks_map

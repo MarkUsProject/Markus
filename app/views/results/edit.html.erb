@@ -1,49 +1,13 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
-  <%= stylesheet_link_tag('grader') %>
-  <%= stylesheet_link_tag('pdfjs/viewer') %>
-  <%= stylesheet_link_tag('context_menu') %>
-
-  <%= javascript_include_tag 'Results/file_selector',
-                             'panes',
-                             'pdfjs',
-                             'testresults_config',
-                             'Results/context_menu' %>
-
-  <%= javascript_tag do -%>
-    PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
-  <% end -%>
+  <%# TODO: merge 'grader.scss' into 'results.scss' %>
+  <%= stylesheet_link_tag 'result_main' %>
 <% end %>
-
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'DropDownMenu/DropDownMenu' %>
-<%= javascript_include_tag 'jquery.ui-contextmenu.min' %>
-
-<!-- MathML -->
-<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'%>
-<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-
-<% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
-<%= javascript_include_tag 'Grader/file_selector',
-                           'Grader/marking',
-                           'Grader/mouse_selections' %>
-
-<% # This file can't be cached %>
-<%= javascript_include_tag 'Grader/tabs_boot'%>
-
-<% # Mouse bindings %>
-<%= javascript_include_tag 'mousetrap.min' %>
-
-<% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
-<%= render partial: 'results/common/syntax_highlighter_brushes',
-           formats: [:html],
-           handlers: [:erb] %>
 
 <script>
   var modalNotesGroup = null;
 
   $(document).ready(function() {
-    localStorage.setItem('assignment_id', <%= @assignment.id %>);
+    localStorage.setItem('assignment_id', <%= @result.submission.grouping.assignment_id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_download = new ModalMarkus('#download_files_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
@@ -117,18 +81,11 @@
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],
-           locals: { first_file: @first_file } %>
-
-<%= render partial: 'results/common/context_menu',
-           formats: [:js],
-           locals: {
-             result: @result,
-             annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
-           } %>
+           locals: { first_file: @files.first } %>
 
 <!-- Dialogs -->
-<aside class='dialog' id='notes_dialog'></aside>
-<aside class='dialog' id='download_files_dialog'>
+<aside class='dialog' id='notes_dialog' style='display:none'></aside>
+<aside class='dialog' id='download_files_dialog' style='display:none'>
   <h1><%= 'Download Files' %></h1>
 
   <%= render partial: 'results/common/download_file_selector',
@@ -136,7 +93,7 @@
                        can_download: true } %>
 
 </aside>
-<aside class='dialog' id='help_dialog'>
+<aside class='dialog' id='help_dialog' style='display:none'>
   <h1><%=t('keybinding.keyboard_help')%></h1>
   <table class="help_table">
     <tr>
@@ -182,13 +139,7 @@
   </table>
 </aside>
 <% if @current_user.admin? %>
-  <aside class='dialog' id='create_new_tag'>
-    <%= javascript_include_tag 'Tags/text_updater.js',
-                               id: 'create_script',
-                               text_id: 'description',
-                               info_id: 'descript_amount',
-                               num_char: '120' %>
-
+  <aside class='dialog' id='create_new_tag' style='display:none'>
     <h1><%= t('tags.create.create_new') %></h1>
     <p><%= t('tags.create.tag_prompt') %></p>
     <%= form_for :create_new,
@@ -218,7 +169,7 @@
         </section>
     <% end %>
   </aside>
-  <aside class='dialog' id='delete_tags'>
+  <aside class='dialog' id='delete_tags' style='display:none'>
     <h1><%= t('tags.delete.delete_tags') %></h1>
     <p><%= t('tags.delete.tag_prompt') %></p>
     <%= form_for :delete,
@@ -276,8 +227,8 @@
 
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
-               locals: { extra_marks_points: @extra_marks_points,
-                         extra_marks_percentage: @extra_marks_percentage,
+               locals: { extra_marks_points: @result.extra_marks.points,
+                         extra_marks_percentage: @result.extra_marks.percentage,
                          annotation_categories:
                            @assignment.annotation_categories.includes(annotation_texts: [:user]),
                          result: @result,
@@ -293,6 +244,71 @@
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
-               handlers: [:erb] %>
+               handlers: [:erb],
+               locals: { extra_marks_points: @result.extra_marks.points,
+                         extra_marks_percentage: @result.extra_marks.percentage
+               }
+    %>
   <% end %>
 </div>
+
+<%# Javascript files %>
+<%= javascript_include_tag 'Results/main' %>
+
+<!-- load the first file -->
+<script>
+  var first_file_id;
+  var first_file_path;
+  <% if @files.empty? %>
+    first_file_id = null;
+    first_file_path = null;
+  <% else %>
+    <% if @current_user.ta? && (assignmentfile =
+              AssignmentFile.select(:filename)
+              .joins('JOIN criteria_assignment_files_joins c ON c.assignment_file_id = assignment_files.id')
+              .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
+              .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
+              .first) %>
+      <% index = @files.find_index{|x| x.filename === assignmentfile.filename} %>
+      first_file_id = <%= @files[index].id %>;
+      first_file_path = '<%= @files[index].path %>/<%= files[index].filename %>';
+    <% else %>
+      first_file_id = <%= @files[0].id %>;
+      first_file_path = '<%= @files[0].path %>/<%= @files[0].filename %>';
+      if (localStorage.getItem('assignment_id') === '<%= @assignment.id %>' && localStorage.getItem('file_path')) {
+        var file = $('.file_item[data-path="' + localStorage.getItem('file_path') + '"');
+        if (file.length === 1) {
+          first_file_id = file.data("id");
+          first_file_path = file.data("path");
+        }
+      }
+      if (first_file_id !== null && first_file_path !== null) {
+        // for code viewer
+        open_file(first_file_id, first_file_path, false);
+        // for download modal
+        open_file(first_file_id, first_file_path, true);
+      }
+    <% end %>
+  <% end %>
+</script>
+
+<%= render partial: 'results/common/context_menu',
+           formats: [:js],
+           locals: {
+               result: @result,
+               annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
+           } %>
+
+<%# MathML %>
+<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
+                           defer: true %>
+
+<%# Only load PDF requirements if this submission has any PDF files.
+      This check is currently based on extension. %>
+<% if @result.submission.submission_files.where("filename LIKE '%.pdf'").any? %>
+  <script>
+    $.getScript('<%= asset_path("pdfjs.js") %>').done(function () {
+      PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+    })
+  </script>
+<% end %>

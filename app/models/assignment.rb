@@ -672,13 +672,18 @@ class Assignment < ActiveRecord::Base
 
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
+    @criteria ||= Hash.new
+    unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
+      return @criteria[[user_visibility, type, options]]
+    end
+
     include_opt = options[:includes]
     if user_visibility == :all
-      get_all_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_all_criteria(type, include_opt)
     elsif user_visibility == :ta
-      get_ta_visible_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(type, include_opt)
     elsif user_visibility == :peer
-      get_peer_visible_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(type, include_opt)
     end
   end
 
@@ -786,21 +791,33 @@ class Assignment < ActiveRecord::Base
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.includes(current_submission_used: [:submitted_remark, :non_pr_results]).select(&:marking_completed?).count
+      groupings.includes(:current_result).select(&:marking_completed?).count
     else
       if is_criteria_mark?(ta_id)
         n = 0
-        ta_memberships.includes(grouping: [current_submission_used: :submitted_remark]).where(user_id: ta_id).find_each do |x|
-          x.grouping.current_submission_used.get_latest_result.marks
-            .joins('INNER JOIN criterion_ta_associations c ON c.criterion_id = markable_id AND c.criterion_type = markable_type')
-            .where('c.ta_id': ta_id, mark: nil).empty? && n += 1
+        ta = Ta.find(ta_id)
+        num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
+        marked = ta.criterion_ta_associations
+                   .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
+                   .where('m.mark IS NOT NULL AND assignment_id = ?', self.id)
+                   .group('m.result_id')
+                   .count
+        ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
+          result_id = t_mem.grouping.current_result.id
+          num_marked = marked[result_id] || 0
+          if num_marked == num_assigned_criteria
+            n += 1
+          end
         end
         n
       else
-        groupings.joins(:current_result, :ta_memberships)
-          .where('memberships.user_id': ta_id,
-                 'results.marking_state': Result::MARKING_STATES[:complete])
-          .count
+        ta_groupings = groupings.includes(:current_result).joins(:ta_memberships)
+                                .where('memberships.user_id': ta_id)
+        count = 0
+        ta_groupings.each do |g|
+          count += 1 if g.current_result.marking_state == Result::MARKING_STATES[:complete]
+        end
+        count
       end
     end
   end
