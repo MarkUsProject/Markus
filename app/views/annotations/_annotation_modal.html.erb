@@ -20,7 +20,7 @@
           <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
         <% else %>
           <h3><%= AnnotationCategory.model_name.human %></h3>
-          <select id='new_annotation_category'>
+          <select id='new_annotation_category' name='category_id'>
             <option value=''><%= t('annotation_categories.one_time_only') %></option>
             <% annotation_categories.each do |annotation_category| %>
               <option value='<%= annotation_category.id %>'>
