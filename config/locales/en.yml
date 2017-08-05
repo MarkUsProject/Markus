@@ -1671,3 +1671,4 @@ en:
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
       generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
+      uncollect_submissions_job: "Uncollecting assignments ... "
