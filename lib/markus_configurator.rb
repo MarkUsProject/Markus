@@ -252,6 +252,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_ate_client_dir
+    if automated_testing_engine_on? && (defined? ATE_CLIENT_DIR)
+      return ATE_CLIENT_DIR
+    else
+      return File.join(::Rails.root.to_s, 'automated_tests')
+    end
+  end
+
   def markus_ate_server_host
     if automated_testing_engine_on? && (defined? ATE_SERVER_HOST)
       return ATE_SERVER_HOST
@@ -268,22 +276,6 @@ module MarkusConfigurator
     end
   end
 
-  def markus_ate_server_tests_username
-    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS_USERNAME)
-      return ATE_SERVER_TESTS_USERNAME
-    else
-      return 'localhost'
-    end
-  end
-
-  def markus_ate_client_dir
-    if automated_testing_engine_on? && (defined? ATE_CLIENT_DIR)
-      return ATE_CLIENT_DIR
-    else
-      return File.join(::Rails.root.to_s, 'automated_tests')
-    end
-  end
-
   def markus_ate_server_files_dir
     if automated_testing_engine_on? && (defined? ATE_SERVER_FILES_DIR)
       return ATE_SERVER_FILES_DIR
@@ -292,19 +284,19 @@ module MarkusConfigurator
     end
   end
 
-  def markus_ate_server_tests_dir
-    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS_DIR)
-      return ATE_SERVER_TESTS_DIR
-    else
-      return File.join(::Rails.root.to_s, 'automated_tests', 'tests')
-    end
-  end
-
   def markus_ate_server_results_dir
     if automated_testing_engine_on? && (defined? ATE_SERVER_RESULTS_DIR)
       return ATE_SERVER_RESULTS_DIR
     else
       return File.join(::Rails.root.to_s, 'automated_tests', 'test_runs')
+    end
+  end
+
+  def markus_ate_server_tests
+    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS)
+      ATE_SERVER_TESTS
+    else
+      [{user: 'localhost', dir: File.join(::Rails.root.to_s, 'automated_tests', 'tests'), queue: 'ate_tests'}]
     end
   end
 
@@ -358,14 +350,6 @@ module MarkusConfigurator
       return ATE_FILES_QUEUE_NAME
     else
       return 'ate_files'
-    end
-  end
-
-  def markus_ate_tests_queue_name
-    if automated_testing_engine_on? && (defined? ATE_TESTS_QUEUE_NAME)
-      return ATE_TESTS_QUEUE_NAME
-    else
-      return 'ate_tests'
     end
   end
 

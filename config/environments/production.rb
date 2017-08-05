@@ -292,15 +292,14 @@ Markus::Application.configure do
   AUTOMATED_TESTING_ENGINE_ON = false
   ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
   ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME = 2.hours
+  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
+  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
   ATE_SERVER_HOST = 'localhost'
   ATE_SERVER_FILES_USERNAME = 'localhost'
-  ATE_SERVER_TESTS_USERNAME = 'localhost'
-  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests"
   ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/files"
-  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/tests"
   ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/automated_tests/test_runs"
-  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
-  ATE_TESTS_QUEUE_NAME = 'ate_tests'
+  ATE_SERVER_TESTS = [
+    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/prod/automated_tests/tests", queue: 'ate_tests'}]
 
   ###################################################################
   # Exam Plugin settings

@@ -287,6 +287,17 @@ module AutomatedTestsClientHelper
     return true
   end
 
+  def self.get_concurrent_tests_config
+    server_tests_config = MarkusConfigurator.markus_ate_server_tests
+    i = 0
+    if server_tests_config.length > 1 # concurrent tests for real
+      i = Rails.cache.fetch('ate_server_tests_i') { 0 }
+      next_i = (i + 1) % server_tests_config.length # use a round robin strategy
+      Rails.cache.write('ate_server_tests_i', next_i)
+    end
+    server_tests_config[i]
+  end
+
   def self.create_test_script_result(script_name, assignment, grouping, submission, requested_by)
     revision_identifier = submission.nil? ?
         grouping.group.repo.get_latest_revision.revision_identifier :
@@ -357,18 +368,19 @@ module AutomatedTestsClientHelper
     if test_server_user.nil?
       return
     end
+    tests_config = get_concurrent_tests_config
     files_path = MarkusConfigurator.markus_ate_server_files_dir
-    tests_path = MarkusConfigurator.markus_ate_server_tests_dir
-    same_path = (MarkusConfigurator.markus_ate_server_files_dir == MarkusConfigurator.markus_ate_server_tests_dir)
     results_path = MarkusConfigurator.markus_ate_server_results_dir
-    test_username = (test_server_host == 'localhost' || MarkusConfigurator.markus_ate_server_files_username ==
-                                                        MarkusConfigurator.markus_ate_server_tests_username) ?
-        nil : MarkusConfigurator.markus_ate_server_tests_username
-    server_queue = "queue:#{MarkusConfigurator.markus_ate_tests_queue_name}"
+    file_username = MarkusConfigurator.markus_ate_server_files_username
+    test_username = tests_config[:user]
+    if test_server_host == 'localhost' || file_username == test_username
+      test_username = nil
+    end
+    server_queue = "queue:#{tests_config[:queue]}"
     resque_params = {:class => 'AutomatedTestsServer',
                      :args => [markus_address, user_api_key, server_api_key, test_username, test_scripts,
-                               'files_path_placeholder', tests_path, results_path, assignment.id, group.id, group.repo_name,
-                               submission_id]}
+                               'files_path_placeholder', tests_config[:dir], results_path, assignment.id, group.id,
+                               group.repo_name, submission_id]}
 
     begin
       if test_server_host == 'localhost'
@@ -380,14 +392,10 @@ module AutomatedTestsClientHelper
         FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
         # enqueue locally using redis api
         resque_params[:args][5] = files_path
-        if same_path
-          resque_params[:args][6] = files_path
-        end
         Resque.redis.rpush(server_queue, JSON.generate(resque_params))
       else
         # tests executed locally or remotely with authentication:
         # copy the student's submission and all necessary files through ssh in a temp folder
-        file_username = MarkusConfigurator.markus_ate_server_files_username
         Net::SSH::start(test_server_host, file_username, auth_methods: ['publickey']) do |ssh|
           ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing..
           files_path = ssh.exec!("mktemp -d --tmpdir='#{files_path}'").strip # ..then create temp subfolder
@@ -404,9 +412,6 @@ module AutomatedTestsClientHelper
           end
           # enqueue remotely directly with redis-cli, resque does not allow for multiple redis servers
           resque_params[:args][5] = files_path
-          if same_path
-            resque_params[:args][6] = files_path
-          end
           ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
         end
       end
