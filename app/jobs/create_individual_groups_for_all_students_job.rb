@@ -1,17 +1,24 @@
 class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
+  include ActiveJob::Status
+
   queue_as MarkusConfigurator.markus_job_create_individual_groups_queue_name
 
-  before_enqueue do |_job|
-    job_messenger = JobMessenger.create(job_id: job_id, status: :queued)
-    PopulateCache.populate_for_job(job_messenger, job_id)
+  def self.on_complete_js(status)
+    'window.location.reload.bind(window.location)'
+  end
+
+  def self.show_status(status)
+    I18n.t('poll_job.create_individual_groups_job', progress: status[:progress],
+           total: status[:total])
+  end
+
+  before_enqueue do |job|
+    status.update(job_class: self.class)
   end
 
   def perform(assignment)
     begin
-      # Update our messenger and populate the cache with its new status
-      job_messenger = JobMessenger.where(job_id: job_id).first
-      job_messenger.update_attributes(status: :running)
-      PopulateCache.populate_for_job(job_messenger, job_id)
+      progress.total = Student.count
 
       if assignment.group_max == 1
         Student.find_each do |student|
@@ -42,6 +49,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
               membership_status: StudentMembership::STATUSES[:inviter],
               user_id: student.id)
           end
+          progress.increment
         end
 
         # Generate the permissions file for all valid groups
@@ -55,11 +63,6 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
       end
     rescue => e
       Rails.logger.error e.message
-      job_messenger.update_attributes(status: :failed, message: e.message)
-      PopulateCache.populate_for_job(job_messenger, job_id)
-      raise e
     end
-      job_messenger.update_attributes(status: :succeeded)
-      PopulateCache.populate_for_job(job_messenger, job_id)
   end
 end
