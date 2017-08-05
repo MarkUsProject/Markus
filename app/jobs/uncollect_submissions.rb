@@ -8,8 +8,7 @@ class UncollectSubmissions < ActiveJob::Base
   end
 
   def self.show_status(status)
-    I18n.t('poll_job.uncollect_submissions_job', progress: status[:progress],
-           total: status[:total])
+    I18n.t('poll_job.uncollect_submissions_job')
   end
 
   before_enqueue do |job|
