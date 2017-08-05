@@ -390,6 +390,9 @@
         url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {
+          if (data) {
+            window.scrollTo(0, 0);
+          }
         }.bind(this)
       });
     },
