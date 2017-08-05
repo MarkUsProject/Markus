@@ -35,7 +35,8 @@ describe TestScriptResult do
                                                   grouping: @sub.grouping,
                                                   test_script: @test_script,
                                                   marks_earned: 5,
-                                                  repo_revision: 0)
+                                                  repo_revision: 0,
+                                                  time: 0)
     end
 
     # create
@@ -71,6 +72,20 @@ describe TestScriptResult do
       context 'test script result expected to be invalid when the marks_earned is not an integer' do
         it 'return false when the marks_earned is not an integer' do
           @test_script_result.marks_earned = 0.5
+          expect(@test_script_result).not_to be_valid
+        end
+      end
+
+      context 'test script result expected to be invalid when the time is negative' do
+        it 'return false when the time is negative' do
+          @test_script_result.time = -1
+          expect(@test_script_result).not_to be_valid
+        end
+      end
+
+      context 'test script result expected to be invalid when the time is not an integer' do
+        it 'return false when the time is not an integer' do
+          @test_script_result.time = 0.5
           expect(@test_script_result).not_to be_valid
         end
       end
