@@ -1592,6 +1592,8 @@ en:
         seq_num: "UPDATE ME: seq_num"
         max_marks: "Max Test Points <span class='required_field'>*</span>"
         max_marks_help: "Mark = Actual Test Points / Max Test Points * Max Criterion Mark (rounded to the nearest level for Rubric Criteria)"
+        timeout: "Timeout (seconds) <span class='required_field'>*</span>"
+        timeout_help: "The number of seconds before the script is forced to stop"
         run_by_instructors: "Runnable by Instructors"
         run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
         run_by_students: "Runnable by Students"

@@ -1821,6 +1821,8 @@ es:
         seq_num:                          "ACTUALIZAME: seq_num"
         max_marks:                        "UPDATE ME <span class='required_field'>*</span>"
         max_marks_help:                   "UPDATE ME"
+        timeout:                          "UPDATE ME <span class='required_field'>*</span>"
+        timeout_help:                     "UPDATE ME"
         run_by_instructors:               "Ejecutable por los Instructores"
         run_by_instructors_help:          "UPDATE ME"
         run_by_students:                  "Ejecutable por los Estudiantes"

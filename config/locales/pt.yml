@@ -1402,6 +1402,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         seq_num: "UPDATE ME"
         max_marks: "UPDATE ME <span class='required_field'>*</span>"
         max_marks_help: "UPDATE ME"
+        timeout: "UPDATE ME <span class='required_field'>*</span>"
+        timeout_help: "UPDATE ME"
         run_by_instructors: "UPDATE ME"
         run_by_instructors_help: "UPDATE ME"
         run_by_students: "UPDATE ME"

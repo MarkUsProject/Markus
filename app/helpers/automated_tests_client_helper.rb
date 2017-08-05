@@ -238,11 +238,11 @@ module AutomatedTestsClientHelper
     if user.admin?
       test_scripts = assignment.instructor_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name)
+                               .pluck_to_hash(:script_name, :timeout)
     elsif user.student?
       test_scripts = assignment.student_test_scripts
                                .order(:seq_num)
-                               .pluck(:script_name)
+                               .pluck_to_hash(:script_name, :timeout)
     else
       test_scripts = []
     end
