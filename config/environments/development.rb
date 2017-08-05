@@ -254,6 +254,10 @@ Markus::Application.configure do
   JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_collect'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
   JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_uncollect'
+  # The name of the queue where jobs to update repos with the list of required files wait to be executed.
+  JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108_job_req_files'
+  JOB_GENERATE_QUEUE_NAME = 'CSC108_job_generate'
+  JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108_job_split_pdf'
 
   ###################################################################
   # Automated Testing Engine settings

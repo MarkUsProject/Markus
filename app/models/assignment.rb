@@ -113,7 +113,7 @@ class Assignment < ActiveRecord::Base
                          numericality: { only_integer: true,
                                          greater_than_or_equal_to: 0 }
   end
-  with_options if: ->{ !:non_regenerating_tokens && :enable_student_tests && !unlimited_tokens} do |assignment|
+  with_options if: ->{ !:non_regenerating_tokens && :enable_student_tests && !:unlimited_tokens} do |assignment|
     assignment.validates :token_period,
                          presence: true,
                          numericality: { greater_than: 0 }
@@ -1124,8 +1124,8 @@ class Assignment < ActiveRecord::Base
   # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
   # the assignment level, allowing the same Group repo to have different students according to the assignment.
   # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
-  # Instead, we are going to take a last-deadline approach instead, where we assume that the valid students at any point
-  # in time are the ones valid for the last assignment due.
+  # Instead, we are going to take a last-deadline approach, where we assume that the valid students at any point in time
+  # are the ones valid for the last assignment due.
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
@@ -1139,6 +1139,22 @@ class Assignment < ActiveRecord::Base
       repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
       repo.__set_all_permissions
     end
+  end
+
+  def self.get_required_files
+    assignments = Assignment.includes(:assignment_files)
+                            .where(scanned_exam: false, is_hidden: false)
+    required = {}
+    assignments.each do |assignment|
+      files = assignment.assignment_files.map(&:filename)
+      if assignment.only_required_files.nil?
+        required_only = false
+      else
+        required_only = assignment.only_required_files
+      end
+      required[assignment.repository_folder] = {required: files, required_only: required_only}
+    end
+    required
   end
 
 end

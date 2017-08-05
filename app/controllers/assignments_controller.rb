@@ -292,20 +292,22 @@ class AssignmentsController < ApplicationController
                                    .order(:id)
 
     begin
+      new_required_files = false
       @assignment.transaction do
-        @assignment = process_assignment_form(@assignment)
+        @assignment, new_required_files = process_assignment_form(@assignment)
+        @assignment.save!
       end
+      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+        # update list of required files in all repos only if there is a hook that will use that list
+        UpdateRepoRequiredFilesJob.perform_later(current_user)
+      end
+      flash_message(:success, I18n.t('assignment.update_success'))
+      redirect_to action: 'edit', id: params[:id]
     rescue SubmissionRule::InvalidRuleType => e
       @assignment.errors.add(:base, t('assignment.error', message: e.message))
       flash_message(:error, t('assignment.error', message: e.message))
       render :edit, id: @assignment.id
-      return
-    end
-
-    if @assignment.save
-      flash_message(:success, I18n.t('assignment.update_success'))
-      redirect_to action: 'edit', id: params[:id]
-    else
+    rescue
       render :edit, id: @assignment.id
     end
   end
@@ -342,7 +344,7 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     @assignment.transaction do
       begin
-        @assignment = process_assignment_form(@assignment)
+        @assignment, _ = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
@@ -920,7 +922,13 @@ class AssignmentsController < ApplicationController
     end
 
   def process_assignment_form(assignment)
-    assignment.update_attributes(assignment_params)
+    num_files_before = assignment.assignment_files.length
+    assignment.assign_attributes(assignment_params)
+    new_required_files = assignment.only_required_files_changed? ||
+                         assignment.assignment_files.any? { |file| file.changed? }
+    assignment.save!
+    new_required_files = new_required_files ||
+                         num_files_before != assignment.assignment_files.length
 
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type].nil? ||
@@ -1004,7 +1012,7 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    assignment
+    return assignment, new_required_files
   end
 
   def assignment_params
