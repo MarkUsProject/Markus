@@ -391,10 +391,10 @@
         data: dataLoad,
         success: function(data) {
           if (data.success) {
-            <% if session[:job_id] %>
-              <% job_status = ActiveJob::Status.get(session[:job_id]) %>
-              poll_job('<%= session[:job_id] %>', undefined, <%= raw job_status[:job_class].on_complete_js(job_status) %>);
-            <% end %>
+              var job_id = <%= session[:job_id] %>;
+              if (job_id) {
+                poll_job(job_id, undefined, <%= raw ActiveJob::Status.get(session[:job_id])[:job_class].on_complete_js(ActiveJob::Status.get(session[:job_id])) %>);
+              }
           }
         }.bind(this)
       });
