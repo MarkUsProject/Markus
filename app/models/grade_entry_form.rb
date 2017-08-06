@@ -47,20 +47,11 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
-    # percent = BLANK_MARK
-    # out_of = self.out_of_total
-    #
-    # unless grade_entry_student.nil?
-    #   unless out_of == 0
-    #     percent = (self.ges_total_grade / out_of) * 100
-    #   end
-    # end
-
     percent = BLANK_MARK
     out_of = self.out_of_total
 
-    unless out_of == 0
-      percent = (self.ges_total_grade / out_of) * 100
+    unless grade_entry_student.nil? || out_of == 0
+        percent = (self.ges_total_grade / out_of) * 100
     end
 
     percent
@@ -73,16 +64,9 @@ class GradeEntryForm < ActiveRecord::Base
                            .where(released_to_student: true,
                                   grade_entry_form: self)
 
-    # ges.each do |grade_entry_student|
-    #   self.ges_total_grade = grade_entry_student.total_grade
-    #   if !self.ges_total_grade.nil?
-    #     grades.push(calculate_total_percent(grade_entry_student))
-    #   end
-    # end
-
     ges.each do |grade_entry_student|
       self.ges_total_grade = grade_entry_student.total_grade
-      unless grade_entry_student.nil? || self.ges_total_grade.nil?
+      if !self.ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
@@ -98,16 +82,9 @@ class GradeEntryForm < ActiveRecord::Base
     ges = GradeEntryStudent.includes(:grades)
                            .where(grade_entry_form: self)
 
-    # ges.each do |grade_entry_student|
-    #   self.ges_total_grade = grade_entry_student.total_grade
-    #   if !self.ges_total_grade.nil?
-    #     grades.push(calculate_total_percent(grade_entry_student))
-    #   end
-    # end
-
     ges.each do |grade_entry_student|
       self.ges_total_grade = grade_entry_student.total_grade
-      unless grade_entry_student.nil? || self.ges_total_grade.nil?
+      if !self.ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
