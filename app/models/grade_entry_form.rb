@@ -7,7 +7,6 @@ require 'histogram/array'
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
-  attr_accessor             :ges_total_grade
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy
