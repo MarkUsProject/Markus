@@ -7,8 +7,6 @@ require 'histogram/array'
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
-  attr_accessor             :released_grades_array
-  attr_accessor             :grades_array
   attr_accessor             :ges_total_grade
   has_many                  :grade_entry_items,
                             -> { order(:position) },
@@ -47,16 +45,16 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
-    unless grade_entry_student.nil? || !self.ges_total_grade.nil?
-      self.ges_total_grade = grade_entry_student.total_grade
+    unless grade_entry_student.nil? || !@ges_total_grade.nil?
+      @ges_total_grade = grade_entry_student.total_grade
     end
 
     percent = BLANK_MARK
     out_of = self.out_of_total
 
     # Check for NA mark f or division by 0
-    unless self.ges_total_grade.nil? || out_of == 0
-        percent = (self.ges_total_grade / out_of) * 100
+    unless @ges_total_grade.nil? || out_of == 0
+        percent = (@ges_total_grade / out_of) * 100
     end
 
     percent
@@ -70,13 +68,13 @@ class GradeEntryForm < ActiveRecord::Base
                                   grade_entry_form: self)
 
     ges.each do |grade_entry_student|
-      self.ges_total_grade = grade_entry_student.total_grade
-      unless self.ges_total_grade.nil?
+      @ges_total_grade = grade_entry_student.total_grade
+      unless @ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
 
-    self.released_grades_array = grades
+    @released_grades_array = grades
 
     grades
   end
@@ -88,13 +86,13 @@ class GradeEntryForm < ActiveRecord::Base
                            .where(grade_entry_form: self)
 
     ges.each do |grade_entry_student|
-      self.ges_total_grade = grade_entry_student.total_grade
-      unless self.ges_total_grade.nil?
+      @ges_total_grade = grade_entry_student.total_grade
+      unless @ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
 
-    self.grades_array = grades
+    @grades_array = grades
 
     grades
   end
@@ -120,26 +118,26 @@ class GradeEntryForm < ActiveRecord::Base
   # Determine the median of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_median
-    released_grades_array.blank? ? 0 : released_grades_array.median
+    @released_grades_array.blank? ? 0 : @released_grades_array.median
   end
 
   # Determine the number of grade_entry_forms that have been released
   def calculate_released_grade_entry_forms
-    released_grades_array.blank? ? 0 : released_grades_array.count
+    @released_grades_array.blank? ? 0 : @released_grades_array.count
   end
 
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted
-    grades_array.blank? ? 0 : grades_array.number.round
+    @grades_array.blank? ? 0 : @grades_array.number.round
   end
 
   def calculate_released_failed
-    released_grades_array.blank? ? 0 : released_grades_array.count { |mark| mark < 50 }
+    @released_grades_array.blank? ? 0 : @released_grades_array.count { |mark| mark < 50 }
   end
 
   def calculate_released_zeros
-    released_grades_array.blank? ? 0 : released_grades_array.count(&:zero?)
+    @released_grades_array.blank? ? 0 : @released_grades_array.count(&:zero?)
   end
 
   # Create grade_entry_student for each student in the course
