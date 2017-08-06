@@ -56,11 +56,10 @@ class GradeEntryForm < ActiveRecord::Base
     #   end
     # end
 
-    self.ges_total_grade = grade_entry_student.total_grade
     percent = BLANK_MARK
     out_of = self.out_of_total
 
-    unless self.ges_total_grade.nil? || out_of == 0
+    unless out_of == 0
       percent = (self.ges_total_grade / out_of) * 100
     end
 
@@ -82,7 +81,8 @@ class GradeEntryForm < ActiveRecord::Base
     # end
 
     ges.each do |grade_entry_student|
-      unless grade_entry_student.nil?
+      self.ges_total_grade = grade_entry_student.total_grade
+      unless grade_entry_student.nil? || self.ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
@@ -106,7 +106,8 @@ class GradeEntryForm < ActiveRecord::Base
     # end
 
     ges.each do |grade_entry_student|
-      unless grade_entry_student.nil?
+      self.ges_total_grade = grade_entry_student.total_grade
+      unless grade_entry_student.nil? || self.ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
