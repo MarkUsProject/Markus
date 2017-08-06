@@ -51,7 +51,7 @@ class GradeEntryForm < ActiveRecord::Base
     out_of = self.out_of_total
 
     unless grade_entry_student.nil?
-      unless self.ges_total_grade || out_of == 0
+      unless self.ges_total_grade.nil? || out_of == 0
         percent = (self.ges_total_grade / out_of) * 100
       end
     end
