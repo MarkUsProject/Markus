@@ -9,6 +9,7 @@ require 'histogram/array'
 class GradeEntryForm < ActiveRecord::Base
   attr_accessor             :released_grades_array
   attr_accessor             :grades_array
+  attr_accessor             :ges_total_grade
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy
@@ -46,13 +47,21 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
-    percent = BLANK_MARK
+    # percent = BLANK_MARK
+    # out_of = self.out_of_total
+    #
+    # unless grade_entry_student.nil?
+    #   unless out_of == 0
+    #     percent = (self.ges_total_grade / out_of) * 100
+    #   end
+    # end
 
-    unless grade_entry_student.nil?
-      total = grade_entry_student.total_grade
-      unless total.nil? || out_of_total == 0
-        percent = (total / out_of_total) * 100
-      end
+    self.ges_total_grade = grade_entry_student.total_grade
+    percent = BLANK_MARK
+    out_of = self.out_of_total
+
+    unless self.ges_total_grade.nil? || out_of == 0
+      percent = (self.ges_total_grade / out_of) * 100
     end
 
     percent
@@ -64,6 +73,13 @@ class GradeEntryForm < ActiveRecord::Base
     ges = GradeEntryStudent.includes(:grades)
                            .where(released_to_student: true,
                                   grade_entry_form: self)
+
+    # ges.each do |grade_entry_student|
+    #   self.ges_total_grade = grade_entry_student.total_grade
+    #   if !self.ges_total_grade.nil?
+    #     grades.push(calculate_total_percent(grade_entry_student))
+    #   end
+    # end
 
     ges.each do |grade_entry_student|
       unless grade_entry_student.nil?
@@ -81,6 +97,13 @@ class GradeEntryForm < ActiveRecord::Base
     grades = Array.new()
     ges = GradeEntryStudent.includes(:grades)
                            .where(grade_entry_form: self)
+
+    # ges.each do |grade_entry_student|
+    #   self.ges_total_grade = grade_entry_student.total_grade
+    #   if !self.ges_total_grade.nil?
+    #     grades.push(calculate_total_percent(grade_entry_student))
+    #   end
+    # end
 
     ges.each do |grade_entry_student|
       unless grade_entry_student.nil?
