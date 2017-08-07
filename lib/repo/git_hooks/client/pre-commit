@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Might need to change this to python3
+python markus-hooks/multihook_client.py
