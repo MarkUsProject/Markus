@@ -163,6 +163,8 @@ Markus::Application.configure do
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
   REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  # Path to the MarkUs client-side hooks (copied to all group repos).
+  REPOSITORY_CLIENT_HOOKS = ""
 
   ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs
@@ -237,7 +239,7 @@ Markus::Application.configure do
   # CSV upload order of fields (usually you don't want to change this)
   ###################################################################
   # Order of student CSV uploads
-  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name]
+  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name, :id_number, :email]
   # Order of graders CSV uploads
   USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 

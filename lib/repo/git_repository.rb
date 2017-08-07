@@ -91,6 +91,15 @@ module Repository
       end
       oid = Rugged::Blob.from_workdir(repo, '.required.json')
       repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
+
+      # Add client-side hooks
+      if MarkusConfigurator.markus_config_repository_client_hooks
+        client_hooks_path = MarkusConfigurator.markus_config_repository_client_hooks
+        FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
+        FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+        repo.index.add_all('markus-hooks')
+      end
+
       GitRepository.do_commit_and_push(repo, 'Markus', 'Initial commit.')
 
       # Set up hooks
