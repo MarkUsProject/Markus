@@ -731,7 +731,7 @@ fr:
       no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
       upload:
         upload_a_class_list: "Envoyer une liste d'étudiants"
-        select_csv_file:     "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section)</code>"
+        select_csv_file:     "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section,id_number,email)</code>"
         student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
       download:
         download_student_list: "Télécharger la liste des étudiants"
