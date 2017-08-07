@@ -43,6 +43,7 @@ describe TestScript do
                                       script_name:                'script.sh',
                                       description:                'This is a bash script file',
                                       max_marks:                  5,
+                                      timeout:                    30,
                                       run_by_instructors:         true,
                                       run_by_students:            true,
                                       halts_testing:              false,
@@ -82,6 +83,7 @@ describe TestScript do
                                            script_name:                 'validscript.sh',
                                            description:                 'This is a bash script file',
                                            max_marks:                   5,
+                                           timeout:                     30,
                                            run_by_instructors:          true,
                                            run_by_students:             true,
                                            halts_testing:               false,
@@ -97,6 +99,7 @@ describe TestScript do
                                              script_name:               'invalidscript.sh',
                                              description:               'This is a bash script file',
                                              max_marks:                 5,
+                                             timeout:                   30,
                                              run_by_instructors:        true,
                                              run_by_students:           true,
                                              halts_testing:             false,
@@ -132,6 +135,34 @@ describe TestScript do
     context 'script file expected to be invalid when the max_marks is not integer' do
       it 'return false when the max_marks is not integer' do
         @invalid_script_file.max_marks = 0.5
+        expect(@invalid_script_file).not_to be_valid
+      end
+    end
+
+    context 'script file expected to be invalid when the timeout is negative' do
+      it 'return false when the timeout is negative' do
+        @invalid_script_file.timeout = -1
+        expect(@invalid_script_file).not_to be_valid
+      end
+    end
+
+    context 'script file expected to be invalid when the timeout is zero' do
+      it 'return false when the timeout is zero' do
+        @invalid_script_file.timeout = 0
+        expect(@invalid_script_file).not_to be_valid
+      end
+    end
+
+    context 'script file expected to be invalid when the timeout is too big' do
+      it 'return false when the timeout is too big' do
+        @invalid_script_file.timeout = 1000
+        expect(@invalid_script_file).not_to be_valid
+      end
+    end
+
+    context 'script file expected to be invalid when the timeout is not integer' do
+      it 'return false when the timeout is not integer' do
+        @invalid_script_file.timeout = 0.5
         expect(@invalid_script_file).not_to be_valid
       end
     end

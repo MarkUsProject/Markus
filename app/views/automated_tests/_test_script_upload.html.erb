@@ -54,7 +54,13 @@
         <div class="maxmarks">
           <%= f.label :max_marks, raw(t 'automated_tests.script_option.max_marks'),
                       title: t('automated_tests.script_option.max_marks_help') %>
-          <%= f.text_field :max_marks, value: f.object.max_marks, size: 10, maxlength: 8 %>
+          <%= f.number_field :max_marks, value: f.object.max_marks, min: 0, step: 1 %>
+        </div>
+
+        <div>
+          <%= f.label :timeout, raw(t('automated_tests.script_option.timeout')),
+                      title: t('automated_tests.script_option.timeout_help') %>
+          <%= f.number_field :timeout, value: (saved ? f.object.timeout : 30), min: 1, max: 600, step: 1 %>
         </div>
 
         <div class="desc">

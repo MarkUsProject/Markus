@@ -1,9 +1,14 @@
 <ul class='annotation_text_list'>
-  <% if annotation_category.annotation_texts.empty? %>
+  <%
+    texts = annotation_category.annotation_texts.select do |annotation_text|
+      !annotation_text.user.nil? && (annotation_text.user.admin? || annotation_text.user == @current_user)
+    end
+  %>
+  <% if texts.empty? %>
     <li><%= t('annotation_categories.no_annotations') %></li>
   <% end %>
 
-  <% annotation_category.annotation_texts.each do |annotation_text| %>
+  <% texts.each do |annotation_text| %>
     <li id='annotation_text_<%= annotation_text.id %>'
         onclick='add_existing_annotation(<%= annotation_text.id %>, <%= result_id %>); return false;'
         onMouseDown='return false;'
