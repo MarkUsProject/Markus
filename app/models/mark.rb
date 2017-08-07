@@ -57,7 +57,8 @@ class Mark < ActiveRecord::Base
   end
 
   def update_result_mark
-    result.update_total_mark
+    if !mark.nil? || mark_changed?
+      result.update_total_mark
+    end
   end
 end
-

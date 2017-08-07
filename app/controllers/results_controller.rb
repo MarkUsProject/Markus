@@ -37,34 +37,29 @@ class ResultsController < ApplicationController
   end
 
   def edit
+    @host = Rails.application.config.action_controller.relative_url_root
     @result = Result.find(params[:id])
     @pr = PeerReview.find_by(result_id: @result.id)
-    @assignment = @result.submission.grouping.assignment
-
     @submission = @result.submission
-
-    if @submission.remark_submitted?
-      @old_result = @submission.get_original_result
-    else
-      @old_result = nil
-    end
-
-    @grouping = @result.submission.grouping
-    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
+    @grouping = @submission.grouping
     @group = @grouping.group
+    @assignment = @grouping.assignment
+    assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
+    @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
+
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
-    @first_file = @files.first
-    @extra_marks_points = @result.extra_marks.points
-    @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
     @old_marks_map = Hash.new
 
+    reviewer_access = false
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         @mark_criteria = @assignment.get_criteria(:peer)
+        assignment = @assignment.pr_assignment
+        reviewer_access = true
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
@@ -79,8 +74,20 @@ class ResultsController < ApplicationController
       @mark_criteria = @mark_criteria.partition { |c| assigned_criteria.include? c }.flatten
     end
 
+    if @old_result
+      marks = @result.marks
+    else
+      marks = @result.marks.includes(:markable)
+    end
     @mark_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by(result_id: @result.id)
+      unless marks.any? { |mark| mark.markable_id == criterion.id &&
+                                 mark.markable_type == criterion.class.name }
+        @result.marks.create(markable: criterion)
+      end
+    end
+    @result.update_total_mark
+
+    marks.each do |mark|
       # NOTE: Due to the way marks were set up, they originally assumed that
       # there only would ever be unique criterion IDs. Now that we mix them
       # together, multiple criteria could end up using the same ID due to the
@@ -88,59 +95,27 @@ class ResultsController < ApplicationController
       # over by other ones with the same criteria ID, so the class String is
       # used to allow the viewers to differentiate between them.
       # TODO - An even better idea: create a 'table', or rather hash[key][key]
-      @marks_map[[criterion.class.to_s, criterion.id]] = mark
+      @marks_map[[mark.markable_type, mark.markable_id]] = mark
 
       # Loading up previous results for the case of a remark
       if @old_result
-        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
+        oldmark = mark.markable.marks.find_or_create_by(result_id: @old_result.id)
         oldmark.save(validate: false)
 
         # See above for reasoning on why two elements are used.
-        @old_marks_map[[criterion.class.to_s, criterion.id]] = oldmark
-      end
-
-      Mark.skip_callback(:save, :after, :update_result_mark)
-      mark.save(validate: false)
-      Mark.set_callback(:save, :after, :update_result_mark)
-    end
-
-    @result.update_total_mark
-
-    if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-      assignment = @assignment.pr_assignment
-    else
-      assignment = @assignment
-    end
-
-    groupings = Grouping.get_groupings_for_assignment(assignment,
-                                                      current_user)
-
-    unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-      # We sort by group name by default
-      groupings = groupings.sort do |a, b|
-        a.group.group_name <=> b.group.group_name
+        @old_marks_map[[mark.markable_type, mark.markable_id]] = oldmark
       end
     end
 
-    current_grouping_index = groupings.index(@grouping)
-    if current_grouping_index.nil?
-      @next_grouping = groupings.first
-      @previous_grouping = groupings.last
-    else
-      unless groupings[current_grouping_index + 1].nil?
-        @next_grouping = groupings[current_grouping_index + 1]
-      end
-      if (current_grouping_index - 1) >= 0
-        @previous_grouping = groupings[current_grouping_index - 1]
-      end
-    end
+    group_order = reviewer_access ? 'grouping.id' : 'group_name'
+    all_groupings = assignment.groupings.joins(:group).order(group_order)
+    @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
+    @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
 
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
-
-    @host = Rails.application.config.action_controller.relative_url_root
 
     # Sets up the tags for the tag pane.
     # Creates a variable for all the tags not used
@@ -148,6 +123,7 @@ class ResultsController < ApplicationController
     @all_tags = Tag.all
     @grouping_tags = get_tags_for_grouping(@grouping.id)
     @not_grouping_tags = get_tags_not_associated_with_grouping(@grouping.id)
+    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
 
     # Gets the top tags and their usage.
     @top_tags = get_top_tags
@@ -570,7 +546,6 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
-    @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new

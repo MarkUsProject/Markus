@@ -45,22 +45,24 @@
         <%= t('marker.marks.total_extra_marks').html_safe %>
       </strong>
       <span id='total_extra_points'>
-        <%= result.get_total_extra_points %>
+        <%= extra_marks_points.map(&:extra_mark).reduce(0, :+).round(1) %>
       </span>
     </div>
 
-    <div class='extra_percentage_pane'>
-      <%= render partial: 'results/marker/extra_percentage_table',
-                 locals: { extra_marks_percentage: extra_marks_percentage,
-                           result_id: result.id } %>
-    </div>
+    <% if extra_marks_percentage.any? %>
+      <div class='extra_percentage_pane'>
+        <%= render partial: 'results/marker/extra_percentage_table',
+                   locals: { extra_marks_percentage: extra_marks_percentage,
+                             result_id: result.id } %>
+      </div>
 
-    <div class='summary_block'>
-      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
-      <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
-      <strong><%= t('marker.marks.translated_to_points') %></strong>
-      <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span>
-    </div>
+      <div class='summary_block'>
+        <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+        <span id='total_extra_percentage'><%= extra_marks_percentage.map(&:extra_mark).reduce(0, :+).round(1) %></span><br>
+        <strong><%= t('marker.marks.translated_to_points') %></strong>
+        <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span>
+      </div>
+    <% end %>
   <% end %>
 </div>
 

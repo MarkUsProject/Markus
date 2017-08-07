@@ -687,7 +687,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
       upload:
         upload_a_class_list: "Carregar lista de alunos"
-        select_csv_file:     "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section)</code>"
+        select_csv_file:     "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section,id_number,email)</code>"
         student_same_number: "Se um estudante com o mesmo nome de usuário exsitir, então a informação do aluno será atualizada."
       download:
         download_student_list: "Baixar lista de estudantes"
@@ -1402,6 +1402,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         seq_num: "UPDATE ME"
         max_marks: "UPDATE ME <span class='required_field'>*</span>"
         max_marks_help: "UPDATE ME"
+        timeout: "UPDATE ME <span class='required_field'>*</span>"
+        timeout_help: "UPDATE ME"
         run_by_instructors: "UPDATE ME"
         run_by_instructors_help: "UPDATE ME"
         run_by_students: "UPDATE ME"

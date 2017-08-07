@@ -5,7 +5,7 @@ describe AnnotationCategoriesController do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
-    allow(controller).to receive(:current_user).and_return(build(:admin))
+    allow(controller).to receive(:current_user).and_return(FactoryGirl.create(:admin))
   end
 
   let(:annotation_category) { FactoryGirl.create(:annotation_category) }

@@ -134,6 +134,8 @@ Markus::Application.configure do
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
   REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  # Path to the MarkUs client-side hooks (copied to all group repos).
+  REPOSITORY_CLIENT_HOOKS = "#{::Rails.root.to_s}/lib/repo/git_hooks/client"
 
   ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs is
@@ -185,6 +187,12 @@ Markus::Application.configure do
   IS_REPOSITORY_ADMIN = true
 
   ###################################################################
+  # Starter code settings
+  ###################################################################
+  # Global flag to enable/disable starter code feature.
+  EXPERIMENTAL_STARTER_CODE_ON = true
+
+  ###################################################################
   # Set this to the desired default language MarkUs should load if
   # nothing else tells it otherwise. At the moment valid values are
   # 'en', 'fr'. Please make sure that proper locale files are present
@@ -202,7 +210,7 @@ Markus::Application.configure do
   # CSV upload order of fields (usually you don't want to change this)
   ###################################################################
   # Order of student CSV uploads
-  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name]
+  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name, :id_number, :email]
   # Order of graders CSV uploads
   USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 
@@ -248,6 +256,10 @@ Markus::Application.configure do
   JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_collect'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
   JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_uncollect'
+  # The name of the queue where jobs to update repos with the list of required files wait to be executed.
+  JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108_job_req_files'
+  JOB_GENERATE_QUEUE_NAME = 'CSC108_job_generate'
+  JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108_job_split_pdf'
 
   ###################################################################
   # Automated Testing Engine settings
@@ -257,15 +269,14 @@ Markus::Application.configure do
   AUTOMATED_TESTING_ENGINE_ON = true
   ATE_EXPERIMENTAL_STUDENT_TESTS_ON = true
   ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME = 2.hours
+  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests"
+  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
   ATE_SERVER_HOST = 'localhost'
   ATE_SERVER_FILES_USERNAME = 'localhost'
-  ATE_SERVER_TESTS_USERNAME = 'localhost'
-  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests"
   ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/files"
-  ATE_SERVER_TESTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/tests"
   ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/test_runs"
-  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
-  ATE_TESTS_QUEUE_NAME = 'ate_tests'
+  ATE_SERVER_TESTS = [
+    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/dev/automated_tests/tests", queue: 'ate_tests'}]
 
   ###################################################################
   # Exam Plugin settings

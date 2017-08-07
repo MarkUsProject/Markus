@@ -763,8 +763,8 @@ en:
       no_students_selected: "No students were selected, so no changes were made."
       upload:
         upload_a_class_list: "Upload a class list"
-        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section)</code>"
-        student_same_number: "If a student with the same student number exists, then the student's information is updated."
+        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section,id_number,email)</code>"
+        student_same_number: "If a student with the same username exists, then the student's information is updated."
       download:
         download_student_list: "Download Student List"
       create:
@@ -1592,6 +1592,8 @@ en:
         seq_num: "UPDATE ME: seq_num"
         max_marks: "Max Test Points <span class='required_field'>*</span>"
         max_marks_help: "Mark = Actual Test Points / Max Test Points * Max Criterion Mark (rounded to the nearest level for Rubric Criteria)"
+        timeout: "Timeout (seconds) <span class='required_field'>*</span>"
+        timeout_help: "The number of seconds before the script is forced to stop"
         run_by_instructors: "Runnable by Instructors"
         run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
         run_by_students: "Runnable by Students"

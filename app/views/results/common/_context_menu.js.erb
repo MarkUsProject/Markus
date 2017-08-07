@@ -8,9 +8,8 @@
     var assignment_id = '<%= result.submission.grouping.assignment.id %>';
     var file_dl_path = '<%= download_assignment_submission_result_path(
       result.submission.grouping.assignment.id,
-      result.submission.grouping.current_submission_used.id,
-      result.submission.grouping
-            .current_submission_used.get_latest_result.id) %>';
+      result.submission.id,
+      result.id) %>';
     var common_annotations = [
     <% annotation_categories.each do |annotation_category| %>
       {

@@ -160,6 +160,9 @@ GEM
       ast (~> 2.2)
     pdf-core (0.6.1)
     pg (0.18.3)
+    pluck_to_hash (1.0.1)
+      activerecord (>= 4.0.2)
+      activesupport (>= 4.0.2)
     powerpack (0.1.1)
     prawn (2.1.0)
       pdf-core (~> 0.6.1)
@@ -379,6 +382,7 @@ DEPENDENCIES
   net-scp
   net-ssh
   pg
+  pluck_to_hash
   prawn
   prawn-qrcode
   quiet_assets
@@ -417,4 +421,4 @@ DEPENDENCIES
   zxing_cpp
 
 BUNDLED WITH
-   1.15.2
+   1.15.3

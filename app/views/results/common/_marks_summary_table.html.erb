@@ -8,7 +8,7 @@
   <% @mark_criteria.each do |criterion| -%>
     <%
       mark = marks_map[[criterion.class.to_s, criterion.id]]
-      if mark.nil? or mark.mark.nil?
+      if mark.nil? || mark.mark.nil? || criterion.weight == 0
         mark_value = 0
       else
         mark_value = mark.mark / criterion.weight
