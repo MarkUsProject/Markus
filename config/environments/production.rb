@@ -163,6 +163,8 @@ Markus::Application.configure do
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
   REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  # Path to the MarkUs client-side hooks (copied to all group repos).
+  REPOSITORY_CLIENT_HOOKS = ""
 
   ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs
