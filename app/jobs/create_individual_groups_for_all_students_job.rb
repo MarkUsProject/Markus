@@ -25,7 +25,10 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
           # Check to see if the student already has a grouping for
           # the current assignment
           grouping = student.accepted_grouping_for(assignment.id)
-          next unless grouping.nil?
+          unless grouping.nil?
+            progress.increment
+            next
+          end
 
           ActiveRecord::Base.transaction do
             # If an individual repo has already been created for this user
