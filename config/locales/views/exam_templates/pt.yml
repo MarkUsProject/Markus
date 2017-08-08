@@ -84,4 +84,5 @@ pt:
       update:
         success: "Modelo de exame foi atualizado com sucesso"
         error: "Modelo de exame não foi atualizado com sucesso"
-
+      assign_errors:
+        success: "Todos os arquivos de erro foram atribuídos com sucesso"
