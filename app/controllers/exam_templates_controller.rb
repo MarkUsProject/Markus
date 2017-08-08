@@ -147,7 +147,7 @@ class ExamTemplatesController < ApplicationController
     @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
     error_path = File.join(@exam_template.base_path, 'error')
-    if(File.directory?(error_path))
+    if File.directory?(error_path)
       Dir.foreach(error_path) do |file|
         @error_files << file unless file =~ /^\.\.?$/
       end
@@ -159,7 +159,7 @@ class ExamTemplatesController < ApplicationController
     end
     incomplete_path = File.join(@exam_template.base_path, 'incomplete')
     @incomplete_groups = []
-    if(File.directory?(incomplete_path))
+    if File.directory?(incomplete_path)
       Dir.foreach(incomplete_path) do |file|
         @incomplete_groups << file unless file =~ /^\.\.?$/
       end
@@ -172,7 +172,7 @@ class ExamTemplatesController < ApplicationController
     exam_group = Group.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
     pages = []
     expected_pages = [*1..exam_template.num_pages]
-    if(exam_group.nil?)
+    if exam_group.nil?
       pages = expected_pages
     else
       pages = expected_pages - exam_group.split_pages.pluck(:exam_page_number)
