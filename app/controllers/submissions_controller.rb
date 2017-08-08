@@ -152,8 +152,10 @@ class SubmissionsController < ApplicationController
   def uncollect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     @current_job = UncollectSubmissions.perform_later(assignment)
+    session[:job_id] = @current_job.job_id
+
     respond_to do |format|
-      format.js {}
+      format.js { render 'shared/_poll_job.js.erb' }
     end
   end
 
