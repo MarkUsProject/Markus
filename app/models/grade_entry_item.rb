@@ -28,40 +28,26 @@ class GradeEntryItem < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade)
-    total = grade.grade
-
     percent = BLANK_MARK
-    out_of = self.out_of
 
     # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
+    unless grade.nil? || out_of == 0
+      percent = (grade / out_of) * 100
     end
     percent
   end
 
-  # An array of all grade_entry_students' percentage total grades that are not nil
-  def percentage_grades_array
-    grade_entry_item_grades = Array.new()
-
-    grades.each do |grade|
-      if !grade.nil? && !grade.grade.nil?
-        grade_entry_item_grades.push(calculate_total_percent(grade))
-      end
-    end
-
-    return grade_entry_item_grades
-  end
-
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(intervals = 20)
-    data = percentage_grades_array
+    data = grades.where.not(grade: nil)
+             .pluck(:grade)
+             .map { |g| calculate_total_percent(g) }
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
     distribution[-1] = distribution.last + data.count{ |x| x > 100 }
 
-    return distribution
+    distribution
   end
 
   # Create new grade entry items (or update them if they already exist) using

@@ -12,18 +12,14 @@
                     class: 'title' %>
       </h2>
 
-      <div id='grade_entry_form_<%= @grade_entry_form.id %>_graph' class='left'>
-        <%= render partial: 'grade_entry_forms/grade_distribution_graph', locals: { grade_entry_form: @grade_entry_form } %>
-      </div>
+      <div id='grade_entry_form_<%= @grade_entry_form.id %>_graph' class='left'></div>
 
       <div class='right'>
         <%= render partial: 'grade_entry_forms/grade_entry_form_info_summary', locals: { grade_entry_form: @grade_entry_form } %>
       </div>
 
       <br>
-      <div id='grade_entry_form_<%= @grade_entry_form.id %>_grade_entry_items_graph' class='ta_grade_distribution'>
-        <%= render partial: 'grade_entry_forms/grade_entry_item_distribution_graph', locals: { grade_entry_form: @grade_entry_form, grade_entry_items: @grade_entry_items } %>
-      </div>
+      <div id='grade_entry_form_<%= @grade_entry_form.id %>_grade_entry_items_graph' class='ta_grade_distribution'></div>
     </div>
 <% end %>
 
