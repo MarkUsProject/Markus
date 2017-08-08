@@ -44,20 +44,41 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(grade_entry_student)
-    unless grade_entry_student.nil? || !@ges_total_grade.nil?
-      @ges_total_grade = grade_entry_student.total_grade
+    unless grade_entry_student.nil?
+      total_grades = grade_entry_student_total_grades
+      ges_total_grade = total_grades[grade_entry_student]
     end
 
     percent = BLANK_MARK
     out_of = self.out_of_total
 
     # Check for NA mark f or division by 0
-    unless @ges_total_grade.nil? || out_of == 0
-        percent = (@ges_total_grade / out_of) * 100
+    unless ges_total_grade.nil? || out_of == 0
+        percent = (ges_total_grade / out_of) * 100
     end
 
     percent
   end
+
+  # Return a hash of each grade_entry_student's total_grade
+  def grade_entry_student_total_grades
+    if defined? @ges_total_grades
+      return @ges_total_grades
+    end
+
+    total_grades = Hash.new
+    ges = GradeEntryStudent.includes(:grades)
+                           .where(grade_entry_form: self)
+
+    ges.each do |grade_entry_student|
+      total_grades[grade_entry_student] = grade_entry_student.total_grade
+    end
+
+    @ges_total_grades = total_grades
+
+    total_grades
+  end
+
 
   # An array of all grade_entry_students' released percentage total grades that are not nil
   def released_percentage_grades_array
@@ -65,14 +86,15 @@ class GradeEntryForm < ActiveRecord::Base
       return @released_grades_array
     end
 
+    total_grades = grade_entry_student_total_grades
     grades = Array.new()
     ges = GradeEntryStudent.includes(:grades)
                            .where(released_to_student: true,
                                   grade_entry_form: self)
 
     ges.each do |grade_entry_student|
-      @ges_total_grade = grade_entry_student.total_grade
-      unless @ges_total_grade.nil?
+      ges_total_grade = total_grades[grade_entry_student]
+      unless ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
@@ -88,13 +110,14 @@ class GradeEntryForm < ActiveRecord::Base
       return @grades_array
     end
 
+    total_grades = grade_entry_student_total_grades
     grades = Array.new()
     ges = GradeEntryStudent.includes(:grades)
                            .where(grade_entry_form: self)
 
     ges.each do |grade_entry_student|
-      @ges_total_grade = grade_entry_student.total_grade
-      unless @ges_total_grade.nil?
+      ges_total_grade = total_grades[grade_entry_student]
+      unless ges_total_grade.nil?
         grades.push(calculate_total_percent(grade_entry_student))
       end
     end
