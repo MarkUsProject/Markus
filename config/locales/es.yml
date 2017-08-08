@@ -1903,3 +1903,4 @@ es:
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
       create_individual_groups_job: "%{progress}/%{total} grupos creados"
+      uncollect_submissions_job: "Asignaciones incumplidas... "
