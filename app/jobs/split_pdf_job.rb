@@ -62,12 +62,12 @@ class SplitPDFJob < ActiveJob::Base
 
         # Snip out the part of the PDF that contains the QR code.
         imglist = Magick::Image.from_blob(original_pdf) do
-          self.quality = 90
+          self.quality = 100
           self.density = '83'
         end
         imglist.each do |img|
           # Snip out the top left corner of PDF that contains the QR code
-          top_left_qr_img = img.crop 20, 35, img.columns / 4.0, img.rows / 5.0
+          top_left_qr_img = img.crop 20, 30, img.columns / 3.8, img.rows / 5.0
           top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
         end
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
@@ -79,7 +79,7 @@ class SplitPDFJob < ActiveJob::Base
         else # if parsing fails, try the top right corner of the PDF
           imglist.each do |img|
             # Snip out the top left corner of PDF that contains the QR code
-            top_right_qr_img = img.crop 490, 35, img.columns / 4.0, img.rows / 5.0
+            top_right_qr_img = img.crop 480, 30, img.columns / 3.8, img.rows / 5.0
             top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
             right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
             right_m = qrcode_regex.match right_qr_code_string
