@@ -204,6 +204,8 @@ describe Result do
                     before do
                       create(:flexible_mark, result: incomp_result, mark: 1, markable: flex_criteria_first)
                       create(:flexible_mark, result: incomp_result, mark: 2, markable: flex_criteria_second)
+                      incomp_result.update_total_mark
+                      incomp_result.reload
                     end
 
                     it 'gets a subtotal' do

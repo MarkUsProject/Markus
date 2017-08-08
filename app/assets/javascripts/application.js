@@ -8,6 +8,8 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require jquery.easyModal
+// TODO: bundle ReactComponents with the actual React files.
+// (No need to load React on pages that do not use it.)
 //= require_tree ./ReactComponents
 //= require js-routes
 //= require job_poller

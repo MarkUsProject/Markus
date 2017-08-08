@@ -21,6 +21,7 @@ describe TestResult do
         script_name:                'script.sh',
         description:                'This is a bash script file',
         max_marks:                  5,
+        timeout:                    30,
         run_by_instructors:         true,
         run_by_students:            true,
         halts_testing:              false,
@@ -34,14 +35,15 @@ describe TestResult do
                                                     grouping: @sub.grouping,
                                                     test_script: @test_script,
                                                     marks_earned: 5,
-                                                    repo_revision: 0)
+                                                    repo_revision: 0,
+                                                    time: 0)
       @test_result = TestResult.create(
         test_script_result: @test_script_result,
         name:               'unit test 1',
         completion_status:  'pass',
         input:              '',
         actual_output:      '   ',
-        expected_output:    'This is the expected output',                                                    marks_earned: 5,
+        expected_output:    'This is the expected output',
         marks_earned: 5
       )
     end

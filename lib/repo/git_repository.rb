@@ -83,14 +83,24 @@ module Repository
       bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
       repo = Rugged::Repository.clone_at(bare_path, connect_string)
 
-      # Do an initial commit with a README.md file.
-      readme_path = File.join(connect_string, 'README.md')
-      File.open(readme_path, 'w') do |readme|
-        readme.write('Initial commit.')
+      # Do an initial commit with the .required_files.json
+      required = Assignment.get_required_files
+      required_path = File.join(connect_string, '.required.json')
+      File.open(required_path, 'w') do |req|
+        req.write(required.to_json)
       end
-      oid = Rugged::Blob.from_workdir(repo, 'README.md')
-      repo.index.add(path: 'README.md', oid: oid, mode: 0100644)
-      GitRepository.do_commit_and_push(repo, 'Markus', 'Initial readme commit.')
+      oid = Rugged::Blob.from_workdir(repo, '.required.json')
+      repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
+
+      # Add client-side hooks
+      if MarkusConfigurator.markus_config_repository_client_hooks
+        client_hooks_path = MarkusConfigurator.markus_config_repository_client_hooks
+        FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
+        FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+        repo.index.add_all('markus-hooks')
+      end
+
+      GitRepository.do_commit_and_push(repo, 'Markus', 'Initial commit.')
 
       # Set up hooks
       MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
@@ -310,7 +320,7 @@ module Repository
       if user_id.nil?
         raise 'Expected a user_id (Repository.get_transaction(user_id))'
       end
-      return Repository::Transaction.new(user_id, comment)
+      Repository::Transaction.new(user_id, comment)
     end
 
     def commit(transaction)
@@ -503,28 +513,20 @@ module Repository
 
     private
 
-    def latest_revision_number(_path = nil, _revision_number = nil)
-      get_revision_number(@repos.last_commit.oid)
-    end
-
-    def path_exists_for_latest_revision?(path)
-      get_latest_revision.path_exists?(path)
-    end
-
     # Creates and commits a file to the repository
     def add_file(path, file_data = nil, author)
-      if path_exists_for_latest_revision?(path)
+      if get_latest_revision.path_exists?(path)
         raise Repository::FileExistsConflict.new(path)
       end
       write_file(path, file_data, author)
     end
 
     # Removes a file from the repository
-    def remove_file(path, author, expected_revision_identifier = 0)
-      if latest_revision_number != expected_revision_identifier
+    def remove_file(path, author, expected_revision_identifier)
+      if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
-      if !path_exists_for_latest_revision?(path)
+      unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
 
@@ -534,11 +536,11 @@ module Repository
     end
 
     # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, expected_revision_identifier = 0)
-      if latest_revision_number != expected_revision_identifier
+    def replace_file(path, file_data, author, expected_revision_identifier)
+      if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
-      if !path_exists_for_latest_revision?(path)
+      unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
       write_file(path, file_data, author)
@@ -581,7 +583,7 @@ module Repository
     # path should be a directory
     def make_directory(path)
       gitkeep_filename = File.join(path, '.gitkeep')
-      add_file(gitkeep_filename, '', 'markus')
+      add_file(gitkeep_filename, '', 'Markus')
     end
 
     # Helper method to check file permissions of git auth file

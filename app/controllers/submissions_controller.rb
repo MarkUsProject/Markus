@@ -152,8 +152,10 @@ class SubmissionsController < ApplicationController
   def uncollect_all_submissions
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     @current_job = UncollectSubmissions.perform_later(assignment)
+    session[:job_id] = @current_job.job_id
+
     respond_to do |format|
-      format.js {}
+      format.js { render 'shared/_poll_job.js.erb' }
     end
   end
 
@@ -173,6 +175,7 @@ class SubmissionsController < ApplicationController
     error = ''
     if partition[0].count > 0
       current_job = SubmissionsJob.perform_later(partition[0])
+      session[:job_id] = current_job.job_id
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
@@ -183,7 +186,7 @@ class SubmissionsController < ApplicationController
     flash_now(:success, success) unless success.empty?
     flash_now(:error, error) unless error.empty?
 
-    render json: { success: success, error: error, job_id: current_job.nil? ? '' : current_job.job_id }
+    render 'shared/_poll_job.js.erb'
   end
 
   def run_tests
@@ -293,7 +296,10 @@ class SubmissionsController < ApplicationController
 
   def populate_submissions_table
     assignment = Assignment.find(params[:assignment_id])
-    groupings = Grouping.includes(:current_result)
+    groupings = Grouping.includes(:current_result,
+                                  :tas,
+                                  :accepted_students
+    )
                         .get_groupings_for_assignment(assignment,
                                                       current_user)
 

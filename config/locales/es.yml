@@ -917,7 +917,7 @@ es:
       upload:
         upload_a_class_list:   "Subir la lista de la clase"
         select_csv_file:       "Seleccionar un archivo en formato CSV de la siguiente forma:
-                                <code>user_name,last_name,first_name(,section)</code>"
+                                <code>user_name,last_name,first_name(,section,id_number,email)</code>"
         student_same_number:   "Si un estudiante con el mismo número de estudiante existe, entonces la información del
                                 estudiante es actualizada."
       download:
@@ -1821,6 +1821,8 @@ es:
         seq_num:                          "ACTUALIZAME: seq_num"
         max_marks:                        "UPDATE ME <span class='required_field'>*</span>"
         max_marks_help:                   "UPDATE ME"
+        timeout:                          "UPDATE ME <span class='required_field'>*</span>"
+        timeout_help:                     "UPDATE ME"
         run_by_instructors:               "Ejecutable por los Instructores"
         run_by_instructors_help:          "UPDATE ME"
         run_by_students:                  "Ejecutable por los Estudiantes"
@@ -1900,3 +1902,5 @@ es:
       failed: "Ha fallado"
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
+      uncollect_submissions_job: "Asignaciones incumplidas... "
+      submissions_job: "%{progress}/%{total} Envíos recibidos"

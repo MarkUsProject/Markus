@@ -97,6 +97,14 @@
            # controller.
            if controller.controller_name == 'criteria'
           target_controller = 'criteria'
+        elsif controller.controller_name == 'exam_templates'
+          if assignment.scanned_exam
+            target_controller = controller.controller_name
+            target_action = nil
+          else
+            target_controller = nil
+            target_action = 'edit'
+          end
         else
           target_controller = controller.controller_name == 'assignments' ||
                   controller.controller_name == 'automated_tests' ? nil :
@@ -129,14 +137,10 @@
                                         action: target_action),
                         title: assignment.description %>
           <% else %>
-            <% if target_action == 'assign_errors' %>
-              <%= link_to assign_errors_assignment_exam_template_path(id: params[:id]) %>
-            <% else %>
-              <%= link_to h(assignment.short_identifier),
-                          polymorphic_url([assignment, target_controller],
-                                          action: target_action),
-                          title: assignment.description %>
-            <% end %>
+            <%= link_to h(assignment.short_identifier),
+                        polymorphic_url([assignment, target_controller],
+                                        action: target_action),
+                        title: assignment.description %>
           <% end %>
         <% # student user, so show only non-hidden assignments
            else %>

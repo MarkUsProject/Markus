@@ -52,6 +52,7 @@ end
 AnnotationText.blueprint do
   annotation_category {AnnotationCategory.make}
   content {'content'}
+  user {Admin.make}
 end
 
 Assignment.blueprint do

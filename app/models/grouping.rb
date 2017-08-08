@@ -22,6 +22,10 @@ class Grouping < ActiveRecord::Base
   has_many :accepted_student_memberships,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'StudentMembership'
+  has_many :accepted_students,
+           class_name: 'Student',
+           through: :accepted_student_memberships,
+           source: :user
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
@@ -32,7 +36,10 @@ class Grouping < ActiveRecord::Base
            class_name: 'Student',
            through: :student_memberships,
            source: :user
-
+  has_many :accepted_students,
+           class_name: 'Student',
+           through: :accepted_student_memberships,
+           source: :user
   has_many :submissions
   has_one :current_submission_used,
           -> { where submission_version_used: true },
@@ -164,12 +171,6 @@ class Grouping < ActiveRecord::Base
     UPDATE_SQL
   end
 
-  def accepted_students
-    self.accepted_student_memberships.includes(user: :grace_period_deductions).collect do |memb|
-      memb.user
-    end
-  end
-
   def get_all_students_in_group
     student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
     return I18n.t('assignment.group.empty') if student_user_names.size == 0
@@ -186,10 +187,9 @@ class Grouping < ActiveRecord::Base
 
   def get_group_name
     name = group.group_name
-    unless accepted_students.size == 1 && name == accepted_students.first.user_name then
-      name += ' ('
-      name += accepted_students.collect{ |student| student.user_name}.join(', ')
-      name += ')'
+    student_names = accepted_students.map &:user_name
+    unless student_names == [name] then
+      name += ' (' + student_names.join(', ') + ')'
     end
     name
   end
@@ -443,7 +443,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def marking_completed?
-    has_submission? && current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
+    !current_result.nil? && current_result.marking_state == Result::MARKING_STATES[:complete]
   end
 
   # EDIT METHODS
@@ -595,14 +595,28 @@ class Grouping < ActiveRecord::Base
       self.group.access_repo do |repo|
         revision = repo.get_latest_revision
         assignment_folder = assignment.repository_folder
-
-        if revision.path_exists?(assignment_folder)
-          return true
-        else
-          txn = repo.get_transaction('markus')
+        result = true
+        unless revision.path_exists?(assignment_folder)
+          txn = repo.get_transaction('Markus')
           txn.add_path(assignment_folder)
-          return repo.commit(txn)
+          result = repo.commit(txn)
         end
+        begin
+          self.assignment.access_repo do |starter_repo|
+            starter_revision = starter_repo.get_latest_revision
+            if starter_revision.path_exists?(assignment_folder)
+              txn = repo.get_transaction('Markus')
+              starter_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
+                starter_file_path = File.join(assignment_folder, starter_file_name)
+                txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
+              end
+              result = repo.commit(txn)
+            end
+          end
+        rescue
+          # repo for starter code does not exist, just continue
+        end
+        return result
       end
     end
   end

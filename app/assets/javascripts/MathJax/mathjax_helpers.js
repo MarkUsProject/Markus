@@ -19,8 +19,10 @@ function updatePreview(source, des) {
 }
 
 // Allow inline single dollar sign notation
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']]}
+$(document).ready(function () {
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']]}
+  });
 });
 
 var delay = (function () {
