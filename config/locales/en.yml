@@ -1673,3 +1673,4 @@ en:
       generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
       create_individual_groups_job: "%{progress}/%{total} groups created"
       uncollect_submissions_job: "Uncollecting assignments ... "
+      submissions_job: "%{progress}/%{total} Submissions collected"

@@ -1904,3 +1904,4 @@ es:
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
       create_individual_groups_job: "%{progress}/%{total} grupos creados"
       uncollect_submissions_job: "Asignaciones incumplidas... "
+      submissions_job: "%{progress}/%{total} Envíos recibidos"

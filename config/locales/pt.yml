@@ -1478,3 +1478,4 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"
       create_individual_groups_job: "%{progress}/%{total} grupos criados"
       uncollect_submissions_job: "Tarefas não coletadas ... "
+      submissions_job: "%{progress}/%{total} Submissões coletadas"
