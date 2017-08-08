@@ -3,6 +3,19 @@ class SubmissionsJob < ActiveJob::Base
 
   queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
+  def self.on_complete_js(status)
+    'window.location.reload.bind(window.location)'
+  end
+
+  def self.show_status(status)
+    I18n.t('poll_job.submissions_job', progress: status[:progress],
+           total: status[:total])
+  end
+
+  before_enqueue do |job|
+    status.update(job_class: self.class)
+  end
+
   def perform(groupings, options = {})
     return if groupings.empty?
 

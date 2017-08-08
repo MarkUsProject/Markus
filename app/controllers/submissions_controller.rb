@@ -175,6 +175,7 @@ class SubmissionsController < ApplicationController
     error = ''
     if partition[0].count > 0
       current_job = SubmissionsJob.perform_later(partition[0])
+      session[:job_id] = current_job.job_id
       success = I18n.t('collect_submissions.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
@@ -185,7 +186,7 @@ class SubmissionsController < ApplicationController
     flash_now(:success, success) unless success.empty?
     flash_now(:error, error) unless error.empty?
 
-    render json: { success: success, error: error, job_id: current_job.nil? ? '' : current_job.job_id }
+    render 'shared/_poll_job.js.erb'
   end
 
   def run_tests

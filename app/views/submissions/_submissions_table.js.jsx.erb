@@ -390,8 +390,8 @@
         url: 'collect_submissions',
         data: dataLoad,
         success: function(data) {
-          if (data.success) {
-            poll_job(data.job_id, undefined, this.props.refresh);
+          if (data) {
+            window.scrollTo(0, 0);
           }
         }.bind(this)
       });

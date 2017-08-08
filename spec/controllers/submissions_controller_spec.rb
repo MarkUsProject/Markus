@@ -434,12 +434,7 @@ describe SubmissionsController do
                    assignment_id: 1,
                    groupings: ([] << @assignment.groupings).flatten
 
-            response_body = JSON.parse(response.body)
-            expect(response_body['error']).to eql(
-              I18n.t('collect_submissions.could_not_collect_some',
-                     assignment_identifier: 'a1'))
-            expect(response_body['success']).to be_empty
-            is_expected.to respond_with(:ok)
+            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
 
           it 'should succeed if it is after the section due date' do
@@ -455,12 +450,7 @@ describe SubmissionsController do
                    assignment_id: 1,
                    groupings: ([] << @assignment.groupings).flatten
 
-            response_body = JSON.parse(response.body)
-            expect(response_body['success']).to eql(
-              I18n.t('collect_submissions.collection_job_started_for_groups',
-                     assignment_identifier: 'a1'))
-            expect(response_body['error']).to be_empty
-            is_expected.to respond_with(:ok)
+            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
         end
 
@@ -478,12 +468,7 @@ describe SubmissionsController do
                    assignment_id: 1,
                    groupings: ([] << @assignment.groupings).flatten
 
-            response_body = JSON.parse(response.body)
-            expect(response_body['error']).to eql(
-              I18n.t('collect_submissions.could_not_collect_some',
-                     assignment_identifier: 'a1'))
-            expect(response_body['success']).to be_empty
-            is_expected.to respond_with(:ok)
+            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
 
           it 'should succeed if it is after the global due date' do
@@ -499,12 +484,7 @@ describe SubmissionsController do
                    assignment_id: 1,
                    groupings: ([] << @assignment.groupings).flatten
 
-            response_body = JSON.parse(response.body)
-            expect(response_body['success']).to eql(
-              I18n.t('collect_submissions.collection_job_started_for_groups',
-                     assignment_identifier: 'a1'))
-            expect(response_body['error']).to be_empty
-            is_expected.to respond_with(:ok)
+            expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
         end
       end
