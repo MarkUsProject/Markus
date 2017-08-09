@@ -159,10 +159,12 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
+      # midterm29.pdf is supposed to be error-free but it generated an error for a page
       should 'have one QR scan error' do
         assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
+      # midterm29.pdf is supposed to be in complete directory, but one page had an error
       should 'have pdf of each page in incomplete directory except for page 1' do
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/29/').sort,
                      %w[. .. 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
