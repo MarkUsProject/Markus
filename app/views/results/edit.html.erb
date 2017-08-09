@@ -302,13 +302,4 @@
 <%# MathML %>
 <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
                            defer: true %>
-
-<%# Only load PDF requirements if this submission has any PDF files.
-      This check is currently based on extension. %>
-<% if @result.submission.submission_files.where("filename LIKE '%.pdf'").any? %>
-  <script>
-    $.getScript('<%= asset_path("pdfjs.js") %>').done(function () {
-      PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
-    })
-  </script>
-<% end %>
+<%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>

@@ -1,7 +1,10 @@
 <%# Render the source code for syntax highlighting... %>
-
-document.getElementById('code_pane').onmousemove = null;
-document.getElementById('codeviewer').onmousemove = null;
+if (document.getElementById('code_pane')) {
+  document.getElementById('code_pane').onmousemove = null;
+}
+if (document.getElementById('codeviewer')) {
+  document.getElementById('codeviewer').onmousemove = null;
+}
 
 <%# Non-binary files %>
 <% if !SubmissionFile.is_binary?(@file_contents) %>
@@ -32,6 +35,40 @@ document.getElementById('codeviewer').onmousemove = null;
                                   locals: { uid: params[:uid],
                                             annots: @annots,
                                             submission_file_id: @submission_file_id }) %>");
+
+  function loadPdfFile() {
+    PDFView.onLoadComplete = function() {
+      window.source_code_ready_for_pdf(PDFView, 'viewer');
+
+      <% if (defined? @annots) %>
+      <% @annots.each do |annot| %>
+      add_pdf_annotation('<%= annot.annotation_text.id %>',
+                         '<%= escape_javascript(markdown(annot.annotation_text.html_content)) %>',
+                         '<%= annot.extract_coords.to_json().html_safe %>');
+      <% end %>
+      <% end %>
+    };
+
+    <% if @current_user.student? %>
+    webViewerLoad("<%= download_assignment_results_path(select_file_id: @submission_file_id,
+                                                          id: @result.id,
+                                                          show_in_browser: true ) %>"); // PDF
+    <% else %>
+    webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: @submission_file_id,
+                                                                     show_in_browser: true ) %>"); // PDF
+    <% end %>
+  }
+
+  // Load pdfjs if this is the first PDF file viewed.
+  if (typeof(PDFView) === 'undefined') {
+    $.getScript('<%= asset_path("pdfjs.js") %>').done(function () {
+      PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+      loadPdfFile();
+    })
+  } else {
+    loadPdfFile();
+  }
+
 <% else %>
   $('#codeviewer').html(
     "<%= escape_javascript(render partial: 'results/common/text_codeviewer',

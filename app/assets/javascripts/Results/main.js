@@ -26,8 +26,6 @@
 //= require SourceCodeGlower/ImageEventHandler
 //= require SourceCodeGlower/PdfAnnotationManager
 
-//= require MathJax/mathjax_helpers
-
 // Page-specific Javascript
 //= require Grader/file_selector
 //= require Grader/marking
