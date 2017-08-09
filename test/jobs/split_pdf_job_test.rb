@@ -163,7 +163,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
-      should 'have pdf of each page in complete directory' do
+      should 'have pdf of each page in incomplete directory except for page 1' do
         assert_equal Dir.entries(@exam_template.base_path + '/incomplete/29/').sort,
                      %w[. .. 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
       end
@@ -180,7 +180,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
           assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
         end
 
-        should 'have 2 pdfs in error directory' do
+        should 'have 1 pdf in error directory' do
           error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
           assert_equal error_dir_entries.length, 1
         end
@@ -258,7 +258,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
         assert Dir.exists?(@exam_template.base_path + '/incomplete/35/')
       end
 
-      should 'have 3 pdfs in error directory' do
+      should 'have 2 pdfs in error directory' do
         error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
         assert_equal error_dir_entries.length, 2
       end
