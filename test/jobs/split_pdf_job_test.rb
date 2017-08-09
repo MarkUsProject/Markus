@@ -230,7 +230,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
       end
 
       should 'have one QR scan error' do
-        assert @split_pdf_log.num_pages_qr_scan_error, 1
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
       should 'have Page 1 in incomplete directory' do
@@ -251,7 +251,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
       end
 
       should 'have two QR scan errors' do
-        assert @split_pdf_log.num_pages_qr_scan_error, 2
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 2
       end
 
       should 'have other pages that are error free in incomplete directory' do
@@ -271,7 +271,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
       end
 
       should 'have one QR scan error' do
-        assert @split_pdf_log.num_pages_qr_scan_error, 1
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
       should 'have other pages that are error free in incomplete directory' do
@@ -287,7 +287,7 @@ class SplitPDFJobTest < ActiveJob::TestCase
       end
 
       should 'have four QR scan errors' do
-        assert @split_pdf_log.num_pages_qr_scan_error, 4
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 4
       end
 
       should 'have other pages that are error free in incomplete directory' do
