@@ -211,10 +211,10 @@ class SplitPDFJob < ActiveJob::Base
         extra_pdf = CombinePDF.new
         cover_pdf = CombinePDF.new
         start_page = 0
-       # if extra_pages[0][0] == 1
-       #   cover_pdf << extra_pages[0][1]
-       #   start_page = 1
-       # end
+        if extra_pages[0][0] == 1
+          cover_pdf << extra_pages[0][1]
+          start_page = 1
+        end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
         txn.add(File.join(assignment_folder,
                           "EXTRA.pdf"),
@@ -231,7 +231,7 @@ class SplitPDFJob < ActiveJob::Base
     end
     groupings.each do |grouping|
       grouping.group.access_repo do |repo|
-        #SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
+        SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
       end
     end
   end
