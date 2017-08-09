@@ -32,19 +32,13 @@ class GenerateJob < ActiveJob::Base
       generated_pdf = CombinePDF.new
       (start..start + num_copies - 1).each do |exam_num|
         m_logger.log("Now generating: #{exam_num}")
-        pdf = Prawn::Document::new(margin: 20) do
+        pdf = Prawn::Document::new(margin: 10) do
           exam_template.num_pages.times do |page_num|
             qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
             qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
             alignment = page_num % 2 == 0 ? :right : :left
-            text = "#{exam_template.name} #{exam_num}-#{page_num + 1}"
-            if alignment == :right
-              text_width = width_of(text)
-              draw_text(text, :at => [400 - text_width, 690])
-            else
-              draw_text(text, :at => [175, 690])
-            end
             render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
+            text("#{exam_template.name} #{exam_num}-#{page_num + 1}", align: alignment)
             start_new_page
           end
         end
