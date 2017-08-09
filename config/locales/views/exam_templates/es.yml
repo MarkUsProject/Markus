@@ -83,5 +83,7 @@ es:
     exam_templates:
       update:
         success: "Plantilla-examen no se ha actualizado con éxito"
-        error: "Exam Template has not been successfully updated"
+        error: "La plantilla de examen no se ha actualizado correctamente"
+      assign_errors:
+        success: "Todos los archivos de error se han asignado correctamente"
 

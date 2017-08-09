@@ -84,4 +84,5 @@ fr:
       update:
         success: "Le modèle d'examen a été mis à jour avec succès"
         error: "Le modèle d'examen n'a pas été mis à jour avec succès"
-
+      assign_errors:
+        success: "Todos los archivos de error se han asignado correctamente"

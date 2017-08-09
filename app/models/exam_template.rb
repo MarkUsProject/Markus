@@ -148,12 +148,12 @@ class ExamTemplate < ActiveRecord::Base
         # Update status of split_page to be FIXED
         split_page_id = File.basename(filename, '.pdf') # since filename is "#{split_page.id}.pdf"
         split_page = SplitPage.find(split_page_id)
-        split_page.update_attributes(status: 'FIXED')
-
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
           repo_name: "#{self.name}_paper_#{exam_num}"
         )
+        split_page.update_attributes(status: 'FIXED', exam_page_number: page_num, group: group)
+
         # add assignment files based on template divisions
         repo = group.repo
         revision = repo.get_latest_revision

@@ -86,7 +86,8 @@ class ResultsController < ApplicationController
       end
     end
     @result.update_total_mark
-
+    marks.reload
+    
     marks.each do |mark|
       # NOTE: Due to the way marks were set up, they originally assumed that
       # there only would ever be unique criterion IDs. Now that we mix them

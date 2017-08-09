@@ -7,6 +7,8 @@
 
   function getFile(filename) {
     checkLastFile();
+    $('#copy_number').val('')
+    $('#page_number').empty()
     $.ajax({
       method: 'GET',
       url: 'download_error_file_path',
@@ -28,6 +30,9 @@
     if (files.length <= 1) {
       $('#next_file').addClass('disable');
       $('#previous_file').addClass('disable');
+      if (files.length == 0) {
+        $('#panes-content').remove();
+      }
       return true;
     }
     return false;
@@ -55,12 +60,51 @@
     }
   }
 
+  function getPages(value) {
+    $('#page_number').empty();
+    if(value !== null){
+      $.ajax({
+        method: 'GET',
+        url: 'error_pages',
+        dataType: 'json',
+        data: {
+          exam_number: value
+        },
+        success: function (data) {
+          $('#page_number').append('<option disabled selected value></option>');
+          data.forEach(function(page) {
+            $('#page_number').append('<option>' + page + '</option>');
+          });
+        },
+        error: function (err) {
+          console.log(err);
+        }
+      });
+    }
+  }
+
   $(document).ready(function () {
     $('#upside_down').click(function () {
       rotate();
     });
 
-    $('form').submit(function(e) {
+    $('#copy_number').on('keyup', function () {
+      getPages($('#copy_number').val());
+    });
+
+    getFile(files[0]);
+
+    var error_groups = [];
+
+    $('#copy_number').autocomplete({
+      source: <%= raw @incomplete_groups.to_json %>,
+      minLength: 0,
+      select: function (e, ui) {
+        getPages(ui.item.value);
+      }
+    });
+
+    $('#info_form').submit(function(e) {
       e.preventDefault();
       // grabbing existing user input data such as copy number, page number, and exam template
       var fix_error = $(this).serializeArray().reduce(function(obj, item) {
@@ -80,7 +124,10 @@
           fix_error: fix_error
         },
         success: function (data) {
-          document.location.reload();
+          files.splice(index, 1);
+          index -= 1;
+          nextFile();
+          $('#copy_number').focus();
         },
         error: function (err) {
           console.log(err);
@@ -88,6 +135,4 @@
       })
     });
   });
-
-  getFile(files[0]);
 </script>

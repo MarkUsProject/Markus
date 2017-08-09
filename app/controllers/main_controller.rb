@@ -23,6 +23,7 @@ class MainController < ApplicationController
   # the website and has not logged in yet, or session has expired.  User
   # is redirected to main page if session is still active and valid.
   def login
+    session[:job_id] = nil
 
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth

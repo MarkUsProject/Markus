@@ -146,10 +146,38 @@ class ExamTemplatesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
-    Dir.foreach(File.join(@exam_template.base_path, 'error')) do |file|
-      @error_files << file unless file =~ /^\.\.?$/
+    error_path = File.join(@exam_template.base_path, 'error')
+    if File.directory?(error_path)
+      Dir.foreach(error_path) do |file|
+        @error_files << file unless file =~ /^\.\.?$/
+      end
+      if @error_files.empty?
+        flash_message(:success, t('groups.done_assign'))
+      else
+        @error_files = @error_files.sort
+      end
     end
-    @error_files = @error_files.sort
+    incomplete_path = File.join(@exam_template.base_path, 'incomplete')
+    @incomplete_groups = []
+    if File.directory?(incomplete_path)
+      Dir.foreach(incomplete_path) do |file|
+        @incomplete_groups << file unless file =~ /^\.\.?$/
+      end
+    end
+  end
+
+  def error_pages
+    @assignment = Assignment.find(params[:assignment_id])
+    exam_template = @assignment.exam_templates.find(params[:id])
+    exam_group = Group.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
+    pages = []
+    expected_pages = [*1..exam_template.num_pages]
+    if exam_group.nil?
+      pages = expected_pages
+    else
+      pages = expected_pages - exam_group.split_pages.pluck(:exam_page_number)
+    end
+    render json: pages
   end
 
   def download_error_file

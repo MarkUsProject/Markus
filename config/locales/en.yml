@@ -643,11 +643,11 @@ en:
     #app/views/grade_entry_forms/_grade_entry_form_info_summary.html.erb
 
     grade_entry_form_due_date: "Due Date"
-    grade_entry_form_average: "Class Average:"
+    grade_entry_form_average: "Class average:"
     percentage: "%{percentage}%"
-    grade_entry_form_median: "Grade Entry Form Median:"
-    grade_entry_form_submitted: "Grade Entry Forms Submitted:"
-    grade_entry_form_released: "Grade Entry Forms Released:"
+    grade_entry_form_median: "Median:"
+    grade_entry_form_submitted: "Number of entries:"
+    grade_entry_form_released: "Number of entries released:"
     grade_entry_form_failed: "Number of fails:"
     grade_entry_form_zeros: "Number of zeros:"
     refresh_graph: "Refresh the graph"
@@ -1671,5 +1671,6 @@ en:
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
       generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
+      create_individual_groups_job: "%{progress}/%{total} groups created"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"

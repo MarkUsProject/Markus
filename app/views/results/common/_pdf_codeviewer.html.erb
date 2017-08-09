@@ -151,28 +151,3 @@
       </div>
   </div>  <!-- overlayContainer -->
 </div>
-
-<script>
-(function() {
-  PDFView.onLoadComplete = function() {
-    window.source_code_ready_for_pdf(PDFView, 'viewer');
-
-    <% if (defined? annots) %>
-      <% annots.each do |annot| %>
-        add_pdf_annotation('<%= annot.annotation_text.id %>',
-                           '<%= escape_javascript(markdown(annot.annotation_text.html_content)) %>',
-                           '<%= annot.extract_coords.to_json().html_safe %>');
-      <% end %>
-    <% end %>
-  };
-
-  <% if @current_user.student? %>
-    webViewerLoad("<%= download_assignment_results_path(select_file_id: submission_file_id,
-                                                        id: @result.id,
-                                                        show_in_browser: true ) %>"); // PDF
-  <% else %>
-    webViewerLoad("<%= download_assignment_submission_results_path(select_file_id: submission_file_id,
-                                                                   show_in_browser: true ) %>"); // PDF
-  <% end %>
-})();
-</script>

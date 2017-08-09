@@ -264,9 +264,11 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
       @current_job = CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
+      session[:job_id] = @current_job.job_id
     end
+
     respond_to do |format|
-      format.js {}
+      format.js { render 'shared/_poll_job.js.erb' }
     end
   end
 
