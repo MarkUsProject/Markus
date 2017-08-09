@@ -16,7 +16,7 @@
       datasets: [
         <% grade_entry_items.each_with_index do |grade_entry_item, index| %>
           {
-            label: "Grade Entry Item <%= grade_entry_item.id %>",
+            label: "<%= grade_entry_item.name %>",
             backgroundColor: colours[<%= index %>],
             data: <%= grade_entry_item.grade_distribution_array(20) %>
           },

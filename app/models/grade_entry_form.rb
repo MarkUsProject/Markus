@@ -46,7 +46,7 @@ class GradeEntryForm < ActiveRecord::Base
   def calculate_total_percent(grade_entry_student)
     unless grade_entry_student.nil?
       total_grades = grade_entry_student_total_grades
-      ges_total_grade = total_grades[grade_entry_student]
+      ges_total_grade = total_grades[grade_entry_student.id]
     end
 
     percent = BLANK_MARK
@@ -66,16 +66,8 @@ class GradeEntryForm < ActiveRecord::Base
       return @ges_total_grades
     end
 
-    total_grades = Hash.new
-    ges = GradeEntryStudent.includes(:grades)
-                           .where(grade_entry_form: self)
-
-    ges.each do |grade_entry_student|
-      total_grades[grade_entry_student] = grade_entry_student.total_grade
-    end
-
+    total_grades = grade_entry_students.joins(:grades).group(:grade_entry_student_id).sum(:grade)
     @ges_total_grades = total_grades
-
     total_grades
   end
 
@@ -87,15 +79,13 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     total_grades = grade_entry_student_total_grades
-    grades = Array.new()
-    ges = GradeEntryStudent.includes(:grades)
-                           .where(released_to_student: true,
-                                  grade_entry_form: self)
+    grades = Array.new
+    out_of = out_of_total
 
-    ges.each do |grade_entry_student|
-      ges_total_grade = total_grades[grade_entry_student]
-      unless ges_total_grade.nil?
-        grades.push(calculate_total_percent(grade_entry_student))
+    grade_entry_students.where(released_to_student: true).find_each do |grade_entry_student|
+      ges_total_grade = total_grades[grade_entry_student.id]
+      if !ges_total_grade.nil? && out_of != 0
+        grades.push((ges_total_grade / out_of) * 100 )
       end
     end
 
@@ -111,14 +101,13 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     total_grades = grade_entry_student_total_grades
-    grades = Array.new()
-    ges = GradeEntryStudent.includes(:grades)
-                           .where(grade_entry_form: self)
+    grades = Array.new
+    out_of = out_of_total
 
-    ges.each do |grade_entry_student|
-      ges_total_grade = total_grades[grade_entry_student]
-      unless ges_total_grade.nil?
-        grades.push(calculate_total_percent(grade_entry_student))
+    grade_entry_students.find_each do |grade_entry_student|
+      ges_total_grade = total_grades[grade_entry_student.id]
+      if !ges_total_grade.nil? && out_of != 0
+        grades.push((ges_total_grade / out_of) * 100 )
       end
     end
 
