@@ -34,6 +34,9 @@ script:
   - bundle exec rake test
   - bundle exec rspec
 
+services:
+  - redis-server
+
 notifications:
   email: false
 
