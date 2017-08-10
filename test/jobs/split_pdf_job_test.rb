@@ -23,11 +23,11 @@ class SplitPDFJobTest < ActiveJob::TestCase
       end
 
       should 'saves all the exam templates with page numbers that are error free in corresponding complete directory' do
-        assert_equal Dir.entries(@exam_template.base_path + '/complete/27/').sort,
+        assert_equal Dir.entries(@exam_template.base_path + '/complete/6/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
-        assert_equal Dir.entries(@exam_template.base_path + '/complete/29/').sort,
+        assert_equal Dir.entries(@exam_template.base_path + '/complete/7/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
-        assert_equal Dir.entries(@exam_template.base_path + '/complete/44/').sort,
+        assert_equal Dir.entries(@exam_template.base_path + '/complete/8/').sort,
                      %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
       end
     end
@@ -159,13 +159,15 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
-      should 'have zero QR scan errors' do
-        assert_equal @split_pdf_log.num_pages_qr_scan_error, 0
+      # midterm29.pdf is supposed to be error-free but it generated an error for a page
+      should 'have one QR scan error' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
-      should 'have pdf of each page in complete directory' do
-        assert_equal Dir.entries(@exam_template.base_path + '/complete/29/').sort,
-                     %w[. .. 1.pdf 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
+      # midterm29.pdf is supposed to be in complete directory, but one page had an error
+      should 'have pdf of each page in incomplete directory except for page 1' do
+        assert_equal Dir.entries(@exam_template.base_path + '/incomplete/29/').sort,
+                     %w[. .. 2.pdf 3.pdf 4.pdf 5.pdf 6.pdf 7.pdf 8.pdf].sort
       end
     end
 
@@ -176,13 +178,13 @@ class SplitPDFJobTest < ActiveJob::TestCase
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
 
-        should 'have at least one QR scan error' do
-          assert @split_pdf_log.num_pages_qr_scan_error >= 1
+        should 'have one QR scan error' do
+          assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
         end
 
-        should 'have 2 pdfs in error directory' do
+        should 'have 1 pdf in error directory' do
           error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
-          assert_equal error_dir_entries.length, 2
+          assert_equal error_dir_entries.length, 1
         end
       end
 
@@ -192,8 +194,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
           @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
         end
 
-        should 'have at least two QR scan errors' do
-          assert @split_pdf_log.num_pages_qr_scan_error >= 2
+        should 'have two QR scan errors' do
+          assert_equal @split_pdf_log.num_pages_qr_scan_error, 2
         end
 
         should 'have other pages that are error free in incomplete directory' do
@@ -229,8 +231,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
-      should 'have at least one QR scan error' do
-        assert @split_pdf_log.num_pages_qr_scan_error >= 1
+      should 'have one QR scan error' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
       should 'have Page 1 in incomplete directory' do
@@ -250,17 +252,17 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
-      should 'have at least two QR scan errors' do
-        assert @split_pdf_log.num_pages_qr_scan_error >= 2
+      should 'have two QR scan errors' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 2
       end
 
       should 'have other pages that are error free in incomplete directory' do
         assert Dir.exists?(@exam_template.base_path + '/incomplete/35/')
       end
 
-      should 'have 3 pdfs in error directory' do
+      should 'have 2 pdfs in error directory' do
         error_dir_entries = Dir.entries(File.join(@exam_template.base_path, 'error')) - %w[. ..]
-        assert_equal error_dir_entries.length, 3
+        assert_equal error_dir_entries.length, 2
       end
     end
 
@@ -270,8 +272,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
-      should 'have at least one QR scan error' do
-        assert @split_pdf_log.num_pages_qr_scan_error >= 1
+      should 'have one QR scan error' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 1
       end
 
       should 'have other pages that are error free in incomplete directory' do
@@ -286,8 +288,8 @@ class SplitPDFJobTest < ActiveJob::TestCase
         @split_pdf_log = SplitPDFJob.perform_now(@exam_template, path)
       end
 
-      should 'have at least four QR scan errors' do
-        assert @split_pdf_log.num_pages_qr_scan_error >= 4
+      should 'have four QR scan errors' do
+        assert_equal @split_pdf_log.num_pages_qr_scan_error, 4
       end
 
       should 'have other pages that are error free in incomplete directory' do
