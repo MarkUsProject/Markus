@@ -5,38 +5,30 @@
    #  differentiate it on submission, and connects the hours and deduction inputs
    #  with a common value
 %>
-<fieldset class='period'>
-  <legend>
-    <span><%= t('submission_rules.penalty_period_submission_rule.short_name') %></span>
-  </legend>
-
+<tr class='period'>
   <%= pf.fields_for :periods, penalty_period do |f| %>
-    <p>
-      <%= f.label :hours,
-                  t('submission_rules.penalty_period_submission_rule.after'),
-                  class: 'required' %>
+    <td>
       <%= f.text_field :hours,
                        size: 1,
                        class: 'PeriodDeltaChain_Hours',
                        required: true,
                        onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
       <%= t('submission_rules.grace_period_submission_rule.hours') %>
-    </p>
-    <div>
+    </td>
+    <td>
       <span class='PeriodDeltaChain'>
-        <%= t('submission_rules.penalty_period_submission_rule.from') %>
         <span class='PeriodDeltaChain_FromTime'></span>
-        <%= t('submission_rules.penalty_period_submission_rule.to') %>
+      </span>
+    </td>
+    <td>
+      <span class='PeriodDeltaChain'>
         <span class='PeriodDeltaChain_ToTime'></span>
       </span>
-    </div>
-    <p>
-      <%= f.label :deduction,
-                  t('submission_rules.penalty_period_submission_rule.deduction'),
-                  class: 'required' %>
+    </td>
+    <td>
       <%= f.text_field :deduction, required: true, size: 1 %>%
-    </p>
-    <p>
+    </td>
+    <td>
       <% if !f.object.nil? && !f.object.new_record? %>
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
@@ -45,6 +37,6 @@
                     '#',
                     onclick: 'remove_period(this, penalty_periods); return false;' %>
       <% end %>
-    </p>
+    </td>
   <% end %>
-</fieldset>
+</tr>

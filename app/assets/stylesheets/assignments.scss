@@ -38,15 +38,50 @@ fieldset {
     }
   }
 
-  &.period,
-  a {
-    margin-left: 2.5em;
-  }
-
   // Save button in assignment form
   & + input[type='submit'] {
     margin-top: 1.5em;
   }
+}
+
+#grace_periods, #penalty_decay_periods, #penalty_periods {
+  margin-left: 2.5em;
+  width: 70%;
+  min-width: 500px;
+
+  &>a {
+    display: block;
+    width: 100%;
+    background-color: $light-blue;
+    padding: 10px;
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+    margin-bottom: 10px;
+
+    td, th {
+      padding: 10px 10px;
+      text-align: left;
+    }
+
+    td:last-child, th:last-child {
+      text-align: right;
+    }
+
+    td:nth-last-child(2) {
+      float: right;
+    }
+
+    thead {
+      border-bottom: 1px solid $grey;
+    }
+  }
+}
+
+.PeriodDeltaChain_Hours {
+  width: 42px;
 }
 
 label {
@@ -75,6 +110,7 @@ input#assignment_repository_folder[readonly] {
 
 .PeriodDeltaChain {
   font-weight: 300;
+  padding-right: 40px;
 
   .PeriodDeltaChain_FromTime,
   .PeriodDeltaChain_ToTime {
