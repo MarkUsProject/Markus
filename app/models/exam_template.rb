@@ -135,13 +135,13 @@ class ExamTemplate < ActiveRecord::Base
         error_file_new_name = File.join(incomplete_dir, "#{page_num}.pdf")
         File.rename(error_file_old_name, error_file_new_name)
         if upside_down
-          file_to_upside_down = File.open(error_file_new_name).read
-          pdf_to_upside_down = CombinePDF.parse file_to_upside_down
-          page_to_upside_down = pdf_to_upside_down.pages[0]
-          page_to_upside_down[:Rotate] = page_to_upside_down[:Rotate].to_f + 180
-          page_to_upside_down.fix_rotation
+          new_pdf = CombinePDF.new
+          pdf = CombinePDF.load(error_file_new_name)
+          pdf.pages.each do |page|
+            new_pdf << page.fix_rotation
+          end
           File.open(error_file_new_name, 'wb') do |f|
-            f.write pdf_to_upside_down.to_pdf
+            f.write new_pdf.to_pdf
           end
         end
 
