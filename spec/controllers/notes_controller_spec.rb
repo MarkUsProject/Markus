@@ -511,8 +511,7 @@ describe NotesController do
         post_as @admin,
                 :create,
                 {noteable_type: 'Student',
-                 note: {noteable_id: @note.id,
-                        notes_message: @message}}
+                 note: {noteable_id: @note.id}}
         assert_select 'select#note_noteable_id'
       end
 
