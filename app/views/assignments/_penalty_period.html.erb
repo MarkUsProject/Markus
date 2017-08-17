@@ -30,11 +30,11 @@
     </td>
     <td>
       <% if !f.object.nil? && !f.object.new_record? %>
-        <%= f.label :_destroy, t(:remove) %>
-        <%= f.check_box :_destroy %>
+        <%= f.check_box :_destroy, {class: 'remove_rule'} %>
       <% else %>
         <%= link_to t(:remove),
                     '#',
+                    class: 'remove_rule',
                     onclick: 'remove_period(this, penalty_periods); return false;' %>
       <% end %>
     </td>
