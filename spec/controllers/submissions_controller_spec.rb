@@ -455,6 +455,11 @@ describe SubmissionsController do
         end
 
         context 'without a section' do
+          before(:each) do
+            @student.section = nil
+            @student.save
+          end
+
           it 'should get an error if it is before the global due date' do
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
