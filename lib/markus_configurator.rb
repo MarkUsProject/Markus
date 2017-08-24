@@ -341,9 +341,9 @@ module MarkusConfigurator
   end
 
   # Whether to allow the creation of scanned exams
-  def markus_exam_scanned_exam
-    if defined? SCANNED_EXAM_ON
-      SCANNED_EXAM_ON
+  def markus_experimental_scanned_exam_on?
+    if defined? EXPERIMENTAL_EXAM_PLUGIN_ON
+      EXPERIMENTAL_EXAM_PLUGIN_ON
     else
       false
     end
