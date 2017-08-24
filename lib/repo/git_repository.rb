@@ -35,7 +35,10 @@ module Repository
         @repos = Rugged::Repository.new(@repos_path)
         # make sure working directory is up-to-date
         @repos.fetch('origin')
-        @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo
+        begin
+          @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
+        rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
+        end
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       else
         raise "Repository does not exist at path \"#{@repos_path}\""
