@@ -803,6 +803,7 @@ class Assignment < ActiveRecord::Base
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
+          next if t_mem.grouping.current_result.nil?
           result_id = t_mem.grouping.current_result.id
           num_marked = marked[result_id] || 0
           if num_marked == num_assigned_criteria
@@ -815,6 +816,7 @@ class Assignment < ActiveRecord::Base
                                 .where('memberships.user_id': ta_id)
         count = 0
         ta_groupings.each do |g|
+          next if g.current_result.nil?
           count += 1 if g.current_result.marking_state == Result::MARKING_STATES[:complete]
         end
         count
