@@ -71,6 +71,7 @@
           exam_number: value
         },
         success: function (data) {
+          $('#page_number').empty();
           $('#page_number').append('<option disabled selected value></option>');
           data.forEach(function(page) {
             $('#page_number').append('<option>' + page + '</option>');

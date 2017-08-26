@@ -206,31 +206,6 @@ class ExamTemplate < ActiveRecord::Base
         end
 
         repo.commit(txn)
-
-        groupings = []
-        groupings << Grouping.find_or_create_by(
-          group: group,
-          assignment: self.assignment
-        )
-        # collect new submission
-        groupings.each do |grouping|
-          revision_identifier = grouping.group.repo.get_latest_revision.revision_identifier
-          if revision_identifier.nil?
-            time = self.assignment.submission_rule.calculate_collection_time.localtime
-            new_submission = Submission.create_by_timestamp(grouping, time)
-          else
-            new_submission = Submission.create_by_revision_identifier(grouping, revision_identifier)
-          end
-          if self.assignment.submission_rule.is_a? GracePeriodSubmissionRule
-            # Return any grace credits previously deducted for this grouping.
-            self.assignment.submission_rule.remove_deductions(grouping)
-          end
-          new_submission = self.assignment.submission_rule.apply_submission_rule(new_submission)
-          unless grouping.error_collecting
-            grouping.is_collected = true
-          end
-          grouping.save
-        end
       end
     end
   end

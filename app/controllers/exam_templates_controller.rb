@@ -146,10 +146,14 @@ class ExamTemplatesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
+    @split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
+    page_ids = @split_pdf_log.split_pages.map { |p| p.id.to_s }
     error_path = File.join(@exam_template.base_path, 'error')
     if File.directory?(error_path)
       Dir.foreach(error_path) do |file|
-        @error_files << file unless file =~ /^\.\.?$/
+        if not file =~ /^\.\.?$/ and page_ids.include? File.basename(file, '.pdf')
+          @error_files << file # unless file =~ /^\.\.?$/
+        end
       end
       if @error_files.empty?
         flash_message(:success, t('groups.done_assign'))
@@ -204,7 +208,7 @@ class ExamTemplatesController < ApplicationController
     filename = params[:fix_error][:filename]
     upside_down = params[:fix_error][:upside_down] == 'true' # because params[:fix_error][:upside_down] is passed as string
     exam_template.fix_error(filename, copy_number, page_number, upside_down)
-    redirect_to action: 'assign_errors'
+    redirect_to action: 'assign_errors', split_pdf_log_id: params[:fix_error][:split_pdf_log_id]
   end
 
   def exam_template_params
