@@ -10,7 +10,7 @@
                                'Results/context_menu' %>
 
     <%= javascript_tag do -%>
-        PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+        PDFJS.workerSrc = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
     <% end -%>
 <% end %>
 

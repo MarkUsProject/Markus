@@ -19,7 +19,7 @@
               { controller: 'assignments',
                 action: 'new' },
               class: 'button' %>
-  <% if MarkusConfigurator.markus_exam_scanned_exam %>
+  <% if MarkusConfigurator.markus_experimental_scanned_exam_on? %>
         <%= link_to t(:create_new_scanned_assignment),
                     { controller: 'assignments',
                       scanned: true,

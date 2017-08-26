@@ -55,11 +55,11 @@ if __name__ == '__main__':
     # warn about missing files
     new_ls = subprocess.run(['git', 'ls-files'], stdout=subprocess.PIPE,
                             universal_newlines=True)
-    files = new_ls.stdout.splitlines()
+    files = [path.split('/') for path in new_ls.stdout.splitlines()]
     for assignment in staged_dirs:
         if assignment not in required_files:
             continue
-        for file_path in required_files[assignment]['required']:
-            if file_path not in files:
+        for [assignment, file_path] in required_files[assignment]['required']:
+            if [assignment, file_path] not in files:
                 print("[MarkUs] Warning: required file '{}' is missing in assignment '{}'.".format(
                     file_path, assignment))

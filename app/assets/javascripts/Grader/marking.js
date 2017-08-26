@@ -282,7 +282,12 @@ function activeCriterion($next_criteria) {
         $next_criteria.find('tr>td')[0].addClass('active-rubric');
       }
     } else if ($next_criteria.hasClass('checkbox_criterion')) {
-      $next_criteria.find('.mark_grade_input_checkbox').focus();
+      $selected_option = $next_criteria.find('.mark_grade_input_checkbox[checked]')[0];
+      if ($selected_option) {
+        $selected_option.focus();
+      } else {
+        $next_criteria.find('.mark_grade_input_checkbox')[0].focus();
+      }
     }
     // If this current criteria is not expanded, expand it
     if ($next_criteria.hasClass('not_expanded')) {
@@ -442,7 +447,8 @@ function update_total_mark(total_mark) {
   document.getElementById('current_mark_div').innerHTML       = total_mark;
   document.getElementById('current_total_mark_div').innerHTML = total_mark;
   hideActiveCriterion();
-  nextCriterion();
+  // TODO: Enable this once it only moves to next *unmarked* criterion.
+  // nextCriterion();
 }
 
 function compact_view_toggle(init) {
