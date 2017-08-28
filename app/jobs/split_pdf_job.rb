@@ -127,6 +127,8 @@ class SplitPDFJob < ActiveJob::Base
      m_logger.log('Split pdf process done')
     rescue => e
       Rails.logger.error e.message
+      # Clean tmp folder
+      Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
       raise e
   end
 
