@@ -215,6 +215,7 @@
           <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
         </div>
         <%= form_tag nil, {id: 'info_form'} do %>
+          <%= hidden_field_tag(:split_pdf_log_id, @split_pdf_log.id) %>
           <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
           <%= number_field_tag(:copy_number, nil, {autofocus: true, required: true}) %><br>
           <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
