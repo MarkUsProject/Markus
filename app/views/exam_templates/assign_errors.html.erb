@@ -217,9 +217,16 @@
         <%= form_tag nil, {id: 'info_form'} do %>
           <%= hidden_field_tag(:split_pdf_log_id, @split_pdf_log.id) %>
           <%= label_tag(:copy_number, t('exam_templates.assign_errors.copy_number')) %>
-          <%= number_field_tag(:copy_number, nil, {autofocus: true, required: true}) %><br>
+          <%= number_field_tag(:copy_number, nil,
+                               { autofocus: true,
+                                 required: true
+                               }) %><br>
           <%= label_tag(:page_number, t('exam_templates.assign_errors.page_number')) %>
-          <%= select_tag(:page_number, nil, {required: true}) %><br>
+          <%= number_field_tag(:page_number, nil,
+                               { required: true,
+                                 min: 1,
+                                 max: @split_pdf_log.exam_template.num_pages
+                               }) %>
           <%= label_tag(:upside_down,  t('exam_templates.assign_errors.upside_down')) %>
           <%= check_box_tag(:upside_down, id: 'upside_down') %><br>
           <br>

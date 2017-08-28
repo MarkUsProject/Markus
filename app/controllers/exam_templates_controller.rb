@@ -161,13 +161,6 @@ class ExamTemplatesController < ApplicationController
         @error_files = @error_files.sort
       end
     end
-    incomplete_path = File.join(@exam_template.base_path, 'incomplete')
-    @incomplete_groups = []
-    if File.directory?(incomplete_path)
-      Dir.foreach(incomplete_path) do |file|
-        @incomplete_groups << file unless file =~ /^\.\.?$/
-      end
-    end
   end
 
   def error_pages

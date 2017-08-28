@@ -7,8 +7,9 @@
 
   function getFile(filename) {
     checkLastFile();
-    $('#copy_number').val('')
-    $('#page_number').empty()
+    $('#copy_number').val('');
+    $('#page_number').val('');
+    $('#page_number_list').empty();
     $.ajax({
       method: 'GET',
       url: 'download_error_file_path',
@@ -71,11 +72,15 @@
           exam_number: value
         },
         success: function (data) {
-          $('#page_number').empty();
-          $('#page_number').append('<option disabled selected value></option>');
-          data.forEach(function(page) {
-            $('#page_number').append('<option>' + page + '</option>');
+          $('#page_number').autocomplete({
+            source: data.map(function (x) { return x.toString(); }),
+            minLength: 0,
+            autoFocus: true,
+            select: function(event, ui) {
+              $('#page_number').val(ui.item.id);
+            }
           });
+          $('#page_number').focus().autocomplete('search', '');
         },
         error: function (err) {
           console.log(err);
@@ -96,14 +101,6 @@
     getFile(files[0]);
 
     var error_groups = [];
-
-    $('#copy_number').autocomplete({
-      source: <%= raw @incomplete_groups.to_json %>,
-      minLength: 0,
-      select: function (e, ui) {
-        getPages(ui.item.value);
-      }
-    });
 
     $('#info_form').submit(function(e) {
       e.preventDefault();
