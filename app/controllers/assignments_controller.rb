@@ -946,7 +946,11 @@ class AssignmentsController < ApplicationController
 
     # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
-    rule_name       = rule_attributes[:type]
+    if rule_attributes.nil?
+      rule_name = assignment.submission_rule.class.to_s
+    else
+      rule_name = rule_attributes[:type]
+    end
 
     [NoLateSubmissionRule, GracePeriodSubmissionRule,
      PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
@@ -989,7 +993,7 @@ class AssignmentsController < ApplicationController
         assignment.submission_rule.periods << Period.new(p)
       end
 
-    else # in this case Rails does what we want, so we'll take the easy route
+    elsif !submission_rule_params.nil? # in this case Rails does what we want, so we'll take the easy route
       assignment.submission_rule.update_attributes(submission_rule_params)
     end
 
@@ -1055,7 +1059,7 @@ class AssignmentsController < ApplicationController
 
   def submission_rule_params
     params.require(:assignment)
-          .require(:submission_rule_attributes)
+          .permit(:submission_rule_attributes)
           .permit(:_destroy, :id, periods_attributes: [:id,
                                                        :deduction,
                                                        :interval,
