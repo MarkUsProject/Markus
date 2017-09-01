@@ -243,10 +243,12 @@
         </li>
 
 
-        <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
-          <%= link_to t('submissions'),
-                      file_manager_assignment_submissions_path(@assignment) %>
-        </li>
+        <% if !@assignment.scanned_exam? && !@assignment.is_peer_review? %>
+          <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
+            <%= link_to t('submissions'),
+                        file_manager_assignment_submissions_path(@assignment) %>
+          </li>
+        <% end %>
 
         <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
             @assignment.tokens_per_period > 0) %>

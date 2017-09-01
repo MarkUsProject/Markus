@@ -85,10 +85,10 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-    if @grouping.nil?
+    if @grouping.nil? || @assignment.scanned_exam? || @assignment.is_peer_review?
       redirect_to controller: 'assignments',
                   action: 'student_interface',
-                  id: params[:id]
+                  id: params[:assignment_id]
       return
     end
 
