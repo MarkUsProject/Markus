@@ -32,9 +32,11 @@ if __name__ == '__main__':
         assignment, file_path = path.split('/', maxsplit=1)  # it can never be a top level file/dir
         staged_dirs.append(assignment)
         req = required_files.get(assignment)
-        if req is None:
-            # this can happen only if an assignment becomes hidden after being visible for a while
-            # (the top level hook prevents the creation of an arbitrary assignment directory)
+        if req is None or not req.get('required'):
+            # This can happen if either:
+            # 1) an assignment becomes hidden after being visible for a while
+            #    (the top level hook prevents the creation of an arbitrary assignment directory)
+            # 2) the assignment has no required files
             continue
         if status == 'A':
             if file_path not in req['required']:
@@ -59,7 +61,7 @@ if __name__ == '__main__':
     for assignment in staged_dirs:
         if assignment not in required_files:
             continue
-        for [assignment, file_path] in required_files[assignment]['required']:
+        for file_path in required_files[assignment]['required']:
             if [assignment, file_path] not in files:
                 print("[MarkUs] Warning: required file '{}' is missing in assignment '{}'.".format(
                     file_path, assignment))
