@@ -156,7 +156,7 @@ module Api
         end
       end
 
-      parameters = [:last_name, :first_name, :type, :grace_credits]
+      parameters = [:last_name, :first_name, :type, :grace_credits, :email, :id_number]
       parameters.each do |key|
         unless params[key].blank?
           attributes[key] = params[key]
