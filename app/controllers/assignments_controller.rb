@@ -344,11 +344,12 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     @assignment.transaction do
       begin
-        @assignment, _ = process_assignment_form(@assignment)
+        @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
+        new_required_files = false
       end
       unless @assignment.save
         @assignments = Assignment.all
@@ -363,6 +364,10 @@ class AssignmentsController < ApplicationController
       end
       if @assignment.save
         flash_message(:success, I18n.t('assignment.create_success'))
+      end
+      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+        # update list of required files in all repos only if there is a hook that will use that list
+        UpdateRepoRequiredFilesJob.perform_later(current_user)
       end
     end
     redirect_to action: 'edit', id: @assignment.id
