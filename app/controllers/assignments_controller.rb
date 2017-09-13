@@ -930,6 +930,7 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     assignment.assign_attributes(assignment_params)
     new_required_files = assignment.only_required_files_changed? ||
+                         assignment.is_hidden_changed? ||
                          assignment.assignment_files.any? { |file| file.changed? }
     assignment.save!
     new_required_files = new_required_files ||
