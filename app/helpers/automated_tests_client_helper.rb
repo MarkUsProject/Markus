@@ -27,7 +27,7 @@ module AutomatedTestsClientHelper
     # Create/Update test scripts (4 cases)
     testscripts.each do |file_num, file|
       # 1) Remove an existing test script
-      if testscripts[file_num][:_destroy]
+      if file[:_destroy] == '1'
         updated_script_files[file_num] = file.clone
         next
       end
