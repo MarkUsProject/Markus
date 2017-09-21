@@ -949,7 +949,6 @@ class AssignmentsController < ApplicationController
 
     # Due to some funkiness, we need to handle submission rules separately
     # from the main attribute update
-
     # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
     if rule_attributes.nil?
@@ -982,7 +981,7 @@ class AssignmentsController < ApplicationController
       # the case of purely new periods the input is only an array, but in
       # the case of a mixture the input is a hash, and if there are no
       # periods at all then the periods_attributes will be nil
-      periods = submission_rule_params[:periods_attributes]
+      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
       periods = case periods
                 when Hash
                   # in this case, we do not care about the keys, because
@@ -1000,7 +999,7 @@ class AssignmentsController < ApplicationController
       end
 
     elsif !submission_rule_params.nil? # in this case Rails does what we want, so we'll take the easy route
-      assignment.submission_rule.update_attributes(submission_rule_params)
+      assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
     end
 
     if params[:is_group_assignment] == 'true'
@@ -1065,11 +1064,17 @@ class AssignmentsController < ApplicationController
 
   def submission_rule_params
     params.require(:assignment)
-          .permit(:submission_rule_attributes)
-          .permit(:_destroy, :id, periods_attributes: [:id,
-                                                       :deduction,
-                                                       :interval,
-                                                       :hours,
-                                                       :_destroy])
+          .permit(submission_rule_attributes: [
+            :_destroy,
+            :id,
+            :type,
+            { periods_attributes: [
+              :id,
+              :deduction,
+              :interval,
+              :hours,
+              :_destroy
+            ] }
+          ])
   end
 end
