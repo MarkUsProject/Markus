@@ -192,13 +192,13 @@
         <%= link_to t(:submissions),
                     controller: 'submissions',
                     action: 'browse',
-                    id: @assignment.id %>
+                    id: @assignment.nil? ? @grouping.assignment_id : @assignment.id %>
       </li>
       <li <% if controller.controller_name == 'summaries' %>
             class='active'
           <% end %>>
         <%= link_to t(:summaries),
-                    assignment_summaries_path(@assignment) %>
+                    assignment_summaries_path(@assignment || @grouping.assignment) %>
       </li>
     <% end %>
   </ul>
