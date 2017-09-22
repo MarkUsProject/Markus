@@ -486,7 +486,8 @@ module AutomatedTestsClientHelper
         test_actual = test['actual'].nil? ? '' : test['actual']
         test_expected = test['expected'].nil? ? '' : test['expected']
         test_status = test['status']
-        if test_status.nil? or not test_status.in?(%w(pass fail error))
+        if test_status.nil? or not test_status.in?(%w(pass partial fail error))
+          test_actual = I18n.t('automated_tests.test_result.bad_status', {status: test_status})
           test_status = 'error'
           marks_earned = 0
         end

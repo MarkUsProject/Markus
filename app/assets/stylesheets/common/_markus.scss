@@ -330,13 +330,22 @@ fieldset {
     }
 
     tbody {
-      .test-result-success {
+      .test-result-pass {
         background-color: #caffc9 !important;
       }
 
-      .test-result-failure {
+      .test-result-partial {
+        background-color: #ffffc9 !important;
+      }
+
+      .test-result-fail {
         background-color: #ffcac9 !important;
       }
+
+      .test-result-error {
+        background-color: #ff7a77 !important;
+      }
+
       tr {
         transition: background-color $time-quick;
 

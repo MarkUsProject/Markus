@@ -1435,8 +1435,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         expected: "Esperado"
         marks_earned: "Marcas Ganhou"
         status: "Estado"
-        passed: "Passou"
-        failed: "Fracassado"
+        pass: "Passou"
+        partial: "UPDATE ME"
+        fail: "Fracassado"
+        error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
         no_test_server_user: "UPDATE ME"
@@ -1453,6 +1455,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
+        bad_status: "UPDATE ME '%{status}'"
 
 #Missing Activerecord Translations for english
     datetime:

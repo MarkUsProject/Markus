@@ -1474,8 +1474,10 @@ fr:
         expected: "Attendu"
         marks_earned: "Marques Gagnés"
         status: "Statut"
-        passed: "Passé"
-        failed: "Échoué"
+        pass: "Passé"
+        partial: "UPDATE ME"
+        fail: "Échoué"
+        error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
         no_test_server_user: "UPDATE ME"
@@ -1492,6 +1494,7 @@ fr:
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
+        bad_status: "UPDATE ME '%{status}'"
 
 #Missing Activerecord Translations for french
     datetime:
