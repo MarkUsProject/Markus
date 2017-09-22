@@ -67,10 +67,9 @@
                     marking: "#{@grouping.last_student_test_marks}/#{@assignment.total_student_test_script_marks}") %>
         </div>
         <div id='test_results' class='sub_block'>
-          <% student_results = @test_script_results.where(submission_id: nil) %>
           <%= render partial: 'test_script_result',
                      locals: { current_user: @current_user, ran_by: 'student',
-                               latest_date: student_results.nil? ? nil : student_results[0].created_at },
+                               latest_date: @test_script_results.empty? ? nil : @test_script_results[0].created_at },
                      collection: @test_script_results %>
         </div>
       </div>
