@@ -1860,8 +1860,10 @@ es:
         expected:     "Esperado"
         marks_earned: "Notas Obtenidas"
         status:       "Estado"
-        passed:       "Pasó"
-        failed:       "Falló"
+        pass:         "Pasó"
+        partial:      "UPDATE ME"
+        fail:         "Falló"
+        error:        "UPDATE ME"
       error:
         not_enabled:          "UPDATE ME"
         no_test_server_user:  "UPDATE ME"
@@ -1879,6 +1881,7 @@ es:
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
+        bad_status: "UPDATE ME '%{status}'"
 
 #Missing Activerecord Translations for english
     datetime:
