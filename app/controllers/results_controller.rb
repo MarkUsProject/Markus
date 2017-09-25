@@ -87,7 +87,7 @@ class ResultsController < ApplicationController
     end
     @result.update_total_mark
     marks.reload
-    
+
     marks.each do |mark|
       # NOTE: Due to the way marks were set up, they originally assumed that
       # there only would ever be unique criterion IDs. Now that we mix them
@@ -110,8 +110,17 @@ class ResultsController < ApplicationController
 
     group_order = reviewer_access ? 'grouping.id' : 'group_name'
     all_groupings = assignment.groupings.joins(:group).order(group_order)
-    @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
-    @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
+    if current_user.ta?
+      assigned_groupings = current_user.groupings
+                             .where(assignment: assignment)
+                             .joins(:group)
+                             .order('group_name')
+      @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
+      @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
+    else
+      @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
+      @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
+    end
 
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +

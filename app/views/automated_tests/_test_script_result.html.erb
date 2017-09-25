@@ -31,8 +31,7 @@
       </thead>
       <tbody>
         <% test_script_result.test_results.each do |test| %>
-          <tr class="<%= test.completion_status == 'pass' ?
-          'test-result-success' : 'test-result-failure' %>">
+          <tr class="<%= "test-result-#{test.completion_status}" %>">
             <td><%= test.name %></td>
             <% if false %><td><%= test.input %></td><% end %>
             <% if show_output %><td><%= test.actual_output %></td><% end %>
@@ -40,9 +39,7 @@
             <td><%= test.expected_output %></td>
             <td><%= test.marks_earned %></td>
             <% end %>
-            <td><%= test.completion_status == 'pass' ?
-                    t('automated_tests.test_results_table.passed') :
-                    t('automated_tests.test_results_table.failed') %>
+            <td><%= t("automated_tests.test_results_table.#{test.completion_status}") %>
             </td>
           </tr>
         <% end %>

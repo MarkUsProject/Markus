@@ -62,7 +62,7 @@ if (document.getElementById('codeviewer')) {
   // Load pdfjs if this is the first PDF file viewed.
   if (typeof(PDFView) === 'undefined') {
     $.getScript('<%= asset_path("pdfjs.js") %>').done(function () {
-      PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
+      PDFJS.workerSrc = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
       loadPdfFile();
     })
   } else {

@@ -344,11 +344,12 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     @assignment.transaction do
       begin
-        @assignment, _ = process_assignment_form(@assignment)
+        @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
+        new_required_files = false
       end
       unless @assignment.save
         @assignments = Assignment.all
@@ -363,6 +364,10 @@ class AssignmentsController < ApplicationController
       end
       if @assignment.save
         flash_message(:success, I18n.t('assignment.create_success'))
+      end
+      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+        # update list of required files in all repos only if there is a hook that will use that list
+        UpdateRepoRequiredFilesJob.perform_later(current_user)
       end
     end
     redirect_to action: 'edit', id: @assignment.id
@@ -925,6 +930,7 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     assignment.assign_attributes(assignment_params)
     new_required_files = assignment.only_required_files_changed? ||
+                         assignment.is_hidden_changed? ||
                          assignment.assignment_files.any? { |file| file.changed? }
     assignment.save!
     new_required_files = new_required_files ||
@@ -943,10 +949,13 @@ class AssignmentsController < ApplicationController
 
     # Due to some funkiness, we need to handle submission rules separately
     # from the main attribute update
-
     # First, figure out what kind of rule has been requested
     rule_attributes = params[:assignment][:submission_rule_attributes]
-    rule_name       = rule_attributes[:type]
+    if rule_attributes.nil?
+      rule_name = assignment.submission_rule.class.to_s
+    else
+      rule_name = rule_attributes[:type]
+    end
 
     [NoLateSubmissionRule, GracePeriodSubmissionRule,
      PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
@@ -972,7 +981,7 @@ class AssignmentsController < ApplicationController
       # the case of purely new periods the input is only an array, but in
       # the case of a mixture the input is a hash, and if there are no
       # periods at all then the periods_attributes will be nil
-      periods = submission_rule_params[:periods_attributes]
+      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
       periods = case periods
                 when Hash
                   # in this case, we do not care about the keys, because
@@ -989,8 +998,8 @@ class AssignmentsController < ApplicationController
         assignment.submission_rule.periods << Period.new(p)
       end
 
-    else # in this case Rails does what we want, so we'll take the easy route
-      assignment.submission_rule.update_attributes(submission_rule_params)
+    elsif !submission_rule_params.nil? # in this case Rails does what we want, so we'll take the easy route
+      assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
     end
 
     if params[:is_group_assignment] == 'true'
@@ -1055,11 +1064,17 @@ class AssignmentsController < ApplicationController
 
   def submission_rule_params
     params.require(:assignment)
-          .require(:submission_rule_attributes)
-          .permit(:_destroy, :id, periods_attributes: [:id,
-                                                       :deduction,
-                                                       :interval,
-                                                       :hours,
-                                                       :_destroy])
+          .permit(submission_rule_attributes: [
+            :_destroy,
+            :id,
+            :type,
+            { periods_attributes: [
+              :id,
+              :deduction,
+              :interval,
+              :hours,
+              :_destroy
+            ] }
+          ])
   end
 end

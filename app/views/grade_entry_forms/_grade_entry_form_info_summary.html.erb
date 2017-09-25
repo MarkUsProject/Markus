@@ -1,8 +1,10 @@
 <p class="due_date">
   <%= I18n.t(:grade_entry_form_due_date) %>:
+  <% if grade_entry_form.date %>
   <span>
     <%= I18n.l(grade_entry_form.date, format: :long_date ) %>
   </span>
+  <% end %>
 </p>
 
 <table>

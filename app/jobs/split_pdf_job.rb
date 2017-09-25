@@ -122,12 +122,14 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error
       )
 
+      m_logger.log('Split pdf process done')
       return split_pdf_log
-    end
-     m_logger.log('Split pdf process done')
     rescue => e
       Rails.logger.error e.message
+      # Clean tmp folder
+      Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
       raise e
+    end
   end
 
   # Save the pages into groups for this assignment
@@ -211,7 +213,7 @@ class SplitPDFJob < ActiveJob::Base
         extra_pdf = CombinePDF.new
         cover_pdf = CombinePDF.new
         start_page = 0
-        if extra_pages[0][0] == 1
+        if !extra_pages.empty? && extra_pages[0][0] == 1
           cover_pdf << extra_pages[0][1]
           start_page = 1
         end

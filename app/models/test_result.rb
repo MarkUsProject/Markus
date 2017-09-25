@@ -26,7 +26,7 @@ class TestResult < ActiveRecord::Base
   validates_presence_of :marks_earned
 
   validates_inclusion_of :completion_status,
-                         in: %w(pass fail error),
+                         in: %w(pass partial fail error),
                          message: "%{value} is not a valid status"
   validates_numericality_of :marks_earned,
                             only_integer: true,

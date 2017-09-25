@@ -35,7 +35,10 @@ module Repository
         @repos = Rugged::Repository.new(@repos_path)
         # make sure working directory is up-to-date
         @repos.fetch('origin')
-        @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo
+        begin
+          @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
+        rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
+        end
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       else
         raise "Repository does not exist at path \"#{@repos_path}\""
@@ -93,7 +96,7 @@ module Repository
       repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
 
       # Add client-side hooks
-      if MarkusConfigurator.markus_config_repository_client_hooks
+      unless MarkusConfigurator.markus_config_repository_client_hooks.empty?
         client_hooks_path = MarkusConfigurator.markus_config_repository_client_hooks
         FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
         FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')

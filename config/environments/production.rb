@@ -311,9 +311,8 @@ Markus::Application.configure do
   # Exam Plugin settings
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
-  EXPERIMENTAL_EXAM_PLUGIN_ON = true
+  EXPERIMENTAL_EXAM_PLUGIN_ON = false
   EXAM_TEMPLATE_DIR = "#{::Rails.root.to_s}/data/dev/exam_templates"
-  SCANNED_EXAM_ON = false
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

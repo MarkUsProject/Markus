@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print('[MarkUs] Running pre-commit checks...')
         scripts = sorted([os.path.join(hooks_dir, f) for f in os.listdir(hooks_dir)])
         for script in scripts:
-            hook = subprocess.run(['python', script], input=sys.stdin.read(), stdout=subprocess.PIPE,
+            hook = subprocess.run([sys.executable, script], input=sys.stdin.read(), stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE, universal_newlines=True)
             sys.stdout.write(hook.stdout)
             sys.stderr.write(hook.stderr)
