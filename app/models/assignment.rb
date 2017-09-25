@@ -815,7 +815,11 @@ class Assignment < ActiveRecord::Base
                                 .where('memberships.user_id': ta_id)
         count = 0
         ta_groupings.each do |g|
-          count += 1 if g.current_result.marking_state == Result::MARKING_STATES[:complete]
+          if g.current_result.nil?
+            count = 0
+          else
+            count += 1 if g.current_result.marking_state == Result::MARKING_STATES[:complete]
+          end
         end
         count
       end
