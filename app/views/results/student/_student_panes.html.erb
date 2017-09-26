@@ -58,7 +58,11 @@
                         </div>
                         <div id="test_results" class="sub_block">
                           <%= render partial: 'automated_tests/test_script_result',
-                                     locals: {current_user: @current_user, ran_by: 'instructor'},
+                                     locals: {
+                                         current_user: @current_user,
+                                         ran_by: 'instructor',
+                                         latest_date: submission.test_script_results.empty? ? nil : submission.test_script_results[0].created_at
+                                     },
                                      collection: submission.test_script_results %>
                         </div>
                       </div>
