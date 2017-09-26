@@ -58,23 +58,12 @@
     </div>
   </div>
 
-  <% unless @test_script_results.nil? %>
-    <div class='block'>
-      <h2><%= t('automated_tests.test_results') %></h2>
-      <div class='block_content'>
-        <div class='sub_block test_points'>
-          <%= raw t('automated_tests.marks_obtained',
-                    marking: "#{@grouping.last_student_test_marks}/#{@assignment.total_student_test_script_marks}") %>
-        </div>
-        <div id='test_results' class='sub_block'>
-          <%= render partial: 'test_script_result',
-                     locals: { current_user: @current_user, ran_by: 'student',
-                               latest_date: @test_script_results.empty? ? nil : @test_script_results[0].created_at },
-                     collection: @test_script_results %>
-        </div>
-      </div>
-    </div>
-  <% end %>
+  <div class='block'>
+    <%= render partial: 'automated_tests/test_script_results',
+               locals: {results: @test_script_results, assignment: @assignment, grouping: @grouping,
+                        current_user: @current_user, ran_by: 'student'} %>
+  </div>
+
 <% elsif @grouping.nil? %>
   <div class='block'>
       <%= t('automated_tests.need_group_for_test') %>

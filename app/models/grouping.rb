@@ -838,7 +838,7 @@ class Grouping < ActiveRecord::Base
   def self.last_test_marks(test_script_ids, test_script_results)
     test_script_ids.sum do |test_script_id|
       mark = test_script_results.where(test_script_id: test_script_id)
-                                .limit(1)
+                                .limit(1) # uses test_script_results with ORDER BY created_at DESC
                                 .pluck(:marks_earned)
       mark.empty? ? 0 : mark[0]
     end

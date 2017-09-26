@@ -35,10 +35,6 @@ module ResultsHelper
     submission.remark_submitted?
   end
 
-  def can_show_test_results_tab?(assignment)
-    assignment.enable_test
-  end
-
   def can_show_feedback_files_tab?(submission)
     not submission.feedback_files.empty?
   end

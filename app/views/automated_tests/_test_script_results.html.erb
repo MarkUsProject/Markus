@@ -1,0 +1,33 @@
+<% if ran_by == 'student' %>
+  <% marks = grouping.last_student_test_marks %>
+  <% total_marks = assignment.total_student_test_script_marks %>
+<% elsif ran_by == 'instructor' && local_assigns[:submission] %>
+  <% marks = submission.last_instructor_test_marks %>
+  <% total_marks = assignment.total_instructor_test_script_marks %>
+<% else %><%# ran_by == 'instructor' without a submission (not possible yet) %>
+  <% marks = grouping.last_instructor_test_marks %>
+  <% total_marks = assignment.total_instructor_test_script_marks %>
+<% end %>
+<h2><%= t('automated_tests.test_results') %></h2>
+<div class="block_content">
+  <div class="sub_block test_points">
+    <% if results.empty? %>
+      <%= t('automated_tests.no_results') %>
+    <% else %>
+      <%= raw t('automated_tests.marks_obtained', marking: "#{marks}/#{total_marks}") %>
+    <% end %>
+    <%# This run tests button is only for instructors before releasing the marks %>
+    <% if !current_user.student? && local_assigns[:submission] && !submission.current_result.released_to_students %>
+      <%= link_to t('automated_tests.run_tests'),
+                  run_tests_assignment_submission_result_path(grouping_id: submission.grouping.id),
+                  class: 'button run_tests right' %>
+    <% end %>
+  </div>
+  <% unless results.empty? %>
+    <div id="test_results" class="sub_block">
+      <%= render partial: 'automated_tests/test_script_result',
+                 locals: {current_user: current_user, ran_by: ran_by, latest_date: results[0].created_at},
+                 collection: results %>
+      </div>
+  <% end %>
+</div>

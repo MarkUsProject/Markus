@@ -1758,6 +1758,7 @@ es:
       testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
       automated_tests:                    "Estructura de la prueba"
       test_results:                       "Resultados de la Prueba"
+      no_results:                         "UPDATE ME"
       expand_all:                         "Expandir Todos"
       collapse_all:                       "Reducir Todos"
       enable_test:                        "Habilitar pruebas para este proyecto"

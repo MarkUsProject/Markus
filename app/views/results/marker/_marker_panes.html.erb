@@ -5,7 +5,7 @@
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
            <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
            <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
-          <% if !@result.is_a_review? && can_show_test_results_tab?(assignment) %>
+          <% if !@result.is_a_review? && assignment.enable_test %>
               <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
           <% end %>
           <% if !@result.is_a_review? && can_show_feedback_files_tab?(submission) %>
@@ -60,32 +60,12 @@
           <ul id='annotation_summary_list'></ul>
         </div>
 
-        <% if !@result.is_a_review? && can_show_test_results_tab?(assignment) %>
+        <% if !@result.is_a_review? && assignment.enable_test %>
           <div id='test_result_tab' style='display:none;'>
             <div id='testviewer' class='block'>
-              <h2><%= t("automated_tests.test_results") %>:</h2>
-              <div class="block_content">
-                <div class="sub_block test_points">
-                  <% if submission.test_script_results.empty? %>
-                    <% t("automated_tests.no_results") %>
-                  <% else %>
-                      <%= raw t("automated_tests.marks_obtained",
-                                marking: "#{submission.last_test_marks}/#{@assignment.total_instructor_test_script_marks}" ) %>
-                  <% end %>
-                  <%= link_to t("automated_tests.run_tests"),
-                              run_tests_assignment_submission_result_path(grouping_id: @grouping.id),
-                              class: 'button run_tests right' %>
-                </div>
-
-                <% unless submission.test_script_results.empty? %>
-                  <div id="test_results" class="sub_block">
-                    <%= render partial: 'automated_tests/test_script_result',
-                               locals: { current_user: @current_user, ran_by: 'instructor',
-                                         latest_date: submission.test_script_results[0].created_at },
-                               collection: submission.test_script_results %>
-                  </div>
-                <% end %>
-              </div>
+              <%= render partial: 'automated_tests/test_script_results',
+                         locals: {results: submission.test_script_results, assignment: assignment,
+                                  submission: submission, current_user: @current_user, ran_by: 'instructor'} %>
             </div>
           </div>
         <% end %>

@@ -1369,6 +1369,7 @@ fr:
       testing_disabled: "Les tests automatiques du code sont désactivés pour ce projet."
       automated_tests: "Tests"
       test_results: "Résultat des tests"
+      no_results: "UPDATE ME"
       expand_all: "Montrer toutes"
       collapse_all: "Cacher toutes"
       enable_test: "Activer les tests pour ce projet"

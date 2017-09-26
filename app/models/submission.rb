@@ -148,7 +148,8 @@ class Submission < ActiveRecord::Base
     end
   end
 
-  def last_test_marks
+  # same as grouping.last_instructor_test_marks, but optimized because all test_script_results here are instructor ones
+  def last_instructor_test_marks
     test_script_ids = self.assignment.instructor_test_scripts
                           .distinct
                           .pluck(:id)
