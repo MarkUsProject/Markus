@@ -252,7 +252,7 @@ module SubmissionsHelper
       f[:raw_name] = file_name
       f[:last_revised_date] = I18n.l(file.last_modified_date,
                                      format: :long_date)
-      f[:last_modified_revision] = file.last_modified_revision
+      f[:last_modified_revision] = revision_identifier
       f[:revision_by] = file.user_id
       f
     end
@@ -273,7 +273,7 @@ module SubmissionsHelper
                                path: File.join(path, directory_name))
       d[:last_revised_date] = I18n.l(directory.last_modified_date,
                                      format: :long_date)
-      d[:last_modified_revision] = directory.last_modified_revision
+      d[:last_modified_revision] = revision_identifier
       d[:revision_by] = directory.user_id
       d
     end
