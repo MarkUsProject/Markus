@@ -121,7 +121,9 @@ module Repository
 
     # static method that should yield to a git repo and then close it
     def self.access(connect_string)
-      yield GitRepository.open(connect_string)
+      repo = GitRepository.open(connect_string)
+      yield repo
+      repo.close
     end
 
     # static method that deletes the git repo
