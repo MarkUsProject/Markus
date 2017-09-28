@@ -352,7 +352,7 @@ module Repository
       end
       # replace content of file in question
       act_rev = get_latest_revision()
-      if (act_rev.revision_identifier != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int.to_i)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       files_list = rev.files_at_path(File.dirname(full_path))
@@ -366,7 +366,7 @@ module Repository
         raise Repostiory::FileDoesNotExistConflict.new(full_path)
       end
       act_rev = get_latest_revision()
-      if (act_rev.revision_identifier != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int.to_i)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       filename = File.basename(full_path)
