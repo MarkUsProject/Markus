@@ -90,7 +90,10 @@ class CriteriaController < ApplicationController
 
     ActiveRecord::Base.transaction do
       params[:criterion].each_with_index do |type_id, index|
-        type, id = type_id.split(' ')
+
+        type = type_id.match(/^[a-zA-Z]+/).to_s
+        id   = type_id.match(/\d+/).to_s
+
         type.constantize.update(id, position: index + 1) unless id.blank?
       end
     end
