@@ -961,6 +961,7 @@ module Repository
     def initialize(revision_number, repo)
       revision_number = revision_number.to_i if revision_number.is_a? String
       @repo = repo
+      @revision_identifier_ui = revision_number.to_s
       begin
         @timestamp = @repo.__get_property(:date, revision_number)
         if @timestamp.instance_of?(String)

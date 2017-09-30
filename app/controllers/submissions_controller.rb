@@ -45,7 +45,7 @@ class SubmissionsController < ApplicationController
     @revisions_history = []
     all_revisions = []
     repo.get_all_revisions.each do |revision|
-      if collected_submission && collected_submission.revision_identifier == revision.revision_identifier
+      if collected_submission && collected_submission.revision_identifier == revision.revision_identifier.to_s
         @collected_revision = revision
       end
       all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
