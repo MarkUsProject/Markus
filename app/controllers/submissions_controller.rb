@@ -111,6 +111,7 @@ class SubmissionsController < ApplicationController
     repo = user_group.repo
     if revision_identifier.nil?
       @revision = repo.get_latest_revision
+      revision_identifier = @revision.revision_identifier
     else
       @revision = repo.get_revision(revision_identifier)
     end
@@ -369,11 +370,7 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions =
-          params[:file_revisions].nil? ? {} : params[:file_revisions]
-      file_revisions.merge!(file_revisions) do |_key, v1, _v2|
-        v1.to_i rescue v1
-      end
+      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
 
       # The files that will be deleted
       delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
