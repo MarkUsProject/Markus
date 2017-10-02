@@ -53,6 +53,7 @@ if (typeof React !== 'undefined') {
 var Table = React.createClass({displayName: 'Table',
   propTypes: {
     data: React.PropTypes.array,
+    sort: React.PropTypes.array,
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
@@ -166,6 +167,7 @@ var Table = React.createClass({displayName: 'Table',
 
     var rows = this.state.sorted_rows.slice();
     sort_by_column(rows,
+                   this.props.sort,
                    sort_column,
                    sort_direction,
                    compare_func);
@@ -597,10 +599,17 @@ function search_item(search_text, item) {
   }
 }
 
-function sort_by_column(data, column, direction, compare) {
+function sort_by_column(data, sort, column, direction, compare) {
   // determine sort behaviour
   function makeComparable(a)
   {
+    if (sort && sort.hasOwnProperty(a.id)) {
+      var sort_data = sort[a.id];
+      if (sort_data.hasOwnProperty(column)) {
+        return sort_data[column];
+      }
+    }
+    a = a[column];
     if (typeof a === 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
@@ -631,7 +640,7 @@ function sort_by_column(data, column, direction, compare) {
 
   // sort row by column id
   data.sort(function(a, b) {
-    var c = compare(makeComparable(a[column]), makeComparable(b[column]));
+    var c = compare(makeComparable(a), makeComparable(b));
 
     if (c === 0) {
       return a.pos - b.pos;

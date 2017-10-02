@@ -550,8 +550,14 @@
       <%= raw @section_column  %>
       {
         id: 'graders',
-        content:<input type='checkbox'
-        onChange={this.graderCheckboxAllClicked}> <%= j raw t('graders.graders') %></input>,
+        content: (
+            <input
+              type='checkbox'
+              onChange={this.graderCheckboxAllClicked}
+            >
+              <%= j raw t('graders.graders') %>
+            </input>
+        ),
         sortable: true,
         searchable: false
       },
@@ -572,6 +578,7 @@
       filters.unshift({name: all, text: all, func: null});
 
       // Massage the data so it will fit into the table.
+      var sort_data = {};
       var groups_data = this.props.groups.map(function(group) {
         var g = {};
         g['id'] = group.id;
@@ -581,13 +588,17 @@
         g['name'] = group.name;
         g['section'] = group.section;
         var graders = [];
+        var graders_name = [];
         for (var i = 0; i < group.graders.length; i++) {
           graders.push(<div key={group.graders[i].membership_id}>
             <input id={group.graders[i].membership_id}
               type='checkbox'
               checked={this.props.selected_graders_in_groups.indexOf(group.graders[i].membership_id) !== -1 ? true : false}
               onChange={this.graderCheckboxClicked} />{group.graders[i].user_name}</div>);
+          graders_name.push(group.graders[i].user_name)
         }
+
+        sort_data[group.id] = {graders: graders_name.join('')};
 
         g['graders'] = graders;
         return g;
@@ -595,7 +606,7 @@
 
       return (
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
-          <Table data={groups_data} columns={columns} ref="myTable"
+          <Table data={groups_data} sort={sort_data} columns={columns} ref="myTable"
                filters={filters} filter_type={filters.length > 3}
                search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
         </div>
