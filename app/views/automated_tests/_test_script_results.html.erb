@@ -3,23 +3,11 @@
 <%#                |   'student'   |         'instructor'         |%>
 <%#    .student?   | student tests | instr tests, results tab     |%>
 <%#   !.student?   | XXXXXXXXXXXXX | instr tests, submissions tab |%>
-<% if ran_by == 'student' %>
-  <% marks = grouping.last_student_test_marks %>
-  <% total_marks = assignment.total_student_test_script_marks %>
-<% elsif ran_by == 'instructor' && local_assigns[:submission] %>
-  <% marks = submission.last_instructor_test_marks %>
-  <% total_marks = assignment.total_instructor_test_script_marks %>
-<% else %><%# ran_by == 'instructor' without a submission (not possible yet) %>
-  <% marks = grouping.last_instructor_test_marks %>
-  <% total_marks = assignment.total_instructor_test_script_marks %>
-<% end %>
 <h2><%= t('automated_tests.test_results') %></h2>
 <div class="block_content">
   <div class="sub_block test_points">
     <% if results.empty? %>
       <%= t('automated_tests.no_results') %>
-    <% elsif !current_user.student? || ran_by == 'student' %>
-      <%= raw t('automated_tests.marks_obtained', marking: "#{marks}/#{total_marks}") %>
     <% end %>
     <%# This run tests button is only for instructors before releasing the marks %>
     <% if !current_user.student? && local_assigns[:submission] && !submission.current_result.released_to_students %>

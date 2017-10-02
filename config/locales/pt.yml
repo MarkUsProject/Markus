@@ -1390,7 +1390,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       invalid_buildproperties: "Arquivo Ant build.properties deve ser nomeado build.properties"
       invalid_filename: "Arquivos de testes, bibliotecas e interpretadores não pode ser nomeado build.xml ou build.properties"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
-      marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       script_option:
         upload_required: "UPDATE ME <span class='required_field'>*</span>"
         upload_help: "UPDATE ME"

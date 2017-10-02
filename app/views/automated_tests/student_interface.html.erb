@@ -60,8 +60,7 @@
 
   <div class='block'>
     <%= render partial: 'automated_tests/test_script_results',
-               locals: {results: @test_script_results, assignment: @assignment, grouping: @grouping,
-                        current_user: @current_user, ran_by: 'student'} %>
+               locals: {results: @test_script_results, current_user: @current_user, ran_by: 'student'} %>
   </div>
 
 <% elsif @grouping.nil? %>
