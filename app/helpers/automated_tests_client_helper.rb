@@ -195,6 +195,8 @@ module AutomatedTestsClientHelper
   # belong to the group, and have at least one token.
   def self.check_user_permission(user, grouping)
 
+    # the user may not have an api key yet
+    user.set_api_key
     # admins are always ok
     if user.admin?
       return
