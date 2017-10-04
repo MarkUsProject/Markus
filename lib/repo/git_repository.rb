@@ -92,8 +92,7 @@ module Repository
       File.open(required_path, 'w') do |req|
         req.write(required.to_json)
       end
-      oid = Rugged::Blob.from_workdir(repo, '.required.json')
-      repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
+      repo.index.add('.required.json')
 
       # Add client-side hooks
       unless MarkusConfigurator.markus_config_repository_client_hooks.empty?
@@ -336,7 +335,7 @@ module Repository
         case job[:action]
         when :add_path
           begin
-            make_directory(job[:path])
+            add_directory(job[:path])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -517,7 +516,7 @@ module Repository
 
     private
 
-    # Creates and commits a file to the repository
+    # Creates a file into the repository.
     def add_file(path, file_data)
       if get_latest_revision.path_exists?(path)
         raise Repository::FileExistsConflict.new(path)
@@ -525,7 +524,14 @@ module Repository
       write_file(path, file_data)
     end
 
-    # Removes a file from the repository
+    # Creates an empty directory into the repository.
+    # The dummy file is required so the directory gets committed.
+    def add_directory(path)
+      gitkeep_filename = File.join(path, '.gitkeep')
+      add_file(gitkeep_filename, '')
+    end
+
+    # Removes a file from the repository.
     def remove_file(path, expected_revision_identifier)
       if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
@@ -537,7 +543,7 @@ module Repository
       @repos.index.remove(path)
     end
 
-    # Replaces file at provided path with file_data
+    # Replaces a file in the repository with new content.
     def replace_file(path, file_data, expected_revision_identifier)
       if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
@@ -548,7 +554,7 @@ module Repository
       write_file(path, file_data)
     end
 
-    # Writes to file using path, file_data
+    # Writes +file_data+ to the file at +path+.
     def write_file(path, file_data)
       # Get directory path of file (one level higher)
       dir = File.dirname(path)
@@ -560,35 +566,12 @@ module Repository
       # file on disk if it already exists, but will only make a
       # new commit if the file contents have changed.
       abs_path = File.join(@repos_path, path)
-      # Actually create the file.
       File.open(abs_path, 'w') do |file|
         file.write file_data.force_encoding('UTF-8')
       end
-      # Get the hash of the file we just created and added
-      oid = Rugged::Blob.from_workdir(@repos, path)
-      @repos.index.add(path: path, oid: oid, mode: 0100644)
+      @repos.index.add(path)
     end
 
-    # Create and commit an empty directory, if it's not already present.
-    # The dummy file is required so the directory gets committed.
-    # path should be a directory
-    def make_directory(path)
-      gitkeep_filename = File.join(path, '.gitkeep')
-      add_file(gitkeep_filename, '')
-    end
-
-    # Helper method to check file permissions of git auth file
-    def git_auth_file_checks
-      if !@repos_admin # if we are not admin, check if files exist
-        if !File.file?(@repos_auth_file)
-          raise FileDoesNotExist.new("'#{@repos_auth_file}' not a file or not existent")
-        end
-        if !File.readable?(@repos_auth_file)
-          raise "File '#{@repos_auth_file}' not readable"
-        end
-      end
-      return true
-    end
   end
 
   # Convenience class, so that we can work on Revisions rather

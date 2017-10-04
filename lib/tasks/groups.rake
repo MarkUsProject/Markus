@@ -38,12 +38,11 @@ namespace :db do
         end
 
         group.access_repo do |repo|
-          txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-          #add files to the root folder of the repo (e.g. "A1")
-          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
+            # add files to the root folder of the repo (e.g. "A1")
           # recursively copying contents(files & directories) inside the file_dir
+          txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
           copy_dir(file_dir, txn, assignment.repository_folder)
-
           repo.commit(txn)
         end
       end
@@ -53,22 +52,19 @@ namespace :db do
     repo.__set_all_permissions
   end
 
-  def copy_dir(file_dir, txn, saving_repo)
-    txn.add_path(saving_repo)
-    Dir.foreach(file_dir) do |filename|
-      content = File.join(file_dir, filename)
-      if filename[0] != '.'
-        if not File.directory?(content)  # if content is a file
-          file_contents = File.open(content)
-          file_contents.rewind
-          path = File.join(saving_repo, filename)
-          txn.add(path, file_contents.read, '')
-          file_contents.close
-        else # if content is a directory and filename doesn't start with .
-          new_saving_repo = File.join(saving_repo, filename) # generating new saving repo for recursion
-          txn.add_path(new_saving_repo)
-          new_dir = File.join(file_dir, filename) # generating new file path for recursion
-          copy_dir(new_dir, txn, new_saving_repo)
+  def copy_dir(seed_dir, txn, repo_dir)
+    Dir.foreach(seed_dir) do |filename|
+      if filename[0] == '.' # skip dir and files starting with .
+        next
+      end
+      seed_path = File.join(seed_dir, filename)
+      repo_path = File.join(repo_dir, filename)
+      if File.directory?(seed_path)
+        txn.add_path(repo_path)
+        copy_dir(seed_path, txn, repo_path)
+      else
+        File.open(seed_path, 'r') do |file|
+          txn.add(repo_path, file.read, '')
         end
       end
     end
