@@ -26,7 +26,8 @@ namespace :db do
       enable_test: false,
       tokens_per_period: 0,
       token_start_date: DateTime.now,
-      token_period: 1
+      token_period: 1,
+      only_required_files: false
     )
     Period.create(submission_rule: rule, hours: 24)
 
@@ -53,7 +54,8 @@ namespace :db do
         enable_test: false,
         tokens_per_period: 0,
         token_start_date: DateTime.now,
-        token_period: 1
+        token_period: 1,
+        only_required_files: false
     )
 
     rule = NoLateSubmissionRule.new
@@ -82,7 +84,8 @@ namespace :db do
         enable_test: false,
         tokens_per_period: 0,
         token_start_date: DateTime.now,
-        token_period: 1
+        token_period: 1,
+        only_required_files: false
     )
 
     assignment_stat = AssignmentStat.new
@@ -107,7 +110,8 @@ namespace :db do
         enable_test: false,
         tokens_per_period: 0,
         token_start_date: DateTime.now,
-        token_period: 1
+        token_period: 1,
+        only_required_files: false
     )
 
     rule = NoLateSubmissionRule.new
@@ -132,7 +136,8 @@ namespace :db do
         enable_test: false,
         tokens_per_period: 0,
         token_start_date: DateTime.now,
-        token_period: 1
+        token_period: 1,
+        only_required_files: false
     )
   end
 end
