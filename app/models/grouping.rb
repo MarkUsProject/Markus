@@ -513,12 +513,16 @@ class Grouping < ActiveRecord::Base
 
   # Returns last modified date of the assignment_folder in this grouping's repository
   def assignment_folder_last_modified_date
-    repo = self.group.repo
-    rev = repo.get_latest_revision
-    last_date = rev.timestamp
-
-    repo.close()
-    last_date
+    revision = nil
+    group.access_repo do |repo|
+      # we use this function because it allows to specify a path
+      revision = repo.get_revision_by_timestamp(Time.zone.now, assignment.repository_folder)
+      # an alternative could have been:
+      # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
+      # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
+      # walk through the entire history
+    end
+    revision.timestamp
   end
 
   # Returns a list of missing assignment_files yet to be submitted
@@ -664,18 +668,11 @@ class Grouping < ActiveRecord::Base
   ##
   def past_due_date?
     timestamp = assignment_folder_last_modified_date
-    due_dates = assignment.section_due_dates
-    section = unless inviter.blank?
-                inviter.section
-              end
-    section_due_date = unless section.blank? || due_dates.blank?
-                         due_dates.where(section_id: section).first.due_date
-                       end
-
-    if !section_due_date.blank?
-      timestamp > section_due_date
-    else
+    if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
       timestamp > assignment.due_date
+    else
+      section_due_date = assignment.section_due_dates.where(section_id: inviter.section).first.due_date
+      timestamp > section_due_date
     end
   end
 
