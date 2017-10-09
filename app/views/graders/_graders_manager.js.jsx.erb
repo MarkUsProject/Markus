@@ -550,8 +550,15 @@
       <%= raw @section_column  %>
       {
         id: 'graders',
-        content:<input type='checkbox'
-        onChange={this.graderCheckboxAllClicked}> <%= j raw t('graders.graders') %></input>,
+        compare: 'compare_graders',
+        content: (
+          <input
+            type='checkbox'
+            onChange={this.graderCheckboxAllClicked}
+          >
+            <%= j raw t('graders.graders') %>
+          </input>
+        ),
         sortable: true,
         searchable: false
       },
