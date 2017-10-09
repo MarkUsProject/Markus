@@ -47,9 +47,11 @@ function compare_fractions(a, b) {
 }
 
 function compare_numeric_values(a, b) {
-  if (isNaN(b) || a > b) {
+  var num_a = convert_string(a);
+  var num_b = convert_string(b);
+  if (isNaN(num_b) || num_a > num_b) {
     return 1;
-  } else if (isNaN(a) || a < b) {
+  } else if (isNaN(num_a) || num_a < num_b) {
     return -1;
   }
   return 0;
@@ -62,4 +64,12 @@ function compare_values(a, b) {
     return -1;
   }
   return 0;
+}
+
+function convert_string(a){
+  if (typeof a === 'string') {
+    var num_a = parseFloat(a);
+  }
+  var num = (num_a != null) ? num_a : a;
+  return num;
 }
