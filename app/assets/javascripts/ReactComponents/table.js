@@ -53,7 +53,6 @@ if (typeof React !== 'undefined') {
 var Table = React.createClass({displayName: 'Table',
   propTypes: {
     data: React.PropTypes.array,
-    sort: React.PropTypes.array,
     search_placeholder: React.PropTypes.string,
     columns: React.PropTypes.array,
     filters: React.PropTypes.array, // Optional: pass null
@@ -167,7 +166,6 @@ var Table = React.createClass({displayName: 'Table',
 
     var rows = this.state.sorted_rows.slice();
     sort_by_column(rows,
-                   this.props.sort,
                    sort_column,
                    sort_direction,
                    compare_func);
