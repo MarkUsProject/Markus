@@ -599,7 +599,7 @@ function search_item(search_text, item) {
   }
 }
 
-function sort_by_column(data, sort, column, direction, compare) {
+function sort_by_column(data, column, direction, compare) {
   // determine sort behaviour
   function makeComparable(a)
   {
