@@ -63,3 +63,10 @@ function compare_values(a, b) {
   }
   return 0;
 }
+
+function compare_graders(a, b) {
+  var nameA = a[0].props.children[1];
+  var nameB = b[0].props.children[1];
+
+  return compare_values(nameA, nameB);
+}

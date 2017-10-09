@@ -603,13 +603,6 @@ function sort_by_column(data, sort, column, direction, compare) {
   // determine sort behaviour
   function makeComparable(a)
   {
-    if (sort && sort.hasOwnProperty(a.id)) {
-      var sort_data = sort[a.id];
-      if (sort_data.hasOwnProperty(column)) {
-        return sort_data[column];
-      }
-    }
-    a = a[column];
     if (typeof a === 'string') {
       return a.toLowerCase().replace(' ', '');
     } else if (a.hasOwnProperty('props')) {
@@ -640,7 +633,7 @@ function sort_by_column(data, sort, column, direction, compare) {
 
   // sort row by column id
   data.sort(function(a, b) {
-    var c = compare(makeComparable(a), makeComparable(b));
+    var c = compare(makeComparable(a[column]), makeComparable(b[column]));
 
     if (c === 0) {
       return a.pos - b.pos;
