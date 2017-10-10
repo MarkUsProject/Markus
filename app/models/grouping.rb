@@ -671,7 +671,7 @@ class Grouping < ActiveRecord::Base
     if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
       timestamp > assignment.due_date
     else
-      section_due_date = assignment.section_due_dates.where(section_id: inviter.section).first.due_date
+      section_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
       timestamp > section_due_date
     end
   end
