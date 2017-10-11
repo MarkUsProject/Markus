@@ -45,8 +45,7 @@ class AutomatedTestsController < ApplicationController
               MarkusConfigurator.markus_ate_client_dir,
               @assignment.repository_folder,
               new_support_file.original_filename)
-          # Replace bad line endings from windows
-          contents = new_support_file.read.tr("\r", '')
+          contents = new_support_file.read
           File.open(
               assignment_tests_path, 'w') { |f| f.write contents }
         end
