@@ -260,7 +260,7 @@ module Repository
 
     def get_all_revisions
       revisions = []
-      1.upto(latest_revision_number) do |revision_number|
+      latest_revision_number.downto(1) do |revision_number|
         revisions << get_revision(revision_number)
       end
       revisions

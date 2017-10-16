@@ -47,17 +47,12 @@ module Repository
 
     # Checks if a memory repository exists at 'path'
     def self.repository_exists?(path)
-      @@repositories.each do |location, repo|
-        if path == location
-          return true
-        end
-      end
-      return false
+      @@repositories.key?(path)
     end
 
     # Open repository at specified location
     def self.open(location)
-      if !self.repository_exists?(location)
+      unless MemoryRepository.repository_exists?(location)
         raise "Could not open repository at location #{location}"
       end
       return @@repositories[location] # return reference in question
@@ -65,7 +60,7 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
-      if !MemoryRepository.repository_exists?(location)
+      unless MemoryRepository.repository_exists?(location)
         MemoryRepository.new(location) # create a repository if it doesn't exist
       end
       return true
@@ -281,7 +276,7 @@ module Repository
 
     # Static method: Yields an existing Memory repository and closes it afterwards
     def self.access(connect_string)
-      repository = self.open(connect_string)
+      repository = MemoryRepository.open(connect_string)
       yield repository
       repository.close
     end
@@ -297,7 +292,7 @@ module Repository
     # This will return a value corresponding to whether the open or close functions
     # have been called but is otherwise meaningless in a MemoryRepository
     def closed?
-      return !@opened
+      !@opened
     end
 
     # Converts a pathname to an absolute pathname

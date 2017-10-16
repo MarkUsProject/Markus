@@ -112,7 +112,10 @@ class Submission < ActiveRecord::Base
 
     result = get_latest_result
     all_marks_by_tests = true
-    result.marks.each do |mark| # Assumes marks already exist
+    if result.marks.empty? # can happen if a criterion is created after collection
+      result.create_marks
+    end
+    result.marks.each do |mark|
       marks_earned = 0
       mark_total = 0
       mark.markable.test_scripts.each do |test_script|
