@@ -53,7 +53,7 @@ module SummariesHelper
         if mark.nil? || mark.mark.nil?
           criteria_hash[key] = '-'
         else
-          criteria_hash[key] = mark.mark.to_s
+          criteria_hash[key] = mark.mark
         end
       else
         criteria_hash[key] = '-'
