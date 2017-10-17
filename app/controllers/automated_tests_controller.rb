@@ -47,7 +47,7 @@ class AutomatedTestsController < ApplicationController
               new_support_file.original_filename)
           contents = new_support_file.read
           File.open(
-              assignment_tests_path, 'w') { |f| f.write contents }
+              assignment_tests_path, 'wb') { |f| f.write contents }
         end
 
         redirect_to action: 'manage',
