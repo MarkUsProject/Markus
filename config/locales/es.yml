@@ -864,6 +864,8 @@ es:
         upload_grader_criteria_map:      "Subir pares Criterios de Calificación / Evaluador"
         description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mapping:         "Eliminar mapeos existentes"
+
       download:
         download_groups_file:         "Descargar Archivos del Grupo"
         download_grader_maps:         "Descargar los pares del evaluador"

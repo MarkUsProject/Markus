@@ -624,6 +624,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         upload_grader_criteria_map: "Carregar critério / Mapa avaliador"
         description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mappings: "Remover mapeamentos existentes"
       download:
         download_groups_file: "Baixar arquivo de grupos"
         download_grader_maps: "Baixar mapeamento dos avaliadores"
