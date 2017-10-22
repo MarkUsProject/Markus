@@ -1575,7 +1575,6 @@ en:
       duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
-      marks_obtained: "<span class=\"prop_label\">Points from Tests (latest run only):</span>&nbsp; %{marking}"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:

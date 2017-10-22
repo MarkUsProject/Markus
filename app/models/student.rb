@@ -292,14 +292,12 @@ class Student < User
     Assignment.find_each { |assignment| assignment.update_results_stats }
   end
 
-  def self.give_grace_credits(student_ids, number_of_grace_credits)
-    students = Student.find(student_ids)
-    students.each do |student|
-      student.grace_credits += number_of_grace_credits.to_i
-      if student.grace_credits < 0
-        student.grace_credits = 0
+  def self.give_grace_credits(student_ids, new_credits)
+    Student.transaction do
+      Student.find(student_ids).each do |student|
+        student.update(:grace_credits,
+                       [0, student.grace_credits + new_credits].max)
       end
-      student.save
     end
   end
 

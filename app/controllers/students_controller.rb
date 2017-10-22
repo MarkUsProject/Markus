@@ -60,7 +60,7 @@ class StudentsController < ApplicationController
         Student.unhide_students(student_ids)
       when 'give_grace_credits'
         Student.give_grace_credits(student_ids,
-                                   params[:number_of_grace_credits])
+                                   params[:number_of_grace_credits].to_i)
       when 'update_section'
         Student.update_section(student_ids, params[:section])
       end

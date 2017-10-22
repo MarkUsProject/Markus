@@ -223,10 +223,10 @@ class StudentTest < ActiveSupport::TestCase
 
       # Mock the repository and expect :remove_user with the student's user_name
       mock_repo = mock('Repository::AbstractRepository')
+      Group.any_instance.stubs(:access_repo).yields(mock_repo)
       mock_repo.stubs(:remove_user).returns(true)
       mock_repo.stubs(:close).returns(true)
       mock_repo.expects(:remove_user).with(any_of(@student1.user_name, @student2.user_name)).at_least(2)
-      Group.any_instance.stubs(:repo).returns(mock_repo)
 
       Student.hide_students(@student_id_list)
     end
@@ -248,7 +248,7 @@ class StudentTest < ActiveSupport::TestCase
     [{type: 'negative', grace_credits: '-10', expected: 0 },
      {type: 'positive', grace_credits: '10', expected: 15 }].each do |item|
       should "not error when given #{item[:type]} grace credits" do
-        assert Student.give_grace_credits(@student_id_list, item[:grace_credits])
+        assert Student.give_grace_credits(@student_id_list, item[:grace_credits].to_i)
 
         #You have to find the students to get the updated values
         students = Student.find(@student_id_list)

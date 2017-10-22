@@ -62,8 +62,8 @@
         <%= t('browse_submissions.currently_collected') %>
         <% if @grouping.is_collected %>
            <% if @collected_revision %>
-               <%= @collected_revision.revision_identifier_ui +
-                   ' (' + l(@collected_revision.timestamp, format: :long_date) + ' )' %>
+               <%= "#{@collected_revision.revision_identifier_ui}" +
+                   " (#{l(@collected_revision.timestamp, format: :long_date)})" %>
            <% else %>
                <%= t('browse_submissions.no_rev_before_deadline') %>
            <% end %>
