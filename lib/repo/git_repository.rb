@@ -92,8 +92,7 @@ module Repository
       File.open(required_path, 'w') do |req|
         req.write(required.to_json)
       end
-      oid = Rugged::Blob.from_workdir(repo, '.required.json')
-      repo.index.add(path: '.required.json', oid: oid, mode: 0100644)
+      repo.index.add('.required.json')
 
       # Add client-side hooks
       unless MarkusConfigurator.markus_config_repository_client_hooks.empty?
@@ -121,7 +120,9 @@ module Repository
 
     # static method that should yield to a git repo and then close it
     def self.access(connect_string)
-      yield GitRepository.open(connect_string)
+      repo = GitRepository.open(connect_string)
+      yield repo
+      repo.close
     end
 
     # static method that deletes the git repo
@@ -326,37 +327,33 @@ module Repository
       Repository::Transaction.new(user_id, comment)
     end
 
+    # Carries out actions on a Git repository stored in
+    # 'transaction'. In case of certain conflicts corresponding
+    # Repositor::Conflict(s) are added to the transaction object
     def commit(transaction)
-      # Carries out actions on a Git repository stored in
-      # 'transaction'. In case of certain conflicts corresponding
-      # Repositor::Conflict(s) are added to the transaction object
-      jobs = transaction.jobs
-
-      jobs.each do |job|
+      transaction.jobs.each do |job|
         case job[:action]
         when :add_path
           begin
-            make_directory(job[:path])
+            add_directory(job[:path])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :add
           begin
-            add_file(job[:path], job[:file_data], transaction.user_id)
+            add_file(job[:path], job[:file_data])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :remove
           begin
-            remove_file(job[:path], transaction.user_id,
-                        job[:expected_revision_identifier])
+            remove_file(job[:path], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            replace_file(job[:path], job[:file_data], transaction.user_id,
-                         job[:expected_revision_identifier])
+            replace_file(job[:path], job[:file_data], job[:expected_revision_identifier])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -364,9 +361,12 @@ module Repository
       end
 
       if transaction.conflicts?
-        return false
+        @repos.reset('master', :hard)
+        false
+      else
+        GitRepository.do_commit_and_push(@repos, transaction.user_id, 'Update files')
+        true
       end
-      return true
     end
 
     # Gets a list of users with AT LEAST the provided permissions.
@@ -516,91 +516,62 @@ module Repository
 
     private
 
-    # Creates and commits a file to the repository
-    def add_file(path, file_data = nil, author)
+    # Creates a file into the repository.
+    def add_file(path, file_data)
       if get_latest_revision.path_exists?(path)
         raise Repository::FileExistsConflict.new(path)
       end
-      write_file(path, file_data, author)
+      write_file(path, file_data)
     end
 
-    # Removes a file from the repository
-    def remove_file(path, author, expected_revision_identifier)
+    # Creates an empty directory into the repository.
+    # The dummy file is required so the directory gets committed.
+    def add_directory(path)
+      gitkeep_filename = File.join(path, '.gitkeep')
+      add_file(gitkeep_filename, '')
+    end
+
+    # Removes a file from the repository.
+    def remove_file(path, expected_revision_identifier)
       if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
-
       File.unlink(File.join(@repos_path, path))
       @repos.index.remove(path)
-      GitRepository.do_commit_and_push(@repos, author, 'Removing file')
     end
 
-    # Replaces file at provided path with file_data
-    def replace_file(path, file_data, author, expected_revision_identifier)
+    # Replaces a file in the repository with new content.
+    def replace_file(path, file_data, expected_revision_identifier)
       if @repos.last_commit.oid != expected_revision_identifier
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       unless get_latest_revision.path_exists?(path)
         raise Repository::FileDoesNotExist.new(path)
       end
-      write_file(path, file_data, author)
+      write_file(path, file_data)
     end
 
-    # Writes to file using path, file_data, and author
-    def write_file(path, file_data = nil, author)
-
+    # Writes +file_data+ to the file at +path+.
+    def write_file(path, file_data)
       # Get directory path of file (one level higher)
       dir = File.dirname(path)
       abs_path = File.join(@repos_path, dir)
-
       # Create the folder (if not present), creating parents folders if necessary.
       # This will not overwrite the folder if it's already present.
       FileUtils.mkdir_p(abs_path)
-
-      # Create and commit the file
-      make_file(path, file_data, author)
-    end
-
-    # Make a file and commit it. This will overwrite the
-    # file on disk if it already exists, but will only make a
-    # new commit if the file contents have changed.
-    def make_file(path, file_data, author)
-      # Get the file path to write to using the ruby File module.
+      # Create a file and commit it. This will overwrite the
+      # file on disk if it already exists, but will only make a
+      # new commit if the file contents have changed.
       abs_path = File.join(@repos_path, path)
-      # Actually create the file.
       File.open(abs_path, 'w') do |file|
         file.write file_data.force_encoding('UTF-8')
       end
-
-      # Get the hash of the file we just created and added
-      oid = Rugged::Blob.from_workdir(@repos, path)
-      @repos.index.add(path: path, oid: oid, mode: 0100644)
-      GitRepository.do_commit_and_push(@repos, author, 'Add file')
+      @repos.index.add(path)
     end
 
-    # Create and commit an empty directory, if it's not already present.
-    # The dummy file is required so the directory gets committed.
-    # path should be a directory
-    def make_directory(path)
-      gitkeep_filename = File.join(path, '.gitkeep')
-      add_file(gitkeep_filename, '', 'Markus')
-    end
-
-    # Helper method to check file permissions of git auth file
-    def git_auth_file_checks
-      if !@repos_admin # if we are not admin, check if files exist
-        if !File.file?(@repos_auth_file)
-          raise FileDoesNotExist.new("'#{@repos_auth_file}' not a file or not existent")
-        end
-        if !File.readable?(@repos_auth_file)
-          raise "File '#{@repos_auth_file}' not readable"
-        end
-      end
-      return true
-    end
   end
 
   # Convenience class, so that we can work on Revisions rather

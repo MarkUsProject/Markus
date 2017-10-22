@@ -864,6 +864,8 @@ es:
         upload_grader_criteria_map:      "Subir pares Criterios de Calificación / Evaluador"
         description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mapping:         "Eliminar mapeos existentes"
+
       download:
         download_groups_file:         "Descargar Archivos del Grupo"
         download_grader_maps:         "Descargar los pares del evaluador"
@@ -1758,6 +1760,7 @@ es:
       testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
       automated_tests:                    "Estructura de la prueba"
       test_results:                       "Resultados de la Prueba"
+      no_results:                         "UPDATE ME"
       expand_all:                         "Expandir Todos"
       collapse_all:                       "Reducir Todos"
       enable_test:                        "Habilitar pruebas para este proyecto"
@@ -1803,7 +1806,6 @@ es:
       duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       dir_not_exist:                      "El directorio %{dir} requerido para Ant no existe"
-      marks_obtained:                     "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
                                            leído."
       download_not_in_db:                 "El archivo solicitado no se encuentra en la base de datos."

@@ -673,6 +673,7 @@ fr:
             <code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Format du fichier CSV : <br>
                        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mappings: 'Supprimer les attributions existants'
       download:
         download_groups_file: "Télécharger groupes"
         download_grader_maps: "Télécharger les attributions des correcteurs"
@@ -1369,6 +1370,7 @@ fr:
       testing_disabled: "Les tests automatiques du code sont désactivés pour ce projet."
       automated_tests: "Tests"
       test_results: "Résultat des tests"
+      no_results: "UPDATE ME"
       expand_all: "Montrer toutes"
       collapse_all: "Cacher toutes"
       enable_test: "Activer les tests pour ce projet"
@@ -1422,7 +1424,6 @@ fr:
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
-      marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:

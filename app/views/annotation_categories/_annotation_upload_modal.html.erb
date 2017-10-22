@@ -53,13 +53,13 @@
         <%= label_tag t('encoding') %>
         <%= select_tag(:encoding, options_for_select(@encodings)) %>
       </div>
+      <section class='dialog-actions'>
+        <%= submit_tag t(:upload),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       id: 'upload_yml',
+                       disabled: true %>
+        <input type='reset' value='<%= t(:cancel) %>'/>
+      </section>
     <% end %>
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
-                     id: 'upload_yml',
-                     disabled: true %>
-      <input type='reset' value='<%= t(:cancel) %>'/>
-    </section>
   </div>
 <% end %>
