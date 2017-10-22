@@ -817,6 +817,7 @@ es:
       add_new:                       "Añadir un nuevo grupo"
       manage_groups:                 "Administrar Grupos"
       assign_scans:                  "Asignar Escaneado"
+      skip_group:                    "UPDATE ME"
       all_students:                  "Todos los/las estudiantes"
       unassigned_students:           "No asignados"
       assigned_students:             "Asignados"
@@ -1758,6 +1759,7 @@ es:
       testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
       automated_tests:                    "Estructura de la prueba"
       test_results:                       "Resultados de la Prueba"
+      no_results:                         "UPDATE ME"
       expand_all:                         "Expandir Todos"
       collapse_all:                       "Reducir Todos"
       enable_test:                        "Habilitar pruebas para este proyecto"
@@ -1803,7 +1805,6 @@ es:
       duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       dir_not_exist:                      "El directorio %{dir} requerido para Ant no existe"
-      marks_obtained:                     "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
                                            leído."
       download_not_in_db:                 "El archivo solicitado no se encuentra en la base de datos."

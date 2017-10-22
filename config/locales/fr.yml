@@ -630,6 +630,7 @@ fr:
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
       assign_scans: "Affecter des scans"
+      skip_group: "UPDATE ME"
       all_students: "Tous les étudiant"
       unassigned_students: "Non assigné(s)"
       assigned_students: "Assigné(s"
@@ -1369,6 +1370,7 @@ fr:
       testing_disabled: "Les tests automatiques du code sont désactivés pour ce projet."
       automated_tests: "Tests"
       test_results: "Résultat des tests"
+      no_results: "UPDATE ME"
       expand_all: "Montrer toutes"
       collapse_all: "Cacher toutes"
       enable_test: "Activer les tests pour ce projet"
@@ -1422,7 +1424,6 @@ fr:
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
-      marks_obtained: "<span class=\"prop_label\">UPDATE ME:</span> %{marking}"
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:

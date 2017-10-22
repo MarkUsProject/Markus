@@ -998,7 +998,7 @@ class AssignmentsController < ApplicationController
         assignment.submission_rule.periods << Period.new(p)
       end
 
-    elsif !submission_rule_params.nil? # in this case Rails does what we want, so we'll take the easy route
+    elsif !submission_rule_params.blank? # in this case Rails does what we want, so we'll take the easy route
       assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
     end
 
