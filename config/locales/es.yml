@@ -817,6 +817,7 @@ es:
       add_new:                       "Añadir un nuevo grupo"
       manage_groups:                 "Administrar Grupos"
       assign_scans:                  "Asignar Escaneado"
+      skip_group:                    "UPDATE ME"
       all_students:                  "Todos los/las estudiantes"
       unassigned_students:           "No asignados"
       assigned_students:             "Asignados"

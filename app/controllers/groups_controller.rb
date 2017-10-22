@@ -160,19 +160,23 @@ class GroupsController < ApplicationController
   end
 
   def assign_student_and_next
-    # if the user has selected a name from the dropdown, s_id is set
-    if params[:s_id].present?
-      student = Student.find(params[:s_id])
-    end
-    # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
-    if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
-      student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-                               params[:names].downcase, params[:names].downcase).first
-    end
     @grouping = Grouping.find(params[:g_id])
-    StudentMembership
-      .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
     @assignment = @grouping.assignment
+    if params[:skip]
+      @grouping.validate_grouping
+    else
+      # if the user has selected a name from the dropdown, s_id is set
+      if params[:s_id].present?
+        student = Student.find(params[:s_id])
+      end
+      # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
+      if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
+        student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+                                 params[:names].downcase, params[:names].downcase).first
+      end
+      StudentMembership
+        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
+    end
     next_grouping
   end
 
