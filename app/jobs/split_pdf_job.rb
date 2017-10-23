@@ -122,6 +122,10 @@ class SplitPDFJob < ActiveJob::Base
         num_pages_qr_scan_error: num_pages_qr_scan_error
       )
 
+      # Update repository permissions
+      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+      repo.__set_all_permissions
+
       m_logger.log('Split pdf process done')
       return split_pdf_log
     rescue => e
