@@ -161,6 +161,10 @@ module Repository
       return true
     end
 
+    def self.__set_all_permissions
+      true
+    end
+
     # Returns the latest revision number (as a RepositoryRevision object)
     def get_latest_revision
       return @current_revision
