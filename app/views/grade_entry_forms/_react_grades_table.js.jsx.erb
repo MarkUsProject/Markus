@@ -56,7 +56,7 @@
         this.props.value = this.props.default_value;
     },
     handleChange: function(event) {
-      var updated_grade = event.target.value === '' ? null : parseFloat(event.target.value);
+      var updated_grade = event.target.value === '' ? null : Number(event.target.value);
       var params = {
         'updated_grade':       updated_grade,
         'student_id':          this.props.student_id,
