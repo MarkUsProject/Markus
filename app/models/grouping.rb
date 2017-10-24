@@ -725,10 +725,11 @@ class Grouping < ActiveRecord::Base
   end
 
   def self.get_assign_scans_grouping(assignment)
+    subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
       .where(admin_approved: false)
-      .joins("LEFT JOIN memberships ON groupings.id = memberships.grouping_id")
-      .where(memberships: { id: nil })
+      .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
+      .where(sub: { id: nil })
       .order(:id)
       .first
   end
