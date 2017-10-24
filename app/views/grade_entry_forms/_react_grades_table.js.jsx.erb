@@ -53,9 +53,12 @@
 
   var GradeEntryBox = React.createClass({
     componentDidMount: function(){
-        this.props.value = this.props.default_value;
+      this.props.value = this.props.default_value;
     },
+
     handleChange: function(event) {
+      clearTimeout(this.typing_timer);
+
       var updated_grade = event.target.value === '' ? null : Number(event.target.value);
       var params = {
         'updated_grade':       updated_grade,
@@ -63,13 +66,17 @@
         'grade_entry_item_id': this.props.grade_entry_column,
         'authenticity_token':  AUTH_TOKEN
       };
-      $.ajax({
-        url:  this.props.data_action,
-        data: params,
-        type: 'POST',
-        dataType: 'script',
-      });
-      this.props.value = parseFloat(event.target.value);
+
+      var data_action = this.props.data_action;
+      this.typing_timer = setTimeout(function() {
+        $.ajax({
+          url:  data_action,
+          data: params,
+          type: 'POST',
+          dataType: 'script',
+        });
+      }, 1500);
+      this.props.value = Number(event.target.value);
     },
 
     // TODO: Make this nicer by not using raw Javascript and jQuery
