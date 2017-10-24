@@ -559,21 +559,6 @@ class Grouping < ActiveRecord::Base
     self.save
   end
 
-  def add_tas_by_user_name_array(ta_user_name_array)
-    grouping_tas = []
-    ta_user_name_array.each do |ta_user_name|
-      ta = Ta.where(user_name: ta_user_name).first
-      unless ta.nil?
-        if ta_memberships.where(user_id: ta.id).first.nil?
-          ta_memberships.create(user: ta)
-        end
-      end
-      grouping_tas += Array(ta)
-    end
-    self.criteria_coverage_count = self.all_assigned_criteria(grouping_tas).length
-    self.save
-  end
-
   # Update repository permissions for students, if we allow external commits
   #   see: grant_repository_permissions and revoke_repository_permissions
   def update_repository_permissions

@@ -75,16 +75,45 @@ class GradersController < ApplicationController
     if params[:grader_mapping].nil?
       flash_message(flash[:error], I18n.t('csv.group_to_grader'))
     else
+      assignment = Assignment.find(params[:assignment_id])
+      if params[:remove_existing_mappings]
+        TaMembership.joins(:grouping)
+          .where(groupings: { assignment_id: assignment.id })
+          .delete_all
+      end
+      new_ta_memberships = []
+      groupings = {}
+      graders = {}
+      assignment.groupings.includes(:group).find_each do |g|
+        groupings[g.group.group_name] = g.id
+      end
+      Ta.find_each do |ta|
+        graders[ta.user_name] = ta.id
+      end
       result = MarkusCSV.parse(params[:grader_mapping].read,
                                encoding: params[:encoding]) do |row|
         raise CSVInvalidLineError if row.empty?
-        grouping = Grouping.joins(:group)
-                           .find_by(groups: { group_name: row.first },
-                                    assignment_id: params[:assignment_id])
-        raise CSVInvalidLineError if grouping.nil?
+        raise CSVInvalidLineError if groupings[row[0]].nil?
 
-        grouping.add_tas_by_user_name_array(row.drop(1))
+        row.drop(1).each do |grader_name|
+          unless graders[grader_name].nil?
+            new_ta_memberships << TaMembership.new(
+                                    grouping_id: groupings[row[0]],
+                                    user_id: graders[grader_name]
+            )
+          end
+        end
       end
+      TaMembership.import new_ta_memberships, validate: false
+
+      # Recompute criteria associations
+      if assignment.assign_graders_to_criteria
+        Grouping.update_criteria_coverage_counts(
+          assignment,
+          new_ta_memberships.map { |x| x[:grouping_id] }
+        )
+      end
+
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
       end
