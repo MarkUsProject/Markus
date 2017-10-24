@@ -584,6 +584,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       add_new: "Adicionar um novo grupo"
       manage_groups: "Gerenciar grupos"
       assign_scans: "Atribuir varreduras"
+      skip_group: "UPDATE ME"
       all_students: "Todos os alunos"
       unassigned_students: "Não-atribuíd"
       assigned_students: "Atribuíds"

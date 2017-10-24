@@ -725,16 +725,12 @@ class Grouping < ActiveRecord::Base
   end
 
   def self.get_assign_scans_grouping(assignment)
-    if assignment.scanned_exam?
-      grouping = nil
-      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.id asc').each do |a|
-        grouping = a
-        if !a.is_valid?
-          break
-        end
-      end
-      grouping
-    end
+    assignment.groupings.includes(:non_rejected_student_memberships)
+      .where(admin_approved: false)
+      .joins("LEFT JOIN memberships ON groupings.id = memberships.grouping_id")
+      .where(memberships: { id: nil })
+      .order(:id)
+      .first
   end
 
   # Helper for populate_submissions_table.
