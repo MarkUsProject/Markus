@@ -713,6 +713,7 @@ en:
         upload_grader_criteria_map: "Upload Criteria / Grader Map"
         description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mappings: 'Remove existing mappings'
       download:
         download_groups_file: "Download Groups File"
         download_grader_maps: "Download Grader Maps"

@@ -674,6 +674,7 @@ fr:
             <code>group_name,grader_user_name,grader_user_name,... </code><br>"
         description_grader_criteria_map: "Format du fichier CSV : <br>
                        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+        remove_existing_mappings: 'Supprimer les attributions existants'
       download:
         download_groups_file: "Télécharger groupes"
         download_grader_maps: "Télécharger les attributions des correcteurs"
