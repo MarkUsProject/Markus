@@ -630,6 +630,7 @@ fr:
       add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
       assign_scans: "Affecter des scans"
+      skip_group: "UPDATE ME"
       all_students: "Tous les étudiant"
       unassigned_students: "Non assigné(s)"
       assigned_students: "Assigné(s"

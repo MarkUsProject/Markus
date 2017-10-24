@@ -672,6 +672,7 @@ en:
       add_new:          "Add new group"
       manage_groups:    "Manage Groups"
       assign_scans:     "Assign Scans"
+      skip_group:       "Skip group"
       all_students:     "All students"
       unassigned_students: "Unassigned"
       assigned_students: "Assigned"

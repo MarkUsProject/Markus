@@ -46,17 +46,6 @@
         success: parseNextScan
       });
     });
-    function getNextScan() {
-      $.ajax({
-        method: "GET",
-        url: "next_grouping",
-        dataType: "json",
-        data: {
-          a_id: <%= @assignment.id %>
-        },
-        success: parseNextScan
-      });
-    }
 
     function parseNextScan(data) {
       $("#group_members").empty();
@@ -65,6 +54,7 @@
       }
       current_group = $("#grouping_id").val();
       $("#assign_student").find("input").val("");
+      $("#assign_student").find("#skip").val("1").prop('checked', false);
       update_bar(data.num_valid, data.num_total);
       // Anytime we advance to another assignment
       if (data.grouping_id != current_group) {
@@ -98,7 +88,7 @@
       <span class="progress_span">
       </span>
     </div>
-    <%= link_to t('groups.manage_groups'), :assignment_groups %>
+    <%= link_to t('groups.manage_groups'), :assignment_groups %>|
 <% end %>
 <div id='panes-content'>
   <div id='panes'>
@@ -260,6 +250,10 @@
           <input id="names" name="names" type="text" placeholder="<%= t('user.full_name') %>">
           <input id="student_id" name="s_id" type="hidden">
           <input id="grouping_id" name="g_id" value="" type="hidden">
+          <br>
+          <label for="skip"><%= t('groups.skip_group') %></label>
+          <input type="checkbox" name="skip" id="skip" value="1">
+          <br>
           <button type="submit"><%= t('save') %></button>
         </form>
         <h3>

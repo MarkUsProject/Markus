@@ -786,7 +786,8 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_num_valid
-    groupings.includes(current_submission_used: :submitted_remark).select(&:is_valid?).count
+    groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
+      .select(&:is_valid?).count
   end
 
   def get_num_marked(ta_id = nil)
