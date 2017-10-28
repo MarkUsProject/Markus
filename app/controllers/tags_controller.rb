@@ -113,7 +113,7 @@ class TagsController < ApplicationController
 
   # Export a YAML formatted string.
   def export_tags_yaml
-    tags = Tag.all(order: 'name')
+    tags = Tag.all.order(:name)
 
     # The final list of all tags.
     final = ActiveSupport::OrderedHash.new
