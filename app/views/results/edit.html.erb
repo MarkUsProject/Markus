@@ -270,7 +270,7 @@
               .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
               .first) %>
       <% index = @files.find_index{|x| x.filename === assignmentfile.filename} %>
-      first_file_id = <%= @files[index].id %>;
+      first_file_id = <%= @files[index || index.to_i].id %>;
       first_file_path = '<%= @files[index].path %>/<%= files[index].filename %>';
     <% else %>
       first_file_id = <%= @files[0].id %>;
