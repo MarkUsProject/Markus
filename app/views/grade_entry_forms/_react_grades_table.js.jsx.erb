@@ -53,7 +53,7 @@
 
   var GradeEntryBox = React.createClass({
     componentDidMount: function(){
-      this.props.value = this.props.default_value;
+        this.props.value = this.props.default_value;
     },
 
     handleChange: function(event) {
@@ -68,15 +68,23 @@
       };
 
       var data_action = this.props.data_action;
-      this.typing_timer = setTimeout(function() {
+
+      function send_request() {
         $.ajax({
           url:  data_action,
           data: params,
           type: 'POST',
           dataType: 'script',
         });
-      }, 1500);
-      this.props.value = Number(event.target.value);
+      };
+
+      if (isNaN(updated_grade) == false) {
+        this.typing_timer = setTimeout(function() {
+          send_request()}, 1500);
+        this.props.value = Number(event.target.value);
+      } else {
+        send_request();
+      }
     },
 
     // TODO: Make this nicer by not using raw Javascript and jQuery
