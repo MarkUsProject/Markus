@@ -271,7 +271,7 @@
               .first) %>
       <% index = @files.find_index{|x| x.filename === assignmentfile.filename}.to_i %>
       first_file_id = <%= @files[index].id %>;
-      first_file_path = '<%= @files[index].path %>/<%= files[index].filename %>';
+      first_file_path = '<%= @files[index].path %>/<%= @files[index].filename %>';
     <% else %>
       first_file_id = <%= @files[0].id %>;
       first_file_path = '<%= @files[0].path %>/<%= @files[0].filename %>';
