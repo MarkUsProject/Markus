@@ -17,24 +17,20 @@
           <div class='sub_block'>
             <%= raw t('automated_tests.token.unlimited_tokens') %>
           </div>
-        <% elsif !@assignment.non_regenerating_tokens %>
+        <% else %>
+          <% unless @assignment.non_regenerating_tokens %>
           <div class='sub_block'>
-            <%= raw t('automated_tests.token.tokens_per_period',
-                      tokens: @assignment.tokens_per_period,
+            <%= raw t('automated_tests.token.tokens_per_period', tokens: @assignment.tokens_per_period,
                       regeneration_period: @assignment.token_period) %>
           </div>
-        <% else %>
-          <div class='sub_block'>
-            <%= raw t('automated_tests.token.tokens_regenerate') %>
-          </div>
+          <% end %>
           <div class='sub_block'>
             <% if DateTime.now < @assignment.token_start_date %>
               <%= raw t('automated_tests.token.tokens_not_given_yet') %>
             <% elsif @token.remaining == 0 %>
               <%= raw t('automated_tests.token.tokens_no_more_available') %>
             <% else %>
-              <%= raw t('automated_tests.token.tokens_available',
-                        tokens: @token.remaining) %>
+              <%= raw t('automated_tests.token.tokens_available', tokens: @token.remaining) %>
             <% end %>
           </div>
         <% end %>
