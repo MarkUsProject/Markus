@@ -66,23 +66,19 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   # Given a number of overtime_hours, calculate the penalty percentage that
   # a student should get
   def calculate_penalty(overtime_hours)
-    return 0 if overtime_hours <= 0
     total_penalty = 0
     periods.each do |period|
+      break if overtime_hours <= 0
       deduction = period.deduction
       if deduction < 0
         deduction = -deduction
       end
-      interval = period.interval
-      if overtime_hours / interval < 1
-        total_penalty += deduction
-      else
-        total_penalty += (overtime_hours / interval).floor.to_f * deduction
-      end
-      overtime_hours = overtime_hours - period.hours
-      break if overtime_hours <= 0
+
+      num_intervals =
+        (([overtime_hours, period.hours].min) / period.interval).ceil.to_f
+      total_penalty += num_intervals * deduction
+      overtime_hours -= period.hours
     end
     total_penalty
   end
-
 end
