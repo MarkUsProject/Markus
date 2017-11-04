@@ -105,8 +105,10 @@ var Table = React.createClass({displayName: 'Table',
     this.setState({visible_rows: rows, sorted_rows: rows});
   },
   componentWillReceiveProps: function(nextProps) {
-    var rows = this.getVisibleRows({data:nextProps.data});
-    this.setState({visible_rows: rows, sorted_rows: rows});
+    this.synchronizeHeaderColumn(
+      this.state.sort_column, this.state.sort_direction, nextProps.data,
+      function () { this.setState({visible_rows: this.getVisibleRows()}); }.bind(this)
+    )
   },
   // A filter was clicked. Adjust state accordingly.
   synchronizeFilter: function(filter) {
@@ -159,12 +161,14 @@ var Table = React.createClass({displayName: 'Table',
     });
   },
   // Header col was clicked. Adjust state accordingly.
-  synchronizeHeaderColumn: function(sort_column, sort_direction) {
+  synchronizeHeaderColumn: function(sort_column, sort_direction, rows, callback) {
     var compare_func = this.props.columns.filter(function(col) {
         return col.id == sort_column;
     })[0].compare;
 
-    var rows = this.state.sorted_rows.slice();
+    if (typeof rows === 'undefined') {
+      rows = this.state.sorted_rows.slice();
+    }
     sort_by_column(rows,
                    sort_column,
                    sort_direction,
@@ -175,7 +179,7 @@ var Table = React.createClass({displayName: 'Table',
       sort_direction: sort_direction,
       sort_compare: compare_func,
       sorted_rows: rows
-    });
+    }, callback);
   },
   headerCheckboxClicked: function(event) {
     var value = event.currentTarget.checked;
@@ -213,6 +217,10 @@ var Table = React.createClass({displayName: 'Table',
       return col.id;
     });
 
+    if (typeof changed === 'undefined') {
+      changed = {};
+    }
+
     var new_data = changed.hasOwnProperty('data') ? changed.data : this.state.sorted_rows; // this.props.data;
     var filter_function = changed.hasOwnProperty('filter_func') ? changed.filter_func : this.state.filter_func;
     var secondary_filter_function = changed.hasOwnProperty('secondary_filter_func') ? changed.secondary_filter_func : this.state.secondary_filter_func;
@@ -228,8 +236,7 @@ var Table = React.createClass({displayName: 'Table',
     var searched_data = search_data(tertiary_filtered_data,
                                     searchables,
                                     search_text);
-    var visible_data = searched_data;
-    return visible_data;
+    return searched_data;
   },
   render: function() {
     var columns = null;
