@@ -48,7 +48,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   end
 
   def description_of_rule
-    I18n.t 'submission_rules.penalty_decy_period_submission_rule.description'
+    I18n.t 'submission_rules.penalty_decay_period_submission_rule.description'
   end
 
   def grader_tab_partial
