@@ -267,6 +267,28 @@
 
       selectionBoxActive = false;
     })
+
+    $pages.click(function(ev) {
+      if (ev.ctrlKey) {
+        var point = getRelativePointForMouseEvent(ev);
+        self.setSelectionBox($(ev.delegateTarget), {
+          x: point.x,
+          y: point.y,
+          width: 0.03,
+          height: 0.03
+        });
+        var data = get_pdf_annotation_data_with_ids();
+        data['content'] = 'Good!';
+        data['category_id'] = '';
+
+        $.post(
+          Routes.annotations_path(),
+          data,
+          undefined,
+          'script'
+        )
+      }
+    })
   }
 
   PdfAnnotationManager.prototype.hideSelectionBox = function() {
@@ -298,8 +320,8 @@
   }
 
   /**
-   * The following four functions are used to keep track of the orientation of 
-   * the PDF so we know how to render the annotations. 
+   * The following four functions are used to keep track of the orientation of
+   * the PDF so we know how to render the annotations.
    */
 
   PdfAnnotationManager.prototype.rotateClockwise90 = function() {
@@ -317,7 +339,7 @@
 
 
   /**
-   * Returns the rotated coordinates of the annotation after applying 
+   * Returns the rotated coordinates of the annotation after applying
    * 0, 1, 2, or 3 90-degree clockwise rotations.
    *
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
@@ -339,13 +361,13 @@
         newCoords.y1 = coords.x1;
         newCoords.y2 = coords.x2;
         break;
-      case 2: 
+      case 2:
         newCoords.x1 = COORDINATE_MULTIPLIER - coords.x2;
         newCoords.x2 = COORDINATE_MULTIPLIER - coords.x1;
         newCoords.y1 = COORDINATE_MULTIPLIER - coords.y2;
         newCoords.y2 = COORDINATE_MULTIPLIER - coords.y1;
         break;
-      case 3: 
+      case 3:
         newCoords.x1 = coords.y1;
         newCoords.x2 = coords.y2;
         newCoords.y1 = COORDINATE_MULTIPLIER - coords.x2;
@@ -366,11 +388,11 @@
       this.annotationControls[coords.annot_id].remove(); // Remove old controls
     }
 
-    // The coords are in the unrotated form, but the PDF may be in a different 
+    // The coords are in the unrotated form, but the PDF may be in a different
     // orientation.
     var newCoords;
     switch (this.angle) {
-      case 90: 
+      case 90:
         newCoords = this.getRotatedCoords(coords, 1);
         break;
       case 180:
