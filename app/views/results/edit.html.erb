@@ -276,7 +276,7 @@
       first_file_id = <%= @files[0].id %>;
       first_file_path = '<%= @files[0].path %>/<%= @files[0].filename %>';
       if (localStorage.getItem('assignment_id') === '<%= @assignment.id %>' && localStorage.getItem('file_path')) {
-        var file = $('.file_item[data-path="' + localStorage.getItem('file_path') + '"');
+        var file = $('.file_item[data-path="' + localStorage.getItem('file_path') + '"]');
         if (file.length === 1) {
           first_file_id = file.data("id");
           first_file_path = file.data("path");
