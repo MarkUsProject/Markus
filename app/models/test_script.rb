@@ -86,7 +86,7 @@ class TestScript < ActiveRecord::Base
 
   validates_numericality_of :seq_num
   validates_numericality_of :max_marks, only_integer: true, greater_than_or_equal_to: 0
-  validates_numericality_of :timeout, only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 600
+  validates_numericality_of :timeout, only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 3600
 
   validates_presence_of :display_description
   validates_presence_of :display_run_status
