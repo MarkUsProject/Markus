@@ -133,6 +133,7 @@
       return {
         submissions: [],
         selected_submissions: [],
+        submissions_data: []
       };
     },
     componentWillMount: function() {
@@ -151,8 +152,60 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
+          var submissions_data = data.map(function(submission) {
+            var s = {};
+            s['id'] = submission.id;
+            if (submission.name_url === '') {
+              s['group_name'] = <span>{submission.name}</span>;
+            } else {
+              s['group_name'] = <a href={submission.name_url}>{submission.name}</a>;
+            }
+              if (submission.error !== '') {
+              s['class_name'] = "submission_error";
+            } else {
+              var tag_list = []
+              for (var i = 0; i < MAX_TAGS && i < submission.tags.length; i++) {
+              tag_list.push(<span className='tag_element'>{submission.tags[i].name}</span>);
+            }
+
+              s['class_name'] = submission.class_name;
+              if (!submission.has_files) {
+              s['repository'] = (<span>
+              <%= image_tag('icons/folder_error.png',
+                            title: t(:no_files_submitted)) %>
+              <a href={submission.repo_url}>{submission.repo_name}</a>
+              </span>);
+            } else {
+              s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
+            }
+              if (submission.late_commit) {
+              s['commit_date'] = (<span>
+              <%= image_tag('icons/clock_error.png',
+                            title: t(:past_due_date_edit_result_warning,
+                            href: t(:last_commit))) %>
+              {submission.commit_date}
+              </span>);
+            } else {
+              s['commit_date'] = submission.commit_date;
+            }
+              s['state'] = submission.state;
+              s['marking_state'] = this.renderMarkingState(submission.state);
+              s['grace_credits_used'] = submission.grace_credits_used;
+              s['tags'] = <div className='tag_list'>{tag_list}</div>;
+              s['final_grade'] = submission.final_grade;
+              s['section'] = submission.section;
+              s['tas'] = submission.tas;
+              s['has_files'] = submission.has_files;
+              <% if @assignment.is_peer_review? %>
+              s['reviewees'] = this.renderRevieweeList(submission.reviewees);
+              <% end %>
+            }
+            return s;
+          }.bind(this));
+
           this.setState({
             submissions: data,
+            submissions_data: submissions_data
           });
         }.bind(this),
         // Close working indicator.
@@ -233,56 +286,6 @@
       <% else %>
         var ta_filters = null;
       <% end %>
-      var submissions_data = this.state.submissions.map(function(submission) {
-        var s = {};
-        s['id'] = submission.id;
-        if (submission.name_url === '') {
-          s['group_name'] = <span>{submission.name}</span>;
-        } else {
-          s['group_name'] = <a href={submission.name_url}>{submission.name}</a>;
-        }
-        if (submission.error !== '') {
-          s['class_name'] = "submission_error";
-        } else {
-          var tag_list = []
-          for (var i = 0; i < MAX_TAGS && i < submission.tags.length; i++) {
-            tag_list.push(<span className='tag_element'>{submission.tags[i].name}</span>);
-          }
-
-          s['class_name'] = submission.class_name;
-          if (!submission.has_files) {
-            s['repository'] = (<span>
-              <%= image_tag('icons/folder_error.png',
-                            title: t(:no_files_submitted)) %>
-              <a href={submission.repo_url}>{submission.repo_name}</a>
-            </span>);
-          } else {
-            s['repository'] = <a href={submission.repo_url}>{submission.repo_name}</a>;
-          }
-          if (submission.late_commit) {
-            s['commit_date'] = (<span>
-              <%= image_tag('icons/clock_error.png',
-                            title: t(:past_due_date_edit_result_warning,
-                            href: t(:last_commit))) %>
-              {submission.commit_date}
-            </span>);
-          } else {
-            s['commit_date'] = submission.commit_date;
-          }
-          s['state'] = submission.state;
-          s['marking_state'] = this.renderMarkingState(submission.state);
-          s['grace_credits_used'] = submission.grace_credits_used;
-          s['tags'] = <div className='tag_list'>{tag_list}</div>;
-          s['final_grade'] = submission.final_grade;
-          s['section'] = submission.section;
-          s['tas'] = submission.tas;
-          s['has_files'] = submission.has_files;
-          <% if @assignment.is_peer_review? %>
-            s['reviewees'] = this.renderRevieweeList(submission.reviewees);
-          <% end %>
-        }
-        return s;
-      }.bind(this));
 
       return (
         <div>
@@ -290,7 +293,7 @@
             selected_submissions={this.state.selected_submissions}
             refresh={this.refresh}
           />
-          <Table data={submissions_data}
+          <Table data={this.state.submissions_data}
             columns={this.props.columns}
             selectable={true}
             filters={this.props.filters}
