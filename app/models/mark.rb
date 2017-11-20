@@ -1,10 +1,10 @@
 class Mark < ActiveRecord::Base
   # When a mark is created, or updated, we need to make sure that that
   # Result has not been released to students
-  before_save :ensure_not_released_to_students, unless: :scaled_mark?
-  before_update :ensure_not_released_to_students, unless: :scaled_mark?
+  before_save :ensure_not_released_to_students
+  before_update :ensure_not_released_to_students
 
-  after_save :update_result_mark, :update_scaled_mark
+  after_save :update_result_mark
 
   belongs_to :result
   validates_presence_of :result_id, :markable_id, :markable_type
@@ -28,7 +28,7 @@ class Mark < ActiveRecord::Base
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
 
-  attr_accessor :scaled_mark
+
 
   # Custom validator for checking the upper range of a mark
   def valid_mark
@@ -41,7 +41,8 @@ class Mark < ActiveRecord::Base
 
   def scale_mark(curr_max_mark, prev_max_mark)
     return if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
-    self.scaled_mark = true
+    Mark.skip_callback(:save, :before, :ensure_not_released_to_students)
+    Mark.skip_callback(:update, :before, :ensure_not_released_to_students)
     if markable.is_a? RubricCriterion
       new_mark = mark * (curr_max_mark / prev_max_mark)
       update_attributes(mark: new_mark.round(2))
@@ -51,18 +52,8 @@ class Mark < ActiveRecord::Base
     else # if it is CheckboxCriterion
       update_attributes(mark: curr_max_mark)
     end
-  end
-
-  def scaled_mark
-    @scaled_mark || false
-  end
-
-  def scaled_mark?
-    return self.scaled_mark
-  end
-
-  def update_scaled_mark
-    self.scaled_mark = false
+    Mark.set_callback(:save, :before, :ensure_not_released_to_students)
+    Mark.set_callback(:update, :before, :ensure_not_released_to_students)
   end
 
   private
