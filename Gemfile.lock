@@ -153,7 +153,7 @@ GEM
       metaclass (~> 0.0.1)
     mono_logger (1.1.0)
     multi_json (1.12.2)
-    mysql2 (0.4.1)
+    mysql2 (0.4.10)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.2.0)
@@ -381,7 +381,7 @@ DEPENDENCIES
   machinist (< 2)
   minitest
   mocha
-  mysql2 (>= 0.3)
+  mysql2
   net-scp
   net-ssh
   pg

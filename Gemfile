@@ -80,7 +80,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql sqlite
 group :mysql do
-  gem 'mysql2', '>=0.3'
+  gem 'mysql2'
 end
 
 # If you are a MarkUs developer and use SQLite, make sure you have
