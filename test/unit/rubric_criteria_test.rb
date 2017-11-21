@@ -32,13 +32,13 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !assignment_id_dne.save
   end
 
-  should 'round weights that have more than 3 significant digits' do
+  should 'round weights that have more than 1 significant digits' do
     RubricCriterion.make
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
     criterion.max_mark = 0.5555555555
     criterion.save
-    assert_equal 0.556, criterion.max_mark
+    assert_equal 0.6, criterion.max_mark
   end
 
   should 'find a mark for a specific rubric and result' do
