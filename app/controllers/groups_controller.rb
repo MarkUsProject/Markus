@@ -112,7 +112,7 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.where(allow_web_submits: false)
+    @clone_assignments = Assignment.where(vcs_submit: true)
                                    .where.not(id: @assignment.id)
                                    .order(:id)
   end
@@ -314,7 +314,10 @@ class GroupsController < ApplicationController
       flash_message(:warning, t('groups.csv.could_not_find_target'))
     else
       # Clone the groupings
-      target_assignment.clone_groupings_from(source_assignment.id)
+      clone_warnings = target_assignment.clone_groupings_from(source_assignment.id)
+      unless clone_warnings.empty?
+        clone_warnings.each { |w| flash_message(:warning, w) }
+      end
     end
 
     redirect_to :back

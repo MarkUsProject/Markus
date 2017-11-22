@@ -209,20 +209,15 @@
       </p>
     </div>
 
-    <p id='persist_groups_assignment_style'
-       style='<%= 'display: none' unless @clone_assignments.size > 0 &&
-                                         @assignment.new_record? %>'>
-      <%= check_box_tag :persist_groups,
-                        onclick: 'set_onbeforeunload(true);' %>
-      <%= label_tag :persist_groups,
-                    t('assignment.group.persist_group_from') %>
-      <%= select_tag :persist_groups_assignment,
-                     options_for_select(
-                       @clone_assignments.map do |a|
-                         [a.short_identifier, a.id]
-                       end),
-                     disabled: true %>
-    </p>
+    <% if @assignment.new_record? && @clone_assignments.size > 0 %>
+      <p id='persist_groups_assignment_style'>
+        <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
+        <%= label_tag :persist_groups, t('assignment.group.persist_group_from') %>
+        <%= select_tag :persist_groups_assignment,
+                       options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
+                       disabled: true %>
+      </p>
+    <% end %>
     <p id='is_group_assignment_style'>
       <%= check_box_tag :is_group_assignment, true,
                         @assignment.student_form_groups ||
