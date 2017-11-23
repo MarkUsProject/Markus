@@ -847,20 +847,22 @@ class Grouping < ActiveRecord::Base
 
   private
 
-  # Once a grouping is valid, grant (write) repository permissions for students
+  # Once a grouping is valid, grant (read+write) repository permissions for students
   # who have accepted memberships (including the inviter)
   #
   # precondition: grouping is valid, self.reload has been called
   def grant_repository_permissions
+    unless self.write_repo_permissions?
+      return
+    end
     memberships = self.accepted_student_memberships
-    memberships.each do |member|
-      # Add repository read and write permissions for user,
-      # if we are required to do so
-      if self.write_repo_permissions?
+    if memberships.empty?
+      return
+    end
+    self.group.access_repo do |repo|
+      memberships.each do |member|
         begin
-          self.group.access_repo do |repo|
-            repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
-          end
+          repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
         rescue Repository::UserAlreadyExistent
           # ignore case if user has permissions already
         end
