@@ -202,7 +202,30 @@
     // Press down, activate the selection box
     $pages.mousedown(function(ev) {
       if (ev.which !== 1 && ev.target.id === 'sel_box') return;
+
       var point = getRelativePointForMouseEvent(ev);
+
+      if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        if (ev.ctrlKey) {
+          self.setSelectionBox($(ev.delegateTarget), {
+            x: point.x,
+            y: point.y,
+            width: 0.3,
+            height: 0.3
+          });
+          var data = get_pdf_annotation_data_with_ids();
+          data['content'] = 'Good!';
+          data['category_id'] = '';
+
+          $.post(
+            Routes.annotations_path(),
+            data,
+            undefined,
+            'script'
+          );
+          return;
+        }
+      }
 
       self.setSelectionBox($(ev.delegateTarget), {
         x: point.x,
@@ -268,27 +291,29 @@
       selectionBoxActive = false;
     })
 
-    $pages.click(function(ev) {
-      if (ev.ctrlKey) {
-        var point = getRelativePointForMouseEvent(ev);
-        self.setSelectionBox($(ev.delegateTarget), {
-          x: point.x,
-          y: point.y,
-          width: 0.03,
-          height: 0.03
-        });
-        var data = get_pdf_annotation_data_with_ids();
-        data['content'] = 'Good!';
-        data['category_id'] = '';
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') <= -1) {
+      $pages.click(function (ev) {
+        if (ev.ctrlKey) {
+          var point = getRelativePointForMouseEvent(ev);
+          self.setSelectionBox($(ev.delegateTarget), {
+            x: point.x,
+            y: point.y,
+            width: 0.03,
+            height: 0.03
+          });
+          var data = get_pdf_annotation_data_with_ids();
+          data['content'] = 'Good!';
+          data['category_id'] = '';
 
-        $.post(
-          Routes.annotations_path(),
-          data,
-          undefined,
-          'script'
-        )
-      }
-    })
+          $.post(
+            Routes.annotations_path(),
+            data,
+            undefined,
+            'script'
+          );
+        }
+      })
+    }
   }
 
   PdfAnnotationManager.prototype.hideSelectionBox = function() {
