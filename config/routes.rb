@@ -409,7 +409,7 @@ Markus::Application.routes.draw do
 
     resources :main do
       collection do
-        get 'logout'
+        post 'logout'
         get 'about'
         post 'login_as'
         get 'role_switch'
