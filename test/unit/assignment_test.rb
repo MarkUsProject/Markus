@@ -339,11 +339,11 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
 
-      context 'an assignment with external commits only and previous groups' do
+      context 'with external commits enabled and previous groups' do
         setup do
-          @assignment.allow_web_submits = false
+          @assignment.vcs_submit = true
           @assignment.save
-          @target = Assignment.make({allow_web_submits: false, group_min: 1, group_max: 1})
+          @target = Assignment.make({vcs_submit: true, group_min: 1, group_max: 1})
           # And for this test, let's make sure all groupings cloned have admin approval
           3.times do
             target_grouping = Grouping.make(
@@ -360,9 +360,10 @@ class AssignmentTest < ActiveSupport::TestCase
           @target.clone_groupings_from(@assignment.id)
           @target.reload
           @target.groupings.each do |grouping|
-            grouping.accepted_students.each do |student|
-              grouping.group.access_repo do |repo|
-                assert_equal repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE, "student should have read-write permissions on their group's repository"
+            grouping.group.access_repo do |repo|
+              grouping.accepted_students.each do |student|
+                assert_equal repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE,
+                             "student should have read-write permissions on their group's repository"
               end
             end
           end

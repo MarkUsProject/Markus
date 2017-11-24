@@ -22,9 +22,9 @@
 <% end %>
 
 <% content_for :additional_headings do %>
-    <% # Allow cloning groups forward only if its web submits are disallowed
+    <% # Allow cloning groups forward only if its vcs submits are allowed
        # for this assignment.
-       unless @assignment.allow_web_submits %>
+       if @assignment.vcs_submit %>
       <%= link_to t('groups.another_assignment_group'),
                   'javascript:void(0);',
                   onclick:'modalAssignmentGroupReUse.open();' %>

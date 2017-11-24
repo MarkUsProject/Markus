@@ -155,7 +155,7 @@ describe TestScript do
 
     context 'script file expected to be invalid when the timeout is too big' do
       it 'return false when the timeout is too big' do
-        @invalid_script_file.timeout = 1000
+        @invalid_script_file.timeout = 3601
         expect(@invalid_script_file).not_to be_valid
       end
     end
