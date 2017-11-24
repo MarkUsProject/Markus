@@ -297,6 +297,7 @@ module Repository
     def self.access(connect_string)
       repository = MemoryRepository.open(connect_string)
       yield repository
+    ensure
       repository.close
     end
 
