@@ -47,7 +47,7 @@ module ResultsHelper
       innermost_dir[:files] = Array.new
       folders = file.path.split('/')
       folders.each do |folder_name|
-        if !innermost_dir.key?(folder_name)
+        unless innermost_dir.key?(folder_name)
           innermost_dir[folder_name] = Hash.new
           innermost_dir[folder_name][:files] = Array.new
         end
