@@ -4,7 +4,10 @@
     .css('background-color', '')
     .addClass('updated')
     .delay(600)
-    .queue(function () {$(this).removeClass('updated')});
+    .queue(function () {
+        $(this).removeClass('updated');
+        $(this).dequeue();
+    });
 
   <%
     # This code calls the javascript function 'update_cell(cell, value)' in
