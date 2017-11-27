@@ -298,11 +298,24 @@
 
         var members = [];
         for (var i = 0; i < group.members.length; i++) {
-          members.push(<div key={group.members[i][0]}>
-            <input id={group.members[i][0]}
-              type='checkbox'
-              checked={this.props.selected_students_in_groups.indexOf(group.members[i][0]) !== -1}
-              onChange={this.studentCheckboxClicked} /> {group.members[i][1]} ({group.members[i][2]})</div>);
+          var member_name = group.members[i][1];
+          var member_status = group.members[i][2];
+          var member_string;
+          if (member_status.toLowerCase() === 'pending') {
+            member_string = <b>{member_name} ({member_status})</b>
+          } else {
+            member_string = member_name + '(' + member_status + ')'
+          }
+          members.push(
+            <div key={group.members[i][0]}>
+              <input id={group.members[i][0]}
+                type='checkbox'
+                checked={this.props.selected_students_in_groups.indexOf(group.members[i][0]) !== -1}
+                onChange={this.studentCheckboxClicked}
+              />
+              {member_string}
+            </div>
+          );
         }
         g['members'] = members;
         g['valid'] = group.valid;
