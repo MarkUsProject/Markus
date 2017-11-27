@@ -23,10 +23,9 @@
                     remote: true %>
       <% end %>
 
-      <%= button_to(t(:log_out),
+      <%= link_to(t(:log_out),
+                  logout_main_index_path,
                   id: 'logout_link',
-                  controller: 'main',
-                  action: 'logout',
                   method: :post) unless
                   MarkusConfigurator.markus_config_logout_redirect == 'NONE' %>
 
