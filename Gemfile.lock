@@ -273,7 +273,7 @@ GEM
       rubocop (>= 0.24.1)
     ruby-progressbar (1.8.1)
     ruby-rc4 (0.1.5)
-    rubyzip (1.1.7)
+    rubyzip (1.2.1)
     rugged (0.26.0)
     sass (3.4.18)
     sass-rails (5.0.0.beta1)
