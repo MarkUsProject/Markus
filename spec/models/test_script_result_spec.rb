@@ -20,7 +20,6 @@ describe TestScriptResult do
                                   seq_num:                    1,
                                   script_name:                'script.sh',
                                   description:                'This is a bash script file',
-                                  max_marks:                  5,
                                   timeout:                    30,
                                   run_by_instructors:         true,
                                   run_by_students:            true,

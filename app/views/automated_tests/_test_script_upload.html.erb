@@ -51,12 +51,6 @@
                                     :new_script),
                            class: 'upload_file' %><br/>
 
-        <div class="maxmarks">
-          <%= f.label :max_marks, raw(t 'automated_tests.script_option.max_marks'),
-                      title: t('automated_tests.script_option.max_marks_help') %>
-          <%= f.number_field :max_marks, value: f.object.max_marks, min: 0, step: 1 %>
-        </div>
-
         <div>
           <%= f.label :timeout, raw(t('automated_tests.script_option.timeout')),
                       title: t('automated_tests.script_option.timeout_help') %>

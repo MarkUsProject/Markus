@@ -1820,8 +1820,6 @@ es:
         description:                      "Descripción"
         update_description:               "Ingrese su Descripción Aquí"
         seq_num:                          "ACTUALIZAME: seq_num"
-        max_marks:                        "UPDATE ME <span class='required_field'>*</span>"
-        max_marks_help:                   "UPDATE ME"
         timeout:                          "UPDATE ME <span class='required_field'>*</span>"
         timeout_help:                     "UPDATE ME"
         run_by_instructors:               "Ejecutable por los Instructores"

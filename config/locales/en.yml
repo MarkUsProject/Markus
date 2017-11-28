@@ -1588,8 +1588,6 @@ en:
         description: "Description"
         update_description: "Enter Description Here"
         seq_num: "UPDATE ME: seq_num"
-        max_marks: "Max Test Points <span class='required_field'>*</span>"
-        max_marks_help: "Mark = Actual Test Points / Max Test Points * Max Criterion Mark (rounded to the nearest level for Rubric Criteria)"
         timeout: "Timeout (seconds) <span class='required_field'>*</span>"
         timeout_help: "The number of seconds before the script is forced to stop"
         run_by_instructors: "Runnable by Instructors"

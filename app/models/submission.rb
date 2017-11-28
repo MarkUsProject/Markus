@@ -111,20 +111,29 @@ class Submission < ActiveRecord::Base
     return if test_script_results.empty?
 
     result = get_latest_result
-    all_marks_by_tests = true
+    complete_marks = true
     if result.marks.empty? # can happen if a criterion is created after collection
       result.create_marks
     end
     result.marks.each do |mark|
-      marks_earned = 0
-      mark_total = 0
+      all_marks_earned = 0.0
+      all_marks_total = 0.0
       mark.markable.test_scripts.each do |test_script|
         res = test_script_results.where(test_script_id: test_script.id).first
-        marks_earned += res.marks_earned
-        mark_total += test_script.max_marks
+        all_marks_earned += res.marks_earned
+        unless all_marks_total.nil?
+          if res.marks_total.nil?
+            all_marks_total = nil # signals that all_marks_total should be mark.markable.max_mark
+          else
+            all_marks_total += res.marks_total
+          end
+        end
       end
-      if mark_total > 0
-        real_mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+      if all_marks_total.nil?
+        all_marks_total = mark.markable.max_mark
+      end
+      if all_marks_total > 0 # test-assigned mark
+        real_mark = (all_marks_earned / all_marks_total * mark.markable.max_mark).round(2)
         if mark.markable.instance_of? RubricCriterion
           # find the nearest mark associated to a level
           nearest_mark = (real_mark / mark.markable.weight.to_f).round * mark.markable.weight
@@ -132,8 +141,8 @@ class Submission < ActiveRecord::Base
         end
         mark.mark = real_mark
         mark.save
-      else
-        all_marks_by_tests = false
+      else # manually-assigned mark (or really silly all_marks_total of 0)
+        complete_marks = false
       end
     end
 
@@ -142,7 +151,7 @@ class Submission < ActiveRecord::Base
       result.submission.assignment.assignment_stat.refresh_grade_distribution
       result.submission.assignment.update_results_stats
     # all marks are set by tests, can set the marking state to complete
-    elsif all_marks_by_tests
+    elsif complete_marks
       result.marking_state = Result::MARKING_STATES[:complete]
       if result.save
         result.submission.assignment.assignment_stat.refresh_grade_distribution

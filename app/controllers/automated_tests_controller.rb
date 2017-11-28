@@ -163,7 +163,7 @@ class AutomatedTestsController < ApplicationController
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
                     [:id, :assignment_id, :seq_num, :script_name, :description,
-                     :max_marks, :timeout, :run_by_instructors, :run_by_students,
+                     :timeout, :run_by_instructors, :run_by_students,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,

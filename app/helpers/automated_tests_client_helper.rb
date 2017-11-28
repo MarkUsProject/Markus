@@ -310,7 +310,7 @@ module AutomatedTestsClientHelper
     return grouping.test_script_results.create(
         test_script_id: test_script.id,
         submission_id: submission_id,
-        marks_earned: 0,
+        marks_earned: 0.0,
         repo_revision: revision_identifier,
         requested_by_id: requested_by.id,
         time: time)
@@ -319,7 +319,7 @@ module AutomatedTestsClientHelper
   def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
                                                 result_name, result_message)
     test_scripts.each do |script_name|
-      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0)
+      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0.0)
       add_test_error_result(test_script_result, result_name, result_message)
       test_script_result.save
     end
@@ -328,18 +328,19 @@ module AutomatedTestsClientHelper
     end
   end
 
-  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, status)
+  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, marks_total, status)
     test_script_result.test_results.create(
         name: name,
         input: CGI.unescapeHTML(input),
         actual_output: CGI.unescapeHTML(actual),
         expected_output: CGI.unescapeHTML(expected),
         marks_earned: marks_earned,
+        marks_total: marks_total,
         completion_status: status)
   end
 
   def self.add_test_error_result(test_script_result, result_name, result_message)
-    add_test_result(test_script_result, result_name, '', result_message, '', 0, 'error')
+    add_test_result(test_script_result, result_name, '', result_message, '', 0.0, nil, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -463,7 +464,8 @@ module AutomatedTestsClientHelper
       if time.nil?
         time = 0
       end
-      total_marks = 0
+      all_marks_earned = 0.0
+      all_marks_total = 0.0
       new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
                                                          time)
       new_test_script_results[script_name] = new_test_script_result
@@ -483,7 +485,8 @@ module AutomatedTestsClientHelper
                                 I18n.t('automated_tests.test_result.bad_results', {xml: test}))
           next
         end
-        marks_earned = test['marks_earned'].nil? ? 0 : test['marks_earned'].to_i
+        marks_earned = test['marks_earned'].nil? ? 0.0 : test['marks_earned'].to_f
+        marks_total = test['marks_total'].nil? ? nil : test['marks_total'].to_f
         test_input = test['input'].nil? ? '' : test['input']
         test_actual = test['actual'].nil? ? '' : test['actual']
         test_expected = test['expected'].nil? ? '' : test['expected']
@@ -491,13 +494,24 @@ module AutomatedTestsClientHelper
         if test_status.nil? or not test_status.in?(%w(pass partial fail error))
           test_actual = I18n.t('automated_tests.test_result.bad_status', {status: test_status})
           test_status = 'error'
-          marks_earned = 0
+          marks_earned = 0.0
         end
         add_test_result(new_test_script_result, test_name, test_input, test_actual, test_expected, marks_earned,
-                        test_status)
-        total_marks += marks_earned
+                        marks_total, test_status)
+        all_marks_earned += marks_earned
+        # marks_total.nil?: when a single test does not specify the marks it is worth, just the student score
+        # all_marks_total.nil?: when the test suite does not specify the marks it is worth, using the criterion max_mark
+        # if at least a single test does not specify marks_total, then all_marks_total will be nil
+        unless all_marks_total.nil?
+          if marks_total.nil?
+            all_marks_total = nil
+          else
+            all_marks_total += marks_total
+          end
+        end
       end
-      new_test_script_result.marks_earned = total_marks
+      new_test_script_result.marks_earned = all_marks_earned
+      new_test_script_result.marks_total = all_marks_total
       new_test_script_result.save
     end
 

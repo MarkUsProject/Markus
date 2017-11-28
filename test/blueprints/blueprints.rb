@@ -299,7 +299,6 @@ TestScript.blueprint do
   seq_num {0}
   script_name {Sham.filename}
   description {Sham.description}
-  max_marks {0}
   run_by_instructors {true}
   run_by_students {false}
   halts_testing {false}

@@ -18,8 +18,6 @@
 #   script_name:        name of the script
 #   description:        a brief description of the script. It
 #                       can be shown to the students. (optionally)
-#   max_marks:          maximum point a test can get for this
-#                       test. It can be any non-negative integer.
 #   run_by_instructors: a boolean indicates if this script will run
 #                       when testing is initiated by admins and tas
 #                       (e.g. after collection)
@@ -65,7 +63,6 @@ class TestScript < ActiveRecord::Base
 
   validates_presence_of :seq_num
   validates_presence_of :script_name
-  validates_presence_of :max_marks
   validates_presence_of :description, if: "description.nil?"
 
   # validates the uniqueness of script_name for the same assignment
@@ -85,7 +82,6 @@ class TestScript < ActiveRecord::Base
   end
 
   validates_numericality_of :seq_num
-  validates_numericality_of :max_marks, only_integer: true, greater_than_or_equal_to: 0
   validates_numericality_of :timeout, only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 3600
 
   validates_presence_of :display_description

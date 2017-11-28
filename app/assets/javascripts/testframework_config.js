@@ -13,27 +13,27 @@ function toggleSettings ( collapse_lnk ) {
   left_side = box.find('.settings_left_side');
   right_side = box.find('.settings_right_side');
 
-  max_marks = box.find('.maxmarks');
+  //max_marks = box.find('.maxmarks');
   desc = left_side.find('.desc');
   desc_box = desc.find('textarea');
 
   if( collapse_lnk.data('collapsed') ) {
     // Was collapsed. Need to expand.
     desc.nextAll('*').show();
-    max_marks.nextAll('*').show();
+    //max_marks.nextAll('*').show();
 
     desc_box.attr('rows', 2);
-    max_marks.insertAfter(desc);
+    //max_marks.insertAfter(desc);
 
     collapse_lnk.text('[-]');
     collapse_lnk.data('collapsed', false);
   } else {
     // Was expanded. Need to collapse.
-    right_side.prepend(max_marks);
+    //right_side.prepend(max_marks);
     desc_box.attr('rows', 1);
 
     desc.nextAll('*').hide();
-    max_marks.nextAll('*').hide();
+    //max_marks.nextAll('*').hide();
 
     collapse_lnk.text('[+]');
     collapse_lnk.data('collapsed', true);
