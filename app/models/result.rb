@@ -133,6 +133,14 @@ class Result < ActiveRecord::Base
     !pr.nil? && submission.grouping == grouping
   end
 
+  def create_marks
+    assignment = self.submission.assignment
+    assignment.get_criteria(:ta).each do |criterion|
+      mark = criterion.marks.create(result_id: id)
+    end
+    self.update_total_mark
+  end
+
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
@@ -173,13 +181,5 @@ class Result < ActiveRecord::Base
       return false
     end
     true
-  end
-
-  def create_marks
-    assignment = self.submission.assignment
-    assignment.get_criteria(:ta).each do |criterion|
-      mark = criterion.marks.create(result_id: id)
-    end
-    self.update_total_mark
   end
 end

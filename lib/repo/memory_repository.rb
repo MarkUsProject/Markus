@@ -47,17 +47,12 @@ module Repository
 
     # Checks if a memory repository exists at 'path'
     def self.repository_exists?(path)
-      @@repositories.each do |location, repo|
-        if path == location
-          return true
-        end
-      end
-      return false
+      @@repositories.key?(path)
     end
 
     # Open repository at specified location
     def self.open(location)
-      if !self.repository_exists?(location)
+      unless MemoryRepository.repository_exists?(location)
         raise "Could not open repository at location #{location}"
       end
       return @@repositories[location] # return reference in question
@@ -65,7 +60,7 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
-      if !MemoryRepository.repository_exists?(location)
+      unless MemoryRepository.repository_exists?(location)
         MemoryRepository.new(location) # create a repository if it doesn't exist
       end
       return true
@@ -166,6 +161,25 @@ module Repository
       return true
     end
 
+    def self.__set_all_permissions
+      permissions = AbstractRepository.get_all_permissions
+      permissions.each do |repo_name, users|
+        begin
+          repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
+          repo = MemoryRepository.open(repo_loc)
+        rescue
+          next
+        end
+        users.each do |user|
+          if repo.has_user?(user)
+            repo.set_permissions(user, Repository::Permission::READ_WRITE)
+          else
+            repo.add_user(user, Repository::Permission::READ_WRITE)
+          end
+        end
+      end
+    end
+
     # Returns the latest revision number (as a RepositoryRevision object)
     def get_latest_revision
       return @current_revision
@@ -198,23 +212,23 @@ module Repository
       @revision_history + [@current_revision]
     end
 
+    # Semi-private - used by the bulk permissions assignments
+    def has_user?(user_id)
+      @users.key?(user_id)
+    end
+
     # Adds a user to the repository and grants him/her the provided permissions
     def add_user(user_id, permissions)
-      if @users.key?(user_id)
-        raise UserAlreadyExistent.new(user_id +" exists already")
+      if self.has_user?(user_id)
+        raise UserAlreadyExistent.new("#{user_id} exists already")
       end
       @users[user_id] = permissions
     end
 
-    # Semi-private - used by the bulk permissions assignments
-    def has_user?(user_id)
-      return @users.key?(user_id)
-    end
-
     # Removes a user from from the repository
     def remove_user(user_id)
-      if !@users.key?(user_id)
-        raise UserNotFound.new(user_id + " not found")
+      unless self.has_user?(user_id)
+        raise UserNotFound.new("#{user_id} not found")
       end
       @users.delete(user_id)
     end
@@ -237,29 +251,29 @@ module Repository
 
     # Sets permissions for the provided user
     def set_permissions(user_id, permissions)
-      if !@users.key?(user_id)
-        raise UserNotFound.new(user_id + " not found")
+      unless self.has_user?(user_id)
+        raise UserNotFound.new("#{user_id} not found")
       end
       @users[user_id] = permissions
     end
 
     # Gets permissions for a given user
     def get_permissions(user_id)
-      if !@users.key?(user_id)
-        raise UserNotFound.new(user_id + " not found")
+      unless self.has_user?(user_id)
+        raise UserNotFound.new("#{user_id} not found")
       end
-      return @users[user_id]
+      @users[user_id]
     end
 
     # Set permissions for many repositories
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       repo_names.each do |repo_name|
-        repo = self.open(repo_name)
+        repo = MemoryRepository.open(repo_name)
         user_id_permissions_map.each do |user_id, permissions|
-          if(!repo.has_user?(user_id))
-            repo.add_user(user_id, permissions)
-          else
+          if repo.has_user?(user_id)
             repo.set_permissions(user_id, permissions)
+          else
+            repo.add_user(user_id, permissions)
           end
         end
       end
@@ -269,9 +283,9 @@ module Repository
     # Delete permissions for many repositories
     def self.delete_bulk_permissions(repo_names, user_ids)
       repo_names.each do |repo_name|
-        repo = self.open(repo_name)
+        repo = MemoryRepository.open(repo_name)
         user_ids.each do |user_id|
-          if(repo.has_user?(user_id))
+          if repo.has_user?(user_id)
             repo.remove_user(user_id)
           end
         end
@@ -281,7 +295,7 @@ module Repository
 
     # Static method: Yields an existing Memory repository and closes it afterwards
     def self.access(connect_string)
-      repository = self.open(connect_string)
+      repository = MemoryRepository.open(connect_string)
       yield repository
       repository.close
     end
@@ -297,7 +311,7 @@ module Repository
     # This will return a value corresponding to whether the open or close functions
     # have been called but is otherwise meaningless in a MemoryRepository
     def closed?
-      return !@opened
+      !@opened
     end
 
     # Converts a pathname to an absolute pathname
@@ -352,7 +366,7 @@ module Repository
       end
       # replace content of file in question
       act_rev = get_latest_revision()
-      if (act_rev.revision_identifier != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int.to_i)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       files_list = rev.files_at_path(File.dirname(full_path))
@@ -366,7 +380,7 @@ module Repository
         raise Repostiory::FileDoesNotExistConflict.new(full_path)
       end
       act_rev = get_latest_revision()
-      if (act_rev.revision_identifier != expected_revision_int)
+      if (act_rev.revision_identifier != expected_revision_int.to_i)
         raise Repository::FileOutOfSyncConflict.new(full_path)
       end
       filename = File.basename(full_path)

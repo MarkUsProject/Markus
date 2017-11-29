@@ -158,8 +158,9 @@ module Api
         return
       end
 
-      # We shouldn't be able to update marks if marking is already complete.
-      if result.marking_state == Result::MARKING_STATES[:complete]
+      force_complete = params.fetch(:force_complete, false)
+      # We shouldn't be able to update annotations if marking is already complete, unless forced.
+      if result.marking_state == Result::MARKING_STATES[:complete] && !force_complete
         render 'shared/http_status', locals: { code: '404', message:
           'Marking for that submission is already completed' }, status: 404
         return

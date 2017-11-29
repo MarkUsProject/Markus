@@ -112,7 +112,7 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.where(allow_web_submits: false)
+    @clone_assignments = Assignment.where(vcs_submit: true)
                                    .where.not(id: @assignment.id)
                                    .order(:id)
   end
@@ -160,19 +160,23 @@ class GroupsController < ApplicationController
   end
 
   def assign_student_and_next
-    # if the user has selected a name from the dropdown, s_id is set
-    if params[:s_id].present?
-      student = Student.find(params[:s_id])
-    end
-    # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
-    if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
-      student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-                               params[:names].downcase, params[:names].downcase).first
-    end
     @grouping = Grouping.find(params[:g_id])
-    StudentMembership
-      .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
     @assignment = @grouping.assignment
+    if params[:skip]
+      @grouping.validate_grouping
+    else
+      # if the user has selected a name from the dropdown, s_id is set
+      if params[:s_id].present?
+        student = Student.find(params[:s_id])
+      end
+      # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
+      if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
+        student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+                                 params[:names].downcase, params[:names].downcase).first
+      end
+      StudentMembership
+        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
+    end
     next_grouping
   end
 
@@ -310,7 +314,10 @@ class GroupsController < ApplicationController
       flash_message(:warning, t('groups.csv.could_not_find_target'))
     else
       # Clone the groupings
-      target_assignment.clone_groupings_from(source_assignment.id)
+      clone_warnings = target_assignment.clone_groupings_from(source_assignment.id)
+      unless clone_warnings.empty?
+        clone_warnings.each { |w| flash_message(:warning, w) }
+      end
     end
 
     redirect_to :back

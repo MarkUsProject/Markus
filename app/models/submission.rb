@@ -112,7 +112,10 @@ class Submission < ActiveRecord::Base
 
     result = get_latest_result
     all_marks_by_tests = true
-    result.marks.each do |mark| # Assumes marks already exist
+    if result.marks.empty? # can happen if a criterion is created after collection
+      result.create_marks
+    end
+    result.marks.each do |mark|
       marks_earned = 0
       mark_total = 0
       mark.markable.test_scripts.each do |test_script|
@@ -148,7 +151,8 @@ class Submission < ActiveRecord::Base
     end
   end
 
-  def last_test_marks
+  # same as grouping.last_instructor_test_marks, but optimized because all test_script_results here are instructor ones
+  def last_instructor_test_marks
     test_script_ids = self.assignment.instructor_test_scripts
                           .distinct
                           .pluck(:id)

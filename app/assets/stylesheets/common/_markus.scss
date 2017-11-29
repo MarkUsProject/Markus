@@ -429,7 +429,7 @@ fieldset {
   background: $light-grey;
   border: 1px solid $blue;
   border-radius: $radius;
-  padding: 0.5em;
+  padding: 0;
 
   ul {
     margin: 0;
@@ -461,7 +461,7 @@ fieldset {
   .ui-tabs-panel {
     background: $white;
     border-radius: 0 0 $radius $radius;
-    padding: 0.5em;
+    padding: 0;
   }
 }
 

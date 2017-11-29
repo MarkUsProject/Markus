@@ -319,6 +319,22 @@
     };
   }
 
+  // Retrieve PDF annotation data with model ids.
+  // Used for ctrl-click as a shortcut for "Good!" annotation.
+  function get_pdf_annotation_data_with_ids() {
+    var data = {
+      result_id: <%= result_id %>,
+      assignment_id: <%= assignment_id %>,
+      submission_file_id: $('#select_file_id').val(),
+    };
+
+    var annot_data = get_pdf_annotation_data();
+    if (!annot_data) return {};
+    else $.extend(data, annot_data);
+
+    return data;
+  }
+
   function make_new_annotation() {
     var data = {
       result_id: <%= result_id %>,

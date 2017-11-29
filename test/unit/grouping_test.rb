@@ -68,14 +68,6 @@ class GroupingTest < ActiveSupport::TestCase
 
       end
 
-      should 'be able to add tas using an array' do
-        user_name_array = [@ta1.user_name, @ta2.user_name]
-        assert_equal 0, @grouping.ta_memberships.count
-        @grouping.add_tas_by_user_name_array(user_name_array)
-        assert_equal 2, @grouping.ta_memberships.count
-      end
-    end
-
     context 'with two student members' do
       setup do
         # should consist of inviter and another student

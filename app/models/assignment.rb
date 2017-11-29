@@ -363,6 +363,7 @@ class Assignment < ActiveRecord::Base
   # into self.  Destroys any previously existing Groupings associated
   # with this Assignment
   def clone_groupings_from(assignment_id)
+    warnings = []
     original_assignment = Assignment.find(assignment_id)
     self.transaction do
       self.group_min = original_assignment.group_min
@@ -374,34 +375,42 @@ class Assignment < ActiveRecord::Base
       self.save
       self.reload
       original_assignment.groupings.each do |g|
-        unhidden_student_memberships = g.accepted_student_memberships.select do |m|
-          !m.user.hidden
+        active_student_memberships = g.accepted_student_memberships.select { |m| !m.user.hidden }
+        if active_student_memberships.empty?
+          warnings << I18n.t('assignment.group.clone_warning.no_active_students', group: g.group.group_name)
+          next
         end
-        unhidden_ta_memberships = g.ta_memberships.select do |m|
-          !m.user.hidden
+        active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
+        grouping = Grouping.new
+        grouping.group_id = g.group_id
+        grouping.assignment_id = self.id
+        grouping.admin_approved = g.admin_approved
+        unless grouping.save
+          warnings << I18n.t('assignment.group.clone_warning.other',
+                             group: g.group.group_name, error: grouping.errors.messages)
+          next
         end
-        #create the memberships for any user that is not hidden
-        unless unhidden_student_memberships.empty?
-          #create the groupings
-          grouping = Grouping.new
-          grouping.group_id = g.group_id
-          grouping.assignment_id = self.id
-          grouping.admin_approved = g.admin_approved
-          raise 'Could not save grouping' if !grouping.save
-          all_memberships = unhidden_student_memberships + unhidden_ta_memberships
-          all_memberships.each do |m|
-            membership = Membership.new
-            membership.user_id = m.user_id
-            membership.type = m.type
-            membership.membership_status = m.membership_status
-            raise 'Could not save membership' if !(grouping.memberships << membership)
+        all_memberships = active_student_memberships + active_ta_memberships
+        all_memberships.each do |m|
+          membership = Membership.new
+          membership.user_id = m.user_id
+          membership.type = m.type
+          membership.membership_status = m.membership_status
+          unless grouping.memberships << membership # this saves the membership as a side effect, i.e. can return false
+            grouping.memberships.delete(membership)
+            warnings << I18n.t('assignment.group.clone_warning.no_member',
+                               member: m.user.user_name, group: g.group.group_name, error: membership.errors.messages)
           end
-          # Ensure all student members have permissions on their group repositories
-          grouping.update_repository_permissions
         end
       end
+      # update all permissions at once
+      repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+      repo_class.__set_all_permissions
     end
+
+    warnings
   end
+
 
   # Add a group and corresponding grouping as provided in
   # the passed in Array.
@@ -786,7 +795,8 @@ class Assignment < ActiveRecord::Base
   end
 
   def get_num_valid
-    groupings.includes(current_submission_used: :submitted_remark).select(&:is_valid?).count
+    groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
+      .select(&:is_valid?).count
   end
 
   def get_num_marked(ta_id = nil)
@@ -969,22 +979,25 @@ class Assignment < ActiveRecord::Base
     true
   end
 
-  # Return a repository object, if possible
-  def repo
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+  def repo_loc
     repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    if repo_class.repository_exists?(repo_loc)
-      repo_class.open(repo_loc)
-    else
+    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+    unless repo_class.repository_exists?(repo_loc)
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end
+    repo_loc
+  end
+
+  # Return a repository object, if possible
+  def repo
+    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    repo_class.open(repo_loc)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
-  def access_repo
-    repository = repo
-    yield repository
-    repository.close
+  def access_repo(&block)
+    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    repo_class.access(repo_loc, &block)
   end
 
   ### /REPO ###
