@@ -131,6 +131,9 @@ class Submission < ActiveRecord::Base
       end
       if all_marks_total.nil?
         all_marks_total = mark.markable.max_mark
+        if all_marks_earned > all_marks_total
+          all_marks_earned = all_marks_total
+        end
       end
       if all_marks_total > 0 # test-assigned mark
         real_mark = (all_marks_earned / all_marks_total * mark.markable.max_mark).round(2)

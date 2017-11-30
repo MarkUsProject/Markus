@@ -77,8 +77,8 @@ module Api
       requested_by = User.find_by(api_key: params[:requested_by])
 
       begin
-        AutomatedTestsClientHelper.process_test_result(params[:file_content], params[:test_scripts], assignment,
-                                                       grouping, submission, requested_by)
+        AutomatedTestsClientHelper.process_test_run(params[:file_content], params[:test_scripts], assignment, grouping,
+                                                    submission, requested_by)
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -110,7 +110,7 @@ module Api
     end
 
     # Updates a Test Script Result instance. Deletes the current test script
-    #  result and its test results and reprocess the xml test harness file. 
+    #  result and its test results and reprocess the xml test harness file.
     # This is basically a delete followed by a create
     # Requires: assignment_id, group_id, id
     #  - file_content: New contents of the test results
@@ -136,12 +136,12 @@ module Api
       end
       requested_by = User.find_by(api_key: params[:requested_by])
 
-      if AutomatedTestsClientHelper.process_test_result(params[:file_content],
-                                                        params[:test_scripts],
-                                                        assignment,
-                                                        grouping,
-                                                        submission,
-                                                        requested_by) &&
+      if AutomatedTestsClientHelper.process_test_run(params[:file_content],
+                                                     params[:test_scripts],
+                                                     assignment,
+                                                     grouping,
+                                                     submission,
+                                                     requested_by) &&
           test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

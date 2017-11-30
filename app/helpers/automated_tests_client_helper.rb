@@ -319,7 +319,7 @@ module AutomatedTestsClientHelper
   def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
                                                 result_name, result_message)
     test_scripts.each do |script_name|
-      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0.0)
+      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0)
       add_test_error_result(test_script_result, result_name, result_message)
       test_script_result.save
     end
@@ -429,24 +429,104 @@ module AutomatedTestsClientHelper
     end
   end
 
-  def self.process_test_result(raw_result, test_scripts_ran, assignment, grouping, submission, requested_by)
+  def self.process_test_result(xml, test_script_result)
+
+    #TODO detect an incoming all tests error (not due to xml), to set all_marks_earned to 0?
+    test_name = xml['name']
+    if test_name.nil?
+      add_test_error_result(test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
+                            I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
+      raise
+    end
+    marks_earned = xml['marks_earned'].nil? ? 0.0 : xml['marks_earned'].to_f
+    marks_total = xml['marks_total'].nil? ? nil : xml['marks_total'].to_f
+    test_input = xml['input'].nil? ? '' : xml['input']
+    test_actual = xml['actual'].nil? ? '' : xml['actual']
+    test_expected = xml['expected'].nil? ? '' : xml['expected']
+    test_status = xml['status']
+    if test_status.nil? or not test_status.in?(%w(pass partial fail error))
+      test_actual = I18n.t('automated_tests.test_result.bad_status', {status: test_status})
+      test_status = 'error'
+      marks_earned = 0.0
+    end
+    if !marks_total.nil? && marks_earned > marks_total
+      marks_earned = marks_total
+    end
+    add_test_result(test_script_result, test_name, test_input, test_actual, test_expected, marks_earned, marks_total,
+                    test_status)
+
+    return marks_earned, marks_total
+  end
+
+  def self.process_test_script_result(xml, assignment, grouping, submission, requested_by)
+
+    # create test result
+    script_name = xml['script_name']
+    time = xml['time']
+    if time.nil?
+      time = 0
+    end
+    new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
+                                                       time)
+    tests = xml['test']
+    if tests.nil? #TODO what about empty?
+      add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
+                            I18n.t('automated_tests.test_result.no_tests'))
+      return new_test_script_result
+    end
+    unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
+      tests = [tests]
+    end
+
+    # process tests
+    all_marks_earned = 0.0
+    all_marks_total = 0.0
+    tests.each do |test|
+      begin
+        marks_earned, marks_total = AutomatedTestsClientHelper.process_test_result(test, new_test_script_result)
+      rescue
+        # with malformed xml, test results could be valid only up to a certain test
+        all_marks_earned = 0.0
+        all_marks_total = nil
+        break
+      end
+      all_marks_earned += marks_earned
+      # marks_total.nil?: when a single test does not specify the marks it is worth, just the student score
+      # all_marks_total.nil?: when the test suite does not specify the marks it is worth, using the criterion max_mark
+      # if at least a single test does not specify marks_total, then all_marks_total will be nil
+      unless all_marks_total.nil?
+        if marks_total.nil?
+          all_marks_total = nil
+        else
+          all_marks_total += marks_total
+        end
+      end
+    end
+    new_test_script_result.marks_earned = all_marks_earned
+    new_test_script_result.marks_total = all_marks_total
+    new_test_script_result.save
+
+    new_test_script_result
+  end
+
+  def self.process_test_run(raw_result, test_scripts_ran, assignment, grouping, submission, requested_by)
 
     # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
-    result = nil
+    xml = nil
     begin
-      result = Hash.from_xml(raw_result)
+      xml = Hash.from_xml(raw_result)
     rescue => e
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
                                            I18n.t('automated_tests.test_result.all_tests'),
                                            I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
       return
     end
-    test_run = result['testrun']
+    test_run = xml['testrun']
     test_scripts = test_run.nil? ? nil : test_run['test_script']
     if test_run.nil? || test_scripts.nil?
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
                                            I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
       return
     end
 
@@ -460,62 +540,9 @@ module AutomatedTestsClientHelper
       if script_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
         next
       end
-      time = test_script['time']
-      if time.nil?
-        time = 0
-      end
-      all_marks_earned = 0.0
-      all_marks_total = 0.0
-      new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
-                                                         time)
+      new_test_script_result = AutomatedTestsClientHelper.process_test_script_result(test_script, assignment, grouping,
+                                                                                     submission, requested_by)
       new_test_script_results[script_name] = new_test_script_result
-      tests = test_script['test']
-      if tests.nil?
-        add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
-                              I18n.t('automated_tests.test_result.no_tests'))
-        next
-      end
-      unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
-        tests = [tests]
-      end
-      tests.each do |test|
-        test_name = test['name']
-        if test_name.nil? # with malformed xml, some test results could be valid and some won't
-          add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
-                                I18n.t('automated_tests.test_result.bad_results', {xml: test}))
-          next
-        end
-        marks_earned = test['marks_earned'].nil? ? 0.0 : test['marks_earned'].to_f
-        marks_total = test['marks_total'].nil? ? nil : test['marks_total'].to_f
-        test_input = test['input'].nil? ? '' : test['input']
-        test_actual = test['actual'].nil? ? '' : test['actual']
-        test_expected = test['expected'].nil? ? '' : test['expected']
-        test_status = test['status']
-        if test_status.nil? or not test_status.in?(%w(pass partial fail error))
-          test_actual = I18n.t('automated_tests.test_result.bad_status', {status: test_status})
-          test_status = 'error'
-          marks_earned = 0.0
-        end
-        if !marks_total.nil? && marks_earned > marks_total
-          marks_earned = marks_total
-        end
-        add_test_result(new_test_script_result, test_name, test_input, test_actual, test_expected, marks_earned,
-                        marks_total, test_status)
-        all_marks_earned += marks_earned
-        # marks_total.nil?: when a single test does not specify the marks it is worth, just the student score
-        # all_marks_total.nil?: when the test suite does not specify the marks it is worth, using the criterion max_mark
-        # if at least a single test does not specify marks_total, then all_marks_total will be nil
-        unless all_marks_total.nil?
-          if marks_total.nil?
-            all_marks_total = nil
-          else
-            all_marks_total += marks_total
-          end
-        end
-      end
-      new_test_script_result.marks_earned = all_marks_earned
-      new_test_script_result.marks_total = all_marks_total
-      new_test_script_result.save
     end
 
     # try to recover from malformed xml at the test script level
@@ -524,7 +551,7 @@ module AutomatedTestsClientHelper
         new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
                                                            0)
         add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
-                              I18n.t('automated_tests.test_result.bad_results', {xml: result}))
+                              I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
       end
     end
 
