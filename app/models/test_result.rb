@@ -29,7 +29,7 @@ class TestResult < ActiveRecord::Base
                          in: %w(pass partial fail error),
                          message: "%{value} is not a valid status"
   validates_numericality_of :marks_earned, greater_than_or_equal_to: 0
-  validates_numericality_of :marks_total, allow_nil: true, greater_than_or_equal_to: 0
+  validates_numericality_of :marks_total, allow_nil: true, greater_than_or_equal_to: :marks_earned
 
   # input, actual_output and expected_output could be empty in some situations
   validates_presence_of :input, if: "input.nil?"

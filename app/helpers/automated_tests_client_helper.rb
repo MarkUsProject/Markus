@@ -496,6 +496,9 @@ module AutomatedTestsClientHelper
           test_status = 'error'
           marks_earned = 0.0
         end
+        if !marks_total.nil? && marks_earned > marks_total
+          marks_earned = marks_total
+        end
         add_test_result(new_test_script_result, test_name, test_input, test_actual, test_expected, marks_earned,
                         marks_total, test_status)
         all_marks_earned += marks_earned
