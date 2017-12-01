@@ -208,7 +208,7 @@ module AutomatedTestsClientHelper
     # student checks from now on
 
     # student tests enabled
-    unless MarkusConfigurator.markus_ate_experimental_student_tests_on?
+    unless MarkusConfigurator.markus_ate_student_tests_on?
       raise I18n.t('automated_tests.error.not_enabled')
     end
     # student belongs to the grouping

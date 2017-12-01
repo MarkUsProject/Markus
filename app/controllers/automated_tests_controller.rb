@@ -71,7 +71,7 @@ class AutomatedTestsController < ApplicationController
       display_actual_output: :do_not_display
     )
     @assignment.test_support_files.build
-    @student_tests_on = MarkusConfigurator.markus_ate_experimental_student_tests_on?
+    @student_tests_on = MarkusConfigurator.markus_ate_student_tests_on?
   end
 
   def student_interface

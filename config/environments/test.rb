@@ -263,8 +263,8 @@ Markus::Application.configure do
 
   # Look at lib/automated_tests/README.md for the documentation
   AUTOMATED_TESTING_ENGINE_ON = false
-  ATE_EXPERIMENTAL_STUDENT_TESTS_ON = false
-  ATE_EXPERIMENTAL_STUDENT_TESTS_BUFFER_TIME = 2.hours
+  ATE_STUDENT_TESTS_ON = false
+  ATE_STUDENT_TESTS_BUFFER_TIME = 1.hour
   ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/test/automated_tests"
   ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
   ATE_SERVER_HOST = 'localhost'
