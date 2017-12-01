@@ -339,8 +339,8 @@ module AutomatedTestsClientHelper
         completion_status: status)
   end
 
-  def self.add_test_error_result(test_script_result, result_name, result_message)
-    add_test_result(test_script_result, result_name, '', result_message, '', 0.0, nil, 'error')
+  def self.add_test_error_result(test_script_result, name, message)
+    add_test_result(test_script_result, name, '', message, '', 0.0, nil, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -431,29 +431,38 @@ module AutomatedTestsClientHelper
 
   def self.process_test_result(xml, test_script_result)
 
-    #TODO detect an incoming all tests error (not due to xml), to set all_marks_earned to 0?
     test_name = xml['name']
     if test_name.nil?
       add_test_error_result(test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
                             I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
-      raise
+      raise 'Malformed xml'
     end
+
     marks_earned = xml['marks_earned'].nil? ? 0.0 : xml['marks_earned'].to_f
     marks_total = xml['marks_total'].nil? ? nil : xml['marks_total'].to_f
-    test_input = xml['input'].nil? ? '' : xml['input']
-    test_actual = xml['actual'].nil? ? '' : xml['actual']
-    test_expected = xml['expected'].nil? ? '' : xml['expected']
-    test_status = xml['status']
-    if test_status.nil? or not test_status.in?(%w(pass partial fail error))
-      test_actual = I18n.t('automated_tests.test_result.bad_status', {status: test_status})
-      test_status = 'error'
+    input = xml['input'].nil? ? '' : xml['input']
+    expected = xml['expected'].nil? ? '' : xml['expected']
+    actual = xml['actual'].nil? ? '' : xml['actual']
+    status = xml['status']
+    if status.nil? or not status.in?(%w(pass partial fail error error_all))
+      actual = I18n.t('automated_tests.test_result.bad_status', {status: status})
+      status = 'error'
       marks_earned = 0.0
+    end
+    if status == 'error_all'
+      status = 'error'
+      stop_processing = true
+    else
+      stop_processing = false
     end
     if !marks_total.nil? && marks_earned > marks_total
       marks_earned = marks_total
     end
-    add_test_result(test_script_result, test_name, test_input, test_actual, test_expected, marks_earned, marks_total,
-                    test_status)
+
+    add_test_result(test_script_result, test_name, input, actual, expected, marks_earned, marks_total, status)
+    if stop_processing
+      raise 'Test script reported a serious failure'
+    end
 
     return marks_earned, marks_total
   end
@@ -469,7 +478,7 @@ module AutomatedTestsClientHelper
     new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
                                                        time)
     tests = xml['test']
-    if tests.nil? #TODO what about empty?
+    if tests.nil?
       add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
                             I18n.t('automated_tests.test_result.no_tests'))
       return new_test_script_result
@@ -486,6 +495,7 @@ module AutomatedTestsClientHelper
         marks_earned, marks_total = AutomatedTestsClientHelper.process_test_result(test, new_test_script_result)
       rescue
         # with malformed xml, test results could be valid only up to a certain test
+        # similarly, the test script can signal a serious failure that requires assigning zero marks
         all_marks_earned = 0.0
         all_marks_total = nil
         break
