@@ -22,10 +22,6 @@ class Grouping < ActiveRecord::Base
   has_many :accepted_student_memberships,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'StudentMembership'
-  has_many :accepted_students,
-           class_name: 'Student',
-           through: :accepted_student_memberships,
-           source: :user
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
@@ -802,40 +798,13 @@ class Grouping < ActiveRecord::Base
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def instructor_test_script_results
-    # TODO Refactor requested_by to NOT NULL
-    # TODO Use native .or() with Rails 5
-    self.test_script_results
-        .where(submission: self.current_submission_used)
-        .where(['requested_by_id IS NULL OR requested_by_id IN (?)', User.where(type: User::ADMIN).pluck(:id)])
-  end
-
-  def student_test_script_results
-    self.test_script_results
-        .where(requested_by: self.accepted_students)
-  end
-
-  def self.last_test_marks(test_script_ids, test_script_results)
-    test_script_ids.sum do |test_script_id|
-      mark = test_script_results.where(test_script_id: test_script_id)
-                                .limit(1) # uses test_script_results with ORDER BY created_at DESC
-                                .pluck(:marks_earned)
-      mark.empty? ? 0 : mark[0]
+  def student_test_script_results(include_all_data=false)
+    if include_all_data
+      results = TestScriptResult.includes(:test_script, :test_results).where(id: self.test_script_results.pluck(:id))
+    else
+      results = self.test_script_results
     end
-  end
-
-  def last_instructor_test_marks
-    test_script_ids = self.assignment.instructor_test_scripts
-                                     .distinct
-                                     .pluck(:id)
-    Grouping.last_test_marks(test_script_ids, self.instructor_test_script_results)
-  end
-
-  def last_student_test_marks
-    test_script_ids = self.assignment.student_test_scripts
-                                     .distinct
-                                     .pluck(:id)
-    Grouping.last_test_marks(test_script_ids, self.student_test_script_results)
+    results.where(requested_by: self.accepted_students)
   end
 
   def prepare_tokens_to_use

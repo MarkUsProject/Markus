@@ -80,7 +80,7 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = @grouping.student_test_script_results
+      @test_script_results = @grouping.student_test_script_results(true)
       @token = @grouping.prepare_tokens_to_use
     end
     render layout: 'assignment_content'
