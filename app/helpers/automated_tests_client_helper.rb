@@ -389,31 +389,25 @@ module AutomatedTestsClientHelper
     begin
       if test_server_host == 'localhost'
         # tests executed locally with no authentication:
-        # create a temp folder, copying the student's submission and all necessary test files
-        FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing..
-        files_path = Dir.mktmpdir(nil, files_path) # ..then create temp subfolder
-        FileUtils.cp_r("#{submission_path}/.", files_path) # == cp -r '#{submission_path}'/* '#{files_path}'
-        FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # == cp -r '#{assignment_tests_path}'/* '#{files_path}'
+        # create a temp folder, copying the student's submission and all test files
+        FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing
+        files_path = Dir.mktmpdir(nil, files_path) # create temp subfolder
+        FileUtils.cp_r("#{submission_path}/.", files_path) # includes hidden files
+        FileUtils.cp_r("#{assignment_tests_path}/.", files_path) # includes hidden files
         # enqueue locally using redis api
         resque_params[:args][5] = files_path
         Resque.redis.rpush(server_queue, JSON.generate(resque_params))
       else
         # tests executed locally or remotely with authentication:
-        # copy the student's submission and all necessary files through ssh in a temp folder
+        # copy the student's submission and all test files through ssh/scp in a temp folder
         Net::SSH::start(test_server_host, file_username, auth_methods: ['publickey']) do |ssh|
-          ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing..
-          files_path = ssh.exec!("mktemp -d --tmpdir='#{files_path}'").strip # ..then create temp subfolder
-          Dir.foreach(submission_path) do |file_name| # workaround scp gem not supporting wildcard *
-            next if file_name == '.' or file_name == '..'
-            file_path = File.join(submission_path, file_name)
-            options = File.directory?(file_path) ? {:recursive => true} : {}
-            ssh.scp.upload!(file_path, files_path, options)
-          end
-          Dir.foreach(assignment_tests_path) do |file_name| # workaround scp gem not supporting wildcard *
-            next if file_name == '.' or file_name == '..'
-            file_path = File.join(assignment_tests_path, file_name)
-            ssh.scp.upload!(file_path, files_path)
-          end
+          ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing
+          files_path = ssh.exec!("mktemp -d --tmpdir='#{files_path}'").strip # create temp subfolder
+          # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
+          scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
+                             "'#{submission_path}'/. '#{assignment_tests_path}'/. "\
+                             "#{file_username}@#{test_server_host}:'#{files_path}'"
+          Open3.capture3(scp_command)
           # enqueue remotely directly with redis-cli, resque does not allow for multiple redis servers
           resque_params[:args][5] = files_path
           ssh.exec!("redis-cli rpush \"resque:#{server_queue}\" '#{JSON.generate(resque_params)}'")
