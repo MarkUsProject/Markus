@@ -53,6 +53,10 @@ class Grouping < ActiveRecord::Base
            -> { order 'created_at DESC' },
            dependent: :destroy
 
+  has_many :test_script_results_all_data,
+           -> { includes(:test_script, :test_results, :requested_by).order('created_at DESC') },
+           class_name: 'TestScriptResult'
+
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
           class_name: 'StudentMembership'
@@ -800,7 +804,7 @@ class Grouping < ActiveRecord::Base
 
   def student_test_script_results(include_all_data=false)
     if include_all_data
-      results = TestScriptResult.includes(:test_script, :test_results).where(id: self.test_script_results.pluck(:id))
+      results = self.test_script_results_all_data
     else
       results = self.test_script_results
     end

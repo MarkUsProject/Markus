@@ -38,8 +38,7 @@ class ResultsController < ApplicationController
 
   def edit
     @host = Rails.application.config.action_controller.relative_url_root
-    @result = Result.includes(submission: {test_script_results: [:test_script, :test_results]})
-                    .find(params[:id])
+    @result = Result.find(params[:id])
     @pr = PeerReview.find_by(result_id: @result.id)
     @submission = @result.submission
     @grouping = @submission.grouping

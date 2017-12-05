@@ -27,6 +27,9 @@ class Submission < ActiveRecord::Base
   has_many   :test_script_results,
              -> { order 'created_at DESC' },
              dependent: :destroy
+  has_many   :test_script_results_all_data,
+             -> { includes(:test_script, :test_results, :requested_by).order('created_at DESC') },
+             class_name: 'TestScriptResult'
   has_many   :feedback_files, dependent: :destroy
 
 
