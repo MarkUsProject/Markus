@@ -12,6 +12,7 @@
     <% end %>
     <span class='right'>
       <%= l(test_script_result.created_at, format: :long) %>
+      <%= "(#{test_script_result.requested_by.user_name})" %>
     </span>
   <% if test_script_result.created_at == latest_date %>
       <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
