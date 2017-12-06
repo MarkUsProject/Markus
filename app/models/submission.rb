@@ -118,7 +118,7 @@ class Submission < ActiveRecord::Base
     if result.marks.empty? # can happen if a criterion is created after collection
       result.create_marks
     end
-    result.marks.each do |mark|
+    result.marks.includes(markable: :test_scripts).each do |mark|
       all_marks_earned = 0.0
       all_marks_total = 0.0
       mark.markable.test_scripts.each do |test_script|
