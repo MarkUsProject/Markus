@@ -16,42 +16,11 @@ class AutomatedTestsController < ApplicationController
 
     # Perform transaction, if errors, none of new config saved
     @assignment.transaction do
-      # Get new script from upload form
-      new_script = params[:new_script]
-      # Get new support file from upload form
-      new_support_file = params[:new_support_file]
-
-      @assignment = process_test_form(@assignment,
-                                      params,
-                                      assignment_params,
-                                      new_script,
-                                      new_support_file)
+      @assignment = process_test_form(@assignment, params, assignment_params)
       # Save assignment and associated test files
       if @assignment.save
         flash_message(:success, I18n.t('assignment.update_success'))
-        unless new_script.nil?
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_dir,
-              @assignment.repository_folder,
-              new_script.original_filename)
-          # Replace bad line endings from windows
-          contents = new_script.read.tr("\r", '')
-          File.open(
-              assignment_tests_path, 'w') { |f| f.write contents }
-        end
-
-        unless new_support_file.nil?
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_dir,
-              @assignment.repository_folder,
-              new_support_file.original_filename)
-          contents = new_support_file.read
-          File.open(
-              assignment_tests_path, 'wb') { |f| f.write contents }
-        end
-
-        redirect_to action: 'manage',
-                    assignment_id: params[:assignment_id]
+        redirect_to action: 'manage', assignment_id: params[:assignment_id]
       else
         @assignment.test_support_files.build
         render :manage
