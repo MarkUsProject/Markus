@@ -1870,6 +1870,7 @@ es:
         unknown_test: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"
+        err_results: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"

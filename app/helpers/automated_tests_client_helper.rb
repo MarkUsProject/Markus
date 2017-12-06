@@ -513,12 +513,19 @@ module AutomatedTestsClientHelper
     new_test_script_result
   end
 
-  def self.process_test_run(raw_result, test_scripts_ran, assignment, grouping, submission, requested_by)
+  def self.process_test_run(assignment, grouping, submission, requested_by, test_scripts_ran, test_output_xml,
+                            test_errors=nil)
 
+    # check unhandled errors first, but don't stop here
+    unless test_errors.blank?
+      create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.err_results', {errors: test_errors}))
+    end
     # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
     xml = nil
     begin
-      xml = Hash.from_xml(raw_result)
+      xml = Hash.from_xml(test_output_xml)
     rescue => e
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
                                            I18n.t('automated_tests.test_result.all_tests'),

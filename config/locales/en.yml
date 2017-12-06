@@ -1636,6 +1636,7 @@ en:
         unknown_test: "Unknown test"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
+        err_results: "The tests had unhandled errors: %{errors}"
         bad_results: "The test results are malformed: %{xml}"
         no_tests: "The test results are empty"
         bad_status: "Unrecognized test status '%{status}'"
