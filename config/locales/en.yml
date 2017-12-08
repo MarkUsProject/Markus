@@ -1573,7 +1573,7 @@ en:
         upload_required: "Upload <span class='required_field'>*</span>"
         upload_help: "The new file name must not exist already"
         replace: "Update"
-        replace_help: "The updated file name must be different from the current one"
+        replace_help: "The updated file name can be the same as the current one"
         remove_file: "Remove this file"
         remove_file_help: "Check this box and press submit at the bottom to delete the file"
         run_settings: "Run Settings:"

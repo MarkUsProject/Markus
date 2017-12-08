@@ -14,17 +14,27 @@ class AutomatedTestsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     create_test_repo(@assignment)
 
-    # Perform transaction, if errors, none of new config saved
-    @assignment.transaction do
-      @assignment = process_test_form(@assignment, params, assignment_params)
-      # Save assignment and associated test files
-      if @assignment.save
-        flash_message(:success, I18n.t('assignment.update_success'))
-        redirect_to action: 'manage', assignment_id: params[:assignment_id]
-      else
-        @assignment.test_support_files.build
-        render :manage
+    begin
+      @assignment.transaction do
+        files = process_test_form(@assignment, params, assignment_params)
+        if @assignment.save
+          # write the uploaded files
+          files.each do |file|
+            File.open(file[:path], 'wb') { |f| f.write file[:upload].read }
+            if file.has_key?(:delete)
+              File.delete(file[:delete]) if File.exist?(file[:delete])
+            end
+          end
+          flash_message(:success, I18n.t('assignment.update_success'))
+        else
+          flash_message(:error, @assignment.errors.full_messages)
+        end
       end
+    rescue => e
+      flash_message(:error, e.message)
+    ensure
+      # TODO the page is not correctly drawn when using render
+      redirect_to action: 'manage', assignment_id: params[:assignment_id]
     end
   end
 

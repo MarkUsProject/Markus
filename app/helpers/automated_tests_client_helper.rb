@@ -14,106 +14,92 @@ module AutomatedTestsClientHelper
     end
   end
 
+  def process_test_file(assignment, params, files, form_file, is_script)
+
+    # custom variables
+    if is_script
+      new_file_param = :new_script
+      model_class = TestScript
+      name_field = :script_name
+      upd_name = 'new_update_script'
+    else
+      new_file_param = :new_support_file
+      model_class = TestSupportFile
+      name_field = :file_name
+      upd_name = 'new_update_file'
+    end
+
+    # 1) Remove existing test file
+    if form_file[:_destroy] == '1'
+      return form_file.clone # the _destroy flag will be processed with save
+    end
+    # 2) Empty form
+    is_new = form_file[:id].nil? # id is non-nil only for existing test files
+    new_file = params[new_file_param]
+    return nil if is_new && new_file.nil?
+    # 3) Always update test file options (both new and existing test files)
+    updated_form_file = form_file.clone
+    if is_script
+      if form_file[:criterion_id].empty?
+        updated_form_file[:criterion_id] = nil
+        updated_form_file[:criterion_type] = nil
+      else
+        crit_id, crit_type = JSON.parse(form_file[:criterion_id]) # "[id, "type"]"
+        updated_form_file[:criterion_id] = crit_id
+        updated_form_file[:criterion_type] = crit_type
+      end
+    end
+    # 4) Create new test file
+    if is_new
+      new_file_name = new_file.original_filename
+      if model_class.exists?(name_field => new_file_name, :assignment => assignment)
+        raise I18n.t('automated_tests.duplicate_filename') + new_file_name
+      end
+      updated_form_file[name_field] = new_file_name
+      new_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, new_file_name)
+      files.push({path: new_file_path, upload: new_file})
+    # 5) Possibly replace existing test file
+    else
+      return updated_form_file unless form_file[name_field].nil? # replacing a test file resets the old name
+      old_file_name = model_class.where(id: form_file[:id]).pluck(name_field).first
+      upd_file = params[("#{upd_name}_#{old_file_name}").to_sym]
+      upd_file_name = upd_file.original_filename
+      updated_form_file[name_field] = upd_file_name
+      mod_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, upd_file_name)
+      f = {path: mod_file_path, upload: upd_file}
+      files.push(f)
+      unless upd_file_name == old_file_name
+        old_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, old_file_name)
+        f[:delete] = old_file_path
+      end
+    end
+
+    updated_form_file
+  end
+
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params, assignment_params)
 
-    updated_scripts = {}
-    updated_supporters = {}
-    scripts = assignment_params[:test_scripts_attributes] || []
-    supporters = assignment_params[:test_support_files_attributes] || []
-    new_script = params[:new_script]
-    new_supporter = params[:new_support_file]
+    files = []
 
-    # TODO if @assignment.save fails, all the files have been created and overwritten already
-    # TODO remove label from update
     # Create/Update test scripts
+    scripts = assignment_params[:test_scripts_attributes] || []
+    updated_scripts = {}
     scripts.each do |i, script|
-      # 1) Remove existing test script
-      if script[:_destroy] == '1'
-        updated_scripts[i] = script.clone # the _destroy flag will be processed with save
-        next
-      end
-      # 2) Empty form
-      is_new = script[:id].nil? # id is non-nil only for existing test scripts
-      next if is_new && new_script.nil?
-      # 3) Always update test script options (both new and existing test scripts)
-      updated_scripts[i] = script.clone
-      updated_scripts[i][:seq_num] = i
-      if script[:criterion_id].empty?
-        updated_scripts[i][:criterion_id] = nil
-        updated_scripts[i][:criterion_type] = nil
-      else
-        crit_id, crit_type = JSON.parse(script[:criterion_id]) # "[id, "type"]"
-        updated_scripts[i][:criterion_id] = crit_id
-        updated_scripts[i][:criterion_type] = crit_type
-      end
-      # 4) Create new test script file
-      if is_new
-        new_script_name = new_script.original_filename
-        if TestScript.exists?(script_name: new_script_name, assignment: assignment)
-          raise I18n.t('automated_tests.duplicate_filename') + new_script_name
-        end
-        updated_scripts[i][:script_name] = new_script_name
-        new_script_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                    new_script_name)
-        File.open(new_script_path, 'w') { |f| f.write new_script.read }
-      # 5) Possibly replace existing test script file
-      else
-        next unless script[:script_name].nil? # replacing a script file resets the old name
-        old_script_name = TestScript.where(id: script[:id]).pluck(:script_name).first
-        mod_script = params[("new_update_script_#{old_script_name}").to_sym]
-        mod_script_name = mod_script.original_filename
-        updated_scripts[i][:script_name] = mod_script_name
-        mod_script_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                    mod_script_name)
-        File.open(mod_script_path, 'w') { |f| f.write mod_script.read }
-        unless mod_script_name == old_script_name
-          old_script_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                      old_script_name)
-          File.delete(old_script_path) if File.exist?(old_script_path)
-        end
-      end
+      updated_script = process_test_file(assignment, params, files, script, true)
+      next if updated_script.nil?
+      updated_script[:seq_num] = i
+      updated_scripts[i] = updated_script
     end
 
     # Create/Update test support files
+    supporters = assignment_params[:test_support_files_attributes] || []
+    updated_supporters = {}
     supporters.each do |i, supporter|
-      # 1) Remove existing test support file
-      if supporter[:_destroy] == '1'
-        updated_supporters[i] = supporter.clone # the _destroy flag will be processed with save
-        next
-      end
-      # 2) Empty form
-      is_new = supporter[:id].nil? # id is non-nil only for existing test support files
-      next if is_new && new_supporter.nil?
-      # 3) Always update test support file options (both new and existing test support files)
-      updated_supporters[i] = supporter.clone
-      # 4) Create new test support file
-      if is_new
-        new_supporter_name = new_supporter.original_filename
-        if TestSupportFile.exists?(file_name: new_supporter_name, assignment: assignment)
-          raise I18n.t('automated_tests.duplicate_filename') + new_supporter_name
-        end
-        updated_supporters[i][:file_name] = new_supporter_name
-        new_supporter_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                       new_supporter_name)
-        File.open(new_supporter_path, 'w') { |f| f.write new_supporter.read }
-        # 5) Possibly replace existing test support file
-      else
-        next unless supporter[:file_name].nil? # replacing a support file resets the old name
-        old_supporter_name = TestSupportFile.where(id: supporter[:id]).pluck(:file_name).first
-        mod_supporter = params[("new_update_file_#{old_supporter_name}").to_sym]
-        mod_supporter_name = mod_supporter.original_filename
-        updated_supporters[i][:file_name] = mod_supporter_name
-        mod_supporter_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                       mod_supporter_name)
-        File.open(mod_supporter_path, 'w') { |f| f.write mod_supporter.read }
-        unless mod_supporter_name == old_supporter_name
-          old_supporter_path = File.join(MarkusConfigurator.markus_ate_client_dir, @assignment.repository_folder,
-                                         old_supporter_name)
-          File.delete(old_supporter_path) if File.exist?(old_supporter_path)
-        end
-      end
+      updated_supporter = process_test_file(assignment, params, files, supporter, false)
+      next if updated_supporter.nil?
+      updated_supporters[i] = updated_supporter
     end
 
     # Update test file attributes
@@ -129,7 +115,7 @@ module AutomatedTestsClientHelper
     assignment.tokens_per_period = assignment_params[:tokens_per_period].nil? ?
                                      0 : assignment_params[:tokens_per_period]
 
-    assignment
+    files
   end
 
   # Export group repository for testing. Students' submitted files
