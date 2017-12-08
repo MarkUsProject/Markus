@@ -98,16 +98,5 @@ describe Group do
         end
       end
     end
-
-    context 'when repository is closed' do
-      let(:group) { create(:group) }
-
-      it 'raises an error' do
-        group.repo do |repo|
-          repo.close
-          expect(group.access_repo).to raise_error
-        end
-      end
-    end
   end
 end
