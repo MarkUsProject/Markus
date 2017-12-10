@@ -1369,7 +1369,7 @@ context 'main' do
 
   context 'collection' do
     it 'routes GET logout properly' do
-      expect(get: path + '/logout').to route_to(
+      expect(post: path + '/logout').to route_to(
         controller: ctrl,
         action: 'logout',
         locale: 'en')
@@ -1427,7 +1427,7 @@ context 'main' do
   end
 
   it 'routes GET logout properly' do
-    expect(get: path + '/logout').to route_to(
+    expect(post: path + '/logout').to route_to(
       controller: ctrl,
       action: 'logout',
       locale: 'en')
