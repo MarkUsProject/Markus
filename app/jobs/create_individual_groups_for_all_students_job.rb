@@ -19,9 +19,10 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
   def perform(assignment)
     return unless assignment.group_max == 1
 
-    progress.total = Student.count
+    students = Student.where(hidden: false)
+    progress.total = students.count
 
-    Student.find_each do |student|
+    students.find_each do |student|
       # Check to see if the student already has a grouping for
       # the current assignment
       unless student.accepted_grouping_for(assignment.id).nil?
