@@ -1100,6 +1100,9 @@ en:
         not_in_use: "Tags Not in Use"
 
     submission_rules:
+      from: "from"
+      to: "to"
+      hours: "hour(s)"
       submission_rule:
         description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen."
         commit_after_collection_message: "This message is displayed when students submit code after the collection date.  Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students."
@@ -1126,10 +1129,7 @@ en:
         overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days."
         form_description:  "Automatically deduct grace period credits"
         add_grace_period: "Add a Grace Period"
-        hours:  "hours..."
         after:  "After"
-        from:  "From"
-        to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
 
       penalty_decay_period_submission_rule:
@@ -1143,9 +1143,6 @@ en:
         form_description: "Use Penalty Decay Formula"
         add_penalty_decay: "Add a Decay Period"
         alert: "You must select the Penalty Decay Submission Rule to add a decay period."
-        from: "From"
-        to: "to"
-        hours: "hour(s)..."
         after: "After"
         every: "every"
         deduct: "Deduct"
@@ -1161,11 +1158,8 @@ en:
         extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction"
         form_description: "Use Penalty Formula"
         add_penalty_period: "Add a Penalty Period"
-        hours:  "hours..."
         after:  "After"
-        from:  "From"
-        to:  "to"
-        deduction: "Penalty Period Deduction"
+        deduction: "Deduct"
         alert: "You must select the Penalty Period Submission Rule to add a penalty period."
 
     submission_file:

@@ -959,6 +959,10 @@ fr:
     unhide_students: "Activer les étudiants"
 
     submission_rules:
+      hours:  "heure(s)"
+      from:  "du"
+      to:  "au"
+
       submission_rule:
         description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen." #TODO
         commit_after_collection_message: "Ce message est affiché aux étudiants quand ils envoient leur code après la date de récupération des projets par le correcteur. Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students." #TODO
@@ -985,10 +989,7 @@ fr:
         overtime_message_without_days_left: "La date de retour pour ce projet est passée et vous ne pouvez plus utiliser de jours de grâce."
         form_description:  "Déduire automatiquement les crédits de grâce"
         add_grace_period: "Ajouter une période de grâce"
-        hours:  "heures…"
         after:  "Après"
-        from:  "Du"
-        to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
 
       penalty_decay_period_submission_rule:
@@ -1002,9 +1003,6 @@ fr:
         form_description: "Utiliser une pénalité dépendant du retard"
         add_penalty_decay: "Ajouter une période pénalité"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
-        from: "De"
-        to: "au"
-        hours: "heure(s)…"
         after: "Après"
         every: "chaque"
         deduct: "déduction"
@@ -1020,10 +1018,7 @@ fr:
         extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
-        hours:  "heures…"
         after:  "Après"
-        from:  "Du"
-        to:  "au"
         deduction: "Déduction après la période de pénalité"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité."
 

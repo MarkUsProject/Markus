@@ -1280,6 +1280,10 @@ es:
 
 
     submission_rules:
+      hours:                             "hora(s)"
+      from:                              "desde"
+      to:                                "a"
+
       submission_rule:
         description:                     "Esta es la descripción de la clase SubmissionRule. Ya que sólo subclases
                                           de esta clase deberían estar vinculadas con un proyecto, este mensaje no
@@ -1324,10 +1328,7 @@ es:
                                              días de aplazamiento de gracia."
         form_description:                   "Deducir automáticamente los créditos de aplazamiento de gracia"
         add_grace_period:                   "Añadir un Período de Aplazamiento de Gracia"
-        hours:                              "horas..."
         after:                              "Después"
-        from:                               "Desde"
-        to:                                 "a"
         alert:                              "Usted debe seleccionar la Regla de Entrega para el Período de Aplazamiento
                                              de Gracia para poder añadir el mismo."
 
@@ -1350,9 +1351,6 @@ es:
         add_penalty_decay:               "Añadir un Período de Penalidad"
         alert:                           "Usted debe seleccionar la Regla de Entrega para el período de penalidad para
                                           poder añadir un período de penalidad."
-        from:                            "Desde"
-        to:                              "a"
-        hours:                           "hora(s)..."
         after:                           "Después"
         every:                           "todos/todas"
         deduct:                          "Deducir"
@@ -1376,10 +1374,7 @@ es:
                                           de %{penalty_amount}%"
         form_description:                "Usar la Fórmula de Penalidad"
         add_penalty_period:              "Añadir un Período de Penalidad"
-        hours:                           "horas..."
         after:                           "Después"
-        from:                            "Desde"
-        to:                              "a"
         deduction:                       "Deducción Período de Penalidad"
         alert:                           "Usted debe seleccionar la Regla de Entrega para el Período de Penalidad para
                                           poder añadir el mismo."

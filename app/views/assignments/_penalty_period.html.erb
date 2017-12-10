@@ -13,7 +13,10 @@
                        class: 'PeriodDeltaChain_Hours',
                        required: true,
                        onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
-      <%= t('submission_rules.grace_period_submission_rule.hours') %>
+      <%= t('submission_rules.hours') %>
+    </td>
+    <td>
+      <%= f.text_field :deduction, required: true, size: 1 %> %
     </td>
     <td>
       <span class='PeriodDeltaChain'>
@@ -24,9 +27,6 @@
       <span class='PeriodDeltaChain'>
         <span class='PeriodDeltaChain_ToTime'></span>
       </span>
-    </td>
-    <td>
-      <%= f.text_field :deduction, required: true, size: 1 %>%
     </td>
     <td>
       <% if !f.object.nil? && !f.object.new_record? %>

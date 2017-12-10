@@ -927,6 +927,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     unhide_students: "Marcar como ativo"
 
     submission_rules:
+      hours:  "hora(s)"
+      from:  "de"
+      to:  "para"
+
       submission_rule:
         description: "Esta é a descrição da classe SubmissionRule. Uma vez que apenas subclasses de SubmissionRule deven ser anexadas a um projeto, esta mensagem nunca deve ser vista."
         commit_after_collection_message: "Esta mensagem é apresentada quando os estudantes submeterem código após a data de coleta. Como SubmissionRule será uma subclasse, e não referenciados diretamente por um Assignment, esta mensagem particular nunca deve ser exibido para os alunos."
@@ -953,10 +957,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         overtime_message_without_days_left: "A data de entrega para este projeto já passou, e você já não são capazes de usar os dias de tolerância."
         form_description:  "Deduzir automaticamente créditos de período de tolerância"
         add_grace_period: "Adicionar um período de tolerância"
-        hours:  "horas..."
         after:  "Depois"
-        from:  "De"
-        to:  "para"
         alert: "Você deve selecionar a regra de envio Prazo de tolerância para adicionar um período de tolerância."
 
       penalty_decay_period_submission_rule:
@@ -970,9 +971,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         form_description: "Usar fórmula de decaimento de penalidade"
         add_penalty_decay: "Adicionar período de decaimento"
         alert: "Você deve selecionar uma regra de penalidade para adicionar um período de decaimento."
-        from: "De"
-        to: "para"
-        hours: "hora(s)..."
         after: "Depois"
         every: "todo"
         deduct: "Deduzir"
@@ -988,10 +986,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         extramark_description: "Submissão atrasada (%{overtime_hours} hora(s)) resultou em dedução automatica de  %{penalty_amount}%"
         form_description: "Usar fórmula de penalidade"
         add_penalty_period: "Adicionar um período de penalidade"
-        hours:  "horas..."
         after:  "Depois"
-        from:  "De"
-        to:  "para"
         deduction: "Período de dedução de penalidade"
         alert: "Você deve selecionar uma regra de submissão de período de penalidade para adicionar um período de multa."
 
