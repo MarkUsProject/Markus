@@ -5,7 +5,7 @@ class MainController < ApplicationController
 
   include ApplicationHelper, MainHelper, CookieDetection
 
-  protect_from_forgery except: [:login, :page_not_found]
+  protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
   before_filter      :authorize_for_user,
