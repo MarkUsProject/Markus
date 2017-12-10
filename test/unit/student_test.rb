@@ -248,7 +248,7 @@ class StudentTest < ActiveSupport::TestCase
     [{type: 'negative', grace_credits: '-10', expected: 0 },
      {type: 'positive', grace_credits: '10', expected: 15 }].each do |item|
       should "not error when given #{item[:type]} grace credits" do
-        assert Student.give_grace_credits(@student_id_list, item[:grace_credits])
+        assert Student.give_grace_credits(@student_id_list, item[:grace_credits].to_i)
 
         #You have to find the students to get the updated values
         students = Student.find(@student_id_list)
