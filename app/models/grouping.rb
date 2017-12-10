@@ -513,12 +513,16 @@ class Grouping < ActiveRecord::Base
 
   # Returns last modified date of the assignment_folder in this grouping's repository
   def assignment_folder_last_modified_date
-    repo = self.group.repo
-    rev = repo.get_latest_revision
-    last_date = rev.timestamp
-
-    repo.close()
-    last_date
+    revision = nil
+    group.access_repo do |repo|
+      # we use this function because it allows to specify a path
+      revision = repo.get_revision_by_timestamp(Time.zone.now, assignment.repository_folder)
+      # an alternative could have been:
+      # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
+      # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
+      # walk through the entire history
+    end
+    revision.timestamp
   end
 
   # Returns a list of missing assignment_files yet to be submitted
@@ -552,21 +556,6 @@ class Grouping < ActiveRecord::Base
     end
     criteria = self.all_assigned_criteria(self.tas - ta_memberships_to_remove.collect{|mem| mem.user})
     self.criteria_coverage_count = criteria.length
-    self.save
-  end
-
-  def add_tas_by_user_name_array(ta_user_name_array)
-    grouping_tas = []
-    ta_user_name_array.each do |ta_user_name|
-      ta = Ta.where(user_name: ta_user_name).first
-      unless ta.nil?
-        if ta_memberships.where(user_id: ta.id).first.nil?
-          ta_memberships.create(user: ta)
-        end
-      end
-      grouping_tas += Array(ta)
-    end
-    self.criteria_coverage_count = self.all_assigned_criteria(grouping_tas).length
     self.save
   end
 
@@ -664,18 +653,11 @@ class Grouping < ActiveRecord::Base
   ##
   def past_due_date?
     timestamp = assignment_folder_last_modified_date
-    due_dates = assignment.section_due_dates
-    section = unless inviter.blank?
-                inviter.section
-              end
-    section_due_date = unless section.blank? || due_dates.blank?
-                         due_dates.where(section_id: section).first.due_date
-                       end
-
-    if !section_due_date.blank?
-      timestamp > section_due_date
-    else
+    if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
       timestamp > assignment.due_date
+    else
+      section_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+      timestamp > section_due_date
     end
   end
 
@@ -728,16 +710,13 @@ class Grouping < ActiveRecord::Base
   end
 
   def self.get_assign_scans_grouping(assignment)
-    if assignment.scanned_exam?
-      grouping = nil
-      assignment.groupings.includes(:group, :student_memberships, current_submission_used: :submission_files, memberships: :user).order('groups.id asc').each do |a|
-        grouping = a
-        if !a.is_valid?
-          break
-        end
-      end
-      grouping
-    end
+    subquery = StudentMembership.all.to_sql
+    assignment.groupings.includes(:non_rejected_student_memberships)
+      .where(admin_approved: false)
+      .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
+      .where(sub: { id: nil })
+      .order(:id)
+      .first
   end
 
   # Helper for populate_submissions_table.
@@ -838,7 +817,7 @@ class Grouping < ActiveRecord::Base
   def self.last_test_marks(test_script_ids, test_script_results)
     test_script_ids.sum do |test_script_id|
       mark = test_script_results.where(test_script_id: test_script_id)
-                                .limit(1)
+                                .limit(1) # uses test_script_results with ORDER BY created_at DESC
                                 .pluck(:marks_earned)
       mark.empty? ? 0 : mark[0]
     end
@@ -868,20 +847,22 @@ class Grouping < ActiveRecord::Base
 
   private
 
-  # Once a grouping is valid, grant (write) repository permissions for students
+  # Once a grouping is valid, grant (read+write) repository permissions for students
   # who have accepted memberships (including the inviter)
   #
   # precondition: grouping is valid, self.reload has been called
   def grant_repository_permissions
+    unless self.write_repo_permissions?
+      return
+    end
     memberships = self.accepted_student_memberships
-    memberships.each do |member|
-      # Add repository read and write permissions for user,
-      # if we are required to do so
-      if self.write_repo_permissions?
+    if memberships.empty?
+      return
+    end
+    self.group.access_repo do |repo|
+      memberships.each do |member|
         begin
-          self.group.access_repo do |repo|
-            repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
-          end
+          repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
         rescue Repository::UserAlreadyExistent
           # ignore case if user has permissions already
         end

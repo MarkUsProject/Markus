@@ -42,26 +42,9 @@
       <% end %>
     </script>
 
-
-    <!-- arrange the files list into a nested hashtable for displaying in a recursive menu -->
-    <% outermost_dir = Hash.new %>
-    <% files.each do |file| %>
-        <% innermost_dir = outermost_dir %>
-        <% innermost_dir["files"] = Array.new %>
-        <% folders = file.path.split('/') %>
-        <% folders.each do |folder_name| %>
-            <% if !innermost_dir.key?(folder_name) %>
-                <% innermost_dir[folder_name] = Hash.new %>
-                <% innermost_dir[folder_name]["files"] = Array.new %>
-            <% end %>
-            <% innermost_dir = innermost_dir[folder_name] %>
-        <% end %>
-        <% innermost_dir["files"].push(file) %>
-    <% end %>
-
     <% def show_folder_recursive(dir) %>
         <% dir.each do |name, contents|  %>
-            <% if name != "files" %>
+            <% if name != :files %>
                 <li class="nested-submenu">
                   <a onmouseenter='open_submenu(this)'>
                     <b><%= name %></b>
@@ -70,8 +53,8 @@
                 </li>
             <% end %>
         <% end %>
-        <% if dir["files"] != nil %>
-            <% dir["files"].each do |file| %>
+        <% if dir[:files] != nil %>
+            <% dir[:files].each do |file| %>
                 <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>", true)'
                        onmouseover='close_submenu_recursive(
                            this.parentNode.parentNode, null)'>
@@ -82,11 +65,12 @@
     <% end %>
 
     <div class="dropdown" id="download_select_file_id">
+      <% outermost_dir = create_nested_files_hash_table(files) %>
       <a id="download_file_selector_dropdown_text">Files</a>
       <span class="caret"></span>
       <ul class="nested-folder">
         <% outermost_dir.each do |key, value| %>
-            <% if key != "files" %>
+            <% if key != :files %>
                 <% show_folder_recursive(outermost_dir[key]) %>
             <% end %>
         <% end %>

@@ -260,7 +260,7 @@ module Repository
 
     def get_all_revisions
       revisions = []
-      1.upto(latest_revision_number) do |revision_number|
+      latest_revision_number.downto(1) do |revision_number|
         revisions << get_revision(revision_number)
       end
       revisions
@@ -803,7 +803,7 @@ module Repository
 
     # removes a file from a transaction and eventually from repository
     def remove_file(txn, path, expected_revision_number=0)
-      if latest_revision_number(path).to_i != expected_revision_number.to_i
+      if latest_revision_number.to_i != expected_revision_number.to_i
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       if !__path_exists?(path)
@@ -816,7 +816,7 @@ module Repository
     # replaces file at provided path with file_data
     def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
       # Note: this check is inconsistent with the MemoryRepository
-      if latest_revision_number(path).to_i > expected_revision_number.to_i
+      if latest_revision_number.to_i > expected_revision_number.to_i
         raise Repository::FileOutOfSyncConflict.new(path)
       end
       txn = write_file(txn, path, file_data, mime_type)
@@ -961,6 +961,7 @@ module Repository
     def initialize(revision_number, repo)
       revision_number = revision_number.to_i if revision_number.is_a? String
       @repo = repo
+      @revision_identifier_ui = revision_number.to_s
       begin
         @timestamp = @repo.__get_property(:date, revision_number)
         if @timestamp.instance_of?(String)

@@ -263,9 +263,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
-    @clone_assignments = Assignment.where(allow_web_submits: false)
-                                   .where.not(id: @assignment.id)
-                                   .order(:id)
     @sections = Section.all
 
     unless @past_date.nil? || @past_date.empty?
@@ -287,9 +284,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
     @sections = Section.all
-    @clone_assignments = Assignment.where(allow_web_submits: false)
-                                   .where.not(id: @assignment.id)
-                                   .order(:id)
 
     begin
       new_required_files = false
@@ -320,7 +314,7 @@ class AssignmentsController < ApplicationController
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
-    @clone_assignments = Assignment.where(allow_web_submits: false)
+    @clone_assignments = Assignment.where(vcs_submit: true)
                                    .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
@@ -354,13 +348,16 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        @clone_assignments = Assignment.where(allow_web_submits: false)
+        @clone_assignments = Assignment.where(vcs_submit: true)
                                        .order(:id)
         render :new
         return
       end
       if params[:persist_groups_assignment]
-        @assignment.clone_groupings_from(params[:persist_groups_assignment])
+        clone_warnings = @assignment.clone_groupings_from(params[:persist_groups_assignment])
+        unless clone_warnings.empty?
+          clone_warnings.each { |w| flash_message(:warning, w) }
+        end
       end
       if @assignment.save
         flash_message(:success, I18n.t('assignment.create_success'))
@@ -998,7 +995,7 @@ class AssignmentsController < ApplicationController
         assignment.submission_rule.periods << Period.new(p)
       end
 
-    elsif !submission_rule_params.nil? # in this case Rails does what we want, so we'll take the easy route
+    elsif !submission_rule_params.blank? # in this case Rails does what we want, so we'll take the easy route
       assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
     end
 

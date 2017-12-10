@@ -103,21 +103,24 @@ class Group < ActiveRecord::Base
     true
   end
 
-  # Return a repository object, if possible
-  def repo
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
+  def repo_loc
     repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    if repo_class.repository_exists?(repo_loc)
-      repo_class.open(repo_loc)
-    else
+    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+    unless repo_class.repository_exists?(repo_loc)
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end
+    repo_loc
+  end
+
+  # Return a repository object, if possible
+  def repo
+    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    repo_class.open(repo_loc)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
-  def access_repo
-    repository = repo
-    yield repository
-    repository.close
+  def access_repo(&block)
+    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
+    repo_class.access(repo_loc, &block)
   end
 end

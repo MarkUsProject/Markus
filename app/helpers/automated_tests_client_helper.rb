@@ -195,6 +195,8 @@ module AutomatedTestsClientHelper
   # belong to the group, and have at least one token.
   def self.check_user_permission(user, grouping)
 
+    # the user may not have an api key yet
+    user.set_api_key
     # admins are always ok
     if user.admin?
       return
@@ -353,8 +355,8 @@ module AutomatedTestsClientHelper
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
-      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
-                                           I18n.t('automated_tests.test_result.all_tests'),
+      create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
+                                           requested_by, I18n.t('automated_tests.test_result.all_tests'),
                                            I18n.t('automated_tests.test_result.no_source_files'))
       return
     end
@@ -419,10 +421,10 @@ module AutomatedTestsClientHelper
     rescue Exception => e
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
-      create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
-                                           I18n.t('automated_tests.test_result.all_tests'),
+      create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
+                                           requested_by, I18n.t('automated_tests.test_result.all_tests'),
                                            I18n.t('automated_tests.test_result.bad_server',
-                                                  {hostname: test_server_host, error: e.message}))
+                                             {hostname: test_server_host, error: e.message}))
     end
   end
 

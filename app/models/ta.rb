@@ -82,7 +82,10 @@ class Ta < User
       .where(memberships: { user_id: id }).find_each do |grouping|
       result = grouping.current_result
       unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
-        grades.push(calculate_total_percent(result, out_of))
+        percent = calculate_total_percent(result, out_of)
+        unless percent == BLANK_MARK
+          grades.push(percent)
+        end
       end
     end
 

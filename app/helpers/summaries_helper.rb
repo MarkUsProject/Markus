@@ -3,12 +3,15 @@ module SummariesHelper
   def get_summaries_table_info(assignment, grader_id=nil)
     if grader_id.nil?
       groupings = assignment.groupings
-        .includes(:assignment,
-                  :group,
-                  :grace_period_deductions,
-                  current_result: :marks,
-                  accepted_student_memberships: :user)
-        .select { |g| g.non_rejected_student_memberships.size > 0 }
+                      .includes(:assignment,
+                                :group,
+                                :grace_period_deductions,
+                                current_result: :marks,
+                                accepted_student_memberships: :user)
+
+      unless assignment.scanned_exam
+        groupings = groupings.select { |g| g.non_rejected_student_memberships.size > 0 }
+      end
     else
       ta = Ta.find(grader_id)
       groupings = assignment.groupings
@@ -25,7 +28,8 @@ module SummariesHelper
 
     groupings.map do |grouping|
       result = grouping.current_result
-      final_due_date = assignment.submission_rule.get_collection_time(grouping.inviter.section)
+      final_due_date = assignment.submission_rule.get_collection_time(
+        grouping.inviter && grouping.inviter.section)
       g = grouping.attributes
       g[:class_name] = get_tr_class(grouping, assignment)
       g[:name] = grouping.get_group_name

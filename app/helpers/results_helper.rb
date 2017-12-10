@@ -35,10 +35,6 @@ module ResultsHelper
     submission.remark_submitted?
   end
 
-  def can_show_test_results_tab?(assignment)
-    assignment.enable_test
-  end
-
   def can_show_feedback_files_tab?(submission)
     not submission.feedback_files.empty?
   end
@@ -51,7 +47,7 @@ module ResultsHelper
       innermost_dir[:files] = Array.new
       folders = file.path.split('/')
       folders.each do |folder_name|
-        if !innermost_dir.key?(folder_name)
+        unless innermost_dir.key?(folder_name)
           innermost_dir[folder_name] = Hash.new
           innermost_dir[folder_name][:files] = Array.new
         end
