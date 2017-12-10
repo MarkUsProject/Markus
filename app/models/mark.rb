@@ -28,6 +28,8 @@ class Mark < ActiveRecord::Base
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
 
+
+
   # Custom validator for checking the upper range of a mark
   def valid_mark
     unless mark.nil?
@@ -39,6 +41,8 @@ class Mark < ActiveRecord::Base
 
   def scale_mark(curr_max_mark, prev_max_mark)
     return if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
+    Mark.skip_callback(:save, :before, :ensure_not_released_to_students)
+    Mark.skip_callback(:update, :before, :ensure_not_released_to_students)
     if markable.is_a? RubricCriterion
       new_mark = mark * (curr_max_mark / prev_max_mark)
       update_attributes(mark: new_mark.round(2))
@@ -48,6 +52,8 @@ class Mark < ActiveRecord::Base
     else # if it is CheckboxCriterion
       update_attributes(mark: curr_max_mark)
     end
+    Mark.set_callback(:save, :before, :ensure_not_released_to_students)
+    Mark.set_callback(:update, :before, :ensure_not_released_to_students)
   end
 
   private
