@@ -323,14 +323,37 @@
   // Used for ctrl-click as a shortcut for "Good!" annotation.
   function get_pdf_annotation_data_with_ids() {
     var data = {
+      annotation_type: 'pdf',
       result_id: <%= result_id %>,
       assignment_id: <%= assignment_id %>,
       submission_file_id: $('#select_file_id').val(),
     };
 
-    var annot_data = get_pdf_annotation_data();
-    if (!annot_data) return {};
-    else $.extend(data, annot_data);
+    var box = annotation_manager.selectionRectangleAsInts();
+    var page = box.page;
+    var angle = annotation_manager.getAngle();
+    switch (angle) {
+      case 90:
+      box = annotation_manager.getRotatedCoords(box, 3);
+      break;
+      case 180:
+      box = annotation_manager.getRotatedCoords(box, 2);
+      break;
+      case 270:
+      box = annotation_manager.getRotatedCoords(box, 1);
+      break;
+    }
+    $.extend(data, {
+      x1: box.x1,
+      x2: box.x2,
+      y1: box.y1,
+      y2: box.y2,
+      page: page
+    });
+
+//    var annot_data = get_pdf_annotation_data();
+//    if (!annot_data) return {};
+//    else $.extend(data, annot_data);
 
     return data;
   }

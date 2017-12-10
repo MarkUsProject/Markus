@@ -1,6 +1,9 @@
 <% content_for :head do %>
   <%# TODO: merge 'grader.scss' into 'results.scss' %>
   <%= stylesheet_link_tag 'result_main' %>
+  <%# MathML %>
+  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
+  <%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>
 <% end %>
 
 <script>
@@ -183,20 +186,18 @@
   </aside>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('results.title',
-          { assignment_name: @assignment.short_identifier,
-            group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
-  </h1>
-  <div class='heading_buttons'>
-    <div class="progress_meter">
-      <span class="progress_span">
-      </span>
-    </div>
-    <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
+<% content_for :title do %>
+  <%= t('results.title',
+        { assignment_name: @assignment.short_identifier,
+          group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
+<% end %>
+<% content_for :additional_headings do %>
+  <div class="progress_meter">
+    <span class="progress_span">
+    </span>
   </div>
-</div>
+  <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
+<% end %>
 
 <div class='wrapLeft'>
   <% if flash[:fail_notice] %>
@@ -298,8 +299,3 @@
                result: @result,
                annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
            } %>
-
-<%# MathML %>
-<%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
-                           defer: true %>
-<%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>
