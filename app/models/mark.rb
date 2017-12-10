@@ -1,8 +1,7 @@
 class Mark < ActiveRecord::Base
-  # When a mark is created, or updated, we need to make sure that that
+  # When a mark is saved, we need to make sure that that
   # Result has not been released to students
   before_save :ensure_not_released_to_students
-  before_update :ensure_not_released_to_students
 
   after_save :update_result_mark
 
@@ -28,8 +27,6 @@ class Mark < ActiveRecord::Base
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
 
-
-
   # Custom validator for checking the upper range of a mark
   def valid_mark
     unless mark.nil?
@@ -41,19 +38,17 @@ class Mark < ActiveRecord::Base
 
   def scale_mark(curr_max_mark, prev_max_mark)
     return if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
-    Mark.skip_callback(:save, :before, :ensure_not_released_to_students)
-    Mark.skip_callback(:update, :before, :ensure_not_released_to_students)
     if markable.is_a? RubricCriterion
       new_mark = mark * (curr_max_mark / prev_max_mark)
-      update_attributes(mark: new_mark.round(2))
+      # Use update_columns to skip validations.
+      update_columns(mark: new_mark.round(1))
     elsif markable.is_a? FlexibleCriterion
       new_mark = mark * (curr_max_mark.to_f / prev_max_mark)
-      update_attributes(mark: new_mark.round(2))
+      update_columns(mark: new_mark.round(2))
     else # if it is CheckboxCriterion
-      update_attributes(mark: curr_max_mark)
+      new_mark = (mark / prev_max_mark) * curr_max_mark
+      update_columns(mark: new_mark.round(0))
     end
-    Mark.set_callback(:save, :before, :ensure_not_released_to_students)
-    Mark.set_callback(:update, :before, :ensure_not_released_to_students)
   end
 
   private

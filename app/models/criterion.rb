@@ -145,7 +145,7 @@ class Criterion < ActiveRecord::Base
     if self.max_mark_changed? # if max_mark is updated
       # results with specific assignment
       results = Result.joins(submission: :grouping)
-                      .where(groupings: {assignment_id: self.assignment_id})
+                      .where(groupings: {assignment_id: assignment_id})
       results.each do |r|
         # all associated marks should have their mark value scaled to the change.
         marks = self.marks.where(result_id: r.id)
@@ -156,6 +156,8 @@ class Criterion < ActiveRecord::Base
         end
         r.update_total_mark
       end
+
+      Assignment.find(assignment_id).assignment_stat.refresh_grade_distribution
     end
   end
 end
