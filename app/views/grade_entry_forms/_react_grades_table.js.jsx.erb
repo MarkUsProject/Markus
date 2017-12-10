@@ -55,21 +55,36 @@
     componentDidMount: function(){
         this.props.value = this.props.default_value;
     },
+
     handleChange: function(event) {
-      var updated_grade = event.target.value === '' ? null : parseFloat(event.target.value);
+      clearTimeout(this.typing_timer);
+
+      var updated_grade = event.target.value === '' ? null : Number(event.target.value);
       var params = {
         'updated_grade':       updated_grade,
         'student_id':          this.props.student_id,
         'grade_entry_item_id': this.props.grade_entry_column,
         'authenticity_token':  AUTH_TOKEN
       };
-      $.ajax({
-        url:  this.props.data_action,
-        data: params,
-        type: 'POST',
-        dataType: 'script',
-      });
-      this.props.value = parseFloat(event.target.value);
+
+      var data_action = this.props.data_action;
+
+      function send_request() {
+        $.ajax({
+          url:  data_action,
+          data: params,
+          type: 'POST',
+          dataType: 'script',
+        });
+      };
+
+      if (isNaN(updated_grade) == false) {
+        this.typing_timer = setTimeout(function() {
+          send_request()}, 1500);
+        this.props.value = Number(event.target.value);
+      } else {
+        send_request();
+      }
     },
 
     // TODO: Make this nicer by not using raw Javascript and jQuery
