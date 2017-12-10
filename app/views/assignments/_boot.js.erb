@@ -95,7 +95,7 @@
     new_period.find('label').each(function () {
       $(this).attr('for', $(this).attr('for').replace(id_re, repl));
     });
-    $('#' + id).append(new_period);
+    $('#' + id + '_table').append(new_period);
 
     if (periods) {
       periods.refresh();

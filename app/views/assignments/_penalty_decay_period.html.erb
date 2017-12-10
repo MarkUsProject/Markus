@@ -7,53 +7,42 @@
    #  with a common value
 %>
 
-<fieldset class='period'>
-  <legend>
-    <span><%= t('submission_rules.penalty_decay_period_submission_rule.short_name') %></span>
-  </legend>
-
-  <p>
+<tr class='period'>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
-      <p>
-        <%= f.label :deduction,
-                    t('submission_rules.penalty_decay_period_submission_rule.deduct'),
-                    class: 'required' %>
+      <td>
         <%= f.text_field :deduction, required: true, size: 1 %>%
-      </p>
-      <p>
-        <%= f.label :interval,
-                    t('submission_rules.penalty_decay_period_submission_rule.every'),
-                    class: 'required' %>
+      </td>
+      <td>
         <%= f.text_field :interval, required: true, size: 1 %>
         <%= t('submission_rules.penalty_decay_period_submission_rule.hours') %>
-      </p>
-      <p>
-        <%= f.label :hours,
-                    t('submission_rules.penalty_decay_period_submission_rule.for'),
-                    class: 'required' %>
+      </td>
+      <td>
         <%= f.text_field :hours,
                          size: 1,
                          required: true,
                          class: 'PeriodDeltaChain_Hours',
                          onchange: 'if (penalty_decay_periods) { penalty_decay_periods.refresh(); }' %>
         <%= t('submission_rules.penalty_decay_period_submission_rule.hours') %>
-      </p>
-      <div>
+      </td>
+      <td>
         <span class='PeriodDeltaChain'>
-          <%= t('submission_rules.penalty_decay_period_submission_rule.from') %>
           <span class='PeriodDeltaChain_FromTime'></span>
-          <%= t('submission_rules.penalty_decay_period_submission_rule.to') %>
+        </span>
+      </td>
+      <td>
+        <span class='PeriodDeltaChain'>
           <span class='PeriodDeltaChain_ToTime'></span>
         </span>
-      </div>
-      <% if !f.object.nil? && !f.object.new_record? %>
-        <%= f.label :_destroy, t(:remove) %>
-        <%= f.check_box :_destroy %>
-      <% else %>
-        <%= link_to t(:remove),
-                    '#',
-                    onclick: 'remove_period(this, penalty_decay_periods); return false;' %>
-      <% end %>
+      </td>
+      <td>
+        <% if !f.object.nil? && !f.object.new_record? %>
+          <%= f.check_box :_destroy, {class: 'remove_rule'} %>
+        <% else %>
+          <%= link_to t(:remove),
+                      '#',
+                      class: 'remove_rule',
+                      onclick: 'remove_period(this, penalty_decay_periods); return false;' %>
+        <% end %>
+      </td>
     <% end %>
-  </p>
-</fieldset>
+</tr>

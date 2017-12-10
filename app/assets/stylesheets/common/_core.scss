@@ -46,7 +46,7 @@ input[type='radio'] {
   color: $red;
 }
 
-label.required::after {
+label.required::after, th.required::after {
   content: "*";
   color: $red;
 }
