@@ -57,7 +57,9 @@
     },
 
     handleChange: function(event) {
-      clearTimeout(this.typing_timer);
+      if (this.typing_timer) {
+        clearTimeout(this.typing_timer);
+      }
 
       var updated_grade = event.target.value === '' ? null : Number(event.target.value);
       var params = {
@@ -69,22 +71,14 @@
 
       var data_action = this.props.data_action;
 
-      function send_request() {
+      this.typing_timer = setTimeout(function() {
         $.ajax({
           url:  data_action,
           data: params,
           type: 'POST',
           dataType: 'script',
         });
-      };
-
-      if (isNaN(updated_grade) == false) {
-        this.typing_timer = setTimeout(function() {
-          send_request()}, 1500);
-        this.props.value = Number(event.target.value);
-      } else {
-        send_request();
-      }
+      }, 300);
     },
 
     // TODO: Make this nicer by not using raw Javascript and jQuery
