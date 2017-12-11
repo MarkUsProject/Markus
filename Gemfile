@@ -42,7 +42,6 @@ gem 'resque'
 gem 'redis-rails'
 gem 'activejob-status', github: 'inkstak/activejob-status'
 gem 'net-ssh'
-gem 'net-scp'
 gem 'pluck_to_hash'
 
 gem 'actionpack-action_caching'
