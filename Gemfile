@@ -34,7 +34,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'uglifier',     '>= 1.3.0'
 gem 'execjs'
 gem 'libv8'
-gem 'therubyracer', '>= 0.11.1'
+gem 'therubyracer'
 gem 'json'
 gem 'minitest'
 gem 'autoprefixer-rails'
@@ -80,7 +80,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql sqlite
 group :mysql do
-  gem 'mysql2', '>=0.3'
+  gem 'mysql2'
 end
 
 # If you are a MarkUs developer and use SQLite, make sure you have

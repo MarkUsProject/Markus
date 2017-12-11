@@ -668,11 +668,11 @@ module Repository
         entry_name = entry_hash[:name]
         # wrap in a RevisionFile or RevisionDirectory (paths without filename to be consistent with SVN)
         if entry_type == :blob
-          mime_types = MIME::Types.type_for(entry_name)
-          if mime_types.empty?
+          mime_type = MiniMime.lookup_by_filename(entry_name)
+          if mime_type.nil?
             mime_type = 'text'
           else
-            mime_type = mime_types.first.content_type
+            mime_type = mime_type.content_type
           end
           entries[entry_name] = Repository::RevisionFile.new(@revision_identifier, name: entry_name, path: path,
                                                              mime_type: mime_type)
