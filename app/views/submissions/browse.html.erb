@@ -1,4 +1,8 @@
+<script type='text/jsx'>
+/** @jsx React.DOM */
 <%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
+React.renderComponent(<SubmissionsTable />, document.getElementById('submissions_table'));
+</script>
 
 <% content_for :title do %>
   <% if @assignment.is_peer_review? %>
