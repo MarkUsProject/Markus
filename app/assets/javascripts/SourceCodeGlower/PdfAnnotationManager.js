@@ -206,17 +206,17 @@
       var point = getRelativePointForMouseEvent(ev);
 
       if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        if (ev.ctrlKey) {
+        if (ev.ctrlKey || ev.metaKey) {
           self.setSelectionBox($(ev.delegateTarget), {
             x: point.x,
             y: point.y,
-            width: 0.3,
-            height: 0.3
+            width: 0.03,
+            height: 0.03,
+            visible: true
           });
           var data = get_pdf_annotation_data_with_ids();
           data['content'] = 'Good!';
           data['category_id'] = '';
-
           $.post(
             Routes.annotations_path(),
             data,
@@ -293,13 +293,14 @@
 
     if (navigator.userAgent.toLowerCase().indexOf('firefox') <= -1) {
       $pages.click(function (ev) {
-        if (ev.ctrlKey) {
+        if (ev.ctrlKey || ev.metaKey) {
           var point = getRelativePointForMouseEvent(ev);
           self.setSelectionBox($(ev.delegateTarget), {
             x: point.x,
             y: point.y,
             width: 0.03,
-            height: 0.03
+            height: 0.03,
+            visible: true
           });
           var data = get_pdf_annotation_data_with_ids();
           data['content'] = 'Good!';

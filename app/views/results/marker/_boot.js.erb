@@ -34,36 +34,4 @@
       <% end %>
     });
   <% end %>
-
-  $(document).ready(function () {
-    $('#overall_remark_comment_edit form').on('ajax:success', function (data) {
-        if ($('.success').length > 0) {
-            $('.success').text = '<%= t("marker.overall_comments_success") %>';
-            $('.success').show();
-            } else {
-            $('.wrapLeft').prepend(
-                '<div class="success">' +
-                    '<%= t("marker.overall_comments_success") %>' +
-                    '</div>');
-            }
-        $('#overall_remark_comment_submit').prop('disabled',true);
-        }).on('ajax:before', function () {
-        $('.success').hide();
-        });
-      });
-  $(document).ready(function () {
-    $('#overall_comment_edit form').on('ajax:success', function (data) {
-        if ($('.success').length > 0) {
-            $('.success').text = '<%= t("marker.overall_comments_success") %>';
-            $('.success').show();
-            } else {
-            $('.wrapLeft').prepend(
-                '<div class="success">' +
-                    '<%= t("marker.overall_comments_success") %>' +
-                    '</div>');
-            }
-        }).on('ajax:before', function () {
-        $('.success').hide();
-        });
-    });
 </script>

@@ -625,6 +625,7 @@ class ResultsController < ApplicationController
   def update_overall_comment
     Result.find(params[:id]).update_attributes(
       overall_comment: params[:result][:overall_comment])
+    flash_message :success, t('marker.overall_comments_success')
     head :ok
   end
 
