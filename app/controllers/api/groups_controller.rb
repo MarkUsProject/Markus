@@ -172,10 +172,15 @@ module Api
       annotation_category = nil
       submission_file = nil
       params[:annotations].each_with_index do |annot_params, i|
-        if annotation_category.nil? || annotation_category.annotation_category_name != annot_params[:annotation_category_name]
-          annotation_category = assignment.annotation_categories.find_or_create_by(
-            annotation_category_name: annot_params[:annotation_category_name]
-          )
+        if annot_params[:annotation_category_name].nil?
+          annotation_category_id = nil
+        else
+          if annotation_category.nil? || annotation_category.annotation_category_name != annot_params[:annotation_category_name]
+            annotation_category = assignment.annotation_categories.find_or_create_by(
+              annotation_category_name: annot_params[:annotation_category_name]
+            )
+          end
+          annotation_category_id = annotation_category.id
         end
         if submission_file.nil? || submission_file.filename != annot_params[:filename]
           submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
@@ -183,7 +188,7 @@ module Api
 
         annotation_texts << AnnotationText.new(
           content: annot_params[:content],
-          annotation_category_id: annotation_category.id,
+          annotation_category_id: annotation_category_id,
           creator_id: @current_user.id,
           last_editor_id: @current_user.id
         )
