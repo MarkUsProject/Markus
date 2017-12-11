@@ -171,7 +171,7 @@ module SubmissionsHelper
   end
 
   def get_grouping_name_url(grouping, result)
-    if !grouping.peer_reviews_to_others.empty? && result.is_a_review?
+    if grouping.assignment.is_peer_review? && !grouping.peer_reviews_to_others.empty? && result.is_a_review?
       url_for(view_marks_assignment_submission_result_path(
                   assignment_id: grouping.assignment.parent_assignment.id, submission_id: result.submission.id,
                   id: result.id, reviewer_grouping_id: grouping.id))
