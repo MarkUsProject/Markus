@@ -105,10 +105,14 @@ var Table = React.createClass({displayName: 'Table',
     this.setState({visible_rows: rows, sorted_rows: rows});
   },
   componentWillReceiveProps: function(nextProps) {
-    this.synchronizeHeaderColumn(
-      this.state.sort_column, this.state.sort_direction, nextProps.data,
-      function () { this.setState({visible_rows: this.getVisibleRows()}); }.bind(this)
-    )
+    if (this.props.data !== nextProps.data) {
+      this.synchronizeHeaderColumn(
+        this.state.sort_column, this.state.sort_direction, nextProps.data,
+        function () {
+          this.setState({visible_rows: this.getVisibleRows()});
+        }.bind(this)
+      )
+    }
   },
   // A filter was clicked. Adjust state accordingly.
   synchronizeFilter: function(filter) {
@@ -183,7 +187,7 @@ var Table = React.createClass({displayName: 'Table',
   },
   headerCheckboxClicked: function(event) {
     var value = event.currentTarget.checked;
-    var new_selected_rows = null;
+    var new_selected_rows;
     if (value) {
       new_selected_rows = this.state.visible_rows.map(function(x){return x.id});
     } else {
@@ -248,7 +252,7 @@ var Table = React.createClass({displayName: 'Table',
       columns = this.props.columns;
     }
     var secondary_filter_div = null;
-    if (this.props.secondary_filters != null) {
+    if (this.props.secondary_filters !== null) {
       secondary_filter_div = TableFilter( {
         filters:        this.props.secondary_filters,
         current_filter: this.state.secondary_filter,
@@ -258,7 +262,7 @@ var Table = React.createClass({displayName: 'Table',
       });
     }
     var tertiary_filter_div = null;
-    if (this.props.tertiary_filters != null) {
+    if (this.props.tertiary_filters !== null) {
         tertiary_filter_div = TableFilter( {
             filters:        this.props.tertiary_filters,
             current_filter: this.state.tertiary_filter,
@@ -527,16 +531,14 @@ TableRows = React.createClass({displayName: 'TableRows',
       final_data = this.props.visibleRows;
     }
 
-    // create rows
-    // consider instead of recreating array each time, just hiding the rows.
-    var rows = [];
-    for (var i = 0; i < final_data.length; i++) {
-      rows.push(
-        TableRow( {key:final_data[i].id,
-          row_object:final_data[i],
-          columns:this.props.columns})
-      );
-    }
+    var columns = this.props.columns;
+    var rows = final_data.map(function(row_data) {
+      return TableRow({
+        key: row_data.id,
+        row_object: row_data,
+        columns: columns
+      });
+    });
 
     return (
       React.DOM.tbody(null,
@@ -639,7 +641,6 @@ function sort_by_column(data, column, direction, compare) {
   // sort row by column id
   data.sort(function(a, b) {
     var c = compare(makeComparable(a[column]), makeComparable(b[column]));
-
     if (c === 0) {
       return a.pos - b.pos;
     } else if (direction === 'desc') {

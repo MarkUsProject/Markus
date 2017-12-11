@@ -5,62 +5,51 @@ module SummariesHelper
       groupings = assignment.groupings
                       .includes(:assignment,
                                 :group,
-                                :grace_period_deductions,
+                                :accepted_students,
+                                :inviter,
+                                :tas,
                                 current_result: :marks,
-                                accepted_student_memberships: :user)
-
-      unless assignment.scanned_exam
-        groupings = groupings.select { |g| g.non_rejected_student_memberships.size > 0 }
-      end
+                                )
     else
-      ta = Ta.find(grader_id)
       groupings = assignment.groupings
         .includes(:assignment,
                   :group,
-                  :grace_period_deductions,
-                  current_result: :marks,
-                  accepted_student_memberships: :user)
-        .select do |g|
-          g.non_rejected_student_memberships.size > 0 and
-          ta.is_assigned_to_grouping?(g.id)
-        end
+                  :accepted_students,
+                  :inviter,
+                  current_result: :marks)
+        .joins(:memberships)
+        .where('memberships.user_id': grader_id)
     end
 
-    groupings.map do |grouping|
-      result = grouping.current_result
-      final_due_date = assignment.submission_rule.get_collection_time(
-        grouping.inviter && grouping.inviter.section)
-      g = grouping.attributes
-      g[:class_name] = get_tr_class(grouping, assignment)
+    data = []
+    groupings.find_each do |grouping|
+      g = {}
       g[:name] = grouping.get_group_name
-      g[:name_url] = get_grouping_name_url(grouping, result)
       g[:section] = grouping.section
-      g[:late_commit] = grouping.past_due_date?
-      g[:state] = grouping.marking_state(result, assignment, current_user)
-      g[:grace_credits_used] = grouping.grace_period_deduction_single
-      g[:final_grade] = grouping.final_grade(result)
-      g[:criteria] = get_grouping_criteria(assignment, grouping)
-      g[:total_extra_points] = grouping.total_extra_points(result)
-      g[:tas] = grouping.tas.pluck(:user_name)
-      g
+      g[:tas] = grader_id ? [] : grouping.tas.map(&:user_name)
+
+      result = grouping.current_result
+      if result.nil?
+        g[:name_url] = ''
+        g[:final_grade] = ''
+        g[:criteria] = {}
+      else
+        g[:name_url] = get_grouping_name_url(grouping, result)
+        g[:final_grade] = grouping.final_grade(result)
+        g[:criteria] = get_grouping_criteria(grouping)
+      end
+      data << g
     end
+    data
   end
 
-  def get_grouping_criteria(assignment, grouping)
+  def get_grouping_criteria(grouping)
     # put all criteria in a hash for retrieval
     criteria_hash = Hash.new
-    criteria = assignment.get_criteria(:ta)
-    criteria.each do |criterion|
-      key = 'criterion_' + criterion.class.to_s + '_' + criterion.id.to_s
-      if grouping.has_submission?
-        mark = grouping.current_result.marks.find_by(markable: criterion)
-        if mark.nil? || mark.mark.nil?
-          criteria_hash[key] = '-'
-        else
-          criteria_hash[key] = mark.mark
-        end
-      else
-        criteria_hash[key] = '-'
+    unless grouping.current_result.nil?
+      grouping.current_result.marks.each do |mark|
+        key = "criterion_#{mark.markable_type}_#{mark.markable_id}"
+        criteria_hash[key] = mark.mark
       end
     end
     criteria_hash

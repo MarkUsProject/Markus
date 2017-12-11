@@ -186,14 +186,15 @@ class Grouping < ActiveRecord::Base
   end
 
   def get_group_name
+    return group.group_name if assignment.group_max == 1
+
     name = group.group_name
     student_names = accepted_students.map &:user_name
-    unless student_names == [name] then
+    unless student_names == [name]
       name += ' (' + student_names.join(', ') + ')'
     end
     name
   end
-
 
   def group_name_with_student_user_names
 		user_names = get_all_students_in_group

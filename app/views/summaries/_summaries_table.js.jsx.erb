@@ -1,7 +1,6 @@
 <script type='text/jsx'>
   /** @jsx React.DOM */
 
-  var render_bonus_column = false;
   var SummariesTable = React.createClass({
 
     getDefaultProps: function() {
@@ -14,19 +13,13 @@
           searchable: true
         },
         {
-          id: 'marking_state',
-          content: '<%= j raw I18n.t('summaries_index.marking_state') %>',
-          sortable: true,
-          searchable: false
-        },
-        {
           id: 'final_grade',
           content: '<%= j raw I18n.t('summaries_index.final_grade') %>',
           sortable: true,
           compare: compare_numeric_values,
           searchable: true
         },
-        <%= raw @section_column  %>
+        <%= raw @section_column %>
       ];
 
       <% for criterion in @criteria %>
@@ -39,54 +32,7 @@
         });
       <% end %>
 
-      if (render_bonus_column) {
-        columns.splice(3, 0, {
-          id: 'total_extra_points',
-          content: '<%= j raw I18n.t('marker.marks.bonus_deductions') %>',
-          sortable: true,
-          compare: compare_numeric_values,
-          searchable: true
-        })
-      }
-
-      var filters = [
-        {
-          name: 'all',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_all') %>',
-          func: function(submission) {
-            return true;
-          }
-        },
-        {
-          name: 'unmarked',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_unmarked') %>',
-          func: function(submission) {
-            return submission.state === 'unmarked';
-          }
-        },
-        {
-          name: 'partial',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_partial') %>',
-          func: function(submission) {
-            return submission.state === 'partial';
-          }
-        },
-        {
-          name: 'complete',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_complete') %>',
-          func: function(submission) {
-            return submission.state === 'complete';
-          }
-        },
-        {
-          name: 'released',
-          text: '<%= j raw I18n.t(:'browse_submissions.show_released') %>',
-          func: function(submission) {
-            return submission.state === 'released';
-          }
-        }
-      ];
-      return {columns: columns, filters: filters};
+      return {columns: columns, filters: null};
     },
 
     getInitialState: function() {
@@ -118,32 +64,6 @@
       });
     },
 
-    renderMarkingState: function(state) {
-      if (state === 'unmarked') {
-        return (<%= image_tag('icons/shape_square.png',
-                              alt: t('marking_state.not_collected'),
-                              title: t('marking_state.not_collected')) %>);
-      } else if (state === 'partial') {
-        return (<%= image_tag('icons/pencil.png',
-                              alt: t('marking_state.in_progress'),
-                              title: t('marking_state.in_progress')) %>);
-      } else if (state === 'completed') {
-        return (<%= image_tag('icons/accept.png',
-                              alt: t('marking_state.completed'),
-                              title: t('marking_state.completed')) %>);
-      } else if (state === 'released') {
-        return (<%= image_tag('icons/email_go.png',
-                              alt: t('marking_state.released'),
-                              title: t('marking_state.released')) %>);
-      } else if (state === 'remark') {
-        return (<%= image_tag('icons/double_exclamation.png',
-                              alt: t('marking_state.remark_requested'),
-                              title: t('marking_state.remark_requested')) %>);
-      } else {
-        return 'Invalid marking state';
-      }
-    },
-
     render: function() {
       <% if @current_user.admin? %>
         var tas = <%= raw @tas.to_json %>;
@@ -172,18 +92,12 @@
         } else {
           s['group_name'] = <a href={summary.name_url}>{summary.name}</a>;
         };
-        s['marking_state'] = this.renderMarkingState(summary.state);
         s['final_grade'] = summary.final_grade;
         s['section'] = summary.section;
-        s['state'] = summary.state;
-        s['total_extra_points'] = summary.total_extra_points;
-        if (summary.total_extra_points > 0) {
-          render_bonus_column = true;
-        }
         s['tas'] = summary.tas;
         <% for criterion in @criteria %>
           var key = 'criterion_' + '<%= criterion.class.to_s %>' + '_' + '<%= criterion.id %>';
-          s[key] = summary.criteria[key];
+          s[key] = summary.criteria[key] || '';
         <% end %>
         return s;
       }.bind(this));
