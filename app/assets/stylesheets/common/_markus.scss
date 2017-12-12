@@ -431,7 +431,7 @@ fieldset {
   border-radius: $radius;
   padding: 0;
 
-  ul {
+  > ul {
     margin: 0;
     padding: 0;
 

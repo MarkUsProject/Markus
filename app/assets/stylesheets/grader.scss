@@ -371,10 +371,6 @@ ul.annotation_text_list {
     margin: 1em 0;
     width: 100%;
   }
-
-  input#overall_comment_submit {
-    margin-bottom: 2em;
-  }
 }
 
 #annotation_summary_list {
@@ -416,8 +412,10 @@ ul.annotation_text_list {
 #annotation_preview, #overall_comment_preview, #overall_remark_comment_preview {
   margin: 1em 0 20px 0;
   border: 1px dashed $grey;
-  padding: 0px 10px;
+  padding: 0 10px;
   min-height: 43px;
+  max-height: 15em;
+  overflow-y: scroll;
 }
 
 #annotation_preview {
