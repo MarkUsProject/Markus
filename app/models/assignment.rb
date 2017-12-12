@@ -138,7 +138,7 @@ class Assignment < ActiveRecord::Base
   BLANK_MARK = ''
 
   # Set the default order of assignments: in ascending order of due_date
-  default_scope { order('due_date ASC') }
+  default_scope { order('due_date ASC', 'id ASC') }
 
   def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min

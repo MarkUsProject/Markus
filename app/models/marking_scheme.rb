@@ -6,6 +6,8 @@ class MarkingScheme < ActiveRecord::Base
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
 
+  default_scope { order('id ASC') }
+
   # Returns an array of all students' weighted grades that are not nil
   def students_weighted_grades_array
     return @grades_array unless @grades_array.nil?

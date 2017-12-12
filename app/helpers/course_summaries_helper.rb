@@ -4,8 +4,7 @@ module CourseSummariesHelper
   # Get JSON data for the table
   def get_table_json_data
     course_information
-    all_students = Student.includes(:memberships,
-                                    groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
+    all_students = Student.includes(accepted_groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
                                     grade_entry_students: :grades)
     student_list = all_students.all.map do |student|
       get_student_information(student)
@@ -29,12 +28,12 @@ module CourseSummariesHelper
     rubric_max = RubricCriterion.group(:assignment_id).sum(:max_mark)
     flexible_max = FlexibleCriterion.group(:assignment_id).sum(:max_mark)
     checkbox_max = CheckboxCriterion.group(:assignment_id).sum(:max_mark)
-    @max_marks = Hash[Assignment.all.map do |a|
+    @max_marks = Hash[@all_assignments.map do |a|
       [a.id, rubric_max.fetch(a.id, 0) + flexible_max.fetch(a.id, 0) + checkbox_max.fetch(a.id, 0)]
     end
     ]
 
-    @gef_max_marks = Hash[GradeEntryForm.all.map do |gef|
+    @gef_max_marks = Hash[@all_grade_entry_forms.map do |gef|
       [gef.id, get_max_mark_for_grade_entry_form(gef.id)]
     end
     ]
@@ -112,7 +111,7 @@ module CourseSummariesHelper
   # and the value the weight for that assignment
   def get_marking_weights_for_all_marking_schemes
     result = {}
-    MarkingScheme.all.each do |ms|
+    @all_schemes.each do |ms|
       result[ms.id] = {}
       MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: true).each do |mw|
         result[ms.id][mw.gradable_item_id] = mw.weight
@@ -123,7 +122,7 @@ module CourseSummariesHelper
 
   def get_gef_marking_weights_for_all_marking_schemes
     result = {}
-    MarkingScheme.all.each do |ms|
+    @all_schemes.each do |ms|
       result[ms.id] = {}
       MarkingWeight.where(marking_scheme_id: ms.id, is_assignment: false).each do |mw|
         result[ms.id][mw.gradable_item_id] = mw.weight

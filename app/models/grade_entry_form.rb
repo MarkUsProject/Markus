@@ -29,6 +29,9 @@ class GradeEntryForm < ActiveRecord::Base
 
   after_create :create_all_grade_entry_students
 
+  # Set the default order of spreadsheets: in ascending order of id
+  default_scope { order('id ASC') }
+
   BLANK_MARK = ''
 
   # The total number of marks for this grade entry form

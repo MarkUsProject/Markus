@@ -41,9 +41,9 @@ class CourseSummariesController < ApplicationController
   end
 
   def generate_csv_header(csv)
-    assignments = Assignment.order(:id)
-    grade_entry_forms = GradeEntryForm.order(:id)
-    marking_schemes = MarkingScheme.order(:id)
+    assignments = Assignment.all
+    grade_entry_forms = GradeEntryForm.all
+    marking_schemes = MarkingScheme.all
 
     header = ['Username']
     header.concat(assignments.map(&:short_identifier))
