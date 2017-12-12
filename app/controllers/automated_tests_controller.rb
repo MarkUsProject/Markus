@@ -20,12 +20,12 @@ class AutomatedTestsController < ApplicationController
         if @assignment.save
           # write the uploaded files
           files.each do |file|
-            File.open(file[:path], 'wb') { |f| f.write file[:upload].read }
-            if file.has_key?(:delete)
-              File.delete(file[:delete]) if File.exist?(file[:delete])
+            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
+            if file.has_key?(:delete) && File.exist?(file[:delete])
+              File.delete(file[:delete])
             end
           end
-          flash_message(:success, I18n.t('assignment.update_success'))
+          flash_message(:success, t('assignment.update_success'))
         else
           flash_message(:error, @assignment.errors.full_messages)
         end

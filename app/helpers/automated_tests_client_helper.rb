@@ -53,7 +53,7 @@ module AutomatedTestsClientHelper
     if is_new
       new_file_name = new_file.original_filename
       if model_class.exists?(name_field => new_file_name, :assignment => assignment)
-        raise I18n.t('automated_tests.duplicate_filename') + new_file_name
+        raise t('automated_tests.duplicate_filename') + new_file_name
       end
       updated_form_file[name_field] = new_file_name
       new_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, new_file_name)
@@ -61,17 +61,17 @@ module AutomatedTestsClientHelper
     # 5) Possibly replace existing test file
     else
       return updated_form_file unless form_file[name_field].nil? # replacing a test file resets the old name
-      old_file_name = model_class.where(id: form_file[:id]).pluck(name_field).first
+      old_file_name = model_class.find(form_file[:id])[name_field]
       upd_file = params[("#{upd_name}_#{old_file_name}").to_sym]
       upd_file_name = upd_file.original_filename
       updated_form_file[name_field] = upd_file_name
       mod_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, upd_file_name)
       f = {path: mod_file_path, upload: upd_file}
-      files.push(f)
       unless upd_file_name == old_file_name
         old_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, old_file_name)
         f[:delete] = old_file_path
       end
+      files.push(f)
     end
 
     updated_form_file
@@ -152,7 +152,7 @@ module AutomatedTestsClientHelper
     test_server_host = MarkusConfigurator.markus_ate_server_host
     test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
-      raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
+      raise t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
     test_server_user.set_api_key
 
@@ -172,26 +172,26 @@ module AutomatedTestsClientHelper
     end
     # no tas
     if user.ta?
-      raise I18n.t('automated_tests.error.ta_not_allowed')
+      raise t('automated_tests.error.ta_not_allowed')
     end
     # student checks from now on
 
     # student tests enabled
     unless MarkusConfigurator.markus_ate_student_tests_on?
-      raise I18n.t('automated_tests.error.not_enabled')
+      raise t('automated_tests.error.not_enabled')
     end
     # student belongs to the grouping
     unless user.accepted_groupings.include?(grouping)
-      raise I18n.t('automated_tests.error.bad_group')
+      raise t('automated_tests.error.bad_group')
     end
     # deadline has not passed
     if grouping.assignment.submission_rule.can_collect_now?
-      raise I18n.t('automated_tests.error.after_due_date')
+      raise t('automated_tests.error.after_due_date')
     end
     token = grouping.prepare_tokens_to_use
     # no other enqueued tests
     if token.enqueued?
-      raise I18n.t('automated_tests.error.already_enqueued')
+      raise t('automated_tests.error.already_enqueued')
     end
     token.decrease_tokens # raises exception with no tokens available
   end
@@ -202,7 +202,7 @@ module AutomatedTestsClientHelper
     # No test directory or test files
     test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
     unless File.exist?(test_dir)
-      raise I18n.t('automated_tests.error.no_test_files')
+      raise t('automated_tests.error.no_test_files')
     end
 
     # Select a subset of test scripts
@@ -218,7 +218,7 @@ module AutomatedTestsClientHelper
       test_scripts = []
     end
     if test_scripts.empty?
-      raise I18n.t('automated_tests.error.no_test_files')
+      raise t('automated_tests.error.no_test_files')
     end
 
     test_scripts
@@ -229,7 +229,7 @@ module AutomatedTestsClientHelper
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     unless assignment.enable_test
-      raise I18n.t('automated_tests.error.not_enabled')
+      raise t('automated_tests.error.not_enabled')
     end
     test_server_user = get_test_server_user
     test_scripts = get_test_scripts(assignment, current_user)
@@ -326,8 +326,8 @@ module AutomatedTestsClientHelper
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
       create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
-                                           requested_by, I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.no_source_files'))
+                                           requested_by, t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.no_source_files'))
       return
     end
 
@@ -386,8 +386,8 @@ module AutomatedTestsClientHelper
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
       create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
-                                           requested_by, I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.bad_server',
+                                           requested_by, t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.bad_server',
                                              {hostname: test_server_host, error: e.message}))
     end
   end
@@ -396,8 +396,8 @@ module AutomatedTestsClientHelper
 
     test_name = xml['name']
     if test_name.nil?
-      add_test_error_result(test_script_result, I18n.t('automated_tests.test_result.unknown_test'),
-                            I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
+      add_test_error_result(test_script_result, t('automated_tests.test_result.unknown_test'),
+                            t('automated_tests.test_result.bad_results', {xml: xml}))
       raise 'Malformed xml'
     end
 
@@ -407,8 +407,8 @@ module AutomatedTestsClientHelper
     expected = xml['expected'].nil? ? '' : xml['expected']
     actual = xml['actual'].nil? ? '' : xml['actual']
     status = xml['status']
-    if status.nil? or not status.in?(%w(pass partial fail error error_all))
-      actual = I18n.t('automated_tests.test_result.bad_status', {status: status})
+    if status.nil? || !status.in?(%w(pass partial fail error error_all))
+      actual = t('automated_tests.test_result.bad_status', {status: status})
       status = 'error'
       marks_earned = 0.0
     end
@@ -434,16 +434,13 @@ module AutomatedTestsClientHelper
 
     # create test result
     script_name = xml['script_name']
-    time = xml['time']
-    if time.nil?
-      time = 0
-    end
+    time = xml['time'].nil? ? 0 : xml['time']
     new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
                                                        time)
     tests = xml['test']
     if tests.nil?
-      add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
-                            I18n.t('automated_tests.test_result.no_tests'))
+      add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
+                            t('automated_tests.test_result.no_tests'))
       return new_test_script_result
     end
     unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
@@ -488,8 +485,8 @@ module AutomatedTestsClientHelper
     # check unhandled errors first, but don't stop here
     unless test_errors.blank?
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
-                                           I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.err_results', {errors: test_errors}))
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.err_results', {errors: test_errors}))
     end
     # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
     xml = nil
@@ -497,16 +494,16 @@ module AutomatedTestsClientHelper
       xml = Hash.from_xml(test_output_xml)
     rescue => e
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
-                                           I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.bad_results', {xml: e.message}))
       return
     end
     test_run = xml['testrun']
     test_scripts = test_run.nil? ? nil : test_run['test_script']
     if test_run.nil? || test_scripts.nil?
       create_all_test_scripts_error_result(test_scripts_ran, assignment, grouping, submission, requested_by,
-                                           I18n.t('automated_tests.test_result.all_tests'),
-                                           I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.bad_results', {xml: xml}))
       return
     end
 
@@ -530,8 +527,8 @@ module AutomatedTestsClientHelper
       if new_test_script_results[script_name].nil?
         new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
                                                            0)
-        add_test_error_result(new_test_script_result, I18n.t('automated_tests.test_result.all_tests'),
-                              I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
+        add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
+                              t('automated_tests.test_result.bad_results', {xml: xml}))
       end
     end
 
