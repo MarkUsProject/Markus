@@ -15,7 +15,7 @@
 #   seq_num:            a floating point number indicates the
 #                       order of the execution. The test script
 #                       with the smallest seq_num executes first.
-#   script_name:        name of the script
+#   file_name:          name of the script
 #   description:        a brief description of the script. It
 #                       can be shown to the students. (optionally)
 #   run_by_instructors: a boolean indicates if this script will run
@@ -62,20 +62,20 @@ class TestScript < ActiveRecord::Base
   validates_associated :assignment
 
   validates_presence_of :seq_num
-  validates_presence_of :script_name
+  validates_presence_of :file_name
   validates_presence_of :description, if: "description.nil?"
 
-  # validates the uniqueness of script_name for the same assignment
-  validates_each :script_name do |record, attr, value|
-    # Extract script_name
+  # validates the uniqueness of file_name for the same assignment
+  validates_each :file_name do |record, attr, value|
+    # Extract file_name
     name = value
     if value.respond_to?(:original_filename)
       name = value.original_filename
     end
 
     # FIXME: create a loop to loop through all dup_file
-    # dup_files = TestScript.find_all_by_assignment_id_and_script_name(record.assignment_id, name)
-    dup_file = TestScript.find_by_assignment_id_and_script_name(record.assignment_id, name)
+    # dup_files = TestScript.find_all_by_assignment_id_and_file_name(record.assignment_id, name)
+    dup_file = TestScript.find_by(assignment_id: record.assignment_id, file_name: name)
     if dup_file && dup_file.id != record.id
       record.errors.add attr, ' ' + name + ' ' + I18n.t("automated_tests.filename_exists")
     end
@@ -105,17 +105,17 @@ class TestScript < ActiveRecord::Base
   # Save the full test file path and sanitize the filename for the database
   def sanitize_filename
     # Execute only when full file path exists (indicating a new File object)
-    if self.script_name.respond_to?(:original_filename)
-      @file_path = self.script_name
-      self.script_name = self.script_name.original_filename
+    if self.file_name.respond_to?(:original_filename)
+      @file_path = self.file_name
+      self.file_name = self.file_name.original_filename
 
       # Sanitize filename:
-      self.script_name.strip!
-      self.script_name.gsub(/^(..)+/, ".")
+      self.file_name.strip!
+      self.file_name.gsub(/^(..)+/, ".")
       # replace spaces with
-      self.script_name.gsub(/[^\s]/, "")
+      self.file_name.gsub(/[^\s]/, "")
       # replace all non alphanumeric, underscore or periods with underscore
-      self.script_name.gsub(/^[\W]+$/, '_')
+      self.file_name.gsub(/^[\W]+$/, '_')
     end
   end
 
@@ -125,7 +125,7 @@ class TestScript < ActiveRecord::Base
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       # If the filenames are different, delete the old file
-      if self.script_name_changed?
+      if self.file_name_changed?
         # Delete old file
         self.delete_file
       end
@@ -136,7 +136,7 @@ class TestScript < ActiveRecord::Base
   def write_file
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
-      name = self.script_name
+      name = self.file_name
       test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
 
       # Create the file path
@@ -152,7 +152,7 @@ class TestScript < ActiveRecord::Base
     test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
 
     # Delete file if it exists
-    path = File.join(test_dir, self.script_name)
+    path = File.join(test_dir, self.file_name)
     if File.exist?(path)
       File.delete(path)
     end

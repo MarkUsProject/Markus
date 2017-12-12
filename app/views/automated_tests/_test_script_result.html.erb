@@ -6,7 +6,7 @@
     (ran_by == 'student' && test_script.display_actual_output == 'display_after_collection')) %>
 
   <h3>
-    <%= "#{test_script.script_name}" %>
+    <%= "#{test_script.file_name}" %>
     <% unless test_script.description.blank? %>
       <%= "- #{test_script.description}" %>
     <% end %>

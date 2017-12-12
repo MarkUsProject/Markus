@@ -297,7 +297,7 @@ end
 TestScript.blueprint do
   assignment {Assignment.make}
   seq_num {0}
-  script_name {Sham.filename}
+  file_name {Sham.filename}
   description {Sham.description}
   run_by_instructors {true}
   run_by_students {false}

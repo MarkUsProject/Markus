@@ -88,19 +88,15 @@ class AutomatedTestsController < ApplicationController
   #  2. file is in the directory it's supposed to be
   #  3. file exists and is readable
   def download
-    filedb = nil
     if params[:type] == 'script'
-      filedb = TestScript.find_by(assignment_id: params[:assignment_id], script_name: params[:filename])
-    elsif params[:type] == 'support'
-      filedb = TestSupportFile.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
+      model_class = TestScript
+    else # params[:type] == 'support'
+      model_class = TestSupportFile
     end
+    filedb = model_class.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
 
     if filedb
-      if params[:type] == 'script'
-        filename = filedb.script_name
-      elsif params[:type] == 'support'
-        filename = filedb.file_name
-      end
+      filename = filedb.file_name
       assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
 
       # the given file should be in this directory
@@ -141,7 +137,7 @@ class AutomatedTestsController < ApplicationController
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
-                    [:id, :assignment_id, :seq_num, :script_name, :description,
+                    [:id, :assignment_id, :seq_num, :file_name, :description,
                      :timeout, :run_by_instructors, :run_by_students,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,

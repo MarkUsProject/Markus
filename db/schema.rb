@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171128164242) do
+ActiveRecord::Schema.define(version: 20171212191808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -576,7 +576,7 @@ ActiveRecord::Schema.define(version: 20171128164242) do
   create_table "test_scripts", force: :cascade do |t|
     t.integer "assignment_id",           null: false
     t.float   "seq_num",                 null: false
-    t.string  "script_name",             null: false
+    t.string  "file_name",               null: false
     t.text    "description",             null: false
     t.boolean "run_by_instructors"
     t.boolean "run_by_students"

@@ -17,7 +17,7 @@ describe TestResult do
       @test_script = TestScript.create(
         assignment_id: @asst.id,
         seq_num: 1,
-        script_name: 'script.sh',
+        file_name: 'script.sh',
         description: 'This is a bash script file',
         timeout: 30,
         run_by_instructors: true,

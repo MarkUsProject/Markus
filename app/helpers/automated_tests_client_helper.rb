@@ -20,12 +20,10 @@ module AutomatedTestsClientHelper
     if is_script
       new_file_param = :new_script
       model_class = TestScript
-      name_field = :script_name
       upd_name = 'new_update_script'
     else
       new_file_param = :new_support_file
       model_class = TestSupportFile
-      name_field = :file_name
       upd_name = 'new_update_file'
     end
 
@@ -52,19 +50,19 @@ module AutomatedTestsClientHelper
     # 4) Create new test file
     if is_new
       new_file_name = new_file.original_filename
-      if model_class.exists?(name_field => new_file_name, :assignment => assignment)
+      if model_class.exists?(file_name: new_file_name, assignment: assignment)
         raise t('automated_tests.duplicate_filename') + new_file_name
       end
-      updated_form_file[name_field] = new_file_name
+      updated_form_file[:file_name] = new_file_name
       new_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, new_file_name)
       files.push({path: new_file_path, upload: new_file})
     # 5) Possibly replace existing test file
     else
-      return updated_form_file unless form_file[name_field].nil? # replacing a test file resets the old name
-      old_file_name = model_class.find(form_file[:id])[name_field]
+      return updated_form_file unless form_file[:file_name].nil? # replacing a test file resets the old name
+      old_file_name = model_class.find(form_file[:id]).file_name
       upd_file = params[("#{upd_name}_#{old_file_name}").to_sym]
       upd_file_name = upd_file.original_filename
-      updated_form_file[name_field] = upd_file_name
+      updated_form_file[:file_name] = upd_file_name
       mod_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, upd_file_name)
       f = {path: mod_file_path, upload: upd_file}
       unless upd_file_name == old_file_name
@@ -209,11 +207,11 @@ module AutomatedTestsClientHelper
     if user.admin?
       test_scripts = assignment.instructor_test_scripts
                                .order(:seq_num)
-                               .pluck_to_hash(:script_name, :timeout)
+                               .pluck_to_hash(:file_name, :timeout)
     elsif user.student?
       test_scripts = assignment.student_test_scripts
                                .order(:seq_num)
-                               .pluck_to_hash(:script_name, :timeout)
+                               .pluck_to_hash(:file_name, :timeout)
     else
       test_scripts = []
     end
@@ -269,12 +267,12 @@ module AutomatedTestsClientHelper
     server_tests_config[i]
   end
 
-  def self.create_test_script_result(script_name, assignment, grouping, submission, requested_by, time)
+  def self.create_test_script_result(file_name, assignment, grouping, submission, requested_by, time)
     revision_identifier = submission.nil? ?
         grouping.group.repo.get_latest_revision.revision_identifier :
         submission.revision_identifier
     submission_id = submission.nil? ? nil : submission.id
-    test_script = TestScript.find_by(assignment_id: assignment.id, script_name: script_name)
+    test_script = TestScript.find_by(assignment_id: assignment.id, file_name: file_name)
 
     return grouping.test_script_results.create(
         test_script_id: test_script.id,
@@ -287,8 +285,8 @@ module AutomatedTestsClientHelper
 
   def self.create_all_test_scripts_error_result(test_scripts, assignment, grouping, submission, requested_by,
                                                 result_name, result_message)
-    test_scripts.each do |script_name|
-      test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by, 0)
+    test_scripts.each do |file_name|
+      test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, 0)
       add_test_error_result(test_script_result, result_name, result_message)
       test_script_result.save
     end
@@ -325,7 +323,7 @@ module AutomatedTestsClientHelper
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
-      create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
+      create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, assignment, grouping, submission,
                                            requested_by, t('automated_tests.test_result.all_tests'),
                                            t('automated_tests.test_result.no_source_files'))
       return
@@ -385,7 +383,7 @@ module AutomatedTestsClientHelper
     rescue Exception => e
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
-      create_all_test_scripts_error_result(test_scripts.map {|s| s['script_name']}, assignment, grouping, submission,
+      create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, assignment, grouping, submission,
                                            requested_by, t('automated_tests.test_result.all_tests'),
                                            t('automated_tests.test_result.bad_server',
                                              {hostname: test_server_host, error: e.message}))
@@ -433,9 +431,9 @@ module AutomatedTestsClientHelper
   def self.process_test_script_result(xml, assignment, grouping, submission, requested_by)
 
     # create test result
-    script_name = xml['script_name']
+    file_name = xml['file_name']
     time = xml['time'].nil? ? 0 : xml['time']
-    new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
+    new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by,
                                                        time)
     tests = xml['test']
     if tests.nil?
@@ -513,20 +511,19 @@ module AutomatedTestsClientHelper
     end
     new_test_script_results = {}
     test_scripts.each do |test_script|
-      script_name = test_script['script_name']
-      if script_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
+      file_name = test_script['file_name']
+      if file_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
         next
       end
       new_test_script_result = AutomatedTestsClientHelper.process_test_script_result(test_script, assignment, grouping,
                                                                                      submission, requested_by)
-      new_test_script_results[script_name] = new_test_script_result
+      new_test_script_results[file_name] = new_test_script_result
     end
 
     # try to recover from malformed xml at the test script level
-    test_scripts_ran.each do |script_name|
-      if new_test_script_results[script_name].nil?
-        new_test_script_result = create_test_script_result(script_name, assignment, grouping, submission, requested_by,
-                                                           0)
+    test_scripts_ran.each do |file_name|
+      if new_test_script_results[file_name].nil?
+        new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, 0)
         add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
                               t('automated_tests.test_result.bad_results', {xml: xml}))
       end

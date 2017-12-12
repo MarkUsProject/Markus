@@ -26,13 +26,13 @@
         <span class='file_name'>
           <% if saved %>
             <div class="file_link">
-              <%= link_to(f.object.script_name,
+              <%= link_to(f.object.file_name,
                           action: 'download',
                           assignment_id: @assignment.id,
                           type: 'script',
-                          filename: f.object.script_name) %>
+                          filename: f.object.file_name) %>
             </div>
-            <%= f.hidden_field :script_name, value: f.object.script_name %>
+            <%= f.hidden_field :file_name, value: f.object.file_name %>
           <% else %>
             <%= t('automated_tests.new_test_script_file') %>
           <% end %>
@@ -43,11 +43,11 @@
 
       <div class="settings_left_side">
 
-        <%= f.label :script_name, (saved ? t('automated_tests.script_option.replace') :
-                                           t('automated_tests.script_option.upload_required').html_safe),
+        <%= f.label :file_name, (saved ? t('automated_tests.script_option.replace') :
+                                         t('automated_tests.script_option.upload_required').html_safe),
                     title: (saved ? t('automated_tests.script_option.replace_help') :
                                     t('automated_tests.script_option.upload_help')) %>
-        <%= file_field_tag (saved ? ('new_update_script_'+f.object.script_name).to_sym :
+        <%= file_field_tag (saved ? ('new_update_script_'+f.object.file_name).to_sym :
                                     :new_script),
                            class: 'upload_file' %><br/>
 

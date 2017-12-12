@@ -5,7 +5,7 @@ describe TestScript do
   it { is_expected.to have_many(:test_script_results) }
   it { is_expected.to validate_presence_of :assignment }
   it { is_expected.to validate_presence_of :seq_num }
-  it { is_expected.to validate_presence_of :script_name }
+  it { is_expected.to validate_presence_of :file_name }
 
   # For booleans, should validate_presence_of does
   # not work: see the Rails API documentation for should validate_presence_of
@@ -38,7 +38,7 @@ describe TestScript do
 
       @script_file = TestScript.create(assignment_id:             @asst.id,
                                       seq_num:                    1,
-                                      script_name:                'script.sh',
+                                      file_name:                  'script.sh',
                                       description:                'This is a bash script file',
                                       timeout:                    30,
                                       run_by_instructors:         true,
@@ -72,7 +72,7 @@ describe TestScript do
 
       @valid_script_file = TestScript.create(assignment_id:               @asst.id,
                                            seq_num:                     1,
-                                           script_name:                 'validscript.sh',
+                                           file_name:                   'validscript.sh',
                                            description:                 'This is a bash script file',
                                            timeout:                     30,
                                            run_by_instructors:          true,
@@ -87,7 +87,7 @@ describe TestScript do
 
       @invalid_script_file = TestScript.create(assignment_id:             @asst.id,
                                              seq_num:                   2,
-                                             script_name:               'invalidscript.sh',
+                                             file_name:                 'invalidscript.sh',
                                              description:               'This is a bash script file',
                                              timeout:                   30,
                                              run_by_instructors:        true,
@@ -143,9 +143,9 @@ describe TestScript do
       end
     end
 
-    context 'script file expected to be invalid when the script_name already exists in the same assignment' do
-      it 'return false when the script_name already exists' do
-        @invalid_script_file.script_name = 'validscript.sh'
+    context 'script file expected to be invalid when the file_name already exists in the same assignment' do
+      it 'return false when the file_name already exists' do
+        @invalid_script_file.file_name = 'validscript.sh'
         expect(@invalid_script_file).not_to be_valid
       end
     end
