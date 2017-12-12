@@ -304,7 +304,6 @@ module Repository
     # This does nothing except set a proper value for the closed? function
     # It is not important to close memory repositories (is it possible?)
     def close
-      @@repositories.delete(@repository_location)
       @opened = false
     end
 
