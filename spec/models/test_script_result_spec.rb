@@ -6,8 +6,10 @@ describe TestScriptResult do
   it { is_expected.to belong_to(:test_script) }
   it { is_expected.to validate_presence_of(:test_script) }
   it { is_expected.to validate_presence_of(:marks_earned) }
+  it { is_expected.to validate_presence_of(:marks_total) }
   it { is_expected.to validate_presence_of(:repo_revision) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
+  it { is_expected.to validate_numericality_of(:marks_total) }
 
   context 'test script result' do
     before(:each) do
@@ -43,8 +45,7 @@ describe TestScriptResult do
 
     context 'A valid test script result' do
 
-      it 'can have a specified marks total' do
-        is_expected.to validate_numericality_of(:marks_total)
+      it 'can be saved' do
         expect(@test_script_result).to be_valid
         expect(@test_script_result.save).to be true
       end
@@ -57,6 +58,12 @@ describe TestScriptResult do
 
       it 'can have fractional marks earned' do
         @test_script_result.marks_earned = 0.5
+        expect(@test_script_result).to be_valid
+        expect(@test_script_result.save).to be true
+      end
+
+      it 'can have zero marks total' do
+        @test_script_result.marks_total = 0
         expect(@test_script_result).to be_valid
         expect(@test_script_result.save).to be true
       end
@@ -74,8 +81,8 @@ describe TestScriptResult do
         expect(@test_script_result.save).to be true
       end
 
-      it 'can have a nil marks total' do
-        @test_script_result.marks_total = nil
+      it 'can have marks earned greater than marks total' do
+        @test_script_result.marks_earned = 2
         expect(@test_script_result).to be_valid
         expect(@test_script_result.save).to be true
       end
@@ -98,13 +105,18 @@ describe TestScriptResult do
         expect(@test_script_result).not_to be_valid
       end
 
+      it 'has nil marks earned' do
+        @test_script_result.marks_earned = nil
+        expect(@test_script_result).not_to be_valid
+      end
+
       it 'has negative marks total' do
         @test_script_result.marks_total = -1
         expect(@test_script_result).not_to be_valid
       end
 
-      it 'has marks earned greater than marks total' do
-        @test_script_result.marks_earned = 2
+      it 'has nil marks total' do
+        @test_script_result.marks_total = nil
         expect(@test_script_result).not_to be_valid
       end
 

@@ -7,7 +7,9 @@ describe TestResult do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:completion_status) }
   it { is_expected.to validate_presence_of(:marks_earned) }
+  it { is_expected.to validate_presence_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
+  it { is_expected.to validate_numericality_of(:marks_total) }
 
   context 'test result' do
     before(:each) do
@@ -53,8 +55,7 @@ describe TestResult do
 
     context 'A valid test result' do
 
-      it 'can have a specified marks total' do
-        is_expected.to validate_numericality_of(:marks_total)
+      it 'can be saved' do
         expect(@test_script_result).to be_valid
         expect(@test_script_result.save).to be true
       end
@@ -89,6 +90,12 @@ describe TestResult do
         expect(@test_result.save).to be true
       end
 
+      it 'can have zero marks total' do
+        @test_result.marks_total = 0
+        expect(@test_result).to be_valid
+        expect(@test_result.save).to be true
+      end
+
       it 'can have fractional marks total' do
         @test_result.marks_total = 1.5
         expect(@test_result).to be_valid
@@ -102,8 +109,8 @@ describe TestResult do
         expect(@test_result.save).to be true
       end
 
-      it 'can have an unspecified marks total' do
-        @test_result.marks_total = nil
+      it 'can have marks earned greater than marks total' do
+        @test_result.marks_earned = 2
         expect(@test_result).to be_valid
         expect(@test_result.save).to be true
       end
@@ -142,13 +149,18 @@ describe TestResult do
         expect(@test_result).not_to be_valid
       end
 
+      it 'has nil marks earned' do
+        @test_result.marks_earned = nil
+        expect(@test_result).not_to be_valid
+      end
+
       it 'has negative marks total' do
         @test_result.marks_total = -1
         expect(@test_result).not_to be_valid
       end
 
-      it 'has marks earned greater than marks total' do
-        @test_result.marks_earned = 2
+      it 'has nil marks total' do
+        @test_result.marks_total = nil
         expect(@test_result).not_to be_valid
       end
     end

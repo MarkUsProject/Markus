@@ -1618,6 +1618,7 @@ en:
         expected: "Expected"
         marks_earned: "Mark"
         marks_total: "Out of"
+        marks_bonus: "bonus"
         status: "Status"
         pass: "Passed"
         partial: "Partially Passed"
@@ -1640,6 +1641,8 @@ en:
         err_results: "The tests had unhandled errors: %{errors}"
         bad_results: "The test results are malformed: %{xml}"
         no_tests: "The test results are empty"
+        bad_marks_earned: "Earned marks are missing"
+        bad_marks_total: "Total marks are missing"
         bad_status: "Unrecognized test status '%{status}'"
 
 #Missing Activerecord Translations for english

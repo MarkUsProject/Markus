@@ -1434,6 +1434,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         expected: "Esperado"
         marks_earned: "Marca"
         marks_total: "UPDATE ME"
+        marks_bonus: "UPDATE ME"
         status: "Estado"
         pass: "Passou"
         partial: "UPDATE ME"
@@ -1456,6 +1457,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         err_results: "UPDATE ME"
         bad_results: "UPDATE ME"
         no_tests: "UPDATE ME"
+        bad_marks_earned: "UPDATE ME"
+        bad_marks_total: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"
 
 #Missing Activerecord Translations for english

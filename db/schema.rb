@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212191808) do
+ActiveRecord::Schema.define(version: 20171212204015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -555,7 +555,7 @@ ActiveRecord::Schema.define(version: 20171212191808) do
     t.text     "expected_output",       default: "",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "marks_total"
+    t.float    "marks_total",           default: 0.0, null: false
   end
 
   create_table "test_script_results", force: :cascade do |t|
@@ -568,7 +568,7 @@ ActiveRecord::Schema.define(version: 20171212191808) do
     t.integer  "submission_id"
     t.integer  "requested_by_id"
     t.integer  "time",            limit: 8,               null: false
-    t.float    "marks_total"
+    t.float    "marks_total",               default: 0.0, null: false
   end
 
   add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree

@@ -278,6 +278,7 @@ module AutomatedTestsClientHelper
         test_script_id: test_script.id,
         submission_id: submission_id,
         marks_earned: 0.0,
+        marks_total: 0.0,
         repo_revision: revision_identifier,
         requested_by_id: requested_by.id,
         time: time)
@@ -307,7 +308,7 @@ module AutomatedTestsClientHelper
   end
 
   def self.add_test_error_result(test_script_result, name, message)
-    add_test_result(test_script_result, name, '', message, '', 0.0, nil, 'error')
+    add_test_result(test_script_result, name, '', message, '', 0.0, 0.0, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -399,25 +400,37 @@ module AutomatedTestsClientHelper
       raise 'Malformed xml'
     end
 
-    marks_earned = xml['marks_earned'].nil? ? 0.0 : xml['marks_earned'].to_f
-    marks_total = xml['marks_total'].nil? ? nil : xml['marks_total'].to_f
     input = xml['input'].nil? ? '' : xml['input']
     expected = xml['expected'].nil? ? '' : xml['expected']
     actual = xml['actual'].nil? ? '' : xml['actual']
     status = xml['status']
-    if status.nil? || !status.in?(%w(pass partial fail error error_all))
-      actual = t('automated_tests.test_result.bad_status', {status: status})
-      status = 'error'
-      marks_earned = 0.0
-    end
-    if status == 'error_all'
+    # check first if we have to stop
+    if !status.nil? && status == 'error_all'
       status = 'error'
       stop_processing = true
     else
       stop_processing = false
     end
-    if !marks_total.nil? && marks_earned > marks_total
-      marks_earned = marks_total
+    # look for all status and marks errors (but only the last message will be shown)
+    if xml['marks_earned'].nil?
+      actual = t('automated_tests.test_result.bad_marks_earned') unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
+    else
+      marks_earned = xml['marks_earned'].to_f
+    end
+    if xml['marks_total'].nil?
+      actual = t('automated_tests.test_result.bad_marks_total') unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
+      marks_total = 0.0
+    else
+      marks_total = xml['marks_total'].to_f
+    end
+    if status.nil? || !status.in?(%w(pass partial fail error))
+      actual = t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
     end
 
     add_test_result(test_script_result, test_name, input, actual, expected, marks_earned, marks_total, status)
@@ -433,8 +446,7 @@ module AutomatedTestsClientHelper
     # create test result
     file_name = xml['file_name']
     time = xml['time'].nil? ? 0 : xml['time']
-    new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by,
-                                                       time)
+    new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, time)
     tests = xml['test']
     if tests.nil?
       add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
@@ -453,22 +465,12 @@ module AutomatedTestsClientHelper
         marks_earned, marks_total = AutomatedTestsClientHelper.process_test_result(test, new_test_script_result)
       rescue
         # with malformed xml, test results could be valid only up to a certain test
-        # similarly, the test script can signal a serious failure that requires assigning zero marks
+        # similarly, the test script can signal a serious failure that requires stopping and assigning zero marks
         all_marks_earned = 0.0
-        all_marks_total = nil
         break
       end
       all_marks_earned += marks_earned
-      # marks_total.nil?: when a single test does not specify the marks it is worth, just the student score
-      # all_marks_total.nil?: when the test suite does not specify the marks it is worth, using the criterion max_mark
-      # if at least a single test does not specify marks_total, then all_marks_total will be nil
-      unless all_marks_total.nil?
-        if marks_total.nil?
-          all_marks_total = nil
-        else
-          all_marks_total += marks_total
-        end
-      end
+      all_marks_total += marks_total
     end
     new_test_script_result.marks_earned = all_marks_earned
     new_test_script_result.marks_total = all_marks_total
