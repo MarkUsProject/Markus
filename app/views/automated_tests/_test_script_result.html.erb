@@ -31,7 +31,8 @@
           <th><%= t('automated_tests.test_results_table.expected') %></th>
           <% end %>
           <th><%= t('automated_tests.test_results_table.status') %></th>
-          <th><%= t('automated_tests.test_results_table.marks') %></th>
+          <th><%= t('automated_tests.test_results_table.marks_earned') %></th>
+          <th><%= t('automated_tests.test_results_table.marks_total') %></th>
         </tr>
       </thead>
       <tbody>
@@ -44,11 +45,12 @@
             <td><%= test.expected_output %></td>
             <% end %>
             <td><%= t("automated_tests.test_results_table.#{test.completion_status}") %></td>
+            <td><%= sprintf('%g', test.marks_earned) %></td>
             <td>
             <% if test.marks_total.nil? %>
-              <%= sprintf('%g', test.marks_earned) %>
+              0
             <% else %>
-              <%= "#{sprintf('%g', test.marks_earned)}/#{sprintf('%g', test.marks_total)}" %>
+              <%= sprintf('%g', test.marks_total) %>
             <% end %>
             </td>
           </tr>
