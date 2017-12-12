@@ -66,7 +66,8 @@
     </li>
   <% end %>
 
-  <% if REPOSITORY_TYPE == 'git' %>
+  <%# TODO: Enable key pairs when functionality is supported. %>
+  <% if false && REPOSITORY_TYPE == 'git' %>
       <li <% if controller.controller_name == 'key_pairs' %>
           class='active'
           <% end %>>
