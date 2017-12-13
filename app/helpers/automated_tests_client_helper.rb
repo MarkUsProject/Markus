@@ -288,27 +288,12 @@ module AutomatedTestsClientHelper
                                                 result_name, result_message)
     test_scripts.each do |file_name|
       test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, 0)
-      add_test_error_result(test_script_result, result_name, result_message)
+      test_script_result.add_test_error_result(result_name, result_message)
       test_script_result.save
     end
     unless submission.nil?
       submission.set_marks_for_tests
     end
-  end
-
-  def self.add_test_result(test_script_result, name, input, actual, expected, marks_earned, marks_total, status)
-    test_script_result.test_results.create(
-        name: name,
-        input: CGI.unescapeHTML(input),
-        actual_output: CGI.unescapeHTML(actual),
-        expected_output: CGI.unescapeHTML(expected),
-        marks_earned: marks_earned,
-        marks_total: marks_total,
-        completion_status: status)
-  end
-
-  def self.add_test_error_result(test_script_result, name, message)
-    add_test_result(test_script_result, name, '', message, '', 0.0, 0.0, 'error')
   end
 
   # Perform a job for automated testing. This code is run by
@@ -391,56 +376,6 @@ module AutomatedTestsClientHelper
     end
   end
 
-  def self.process_test_result(xml, test_script_result)
-
-    test_name = xml['name']
-    if test_name.nil?
-      add_test_error_result(test_script_result, t('automated_tests.test_result.unknown_test'),
-                            t('automated_tests.test_result.bad_results', {xml: xml}))
-      raise 'Malformed xml'
-    end
-
-    input = xml['input'].nil? ? '' : xml['input']
-    expected = xml['expected'].nil? ? '' : xml['expected']
-    actual = xml['actual'].nil? ? '' : xml['actual']
-    status = xml['status']
-    # check first if we have to stop
-    if !status.nil? && status == 'error_all'
-      status = 'error'
-      stop_processing = true
-    else
-      stop_processing = false
-    end
-    # look for all status and marks errors (but only the last message will be shown)
-    if xml['marks_earned'].nil?
-      actual = t('automated_tests.test_result.bad_marks_earned') unless stop_processing
-      status = 'error'
-      marks_earned = 0.0
-    else
-      marks_earned = xml['marks_earned'].to_f
-    end
-    if xml['marks_total'].nil?
-      actual = t('automated_tests.test_result.bad_marks_total') unless stop_processing
-      status = 'error'
-      marks_earned = 0.0
-      marks_total = 0.0
-    else
-      marks_total = xml['marks_total'].to_f
-    end
-    if status.nil? || !status.in?(%w(pass partial fail error))
-      actual = t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
-      status = 'error'
-      marks_earned = 0.0
-    end
-
-    add_test_result(test_script_result, test_name, input, actual, expected, marks_earned, marks_total, status)
-    if stop_processing
-      raise 'Test script reported a serious failure'
-    end
-
-    return marks_earned, marks_total
-  end
-
   def self.process_test_script_result(xml, assignment, grouping, submission, requested_by)
 
     # create test result
@@ -449,8 +384,8 @@ module AutomatedTestsClientHelper
     new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, time)
     tests = xml['test']
     if tests.nil?
-      add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
-                            t('automated_tests.test_result.no_tests'))
+      new_test_script_result.add_test_error_result(t('automated_tests.test_result.all_tests'),
+                                                   t('automated_tests.test_result.no_tests'))
       return new_test_script_result
     end
     unless tests.is_a?(Array) # same workaround as above, Hash.from_xml returns a hash if it's a single test
@@ -462,7 +397,7 @@ module AutomatedTestsClientHelper
     all_marks_total = 0.0
     tests.each do |test|
       begin
-        marks_earned, marks_total = AutomatedTestsClientHelper.process_test_result(test, new_test_script_result)
+        marks_earned, marks_total = new_test_script_result.add_test_result_from_xml(test)
       rescue
         # with malformed xml, test results could be valid only up to a certain test
         # similarly, the test script can signal a serious failure that requires stopping and assigning zero marks
@@ -526,8 +461,8 @@ module AutomatedTestsClientHelper
     test_scripts_ran.each do |file_name|
       if new_test_script_results[file_name].nil?
         new_test_script_result = create_test_script_result(file_name, assignment, grouping, submission, requested_by, 0)
-        add_test_error_result(new_test_script_result, t('automated_tests.test_result.all_tests'),
-                              t('automated_tests.test_result.bad_results', {xml: xml}))
+        new_test_script_result.add_test_error_result(t('automated_tests.test_result.all_tests'),
+                                                     t('automated_tests.test_result.bad_results', {xml: xml}))
       end
     end
 
