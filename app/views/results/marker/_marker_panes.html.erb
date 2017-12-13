@@ -64,7 +64,7 @@
           <div id='test_result_tab' style='display:none;'>
             <div id='testviewer' class='block'>
               <%= render partial: 'automated_tests/test_script_results',
-                         locals: {results: submission.test_script_results, submission: submission,
+                         locals: {results: submission.test_script_results_all_data, submission: submission,
                                   current_user: @current_user, ran_by: 'instructor'} %>
             </div>
           </div>

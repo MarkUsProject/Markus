@@ -22,9 +22,8 @@ class AutomatedTestsClientHelperTest < ActiveSupport::TestCase
 
       @scriptfile  = TestScript.make(assignment_id: @asst.id,
                                      seq_num: 2,
-                                     script_name: 'test1.rb',
+                                     file_name: 'test1.rb',
                                      description: 'This is an easy test',
-                                     max_marks: 2,
                                      run_by_instructors: false,
                                      run_by_students: true,
                                      halts_testing: false,
@@ -36,9 +35,8 @@ class AutomatedTestsClientHelperTest < ActiveSupport::TestCase
                                      display_actual_output: 'do_not_display')
       @scriptfile2 = TestScript.make(assignment_id: @asst.id,
                                      seq_num: 1,
-                                     script_name: 'pretest.rb',
+                                     file_name: 'pretest.rb',
                                      description: 'This is a test with no mark, can be a pretest, compile test etc.',
-                                     max_marks: 0,
                                      run_by_instructors: true,
                                      run_by_students: true,
                                      halts_testing: false,
@@ -50,9 +48,8 @@ class AutomatedTestsClientHelperTest < ActiveSupport::TestCase
                                      display_actual_output: 'do_not_display')
       @scriptfile3 = TestScript.make(assignment_id: @asst.id,
                                      seq_num: 3,
-                                     script_name: 'test2.rb',
+                                     file_name: 'test2.rb',
                                      description: 'This is a hard test',
-                                     max_marks: 10,
                                      run_by_instructors: false,
                                      run_by_students: false,
                                      halts_testing: false,

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803155637) do
+ActiveRecord::Schema.define(version: 20171212204015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -548,25 +548,27 @@ ActiveRecord::Schema.define(version: 20170803155637) do
   create_table "test_results", force: :cascade do |t|
     t.integer  "test_script_result_id"
     t.string   "name"
-    t.string   "completion_status",                  null: false
-    t.integer  "marks_earned",                       null: false
-    t.text     "input",                 default: "", null: false
-    t.text     "actual_output",         default: "", null: false
-    t.text     "expected_output",       default: "", null: false
+    t.string   "completion_status",                   null: false
+    t.float    "marks_earned",          default: 0.0, null: false
+    t.text     "input",                 default: "",  null: false
+    t.text     "actual_output",         default: "",  null: false
+    t.text     "expected_output",       default: "",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "marks_total",           default: 0.0, null: false
   end
 
   create_table "test_script_results", force: :cascade do |t|
     t.integer  "grouping_id"
     t.integer  "test_script_id"
-    t.integer  "marks_earned"
+    t.float    "marks_earned",              default: 0.0, null: false
     t.text     "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "submission_id"
     t.integer  "requested_by_id"
-    t.integer  "time",            limit: 8, null: false
+    t.integer  "time",            limit: 8,               null: false
+    t.float    "marks_total",               default: 0.0, null: false
   end
 
   add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree
@@ -574,9 +576,8 @@ ActiveRecord::Schema.define(version: 20170803155637) do
   create_table "test_scripts", force: :cascade do |t|
     t.integer "assignment_id",           null: false
     t.float   "seq_num",                 null: false
-    t.string  "script_name",             null: false
+    t.string  "file_name",               null: false
     t.text    "description",             null: false
-    t.integer "max_marks",               null: false
     t.boolean "run_by_instructors"
     t.boolean "run_by_students"
     t.boolean "halts_testing"

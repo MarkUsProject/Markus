@@ -297,9 +297,8 @@ end
 TestScript.blueprint do
   assignment {Assignment.make}
   seq_num {0}
-  script_name {Sham.filename}
+  file_name {Sham.filename}
   description {Sham.description}
-  max_marks {0}
   run_by_instructors {true}
   run_by_students {false}
   halts_testing {false}
@@ -320,7 +319,8 @@ end
 TestScriptResult.blueprint do
   submission {Submission.make}
   test_script {TestScript.make}
-  marks_earned {0}
+  marks_earned {1}
+  marks_total {1}
   repo_revision {'1'}
   requested_by {Admin.make}
 end
@@ -334,7 +334,8 @@ TestResult.blueprint do
   test_script_result {TestScriptResult.make}
   name {Sham.filename}
   completion_status {'pass'}
-  marks_earned {0}
+  marks_earned {1}
+  marks_total {1}
   input {Sham.message}
   actual_output {Sham.message}
   expected_output {Sham.message}

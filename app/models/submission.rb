@@ -27,6 +27,9 @@ class Submission < ActiveRecord::Base
   has_many   :test_script_results,
              -> { order 'created_at DESC' },
              dependent: :destroy
+  has_many   :test_script_results_all_data,
+             -> { includes(:test_script, :test_results, :requested_by).order('created_at DESC') },
+             class_name: 'TestScriptResult'
   has_many   :feedback_files, dependent: :destroy
 
 
@@ -111,30 +114,37 @@ class Submission < ActiveRecord::Base
     return if test_script_results.empty?
 
     result = get_latest_result
-    all_marks_by_tests = true
+    complete_marks = true
     if result.marks.empty? # can happen if a criterion is created after collection
       result.create_marks
     end
-    result.marks.each do |mark|
-      marks_earned = 0
-      mark_total = 0
-      mark.markable.test_scripts.each do |test_script|
-        res = test_script_results.where(test_script_id: test_script.id).first
-        marks_earned += res.marks_earned
-        mark_total += test_script.max_marks
+    result.marks.includes(markable: :test_scripts).each do |mark|
+      test_scripts = mark.markable.test_scripts
+      if test_scripts.size == 0 # there's at least one manually-assigned mark
+        complete_marks = false
+        next
       end
-      if mark_total > 0
-        real_mark = (marks_earned.to_f / mark_total.to_f * mark.markable.max_mark).round(2)
+      all_marks_earned = 0.0
+      all_marks_total = 0.0
+      test_scripts.each do |script|
+        res = test_script_results.where(test_script_id: script.id).first
+        all_marks_earned += res.marks_earned
+        all_marks_total += res.marks_total
+      end
+      if all_marks_earned == 0 || all_marks_total == 0
+        final_mark = 0.0
+      elsif all_marks_earned > all_marks_total
+        final_mark = mark.markable.max_mark
+      else
+        final_mark = (all_marks_earned / all_marks_total * mark.markable.max_mark).round(2)
         if mark.markable.instance_of? RubricCriterion
           # find the nearest mark associated to a level
-          nearest_mark = (real_mark / mark.markable.weight.to_f).round * mark.markable.weight
-          real_mark = nearest_mark
+          nearest_mark = (final_mark / mark.markable.weight.to_f).round * mark.markable.weight
+          final_mark = nearest_mark
         end
-        mark.mark = real_mark
-        mark.save
-      else
-        all_marks_by_tests = false
       end
+      mark.mark = final_mark
+      mark.save
     end
 
     # marking state was already complete, tests are overwriting some marks
@@ -142,21 +152,13 @@ class Submission < ActiveRecord::Base
       result.submission.assignment.assignment_stat.refresh_grade_distribution
       result.submission.assignment.update_results_stats
     # all marks are set by tests, can set the marking state to complete
-    elsif all_marks_by_tests
+    elsif complete_marks
       result.marking_state = Result::MARKING_STATES[:complete]
       if result.save
         result.submission.assignment.assignment_stat.refresh_grade_distribution
         result.submission.assignment.update_results_stats
       end
     end
-  end
-
-  # same as grouping.last_instructor_test_marks, but optimized because all test_script_results here are instructor ones
-  def last_instructor_test_marks
-    test_script_ids = self.assignment.instructor_test_scripts
-                          .distinct
-                          .pluck(:id)
-    Grouping.last_test_marks(test_script_ids, self.test_script_results)
   end
 
   # For group submissions, actions here must only be accessible to members

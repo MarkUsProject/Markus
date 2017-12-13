@@ -65,8 +65,8 @@ class GroupingTest < ActiveSupport::TestCase
 
       should 'be able to add ta' do
         @grouping.add_tas(@ta1)
-
       end
+    end
 
     context 'with two student members' do
       setup do
@@ -79,7 +79,6 @@ class GroupingTest < ActiveSupport::TestCase
           grouping: @grouping,
           membership_status: StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
-
       end
 
       should 'display for note without seeing an exception' do
@@ -218,7 +217,6 @@ class GroupingTest < ActiveSupport::TestCase
       should 'be able to remove ta' do
         @grouping.remove_tas(@tas)
         assert_equal 0, @grouping.ta_memberships.count
-
       end
     end
 
@@ -611,8 +609,6 @@ class GroupingTest < ActiveSupport::TestCase
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
         assert !@grouping.past_due_date?
       end
-
-
     end
 
     context 'with sections before due date' do

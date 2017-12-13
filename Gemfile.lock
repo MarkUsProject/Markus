@@ -154,8 +154,6 @@ GEM
     mono_logger (1.1.0)
     multi_json (1.12.2)
     mysql2 (0.4.10)
-    net-scp (1.2.1)
-      net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
@@ -382,7 +380,6 @@ DEPENDENCIES
   minitest
   mocha
   mysql2
-  net-scp
   net-ssh
   pg
   pluck_to_hash

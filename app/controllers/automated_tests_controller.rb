@@ -14,48 +14,27 @@ class AutomatedTestsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     create_test_repo(@assignment)
 
-    # Perform transaction, if errors, none of new config saved
-    @assignment.transaction do
-      # Get new script from upload form
-      new_script = params[:new_script]
-      # Get new support file from upload form
-      new_support_file = params[:new_support_file]
-
-      @assignment = process_test_form(@assignment,
-                                      params,
-                                      assignment_params,
-                                      new_script,
-                                      new_support_file)
-      # Save assignment and associated test files
-      if @assignment.save
-        flash_message(:success, I18n.t('assignment.update_success'))
-        unless new_script.nil?
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_dir,
-              @assignment.repository_folder,
-              new_script.original_filename)
-          # Replace bad line endings from windows
-          contents = new_script.read.tr("\r", '')
-          File.open(
-              assignment_tests_path, 'w') { |f| f.write contents }
+    begin
+      @assignment.transaction do
+        files = process_test_form(@assignment, params, assignment_params)
+        if @assignment.save
+          # write the uploaded files
+          files.each do |file|
+            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
+            if file.has_key?(:delete) && File.exist?(file[:delete])
+              File.delete(file[:delete])
+            end
+          end
+          flash_message(:success, t('assignment.update_success'))
+        else
+          flash_message(:error, @assignment.errors.full_messages)
         end
-
-        unless new_support_file.nil?
-          assignment_tests_path = File.join(
-              MarkusConfigurator.markus_ate_client_dir,
-              @assignment.repository_folder,
-              new_support_file.original_filename)
-          contents = new_support_file.read
-          File.open(
-              assignment_tests_path, 'wb') { |f| f.write contents }
-        end
-
-        redirect_to action: 'manage',
-                    assignment_id: params[:assignment_id]
-      else
-        @assignment.test_support_files.build
-        render :manage
       end
+    rescue => e
+      flash_message(:error, e.message)
+    ensure
+      # TODO the page is not correctly drawn when using render
+      redirect_to action: 'manage', assignment_id: params[:assignment_id]
     end
   end
 
@@ -71,7 +50,7 @@ class AutomatedTestsController < ApplicationController
       display_actual_output: :do_not_display
     )
     @assignment.test_support_files.build
-    @student_tests_on = MarkusConfigurator.markus_ate_experimental_student_tests_on?
+    @student_tests_on = MarkusConfigurator.markus_ate_student_tests_on?
   end
 
   def student_interface
@@ -80,7 +59,7 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = @grouping.student_test_script_results
+      @test_script_results = @grouping.student_test_script_results(true)
       @token = @grouping.prepare_tokens_to_use
     end
     render layout: 'assignment_content'
@@ -109,19 +88,15 @@ class AutomatedTestsController < ApplicationController
   #  2. file is in the directory it's supposed to be
   #  3. file exists and is readable
   def download
-    filedb = nil
     if params[:type] == 'script'
-      filedb = TestScript.find_by(assignment_id: params[:assignment_id], script_name: params[:filename])
-    elsif params[:type] == 'support'
-      filedb = TestSupportFile.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
+      model_class = TestScript
+    else # params[:type] == 'support'
+      model_class = TestSupportFile
     end
+    filedb = model_class.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
 
     if filedb
-      if params[:type] == 'script'
-        filename = filedb.script_name
-      elsif params[:type] == 'support'
-        filename = filedb.file_name
-      end
+      filename = filedb.file_name
       assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
 
       # the given file should be in this directory
@@ -162,8 +137,8 @@ class AutomatedTestsController < ApplicationController
                 test_files_attributes:
                     [:id, :filename, :filetype, :is_private, :_destroy],
                 test_scripts_attributes:
-                    [:id, :assignment_id, :seq_num, :script_name, :description,
-                     :max_marks, :timeout, :run_by_instructors, :run_by_students,
+                    [:id, :assignment_id, :seq_num, :file_name, :description,
+                     :timeout, :run_by_instructors, :run_by_students,
                      :halts_testing, :display_description, :display_run_status,
                      :display_marks_earned, :display_input,
                      :display_expected_output, :display_actual_output,
