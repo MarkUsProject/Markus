@@ -38,8 +38,8 @@ class ATEFilesJob < ActiveJob::Base
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
       grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    t('automated_tests.test_result.all_tests'),
-                                                    t('automated_tests.test_result.no_source_files'))
+                                                    I18n.t('automated_tests.test_result.all_tests'),
+                                                    I18n.t('automated_tests.test_result.no_source_files'))
       return
     end
 
@@ -98,8 +98,8 @@ class ATEFilesJob < ActiveJob::Base
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
       grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    t('automated_tests.test_result.all_tests'),
-                                                    t('automated_tests.test_result.bad_server',
+                                                    I18n.t('automated_tests.test_result.all_tests'),
+                                                    I18n.t('automated_tests.test_result.bad_server',
                                                       {hostname: test_server_host, error: e.message}))
     end
   end

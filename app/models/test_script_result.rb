@@ -56,8 +56,8 @@ class TestScriptResult < ActiveRecord::Base
   def create_test_result_from_xml(xml)
     test_name = xml['name']
     if test_name.nil?
-      create_test_error_result(t('automated_tests.test_result.unknown_test'),
-                               t('automated_tests.test_result.bad_results', {xml: xml}))
+      create_test_error_result(I18n.t('automated_tests.test_result.unknown_test'),
+                               I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
       raise 'Malformed xml'
     end
 
@@ -74,14 +74,14 @@ class TestScriptResult < ActiveRecord::Base
     end
     # look for all status and marks errors (but only the last message will be shown)
     if xml['marks_earned'].nil?
-      actual = t('automated_tests.test_result.bad_marks_earned') unless stop_processing
+      actual = I18n.t('automated_tests.test_result.bad_marks_earned') unless stop_processing
       status = 'error'
       marks_earned = 0.0
     else
       marks_earned = xml['marks_earned'].to_f
     end
     if xml['marks_total'].nil?
-      actual = t('automated_tests.test_result.bad_marks_total') unless stop_processing
+      actual = I18n.t('automated_tests.test_result.bad_marks_total') unless stop_processing
       status = 'error'
       marks_earned = 0.0
       marks_total = 0.0
@@ -89,7 +89,7 @@ class TestScriptResult < ActiveRecord::Base
       marks_total = xml['marks_total'].to_f
     end
     if status.nil? || !status.in?(%w(pass partial fail error))
-      actual = t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
+      actual = I18n.t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
       status = 'error'
       marks_earned = 0.0
     end

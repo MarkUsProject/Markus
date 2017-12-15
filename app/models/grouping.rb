@@ -855,8 +855,8 @@ class Grouping < ActiveRecord::Base
     new_test_script_result = create_test_script_result(file_name, requested_by, submission, time)
     tests = xml['test']
     if tests.nil?
-      new_test_script_result.create_test_error_result(t('automated_tests.test_result.all_tests'),
-                                                      t('automated_tests.test_result.no_tests'))
+      new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests'),
+                                                      I18n.t('automated_tests.test_result.no_tests'))
       return new_test_script_result
     end
     unless tests.is_a?(Array) # Hash.from_xml returns a hash if it's a single test
@@ -890,8 +890,8 @@ class Grouping < ActiveRecord::Base
     # check unhandled errors first, but don't stop here
     unless test_errors.blank?
       create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
-                                           t('automated_tests.test_result.all_tests'),
-                                           t('automated_tests.test_result.err_results', {errors: test_errors}))
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.err_results', {errors: test_errors}))
     end
     # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
     root = nil
@@ -899,16 +899,16 @@ class Grouping < ActiveRecord::Base
       root = Hash.from_xml(xml)
     rescue => e
       create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
-                                           t('automated_tests.test_result.all_tests'),
-                                           t('automated_tests.test_result.bad_results', {xml: e.message}))
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))
       return
     end
     test_run = root['testrun']
     test_scripts = test_run.nil? ? nil : test_run['test_script']
     if test_run.nil? || test_scripts.nil?
       create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
-                                           t('automated_tests.test_result.all_tests'),
-                                           t('automated_tests.test_result.bad_results', {xml: xml}))
+                                           I18n.t('automated_tests.test_result.all_tests'),
+                                           I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
       return
     end
 
@@ -930,8 +930,8 @@ class Grouping < ActiveRecord::Base
     test_scripts_ran.each do |file_name|
       if new_test_script_results[file_name].nil?
         new_test_script_result = create_test_script_result(file_name, requested_by, submission)
-        new_test_script_result.create_test_error_result(t('automated_tests.test_result.all_tests'),
-                                                        t('automated_tests.test_result.bad_results', {xml: xml}))
+        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests'),
+                                                        I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
       end
     end
 

@@ -51,7 +51,7 @@ module AutomatedTestsClientHelper
     if is_new
       new_file_name = new_file.original_filename
       if model_class.exists?(file_name: new_file_name, assignment: assignment)
-        raise t('automated_tests.duplicate_filename') + new_file_name
+        raise I18n.t('automated_tests.duplicate_filename') + new_file_name
       end
       updated_form_file[:file_name] = new_file_name
       new_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, new_file_name)
@@ -150,7 +150,7 @@ module AutomatedTestsClientHelper
     test_server_host = MarkusConfigurator.markus_ate_server_host
     test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
-      raise t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
+      raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
     end
     test_server_user.set_api_key
 
@@ -170,26 +170,26 @@ module AutomatedTestsClientHelper
     end
     # no tas
     if user.ta?
-      raise t('automated_tests.error.ta_not_allowed')
+      raise I18n.t('automated_tests.error.ta_not_allowed')
     end
     # student checks from now on
 
     # student tests enabled
     unless MarkusConfigurator.markus_ate_student_tests_on?
-      raise t('automated_tests.error.not_enabled')
+      raise I18n.t('automated_tests.error.not_enabled')
     end
     # student belongs to the grouping
     unless user.accepted_groupings.include?(grouping)
-      raise t('automated_tests.error.bad_group')
+      raise I18n.t('automated_tests.error.bad_group')
     end
     # deadline has not passed
     if grouping.assignment.submission_rule.can_collect_now?
-      raise t('automated_tests.error.after_due_date')
+      raise I18n.t('automated_tests.error.after_due_date')
     end
     token = grouping.prepare_tokens_to_use
     # no other enqueued tests
     if token.enqueued?
-      raise t('automated_tests.error.already_enqueued')
+      raise I18n.t('automated_tests.error.already_enqueued')
     end
     token.decrease_tokens # raises exception with no tokens available
   end
@@ -200,7 +200,7 @@ module AutomatedTestsClientHelper
     # No test directory or test files
     test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
     unless File.exist?(test_dir)
-      raise t('automated_tests.error.no_test_files')
+      raise I18n.t('automated_tests.error.no_test_files')
     end
 
     # Select a subset of test scripts
@@ -216,7 +216,7 @@ module AutomatedTestsClientHelper
       test_scripts = []
     end
     if test_scripts.empty?
-      raise t('automated_tests.error.no_test_files')
+      raise I18n.t('automated_tests.error.no_test_files')
     end
 
     test_scripts
@@ -227,7 +227,7 @@ module AutomatedTestsClientHelper
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     unless assignment.enable_test
-      raise t('automated_tests.error.not_enabled')
+      raise I18n.t('automated_tests.error.not_enabled')
     end
     test_server_user = get_test_server_user
     test_scripts = get_test_scripts(assignment, current_user)
