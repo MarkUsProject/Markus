@@ -265,7 +265,7 @@ Markus::Application.configure do
   # Automated Testing Engine settings
   ###################################################################
 
-  # Look at lib/automated_tests/README.md for the documentation
+  # Look at https://github.com/MarkUsProject/markus-autotesting for the documentation
   AUTOMATED_TESTING_ENGINE_ON = true
   ATE_STUDENT_TESTS_ON = true
   ATE_STUDENT_TESTS_BUFFER_TIME = 1.hour

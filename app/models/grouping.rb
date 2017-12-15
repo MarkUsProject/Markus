@@ -819,6 +819,128 @@ class Grouping < ActiveRecord::Base
     self.token
   end
 
+  def create_test_script_result(file_name, requested_by, submission=nil, time=0)
+    revision_identifier = submission.nil? ?
+      self.group.repo.get_latest_revision.revision_identifier :
+      submission.revision_identifier
+    submission_id = submission.nil? ? nil : submission.id
+    test_script = TestScript.find_by(assignment_id: self.assignment.id, file_name: file_name)
+
+    self.test_script_results.create(
+      test_script_id: test_script.id,
+      submission_id: submission_id,
+      marks_earned: 0.0,
+      marks_total: 0.0,
+      repo_revision: revision_identifier,
+      requested_by_id: requested_by.id,
+      time: time)
+  end
+
+  def create_all_test_scripts_error_result(test_scripts, requested_by, submission, result_name, result_message)
+    test_scripts.each do |file_name|
+      test_script_result = create_test_script_result(file_name, requested_by, submission)
+      test_script_result.create_test_error_result(result_name, result_message)
+      test_script_result.save
+    end
+    unless submission.nil?
+      submission.set_marks_for_tests
+    end
+  end
+
+  def create_test_script_result_from_xml(xml, requested_by, submission=nil)
+
+    # create test result
+    file_name = xml['file_name']
+    time = xml['time'].nil? ? 0 : xml['time']
+    new_test_script_result = create_test_script_result(file_name, requested_by, submission, time)
+    tests = xml['test']
+    if tests.nil?
+      new_test_script_result.create_test_error_result(t('automated_tests.test_result.all_tests'),
+                                                      t('automated_tests.test_result.no_tests'))
+      return new_test_script_result
+    end
+    unless tests.is_a?(Array) # Hash.from_xml returns a hash if it's a single test
+      tests = [tests]
+    end
+
+    # process tests
+    all_marks_earned = 0.0
+    all_marks_total = 0.0
+    tests.each do |test|
+      begin
+        marks_earned, marks_total = new_test_script_result.create_test_result_from_xml(test)
+      rescue
+        # with malformed xml, test results could be valid only up to a certain test
+        # similarly, the test script can signal a serious failure that requires stopping and assigning zero marks
+        all_marks_earned = 0.0
+        break
+      end
+      all_marks_earned += marks_earned
+      all_marks_total += marks_total
+    end
+    new_test_script_result.marks_earned = all_marks_earned
+    new_test_script_result.marks_total = all_marks_total
+    new_test_script_result.save
+
+    new_test_script_result
+  end
+
+  def create_test_run_from_xml(xml, test_errors, test_scripts_ran, requested_by, submission=nil)
+
+    # check unhandled errors first, but don't stop here
+    unless test_errors.blank?
+      create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.err_results', {errors: test_errors}))
+    end
+    # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
+    root = nil
+    begin
+      root = Hash.from_xml(xml)
+    rescue => e
+      create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.bad_results', {xml: e.message}))
+      return
+    end
+    test_run = root['testrun']
+    test_scripts = test_run.nil? ? nil : test_run['test_script']
+    if test_run.nil? || test_scripts.nil?
+      create_all_test_scripts_error_result(test_scripts_ran, requested_by, submission,
+                                           t('automated_tests.test_result.all_tests'),
+                                           t('automated_tests.test_result.bad_results', {xml: xml}))
+      return
+    end
+
+    # process results
+    unless test_scripts.is_a?(Array) # Hash.from_xml returns a hash if it's a single test script and an array otherwise
+      test_scripts = [test_scripts]
+    end
+    new_test_script_results = {}
+    test_scripts.each do |test_script|
+      file_name = test_script['file_name']
+      if file_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
+        next
+      end
+      new_test_script_result = create_test_script_result_from_xml(test_script, requested_by, submission)
+      new_test_script_results[file_name] = new_test_script_result
+    end
+
+    # try to recover from malformed xml at the test script level
+    test_scripts_ran.each do |file_name|
+      if new_test_script_results[file_name].nil?
+        new_test_script_result = create_test_script_result(file_name, requested_by, submission)
+        new_test_script_result.create_test_error_result(t('automated_tests.test_result.all_tests'),
+                                                        t('automated_tests.test_result.bad_results', {xml: xml}))
+      end
+    end
+
+    # set the marks assigned by the test
+    unless submission.nil?
+      submission.set_marks_for_tests
+    end
+  end
+
   private
 
   # Once a grouping is valid, grant (read+write) repository permissions for students

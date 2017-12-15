@@ -38,7 +38,7 @@ class TestScriptResult < ActiveRecord::Base
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
   validates_numericality_of :time, only_integer: true, greater_than_or_equal_to: 0
 
-  def add_test_result(name, input, actual, expected, marks_earned, marks_total, status)
+  def create_test_result(name, input, actual, expected, marks_earned, marks_total, status)
     self.test_results.create(
       name: name,
       input: CGI.unescapeHTML(input),
@@ -49,15 +49,15 @@ class TestScriptResult < ActiveRecord::Base
       completion_status: status)
   end
 
-  def add_test_error_result(name, message)
-    self.add_test_result(name, '', message, '', 0.0, 0.0, 'error')
+  def create_test_error_result(name, message)
+    create_test_result(name, '', message, '', 0.0, 0.0, 'error')
   end
 
-  def add_test_result_from_xml(xml)
+  def create_test_result_from_xml(xml)
     test_name = xml['name']
     if test_name.nil?
-      self.add_test_error_result(t('automated_tests.test_result.unknown_test'),
-                                 t('automated_tests.test_result.bad_results', {xml: xml}))
+      create_test_error_result(t('automated_tests.test_result.unknown_test'),
+                               t('automated_tests.test_result.bad_results', {xml: xml}))
       raise 'Malformed xml'
     end
 
@@ -94,7 +94,7 @@ class TestScriptResult < ActiveRecord::Base
       marks_earned = 0.0
     end
 
-    self.add_test_result(test_name, input, actual, expected, marks_earned, marks_total, status)
+    create_test_result(test_name, input, actual, expected, marks_earned, marks_total, status)
     if stop_processing
       raise 'Test script reported a serious failure'
     end
