@@ -35,7 +35,7 @@ module Repository
       @timestamps_revisions[Marshal.dump(
         Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
-      @opened = true
+      @closed = false
 
 
       if MemoryRepository.repository_exists?(location)
@@ -305,14 +305,14 @@ module Repository
     # This does nothing except set a proper value for the closed? function
     # It is not important to close memory repositories (is it possible?)
     def close
-      @opened = false
+      @closed = true
     end
 
     # Resturns whether or not the repository is closed.
     # This will return a value corresponding to whether the open or close functions
     # have been called but is otherwise meaningless in a MemoryRepository
     def closed?
-      !@opened
+      @closed
     end
 
     # Converts a pathname to an absolute pathname
