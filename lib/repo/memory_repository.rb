@@ -36,13 +36,7 @@ module Repository
         Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
       @closed = false
-
-
-      if MemoryRepository.repository_exists?(location)
-        raise RepositoryCollision.new("There is already a repository at #{location}")
-      end
       @@repositories[location] = self             # push new MemoryRepository onto repository list
-
     end
 
     # Checks if a memory repository exists at 'path'
@@ -60,10 +54,8 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
-      unless MemoryRepository.repository_exists?(location)
-        MemoryRepository.new(location) # create a repository if it doesn't exist
-      end
-      return true
+      MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
+      true
     end
 
     # Static method: Deletes an existing memory repository
