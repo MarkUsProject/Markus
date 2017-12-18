@@ -74,7 +74,7 @@ class Group < ActiveRecord::Base
     # For more info about the exception
     # See 'self.create' of lib/repo/subversion_repository.rb.
     begin
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+      Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
       errors.add(:base, self.repo_name)
@@ -98,15 +98,13 @@ class Group < ActiveRecord::Base
     Ta.all.each do |ta|
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
-    group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
+    Repository.get_class.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
     true
   end
 
   def repo_loc
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    unless repo_class.repository_exists?(repo_loc)
+    unless Repository.get_class.repository_exists?(repo_loc)
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end
     repo_loc
@@ -114,13 +112,11 @@ class Group < ActiveRecord::Base
 
   # Return a repository object, if possible
   def repo
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo_class.open(repo_loc)
+    Repository.get_class.open(repo_loc)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo_class.access(repo_loc, &block)
+    Repository.get_class.access(repo_loc, &block)
   end
 end

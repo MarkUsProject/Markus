@@ -123,8 +123,7 @@ class SplitPDFJob < ActiveJob::Base
       )
 
       # Update repository permissions
-      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-      repo.__set_all_permissions
+      Repository.get_class.__set_all_permissions
 
       m_logger.log('Split pdf process done')
       return split_pdf_log

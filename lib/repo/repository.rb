@@ -369,18 +369,19 @@ module Repository
   require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
   require_dependency File.join(File.dirname(__FILE__), 'git_repository')
 
-  # Returns a repository class of the requested type,
-  # which implements AbstractRepository
-  def Repository.get_class(repo_type)
+  # Gets the configured repository implementation
+  def self.get_class
+    repo_type = MarkusConfigurator.markus_config_repository_type
     case repo_type
-      when "svn"
+      when 'svn'
         return SubversionRepository
-      when "memory"
+      when 'memory'
         return MemoryRepository
-      when "git"
+      when 'git'
         return GitRepository
       else
         raise "Repository implementation not found: #{repo_type}"
     end
   end
+
 end # end module Repository

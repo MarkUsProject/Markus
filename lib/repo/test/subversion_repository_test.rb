@@ -81,9 +81,9 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       conf_admin["IS_REPOSITORY_ADMIN"] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       # create repository first
-      Repository.get_class("svn", conf_admin).create(TEST_REPO)
+      SubversionRepository.create(TEST_REPO)
       # open the repository
-      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)
+      @repo = SubversionRepository.open(TEST_REPO)
     end
 
     # removes the SVN repository at TEST_REPO
@@ -394,17 +394,17 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       conf_admin = Hash.new
       conf_admin["IS_REPOSITORY_ADMIN"] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
-      Repository.get_class("svn", conf_admin).create(repo1)
-      Repository.get_class("svn", conf_admin).create(repo2)
-      Repository.get_class("svn", conf_admin).create(TEST_REPO)
+      SubversionRepository.create(repo1)
+      SubversionRepository.create(repo2)
+      SubversionRepository.create(TEST_REPO)
       # open the repository
       conf_non_admin = Hash.new
       conf_non_admin["IS_REPOSITORY_ADMIN"] = false
       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
 
-      @repo1 = Repository.get_class("svn", conf_non_admin).open(repo1) # non-admin repository
-      @repo2 = Repository.get_class("svn", conf_non_admin).open(repo2) # again, a non-admin repo
-      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)     # repo with admin-privs
+      @repo1 = SubversionRepository.open(repo1) # non-admin repository
+      @repo2 = SubversionRepository.open(repo2) # again, a non-admin repo
+      @repo = SubversionRepository.open(TEST_REPO)     # repo with admin-privs
 
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
@@ -623,8 +623,8 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       conf_admin["IS_REPOSITORY_ADMIN"] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       repository_names.each do |repo_name|
-        Repository.get_class("svn", conf_admin).create(repo_name)
-        repo = Repository.get_class("svn", conf_admin).open(repo_name)
+        SubversionRepository.create(repo_name)
+        repo = SubversionRepository.open(repo_name)
         repo.add_user("some_user", Repository::Permission::READ_WRITE)
         repo.add_user("another_user", Repository::Permission::READ_WRITE)
         repositories.push(repo)
@@ -657,7 +657,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       conf = Hash.new
       conf["REPOSITORY_PERMISSION_FILE"] = 'something'
       assert_raise(ConfigurationError) do
-        Repository.get_class("svn", conf) # missing a required constant
+        Repository.get_class # missing a required constant
       end
     end
   end # end context
@@ -679,8 +679,8 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
       @repositories = []
       @repository_names.each do |repo_name|
-        Repository.get_class("svn", @conf_admin).create(SVN_TEST_REPOS_DIR + "/" + repo_name)
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        SubversionRepository.create(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name)
         @repositories.push(repo)
       end
     end
@@ -708,7 +708,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name)
         assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
         assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))
         repo.close()
@@ -719,7 +719,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
       # Test to make sure they got attached to each repository
       @repository_names.each do |repo_name|
-        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name)
         assert_raises Repository::UserNotFound do
           repo.get_permissions("test_user")
         end

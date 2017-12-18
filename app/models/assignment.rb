@@ -393,8 +393,7 @@ class Assignment < ActiveRecord::Base
         end
       end
       # update all permissions at once
-      repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-      repo_class.__set_all_permissions
+      Repository.get_class.__set_all_permissions
     end
 
     warnings
@@ -954,9 +953,7 @@ class Assignment < ActiveRecord::Base
     # only create if we can add starter code
     return true unless can_upload_starter_code?
     begin
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-                .create(File.join(MarkusConfigurator.markus_config_repository_storage,
-                                  repository_name))
+      Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
       errors.add(:base, self.repo_name)
@@ -969,9 +966,8 @@ class Assignment < ActiveRecord::Base
   end
 
   def repo_loc
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    unless repo_class.repository_exists?(repo_loc)
+    unless Repository.get_class.repository_exists?(repo_loc)
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end
     repo_loc
@@ -979,14 +975,12 @@ class Assignment < ActiveRecord::Base
 
   # Return a repository object, if possible
   def repo
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo_class.open(repo_loc)
+    Repository.get_class.open(repo_loc)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
-    repo_class = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo_class.access(repo_loc, &block)
+    Repository.get_class.access(repo_loc, &block)
   end
 
   ### /REPO ###
@@ -1140,8 +1134,7 @@ class Assignment < ActiveRecord::Base
 
   def update_repo_auth
     if self.vcs_submit_was != self.vcs_submit
-      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-      repo.__set_all_permissions
+      Repository.get_class.__set_all_permissions
     end
   end
 
