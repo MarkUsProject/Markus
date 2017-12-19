@@ -97,7 +97,6 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'spring'
-  gem 'debugger', :platforms => :mri_19
   gem 'quiet_assets'
   gem 'bullet'
 end
@@ -111,13 +110,14 @@ group :test do
   gem 'time-warp'
   gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
+  gem 'rails-controller-testing'
 end
 
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
   gem 'byebug', :platforms => [:mri_20, :mri_21, :mri_22, :mri_23]
-  gem "rspec-rails", '~> 3.0'
+  gem "rspec-rails", '~> 3.5'
 end
 
 # Gems needed (wanted) for development, test and production_test
