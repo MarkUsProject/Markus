@@ -1,5 +1,4 @@
-class SplitPDFJob < ActiveJob::Base
-  include ActiveJob::Status
+class SplitPDFJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 

@@ -1,5 +1,4 @@
-class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
-  include ActiveJob::Status
+class CreateIndividualGroupsForAllStudentsJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_create_individual_groups_queue_name
 
