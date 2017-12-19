@@ -1,4 +1,4 @@
-class Result < ActiveRecord::Base
+class Result < ApplicationRecord
 
   MARKING_STATES = {
     complete: 'complete',

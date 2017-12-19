@@ -1,4 +1,4 @@
-class AnnotationText < ActiveRecord::Base
+class AnnotationText < ApplicationRecord
 
   belongs_to :user, foreign_key: :creator_id
 

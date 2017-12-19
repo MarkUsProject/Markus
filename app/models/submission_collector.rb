@@ -16,7 +16,7 @@
 #
 # Both queues are stored in the database to allow for easy parent-child
 # process communication bypassing the need for pipes or signals.
-class SubmissionCollector < ActiveRecord::Base
+class SubmissionCollector < ApplicationRecord
 
   has_many :grouping_queues, dependent: :destroy
 
@@ -40,7 +40,7 @@ class SubmissionCollector < ActiveRecord::Base
   def uncollect_submissions(assignment)
     submissions = assignment.submissions
     old_submissions = submissions.where(submission_version_used: true)
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       old_submissions.each do |submission|
         grouping = submission.grouping
         grouping.update_attributes(grouping_queue_id: nil, is_collected: false)

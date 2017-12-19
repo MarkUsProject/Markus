@@ -1,4 +1,4 @@
-class SubmissionFile < ActiveRecord::Base
+class SubmissionFile < ApplicationRecord
 
   # Only allow alphanumeric characters, '.', '-', and '_' as
   # character set for submission files.

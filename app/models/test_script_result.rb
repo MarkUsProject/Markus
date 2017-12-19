@@ -18,7 +18,7 @@
 #   updated_at:         time when this model is modified
 #############################################################
 
-class TestScriptResult < ActiveRecord::Base
+class TestScriptResult < ApplicationRecord
   belongs_to :submission, required: false
   belongs_to :test_script
   belongs_to :grouping

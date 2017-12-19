@@ -1,4 +1,4 @@
-# ActiveRecord::Base mixin to configure MarkUs
+# ApplicationRecord mixin to configure MarkUs
 # All descendants have the following methods available
 
 module MarkusConfigurator

@@ -1,4 +1,4 @@
-class Period < ActiveRecord::Base
+class Period < ApplicationRecord
   attr_accessor :submission_rule_type
 
   belongs_to :submission_rule, polymorphic: true

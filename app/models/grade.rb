@@ -1,5 +1,5 @@
 # Grade represents an entry in a grade entry form.
-class Grade < ActiveRecord::Base
+class Grade < ApplicationRecord
 
   belongs_to :grade_entry_item
   validates_associated :grade_entry_item

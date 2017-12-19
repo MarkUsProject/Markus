@@ -1,2 +1,2 @@
-class KeyPair < ActiveRecord::Base
+class KeyPair < ApplicationRecord
 end

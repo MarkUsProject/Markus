@@ -1,6 +1,6 @@
 # The abstract base class that defines common behavior for all types of
 # criterion.
-class Criterion < ActiveRecord::Base
+class Criterion < ApplicationRecord
   after_save :scale_marks_when_max_mark_updated
 
   has_many :criteria_assignment_files_joins,

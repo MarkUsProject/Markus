@@ -1,4 +1,4 @@
-class SectionDueDate < ActiveRecord::Base
+class SectionDueDate < ApplicationRecord
   belongs_to :section
   belongs_to :assignment
 

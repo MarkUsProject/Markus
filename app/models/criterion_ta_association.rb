@@ -1,4 +1,4 @@
-class CriterionTaAssociation < ActiveRecord::Base
+class CriterionTaAssociation < ApplicationRecord
 
   belongs_to              :ta
   validates_presence_of   :ta_id

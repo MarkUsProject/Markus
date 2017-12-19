@@ -1,4 +1,4 @@
-class TestFile < ActiveRecord::Base
+class TestFile < ApplicationRecord
   belongs_to :assignment
 
   # Run sanitize_filename before saving to the database

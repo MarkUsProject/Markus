@@ -1,4 +1,4 @@
-class Section < ActiveRecord::Base
+class Section < ApplicationRecord
   validates :name, presence: true, uniqueness: true, allow_blank: false
   has_many :students
   has_many :section_due_dates

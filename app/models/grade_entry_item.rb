@@ -2,7 +2,7 @@ require 'histogram/array'
 
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
-class GradeEntryItem < ActiveRecord::Base
+class GradeEntryItem < ApplicationRecord
 
   belongs_to :grade_entry_form
   validates_associated :grade_entry_form

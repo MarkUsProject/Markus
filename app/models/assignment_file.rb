@@ -1,4 +1,4 @@
-class AssignmentFile < ActiveRecord::Base
+class AssignmentFile < ApplicationRecord
 
   belongs_to :assignment
   has_many :criteria_assignment_files_joins, dependent: :destroy

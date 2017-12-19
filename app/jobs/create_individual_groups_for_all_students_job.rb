@@ -31,7 +31,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
       end
 
       begin
-        ActiveRecord::Base.transaction do
+        ApplicationRecord.transaction do
           # If an individual repo has already been created for this user
           # then just use that one.
           group = Group.find_by(group_name: student.user_name)

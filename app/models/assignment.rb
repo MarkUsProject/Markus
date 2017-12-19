@@ -2,7 +2,7 @@ require 'csv_invalid_line_error'
 require 'descriptive_statistics'
 require 'histogram/array'
 
-class Assignment < ActiveRecord::Base
+class Assignment < ApplicationRecord
   include RepositoryHelper
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
