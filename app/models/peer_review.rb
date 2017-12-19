@@ -1,6 +1,6 @@
 require 'set'
 
-class PeerReview < ActiveRecord::Base
+class PeerReview < ApplicationRecord
   belongs_to :result
   belongs_to :reviewer, class_name: 'Grouping'
 

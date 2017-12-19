@@ -408,7 +408,7 @@ class GradeEntryFormsController < ApplicationController
           to_upsert.append([selector, setter])
         end
       end
-      Upsert.batch(ActiveRecord::Base.connection, Grade.table_name) do |upsert|
+      Upsert.batch(ApplicationRecord.connection, Grade.table_name) do |upsert|
         to_upsert.each do |selector, setter|
           upsert.row(selector, setter)
         end

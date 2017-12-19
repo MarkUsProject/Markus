@@ -1,4 +1,4 @@
-class AnnotationCategory < ActiveRecord::Base
+class AnnotationCategory < ApplicationRecord
   has_many :annotation_texts, dependent: :destroy
 
   validates_presence_of :annotation_category_name

@@ -115,7 +115,7 @@ class Student < User
   # creates a group and a grouping for a student to work alone, for
   # assignment aid
   def create_group_for_working_alone_student(aid)
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       @assignment = Assignment.find(aid)
       @grouping = Grouping.new
       @grouping.assignment_id = @assignment.id

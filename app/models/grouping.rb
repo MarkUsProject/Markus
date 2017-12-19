@@ -5,7 +5,7 @@ require 'set'
 require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
 
 # Represents a collection of students working together on an assignment in a group
-class Grouping < ActiveRecord::Base
+class Grouping < ApplicationRecord
 
   before_create :create_grouping_repository_folder
 

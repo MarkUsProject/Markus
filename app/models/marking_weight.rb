@@ -1,4 +1,4 @@
-class MarkingWeight < ActiveRecord::Base
+class MarkingWeight < ApplicationRecord
   belongs_to :marking_scheme
 
   def get_gradable_item

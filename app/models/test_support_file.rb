@@ -7,33 +7,33 @@
 # testing. MarkUs does not interpret a test support file.
 #
 # The attributes of test_support_files are:
-#   file_name:      name of the support file. 
+#   file_name:      name of the support file.
 #   assignment_id:  id of the assignment
 #   description:    a brief description of the purpose of the
 #                   file.
 #############################################################
 
-class TestSupportFile < ActiveRecord::Base
+class TestSupportFile < ApplicationRecord
   belongs_to :assignment
-  
+
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
-  
+
   # Upon update, if replacing a file with a different name, delete the old file first
   before_update :delete_old_file
-  
+
   # Run write_file after saving to the database
   after_save :write_file
-  
+
   # Run delete_file method after removal from db
   after_destroy :delete_file
-  
+
   validates_presence_of :assignment
   validates_associated :assignment
-  
+
   validates_presence_of :file_name
   validates_presence_of :description, if: "description.nil?"
-  
+
   # validates the uniqueness of file_name for the same assignment
   validates_each :file_name do |record, attr, value|
     # Extract file_name
@@ -47,10 +47,10 @@ class TestSupportFile < ActiveRecord::Base
       record.errors.add attr, ' ' + name + ' ' + I18n.t("automated_tests.filename_exists")
     end
   end
-  
+
   # All callback methods are protected methods
   protected
-  
+
   # Save the full test file path and sanitize the filename for the database
   def sanitize_filename
     # Execute only when full file path exists (indicating a new File object)

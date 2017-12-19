@@ -1,5 +1,5 @@
 # Join model that associates a grade entry student and a TA.
-class GradeEntryStudentTa < ActiveRecord::Base
+class GradeEntryStudentTa < ApplicationRecord
   self.table_name = 'grade_entry_students_tas'
 
   belongs_to :grade_entry_student

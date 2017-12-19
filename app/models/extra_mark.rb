@@ -1,4 +1,4 @@
-class ExtraMark < ActiveRecord::Base
+class ExtraMark < ApplicationRecord
   # When a mark is created, or updated, we need to make sure that that
   # Result that it belongs to has a marking_state of "partial".
   before_save :ensure_not_released_to_students

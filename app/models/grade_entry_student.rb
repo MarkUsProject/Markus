@@ -2,7 +2,7 @@ require 'encoding'
 
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
-class GradeEntryStudent < ActiveRecord::Base
+class GradeEntryStudent < ApplicationRecord
   attr_accessor :total_grade
 
   belongs_to :user

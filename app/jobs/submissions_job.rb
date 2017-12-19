@@ -1,5 +1,4 @@
-class SubmissionsJob < ActiveJob::Base
-  include ActiveJob::Status
+class SubmissionsJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 

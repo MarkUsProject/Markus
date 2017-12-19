@@ -1,7 +1,7 @@
 #
 # NOTE: This is not a Queue Data Structure
 #
-class GroupingQueue < ActiveRecord::Base
+class GroupingQueue < ApplicationRecord
   belongs_to :submission_collector, dependent: :destroy
   has_many :groupings
 

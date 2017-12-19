@@ -1,4 +1,4 @@
-class SubmissionRule < ActiveRecord::Base
+class SubmissionRule < ApplicationRecord
 
   class InvalidRuleType < Exception
     def initialize(rule_name)

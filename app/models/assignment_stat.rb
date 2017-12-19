@@ -1,4 +1,4 @@
-class AssignmentStat < ActiveRecord::Base
+class AssignmentStat < ApplicationRecord
 
   belongs_to :assignment
 

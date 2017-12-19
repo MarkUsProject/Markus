@@ -1,5 +1,4 @@
-class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
-  include ActiveJob::Status
+class CreateIndividualGroupsForAllStudentsJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_create_individual_groups_queue_name
 
@@ -31,7 +30,7 @@ class CreateIndividualGroupsForAllStudentsJob < ActiveJob::Base
       end
 
       begin
-        ActiveRecord::Base.transaction do
+        ApplicationRecord.transaction do
           # If an individual repo has already been created for this user
           # then just use that one.
           group = Group.find_by(group_name: student.user_name)
