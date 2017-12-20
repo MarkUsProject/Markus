@@ -1,14 +1,11 @@
 module AutomatedTestsClientHelper
-  # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
-  # and it is waiting for the submission files to be copied in the test location. Resque manages this queue.
-  @queue = MarkusConfigurator.markus_ate_files_queue_name
 
   def create_test_repo(assignment)
     # Create the automated test repository
-    unless File.exist?(MarkusConfigurator.markus_ate_client_dir)
-      FileUtils.mkdir(MarkusConfigurator.markus_ate_client_dir)
+    unless File.exist?(MarkusConfigurator.autotest_client_dir)
+      FileUtils.mkdir(MarkusConfigurator.autotest_client_dir)
     end
-    test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
     unless File.exist?(test_dir)
       FileUtils.mkdir(test_dir)
     end
@@ -54,7 +51,7 @@ module AutomatedTestsClientHelper
         raise I18n.t('automated_tests.duplicate_filename') + new_file_name
       end
       updated_form_file[:file_name] = new_file_name
-      new_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, new_file_name)
+      new_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, new_file_name)
       files.push({path: new_file_path, upload: new_file})
     # 5) Possibly replace existing test file
     else
@@ -63,10 +60,10 @@ module AutomatedTestsClientHelper
       upd_file = params[("#{upd_name}_#{old_file_name}").to_sym]
       upd_file_name = upd_file.original_filename
       updated_form_file[:file_name] = upd_file_name
-      mod_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, upd_file_name)
+      mod_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, upd_file_name)
       f = {path: mod_file_path, upload: upd_file}
       unless upd_file_name == old_file_name
-        old_file_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder, old_file_name)
+        old_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, old_file_name)
         f[:delete] = old_file_path
       end
       files.push(f)
@@ -122,8 +119,8 @@ module AutomatedTestsClientHelper
   def self.export_group_repo(group, repo_dir, submission = nil)
 
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.markus_ate_client_dir)
-      FileUtils.mkdir(MarkusConfigurator.markus_ate_client_dir)
+    unless File.exists?(MarkusConfigurator.autotest_client_dir)
+      FileUtils.mkdir(MarkusConfigurator.autotest_client_dir)
     end
     # Delete student's assignment repository if it already exists
     # TODO clean up in client worker, or try to optimize if revision is the same?
@@ -147,7 +144,7 @@ module AutomatedTestsClientHelper
   end
 
   def self.get_test_server_user
-    test_server_host = MarkusConfigurator.markus_ate_server_host
+    test_server_host = MarkusConfigurator.autotest_server_host
     test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
       raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
@@ -175,7 +172,7 @@ module AutomatedTestsClientHelper
     # student checks from now on
 
     # student tests enabled
-    unless MarkusConfigurator.markus_ate_student_tests_on?
+    unless MarkusConfigurator.autotest_student_tests_on?
       raise I18n.t('automated_tests.error.not_enabled')
     end
     # student belongs to the grouping
@@ -198,7 +195,7 @@ module AutomatedTestsClientHelper
   def self.get_test_scripts(assignment, user)
 
     # No test directory or test files
-    test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
     unless File.exist?(test_dir)
       raise I18n.t('automated_tests.error.no_test_files')
     end
@@ -236,11 +233,11 @@ module AutomatedTestsClientHelper
     # if current_user is an instructor, then a submission exists and we use that repo revision
     # if current_user is a student, then we use the latest repo revision
     group = grouping.group
-    repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
+    repo_dir = File.join(MarkusConfigurator.autotest_client_dir, group.repo_name)
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, submission)
-    ATEFilesJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key, grouping_id,
-                              submission_id)
+    AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key,
+                                 grouping_id, submission_id)
   end
 
 end

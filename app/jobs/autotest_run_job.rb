@@ -1,6 +1,8 @@
-class ATEFilesJob < ActiveJob::Base
+class AutotestRunJob < ActiveJob::Base
 
-  queue_as MarkusConfigurator.markus_ate_files_queue_name
+  # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
+  # and it is waiting for the submission files to be copied to the test location.
+  queue_as MarkusConfigurator.autotest_run_queue
 
   # Verify that MarkUs has student files to run the test.
   # Note: this does not guarantee all required files are presented.
@@ -16,7 +18,7 @@ class ATEFilesJob < ActiveJob::Base
   end
 
   def get_concurrent_tests_config
-    server_tests_config = MarkusConfigurator.markus_ate_server_tests
+    server_tests_config = MarkusConfigurator.autotest_server_tests
     i = 0
     if server_tests_config.length > 1 # concurrent tests for real
       i = Rails.cache.fetch('ate_server_tests_i') { 0 }
@@ -33,7 +35,7 @@ class ATEFilesJob < ActiveJob::Base
     group = grouping.group
 
     # create empty test results for no submission files
-    repo_dir = File.join(MarkusConfigurator.markus_ate_client_dir, group.repo_name)
+    repo_dir = File.join(MarkusConfigurator.autotest_client_dir, group.repo_name)
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
@@ -44,19 +46,19 @@ class ATEFilesJob < ActiveJob::Base
     end
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
-    assignment_tests_path = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.repository_folder)
+    assignment_tests_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder)
     markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
       host_with_port :
       host_with_port + Rails.application.config.action_controller.relative_url_root
-    test_server_host = MarkusConfigurator.markus_ate_server_host
+    test_server_host = MarkusConfigurator.autotest_server_host
     test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil?
       return
     end
     tests_config = get_concurrent_tests_config
-    files_path = MarkusConfigurator.markus_ate_server_files_dir
-    results_path = MarkusConfigurator.markus_ate_server_results_dir
-    file_username = MarkusConfigurator.markus_ate_server_files_username
+    files_path = MarkusConfigurator.autotest_server_files_dir
+    results_path = MarkusConfigurator.autotest_server_results_dir
+    file_username = MarkusConfigurator.autotest_server_files_username
     test_username = tests_config[:user]
     if test_server_host == 'localhost' || file_username == test_username
       test_username = nil
