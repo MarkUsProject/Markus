@@ -728,7 +728,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       @repositories = []
       @repository_names.each do |repo_name|
         GitRepository.create(GIT_TEST_REPOS_DIR + "/" + repo_name)
-        repo = GitRepositoryGitRepository.open(GIT_TEST_REPOS_DIR + "/" + repo_name)
+        repo = GitRepository.open(GIT_TEST_REPOS_DIR + "/" + repo_name)
         @repositories.push(repo)
       end
     end
