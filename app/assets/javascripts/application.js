@@ -15,45 +15,6 @@
 //= require job_poller
 
 
-/** Modal windows, powered by jQuery.easyModal. */
-
-function ModalMarkus(elem, openLink) {
-  this.modal_dialog = $(elem).easyModal({
-    onOpen: function (myModal) {
-     // wait for the modal to load
-     setTimeout(function () {
-       // search for elements that can receive text as input
-       var inputs = $(myModal).find('textarea, input:text');
-       if (inputs.length > 0) {
-         inputs[0].focus();
-       }
-     }, 200);
-    },
-    updateZIndexOnOpen: false
-  });
-
-  // If link is provided, bind its onclick to open this modal.
-  if (openLink !== undefined) {
-    $(openLink).click(function () {
-      this.open();
-    }.bind(this))
-  }
-
-  // Set callbacks for buttons to close the modal.
-  this.modal_dialog.find('.make_div_clickable, [type=reset]').click(function () {
-    this.close();
-  }.bind(this));
-}
-
-ModalMarkus.prototype.open = function() {
-  this.modal_dialog.trigger('openModal');
-}
-
-ModalMarkus.prototype.close = function() {
-  this.modal_dialog.trigger('closeModal');
-}
-
-
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
 Element.prototype.addClass = function(className) {

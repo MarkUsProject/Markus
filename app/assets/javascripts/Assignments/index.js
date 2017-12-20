@@ -1,8 +1,3 @@
-$(document).ready(function () {
-  new ModalMarkus('#upload_dialog', '#uploadModal');
-  new ModalMarkus('#download_dialog', '#downloadModal')
-});
-
 function choose_upload(value) {
   document.getElementById('file_format').value = value;
 }

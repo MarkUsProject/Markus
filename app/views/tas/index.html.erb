@@ -1,6 +1,5 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'users_manager',
-                             'Tas/index' %>
+  <%= javascript_include_tag 'users_manager' %>
   <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>

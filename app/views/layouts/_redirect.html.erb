@@ -3,6 +3,8 @@
     <p><strong><%= t(:session_expired)%></strong></p>
     <br>
     <%= button_tag t(:log_in), class: 'submit' %>
-    <%= button_tag t(:cancel), class: 'cancel' %>
+    <section class='dialog-actions'>
+      <input type='reset' value='<%= t(:cancel) %>' />
+    </section>
   <% end %>
 </div>

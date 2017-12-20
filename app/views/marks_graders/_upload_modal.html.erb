@@ -1,7 +1,8 @@
 <%= content_for :modal_id, 'upload_dialog' %>
 <%= content_for :modal_title, t('marks_graders.upload.upload_grader_map') %>
-<%= content_for :modal_content do %>
+<%= content_for :modal_open_link, '#uploadModal' %>
 
+<%= content_for :modal_content do %>
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',

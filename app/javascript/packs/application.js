@@ -12,3 +12,8 @@ import 'javascripts/layouts';
 import 'javascripts/menu';
 import 'javascripts/check_timeout';
 import 'javascripts/redirect';
+
+import { ModalMarkus } from 'javascripts/modals';
+
+// TODO: We shouldn't need to make this a global export.
+window.ModalMarkus = ModalMarkus;
