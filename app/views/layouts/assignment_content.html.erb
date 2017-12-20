@@ -7,10 +7,6 @@
   <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/react.min.js',
                              'https://cdnjs.cloudflare.com/ajax/libs/react/0.11.0/JSXTransformer.js' %>
   <%= javascript_include_tag 'application' %>
-  <% # UI LIBRARIES %>
-  <%= javascript_include_tag 'menu',
-                             'layouts',
-                             'help-system' %>
   <%= javascript_pack_tag 'application' %>
   <%= yield :head %>
 </head>
@@ -58,15 +54,5 @@
   </div>
   <%= render partial: 'layouts/footer' %>
 </div>
-
-<%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
-
-<script>
-  $(document).ready(function($) {
-    setInterval(function() {
-      $.get('<%= check_timeout_main_index_path %>');
-    }, 120000);
-  });
-</script>
 </body>
 </html>
