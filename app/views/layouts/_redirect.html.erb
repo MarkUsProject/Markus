@@ -1,8 +1,10 @@
 <div id="redirect_dialog" style="display:none;">
   <%= form_tag do %>
-    <p><strong><%= I18n.t(:session_expired)%></strong></p>
+    <p><strong><%= t(:session_expired)%></strong></p>
     <br>
-    <%= button_tag I18n.t(:log_in), onclick: 'redirectToLogin()' %>
-    <%= button_tag I18n.t(:cancel), onclick: 'redirect_modal.close()' %>
+    <%= button_tag t(:log_in), class: 'submit' %>
+    <section class='dialog-actions'>
+      <input type='reset' value='<%= t(:cancel) %>' />
+    </section>
   <% end %>
 </div>
