@@ -47,9 +47,7 @@ namespace :db do
         end
       end
     end
-    # This really should be done in a more generic way
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo.__set_all_permissions
+    Repository.get_class.__set_all_permissions
   end
 
   def copy_dir(seed_dir, txn, repo_dir)

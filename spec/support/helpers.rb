@@ -13,6 +13,6 @@ module Helpers
 
   # Reset the repos to empty
   def destroy_repos
-    Repository.get_class(REPOSITORY_TYPE).purge_all
+    Repository.get_class.purge_all
   end
 end

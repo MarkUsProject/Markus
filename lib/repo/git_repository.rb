@@ -122,6 +122,7 @@ module Repository
     def self.access(connect_string)
       repo = GitRepository.open(connect_string)
       yield repo
+    ensure
       repo.close
     end
 

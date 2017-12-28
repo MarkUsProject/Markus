@@ -256,8 +256,7 @@ class GroupsController < ApplicationController
       # for performance reasons. Because the groups are being created as part of
       # this transaction, the race condition of the repos being created before the
       # permissions are set should not be a problem.
-      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-      repo.__set_all_permissions
+      Repository.get_class.__set_all_permissions
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
     end

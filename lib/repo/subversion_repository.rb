@@ -90,6 +90,7 @@ module Repository
     def self.access(connect_string)
       repository = self.open(connect_string)
       yield repository
+    ensure
       repository.close
     end
 
