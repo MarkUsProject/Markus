@@ -23,7 +23,7 @@ module EnsureConfigHelper
     check_writable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
     check_readable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
     check_executable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
-    check_in_writable_dir(MarkusConfigurator.markus_ate_client_dir, 'automated_tests_REPOSITORY')
+    check_in_writable_dir(MarkusConfigurator.autotest_client_dir, 'autotest_REPOSITORY')
     check_configured_default_language(MarkusConfigurator.markus_config_default_language)
     ensure_logout_redirect_link_valid
     unless RUBY_PLATFORM =~ /(:?mswin|mingw)/  # should match for Windows only

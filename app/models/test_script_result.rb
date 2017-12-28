@@ -38,4 +38,68 @@ class TestScriptResult < ActiveRecord::Base
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
   validates_numericality_of :time, only_integer: true, greater_than_or_equal_to: 0
 
+  def create_test_result(name, input, actual, expected, marks_earned, marks_total, status)
+    self.test_results.create(
+      name: name,
+      input: CGI.unescapeHTML(input),
+      actual_output: CGI.unescapeHTML(actual),
+      expected_output: CGI.unescapeHTML(expected),
+      marks_earned: marks_earned,
+      marks_total: marks_total,
+      completion_status: status)
+  end
+
+  def create_test_error_result(name, message)
+    create_test_result(name, '', message, '', 0.0, 0.0, 'error')
+  end
+
+  def create_test_result_from_xml(xml)
+    test_name = xml['name']
+    if test_name.nil?
+      create_test_error_result(I18n.t('automated_tests.test_result.unknown_test'),
+                               I18n.t('automated_tests.test_result.bad_results', {xml: xml}))
+      raise 'Malformed xml'
+    end
+
+    input = xml['input'].nil? ? '' : xml['input']
+    expected = xml['expected'].nil? ? '' : xml['expected']
+    actual = xml['actual'].nil? ? '' : xml['actual']
+    status = xml['status']
+    # check first if we have to stop
+    if !status.nil? && status == 'error_all'
+      status = 'error'
+      stop_processing = true
+    else
+      stop_processing = false
+    end
+    # look for all status and marks errors (but only the last message will be shown)
+    if xml['marks_earned'].nil?
+      actual = I18n.t('automated_tests.test_result.bad_marks_earned') unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
+    else
+      marks_earned = xml['marks_earned'].to_f
+    end
+    if xml['marks_total'].nil?
+      actual = I18n.t('automated_tests.test_result.bad_marks_total') unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
+      marks_total = 0.0
+    else
+      marks_total = xml['marks_total'].to_f
+    end
+    if status.nil? || !status.in?(%w(pass partial fail error))
+      actual = I18n.t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
+      status = 'error'
+      marks_earned = 0.0
+    end
+
+    create_test_result(test_name, input, actual, expected, marks_earned, marks_total, status)
+    if stop_processing
+      raise 'Test script reported a serious failure'
+    end
+
+    return marks_earned, marks_total
+  end
+
 end
