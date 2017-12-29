@@ -212,11 +212,11 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @marking_schemes = MarkingScheme.all
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
       @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
       @assignments = Assignment.where(is_hidden: false).order(:id)
+      @marking_schemes = MarkingScheme.none
       #get the section of current user
       @section = current_user.section
       # get results for assignments for the current user
@@ -251,10 +251,12 @@ class AssignmentsController < ApplicationController
       @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
       render :grader_index, layout: 'assignment_content'
+      @marking_schemes = MarkingScheme.all
     else
       @grade_entry_forms = GradeEntryForm.order(:id)
       @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index, layout: 'assignment_content'
+      @marking_schemes = MarkingScheme.all
     end
   end
 
