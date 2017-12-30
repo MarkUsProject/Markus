@@ -8,9 +8,9 @@ class CourseSummariesController < ApplicationController
 
   def index
     @assignments = Assignment.all
+    @grade_entry_forms = GradeEntryForm.all
     @marking_schemes = MarkingScheme.all
     @marking_weights = MarkingWeight.all
-    @grade_entry_forms = GradeEntryForm.all
   end
 
   def populate
