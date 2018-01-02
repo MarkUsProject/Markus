@@ -438,7 +438,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
 
     should "raise an exception if not properly configured" do
       assert_raise(ConfigurationError) do
-        Repository.get_class("memory") # missing required REPOSITORY_PERMISSION_FILE
+        Repository.get_class # missing required REPOSITORY_PERMISSION_FILE
       end
     end
 

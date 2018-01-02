@@ -240,71 +240,71 @@ module MarkusConfigurator
   # Automated Testing Engine Configuration
   ##########################################
 
-  def automated_testing_engine_on?
-    return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
+  def autotest_on?
+    (defined? AUTOTEST_ON) && AUTOTEST_ON == true
   end
 
-  def markus_ate_student_tests_on?
-    if automated_testing_engine_on? && (defined? ATE_STUDENT_TESTS_ON)
-      ATE_STUDENT_TESTS_ON
+  def autotest_student_tests_on?
+    if autotest_on? && (defined? AUTOTEST_STUDENT_TESTS_ON)
+      AUTOTEST_STUDENT_TESTS_ON
     else
       false
     end
   end
 
-  def markus_ate_student_tests_buffer_time
-    if markus_ate_student_tests_on? && (defined? ATE_STUDENT_TESTS_BUFFER_TIME)
-      ATE_STUDENT_TESTS_BUFFER_TIME
+  def autotest_student_tests_buffer_time
+    if autotest_student_tests_on? && (defined? AUTOTEST_STUDENT_TESTS_BUFFER_TIME)
+      AUTOTEST_STUDENT_TESTS_BUFFER_TIME
     else
       1.hour
     end
   end
 
-  def markus_ate_client_dir
-    if automated_testing_engine_on? && (defined? ATE_CLIENT_DIR)
-      return ATE_CLIENT_DIR
+  def autotest_client_dir
+    if autotest_on? && (defined? AUTOTEST_CLIENT_DIR)
+      AUTOTEST_CLIENT_DIR
     else
-      return File.join(::Rails.root.to_s, 'automated_tests')
+      File.join(::Rails.root.to_s, 'autotest')
     end
   end
 
-  def markus_ate_server_host
-    if automated_testing_engine_on? && (defined? ATE_SERVER_HOST)
-      return ATE_SERVER_HOST
+  def autotest_server_host
+    if autotest_on? && (defined? AUTOTEST_SERVER_HOST)
+      AUTOTEST_SERVER_HOST
     else
-      return 'localhost'
+      'localhost'
     end
   end
 
-  def markus_ate_server_files_username
-    if automated_testing_engine_on? && (defined? ATE_SERVER_FILES_USERNAME)
-      return ATE_SERVER_FILES_USERNAME
+  def autotest_server_files_username
+    if autotest_on? && (defined? AUTOTEST_SERVER_FILES_USERNAME)
+      AUTOTEST_SERVER_FILES_USERNAME
     else
-      return 'localhost'
+      'localhost'
     end
   end
 
-  def markus_ate_server_files_dir
-    if automated_testing_engine_on? && (defined? ATE_SERVER_FILES_DIR)
-      return ATE_SERVER_FILES_DIR
+  def autotest_server_files_dir
+    if autotest_on? && (defined? AUTOTEST_SERVER_FILES_DIR)
+      AUTOTEST_SERVER_FILES_DIR
     else
-      return File.join(::Rails.root.to_s, 'automated_tests', 'files')
+      File.join(::Rails.root.to_s, 'autotest', 'files')
     end
   end
 
-  def markus_ate_server_results_dir
-    if automated_testing_engine_on? && (defined? ATE_SERVER_RESULTS_DIR)
-      return ATE_SERVER_RESULTS_DIR
+  def autotest_server_results_dir
+    if autotest_on? && (defined? AUTOTEST_SERVER_RESULTS_DIR)
+      AUTOTEST_SERVER_RESULTS_DIR
     else
-      return File.join(::Rails.root.to_s, 'automated_tests', 'test_runs')
+      File.join(::Rails.root.to_s, 'autotest', 'results')
     end
   end
 
-  def markus_ate_server_tests
-    if automated_testing_engine_on? && (defined? ATE_SERVER_TESTS)
-      ATE_SERVER_TESTS
+  def autotest_server_tests
+    if autotest_on? && (defined? AUTOTEST_SERVER_TESTS)
+      AUTOTEST_SERVER_TESTS
     else
-      [{user: 'localhost', dir: File.join(::Rails.root.to_s, 'automated_tests', 'tests'), queue: 'ate_tests'}]
+      [{user: 'localhost', dir: File.join(::Rails.root.to_s, 'autotest', 'tests'), queue: 'autotest'}]
     end
   end
 
@@ -353,11 +353,11 @@ module MarkusConfigurator
   # Resque Configuration
   ##########################################
 
-  def markus_ate_files_queue_name
-    if automated_testing_engine_on? && (defined? ATE_FILES_QUEUE_NAME)
-      return ATE_FILES_QUEUE_NAME
+  def autotest_run_queue
+    if autotest_on? && (defined? AUTOTEST_RUN_QUEUE)
+      AUTOTEST_RUN_QUEUE
     else
-      return 'ate_files'
+      'autotest_run'
     end
   end
 

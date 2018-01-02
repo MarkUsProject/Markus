@@ -54,7 +54,7 @@ class Token < ApplicationRecord
   # Checks whether a test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented a test result to be stored)
   def enqueued?
-    buffer_time = MarkusConfigurator.markus_ate_student_tests_buffer_time
+    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
     if self.last_used.nil? || (self.last_used + buffer_time) < Time.zone.now
       # first test or buffer time expired (in case some unhandled problem happened)
       false

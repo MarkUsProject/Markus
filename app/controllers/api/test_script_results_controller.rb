@@ -68,17 +68,15 @@ module Api
         submission = nil
         group = Group.find(params[:group_id])
         grouping = group.grouping_for_assignment(params[:assignment_id])
-        assignment = Assignment.find(params[:assignment_id])
       else
         submission = Submission.find(params[:submission_id])
         grouping = submission.grouping
-        assignment = submission.assignment
       end
       requested_by = User.find_by(api_key: params[:requested_by])
 
       begin
-        AutomatedTestsClientHelper.process_test_run(assignment, grouping, submission, requested_by,
-                                                    params[:test_scripts], params[:test_output], params[:test_errors])
+        grouping.create_test_run_from_xml(params[:test_output], params[:test_errors], params[:test_scripts],
+                                          requested_by, submission)
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -128,23 +126,20 @@ module Api
         submission = nil
         group = Group.find(params[:group_id])
         grouping = group.grouping_for_assignment(params[:assignment_id])
-        assignment = Assignment.find(params[:assignment_id])
       else
         submission = Submission.find(params[:submission_id])
         grouping = submission.grouping
-        assignment = submission.assignment
       end
       requested_by = User.find_by(api_key: params[:requested_by])
 
-      if AutomatedTestsClientHelper.process_test_run(assignment, grouping, submission, requested_by,
-                                                     params[:test_scripts], params[:test_output],
-                                                     params[:test_errors]) && test_script_result.destroy
-        render 'shared/http_status', locals: {code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
+      if grouping.create_test_run_from_xml(params[:test_output], params[:test_errors], params[:test_scripts],
+                                           requested_by, submission) && test_script_result.destroy
+        render 'shared/http_status', locals: {code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200']},
+                                     status: 200
       else
         # Some other error occurred
-        render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        render 'shared/http_status', locals: {code: '500', message: HttpStatusHelper::ERROR_CODE['message']['500']},
+                                     status: 500
       end
     end
 

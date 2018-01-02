@@ -35,14 +35,8 @@ module Repository
       @timestamps_revisions[Marshal.dump(
         Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
-      @opened = true
-
-
-      if MemoryRepository.repository_exists?(location)
-        raise RepositoryCollision.new("There is already a repository at #{location}")
-      end
+      @closed = false
       @@repositories[location] = self             # push new MemoryRepository onto repository list
-
     end
 
     # Checks if a memory repository exists at 'path'
@@ -60,10 +54,8 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
-      unless MemoryRepository.repository_exists?(location)
-        MemoryRepository.new(location) # create a repository if it doesn't exist
-      end
-      return true
+      MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
+      true
     end
 
     # Static method: Deletes an existing memory repository
@@ -297,6 +289,7 @@ module Repository
     def self.access(connect_string)
       repository = MemoryRepository.open(connect_string)
       yield repository
+    ensure
       repository.close
     end
 
@@ -304,14 +297,14 @@ module Repository
     # This does nothing except set a proper value for the closed? function
     # It is not important to close memory repositories (is it possible?)
     def close
-      @opened = false
+      @closed = true
     end
 
     # Resturns whether or not the repository is closed.
     # This will return a value corresponding to whether the open or close functions
     # have been called but is otherwise meaningless in a MemoryRepository
     def closed?
-      !@opened
+      @closed
     end
 
     # Converts a pathname to an absolute pathname

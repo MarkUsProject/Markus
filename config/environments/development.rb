@@ -265,18 +265,18 @@ Markus::Application.configure do
   # Automated Testing Engine settings
   ###################################################################
 
-  # Look at lib/automated_tests/README.md for the documentation
-  AUTOMATED_TESTING_ENGINE_ON = true
-  ATE_STUDENT_TESTS_ON = true
-  ATE_STUDENT_TESTS_BUFFER_TIME = 1.hour
-  ATE_CLIENT_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests"
-  ATE_FILES_QUEUE_NAME = 'CSC108_ate_files'
-  ATE_SERVER_HOST = 'localhost'
-  ATE_SERVER_FILES_USERNAME = 'localhost'
-  ATE_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/files"
-  ATE_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/automated_tests/test_runs"
-  ATE_SERVER_TESTS = [
-    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/dev/automated_tests/tests", queue: 'ate_tests'}]
+  # Look at https://github.com/MarkUsProject/markus-autotesting for the documentation
+  AUTOTEST_ON = true
+  AUTOTEST_STUDENT_TESTS_ON = true
+  AUTOTEST_STUDENT_TESTS_BUFFER_TIME = 1.hour
+  AUTOTEST_CLIENT_DIR = "#{::Rails.root.to_s}/data/dev/autotest"
+  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
+  AUTOTEST_SERVER_HOST = 'localhost'
+  AUTOTEST_SERVER_FILES_USERNAME = 'localhost'
+  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/dev/autotest/files"
+  AUTOTEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/autotest/results"
+  AUTOTEST_SERVER_TESTS = [
+    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/dev/autotest/tests", queue: 'autotest'}]
 
   ###################################################################
   # Exam Plugin settings

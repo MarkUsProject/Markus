@@ -50,7 +50,7 @@ class AutomatedTestsController < ApplicationController
       display_actual_output: :do_not_display
     )
     @assignment.test_support_files.build
-    @student_tests_on = MarkusConfigurator.markus_ate_student_tests_on?
+    @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
 
   def student_interface
@@ -100,7 +100,7 @@ class AutomatedTestsController < ApplicationController
       assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
 
       # the given file should be in this directory
-      should_be_in = File.join(MarkusConfigurator.markus_ate_client_dir, assn_short_id)
+      should_be_in = File.join(MarkusConfigurator.autotest_client_dir, assn_short_id)
       should_be_in = File.expand_path(should_be_in)
       filename = File.expand_path(File.join(should_be_in, filename))
 

@@ -14,16 +14,21 @@ module CourseSummariesHelper
 
   def get_student_row_information
     course_information
-    [get_student_information(@current_user)].to_json
+    [get_student_information(@current_user, false)].to_json
   end
 
   def course_information
     @all_assignments = Assignment.all
     @all_grade_entry_forms = GradeEntryForm.all
-    @all_schemes = MarkingScheme.all
-
-    @weights = get_marking_weights_for_all_marking_schemes
-    @gef_weights = get_gef_marking_weights_for_all_marking_schemes
+    if @current_user && @current_user.student?
+      @all_schemes = MarkingScheme.none
+      @weights = {}
+      @gef_weights = {}
+    else
+      @all_schemes = MarkingScheme.all
+      @weights = get_marking_weights_for_all_marking_schemes
+      @gef_weights = get_gef_marking_weights_for_all_marking_schemes
+    end
 
     rubric_max = RubricCriterion.group(:assignment_id).sum(:max_mark)
     flexible_max = FlexibleCriterion.group(:assignment_id).sum(:max_mark)
@@ -38,7 +43,7 @@ module CourseSummariesHelper
     end
     ]
 
-    if @current_user.student?
+    if @current_user && @current_user.student?
       @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form,)
                      .where(grade_entry_students: { released_to_student: true })
                      .group('grade_entry_students.user_id', 'grade_entry_items.grade_entry_form_id')
@@ -50,23 +55,27 @@ module CourseSummariesHelper
     end
   end
 
-  def get_student_information(student)
+  def get_student_information(student, marking_schemes = true)
     marks = get_mark_for_all_assignments_for_student(student, @all_assignments)
     gef_marks = get_mark_for_all_gef_for_student(
       student, @all_grade_entry_forms)
 
-    {
+    data = {
         id: student.id,
         user_name: student.user_name,
         first_name: student.first_name,
         last_name: student.last_name,
         assignment_marks: marks,
-        grade_entry_form_marks: gef_marks,
-        weighted_marks:
-          get_weighted_total_for_all_marking_schemes_for_student(
-            @all_schemes, marks, gef_marks, @weights,
-            @gef_weights, @max_marks, @gef_max_marks)
+        grade_entry_form_marks: gef_marks
     }
+
+    if marking_schemes
+      data[:weighted_marks] = get_weighted_total_for_all_marking_schemes_for_student(
+        @all_schemes, marks, gef_marks, @weights,
+        @gef_weights, @max_marks, @gef_max_marks)
+    end
+
+    data
   end
 
   # Get marks for all assignments for a student

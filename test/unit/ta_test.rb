@@ -79,7 +79,7 @@ class TATest < ActiveSupport::TestCase
   context 'If repo admin' do
 
     setup do
-      @repo = Repository.get_class(markus_config_repository_type)
+      @repo = Repository.get_class
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
     end
 
@@ -109,7 +109,7 @@ class TATest < ActiveSupport::TestCase
 
     setup do
       # set repository_admin false (NOT SURE HOW TO DO THIS NOW)
-      @repo = Repository.get_class(markus_config_repository_type)
+      @repo = Repository.get_class
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
     end
 

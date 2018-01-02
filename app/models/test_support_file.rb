@@ -86,7 +86,7 @@ class TestSupportFile < ApplicationRecord
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       name = self.file_name
-      test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
+      test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
 
       # Create the file path
       path = File.join(test_dir, name)
@@ -98,7 +98,7 @@ class TestSupportFile < ApplicationRecord
 
   def delete_file
     # Automated tests repository to delete from
-    test_dir = File.join(MarkusConfigurator.markus_ate_client_dir, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
 
     # Delete file if it exists
     path = File.join(test_dir, self.file_name)

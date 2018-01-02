@@ -295,27 +295,26 @@ class User < ApplicationRecord
     # If we're not the repository admin, bail out
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
 
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
     repo_names = Group.all.collect do |group|
-                   File.join(MarkusConfigurator.markus_config_repository_storage,
-                             group.repository_name)
+                   File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name)
                  end
-    repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
+    Repository.get_class.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
   end
 
   # Revokes read and write permissions for a deleted admin user
   def revoke_repository_permissions
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
 
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type)
-    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
-    repo.delete_bulk_permissions(repo_names, [self.user_name])
+    repo_names = Group.all.collect do |group|
+                   File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name)
+                 end
+    Repository.get_class.delete_bulk_permissions(repo_names, [self.user_name])
   end
 
   def maintain_repository_permissions
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
     if self.user_name_changed?
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type).__set_all_permissions
+      Repository.get_class.__set_all_permissions
     end
   end
 end
