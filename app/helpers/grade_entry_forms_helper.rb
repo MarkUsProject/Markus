@@ -29,7 +29,7 @@ module GradeEntryFormsHelper
 
     unless grade_entry_items.nil?
       # Update the attributes hash
-      max_position = 1
+      max_position = GradeEntryItem.where(:grade_entry_form_id => 1).count
       grade_entry_items.each do |_, item|
         # Some items are being deleted so don't update those
         unless item[:_destroy]
