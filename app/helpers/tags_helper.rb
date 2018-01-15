@@ -4,8 +4,7 @@ module TagsHelper
 
     tags.map do |tag|
       t = tag.attributes
-      t[:user_name] = User.find(tag.user).first_name +
-                      ' ' + User.find(tag.user).last_name
+      t[:user_name] = tag.user.first_name + ' ' + tag.user.last_name
       t[:use] = get_num_groupings_for_tag(tag.id)
       t[:edit_link] = view_context.link_to(
           'Edit',
@@ -71,15 +70,7 @@ module TagsHelper
 
   def get_num_groupings_for_tag(tag_id)
     tag = Tag.find(tag_id)
-    count = 0
-
-    Grouping.all.each do |group|
-      if tag.groupings.exists?(group.id)
-        count += 1
-      end
-    end
-
-    count
+    tag.groupings.size
   end
 
   def get_tags_not_associated_with_grouping(g_id)
