@@ -204,13 +204,13 @@ describe SubmissionsController do
     end
 
     it 'should not be able download svn checkout commands' do
-      get_as @student, :download_svn_checkout_commands, assignment_id: 1
+      get_as @student, :download_repo_checkout_commands, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
 
     it 'should not be able to download the svn repository list' do
-      get_as @student, :download_svn_repo_list, assignment_id: 1
+      get_as @student, :download_repo_list, assignment_id: 1
 
       is_expected.to respond_with(:missing)
     end
@@ -272,14 +272,14 @@ describe SubmissionsController do
 
     it 'should be able to download the svn checkout commands' do
       get_as @ta_membership.user,
-             :download_svn_checkout_commands,
+             :download_repo_checkout_commands,
              assignment_id: 1
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download the svn repository list' do
       get_as @ta_membership.user,
-             :download_svn_repo_list,
+             :download_repo_list,
              assignment_id: 1
       is_expected.to respond_with(:missing)
     end
@@ -363,14 +363,14 @@ describe SubmissionsController do
 
     it 'should be able to download the svn checkout commands' do
       get_as @admin,
-             :download_svn_checkout_commands,
+             :download_repo_checkout_commands,
              assignment_id: @assignment.id
       is_expected.to respond_with(:success)
     end
 
     it 'should be able to download the svn repository list' do
       get_as @admin,
-             :download_svn_repo_list,
+             :download_repo_list,
              assignment_id: @assignment.id
       is_expected.to respond_with(:success)
     end
@@ -686,12 +686,12 @@ describe SubmissionsController do
     end
 
     it 'should not be able to download the svn checkout commands' do
-      get :download_svn_checkout_commands, assignment_id: 1
+      get :download_repo_checkout_commands, assignment_id: 1
       is_expected.to respond_with(:redirect)
     end
 
     it 'should not be able to download the svn repository list' do
-      get :download_svn_repo_list, assignment_id: 1
+      get :download_repo_list, assignment_id: 1
       is_expected.to respond_with(:redirect)
     end
   end

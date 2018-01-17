@@ -757,23 +757,23 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_detailed_report.csv"
   end
 
-  # See Assignment.get_svn_checkout_commands for details
-  def download_svn_checkout_commands
+  # See Assignment.get_repo_checkout_commands for details
+  def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_svn_checkout_commands
+    svn_commands = assignment.get_repo_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
-              filename: "#{assignment.short_identifier}_svn_checkouts.csv"
+              filename: "#{assignment.short_identifier}_repo_checkouts"
   end
 
-  # See Assignment.get_svn_repo_list for details
-  def download_svn_repo_list
+  # See Assignment.get_repo_list for details
+  def download_repo_list
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_svn_repo_list,
+    send_data assignment.get_repo_list,
               disposition: 'attachment',
               type: 'text/plain',
-              filename: "#{assignment.short_identifier}_svn_repo_list"
+              filename: "#{assignment.short_identifier}_repo_list"
   end
 
   # This action is called periodically from file_manager.

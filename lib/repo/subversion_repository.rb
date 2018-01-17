@@ -164,7 +164,6 @@ module Repository
       return @closed
     end
 
-
     # Static method: Reports if a Subversion repository exists
     # It's in fact a pretty hacky method checking for files typical
     # for Subversion repositories
@@ -178,6 +177,13 @@ module Repository
         end
       end
       return repos_meta_files_exist
+    end
+
+    def self.get_checkout_command(external_repo_url, revision_number, group_name, repo_folder=nil)
+      unless repo_folder.nil?
+        external_repo_url += "/#{repo_folder}"
+      end
+      "svn checkout -r #{revision_number} #{external_repo_url} \"#{group_name}\""
     end
 
     # Given a single object, or an array of objects of type
