@@ -116,7 +116,7 @@ module AutomatedTestsClientHelper
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def self.export_group_repo(group, repo_dir, submission = nil)
+  def self.export_group_repo(group, repo_dir, assignment, submission = nil)
 
     # Create the automated test repository
     unless File.exists?(MarkusConfigurator.autotest_client_dir)
@@ -131,9 +131,16 @@ module AutomatedTestsClientHelper
     if submission.nil?
       group.repo.export(repo_dir)
     else
-      files = submission.submission_files
       FileUtils.mkdir(repo_dir)
-      files.each do |file|
+      unless assignment.only_required_files.blank?
+        required_files = assignment.assignment_files.map(&:filename).to_set
+      end
+      submission.submission_files.each do |file|
+        unless required_files.nil? || required_files.include?(file.filename) # TODO use &. with ruby > 2.3
+          # do not export non-required files, if only required files are allowed
+          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+          next
+        end
         file_content = file.retrieve_file
         FileUtils.mkdir_p(File.join(repo_dir, file.path))
         File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
@@ -235,7 +242,7 @@ module AutomatedTestsClientHelper
     group = grouping.group
     repo_dir = File.join(MarkusConfigurator.autotest_client_dir, group.repo_name)
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
-    export_group_repo(group, repo_dir, submission)
+    export_group_repo(group, repo_dir, assignment, submission)
     AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key,
                                  grouping_id, submission_id)
   end
