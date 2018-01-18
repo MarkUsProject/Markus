@@ -581,16 +581,8 @@ class AssignmentTest < ActiveSupport::TestCase
         end
 
         should 'be able to get_repo_checkout_commands' do
-          expected_array = []
-
-          @assignment.groupings.each do |grouping|
-            submission = grouping.current_submission_used
-            if submission
-              group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
-            end
-          end
-          assert_equal expected_array, @assignment.get_repo_checkout_commands
+          submissions = @assignment.groupings.count { |g| g.current_submission_used } # filter out without submission
+          assert_equal submissions, @assignment.get_repo_checkout_commands.size
         end
 
         should 'be able to get_repo_checkout_commands with spaces in group name ' do
@@ -598,16 +590,8 @@ class AssignmentTest < ActiveSupport::TestCase
             group.group_name = group.group_name + ' Test'
             group.save
           end
-          expected_array = []
-
-          @assignment.groupings.each do |grouping|
-            submission = grouping.current_submission_used
-            if submission
-              group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
-            end
-          end
-          assert_equal expected_array, @assignment.get_repo_checkout_commands
+          submissions = @assignment.groupings.count { |g| g.current_submission_used } # filter out without submission
+          assert_equal submissions, @assignment.get_repo_checkout_commands.size
         end
       end
 
@@ -631,16 +615,8 @@ class AssignmentTest < ActiveSupport::TestCase
         end
 
         should 'be able to get_repo_checkout_commands' do
-          expected_array = []
-
-          @assignment.groupings.each do |grouping|
-            submission = grouping.current_submission_used
-            if submission
-              group = grouping.group
-              expected_array.push("svn checkout -r #{submission.revision_identifier} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
-            end
-          end
-          assert_equal expected_array, @assignment.get_repo_checkout_commands
+          submissions = @assignment.groupings.count { |g| g.current_submission_used } # filter out without submission
+          assert_equal submissions, @assignment.get_repo_checkout_commands.size
         end
       end
     end
