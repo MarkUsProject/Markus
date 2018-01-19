@@ -41,7 +41,7 @@
       }
     });
 
-    var filename_re = /^[-_\.a-zA-Z0-9]+$/;
+    var filename_re = /^[\-\._a-zA-Z0-9][\/\-\._a-zA-Z0-9]*$/;
     $('.assignment_file').each(function() {
       if (!filename_re.exec(this.value)) {
         invalid = true;
