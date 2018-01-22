@@ -1481,6 +1481,8 @@ fr:
         after_due_date: "Vous ne pouvez pas exécuter de test après la date de retour"
       test_result:
         all_tests: "UPDATE ME"
+        all_tests_stdout: "UPDATE ME"
+        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
