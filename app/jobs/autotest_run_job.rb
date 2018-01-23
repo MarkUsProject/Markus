@@ -39,9 +39,10 @@ class AutotestRunJob < ActiveJob::Base
     unless repo_files_available?(assignment, repo_dir)
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
+      error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
+                             message: I18n.t('automated_tests.test_result.no_source_files'))
       grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    I18n.t('automated_tests.test_result.all_tests'),
-                                                    I18n.t('automated_tests.test_result.no_source_files'))
+                                                    [error])
       return
     end
 
@@ -99,10 +100,11 @@ class AutotestRunJob < ActiveJob::Base
     rescue Exception => e
       submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
+      error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
+                             message: I18n.t('automated_tests.test_result.bad_server',
+                                             {hostname: test_server_host, error: e.message}))
       grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    I18n.t('automated_tests.test_result.all_tests'),
-                                                    I18n.t('automated_tests.test_result.bad_server',
-                                                      {hostname: test_server_host, error: e.message}))
+                                                    [error])
     end
   end
 
