@@ -132,6 +132,13 @@ module Repository
       FileUtils.rm_rf(repo_path)
     end
 
+    def self.get_checkout_command(external_repo_url, revision_hash, group_name, repo_folder=nil)
+      "git clone #{external_repo_url} \"#{group_name}\" && "\
+      "cd \"#{group_name}\" && "\
+      "git reset --hard #{revision_hash} && "\
+      "cd .."
+    end
+
     def get_revision(revision_hash)
       Repository::GitRevision.new(revision_hash, self)
     end

@@ -576,23 +576,22 @@ class Assignment < ActiveRecord::Base
   end
 
   # Get a list of subversion client commands to be used for scripting
-  def get_svn_checkout_commands
-    svn_commands = [] # the commands to be exported
+  def get_repo_checkout_commands
+    repo_commands = [] # the commands to be exported
 
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
       if submission
-        svn_commands.push(
-          "svn checkout -r #{submission.revision_identifier} " +
-          "#{grouping.group.repository_external_access_url}/" +
-          "#{repository_folder} \"#{grouping.group.group_name}\"")
+        repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
+                                                                   submission.revision_identifier,
+                                                                   grouping.group.group_name, self.repository_folder)
       end
     end
-    svn_commands
+    repo_commands
   end
 
   # Get a list of group_name, repo-url pairs
-  def get_svn_repo_list
+  def get_repo_list
     CSV.generate do |csv|
       self.groupings.each do |grouping|
         group = grouping.group

@@ -105,6 +105,11 @@ module Repository
       raise NotImplementedError, "Repository::closed Not yet implemented"
     end
 
+    # Static method: returns the shell command to check out a repository or one of its folders
+    def self.get_checkout_command(external_repo_url, revision_identifier, group_name, repo_folder=nil)
+      raise NotImplementedError, "Repository::get_checkout_command Not yet implemented"
+    end
+
     # Given either an array of, or a single object of class RevisionFile,
     # return a stream of data for the user to download as the file(s).
     def stringify_files(files)
