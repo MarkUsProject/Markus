@@ -9,7 +9,7 @@ function updatePreview(source, des) {
   var preview = document.getElementById(des);
 
   if (preview !== null && newAnnotation !== null) {
-    preview.innerHTML = marked(newAnnotation.value);
+    preview.innerHTML = marked(newAnnotation.value, {sanitize: true});
     // typeset the preview
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, preview]);
   }

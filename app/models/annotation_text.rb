@@ -25,4 +25,8 @@ class AnnotationText < ApplicationRecord
   def html_content
     content.gsub(/\n/, '<br/>').html_safe
   end
+
+  def escape_newlines
+    content.gsub(/\r?\n/, '\\n')
+  end
 end
