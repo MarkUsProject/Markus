@@ -8,9 +8,9 @@ class Ta < User
   CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
   SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
 
-  after_create  :grant_repository_permissions
-  after_destroy :revoke_repository_permissions
-  after_update  :maintain_repository_permissions
+  after_create  :grant_repository_permissions, if: Proc.new { |admin| admin.batch_processing.blank? }
+  after_destroy :revoke_repository_permissions, if: Proc.new { |admin| admin.batch_processing.blank? }
+  after_update  :maintain_repository_permissions, if: Proc.new { |admin| admin.batch_processing.blank? }
 
   has_many :criterion_ta_associations, dependent: :delete_all
 

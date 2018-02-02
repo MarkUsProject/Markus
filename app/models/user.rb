@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   has_many :test_script_results, foreign_key: 'requested_by_id', dependent: :delete_all, inverse_of: :requested_by
   has_many :split_pdf_logs
 
+  attr_accessor :batch_processing
+
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
   validates_uniqueness_of   :email, :allow_nil => true
@@ -201,7 +203,7 @@ class User < ActiveRecord::Base
     result
   end
 
-  def self.add_user(user_class, row)
+  def self.add_user(user_class, row, batch_processing=false)
     # convert each line to a hash with FIELDS as corresponding keys
     # and create or update a user with the hash values
     #return nil if values.length < UPLOAD_FIELDS.length
@@ -226,9 +228,14 @@ class User < ActiveRecord::Base
     current_user = user_class.find_or_create_by(
       user_name: user_attributes[:user_name])
     current_user.attributes = user_attributes
+    current_user.batch_processing = batch_processing # inhibit callbacks if true
 
-    return unless current_user.save
-    current_user
+    if current_user.save
+      current_user.batch_processing = false # restore future callbacks
+      current_user
+    else
+      nil
+    end
   end
 
   # Set API key for user model. The key is a
