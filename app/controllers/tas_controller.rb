@@ -88,16 +88,17 @@ class TasController < ApplicationController
   def upload_ta_list
     if params[:userlist]
       User.transaction do
-        processed_users = []
+        processed_users = Set.new
         result = MarkusCSV.parse(params[:userlist],
                                  skip_blanks: true,
                                  row_sep: :auto,
                                  encoding: params[:encoding]) do |row|
           next if CSV.generate_line(row).strip.empty?
           raise CSVInvalidLineError if processed_users.include?(row[0])
-          raise CSVInvalidLineError if User.add_user(Ta, row).nil?
-          processed_users.push(row[0])
+          raise CSVInvalidLineError if User.add_user(Ta, row, true).nil?
+          processed_users << row[0]
         end
+        Repository.get_class.__set_all_permissions
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])
         end
