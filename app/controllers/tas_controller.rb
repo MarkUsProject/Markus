@@ -89,21 +89,31 @@ class TasController < ApplicationController
   def upload_ta_list
     if params[:userlist]
       User.transaction do
-        processed_users = []
+        user_names = Set.new
+        tas = []
         result = MarkusCSV.parse(params[:userlist],
                                  skip_blanks: true,
                                  row_sep: :auto,
                                  encoding: params[:encoding]) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          raise CSVInvalidLineError if processed_users.include?(row[0])
-          raise CSVInvalidLineError if User.add_user(Ta, row).nil?
-          processed_users.push(row[0])
+          row.compact! # discard unwanted nil elements
+          next if row.empty?
+          user_name_i = Ta::CSV_UPLOAD_ORDER.find_index(:user_name)
+          raise CSVInvalidLineError if user_names.include?(row[user_name_i]) ||
+                                       row.size != Ta::CSV_UPLOAD_ORDER.size
+          user_names << row[user_name_i]
+          tas << row
         end
+        imported = Ta.import Ta::CSV_UPLOAD_ORDER, tas
+        Repository.get_class.__set_all_permissions
         unless result[:invalid_lines].empty?
           flash_message(:error, result[:invalid_lines])
         end
-        unless result[:valid_lines].empty?
-          flash_message(:success, result[:valid_lines])
+        unless imported.failed_instances.empty?
+          flash_message(:error, I18n.t('csv_invalid_lines') +
+                                x.failed_instances.map { |f| f[:user_name] }.join(', '))
+        end
+        unless imported.ids.empty?
+          flash_message(:success, I18n.t('csv_valid_lines', valid_line_count: x.ids.size))
         end
       end
     else
