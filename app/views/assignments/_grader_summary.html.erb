@@ -1,13 +1,10 @@
+<p class="grader_distribution"><%= t(:grader_distribution) %></p>
 <% if assignment.tas.empty? %>
-  <p class="grader_distribution"><%= t(:grader_distribution) %>:</p>
-  <%= link_to t(:assign_graders),
-              assignment_graders_path(assignment) %>
+  (<%= link_to t('graders.manage_graders'), assignment_graders_path(assignment) %>)
 <% else %>
-  <p class="grader_distribution"><%= t(:grader_distribution) %>
-    (<%= link_to t('graders.all_graders'), { controller: 'graders',
+  (<%= link_to t('graders.all_graders'), { controller: 'graders',
                                              action: 'grader_summary',
                                              assignment_id: assignment.id }
-  %>)</p>
-
+  %>)
 <% end %>
 

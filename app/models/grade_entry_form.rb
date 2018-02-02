@@ -143,11 +143,6 @@ class GradeEntryForm < ApplicationRecord
     released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.median
   end
 
-  # Determine the number of grade_entry_forms that have been released
-  def calculate_released_grade_entry_forms
-    released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.count
-  end
-
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted

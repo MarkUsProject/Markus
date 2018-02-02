@@ -109,9 +109,8 @@
                     <% end %>
                   </span>
                   <span id='class_average__<%= assignment.short_identifier %>'>
-                    <% if !assignment.results_average.nil? %>
-                      <%= t(:class_average,
-                            results_average: assignment.results_average) %>
+                    <% unless assignment.results_average.nil? %>
+                      <%= "#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)}" %>
                     <% end %>
                   </span>
                   <% if assignment.submission_rule.can_collect_all_now? %>

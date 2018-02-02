@@ -54,7 +54,7 @@
     font-size: 0.95em;
     margin-left: 1em;
     vertical-align: top;
-    width: 250px;
+    width: calc(100% - 450px);
   }
 
   .course_summary {
@@ -71,7 +71,6 @@
 
   .title {
     color: $dark-blue;
-    font-weight: 300;
     margin-bottom: 1em;
     padding: 0;
   }

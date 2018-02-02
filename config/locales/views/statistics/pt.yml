@@ -1,0 +1,19 @@
+pt:
+  # app/views/main/_assignment_info_summary.erb
+  average: "Média"
+  class_average: "Média da classe"
+  median: "Mediana"
+  assignments_submitted: "Projetos submetidos"
+  assignments_graded: "Projetos avalidos"
+  assignments_failed: "Número de falhas"
+  assignments_zeros: "Número de zeros"
+  refresh_graph: "Atualizar gráfico"
+  outstanding_remark_request:
+    one: "%{count} pedidos de avaliação"
+    other: "%{count} pedidos de avaliação"
+
+  # app/views/main/_grader_summary.erb
+  grader_distribution: "Distribuição de notas"
+
+  #app/views/course_summaries/_course_summary_info_summary.html.erb
+  marking_scheme_with_id: "Esquema de marcação %{marking_scheme_id}"
