@@ -3,12 +3,15 @@
 <% end %>
 
 <div class='title_bar'>
-  <h1>
-    <%= t(:assignment_link,
-          short_id: @assignment.short_identifier,
-          description: @assignment.description) %> -
-    <%= t(:grader_distribution) %>
-  </h1>
+  <h2>
+    <% if assignment.is_peer_review? %>
+        <%= link_to "#{assignment.parent_assignment.short_identifier}: #{t('assignment.review')}",
+                    browse_assignment_submissions_path(assignment.id) %>
+    <% else %>
+        <%= link_to "#{assignment.short_identifier}: #{assignment.description}",
+                    browse_assignment_submissions_path(assignment.id) %>
+    <% end %>
+  </h2>
 </div>
 <div class='wrapper'>
   <div id='section'>
