@@ -29,11 +29,7 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins do
-      collection do
-        get 'populate'
-      end
-    end
+    resources :admins
 
     resources :assignments do
 
