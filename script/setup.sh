@@ -14,3 +14,4 @@ cp node_modules/@rails/webpacker/lib/install/config/webpacker.yml config
 
 # TODO: change to `rails webpacker:install` when rails5 upgrade is done.
 bundle exec rake webpacker:install
+bundle exec rake webpacker:install:react

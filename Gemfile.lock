@@ -119,6 +119,8 @@ GEM
     histogram (0.2.4.1)
     i18n (0.9.1)
       concurrent-ruby (~> 1.0)
+    i18n-js (3.0.4)
+      i18n (~> 0.6, >= 0.6.6)
     jbuilder (2.4.1)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
@@ -371,6 +373,7 @@ DEPENDENCIES
   faker
   histogram (~> 0.2.4.1)
   i18n
+  i18n-js
   jbuilder (~> 2.0)
   jquery-rails
   js-routes

@@ -14,6 +14,11 @@ import 'javascripts/check_timeout';
 import 'javascripts/redirect';
 
 import { ModalMarkus } from 'javascripts/modals';
+import { makeTATable } from 'javascripts/Components/ta_table';
+
+import 'javascripts/react_config';
+
 
 // TODO: We shouldn't need to make this a global export.
 window.ModalMarkus = ModalMarkus;
+window.makeTATable = makeTATable;

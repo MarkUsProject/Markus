@@ -398,7 +398,6 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
-        get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end
