@@ -14,6 +14,8 @@
 //= require js-routes
 //= require job_poller
 
+//= require i18n
+//= require i18n/translations
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
