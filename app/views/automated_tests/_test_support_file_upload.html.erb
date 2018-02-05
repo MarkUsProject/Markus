@@ -7,13 +7,11 @@
       <legend>
         <span class='file_name'>
           <% if saved %>
-            <div class="file_link">
-              <%= link_to(f.object.file_name,
-                          action: 'download',
-                          assignment_id: @assignment.id,
-                          type: 'support',
-                          filename: f.object.file_name) %>
-            </div>
+            <%= link_to(f.object.file_name,
+                        action: 'download',
+                        assignment_id: @assignment.id,
+                        type: 'support',
+                        filename: f.object.file_name) %>
             <%= f.hidden_field :file_name, value: f.object.file_name %>
           <% else %>
             <%= t('automated_tests.new_test_support_file') %>

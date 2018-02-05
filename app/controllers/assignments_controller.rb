@@ -710,11 +710,7 @@ class AssignmentsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions =
-          params[:file_revisions].nil? ? {} : params[:file_revisions]
-      file_revisions.merge!(file_revisions) do |_key, v1, _v2|
-        v1.to_i rescue v1
-      end
+      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
 
       # The files that will be deleted
       delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
@@ -740,7 +736,7 @@ class AssignmentsController < ApplicationController
         # Add new files and replace existing files
         revision = repo.get_latest_revision
         files = revision.files_at_path(
-            File.join('', @path))
+            File.join(@assignment.repository_folder, @path))
         filenames = files.keys
 
 

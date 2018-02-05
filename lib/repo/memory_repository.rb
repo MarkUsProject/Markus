@@ -68,6 +68,13 @@ module Repository
       @@repositories = {}
     end
 
+    def self.get_checkout_command(external_repo_url, revision_number, group_name, repo_folder=nil)
+      unless repo_folder.nil?
+        external_repo_url += "/#{repo_folder}"
+      end
+      "#{external_repo_url},#{revision_number},\"#{group_name}\""
+    end
+
     # Given either an array of, or a single object of class RevisionFile,
     # return a stream of data for the user to download as the file(s).
     def stringify_files(files)

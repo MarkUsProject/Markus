@@ -25,13 +25,11 @@
       <legend>
         <span class='file_name'>
           <% if saved %>
-            <div class="file_link">
-              <%= link_to(f.object.file_name,
-                          action: 'download',
-                          assignment_id: @assignment.id,
-                          type: 'script',
-                          filename: f.object.file_name) %>
-            </div>
+            <%= link_to(f.object.file_name,
+                        action: 'download',
+                        assignment_id: @assignment.id,
+                        type: 'script',
+                        filename: f.object.file_name) %>
             <%= f.hidden_field :file_name, value: f.object.file_name %>
           <% else %>
             <%= t('automated_tests.new_test_script_file') %>
@@ -58,7 +56,7 @@
         </div>
 
         <div class="desc">
-          <%= f.label :description, t('automated_tests.script_option.description'), style: 'vertical-align:top;' %>
+          <%= f.label :description, t('automated_tests.script_option.description') %>
           <%= f.text_area :description, value: f.object.description, cols: 29, rows: 2  %>
         </div>
 
@@ -74,7 +72,7 @@
       <div class="settings_right_side">
 
         <%= f.label :criterion_id, t('automated_tests.script_option.associated_criterion') %>
-        <% selected = f.object.criterion.nil? ?
+        <% selected = f.object.criterion_id.nil? ?
                         nil :
                         [f.object.criterion_id, f.object.criterion_type].to_s %>
         <%= f.select :criterion_id, options_for_select(criterion_options, selected) %><br/>
