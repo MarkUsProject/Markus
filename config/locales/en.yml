@@ -976,7 +976,7 @@ en:
         full_name:      "Full Name"
         type:           "Type"
         user_type:      "Type"
-        grace_credits:  "Grace Credits Left"
+        grace_credits:  "Grace Credits"
         notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
