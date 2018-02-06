@@ -103,17 +103,21 @@ class TasController < ApplicationController
           user_names << row[user_name_i]
           tas << row
         end
-        imported = Ta.import Ta::CSV_UPLOAD_ORDER, tas
-        Repository.get_class.__set_all_permissions
-        unless result[:invalid_lines].empty?
-          flash_message(:error, result[:invalid_lines])
-        end
-        unless imported.failed_instances.empty?
-          flash_message(:error, I18n.t('csv_invalid_lines') +
-                                x.failed_instances.map { |f| f[:user_name] }.join(', '))
-        end
-        unless imported.ids.empty?
-          flash_message(:success, I18n.t('csv_valid_lines', valid_line_count: x.ids.size))
+        begin
+          imported = Ta.import Ta::CSV_UPLOAD_ORDER, tas
+          unless result[:invalid_lines].empty?
+            flash_message(:error, result[:invalid_lines])
+          end
+          unless imported.failed_instances.empty?
+            flash_message(:error, I18n.t('csv_invalid_lines') +
+                                  imported.failed_instances.map { |f| f[:user_name] }.join(', '))
+          end
+          unless imported.ids.empty?
+            Repository.get_class.__set_all_permissions
+            flash_message(:success, I18n.t('csv_valid_lines', valid_line_count: imported.ids.size))
+          end
+        rescue ActiveRecord::RecordNotUnique => e # can trigger on uniqueness constraint validation for :user_name
+          flash_message(:error, I18n.t('csv_upload_user_duplicate', user_name: e.message))
         end
       end
     else
