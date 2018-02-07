@@ -1,3 +1,9 @@
+# Install rvm.
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+\curl -sSL https://get.rvm.io | bash -s stable --ruby
+rvm install ruby-2.4.0
+rvm --default use 2.4.0
+
 # Update package manager
 sudo apt-get update
 sudo apt-get upgrade
@@ -19,10 +25,10 @@ sudo apt-add-repository -y ppa:rael-gc/rvm
 sudo apt-get install -y rvm
 source ~/.rvm/scripts/rvm
 
-# Install ruby 2.5
-rvm get stable
-rvm install 2.5
-rvm use 2.5 --default
+# Installing ruby 2.5 causes issues with nokogiri 1.8.1 which requires the version to be before 2.5.
+# rvm get stable
+# rvm install 2.5
+# rvm use 2.5 --default
 
 # Install postgres
 sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
