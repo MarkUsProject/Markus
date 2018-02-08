@@ -63,5 +63,5 @@
 # Ignore redis dump file
 .dump.rdb
 /public/packs
-/public/packs-test
+/public/javascripts
 /node_modules
