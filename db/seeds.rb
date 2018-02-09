@@ -11,4 +11,4 @@ Rake::Task['db:remarks'].invoke
 Rake::Task['db:peer_reviews'].invoke
 Rake::Task['db:scanned_exam'].invoke
 Rake::Task['db:marking_scheme'].invoke
-
+Rake::Task['db:autotest'].invoke
