@@ -18,11 +18,20 @@ namespace :db do
     FileUtils.cp original_test_files, test_file_destination
 
     assignment = Assignment.find_by(short_identifier: 'A5')
+
     unless assignment.nil?
+      # get the criteria from assignment 5
+      criteria = assignment.flexible_criteria + assignment.rubric_criteria + assignment.checkbox_criteria
+
+      # get the test files stored in db/data/autotest_files
       test_files = Dir.glob(File.join(test_file_destination, '*')).select {|f| File.file?(f)}
+
       test_files.each do |test_file|
+        # get an arbitrary criterion from assignment 5
+        criterion = criteria.pop
+
         TestScript.create(
-          assignment_id: assignment.id,
+          assignment: assignment,
           seq_num: 0,
           file_name: File.basename(test_file),
           description: "",
@@ -35,7 +44,8 @@ namespace :db do
           display_input: "do_not_display",
           display_expected_output: "do_not_display",
           display_actual_output: "display_after_submission",
-          timeout: 30
+          timeout: 30,
+          criterion: criterion
         )
       end
     end
