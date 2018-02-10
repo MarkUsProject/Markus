@@ -2,7 +2,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "markusproject/ubuntu"
+  config.vm.box = "ubuntu/trusty64"
 
   # Set this to your private key if you're having trouble
   # ssh-ing into Vagrant (it's requiring a password)
@@ -16,6 +16,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+
+  # Provisioning
+  config.vm.provision "shell", path: "script/setup.sh"
 
   config.vm.provider "virtualbox" do |vb|
     # Uncomment the following line if you want a GUI.
