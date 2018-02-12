@@ -88,37 +88,13 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if params[:userlist]
-      User.transaction do
-        user_names = Set.new
-        tas = []
-        result = MarkusCSV.parse(params[:userlist],
-                                 skip_blanks: true,
-                                 row_sep: :auto,
-                                 encoding: params[:encoding]) do |row|
-          row.compact! # discard unwanted nil elements
-          next if row.empty?
-          user_name_i = Ta::CSV_UPLOAD_ORDER.find_index(:user_name)
-          raise CSVInvalidLineError if user_names.include?(row[user_name_i]) ||
-                                       row.size != Ta::CSV_UPLOAD_ORDER.size
-          user_names << row[user_name_i]
-          tas << row
-        end
-        begin
-          imported = Ta.import Ta::CSV_UPLOAD_ORDER, tas
-          unless result[:invalid_lines].empty?
-            flash_message(:error, result[:invalid_lines])
-          end
-          unless imported.failed_instances.empty?
-            flash_message(:error, I18n.t('csv_invalid_lines') +
-                                  imported.failed_instances.map { |f| f[:user_name] }.join(', '))
-          end
-          unless imported.ids.empty?
-            Repository.get_class.__set_all_permissions
-            flash_message(:success, I18n.t('csv_valid_lines', valid_line_count: imported.ids.size))
-          end
-        rescue ActiveRecord::RecordNotUnique => e # can trigger on uniqueness constraint validation for :user_name
-          flash_message(:error, I18n.t('csv_upload_user_duplicate', user_name: e.message))
-        end
+      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+      unless result[:invalid_lines].blank?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].blank?
+        Repository.get_class.__set_all_permissions
+        flash_message(:success, result[:valid_lines])
       end
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
