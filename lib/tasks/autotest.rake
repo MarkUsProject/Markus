@@ -1,7 +1,7 @@
 namespace :db do
   desc 'Create autotest for assignment 5'
   task :autotest => :environment do
-    puts 'Autotest: 1'
+    puts 'Add autotest scripts'
 
     test_file_location = File.join('db', 'data', 'autotest_files')
     test_file_destination = File.join('data', 'dev', 'autotest')
@@ -47,6 +47,16 @@ namespace :db do
           timeout: 30,
           criterion: criterion
         )
+      end
+
+      # collect the submissions from all groupings for assignment 5 so they can be autotested
+      assignment.groupings.all.each do |grouping|
+        # create new submission for each grouping
+        time = assignment.submission_rule.calculate_collection_time.localtime
+        Submission.create_by_timestamp(grouping, time)
+        # collect submission
+        grouping.is_collected = true
+        grouping.save
       end
     end
   end
