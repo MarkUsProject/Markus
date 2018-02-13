@@ -275,7 +275,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     properties:         "Propriedades"
     grades:             "Notas"
     submissions:        "Submissões"
-    summaries:          "Resumos"
     peer_reviews:       "Avaliações pelos pares"
     rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"

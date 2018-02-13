@@ -211,3 +211,10 @@ label.required::after, th.required::after {
 .clear-alignment {
   clear: both;
 }
+
+
+// Customize react-table styling
+.ReactTable .rt-thead,
+.ReactTable .rt-body {
+  overflow-y: scroll;
+}

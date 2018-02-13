@@ -425,7 +425,6 @@ es:
     properties:                  "Propiedades"
     grades:                      "Evaluadores"
     submissions:                 "Entregas"
-    summaries:                   "Resúmenes"
     peer_reviews:                "Revisiones de Compañeros"
     rubrics:                     "Rúbricas"
     marking_scheme:              "Esquema de calificación"

@@ -121,6 +121,17 @@ class Result < ApplicationRecord
     self.update_total_mark
   end
 
+  # Returns a hash of all marks for this result.
+  # TODO: make it include extra marks as well.
+  def mark_hash
+    Hash[
+      marks.map do |mark|
+        ["criterion_#{mark.markable_type}_#{mark.markable_id}",
+         mark.mark]
+      end
+    ]
+  end
+
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.

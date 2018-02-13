@@ -89,11 +89,12 @@
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' &&
                controller.action_name != 'create') %>
-          <li <% if ['assignments',
-                     'criteria',
+          <li <% if ['criteria',
                      'annotation_categories',
                      'automated_tests',
-                     'exam_templates'].include?(controller.controller_name) %>
+                     'exam_templates'].include?(controller.controller_name) ||
+                    (controller.controller_name == 'assignments' &&
+                     controller.action_name != 'summary') %>
                 class='active'
               <% end %>>
             <%= link_to t('settings'),
@@ -136,9 +137,9 @@
                                                               @assignment) %>
           </li>
           <% unless @assignment.is_peer_review? || is_viewing_a_peer_review_result %>
-            <li class='<%= "active" if controller.controller_name == 'summaries' %>'>
-              <%= link_to t(:summaries),
-                          assignment_summaries_path(@assignment) %>
+            <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
+              <%= link_to t('marks.summary'),
+                          summary_assignment_path(@assignment) %>
             </li>
           <% end %>
         <% end %>
@@ -184,21 +185,19 @@
     </li>
     <% if controller.controller_name == 'submissions' ||
           controller.controller_name == 'results' ||
-          controller.controller_name == 'summaries' %>
+          controller.action_name == 'summary' %>
       <li <% if controller.controller_name == 'submissions' ||
                 controller.controller_name == 'results' %>
             class='active'
           <% end %>>
         <%= link_to t(:submissions),
-                    controller: 'submissions',
-                    action: 'browse',
-                    id: @assignment.nil? ? @grouping.assignment_id : @assignment.id %>
+                    browse_assignment_submissions_path(@assignment || @grouping.assignment) %>
       </li>
-      <li <% if controller.controller_name == 'summaries' %>
+      <li <% if controller.action_name == 'summary' %>
             class='active'
           <% end %>>
-        <%= link_to t(:summaries),
-                    assignment_summaries_path(@assignment || @grouping.assignment) %>
+        <%= link_to t('marks.summary'),
+                    summary_assignment_path(@assignment || @grouping.assignment) %>
       </li>
     <% end %>
   </ul>
