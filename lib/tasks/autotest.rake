@@ -4,7 +4,7 @@ namespace :db do
     puts 'Add autotest scripts'
 
     test_file_location = File.join('db', 'data', 'autotest_files')
-    test_file_destination = File.join('data', 'dev', 'autotest')
+    test_file_destination = MarkusConfigurator.autotest_client_dir
     original_test_files = Dir.glob(File.join(test_file_location, '*'))
 
     # remove previously existing autotest files to create room for new ones
@@ -19,47 +19,40 @@ namespace :db do
 
     assignment = Assignment.find_by(short_identifier: 'A5')
 
-    unless assignment.nil?
-      # get the criteria from assignment 5
-      criteria = assignment.flexible_criteria + assignment.rubric_criteria + assignment.checkbox_criteria
+    # get the criteria from assignment 5
+    criteria = assignment.get_criteria
 
-      # get the test files stored in db/data/autotest_files
-      test_files = Dir.glob(File.join(test_file_destination, '*')).select {|f| File.file?(f)}
+    # get the test files stored in db/data/autotest_files
+    test_files = Dir.glob(File.join(test_file_destination, '*')).select {|f| File.file?(f)}
 
-      test_files.each do |test_file|
-        # get an arbitrary criterion from assignment 5
-        criterion = criteria.pop
+    test_files.zip(criteria) do |test_file, criterion|
+      TestScript.create(
+        assignment: assignment,
+        seq_num: 0,
+        file_name: File.basename(test_file),
+        description: "",
+        run_by_instructors: true,
+        run_by_students: true,
+        halts_testing: true,
+        display_description: "do_not_display",
+        display_run_status: "do_not_display",
+        display_marks_earned: "do_not_display",
+        display_input: "do_not_display",
+        display_expected_output: "do_not_display",
+        display_actual_output: "display_after_submission",
+        timeout: 30,
+        criterion: criterion
+      )
+    end
 
-        TestScript.create(
-          assignment: assignment,
-          seq_num: 0,
-          file_name: File.basename(test_file),
-          description: "",
-          run_by_instructors: true,
-          run_by_students: true,
-          halts_testing: true,
-          display_description: "do_not_display",
-          display_run_status: "do_not_display",
-          display_marks_earned: "do_not_display",
-          display_input: "do_not_display",
-          display_expected_output: "do_not_display",
-          display_actual_output: "display_after_submission",
-          timeout: 30,
-          criterion: criterion
-        )
-      end
-
-      # collect the submissions from all groupings for assignment 5 so they can be autotested
-      assignment.groupings.all.each do |grouping|
-        # create new submission for each grouping
-        time = assignment.submission_rule.calculate_collection_time.localtime
-        Submission.create_by_timestamp(grouping, time)
-        # collect submission
-        grouping.is_collected = true
-        grouping.save
-      end
+    # collect the submissions from all groupings for assignment 5 so they can be autotested
+    assignment.groupings.find_each do |grouping|
+      # create new submission for each grouping
+      time = assignment.submission_rule.calculate_collection_time.localtime
+      Submission.create_by_timestamp(grouping, time)
+      # collect submission
+      grouping.is_collected = true
+      grouping.save
     end
   end
 end
-
-
