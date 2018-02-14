@@ -183,14 +183,21 @@ class User < ApplicationRecord
         imported = user_class.import user_class::CSV_UPLOAD_ORDER, users
       end
       unless imported.failed_instances.empty?
-        parsed[:invalid_lines] += I18n.t('csv_invalid_lines') +
-                                  imported.failed_instances.map { |f| f[:user_name] }.join(', ')
+        if parsed[:invalid_lines].blank?
+          parsed[:invalid_lines] = I18n.t('csv_invalid_lines')
+        else
+          parsed[:invalid_lines] += MarkusCSV::INVALID_LINE_SEP # concat to invalid_lines from MarkusCSV#parse
+        end
+        parsed[:invalid_lines] +=
+          imported.failed_instances.map { |f| "#{f[:user_name]},#{f[:last_name]},#{f[:first_name]}" }
+            .join(MarkusCSV::INVALID_LINE_SEP)
       end
       unless imported.ids.empty?
         parsed[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: imported.ids.size)
       end
-    rescue ActiveRecord::RecordNotUnique => e # can trigger on uniqueness constraint validation for :user_name
-      parsed[:invalid_lines] += I18n.t('csv_upload_user_duplicate', user_name: e.message)
+    rescue ActiveRecord::RecordNotUnique => e
+      # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import
+      parsed[:invalid_lines] = I18n.t('csv_upload_user_duplicate', user_name: e.message)
     end
 
     parsed
