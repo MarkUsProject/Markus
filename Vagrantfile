@@ -18,7 +18,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3000, host: 3000
 
   # Provisioning
-  config.vm.provision "shell", path: "script/setup.sh"
+  config.vm.provision "shell" do |s|
+    s.path = "script/setup.sh"
+    s.privileged = false
+  end
 
   config.vm.provider "virtualbox" do |vb|
     # Uncomment the following line if you want a GUI.
