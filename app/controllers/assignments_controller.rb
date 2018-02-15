@@ -14,7 +14,11 @@ class AssignmentsController < ApplicationController
                               :student_interface,
                               :update_collected_submissions,
                               :render_feedback_file,
-                              :peer_review]
+                              :peer_review,
+                              :summary]
+
+  before_filter      :authorize_for_ta_and_admin,
+                     only: [:summary]
 
   before_filter      :authorize_for_student,
                      only: [:student_interface,
@@ -370,6 +374,34 @@ class AssignmentsController < ApplicationController
       end
     end
     redirect_to action: 'edit', id: @assignment.id
+  end
+
+  def summary
+    @assignment = Assignment.find(params[:id])
+    respond_to do |format|
+      format.html {
+        render layout: 'assignment_content'
+      }
+      format.json {
+        render json: @assignment.summary_json(@current_user)
+      }
+    end
+  end
+
+  def csv_summary
+    assignment = Assignment.find(params[:id])
+    if params[:download] == 'Download'
+      data = assignment.summary_csv(@current_user)
+      filename = "#{assignment.short_identifier}_summary.csv"
+    else
+      data = assignment.get_detailed_csv_report
+      filename = "#{assignment.short_identifier}_summary-DEPRECATED.csv"
+    end
+
+    send_data data,
+              disposition: 'attachment',
+              type: 'text/csv',
+              filename: filename
   end
 
   # Methods for the student interface

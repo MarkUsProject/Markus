@@ -1,0 +1,16 @@
+<%= content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeAssignmentSummaryTable(
+        document.getElementById('assignment_summary_table'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          is_admin: <%= @current_user.admin? %>
+        }
+      );
+    });
+  </script>
+<% end %>
+
+
+<div id='assignment_summary_table'></div>

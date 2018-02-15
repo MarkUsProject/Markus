@@ -55,6 +55,8 @@ Markus::Application.routes.draw do
         post 'update_files'
         get 'download'
         get 'peer_review'
+        get 'summary'
+        get 'csv_summary'
       end
 
       resources :tags do
@@ -149,8 +151,6 @@ Markus::Application.routes.draw do
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'
-          get 'download_simple_csv_report'
-          get 'download_detailed_csv_report'
           get 'download_svn_export_list'
           get 'download_repo_checkout_commands'
           get 'download_repo_list'
@@ -204,12 +204,6 @@ Markus::Application.routes.draw do
             post 'remove_tag'
             get 'run_tests'
           end
-        end
-      end
-
-      resources :summaries, only: :index do
-        collection do
-          get 'populate'
         end
       end
 

@@ -468,22 +468,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_simple_csv_report properly' do
-        expect(get: sub_path + '/download_simple_csv_report').to route_to(
-          controller: sub_ctrl,
-          action: 'download_simple_csv_report',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_detailed_csv_report properly' do
-        expect(get: sub_path + '/download_detailed_csv_report').to route_to(
-          controller: sub_ctrl,
-          action: 'download_detailed_csv_report',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET download_repo_checkout_commands properly' do
         expect(get: sub_path + '/download_repo_checkout_commands').to route_to(
           controller: sub_ctrl,

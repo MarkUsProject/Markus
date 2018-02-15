@@ -274,7 +274,6 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
-    summaries:          "Récapitulatif"
     peer_reviews:       "Examens par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"

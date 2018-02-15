@@ -725,38 +725,6 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  # See Assignment.get_simple_csv_report for details
-  def download_simple_csv_report
-    assignment = Assignment.find(params[:assignment_id])
-    students = Student.all
-    out_of = assignment.max_mark
-    file_out = MarkusCSV.generate(students) do |student|
-      result = [student.user_name]
-      grouping = student.accepted_grouping_for(assignment.id)
-      if grouping.nil? || !grouping.has_submission?
-        result.push('')
-      else
-        submission = grouping.current_submission_used
-        result.push(submission.get_latest_result.total_mark / out_of * 100)
-      end
-      result
-    end
-
-    send_data file_out,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: "#{assignment.short_identifier}_simple_report.csv"
-  end
-
-  # See Assignment.get_detailed_csv_report for details
-  def download_detailed_csv_report
-    assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_detailed_csv_report,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: "#{assignment.short_identifier}_detailed_report.csv"
-  end
-
   # See Assignment.get_repo_checkout_commands for details
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
