@@ -98,6 +98,7 @@ Markus::Application.routes.draw do
           get 'download'
           get 'download_generate'
           get 'assign_errors'
+          get 'download_raw_split_file'
           get 'download_error_file'
           get 'download_error_file_path'
           get 'error_pages'

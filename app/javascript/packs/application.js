@@ -18,6 +18,7 @@ import { makeTATable } from 'javascripts/Components/ta_table';
 import { makeAdminTable } from 'javascripts/Components/admin_table';
 import { makeStudentTable } from 'javascripts/Components/student_table';
 import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
+import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
 
 import 'javascripts/react_config';
 
@@ -28,3 +29,4 @@ window.makeAdminTable = makeAdminTable;
 window.makeStudentTable = makeStudentTable;
 window.makeTATable = makeTATable;
 window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;
+window.makeExamScanLogTable = makeExamScanLogTable;

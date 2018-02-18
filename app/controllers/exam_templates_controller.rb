@@ -135,11 +135,46 @@ class ExamTemplatesController < ApplicationController
 
   def view_logs
     @assignment = Assignment.find(params[:assignment_id])
-    @split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
-                                 .where(assignments: {id: @assignment.id})
-                                 .includes(:exam_template)
-                                 .includes(:user)
-                                 .includes(:split_pages)
+
+    respond_to do |format|
+      format.html
+      format.json do
+        split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
+                           .where(assignments: {id: @assignment.id})
+                           .includes(:exam_template)
+                           .includes(:user)
+                           .includes(split_pages: :group)
+
+        data = split_pdf_logs.map do |log|
+          pages = log.split_pages.select do |p|
+            p.status == 'FIXED' || p.status.start_with?('ERROR')
+          end
+
+          page_data = pages.map do |page|
+            {
+              raw_page_number: page.raw_page_number,
+              exam_page_number: page.exam_page_number,
+              status: page.status,
+              group: page.group_id.nil? ? nil : page.group.group_name
+            }
+          end
+          {
+            date: I18n.l(log.uploaded_when),
+            exam_template: log.exam_template.name,
+            exam_template_id: log.exam_template_id,
+            filename: log.filename,
+            file_id: log.id,
+            num_groups_in_complete: log.num_groups_in_complete,
+            num_groups_in_incomplete: log.num_groups_in_incomplete,
+            original_num_pages: log.original_num_pages,
+            num_pages_qr_scan_error: log.num_pages_qr_scan_error,
+            #number_of_pages_fixed: log.split_pages.where(status: 'FIXED').length
+            page_data: page_data
+          }
+        end
+        render json: data
+      end
+    end
   end
 
   def assign_errors
@@ -175,6 +210,16 @@ class ExamTemplatesController < ApplicationController
       pages = expected_pages - exam_group.split_pages.pluck(:exam_page_number)
     end
     render json: pages
+  end
+
+  def download_raw_split_file
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    split_pdf_log = exam_template.split_pdf_logs.find(params[:split_pdf_log_id])
+    split_file = "raw_upload_#{split_pdf_log.id}.pdf"
+    send_file(File.join(exam_template.base_path, 'raw', split_file),
+              filename: split_pdf_log.filename,
+              type: 'application/pdf')
   end
 
   def download_error_file
