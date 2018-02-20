@@ -165,22 +165,37 @@ class User < ApplicationRecord
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
-    user_names = Set.new
-    user_name_i = user_class::CSV_UPLOAD_ORDER.find_index(:user_name)
+    user_columns = user_class::CSV_UPLOAD_ORDER
     users = []
+    user_names = Set.new
+    user_name_i = user_columns.find_index(:user_name)
+    section_name_i = user_columns.find_index(:section_name)
+    unless section_name_i.nil?
+      user_columns[section_name_i] = :section_id # becomes foreign key
+    end
+
     parsed = MarkusCSV.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
-      row.compact! # discard unwanted nil elements
       next if row.empty?
-      raise CSVInvalidLineError if user_names.include?(row[user_name_i]) ||
-                                   row.size != user_class::CSV_UPLOAD_ORDER.size
+      raise CSVInvalidLineError if user_names.include?(row[user_name_i])
+      if row.size < user_columns.size
+        row.fill(nil, row.size...user_columns.size)
+      end
+      if row.size > user_columns.size
+        row = row[0...user_columns.size]
+      end
+      unless section_name_i.nil?
+        section = Section.find_or_create_by(name: row[section_name_i])
+        row[section_name_i] = if section.nil? then nil else section.id end
+      end
       user_names << row[user_name_i]
       users << row
     end
     parsed[:valid_lines] = '' # reset the value from MarkusCSV#parse
+
     begin
       imported = nil
       User.transaction do
-        imported = user_class.import user_class::CSV_UPLOAD_ORDER, users
+        imported = user_class.import user_columns, users
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
@@ -189,8 +204,7 @@ class User < ApplicationRecord
           parsed[:invalid_lines] += MarkusCSV::INVALID_LINE_SEP # concat to invalid_lines from MarkusCSV#parse
         end
         parsed[:invalid_lines] +=
-          imported.failed_instances.map { |f| "#{f[:user_name]},#{f[:last_name]},#{f[:first_name]}" }
-            .join(MarkusCSV::INVALID_LINE_SEP)
+          imported.failed_instances.map { |f| "#{f[:user_name]}" }.join(MarkusCSV::INVALID_LINE_SEP)
       end
       unless imported.ids.empty?
         parsed[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: imported.ids.size)
