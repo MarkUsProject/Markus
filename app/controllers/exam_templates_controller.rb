@@ -155,7 +155,8 @@ class ExamTemplatesController < ApplicationController
               raw_page_number: page.raw_page_number,
               exam_page_number: page.exam_page_number,
               status: page.status,
-              group: page.group_id.nil? ? nil : page.group.group_name
+              group: page.group_id.nil? ? nil : page.group.group_name,
+              id: page.id
             }
           end
           {
@@ -182,27 +183,26 @@ class ExamTemplatesController < ApplicationController
     @exam_template = @assignment.exam_templates.find(params[:id])
     @error_files = []
     @split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
-    page_ids = @split_pdf_log.split_pages.map { |p| p.id.to_s }
-    error_path = File.join(@exam_template.base_path, 'error')
-    if File.directory?(error_path)
-      Dir.foreach(error_path) do |file|
-        if not file =~ /^\.\.?$/ and page_ids.include? File.basename(file, '.pdf')
-          @error_files << file # unless file =~ /^\.\.?$/
-        end
+    if params[:split_page_id]
+      @next_error = @split_pdf_log.split_pages
+                      .find(params[:split_page_id])
+      unless @next_error.status.start_with? 'ERROR'
+        @next_error = @split_pdf_log.split_pages.order(:id)
+                        .find_by('status LIKE ?', 'ERROR%')
       end
-      if @error_files.empty?
-        flash_message(:success, t('groups.done_assign'))
-      else
-        @error_files = @error_files.sort
-      end
+    else
+      @next_error = @split_pdf_log.split_pages.order(:id)
+                      .find_by('status LIKE ?', 'ERROR%')
+    end
+    if @next_error.nil?
+      flash_message(:success, t('groups.done_assign'))
     end
   end
 
   def error_pages
-    @assignment = Assignment.find(params[:assignment_id])
-    exam_template = @assignment.exam_templates.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
     exam_group = Group.find_by(group_name: "#{exam_template.name}_paper_#{params[:exam_number]}")
-    pages = []
     expected_pages = [*1..exam_template.num_pages]
     if exam_group.nil?
       pages = expected_pages
@@ -230,23 +230,37 @@ class ExamTemplatesController < ApplicationController
               type: 'application/pdf')
   end
 
-  def download_error_file_path
-    render text: download_error_file_assignment_exam_template_path(
-                assignment_id: params[:assignment_id],
-                id: params[:id],
-                file_name: params[:file_name],
-                show_in_browser: true )
-  end
-
   def fix_error
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    copy_number = params[:fix_error][:copy_number]
-    page_number = params[:fix_error][:page_number]
-    filename = params[:fix_error][:filename]
-    upside_down = params[:fix_error][:upside_down] == 'true' # because params[:fix_error][:upside_down] is passed as string
-    exam_template.fix_error(filename, copy_number, page_number, upside_down)
-    redirect_to action: 'assign_errors', split_pdf_log_id: params[:fix_error][:split_pdf_log_id]
+    split_page_id = params[:split_page_id]
+
+    if params[:commit] == 'Save'
+      copy_number = params[:copy_number]
+      page_number = params[:page_number]
+      filename = "#{split_page_id}.pdf"
+      upside_down = params[:upside_down]
+      exam_template.fix_error(filename, copy_number, page_number, upside_down)
+    end
+
+    split_pdf_log = SplitPdfLog.find(params[:split_pdf_log_id])
+    next_error = split_pdf_log.split_pages.order(:id)
+                   .where('id > ?', split_page_id)
+                   .find_by('status LIKE ?', 'ERROR%')
+
+    # Try looping back to the first split page error.
+    if next_error.nil?
+      next_error = split_pdf_log.split_pages.order(:id)
+                     .find_by('status LIKE ?', 'ERROR%')
+    end
+
+    if next_error.nil?
+      flash_now(:success, t('groups.done_assign'))
+      render plain: ''
+    else
+      render plain: "#{next_error.id}.pdf"
+    end
+
   end
 
   def exam_template_params

@@ -1,148 +1,71 @@
-<script>
-  function rotate() {
-    PDFView.rotatePages(180);
+function getFile(filename) {
+  if (!filename) {
+    $('#panes-content').remove();
+    return;
   }
-  var index = 0;
-  var files = <%= raw @error_files %>;
-  function getFile(filename) {
-    checkLastFile();
-    $('#copy_number').val('');
-    $('#page_number').val('');
-    $('#page_number_list').empty();
+
+  $('#copy_number').val('');
+  $('#page_number').val('');
+  $('#page_number_list').empty();
+  $('#upside_down')[0].checked = false;
+  $('#info_form input[type=submit]').prop('disabled', false);
+  $('#split_page_id').val(filename.split('.')[0])
+
+  var path = Routes.download_error_file_assignment_exam_template_path(
+    '',
+    <%= @assignment.id %>,
+    <%= @exam_template.id %>,
+    { file_name: filename, show_in_browser: true }
+  );
+
+  webViewerLoad(path).then(function () {
+    $('#copy_number').focus();
+  });
+}
+
+function getErrorPages(value) {
+  $('#page_number').empty();
+  if (value !== null) {
     $.ajax({
       method: 'GET',
-      url: 'download_error_file_path',
-      dataType: 'text',
+      url: 'error_pages',
+      dataType: 'json',
       data: {
-        assignment_id: <%= @assignment.id %>,
-        file_name: filename
+        exam_number: value
       },
       success: function (data) {
-        webViewerLoad(data);
+        $('#page_number').autocomplete({
+          source: data.map(function (x) { return x.toString(); }),
+          minLength: 0,
+          autoFocus: true,
+          select: function(event, ui) {
+            $('#page_number').val(ui.item.id);
+          }
+        });
       },
       error: function (err) {
         console.log(err);
       }
     });
   }
+}
 
-  function checkLastFile() {
-    if (files.length <= 1) {
-      $('#next_file').addClass('disable');
-      $('#previous_file').addClass('disable');
-      if (files.length == 0) {
-        $('#panes-content').remove();
-      }
-      return true;
-    }
-    return false;
-  }
-
-  function nextFile() {
-    if (index < files.length - 1) {
-      index += 1;
-    } else {
-      index = 0;
-    }
-    if (!checkLastFile()) {
-      getFile(files[index]);
-    }
-  }
-
-  function previousFile() {
-    if (index > 0) {
-      index -= 1;
-    } else {
-      index = files.length - 1;
-    }
-    if (!checkLastFile()) {
-      getFile(files[index]);
-    }
-  }
-
-  function getPages(value) {
-    $('#page_number').empty();
-    if(value !== null){
-      $.ajax({
-        method: 'GET',
-        url: 'error_pages',
-        dataType: 'json',
-        data: {
-          exam_number: value
-        },
-        success: function (data) {
-          $('#page_number').autocomplete({
-            source: data.map(function (x) { return x.toString(); }),
-            minLength: 0,
-            autoFocus: true,
-            select: function(event, ui) {
-              $('#page_number').val(ui.item.id);
-            }
-          });
-        },
-        error: function (err) {
-          console.log(err);
-        }
-      });
-    }
-  }
-
-  $(document).ready(function () {
-    $('#upside_down').click(function () {
-      rotate();
-    });
-
-    $('#copy_number').on('keyup', function () {
-      getPages($('#copy_number').val());
-    });
-
-    getFile(files[0]);
-
-    var error_groups = [];
-
-    $('#info_form').submit(function(e) {
-      e.preventDefault();
-      // grabbing existing user input data such as copy number, page number, and exam template
-      var fix_error = $(this).serializeArray().reduce(function(obj, item) {
-        obj[item.name] = item.value;
-        return obj;
-      }, {});
-      // appending checkbox data to determine whether we should flip the PDF or not
-      fix_error['upside_down'] = document.getElementById('upside_down').checked;
-      // appending filename to existing form data
-      var filename = files[index];
-      fix_error['filename'] = filename;
-      $.ajax({
-        method: 'POST',
-        url: '<%= fix_error_assignment_exam_template_path(id: @exam_template.id) %>',
-        dataType: 'text',
-        data: {
-          fix_error: fix_error
-        },
-        beforeSend: function () {
-          $('#info_form input[type=submit]').prop('disabled', true);
-        },
-        success: function (data) {
-          files.splice(index, 1);
-          if (index >= files.length) {
-            index = files.length - 1;
-          }
-          getFile(files[index]);
-
-          $('#copy_number').focus();
-          $('#upside_down')[0].checked = false;
-
-          if (files.length == 0) {
-            $('#panes-content').remove();
-          }
-        },
-        error: function (err) {
-          console.log(err);
-        },
-        complete: function () {
-          $('#info_form input[type=submit]').prop('disabled', false);
-        },
-      })
-    });
+$(document).ready(function () {
+  $('#upside_down').click(function () {
+    PDFView.rotatePages(180);
   });
-</script>
+
+  $('#copy_number').on('keyup', function () {
+    getErrorPages($('#copy_number').val());
+  });
+
+  $('#info_form').on('ajax:success', function (e, data) {
+    getFile(data);
+  });
+
+  <% if @next_error.nil? %>
+    getFile('');
+  <% else %>
+    getFile('<%= "#{@next_error.id}.pdf" -%>');
+  <% end %>
+});

@@ -27,7 +27,7 @@ class ExamScanLogTable extends React.Component {
 
   columns = [
     {
-      Header: 'File information',
+      Header: I18n.t('split_pdf_logs.file_information'),
       columns: [
         {
           Header: I18n.t('activerecord.attributes.split_pdf_log.exam_template'),
@@ -55,33 +55,33 @@ class ExamScanLogTable extends React.Component {
       ]
     },
     {
-      Header: 'Page scans',
+      Header: I18n.t('split_pdf_logs.pages'),
       columns: [
         {
           Header: I18n.t('activerecord.attributes.split_pdf_log.original_num_pages'),
           accessor: 'original_num_pages'
         },
         {
-          Header: I18n.t('activerecord.attributes.split_pdf_log.num_pages_qr_scan_error'),
+          Header: I18n.t('split_pdf_logs.pages_error'),
           Cell: row =>
             row.original.page_data.filter(p => p.status.startsWith('ERROR')).length
         },
         {
-          Header: I18n.t('split_pdf_logs.number_of_fixed_pages'),
+          Header: I18n.t('split_pdf_logs.pages_fixed'),
           Cell: row =>
             row.original.page_data.filter(p => p.status === 'FIXED').length
         },
       ]
     },
     {
-      Header: 'Papers found',
+      Header: I18n.t('split_pdf_logs.papers_found'),
       columns: [
         {
-          Header: I18n.t('activerecord.attributes.split_pdf_log.num_groups_in_complete'),
+          Header: I18n.t('complete'),
           accessor: 'num_groups_in_complete'
         },
         {
-          Header: I18n.t('activerecord.attributes.split_pdf_log.num_groups_in_incomplete'),
+          Header: I18n.t('incomplete'),
           accessor: 'num_groups_in_incomplete'
         },
       ]
@@ -132,14 +132,17 @@ class ExamScanErrorsTable extends React.Component {
               '', // Not sure why this is necessary
               this.props.assignment_id,
               this.props.exam_template_id,
-              {split_pdf_log_id: this.props.split_pdf_log_id})}>Fix</a>)
+              {split_pdf_log_id: this.props.split_pdf_log_id,
+               split_page_id: row.original.id})}>
+               {I18n.t('exam_templates.assign_errors.fix_errors')}
+             </a>)
           </span>
           );
         }
       },
     },
     {
-      Header: 'Group',
+      Header: I18n.t('groups.group_name'),
       accessor: 'group',
       maxWidth: 150,
     },
