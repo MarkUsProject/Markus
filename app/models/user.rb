@@ -190,7 +190,13 @@ class User < ApplicationRecord
       user_names << row[user_name_i]
       users << row
     end
-    parsed[:valid_lines] = '' # reset the value from MarkusCSV#parse
+    if parsed[:valid_lines].blank?
+      # the csv was malformed (or empty, which is ok)
+      # we should not trust the rows processed before finding it was malformed
+      users.clear
+    else
+      parsed[:valid_lines] = '' # reset the value from MarkusCSV#parse, use import's return instead
+    end
 
     begin
       imported = nil
