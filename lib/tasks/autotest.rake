@@ -1,3 +1,4 @@
+
 namespace :db do
   desc 'Sets up environment to test the autotester'
   task :autotest => :environment do
@@ -8,14 +9,19 @@ end
 
 class AutotestSetup
 
-  def initialize(short_id)
+  def initialize(short_id, required_files: ['submission.py'])
 
     # setup instance variables (mostly paths to directories)
     @assg_short_id = short_id
     root_dir = File.join('db', 'data', 'autotest_files', @assg_short_id)
-    @script_dir = File.join(root_dir, 'autotest_scripts')
-    @student_dir = File.join(root_dir, 'student_files')
+    script_dir = File.join(root_dir, 'autotest_scripts')
+    @test_files = Dir.glob(File.join(script_dir, '*'))
+    student_dir = File.join(root_dir, 'student_files')
+    @student_paths = Dir.glob(File.join(student_dir, '*')).select {|d| File.directory?(d)}
+    @req_files = required_files
+
     @assignment = create_new_assignment
+
 
     # clear old file and populate with new files
     clear_old_files
@@ -34,10 +40,9 @@ class AutotestSetup
 
   def clear_old_files
     # remove existing files to create room for new ones
+    # remove test scripts
     autotest_dir = File.join(MarkusConfigurator.autotest_client_dir, @assg_short_id)
-    FileUtils.remove_dir(autotest_dir, force:true)
-    ## TODO: remove only for this assignment and clear repo aswell for this assignment
-    # ?? do we need to clear the repo as well even if groups.rake is doing it already
+    FileUtils.remove_dir(autotest_dir, force: true)
   end
 
   def move_test_script_files
@@ -46,8 +51,7 @@ class AutotestSetup
     FileUtils.makedirs test_file_destination
 
     # copy test script files into the destination directory
-    original_test_files = Dir.glob(File.join(@script_dir, '*'))
-    FileUtils.cp original_test_files, test_file_destination
+    FileUtils.cp @test_files, test_file_destination
   end
 
   def create_marking_scheme
@@ -88,8 +92,7 @@ class AutotestSetup
   end
 
   def create_students
-    student_paths = Dir.glob(File.join(@student_dir, '*')).select {|d| File.directory?(d)}
-    student_paths.each do |student_path|
+    @student_paths.each do |student_path|
       # create group and grouping based on student directory names
       name = File.basename(student_path)
       student = User.add_user(Student, [name, "#{name}_last", "#{name}_first"])
@@ -97,18 +100,21 @@ class AutotestSetup
       group = Group.find_by group_name: student.user_name
 
       # move submission file (only one per student) and commit to repository
-      submission_basename = 'submission.py'
-      submission_file_path = File.join(student_path, submission_basename)
-      if File.file?(submission_file_path)
-        group.access_repo do |repo|
-          transaction = repo.get_transaction(student.user_name)
-          File.open(submission_file_path, 'r') do |file|
-            repo_path = File.join(@assignment.repository_folder, submission_basename)
-            transaction.add(repo_path, file.read, '')
+      @req_files.each do |filename|
+        submission_file_path = File.join(student_path, filename)
+        if File.file?(submission_file_path)
+          group.access_repo do |repo|
+            transaction = repo.get_transaction(student.user_name)
+            File.open(submission_file_path, 'r') do |file|
+              repo_path = File.join(@assignment.repository_folder, filename)
+              transaction.add(repo_path, file.read, '')
+            end
+            repo.commit(transaction)
           end
-          repo.commit(transaction)
         end
       end
+
+
     end
   end
 
@@ -137,14 +143,14 @@ class AutotestSetup
       token_period: 1,
       only_required_files: true
     )
-
     assignment = Assignment.find_by(short_identifier: @assg_short_id)
 
-    AssignmentFile.create(
-      assignment_id: assignment.id,
-      filename: 'submission.py'
-    )
-
+    @req_files.each do |filename|
+      AssignmentFile.create(
+        assignment_id: assignment.id,
+        filename: filename
+      )
+    end
     assignment
   end
 

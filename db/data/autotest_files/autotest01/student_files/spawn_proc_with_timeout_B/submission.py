@@ -19,7 +19,7 @@ import os
 open('angler.txt', 'w').close()
 os.chmod('angler.txt', 0o777)
 
-time.sleep(3)
+time.sleep(3) # just in case it takes some time to write to the file
 
 with open('angler.txt') as f:
 	contents = f.read()
@@ -41,6 +41,6 @@ response = '''
 </test>
 '''.format(*output)
 
-print(output)
+print(response)
 
 os.remove('angler.txt')

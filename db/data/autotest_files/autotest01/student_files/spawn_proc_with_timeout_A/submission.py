@@ -15,6 +15,9 @@ It represents the test case where:
 import subprocess
 import time
 
+# Note: sleeps once after the while loop to make sure the *_B.py file has time to
+#       make sure the permissions for angler.txt are set corectly
+
 cmd = "while [ ! -f ./angler.txt ]; do sleep 1; done; sleep 1; echo 'a fish!' > angler.txt"
 proc = subprocess.Popen(cmd, shell=True)
 
