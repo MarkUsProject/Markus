@@ -18,7 +18,7 @@ rvm --default use 2.4.0
 
 # Update package manager
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get -y upgrade
 
 # Change time zone
 sudo rm -f /etc/localtime
