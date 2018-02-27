@@ -17,45 +17,6 @@ class TATest < ActiveSupport::TestCase
   # to make sure we can easily create/update users based on their user_name
 
   # Test if user with a unique user number has been added to database
-  should 'be able to upload a csv vile' do
-    csv_file_data = StringIO.new("newuser1,USER1,USER1\n" +
-                                     'newuser2,USER2,USER2')
-    Ta.upload_user_list(Ta, csv_file_data, nil)
-
-    assert_equal 2, Ta.all.size,
-                 "Expected a different number of users - the CSV upload didn't work"
-
-    csv_1 = Ta.find_by_user_name('newuser1')
-    assert_not_nil csv_1, "Couldn't find a user uploaded by CSV"
-    assert_equal 'USER1', csv_1.last_name, 'Last name did not match'
-    assert_equal 'USER1', csv_1.first_name, 'First name did not match'
-
-    csv_2 = Ta.find_by_user_name('newuser2')
-    assert_not_nil csv_2, "Couldn't find a user uploaded by CSV"
-    assert_equal 'USER2', csv_2.last_name, 'Last name did not match'
-    assert_equal 'USER2', csv_2.first_name, 'First name did not match'
-  end
-
-  should 'ignore duplicates in the CSV file' do
-    new_user = Ta.new({user_name: 'exist_user',
-                       first_name: 'Nelle',
-                       last_name: 'Varoquaux'})
-
-    assert new_user.save, 'Could not create a new User'
-
-    csv_file_data = StringIO.new("newuser1,USER1,USER1\n" +
-                                     'exist_user,USER2,USER2')
-
-    User.upload_user_list(Ta, csv_file_data, nil)
-
-    user = Ta.find_by_user_name('exist_user')
-    assert_equal 'USER2', user.last_name, 'Last name was not properly overwritten by CSV file'
-    assert_equal 'USER2', user.first_name, 'First name was not properly overwritten by CSV file'
-
-    other_user = Ta.find_by_user_name('newuser1')
-    assert_not_nil other_user, 'Could not find the other user uploaded by CSV'
-
-  end
 
   context 'A ta with a membership' do
     setup do

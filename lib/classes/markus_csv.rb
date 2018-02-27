@@ -3,6 +3,7 @@ include ActionView::Helpers::TranslationHelper
 
 class MarkusCSV
   MAX_INVALID_LINES = 10
+  INVALID_LINE_SEP = ' - '
 
   # Returns a CSV string representation of an array of data.
   # 'objects' is an array of data, and gen_csv is a block which
@@ -46,12 +47,10 @@ class MarkusCSV
       end
       # Return string representation of the erroneous lines.
       unless invalid_lines.empty?
-        result[:invalid_lines] = t('csv_invalid_lines') + ' ' +
-          invalid_lines.take(MAX_INVALID_LINES).join(', ')
+        result[:invalid_lines] = t('csv_invalid_lines') + invalid_lines.take(MAX_INVALID_LINES).join(INVALID_LINE_SEP)
       end
       if valid_line_count > 0
-        result[:valid_lines] = I18n.t('csv_valid_lines',
-                                      valid_line_count: valid_line_count - header_count)
+        result[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: valid_line_count - header_count)
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = t('upload_errors.malformed_csv')
