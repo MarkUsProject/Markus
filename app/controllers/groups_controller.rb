@@ -126,6 +126,7 @@ class GroupsController < ApplicationController
     end
     if next_grouping.nil?
       redirect_to(:back)
+      return
     end
     names = next_grouping.memberships.map do |u|
       u.user.first_name + ' ' + u.user.last_name
