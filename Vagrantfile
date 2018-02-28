@@ -18,8 +18,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3000, host: 3000
 
   # Provisioning
-  config.vm.provision "shell" do |s|
+  config.vm.provision "setup", type: "shell" do |s|
     s.path = "script/setup.sh"
+    s.privileged = false
+  end
+
+  config.vm.provision "configuration", type: "shell" do |s|
+    s.path = "script/configuration.sh"
     s.privileged = false
   end
 
