@@ -57,7 +57,10 @@ bundle exec rake webpacker:install
 
 # Clone the Markus repository.
 git clone https://github.com/MarkUsProject/Markus.git
+
+# Install dependencies
 cd Markus
+bundle install
 
 # Setup the postgres database.
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password 'postgres';"
