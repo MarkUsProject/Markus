@@ -88,4 +88,4 @@ cd Markus
 sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments/development.rb
 
 # Setup the database.
-rake db:seed
+rake db:setup
