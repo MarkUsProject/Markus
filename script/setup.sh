@@ -72,7 +72,7 @@ sudo sed -i 's/local   all             all                                     p
 
 # Restarting the postgres server after changing the database.
 cd ../../../
-init.d/postgresql restart
+sudo init.d/postgresql restart
 
 # Switching back to the Markus folder.
 cd ../home/vagrant/Markus/
