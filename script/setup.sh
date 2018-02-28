@@ -83,7 +83,9 @@ cp config/database.yml.postgresql config/database.yml
 # Set the permissions so that the log file is writeable.
 chmod 0664 log/development.log
 
+# Switch the repository type to be git and not SVN.
 cd Markus
+sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments/development.rb
 
 # Setup the database.
 rake db:seed
