@@ -27,10 +27,8 @@ sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 # Install dependencies
 sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig
 
-# Git clone the repository
+# Git installation.
 sudo apt-get install -y git
-git clone https://github.com/MarkUsProject/Markus.git
-cd Markus
 
 # Install postgres
 sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
@@ -53,6 +51,13 @@ bundle install --without mysql
 yarn add @rails/webpacker
 # TODO: Is this really necessary?
 cp node_modules/@rails/webpacker/lib/install/config/webpacker.yml config
+
+# TODO: change to `rails webpacker:install` when rails5 upgrade is done.
+bundle exec rake webpacker:install
+
+# Clone the Markus repository.
+git clone https://github.com/MarkUsProject/Markus.git
+cd Markus
 
 # Setup the postgres database.
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password 'postgres';"
@@ -79,6 +84,3 @@ cd Markus
 
 # Setup the database.
 rake db:seed
-
-# TODO: change to `rails webpacker:install` when rails5 upgrade is done.
-bundle exec rake webpacker:install
