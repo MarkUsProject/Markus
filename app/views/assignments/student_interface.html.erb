@@ -133,23 +133,21 @@
             <% if @assignment.group_min == 1 %>
               <p>
                 <%= link_to t('student.work_alone'),
-                            { action: 'creategroup',
-                              id: @assignment.id,
-                              workalone: 'true' },
-                            { class: 'button',
-                              confirm: t('student.confirm_work_alone')} %>
+                            { action: 'creategroup', id: @assignment.id, workalone: 'true' },
+                            { class: 'button', data: { confirm: t('student.confirm_work_alone'),
+                                                       disable_with: t('student.please_wait') } } %>
               </p>
             <% end %>
             <p>
               <% if @student.has_pending_groupings_for?(@assignment.id)%>
                 <%= link_to t(:create),
-                            {action: 'creategroup', id: @assignment.id},
-                            {class: 'button', data: {confirm: t('student.decline_invitation2'),
-                                                     disable_with: t('student.please_wait')}} %>
+                            { action: 'creategroup', id: @assignment.id },
+                            { class: 'button', data: { confirm: t('student.decline_invitation2'),
+                                                       disable_with: t('student.please_wait') } } %>
               <% else %>
                 <%= link_to t(:create),
-                            {action: 'creategroup', id: @assignment.id},
-                            {class: 'button', data: {disable_with: t('student.please_wait')}} %>
+                            { action: 'creategroup', id: @assignment.id },
+                            { class: 'button', data: { disable_with: t('student.please_wait') } } %>
               <% end %>
             </p>
           <% end %>
