@@ -81,16 +81,12 @@ fr:
     admin_password:      "Mot de passe Administrateur"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
 
-    #app/views/main/_assignment_summary.html.erb
-    assignment_link:           "%{short_id} : %{description}"
-
     # app/views/assignments/_list_manage.html.erb
     current_assignments:       "Projets existants"
     assignment_item:           "Projet"
     due:                       "Date de retour"
     submission_status:         "Statut de la présentation"
     no_assignments:            "Aucun devoir pour le moment."
-    class_average:             "Moyenne : %{results_average}"
     submissions_collected:     "%{count}/%{size} Envois récupérés"
 
     # app/views/assignments/
@@ -278,7 +274,6 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
-    summaries:          "Récapitulatif"
     peer_reviews:       "Examens par le pairs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
@@ -489,7 +484,6 @@ fr:
       review_state:         "Avis Etat"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
-      class_average:        "Moyenne : %{results_average}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
       show_partial:         "Partiellement notés"
@@ -504,8 +498,8 @@ fr:
       submissions:	    "Soumissions: %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailed_csv_report: "Rappost CSV détaillé"
-      subversion_repo_list: "Liste des dépôts Subversion"
-      subversion_checkout_file: "Commandes SVN pour extraire les projets"
+      repo_list: "Liste des dépôts"
+      repo_checkout_file: "Commandes pour extraire les projets"
       errors:               "Erreurs"
       filter:               "Filtres :"
       show:                 "Montrer"
@@ -615,18 +609,6 @@ fr:
 
     stopping_collection_process: "Arrêt du processus de récupération…"
     converting_pdfs: "Conversion des PDF… %{converted}/%{total}"
-
-    #app/views/course_summaries/_course_summary.html.erb
-    course_summary_link: "Résumé du cours"
-
-    #app/views/main/_summary.erb
-    course_summary_link: "Résumé du cours"
-
-    #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme_with_id: "Barème %{marking_scheme_id}"
-    course_summary_weighted_average: "Moyenne pondérée de la classe:"
-    percentage: "%{percentage}%"
-    course_summary_weighted_median: "Médiation de classe pondérée:"
 
     groups:
       groups: "Groupes"
@@ -1330,25 +1312,6 @@ fr:
     penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"
     penalty_period_message: "Après %{hours} heures après la date d'échéance, votre note sera réduit de %{deduction}%"
 
-    #app/views/main/_assignment_info_summary.erb
-    percentage:                "%{percentage} %"
-    assignment_average:        "Classe Moyenne :"
-    assignment_median:        "Médiane :"
-    assignments_submitted:     "Projets envoyés :"
-    assignments_graded:        "Projets corrigés :"
-    assignments_failed:        "Projets sous la moyenne :"
-    assignments_zeros:         "Projets à 0 :"
-    refresh_graph:             "Actualiser le graphique"
-    outstanding_remark_request: "%{request_count} demande de remarque restante."
-    outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
-
-    #app/views/main/_grader_summary.erb
-    grader_distribution:       "Correcteurs assignés"
-    assign_graders:            "Attribuer Correcteurs"
-
-    #app/views/main/_grade_distribution_graph.html.erb
-    grade_distribution:        "Répartition des notes"
-
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message: "Processus en cours d`éxécution:"
@@ -1481,6 +1444,8 @@ fr:
         after_due_date: "Vous ne pouvez pas exécuter de test après la date de retour"
       test_result:
         all_tests: "UPDATE ME"
+        all_tests_stdout: "UPDATE ME"
+        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"

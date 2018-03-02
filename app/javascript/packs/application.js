@@ -14,6 +14,17 @@ import 'javascripts/check_timeout';
 import 'javascripts/redirect';
 
 import { ModalMarkus } from 'javascripts/modals';
+import { makeTATable } from 'javascripts/Components/ta_table';
+import { makeAdminTable } from 'javascripts/Components/admin_table';
+import { makeStudentTable } from 'javascripts/Components/student_table';
+import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
+
+import 'javascripts/react_config';
+
 
 // TODO: We shouldn't need to make this a global export.
 window.ModalMarkus = ModalMarkus;
+window.makeAdminTable = makeAdminTable;
+window.makeStudentTable = makeStudentTable;
+window.makeTATable = makeTATable;
+window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;

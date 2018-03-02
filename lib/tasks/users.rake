@@ -39,8 +39,9 @@ namespace :db do
     puts 'Populate database with Students'
     STUDENT_CSV = 'db/data/students.csv'
     if File.readable?(STUDENT_CSV)
-      csv_students = File.new(STUDENT_CSV)
-      User.upload_user_list(Student, csv_students, nil)
+      File.open(STUDENT_CSV) do |csv_students|
+        User.upload_user_list(Student, csv_students.read, nil)
+      end
     end
     i = 0
     Student.find_each do |student|

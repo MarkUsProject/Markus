@@ -77,13 +77,6 @@ context 'Admin resource' do
       id: admin.id.to_s,
       locale: 'en')
   end
-
-  it 'routes GET populate on a collection correctly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
-      locale: 'en')
-  end
 end
 # end Admin route tests
 
@@ -475,34 +468,18 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_simple_csv_report properly' do
-        expect(get: sub_path + '/download_simple_csv_report').to route_to(
+      it 'routes GET download_repo_checkout_commands properly' do
+        expect(get: sub_path + '/download_repo_checkout_commands').to route_to(
           controller: sub_ctrl,
-          action: 'download_simple_csv_report',
+          action: 'download_repo_checkout_commands',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes GET download_detailed_csv_report properly' do
-        expect(get: sub_path + '/download_detailed_csv_report').to route_to(
+      it 'routes GET download_repo_list properly' do
+        expect(get: sub_path + '/download_repo_list').to route_to(
           controller: sub_ctrl,
-          action: 'download_detailed_csv_report',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_svn_checkout_commands properly' do
-        expect(get: sub_path + '/download_svn_checkout_commands').to route_to(
-          controller: sub_ctrl,
-          action: 'download_svn_checkout_commands',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_svn_repo_list properly' do
-        expect(get: sub_path + '/download_svn_repo_list').to route_to(
-          controller: sub_ctrl,
-          action: 'download_svn_repo_list',
+          action: 'download_repo_list',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -1290,17 +1267,10 @@ context 'students collection' do
   let(:path) { '/en/students' }
   let(:ctrl) { 'students' }
 
-  it 'routes POST bulk_modify properly' do
-    expect(post: path + '/bulk_modify').to route_to(
+  it 'routes PATCH bulk_modify properly' do
+    expect(patch: path + '/bulk_modify').to route_to(
       controller: ctrl,
       action: 'bulk_modify',
-      locale: 'en')
-  end
-
-  it 'route GET populate properly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
       locale: 'en')
   end
 
@@ -1338,13 +1308,6 @@ end
 context 'tas collection' do
   let(:path) { '/en/tas' }
   let(:ctrl) { 'tas' }
-
-  it 'routes GET populate properly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
-      locale: 'en')
-  end
 
   it 'routes POST upload_ta_list properly' do
     expect(post: path + '/upload_ta_list').to route_to(

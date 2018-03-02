@@ -87,7 +87,6 @@ en:
     due:                       "Due date"
     submission_status:         "Submission Status"
     no_assignments:            "There are currently no assignments."
-    class_average:             "Class Average: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissions collected"
 
     # app/views/assignments/
@@ -300,7 +299,6 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
-    summaries:          "Summaries"
     peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
@@ -507,7 +505,6 @@ en:
       review_state:         "Review State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
-      class_average:        "Class Average: %{results_average}"
       show_all:             "Show All"
       show_unmarked:        "Show Unmarked"
       show_partial:         "Show Partial"
@@ -522,8 +519,8 @@ en:
       submissions:	    "Submissions: %{short_identifier}"
       csv_report:           "CSV Report"
       detailed_csv_report: "Detailed CSV Report"
-      subversion_repo_list: "Subversion Repo List"
-      subversion_checkout_file: "Subversion Checkout File"
+      repo_list: "Repo List"
+      repo_checkout_file: "Repo Checkout File"
       errors:               "Errors"
       filter:               "Filter:"
       show:                 "Show"
@@ -624,37 +621,6 @@ en:
                              <code>\"\",q1_name,q2_name,q3_name</code><br>
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-
-    #app/views/course_summaries/_course_summary.html.erb
-
-    course_summary_link: "Course Summary"
-
-    #app/views/main/_summary.erb
-
-    course_summary_link: "Course Summary"
-
-    #app/views/course_summaries/_course_summary_info_summary.html.erb
-
-    marking_scheme_with_id: "Marking Scheme %{marking_scheme_id}"
-    course_summary_weighted_average: "Weighted Class Average:"
-    percentage: "%{percentage}%"
-    course_summary_weighted_median: "Weighted Class Median:"
-
-    #app/views/grade_entry_forms/_grade_entry_form_summary.html.erb
-
-    grade_entry_form_link: "%{short_id}: %{description}"
-
-    #app/views/grade_entry_forms/_grade_entry_form_info_summary.html.erb
-
-    grade_entry_form_due_date: "Due Date"
-    grade_entry_form_average: "Class average:"
-    percentage: "%{percentage}%"
-    grade_entry_form_median: "Median:"
-    grade_entry_form_submitted: "Number of entries:"
-    grade_entry_form_released: "Number of entries released:"
-    grade_entry_form_failed: "Number of fails:"
-    grade_entry_form_zeros: "Number of zeros:"
-    refresh_graph: "Refresh the graph"
 
     no_grade_entry_forms_message: "There are currently no marks spreadsheets."
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
@@ -1009,7 +975,7 @@ en:
         full_name:      "Full Name"
         type:           "Type"
         user_type:      "Type"
-        grace_credits:  "Grace Credits Left"
+        grace_credits:  "Grace Credits"
         notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
@@ -1317,6 +1283,7 @@ en:
         success: "Key Pair was removed successfully"
 
     course_summaries:
+      model_name: "Course Summary"
       title: "Summary"
 
     marking_schemes:
@@ -1491,29 +1458,6 @@ en:
     penalty_decay_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
     penalty_period_message: "Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
 
-    #app/views/main/_assignment_summary.html.erb
-
-    assignment_link:           "%{short_id}: %{description}"
-
-    #app/views/main/_assignment_info_summary.erb
-    percentage:                "%{percentage}%"
-    assignment_average:        "Class Average:"
-    assignment_median:         "Assignment Median:"
-    assignments_submitted:     "Assignments Submitted:"
-    assignments_graded:        "Assignments Graded:"
-    assignments_failed:        "Number of fails:"
-    assignments_zeros:         "Number of zeros:"
-    refresh_graph:             "Refresh the graph"
-    outstanding_remark_request: "%{request_count} outstanding remark request"
-    outstanding_remark_requests: "%{request_count} outstanding remark requests"
-
-    #app/views/main/_grader_summary.erb
-    grader_distribution:       "Grader Distribution"
-    assign_graders:            "Assign Graders"
-
-    #app/views/main/_grade_distribution_graph.html.erb
-    grade_distribution:         "Grade Distribution"
-
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message: "Processing:"
@@ -1635,12 +1579,14 @@ en:
         after_due_date: "You cannot run tests as the due date for this assignment has passed"
       test_result:
         all_tests: "All tests"
+        all_tests_stdout: "All tests (stdout)"
+        all_tests_stderr: "All tests (stderr)"
         unknown_test: "Unknown test"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
-        err_results: "The tests had unhandled errors: %{errors}"
-        bad_results: "The test results are malformed: %{xml}"
-        no_tests: "The test results are empty"
+        err_results: "There are unhandled errors: %{errors}"
+        bad_results: "Test results are malformed: %{xml}"
+        no_tests: "Test results are empty"
         bad_marks_earned: "Earned marks are missing"
         bad_marks_total: "Total marks are missing"
         bad_status: "Unrecognized test status '%{status}'"

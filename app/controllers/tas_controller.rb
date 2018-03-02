@@ -1,14 +1,15 @@
 class TasController < ApplicationController
-  include TasHelper
   before_filter  :authorize_only_for_admin
 
   layout 'assignment_content'
 
   def index
-  end
-
-  def populate
-    render json: get_tas_table_info
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: Ta.select(:id, :user_name, :first_name, :last_name, :email)
+      }
+    end
   end
 
   def new
@@ -87,23 +88,13 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if params[:userlist]
-      User.transaction do
-        processed_users = []
-        result = MarkusCSV.parse(params[:userlist],
-                                 skip_blanks: true,
-                                 row_sep: :auto,
-                                 encoding: params[:encoding]) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          raise CSVInvalidLineError if processed_users.include?(row[0])
-          raise CSVInvalidLineError if User.add_user(Ta, row).nil?
-          processed_users.push(row[0])
-        end
-        unless result[:invalid_lines].empty?
-          flash_message(:error, result[:invalid_lines])
-        end
-        unless result[:valid_lines].empty?
-          flash_message(:success, result[:valid_lines])
-        end
+      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+      unless result[:invalid_lines].blank?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].blank?
+        Repository.get_class.__set_all_permissions
+        flash_message(:success, result[:valid_lines])
       end
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))

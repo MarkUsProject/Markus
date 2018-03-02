@@ -94,7 +94,6 @@ es:
     due:                       "Último plazo de entrega"
     submission_status:         "Estado"
     no_assignments:            "No existen proyectos por el momento."
-    class_average:             "Promedio de la clase: %{results_average}"
     submissions_collected:     "%{count}/%{size} Entregas recolectadas"
 
     # app/views/assignments/
@@ -426,7 +425,6 @@ es:
     properties:                  "Propiedades"
     grades:                      "Evaluadores"
     submissions:                 "Entregas"
-    summaries:                   "Resúmenes"
     peer_reviews:                "Revisiones de Compañeros"
     rubrics:                     "Rúbricas"
     marking_scheme:              "Esquema de calificación"
@@ -669,7 +667,6 @@ es:
       review_state:                         "Estado de la Revisión"
       grace_credits_used:                   "Créditos de Gracia Usados"
       final_grade:                          "Nota Final"
-      class_average:                        "Promedio de la Clase: %{results_average}"
       show_all:                             "Mostrar todos"
       show_unmarked:                        "Mostrar no calificados"
       show_partial:                         "Mostrar Parciales"
@@ -685,8 +682,8 @@ es:
       submissions:	                        "Entregas: %{short_identifier}"
       csv_report:                           "Reporte en formato CSV"
       detailed_csv_report:                  "Reporte Detallado en formato CSV"
-      subversion_repo_list:                 "Lista de Repositorios de Subversion"
-      subversion_checkout_file:             "Nueva Copia de Archivo Usando Subversion"
+      repo_list:                            "Lista de Repositorios"
+      repo_checkout_file:                   "Nueva Copia de Archivo"
       errors:                               "Errores"
       filter:                               "Filtro:"
       show:                                 "Mostrar"
@@ -707,18 +704,6 @@ es:
       how_many_marked:                      "%{num_marked}/%{num_assigned} proyectos han sido calificados"
       how_many_marked_short:                "%{num_marked}/%{num_assigned} calificados"
       average_annotations:                  "%{average_annotations} anotaciones por entrega calificada"
-
-    #app/views/course_summaries/_course_summary.html.erb
-    course_summary_link: "Resumen del curso"
-
-    #app/views/main/_summary.erb
-    course_summary_link: "Resumen del curso"
-
-    #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme_with_id: "Esquema de puntuación %{marking_scheme_id}"
-    course_summary_weighted_average: "Promedio ponderado de la clase:"
-    percentage: "%{percentage}%"
-    course_summary_weighted_median: "Mediana ponderada de la clase:"
 
     summaries_index:
       group_name:         "Nombre del Grupo"
@@ -1716,29 +1701,6 @@ es:
     penalty_period_message:                "Hasta %{hours} horas  después del último plazo de entrega del proyecto, su
                                             nota será reducida por %{deduction}%"
 
-    #app/views/main/_assignment_summary.html.erb
-
-    assignment_link:           "%{short_id}: %{description}"
-
-    #app/views/main/_assignment_info_summary.erb
-    percentage:                "%{percentage}%"
-    assignment_average:        "Promedio de la Clase:"
-    assignment_median:         "Media del Proyecto:"
-    assignments_submitted:     "Proyectos Entregados:"
-    assignments_graded:        "Proyectos Calificados:"
-    assignments_failed:        "Número de fallos:"
-    assignments_zeros:         "Número de ceros:"
-    refresh_graph:             "Volver a cargar el gráfico"
-    outstanding_remark_request: "%{request_count} solicitud de recalificación pendiente"
-    outstanding_remark_requests: "%{request_count} solicitudes de recalificación pendientes"
-
-    #app/views/main/_grader_summary.erb
-    grader_distribution:       "Distribución de Evaluadores"
-    assign_graders:            "Asignar Evaluadores"
-
-    #app/views/main/_grade_distribution_graph.html.erb
-    grade_distribution:         "Distribución de notas"
-
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message:          "Procesando:"
@@ -1869,6 +1831,8 @@ es:
                                proyecto ha pasado"
       test_result:
         all_tests: "UPDATE ME"
+        all_tests_stdout: "UPDATE ME"
+        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"

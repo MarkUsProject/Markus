@@ -49,9 +49,13 @@
                 </td>
                 <td>
                   <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
-                    <strong><%= t(:your_mark) %></strong>
-                    <%= # show results
-                        ("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark)).to_s + "% (#{t('assignment_average')} " + ("%.2f" % (assignment.results_average)).to_s + "%)" %>
+                    <% if assignment.max_mark > 0 %>
+                      <p>
+                        <strong><%= t(:your_mark) %></strong>
+                        <%= number_to_percentage(@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark, precision: 1) %>
+                        <%= "(#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)})" %>
+                      </p>
+                    <% end %>
                     <%= link_to t('results.results_name'),
                                 view_marks_assignment_submission_result_path(
                                   assignment_id: assignment.id,

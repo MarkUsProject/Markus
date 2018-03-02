@@ -1,6 +1,7 @@
 require 'csv_invalid_line_error'
 require 'descriptive_statistics'
 require 'histogram/array'
+require 'csv'
 
 class Assignment < ApplicationRecord
   include RepositoryHelper
@@ -576,27 +577,119 @@ class Assignment < ApplicationRecord
   end
 
   # Get a list of subversion client commands to be used for scripting
-  def get_svn_checkout_commands
-    svn_commands = [] # the commands to be exported
+  def get_repo_checkout_commands
+    repo_commands = [] # the commands to be exported
 
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
       if submission
-        svn_commands.push(
-          "svn checkout -r #{submission.revision_identifier} " +
-          "#{grouping.group.repository_external_access_url}/" +
-          "#{repository_folder} \"#{grouping.group.group_name}\"")
+        repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
+                                                                   submission.revision_identifier,
+                                                                   grouping.group.group_name, self.repository_folder)
       end
     end
-    svn_commands
+    repo_commands
   end
 
   # Get a list of group_name, repo-url pairs
-  def get_svn_repo_list
+  def get_repo_list
     CSV.generate do |csv|
       self.groupings.each do |grouping|
         group = grouping.group
         csv << [group.group_name,group.repository_external_access_url]
+      end
+    end
+  end
+
+  # Generate JSON summary of grades for this assignment
+  # for the current user. The user should be an admin or TA.
+  def summary_json(user)
+    return {} unless user.admin? || user.ta?
+
+    if user.admin?
+      groupings = self.groupings
+                    .includes(:group,
+                              :accepted_students,
+                              :inviter,
+                              :tas,
+                              current_result: :marks)
+    else
+      groupings = self.groupings
+                    .includes(:group,
+                              :accepted_students,
+                              :inviter,
+                              current_result: :marks)
+                    .joins(:memberships)
+                    .where('memberships.user_id': user.id)
+    end
+
+    grouping_data = groupings.map do |g|
+      result = g.current_result
+      {
+        group_name: g.group.group_name,
+        section: g.section,
+        members: g.accepted_students.map { |s| [s.user_name, s.first_name, s.last_name] },
+        graders: user.admin? ? g.tas.map(&:user_name) : [],
+        marking_state: g.marking_state(result, self, user),
+        final_grade: result && result.total_mark,
+        criteria: result.nil? ? {} : result.mark_hash,
+        result_id: result && result.id,
+        submission_id: result && result.submission_id
+      }
+    end
+    criteria_columns = self.get_criteria(:ta).map do |crit|
+      {
+        Header: crit.name,
+        accessor: "criteria.criterion_#{crit.class.to_s}_#{crit.id}"
+      }
+    end
+
+    { data: grouping_data, criteriaColumns: criteria_columns }
+  end
+
+  # Generate CSV summary of grades for this assignment
+  # for the current user. The user should be an admin or TA.
+  def summary_csv(user)
+    return '' unless user.admin?
+
+    if user.admin?
+      groupings = self.groupings
+                    .includes(:group,
+                              :accepted_students,
+                              current_result: :marks)
+    else
+      groupings = self.groupings
+                    .includes(:group,
+                              :accepted_students,
+                              current_result: :marks)
+                    .joins(:memberships)
+                    .where('memberships.user_id': user.id)
+    end
+
+    headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
+    criteria = self.get_criteria(:ta)
+    criteria.each do |crit|
+      headers[0] << crit.name
+      headers[1] << crit.max_mark
+    end
+
+    CSV.generate do |csv|
+      csv << headers[0]
+      csv << headers[1]
+
+      groupings.each do |g|
+        result = g.current_result
+        marks = result.nil? ? {} : result.mark_hash
+        g.accepted_students.each do |s|
+          row = [s.user_name, g.group.group_name]
+          if result.nil?
+            row += Array.new(1 + criteria.length, nil)
+          else
+            row << result.total_mark
+            row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+          end
+          csv << row
+        end
       end
     end
   end
@@ -607,6 +700,7 @@ class Assignment < ApplicationRecord
   #   student_name,95.22222,3,4,2,5,5,4,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
+  # TODO: remove this after version 1.7.
   def get_detailed_csv_report
     out_of = max_mark
     students = Student.all
@@ -956,7 +1050,7 @@ class Assignment < ApplicationRecord
       Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
-      errors.add(:base, self.repo_name)
+      errors.add(:base, self.repository_name)
       m_logger = MarkusLogger.instance
       m_logger.log("Creating repository '#{repository_name}' caused repository collision. " +
                      "Error message: '#{e.message}'",

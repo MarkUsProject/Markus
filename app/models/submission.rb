@@ -118,7 +118,7 @@ class Submission < ApplicationRecord
     if result.marks.empty? # can happen if a criterion is created after collection
       result.create_marks
     end
-    result.marks.includes(markable: :test_scripts).each do |mark|
+    result.marks.each do |mark|
       test_scripts = mark.markable.test_scripts
       if test_scripts.size == 0 # there's at least one manually-assigned mark
         complete_marks = false
@@ -127,7 +127,7 @@ class Submission < ApplicationRecord
       all_marks_earned = 0.0
       all_marks_total = 0.0
       test_scripts.each do |script|
-        res = test_script_results.where(test_script_id: script.id).first
+        res = self.test_script_results.where(test_script_id: script.id).first
         all_marks_earned += res.marks_earned
         all_marks_total += res.marks_total
       end
@@ -154,10 +154,9 @@ class Submission < ApplicationRecord
     # all marks are set by tests, can set the marking state to complete
     elsif complete_marks
       result.marking_state = Result::MARKING_STATES[:complete]
-      if result.save
-        result.submission.assignment.assignment_stat.refresh_grade_distribution
-        result.submission.assignment.update_results_stats
-      end
+      result.save
+      result.submission.assignment.assignment_stat.refresh_grade_distribution
+      result.submission.assignment.update_results_stats
     end
   end
 

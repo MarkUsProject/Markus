@@ -29,11 +29,7 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins do
-      collection do
-        get 'populate'
-      end
-    end
+    resources :admins
 
     resources :assignments do
 
@@ -59,6 +55,8 @@ Markus::Application.routes.draw do
         post 'update_files'
         get 'download'
         get 'peer_review'
+        get 'summary'
+        get 'csv_summary'
       end
 
       resources :tags do
@@ -153,11 +151,9 @@ Markus::Application.routes.draw do
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'
-          get 'download_simple_csv_report'
-          get 'download_detailed_csv_report'
           get 'download_svn_export_list'
-          get 'download_svn_checkout_commands'
-          get 'download_svn_repo_list'
+          get 'download_repo_checkout_commands'
+          get 'download_repo_list'
           post 'update_submissions'
           get 'updated_files'
           get 'replace_files'
@@ -208,12 +204,6 @@ Markus::Application.routes.draw do
             post 'remove_tag'
             get 'run_tests'
           end
-        end
-      end
-
-      resources :summaries, only: :index do
-        collection do
-          get 'populate'
         end
       end
 
@@ -383,8 +373,7 @@ Markus::Application.routes.draw do
 
     resources :students do
       collection do
-        get 'populate'
-        post 'bulk_modify'
+        patch 'bulk_modify'
         get 'manage'
         get 'add_new_section'
         get 'download_student_list'
@@ -398,7 +387,6 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
-        get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end

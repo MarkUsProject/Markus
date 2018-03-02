@@ -1,6 +1,4 @@
 class StudentsController < ApplicationController
-  include UsersHelper
-  include StudentsHelper
   before_filter    :authorize_only_for_admin
 
   def note_message
@@ -13,19 +11,30 @@ class StudentsController < ApplicationController
   end
 
   def index
-    @sections = Section.all
-    @section_column = ''
-    if Section.all.size > 0
-      @section_column = "{
-        id: 'section',
-        content: '#{Section.model_name.human}',
-        sortable: true
-      },"
+    respond_to do |format|
+      format.html
+      format.json {
+        student_data = Student.includes(:grace_period_deductions, :section).map do |s|
+          {
+            _id: s.id,
+            user_name: s.user_name,
+            first_name: s.first_name,
+            last_name: s.last_name,
+            email: s.email,
+            id_number: s.id_number,
+            hidden: s.hidden,
+            section: s.section_id,
+            grace_credits: s.grace_credits,
+            remaining_grace_credits: s.remaining_grace_credits
+          }
+        end
+        sections = Hash[Section.all.map { |section| [section.id, section.name] }]
+        render json: {
+          students: student_data,
+          sections: sections
+        }
+      }
     end
-  end
-
-  def populate
-    render json: get_students_table_info
   end
 
   def edit
@@ -60,7 +69,7 @@ class StudentsController < ApplicationController
         Student.unhide_students(student_ids)
       when 'give_grace_credits'
         Student.give_grace_credits(student_ids,
-                                   params[:number_of_grace_credits])
+                                   params[:grace_credits])
       when 'update_section'
         Student.update_section(student_ids, params[:section])
       end

@@ -725,55 +725,23 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  # See Assignment.get_simple_csv_report for details
-  def download_simple_csv_report
+  # See Assignment.get_repo_checkout_commands for details
+  def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    students = Student.all
-    out_of = assignment.max_mark
-    file_out = MarkusCSV.generate(students) do |student|
-      result = [student.user_name]
-      grouping = student.accepted_grouping_for(assignment.id)
-      if grouping.nil? || !grouping.has_submission?
-        result.push('')
-      else
-        submission = grouping.current_submission_used
-        result.push(submission.get_latest_result.total_mark / out_of * 100)
-      end
-      result
-    end
-
-    send_data file_out,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: "#{assignment.short_identifier}_simple_report.csv"
-  end
-
-  # See Assignment.get_detailed_csv_report for details
-  def download_detailed_csv_report
-    assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_detailed_csv_report,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: "#{assignment.short_identifier}_detailed_report.csv"
-  end
-
-  # See Assignment.get_svn_checkout_commands for details
-  def download_svn_checkout_commands
-    assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_svn_checkout_commands
+    svn_commands = assignment.get_repo_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'application/vnd.ms-excel',
-              filename: "#{assignment.short_identifier}_svn_checkouts.csv"
+              filename: "#{assignment.short_identifier}_repo_checkouts"
   end
 
-  # See Assignment.get_svn_repo_list for details
-  def download_svn_repo_list
+  # See Assignment.get_repo_list for details
+  def download_repo_list
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_svn_repo_list,
+    send_data assignment.get_repo_list,
               disposition: 'attachment',
               type: 'text/plain',
-              filename: "#{assignment.short_identifier}_svn_repo_list"
+              filename: "#{assignment.short_identifier}_repo_list"
   end
 
   # This action is called periodically from file_manager.
