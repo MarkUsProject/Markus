@@ -39,7 +39,7 @@ test:
   database: markus_test
   username: markus
   password: markus
-#
+
 # Production database settings. Make sure the database name is unique for
 # each MarkUs instance.
 production:

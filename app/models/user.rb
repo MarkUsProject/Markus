@@ -165,40 +165,62 @@ class User < ApplicationRecord
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
-    max_invalid_lines = 10
-    num_update = 0
-    result = {}
-    result[:invalid_lines] = []  # store lines that were not processed
-    # read each line of the file and update classlist
-    begin
-      user_list = user_list.utf8_encode(encoding)
-      User.transaction do
-        processed_users = []
-        CSV.parse(user_list,
-                  skip_blanks: true,
-                  row_sep: :auto) do |row|
-          # don't know how to fetch line so we concat given array
-          next if CSV.generate_line(row).strip.empty?
-          if processed_users.include?(row[0])
-            if result[:invalid_lines].count < max_invalid_lines
-              result[:invalid_lines] << I18n.t('csv_upload_user_duplicate',
-                                               { user_name: row[0] })
-            end
-          else
-            if User.add_user(user_class, row).nil?
-              if result[:invalid_lines].count < max_invalid_lines
-                result[:invalid_lines] << row.join(',')
-              end
-            else
-              num_update += 1
-              processed_users.push(row[0])
-            end
-          end
-        end # end parse
-      end
+    user_columns = user_class::CSV_UPLOAD_ORDER
+    users = []
+    user_names = Set.new
+    user_name_i = user_columns.find_index(:user_name)
+    section_name_i = user_columns.find_index(:section_name)
+    unless section_name_i.nil?
+      user_columns[section_name_i] = :section_id # becomes foreign key
     end
-    result[:upload_notice] = "#{num_update} user(s) added/updated."
-    result
+
+    parsed = MarkusCSV.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
+      next if row.empty?
+      raise CSVInvalidLineError if user_names.include?(row[user_name_i])
+      if row.size < user_columns.size
+        row.fill(nil, row.size...user_columns.size)
+      end
+      if row.size > user_columns.size
+        row = row[0...user_columns.size]
+      end
+      unless section_name_i.nil?
+        section = Section.find_or_create_by(name: row[section_name_i])
+        row[section_name_i] = if section.nil? then nil else section.id end
+      end
+      user_names << row[user_name_i]
+      users << row
+    end
+    if parsed[:valid_lines].blank?
+      # the csv was malformed (or empty, which is ok)
+      # we should not trust the rows processed before finding it was malformed
+      users.clear
+    else
+      parsed[:valid_lines] = '' # reset the value from MarkusCSV#parse, use import's return instead
+    end
+
+    begin
+      imported = nil
+      User.transaction do
+        imported = user_class.import user_columns, users
+      end
+      unless imported.failed_instances.empty?
+        if parsed[:invalid_lines].blank?
+          parsed[:invalid_lines] = I18n.t('csv_invalid_lines')
+        else
+          parsed[:invalid_lines] += MarkusCSV::INVALID_LINE_SEP # concat to invalid_lines from MarkusCSV#parse
+        end
+        parsed[:invalid_lines] +=
+          imported.failed_instances.map { |f| "#{f[:user_name]}" }.join(MarkusCSV::INVALID_LINE_SEP)
+      end
+      unless imported.ids.empty?
+        parsed[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: imported.ids.size)
+      end
+    rescue ActiveRecord::RecordNotUnique => e
+      # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import
+      parsed[:invalid_lines] = I18n.t('csv_upload_user_duplicate', user_name: e.message)
+    end
+
+    parsed
   end
 
   def self.add_user(user_class, row)

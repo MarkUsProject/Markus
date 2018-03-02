@@ -92,7 +92,7 @@ describe TasController do
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to action: 'index'
       expect(flash[:error])
-        .to eq([I18n.t('csv.upload.non_text_file_with_csv_extension')])
+        .to eq([I18n.t('upload_errors.malformed_csv')])
     end
   end
 

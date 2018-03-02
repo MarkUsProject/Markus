@@ -191,18 +191,6 @@ describe SubmissionsController do
     end
 
     # Stopping a curious student
-    it 'should not be able to access a simple csv report' do
-      get_as @student, :download_simple_csv_report, assignment_id: 1
-
-      is_expected.to respond_with(:missing)
-    end
-
-    it 'should not be able to access a detailed csv report.' do
-      get_as @student, :download_detailed_csv_report, assignment_id: 1
-
-      is_expected.to respond_with(:missing)
-    end
-
     it 'should not be able download svn checkout commands' do
       get_as @student, :download_repo_checkout_commands, assignment_id: 1
 
@@ -256,20 +244,6 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-    it 'should be able to download a simple csv report' do
-      get_as @ta_membership.user,
-             :download_simple_csv_report,
-             assignment_id: 1
-      is_expected.to respond_with(:missing)
-    end
-
-    it 'should be able to download a detailed csv report' do
-      get_as @ta_membership.user,
-             :download_detailed_csv_report,
-             assignment_id: 1
-      is_expected.to respond_with(:missing)
-    end
-
     it 'should be able to download the svn checkout commands' do
       get_as @ta_membership.user,
              :download_repo_checkout_commands,
@@ -314,52 +288,6 @@ describe SubmissionsController do
              path: '/'
       is_expected.to respond_with(:success)
     end
-
-    it 'should be able to download the simple csv report' do
-      get_as @admin,
-             :download_simple_csv_report,
-             assignment_id: @assignment.id
-      is_expected.to respond_with(:success)
-    end
-
-    it 'should be able to generate a simple CSV report with appropriate content' do
-      csv_data = ''
-      Student.all.each do |student|
-        fields = []
-        fields.push(student.user_name)
-        grouping = student.accepted_grouping_for(@assignment.id)
-        if grouping.nil? || !grouping.has_submission?
-          fields.push('')
-        else
-          submission = grouping.current_submission_used
-          fields.push(submission.get_latest_result.total_mark / @assignment.max_mark * 100)
-        end
-        csv_data.concat(fields.to_csv)
-      end
-      expect(@controller).to receive(:send_data).with(csv_data, @csv_options) {
-        # to prevent a 'missing template' error
-        @controller.render nothing: true
-      }
-      get_as @admin,
-             :download_simple_csv_report,
-             assignment_id: @assignment.id
-    end
-
-    it 'should be able to download the detailed csv report' do
-      get_as @admin,
-             :download_detailed_csv_report,
-             assignment_id: @assignment.id
-      is_expected.to respond_with(:success)
-    end
-
-    # parse header object to check for the right content type
-    it 'returns text/csv type for detailed csv report' do
-      get_as @admin,
-             :download_simple_csv_report,
-             assignment_id: @assignment.id
-      expect(response.content_type).to eq 'text/csv'
-    end
-
 
     it 'should be able to download the svn checkout commands' do
       get_as @admin,
@@ -675,16 +603,6 @@ describe SubmissionsController do
   end
 
   describe 'An unauthenticated or unauthorized user' do
-    it 'should not be able to download a simple csv report' do
-      get :download_simple_csv_report, assignment_id: 1
-      is_expected.to respond_with(:redirect)
-    end
-
-    it 'should not be able to download a detailed csv report' do
-      get :download_detailed_csv_report, assignment_id: 1
-      is_expected.to respond_with(:redirect)
-    end
-
     it 'should not be able to download the svn checkout commands' do
       get :download_repo_checkout_commands, assignment_id: 1
       is_expected.to respond_with(:redirect)

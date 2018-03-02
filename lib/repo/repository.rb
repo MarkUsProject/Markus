@@ -371,7 +371,9 @@ module Repository
 
   # A repository factory
   require_dependency File.join(File.dirname(__FILE__), 'memory_repository')
-  require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
+  if MarkusConfigurator.markus_config_repository_type == 'svn'
+    require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
+  end
   require_dependency File.join(File.dirname(__FILE__), 'git_repository')
 
   # Gets the configured repository implementation
