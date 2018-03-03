@@ -128,7 +128,7 @@ class GroupsController < ApplicationController
       redirect_to(:back)
       return
     end
-    names = next_grouping.memberships.map do |u|
+    names = next_grouping.non_rejected_student_memberships.map do |u|
       u.user.first_name + ' ' + u.user.last_name
     end
     num_valid = @assignment.get_num_valid
@@ -163,9 +163,7 @@ class GroupsController < ApplicationController
   def assign_student_and_next
     @grouping = Grouping.find(params[:g_id])
     @assignment = @grouping.assignment
-    if params[:skip]
-      @grouping.validate_grouping
-    else
+    unless params[:skip]
       # if the user has selected a name from the dropdown, s_id is set
       if params[:s_id].present?
         student = Student.find(params[:s_id])
@@ -186,7 +184,7 @@ class GroupsController < ApplicationController
       @assignment = Assignment.find(params[:a_id])
     end
     next_grouping = Grouping.get_assign_scans_grouping(@assignment)
-    names = next_grouping.memberships.map do |u|
+    names = next_grouping.non_rejected_student_memberships.map do |u|
       u.user.first_name + ' ' + u.user.last_name
     end
     num_valid = @assignment.get_num_valid
