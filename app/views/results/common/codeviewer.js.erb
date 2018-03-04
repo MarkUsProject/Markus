@@ -77,19 +77,3 @@ if (document.getElementById('codeviewer')) {
                                             annots: @annots,
                                             code_type: @code_type }) %>");
 <% end %>
-
-<%# Also update the annotation_summary_list %>
-<% if @current_user.ta? || @current_user.admin? ||
-   @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-  $('#annotation_summary_list').html(
-    "<%= escape_javascript(render partial: 'results/marker/annotation_summary',
-                                  locals: { annots: @all_annots,
-                                            submission_file_id: @submission_file_id }) %>");
-
-  hide_all_annotation_content_editors();
-<% else %>
-  $('#annotation_summary_list').html(
-    "<%= escape_javascript(render partial: 'results/student/annotation_summary',
-                                  locals: { annots: @all_annots,
-                                            submission_file_id: @submission_file_id }) %>");
-<% end %>

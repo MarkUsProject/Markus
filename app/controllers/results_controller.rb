@@ -4,6 +4,7 @@ class ResultsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:codeviewer, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
+                         :get_annotations,
                          :update_overall_comment, :remove_extra_mark,
                          :toggle_marking_state,
                          :download, :download_zip,
@@ -15,7 +16,7 @@ class ResultsController < ApplicationController
                        :note_message]
   before_filter :authorize_for_user,
                 only: [:codeviewer, :download, :download_zip, :run_tests,
-                       :view_marks]
+                       :view_marks, :get_annotations]
   before_filter :authorize_for_student,
                 only: [:update_remark_request,
                        :cancel_remark_request]
@@ -401,10 +402,8 @@ class ResultsController < ApplicationController
     end
 
     @annots = @file.annotations.includes(:creator, :annotation_text).select{|a| a.result_id == @result.id}
-    @all_annots = @result.annotations.includes(:submission_file, :creator, :annotation_text)
     if @result.submission.remark_submitted?
       original_result = @result.submission.get_original_result
-      @all_annots += original_result.annotations
       @annots += @file.annotations.select{|a| a.result_id == original_result.id}
     end
 
@@ -418,6 +417,39 @@ class ResultsController < ApplicationController
     @code_type = @file.get_file_type
 
     render template: 'results/common/codeviewer'
+  end
+
+  def get_annotations
+    result = Result.find(params[:id])
+
+    all_annots = result.annotations.includes(:submission_file, :creator, :annotation_text)
+    if result.submission.remark_submitted?
+      all_annots += result.submission.get_original_result.annotations
+    end
+
+    annotation_data = all_annots.map do |annotation|
+      data = {
+        id: annotation.id,
+        file: File.join(annotation.submission_file.path,
+                        annotation.submission_file.filename),
+        submission_file_id: annotation.submission_file_id,
+        content: annotation.annotation_text.content,
+        annotation_category:
+          annotation.annotation_text.annotation_category&.annotation_category_name,
+        type: annotation.class.name,
+        number: annotation.annotation_number,
+        line_start: annotation.line_start,
+        is_remark: annotation.is_remark
+      }
+
+      if @current_user.admin? || @current_user.ta?
+        data[:creator] = "#{annotation.creator.last_name} #{annotation.creator.last_name}"
+      end
+
+      data
+    end
+
+    render json: annotation_data
   end
 
   def update_mark

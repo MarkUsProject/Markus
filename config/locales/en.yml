@@ -341,7 +341,7 @@ en:
     marker:
       overall_comments: "Overall Comments"
       overall_comments_success: "Overall comments successfully updated."
-      across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
+      across_all_submission_files: "New: click on the filename to jump to the annotation. You can edit/remove annotations by right-clicking on them."
       source_code: "Source Code"
       test_results: "Test Results"
       feedback_files: "Feedback files"
@@ -404,7 +404,6 @@ en:
         show_old_marks: "Show Old Mark Summary"
       annotation:
         placeholder: "Markdown and basic LaTeX notation is supported"
-        from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         remark_flag: "(remark)"
         new_annotation: "Create new annotation"
         edit_annotation: "Edit annotation"

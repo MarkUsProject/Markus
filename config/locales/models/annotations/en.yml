@@ -5,4 +5,4 @@ en:
         one: "Annotation"
     attributes:
       annotation:
-        creator: "Created By:"
+        creator: "Created By"

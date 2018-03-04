@@ -4,6 +4,21 @@
   <%# MathML %>
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>
+  <%= javascript_pack_tag 'result' %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.annotationTable =
+        makeAnnotationTable(document.getElementById('annotation_table'),
+          {
+            result_id: <%= @result.id %>,
+            submission_id: <%= @result.submission_id %>,
+            assignment_id: <%= @result.submission.grouping.assignment_id %>,
+            detailed: <%= @current_user.admin? || @current_user.ta? ||
+             @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+          }
+      );
+    });
+  </script>
 <% end %>
 
 <script>

@@ -5,17 +5,6 @@
 
 /* Annotations */
 
-.annotationContent,
-.manageAnnotations {
-  font: 0.85em/0.9em $fonts;
-  margin-bottom: 10px;
-  padding-left: 10px;
-}
-
-.annotationContent p {
-  white-space: pre-wrap;
-}
-
 .annotation_text_display {
   background: #f6f6f6;
   border: 1px solid $grey;
@@ -371,40 +360,6 @@ ul.annotation_text_list {
     margin: 1em 0;
     width: 100%;
   }
-}
-
-#annotation_summary_list {
-  border-top: 1px solid $grey;
-  list-style: none;
-  margin: 0 0 20px 0;
-  padding: 0;
-
-  li {
-    border-bottom: 1px solid $grey;
-    padding: 0.25em 0.5em;
-    width: 100%;
-
-    &:nth-child(odd) {
-      background-color: #fffcc4;
-    }
-
-    &:nth-child(even) {
-      background-color: #ff9;
-    }
-  }
-
-  a {
-    color: $dark-blue;
-  }
-
-  input,
-  form.button_to {
-    display: inline-block;
-  }
-}
-
-.edit_remove_annotation_button {
-  font-size: 0.85em !important;
 }
 
 /* MathJAX previews */
