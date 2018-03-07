@@ -1,4 +1,4 @@
-class SplitPage < ActiveRecord::Base
+class SplitPage < ApplicationRecord
   belongs_to :split_pdf_log
   belongs_to :group, required: false
   validates :split_pdf_log, :filename, :raw_page_number, presence: true

@@ -1,8 +1,9 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'effects.js',
-                             'Students/index' %>
-  <%= stylesheet_link_tag('clickable') %>
-  <%= render partial: 'students_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeStudentTable(document.getElementById('students_table'));
+    })
+  </script>
 <% end %>
 
 <div class='title_bar'>

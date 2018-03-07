@@ -16,7 +16,7 @@ class MarkingSchemesController < ApplicationController
   end
 
   def create
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       begin
         # save marking scheme
         marking_scheme =
@@ -45,7 +45,7 @@ class MarkingSchemesController < ApplicationController
   end
 
   def update
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       begin
         # save marking scheme
         marking_scheme = MarkingScheme.find(params['id'])

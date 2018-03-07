@@ -236,7 +236,7 @@ class GroupsController < ApplicationController
       @assignment = Assignment.find(params[:assignment_id])
       # Transaction allows us to potentially roll back if something
       # really bad happens.
-      ActiveRecord::Base.transaction do
+      ApplicationRecord.transaction do
         # Loop over each row, which lists the members to be added to the group.
         result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
           @assignment.add_csv_group(row)

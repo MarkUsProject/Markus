@@ -17,7 +17,7 @@
 #   expected_output:        expected output from running the test
 #############################################################
 
-class TestResult < ActiveRecord::Base
+class TestResult < ApplicationRecord
   belongs_to :test_script_result
   validates_presence_of :test_script_result
 

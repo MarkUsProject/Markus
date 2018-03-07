@@ -1,4 +1,4 @@
-class AutotestRunJob < ActiveJob::Base
+class AutotestRunJob < ApplicationJob
 
   # This is the waiting list for automated testing on the test client. Once a test is requested, it is enqueued
   # and it is waiting for the submission files to be copied to the test location.

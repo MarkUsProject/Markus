@@ -1,4 +1,4 @@
-class JobMessenger < ActiveRecord::Base
+class JobMessenger < ApplicationRecord
   def message_for_user
     case status
       when 'queued'

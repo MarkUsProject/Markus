@@ -1,5 +1,5 @@
 # Join model representing a member in a grouping
-class Membership < ActiveRecord::Base
+class Membership < ApplicationRecord
 
   has_many :grace_period_deductions, dependent: :destroy
 

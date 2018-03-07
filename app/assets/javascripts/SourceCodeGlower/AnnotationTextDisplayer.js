@@ -38,6 +38,7 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
 
   // Each element is an AnnotationText object
   collection.forEach(function(element, index, array) {
+    // Assumes element's content is already sanitized.
     final_string += marked(element.getContent());
   });
 

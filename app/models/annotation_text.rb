@@ -1,4 +1,4 @@
-class AnnotationText < ActiveRecord::Base
+class AnnotationText < ApplicationRecord
 
   belongs_to :user, foreign_key: :creator_id
 
@@ -24,5 +24,9 @@ class AnnotationText < ActiveRecord::Base
   # Convert the content string into HTML
   def html_content
     content.gsub(/\n/, '<br/>').html_safe
+  end
+
+  def escape_newlines
+    content.gsub(/\r?\n/, '\\n')
   end
 end

@@ -1,4 +1,4 @@
-class Annotation < ActiveRecord::Base
+class Annotation < ApplicationRecord
 
   belongs_to                :submission_file
   belongs_to                :annotation_text

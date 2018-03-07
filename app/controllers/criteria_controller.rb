@@ -88,7 +88,7 @@ class CriteriaController < ApplicationController
   def update_positions
     @assignment = Assignment.find(params[:assignment_id])
 
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       params[:criterion].each_with_index do |type_id, index|
 
         type = type_id.match(/^[a-zA-Z]+/).to_s

@@ -4,6 +4,7 @@
   "browser": true,
   "camelcase": false,
   "curly": true,
+  "esversion": 6,
   "forin": true,
   "immed": true,
   "latedef": "nofunc",

@@ -57,6 +57,9 @@ module Markus
     I18n.available_locales = [:en, :es, :fr, :pt]
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
 
+    # Generate translations.js file (for i18n-js gem).
+    config.middleware.use I18n::JS::Middleware
+
     # flash keys for responder flash
     config.responders.flash_keys = [:success, :error]
     config.app_generators.scaffold_controller :responders_controller

@@ -1,4 +1,4 @@
-class Note < ActiveRecord::Base
+class Note < ApplicationRecord
   belongs_to :noteable, polymorphic: true, counter_cache: true
 
   validates_presence_of :notes_message, :creator_id, :noteable

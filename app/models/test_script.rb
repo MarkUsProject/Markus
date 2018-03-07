@@ -41,7 +41,7 @@
 #   to the student.
 ##############################################################
 
-class TestScript < ActiveRecord::Base
+class TestScript < ApplicationRecord
   belongs_to :assignment
   has_many :test_script_results, dependent: :delete_all
   belongs_to :criterion, polymorphic: true

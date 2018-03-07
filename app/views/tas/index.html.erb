@@ -1,9 +1,11 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'users_manager',
-                             'Tas/index' %>
   <%= stylesheet_link_tag('clickable') %>
 
-  <%= render partial: 'tas_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeTATable(document.getElementById('tas_table'));
+    })
+  </script>
 <% end %>
 
 <% content_for :title do %>

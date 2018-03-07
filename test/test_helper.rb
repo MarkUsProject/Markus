@@ -31,7 +31,7 @@ class ActiveSupport::TestCase
   end
 end
 
-class ActiveRecord::Base
+class ApplicationRecord
   unless defined? ANSI_BOLD
     ANSI_BOLD       = "\033[1m"
   end

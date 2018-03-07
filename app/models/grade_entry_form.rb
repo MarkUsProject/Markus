@@ -6,7 +6,7 @@ require 'histogram/array'
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
-class GradeEntryForm < ActiveRecord::Base
+class GradeEntryForm < ApplicationRecord
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy
@@ -141,11 +141,6 @@ class GradeEntryForm < ActiveRecord::Base
   # released so far (return a percentage).
   def calculate_released_median
     released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.median
-  end
-
-  # Determine the number of grade_entry_forms that have been released
-  def calculate_released_grade_entry_forms
-    released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.count
   end
 
   # Determine the number of grade_entry_students that have submitted

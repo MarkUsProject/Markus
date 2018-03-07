@@ -30,11 +30,7 @@ Markus::Application.routes.draw do
       resources :main_api
     end
 
-    resources :admins do
-      collection do
-        get 'populate'
-      end
-    end
+    resources :admins
 
     resources :assignments do
 
@@ -384,8 +380,7 @@ Markus::Application.routes.draw do
 
     resources :students do
       collection do
-        get 'populate'
-        post 'bulk_modify'
+        patch 'bulk_modify'
         get 'manage'
         get 'add_new_section'
         get 'download_student_list'
@@ -399,7 +394,6 @@ Markus::Application.routes.draw do
 
     resources :tas  do
       collection do
-        get 'populate'
         post 'upload_ta_list'
         get 'download_ta_list'
       end

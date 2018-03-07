@@ -1,50 +1,40 @@
 <p class="due_date">
-  <%= I18n.t(:grade_entry_form_due_date) %>:
   <% if grade_entry_form.date %>
-  <span>
-    <%= I18n.l(grade_entry_form.date, format: :long_date ) %>
-  </span>
+    <%= "#{t(:spreadsheet_date)}: #{l(grade_entry_form.date, format: :long_date)}" %>
   <% end %>
 </p>
 
 <table>
   <tr>
-    <td><%= I18n.t(:grade_entry_form_average) %></td>
+    <td><%= t(:average) %></td>
     <td>
-      <%= I18n.t(:percentage, percentage: number_with_precision(grade_entry_form.calculate_released_average, precision: 1) || '0') %>
+      <%= number_to_percentage(grade_entry_form.calculate_released_average || 0, precision: 1) %>
     </td>
   </tr>
 
   <tr>
-    <td><%= I18n.t(:grade_entry_form_median) %></td>
+    <td><%= t(:median) %></td>
     <td>
-      <%= I18n.t(:percentage, percentage: number_with_precision(grade_entry_form.calculate_released_median, precision: 1) || '0') %>
+      <%= number_to_percentage(grade_entry_form.calculate_released_median || 0, precision: 1) %>
     </td>
   </tr>
 
   <tr>
-    <td><%= I18n.t(:grade_entry_form_submitted) %></td>
+    <td><%= t(:num_entries) %></td>
     <td>
       <%= "#{grade_entry_form.grade_entry_forms_submitted}/#{grade_entry_form.grade_entry_students.size}" %>
     </td>
   </tr>
 
   <tr>
-    <td><%= I18n.t(:grade_entry_form_released) %></td>
-    <td>
-      <%= "#{grade_entry_form.calculate_released_grade_entry_forms}/#{grade_entry_form.grade_entry_students.size}" %>
-    </td>
-  </tr>
-
-  <tr>
-    <td><%= I18n.t(:grade_entry_form_failed) %></td>
+    <td><%= t(:num_failed) %></td>
     <td>
       <%= "#{grade_entry_form.calculate_released_failed}" %>
     </td>
   </tr>
 
   <tr>
-    <td><%= I18n.t(:grade_entry_form_zeros) %></td>
+    <td><%= t(:num_zeros) %></td>
     <td>
       <%= "#{grade_entry_form.calculate_released_zeros}" %>
     </td>

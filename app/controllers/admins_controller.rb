@@ -1,14 +1,15 @@
 class AdminsController < ApplicationController
-  include AdminsHelper
   before_filter  :authorize_only_for_admin
 
   layout 'assignment_content'
 
   def index
-  end
-
-  def populate
-    render json: get_admins_table_info
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: Admin.select(:id, :user_name, :first_name, :last_name, :email)
+      }
+    end
   end
 
   def edit

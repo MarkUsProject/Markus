@@ -2,7 +2,7 @@ require 'csv_invalid_line_error'
 require 'descriptive_statistics'
 require 'histogram/array'
 
-class Assignment < ActiveRecord::Base
+class Assignment < ApplicationRecord
   include RepositoryHelper
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
@@ -955,7 +955,7 @@ class Assignment < ActiveRecord::Base
       Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
-      errors.add(:base, self.repo_name)
+      errors.add(:base, self.repository_name)
       m_logger = MarkusLogger.instance
       m_logger.log("Creating repository '#{repository_name}' caused repository collision. " +
                      "Error message: '#{e.message}'",

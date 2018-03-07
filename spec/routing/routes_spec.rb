@@ -77,13 +77,6 @@ context 'Admin resource' do
       id: admin.id.to_s,
       locale: 'en')
   end
-
-  it 'routes GET populate on a collection correctly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
-      locale: 'en')
-  end
 end
 # end Admin route tests
 
@@ -1290,17 +1283,10 @@ context 'students collection' do
   let(:path) { '/en/students' }
   let(:ctrl) { 'students' }
 
-  it 'routes POST bulk_modify properly' do
-    expect(post: path + '/bulk_modify').to route_to(
+  it 'routes PATCH bulk_modify properly' do
+    expect(patch: path + '/bulk_modify').to route_to(
       controller: ctrl,
       action: 'bulk_modify',
-      locale: 'en')
-  end
-
-  it 'route GET populate properly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
       locale: 'en')
   end
 
@@ -1338,13 +1324,6 @@ end
 context 'tas collection' do
   let(:path) { '/en/tas' }
   let(:ctrl) { 'tas' }
-
-  it 'routes GET populate properly' do
-    expect(get: path + '/populate').to route_to(
-      controller: ctrl,
-      action: 'populate',
-      locale: 'en')
-  end
 
   it 'routes POST upload_ta_list properly' do
     expect(post: path + '/upload_ta_list').to route_to(

@@ -1,4 +1,4 @@
-class UpdateRepoRequiredFilesJob < ActiveJob::Base
+class UpdateRepoRequiredFilesJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_update_repo_required_files_queue_name
 

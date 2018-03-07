@@ -5,16 +5,16 @@
 
   <table>
     <tr>
-      <td><%= t(:course_summary_weighted_average) %></td>
+      <td><%= t(:average) %></td>
       <td>
-        <%= t(:percentage, percentage: number_with_precision(grades.mean, precision: 1) || '0') %>
+        <%= number_to_percentage(grades.mean || 0, precision: 1) %>
       </td>
     </tr>
 
     <tr>
-      <td><%= t(:course_summary_weighted_median) %></td>
+      <td><%= t(:median) %></td>
       <td>
-        <%= t(:percentage, percentage: number_with_precision(grades.median, precision: 1) || '0') %>
+        <%= number_to_percentage(grades.median || 0, precision: 1) %>
       </td>
     </tr>
   </table>

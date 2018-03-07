@@ -87,7 +87,6 @@ pt:
     due:                       "Prazo de entrega"
     submission_status:         "Status"
     no_assignments:            "Não existem projetos atualmente."
-    class_average:             "Média da classe: %{results_average}"
     submissions_collected:     "%{count}/%{size} Submissões coletadas"
 
     # app/views/assignments/
@@ -464,7 +463,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       review_state:         "Estado de revisão"
       grace_credits_used:   "Créditos de tolerância usados"
       final_grade:          "Nota final"
-      class_average:        "Média da classe: %{results_average}"
       show_all:             "Mostrar todos"
       show_unmarked:        "Mostrar não-avaliados"
       show_partial:         "Mostrar parcial"
@@ -667,18 +665,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     mark:
       error:
         validate_criteria: "deve ser entre 0 e a nota máxima do critério"
-
-    #app/views/course_summaries/_course_summary.html.erb
-    course_summary_link: "Resumo do curso"
-
-    #app/views/main/_summary.erb
-    course_summary_link: "Resumo do curso"
-
-    #app/views/course_summaries/_course_summary_info_summary.html.erb
-    marking_scheme_with_id: "Esquema de marcação %{marking_scheme_id}"
-    course_summary_weighted_average: "Média da classe ponderada:"
-    percentage: "%{percentage}%"
-    course_summary_weighted_median: "Mediana da classe ponderada:"
 
     # Student's View (admin)
     students:
@@ -1318,29 +1304,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
     penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
     penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"
-
-    #app/views/main/_assignment_summary.html.erb
-
-    assignment_link:           "%{short_id}: %{description}"
-
-    #app/views/main/_assignment_info_summary.erb
-    percentage:                "%{percentage}%"
-    assignment_average:        "Média de classe:"
-    assignment_median:         "Mediana do projeto:"
-    assignments_submitted:     "Projetos submetidos:"
-    assignments_graded:        "Projetos avalidos:"
-    assignments_failed:        "Número de falhas:"
-    assignments_zeros:         "Número de zeros:"
-    refresh_graph:             "Atualizar gráfico"
-    outstanding_remark_request: "%{request_count} pedidos de avaliação"
-    outstanding_remark_requests: "%{request_count} pedidos de avaliação"
-
-    #app/views/main/_grader_summary.erb
-    grader_distribution:       "Distribuição de notas"
-    assign_graders:            "Atribuir avaliadores"
-
-    #app/views/main/_grade_distribution_graph.html.erb
-    grade_distribution:         "Distribuição de notas"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh não! Falta pasta Assignment."

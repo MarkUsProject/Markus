@@ -5,7 +5,7 @@ require 'prawn/qrcode'
 require 'zxing'
 require 'rmagick'
 
-class ExamTemplate < ActiveRecord::Base
+class ExamTemplate < ApplicationRecord
   before_save :set_formats_for_name_and_filename
   after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   after_update :rename_exam_template_directory

@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository
 # We always assume the following fields exists:
 # => :user_name, :last_name, :first_name
 # If there are added columns, add the default values to default_values
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   before_validation :strip_name
 
   # Group relationships

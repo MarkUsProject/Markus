@@ -1,7 +1,8 @@
 <%= content_for :modal_id, 'upload_dialog' %>
 <%= content_for :modal_title, t('annotation_categories.upload.title') %>
-<%= content_for :modal_content do %>
+<%= content_for :modal_open_link, '#uploadModal' %>
 
+<%= content_for :modal_content do %>
   <!-- Script for switching content on radio buttons. -->
   <%= javascript_include_tag 'switch_content_control.js' %>
   <%= javascript_tag do %>

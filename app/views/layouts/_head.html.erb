@@ -5,3 +5,4 @@
 <%= stylesheet_link_tag 'OpenSans', params[:controller], media: 'all' %>
 <%= favicon_link_tag 'favicon.ico' %>
 <%= javascript_tag "const AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery?%>
+<%= stylesheet_link_tag 'https://unpkg.com/react-table@latest/react-table.css' %>

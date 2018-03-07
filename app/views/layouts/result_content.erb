@@ -4,6 +4,7 @@
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%= javascript_include_tag 'application' %>
+  <%= javascript_pack_tag 'application' %>
   <%= yield :head %>
 </head>
 <body>
@@ -71,20 +72,5 @@
   </div>
 
 </div>
-
-<%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
-
-<script>
-  $(document).ready(function($) {
-    setInterval(function() {
-      $.get('<%= check_timeout_main_index_path %>');
-    }, 120000);
-  });
-</script>
-<% # UI LIBRARIES %>
-<%= javascript_include_tag 'menu',
-                           'layouts',
-                           'help-system' %>
-
 </body>
 </html>

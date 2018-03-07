@@ -209,6 +209,18 @@ class GradeEntryFormsController < ApplicationController
     student_grade_entry = grade_entry_form.grade_entry_students
                           .find_by_user_id(student.id)
 
+    if current_user.student? && grade_entry_form.is_hidden
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
+
     # Getting the student's information for the row
     row = {}
     row[:user_name] = student.user_name
@@ -359,7 +371,7 @@ class GradeEntryFormsController < ApplicationController
           to_upsert.append([selector, setter])
         end
       end
-      Upsert.batch(ActiveRecord::Base.connection, Grade.table_name) do |upsert|
+      Upsert.batch(ApplicationRecord.connection, Grade.table_name) do |upsert|
         to_upsert.each do |selector, setter|
           upsert.row(selector, setter)
         end

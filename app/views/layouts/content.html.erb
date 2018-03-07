@@ -6,10 +6,7 @@
   <%= javascript_include_tag 'react.min',
                              'JSXTransformer' %>
   <%= javascript_include_tag 'application' %>
-  <% # UI LIBRARIES %>
-  <%= javascript_include_tag 'menu',
-                             'layouts',
-                             'help-system' %>
+  <%= javascript_pack_tag 'application' %>
   <%= yield :head %>
 </head>
 <body>
@@ -41,15 +38,5 @@
   <%= render partial: 'layouts/footer' %>
 
 </div>
-
-<%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
-
-<script>
-  $(document).ready(function($) {
-    setInterval(function() {
-      $.get('<%= check_timeout_main_index_path %>');
-    }, 120000);
-  });
-</script>
 </body>
 </html>

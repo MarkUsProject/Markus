@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), '..', '..',
 require 'csv_invalid_line_error'
 
 # Maintains group information for a given user on a specific assignment
-class Group < ActiveRecord::Base
+class Group < ApplicationRecord
 
   after_create :set_repo_name, :build_repository
 

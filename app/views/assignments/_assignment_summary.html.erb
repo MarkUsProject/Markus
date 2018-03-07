@@ -1,11 +1,13 @@
 <% unless assignment.nil? %>
   <div class='assignment_summary'>
     <h2 class='title'>
-      <%= link_to I18n.t(:assignment_link,
-                         short_id: assignment.is_peer_review? ? assignment.parent_assignment.short_identifier : assignment.short_identifier,
-                         description: assignment.is_peer_review? ? t('assignment.review') : assignment.description),
-                  browse_assignment_submissions_path(assignment.id),
-                  class: 'title' %>
+      <% if assignment.is_peer_review? %>
+        <%= link_to "#{assignment.parent_assignment.short_identifier}: #{t('assignment.review')}",
+                    browse_assignment_submissions_path(assignment.id) %>
+      <% else %>
+        <%= link_to "#{assignment.short_identifier}: #{assignment.description}",
+                    browse_assignment_submissions_path(assignment.id) %>
+      <% end %>
     </h2>
 
     <div id='assignment_<%= assignment.id %>_graph' class='left'>

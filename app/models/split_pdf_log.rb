@@ -1,4 +1,4 @@
-class SplitPdfLog < ActiveRecord::Base
+class SplitPdfLog < ApplicationRecord
   belongs_to :user
   belongs_to :exam_template
   has_many :split_pages, dependent: :destroy

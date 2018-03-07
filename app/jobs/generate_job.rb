@@ -1,5 +1,4 @@
-class GenerateJob < ActiveJob::Base
-  include ActiveJob::Status
+class GenerateJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_generate_queue_name
 
