@@ -206,8 +206,10 @@ class GradeEntryFormsController < ApplicationController
   def populate_term_marks_table
     grade_entry_form = GradeEntryForm.find(params[:id])
     student = current_user
+    student_grade_entry = grade_entry_form.grade_entry_students
+                            .find_by_user_id(student.id)
 
-    if current_user.student? && grade_entry_form.is_hidden
+    if current_user.student? && ( grade_entry_form.is_hidden || !student_grade_entry.released_to_student )
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -218,9 +220,6 @@ class GradeEntryFormsController < ApplicationController
              layout: false
       return
     end
-
-    student_grade_entry = grade_entry_form.grade_entry_students
-                          .find_by_user_id(student.id)
 
     # Getting the student's information for the row
     row = {}
