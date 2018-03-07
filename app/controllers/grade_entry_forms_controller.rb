@@ -206,6 +206,19 @@ class GradeEntryFormsController < ApplicationController
   def populate_term_marks_table
     grade_entry_form = GradeEntryForm.find(params[:id])
     student = current_user
+
+    if current_user.student? && grade_entry_form.is_hidden
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
+
     student_grade_entry = grade_entry_form.grade_entry_students
                           .find_by_user_id(student.id)
 
