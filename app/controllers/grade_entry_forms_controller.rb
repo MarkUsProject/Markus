@@ -207,7 +207,19 @@ class GradeEntryFormsController < ApplicationController
     grade_entry_form = GradeEntryForm.find(params[:id])
     student = current_user
     student_grade_entry = grade_entry_form.grade_entry_students
-                          .find_by_user_id(student.id)
+                            .find_by_user_id(student.id)
+
+    if current_user.student? && ( grade_entry_form.is_hidden || !student_grade_entry.released_to_student )
+      render 'shared/http_status',
+             formats: [:html],
+             locals: {
+               code: '404',
+               message: HttpStatusHelper::ERROR_CODE['message']['404']
+             },
+             status: 404,
+             layout: false
+      return
+    end
 
     # Getting the student's information for the row
     row = {}
