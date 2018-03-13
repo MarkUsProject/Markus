@@ -20,7 +20,10 @@ class AutomatedTestsController < ApplicationController
         if @assignment.save
           # write the uploaded files
           files.each do |file|
-            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
+            File.open(file[:path], 'wb') do |f|
+              content = file[:upload].read
+              f.write(content.encode(content.encoding, universal_newline: true))
+            end
             if file.has_key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
             end
