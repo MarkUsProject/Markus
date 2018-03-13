@@ -825,12 +825,13 @@ class Assignment < ActiveRecord::Base
     if ta_id.nil?
       num_annotations_all
     else
-      n = 0
-      ta_memberships.where(user_id: ta_id).find_each do |x|
-        x.grouping.marking_completed? &&
-          n += x.grouping.current_submission_used.annotations.size
-      end
-      n
+      # uniq is required since entries are doubled if there is a remark request
+      Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
+                .where(submissions: {submission_version_used: true},
+                       memberships: {user_id: ta_id},
+                       results: {marking_state: Result::MARKING_STATES[:complete]},
+                       groupings: {assignment_id: self.id})
+                .select('annotations.id').uniq.size
     end
   end
 
