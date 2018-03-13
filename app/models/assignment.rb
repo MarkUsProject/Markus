@@ -829,7 +829,8 @@ class Assignment < ActiveRecord::Base
       Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
                 .where(submissions: {submission_version_used: true},
                        memberships: {user_id: ta_id},
-                       results: {marking_state: Result::MARKING_STATES[:complete]})
+                       results: {marking_state: Result::MARKING_STATES[:complete]},
+                       groupings: {assignment_id: self.id})
                 .select('annotations.id').uniq.size
     end
   end
