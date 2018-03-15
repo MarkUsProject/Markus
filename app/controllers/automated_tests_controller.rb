@@ -22,7 +22,16 @@ class AutomatedTestsController < ApplicationController
           files.each do |file|
             File.open(file[:path], 'wb') do |f|
               content = file[:upload].read
-              f.write(content.encode(content.encoding, universal_newline: true))
+              # remove carriage return or other non-newline whitespace from
+              # the end of a shebang
+              if content.start_with? '#!'
+                line_end = content.index "\n"
+                unless line_end.nil?
+                  shebang = content[0...line_end].strip
+                  content[0...line_end] = shebang
+                end
+              end
+              f.write(content)
             end
             if file.has_key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
