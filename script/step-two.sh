@@ -1,101 +1,113 @@
+echo "- - - Installing Ruby 2.4.0, Step 1 - - -"
 source /etc/profile.d/rvm.sh
-echo "- - - Setup step 1 of 23 - - -"
+echo "- - - Installing Ruby 2.4.0, Step 2 - - -"
 rvm install 2.4.0
-echo "- - - Setup step 2 of 23 - - -"
+echo "- - - Installing Ruby 2.4.0, Step 3 - - -"
 rvm --default use 2.4.0
 
 # Update package manager
-echo "- - - Setup step 3 of 23 - - -"
+echo "- - - Updating Package Manager, Step 1 - - -"
 sudo apt-get update
-echo "- - - Setup step 4 of 23 - - -"
+echo "- - - Updating Package Manager, Step 2 - - -"
 sudo apt-get -y upgrade
 
 # Change time zone
-echo "- - - Setup step 5 of 23 - - -"
+echo "- - - Changing Time Zone, Step 1 - - -"
 sudo rm -f /etc/localtime
-echo "- - - Setup step 6 of 23 - - -"
+echo "- - - Changing Time Zone, Step 2 - - -"
 sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 
 # Install dependencies
-echo "- - - Setup step 7 of 23 - - -"
+echo "- - - Installing Dependencies - - -"
 sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig
 
 # Git installation.
-echo "- - - Setup step 8 of 23 - - -"
+echo "- - - Installing Git - - -"
 sudo apt-get install -y git
 
 # Install postgres
-echo "- - - Setup step 9 of 23 - - -"
+echo "- - - Installing Postgres - - -"
 sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
 
 # Install node
-echo "- - - Setup step 10 of 23 - - -"
+echo "- - - Installing Node, Step 1 - - -"
 curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-echo "- - - Setup step 11 of 23 - - -"
+echo "- - - Installing Node, Step 2 - - -"
 sudo apt-get install -y nodejs
 
 # Install yarn
-echo "- - - Setup step 12 of 23 - - -"
+echo "- - - Installing Yarn, Step 1 - - -"
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "- - - Setup step 13 of 23 - - -"
+echo "- - - Installing Yarn, Step 2 - - -"
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-echo "- - - Setup step 14 of 23 - - -"
+echo "- - - Installing Yarn, Step 3 - - -"
 sudo apt-get update && sudo apt-get install -y yarn
 
 # Project-specific dependencies now
-echo "- - - Setup step 15 of 23 - - -"
-# Likely not needed to use sudo, this is a quick-fix.
+echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
 gem install bundler
-echo "- - - Setup step 16 of 23 - - -"
+echo "- - - Installing Project-specific Dependencies, Step 2 - - -"
 bundle config libv8 -- --with-system-v8
-echo "- - - Setup step 17 of 23 - - -"
+echo "- - - Installing Project-specific Dependencies, Step 3 - - -"
 bundle install --without mysql
 
 # Add webpacker
-echo "- - - Setup step 18 of 23 - - -"
+echo "- - - Adding Webpacker, Step 1 - - -"
 yarn add @rails/webpacker
 # TODO: Is this really necessary?
-echo "- - - Setup step 19 of 23 - - -"
+echo "- - - Adding Webpacker, Step 2 - - -"
 cp node_modules/@rails/webpacker/lib/install/config/webpacker.yml config
 
 # TODO: change to `rails webpacker:install` when rails5 upgrade is done.
-echo "- - - Setup step 20 of 23 - - -"
+echo "- - - Installing Webpacker - - -"
 bundle exec rake webpacker:install
 
 # Clone the Markus repository.
-echo "- - - Setup step 21 of 23 - - -"
+echo "- - - Cloning Markus - - -"
 git clone https://github.com/MarkUsProject/Markus.git
 
 # Install dependencies
-echo "- - - Setup step 22 of 23 - - -"
+echo "- - - Bundle Install, Step 1 - - -"
 cd Markus
-echo "- - - Setup step 23 of 23 - - -"
+echo "- - - Bundle Install, Step 2 - - -"
 bundle install
 
 # Setup the postgres database.
+echo "- - - Setup Postgres Database, Step 1 - - -"
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password 'postgres';"
+echo "- - - Setup Postgres Database, Step 2 - - -"
 sudo -u postgres psql -U postgres -d postgres -c "create role markus createdb login password 'markus';"
 
 # Editing postgres configuration file needed to setup the database.
+echo "- - - Edit Postgres Configuration, Step 1 - - -"
 cd ../../../etc/postgresql/9.3/main
+echo "- - - Edit Postgres Configuration, Step 2 - - -"
 sudo sed -i 's/local   all             all                                     peer/local   all             all         md5/g' pg_hba.conf
 
 # Restarting the postgres server after changing the database.
+echo "- - - Restart Postgres Database, Step 1 - - -"
 cd ../../../
+echo "- - - Restart Postgres Database, Step 2 - - -"
 sudo init.d/postgresql restart
 
 # Switching back to the Markus folder.
+echo "- - - Switching to Markus Folder - - -"
 cd ../home/vagrant/Markus/
 
 # Copy the new database file.
+echo "- - - Copy Postgres Database File - - -"
 cp config/database.yml.postgresql config/database.yml
 
 # Set the permissions so that the log file is writeable.
+echo "- - - Set Log File Permissions - - -"
 chmod 0664 log/development.log
 
 # Switch the repository type to be git and not SVN.
+echo "- - - Switch Repository Type, Step 1 - - -"
 cd Markus
+echo "- - - Switch Repository Type, Step 2 - - -"
 sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments/development.rb
 
 # Setup the database.
+echo "- - - Setup Database via Rake - - -"
 rake db:setup
