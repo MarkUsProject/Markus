@@ -40,7 +40,7 @@ curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "- - - Setup step 13 of 23 - - -"
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 echo "- - - Setup step 14 of 23 - - -"
-sudo apt-get install -y yarn
+sudo apt-get update && sudo apt-get install -y yarn
 
 # Project-specific dependencies now
 echo "- - - Setup step 15 of 23 - - -"
