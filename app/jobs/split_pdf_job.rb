@@ -198,11 +198,17 @@ class SplitPDFJob < ApplicationJob
               new_pdf << page
             end
           end
-          txn.add(File.join(assignment_folder,
-                            "#{division.label}.pdf"),
-                  new_pdf.to_pdf,
-                  'application/pdf'
-          )
+          if File.exists? File.join(assignment_folder, "#{division.label}.pdf")
+            txn.replace(File.join(assignment_folder,
+                                  "#{division.label}.pdf"),
+                        new_pdf.to_pdf,
+                        'application/pdf')
+          else
+            txn.add(File.join(assignment_folder,
+                              "#{division.label}.pdf"),
+                    new_pdf.to_pdf,
+                    'application/pdf')
+          end
         end
 
         # Pages that don't belong to any division
@@ -220,16 +226,30 @@ class SplitPDFJob < ApplicationJob
           start_page = 1
         end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
-        txn.add(File.join(assignment_folder,
-                          "EXTRA.pdf"),
-                extra_pdf.to_pdf,
-                'application/pdf'
-        )
-        txn.add(File.join(assignment_folder,
+
+        if File.exists? File.join(assignment_folder, "EXTRA.pdf")
+          txn.replace(File.join(assignment_folder,
+                                "EXTRA.pdf"),
+                      extra_pdf.to_pdf,
+                      'application/pdf')
+        else
+          txn.add(File.join(assignment_folder,
+                            "EXTRA.pdf"),
+                  extra_pdf.to_pdf,
+                  'application/pdf')
+        end
+
+        if File.exists? File.join(assignment_folder, "COVER.pdf")
+          txn.replace(File.join(assignment_folder,
+                                "COVER.pdf"),
+                      cover_pdf.to_pdf,
+                      'application/pdf')
+        else
+          txn.add(File.join(assignment_folder,
                           "COVER.pdf"),
                 cover_pdf.to_pdf,
-                'application/pdf'
-        )
+                'application/pdf')
+        end
         repo.commit(txn)
       end
     end

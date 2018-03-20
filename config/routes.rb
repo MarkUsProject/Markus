@@ -9,6 +9,7 @@ Markus::Application.routes.draw do
     # API routes
     namespace :api do
       resources :users, except: [:new, :edit]
+      resources :grade_entry_forms, only: [:show]
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
           collection do

@@ -153,13 +153,18 @@ class ExamTemplate < ApplicationRecord
           repo_name: "#{self.name}_paper_#{exam_num}"
         )
         split_page.update_attributes(status: 'FIXED', exam_page_number: page_num, group: group)
+        # This creates both a new grouping and a new folder in the group repository
+        # when a new group is entered.
+        Grouping.find_or_create_by(
+          group_id: group.id,
+          assignment_id: self.assignment_id
+        )
 
         # add assignment files based on template divisions
         repo = group.repo
         revision = repo.get_latest_revision
         assignment_folder = self.assignment.repository_folder
         txn = repo.get_transaction(Admin.first.user_name)
-        txn.add_path(assignment_folder)
         self.template_divisions.each do |template_division|
           if template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
             submission_file = CombinePDF.new
