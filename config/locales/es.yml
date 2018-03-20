@@ -1752,6 +1752,7 @@ es:
                                            archivo con un script de la prueba."
       add_test_support_file_alert:        "Usted debe habilitar las pruebas para este proyecto para añadir un archivo
                                            de soporte de prueba."
+      convert_newline_notice:             "UPDATE ME"
       new_test_script_file:               "Nuevo archivo del script de la prueba"
       new_test_support_file:              "Nuevo Archivo de Soporte de Prueba"
       assignment_test_script_files:       "Archivos del Script de la Prueba"

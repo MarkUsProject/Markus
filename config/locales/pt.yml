@@ -1342,6 +1342,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       add_test_file_alert: "Você deve habilitar os testes para esse projeto para inserir um arquivo de teste."
       add_lib_file_alert: "Você deve habilitar testes para esse projeto para inserir um arquivo de biblioteca."
       add_parser_file_alert: "Você deve habilitar testes para esse projeto para inserir um arquivo interpretador (Parser)."
+      convert_newline_notice: "UPDATE ME"
       assignment_test_files: "Arquivos testes associados"
       assignment_lib_files: "Arquivos de bibliotecas associadas"
       assignment_parser_files: "Arquivos de interpretador associados"
