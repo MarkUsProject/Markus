@@ -422,7 +422,8 @@ class ResultsController < ApplicationController
   def get_annotations
     result = Result.find(params[:id])
 
-    all_annots = result.annotations.includes(:submission_file, :creator, :annotation_text)
+    all_annots = result.annotations.includes(:submission_file, :creator,
+                                             { annotation_text: :annotation_category })
     if result.submission.remark_submitted?
       all_annots += result.submission.get_original_result.annotations
     end

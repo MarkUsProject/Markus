@@ -5,17 +5,14 @@ annotationTable.addAnnotation({
   submission_file_id: '<%= @annotation.submission_file_id %>',
   content: '<%= @annotation.annotation_text.escape_newlines %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
-  type:' <%= @annotation.class.name %>',
+  type: '<%= @annotation.class.name %>',
   number: <%= @annotation.annotation_number %>,
-  line_start: <%= @annotation.line_start %>,
+  line_start: <%= @annotation.line_start || 'null' %>,
   is_remark: <%= @annotation.is_remark %>
 });
 
 <% if @text.annotation_category_id != nil %>
-  document.getElementById('annotation_text_list_<%= @text.annotation_category_id %>').innerHTML =
-    '<%= escape_javascript(render partial: "annotation_list",
-                                  locals: { annotation_category: @text.annotation_category,
-                                            result_id: @annotation.result_id }) %>';
+  annotationManager.fetchData();
 <% end %>
 
 <% if @annotation.is_a?(TextAnnotation) %>

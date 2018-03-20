@@ -74,17 +74,14 @@ describe AnnotationsController do
     it 'on :add_existing_annotation' do
       post_as @a, :add_existing_annotation,
               { format: :js,
-                creator: :current_user,
                 annotation_text_id: annotation_text.id,
                 submission_file_id: submission_file.id,
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
-                result_id: result.id,
-                assignment_id: assignment.id}
+                result_id: result.id }
       expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
+      expect(assigns(:text)).to be_truthy
       expect(response).to render_template('add_existing_annotation')
     end # End context :add_existing_annotation
 
@@ -184,17 +181,14 @@ describe AnnotationsController do
     it 'on :add_existing_annotation' do
       post_as @ta, :add_existing_annotation,
               { format: :js,
-                creator: :current_user,
                 annotation_text_id: annotation_text.id,
                 submission_file_id: submission_file.id,
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
-                result_id: result.id,
-                assignment_id: assignment.id}
+                result_id: result.id }
       expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
+      expect(assigns(:text)).to be_truthy
       expect(response).to render_template('add_existing_annotation')
     end # End context :add_existing_annotation
 
@@ -294,13 +288,11 @@ describe AnnotationsController do
     it 'on :add_existing_annotation' do
       post_as @stu, :add_existing_annotation,
               { format: :js,
-                creator: :current_user,
                 annotation_text_id: annotation_text.id,
                 submission_file_id: submission_file.id,
                 line_start: 1, line_end: 1,
                 column_start: 1, column_end: 1,
-                result_id: result.id,
-                assignment_id: assignment.id}
+                result_id: result.id }
       expect(response.status).to eq(404)
     end # End context :add_existing_annotation
 

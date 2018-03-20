@@ -5,7 +5,7 @@
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>
   <%= javascript_pack_tag 'result' %>
-  <script>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
       window.annotationTable =
         makeAnnotationTable(document.getElementById('annotation_table'),
@@ -17,6 +17,16 @@
              @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
           }
       );
+
+      <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+      window.annotationManager =
+        makeAnnotationManager(document.getElementById('annotation_options'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        })
+      <% end %>
     });
   </script>
 <% end %>
@@ -92,10 +102,6 @@
              result_id: @result.id,
              assignment_id: @result.submission.grouping.assignment.id
            } %>
-
-<%= render partial: 'results/marker/setup_annotation_categories',
-           formats: [:js],
-           locals: { categories: @assignment.annotation_categories } %>
 
 <%= render partial: 'results/marker/boot',
            formats: [:js],

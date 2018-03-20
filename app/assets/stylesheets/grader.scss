@@ -254,7 +254,7 @@
   width: 100%;
 }
 
-.annotation_options{
+#annotation_options{
   display: block;
   float: left;
 }
@@ -328,7 +328,7 @@ ul.annotation_text_list {
   padding: 0;
   position: absolute;
   left: -0.65em !important;
-  top: 0 !important;
+  /*top: 0 !important;*/
   width: 300px;
 
   li {
