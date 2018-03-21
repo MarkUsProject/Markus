@@ -157,7 +157,8 @@
         method: 'POST',
         data: {
           delete_files: delete_file,
-          file_revisions: file_revisions
+          file_revisions: file_revisions,
+          path: '<%= @path %>'
         },
         success: function(data) {
           this.props.resetTable();

@@ -389,7 +389,7 @@ class SubmissionsController < ApplicationController
             txn.remove(File.join(assignment_folder, filename),
                        file_revisions[filename])
             log_messages.push("Student '#{current_user.user_name}'" +
-                              " deleted file '#{filename}' for assignment" +
+                              " deleted file '#{@path}/#{filename}' for assignment" +
                               " '#{@assignment.short_identifier}'.")
           end
         end
@@ -414,7 +414,7 @@ class SubmissionsController < ApplicationController
             txn.replace(File.join(assignment_folder, filename), file_object.read,
                         file_object.content_type, revision.revision_identifier)
             log_messages.push("Student '#{current_user.user_name}'" +
-                              " replaced content of file '#{filename}'" +
+                              " replaced content of file '#{@path}/#{filename}'" +
                               ' for assignment' +
                               " '#{@assignment.short_identifier}'.")
           else
@@ -427,7 +427,7 @@ class SubmissionsController < ApplicationController
                     file_object.read, file_object.content_type)
             log_messages.push("Student '#{current_user.user_name}'" +
                               ' submitted file' +
-                              " '#{filename}'" +
+                              " '#{@path}/#{filename}'" +
                               ' for assignment ' +
                               "'#{@assignment.short_identifier}'.")
           end
