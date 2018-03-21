@@ -1113,15 +1113,6 @@ es:
         manage_admins: "Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs,
                         incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas."
 
-    #app/views/exam_templates
-    exam_templates:
-      assign_errors:
-        fix_errors:     "Corregir errores de análisis"
-        document_info:  "Información del documento"
-        copy_number:    "Número de copia"
-        page_number:    "número de página"
-        upside_down:    "Página al revés?"
-
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
       fail:
@@ -1752,6 +1743,7 @@ es:
                                            archivo con un script de la prueba."
       add_test_support_file_alert:        "Usted debe habilitar las pruebas para este proyecto para añadir un archivo
                                            de soporte de prueba."
+      convert_newline_notice:             "UPDATE ME"
       new_test_script_file:               "Nuevo archivo del script de la prueba"
       new_test_support_file:              "Nuevo Archivo de Soporte de Prueba"
       assignment_test_script_files:       "Archivos del Script de la Prueba"

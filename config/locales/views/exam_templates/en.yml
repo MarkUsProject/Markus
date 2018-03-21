@@ -78,8 +78,14 @@ en:
       scan_error:
         "Some files have not been scanned properly."
 
-    back_to_exam_template_page: "Back to Exam Template page"
     back_to_log_page: "Back to Log page"
+
+    assign_errors:
+      fix_errors:     "Fix"
+      document_info:  "Document Info"
+      copy_number:    "Copy Number"
+      page_number:    "Page Number"
+      upside_down:    "Page Upside Down?"
 
   flash:
     exam_templates:

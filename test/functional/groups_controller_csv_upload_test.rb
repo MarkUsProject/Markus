@@ -20,13 +20,13 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
       # Non-standard controller test. Rails expects @controller to be set
       @controller = GroupsController.new
 
-      # Setup for SubversionRepository
-      MarkusConfigurator.stubs(:markus_config_repository_type).returns('svn')
+      # Setup for GitRepository #TODO: change this to use memory repository instead
+      MarkusConfigurator.stubs(:markus_config_repository_type).returns('git')
       # Write repositories to tmp
       @repository_storage = File.join(::Rails.root.to_s, 'tmp', 'groups_controller_repos')
       MarkusConfigurator.stubs(:markus_config_repository_storage).returns(@repository_storage)
       MarkusConfigurator.stubs(:markus_config_repository_permission_file).returns(
-            File.join( @repository_storage, 'svn_authz') )
+            File.join( @repository_storage, 'auth') )
     end
 
     context 'on an assignment with allow_web_submits set to false and group max of 1' do
@@ -36,7 +36,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         # If not, having shell-init errors on Linux/MacOSX machines
         @pwd = FileUtils.pwd
         FileUtils.mkdir_p @repository_storage
-        FileUtils.touch File.join(@repository_storage, 'svn_authz')
+        FileUtils.touch File.join(@repository_storage, 'auth')
         @admin = Admin.make
 
         # Available CSV files (in test/groups_csvs):
@@ -134,29 +134,6 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         should 'have the specified repo names' do
           group_names = Group.pluck(:repo_name)
           assert_equal(group_names.sort, %w(x1 x2 x3))
-        end
-
-      end
-
-      context 'should be able to upload groups using CSV file upload, and repos' do
-
-        setup do
-          # We do *not* want to be admin
-          MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
-          @assignment = Assignment.make(invalid_override: true,
-                                        group_min: 1, group_max: 3,
-                                        student_form_groups: false)
-          @res = post_as @admin, :csv_upload, { assignment_id: @assignment.id, group: { grouplist: @non_admin_repos_csv_file } }
-        end
-
-        should 'have the names as provided in the csv file' do
-          # Repository names should be something like "repoX", where X is a number
-          assert_equal(Dir.chdir(@repository_storage), 0)
-          expected_list = %w(repo1 repo2 repo3 repo4)
-          repo_names = Group.all.map{ |g| g.repository_name }
-          assert_equal(expected_list.sort, repo_names.sort)
-          assert_equal(0, Dir.glob('repo*').length)
-          assert_equal([], Dir.glob('group_*'), 'Did not expect any repositories.')
         end
 
       end

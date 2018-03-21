@@ -44,6 +44,7 @@ class SplitPDFJob < ApplicationJob
         user: current_user
       )
 
+      FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
       progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
@@ -111,13 +112,12 @@ class SplitPDFJob < ApplicationJob
         end
         progress.increment
       end
-      save_pages(exam_template, partial_exams, filename, split_pdf_log)
+      num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log)
+      num_incomplete = partial_exams.length - num_complete
 
-      num_groups_in_complete = get_num_groups_in_dir(complete_dir)
-      num_groups_in_incomplete = get_num_groups_in_dir(incomplete_dir)
       split_pdf_log.update_attributes(
-        num_groups_in_complete: num_groups_in_complete,
-        num_groups_in_incomplete: num_groups_in_incomplete,
+        num_groups_in_complete: num_complete,
+        num_groups_in_incomplete: num_incomplete,
         num_pages_qr_scan_error: num_pages_qr_scan_error
       )
 
@@ -142,6 +142,7 @@ class SplitPDFJob < ApplicationJob
     error_dir = File.join(exam_template.base_path, 'error')
 
     groupings = []
+    num_complete = 0
     partial_exams.each do |exam_num, pages|
       next if pages.empty?
       pages.sort_by! { |page_num, _| page_num }
@@ -159,6 +160,7 @@ class SplitPDFJob < ApplicationJob
       # Save raw pages
       if pages.length == exam_template.num_pages
         destination = File.join complete_dir, "#{exam_num}"
+        num_complete += 1
       else
         destination = File.join incomplete_dir, "#{exam_num}"
       end
@@ -198,11 +200,17 @@ class SplitPDFJob < ApplicationJob
               new_pdf << page
             end
           end
-          txn.add(File.join(assignment_folder,
-                            "#{division.label}.pdf"),
-                  new_pdf.to_pdf,
-                  'application/pdf'
-          )
+          if File.exists? File.join(assignment_folder, "#{division.label}.pdf")
+            txn.replace(File.join(assignment_folder,
+                                  "#{division.label}.pdf"),
+                        new_pdf.to_pdf,
+                        'application/pdf')
+          else
+            txn.add(File.join(assignment_folder,
+                              "#{division.label}.pdf"),
+                    new_pdf.to_pdf,
+                    'application/pdf')
+          end
         end
 
         # Pages that don't belong to any division
@@ -220,16 +228,30 @@ class SplitPDFJob < ApplicationJob
           start_page = 1
         end
         extra_pdf << extra_pages[start_page..extra_pages.size].collect { |_, page| page }
-        txn.add(File.join(assignment_folder,
-                          "EXTRA.pdf"),
-                extra_pdf.to_pdf,
-                'application/pdf'
-        )
-        txn.add(File.join(assignment_folder,
+
+        if File.exists? File.join(assignment_folder, "EXTRA.pdf")
+          txn.replace(File.join(assignment_folder,
+                                "EXTRA.pdf"),
+                      extra_pdf.to_pdf,
+                      'application/pdf')
+        else
+          txn.add(File.join(assignment_folder,
+                            "EXTRA.pdf"),
+                  extra_pdf.to_pdf,
+                  'application/pdf')
+        end
+
+        if File.exists? File.join(assignment_folder, "COVER.pdf")
+          txn.replace(File.join(assignment_folder,
+                                "COVER.pdf"),
+                      cover_pdf.to_pdf,
+                      'application/pdf')
+        else
+          txn.add(File.join(assignment_folder,
                           "COVER.pdf"),
                 cover_pdf.to_pdf,
-                'application/pdf'
-        )
+                'application/pdf')
+        end
         repo.commit(txn)
       end
     end
@@ -238,6 +260,8 @@ class SplitPDFJob < ApplicationJob
         SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
       end
     end
+
+    num_complete
   end
 
   def group_name_for(exam_template, exam_num)

@@ -20,7 +20,19 @@ class AutomatedTestsController < ApplicationController
         if @assignment.save
           # write the uploaded files
           files.each do |file|
-            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
+            File.open(file[:path], 'wb') do |f|
+              content = file[:upload].read
+              # remove carriage return or other non-LF whitespace from the end of lines
+              if content.start_with?('#!')
+                newline_chars = content[/\r?\n|\r{1,2}/] # captures line endings: "\n" "\r\n" "\r\r" "\r"
+                if !newline_chars.nil? && newline_chars != "\n"
+                  filename = File.basename file[:path]
+                  flash_message(:notice, t('automated_tests.convert_newline_notice', file: filename))
+                  content = content.encode(content.encoding, universal_newline: true)
+                end
+              end
+              f.write(content)
+            end
             if file.has_key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
             end
