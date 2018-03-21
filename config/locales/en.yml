@@ -1496,6 +1496,7 @@ en:
       add_test_support_file_link: "Add Test Support File"
       add_test_script_file_alert: "You must enable tests for this assignment to add a test script file."
       add_test_support_file_alert: "You must enable tests for this assignment to add a test support file."
+      convert_newline_notice: "Newline characters in %{file} converted to \\n"
       new_test_script_file: "New Test Script File"
       new_test_support_file: "New Test Support File"
       assignment_test_script_files: "Test Script Files"
