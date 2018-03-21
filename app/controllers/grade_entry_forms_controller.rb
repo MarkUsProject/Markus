@@ -347,7 +347,7 @@ class GradeEntryFormsController < ApplicationController
             totals,
             @grade_entry_form,
             overwrite)
-          GradeEntryItem.import grades
+          GradeEntryItem.import grades, on_duplicate_key_update: [:out_of, :position]
           columns = @grade_entry_form.grade_entry_items.reload
           next
         end
