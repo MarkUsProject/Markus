@@ -1,9 +1,9 @@
-echo "- - - Installing Ruby 2.4.0, Step 1 - - -"
+echo "- - - Installing Ruby 2.5.0, Step 1 - - -"
 source /etc/profile.d/rvm.sh
-echo "- - - Installing Ruby 2.4.0, Step 2 - - -"
-rvm install 2.4.0
-echo "- - - Installing Ruby 2.4.0, Step 3 - - -"
-rvm --default use 2.4.0
+echo "- - - Installing Ruby 2.5.0, Step 2 - - -"
+rvm install 2.5.0 --disable-binary
+echo "- - - Installing Ruby 2.5.0, Step 3 - - -"
+rvm --default use 2.5.0
 
 # Update package manager
 echo "- - - Updating Package Manager, Step 1 - - -"
@@ -43,6 +43,13 @@ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/source
 echo "- - - Installing Yarn, Step 3 - - -"
 sudo apt-get update && sudo apt-get install -y yarn
 
+# Clone the Markus repository.
+echo "- - - Cloning Markus - - -"
+git clone https://github.com/MarkUsProject/Markus.git
+
+echo "- - - Switch to Markus - - -"
+cd Markus
+
 # Project-specific dependencies now
 echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
 gem install bundler
@@ -62,14 +69,8 @@ cp node_modules/@rails/webpacker/lib/install/config/webpacker.yml config
 echo "- - - Installing Webpacker - - -"
 bundle exec rake webpacker:install
 
-# Clone the Markus repository.
-echo "- - - Cloning Markus - - -"
-git clone https://github.com/MarkUsProject/Markus.git
-
 # Install dependencies
-echo "- - - Bundle Install, Step 1 - - -"
-cd Markus
-echo "- - - Bundle Install, Step 2 - - -"
+echo "- - - Bundle Install - - -"
 bundle install
 
 # Setup the postgres database.

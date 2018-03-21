@@ -150,7 +150,7 @@ GEM
     multi_json (1.12.2)
     mysql2 (0.4.10)
     net-ssh (4.2.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     parser (2.4.0.0)
       ast (~> 2.2)
