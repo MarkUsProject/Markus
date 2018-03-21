@@ -282,6 +282,7 @@ en:
     edit:               "Edit"
     save:               "Save"
     save_changes:       "Save Changes"
+    skip:               "Skip"
     apply:              "Apply"
     delete:             "Delete"
     create:             "Create"
@@ -314,6 +315,7 @@ en:
     unmarked:           "unmarked"
     partial:           "partial"
     complete:           "complete"
+    incomplete:           "incomplete"
     released:           "released"
     preview:            "Preview"
     invalid_grouping:   "(invalid)"
@@ -920,15 +922,6 @@ en:
         error:   "Failed to update admin."
       help:
         manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
-
-    #app/views/exam_templates
-    exam_templates:
-      assign_errors:
-        fix_errors:     "Fix Scan Errors"
-        document_info:  "Document Info"
-        copy_number:    "Copy Number"
-        page_number:    "Page Number"
-        upside_down:    "Page Upside Down?"
 
     add_student:
       success: "Student %{user_name} added."
