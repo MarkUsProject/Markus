@@ -338,7 +338,7 @@ class SubmissionsController < ApplicationController
     @file_manager_errors = Hash.new
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
-    students_filename = []
+    students_filenames = []
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
     unless @grouping.is_valid?
@@ -383,67 +383,57 @@ class SubmissionsController < ApplicationController
 
       log_messages = []
       begin
+
         if new_files.empty?
           # delete files marked for deletion
           delete_files.each do |filename|
-            txn.remove(File.join(assignment_folder, filename),
-                       file_revisions[filename])
-            log_messages.push("Student '#{current_user.user_name}'" +
-                              " deleted file '#{@path}/#{filename}' for assignment" +
-                              " '#{@assignment.short_identifier}'.")
+            file_path_full = File.join(assignment_folder, filename)
+            file_path_relative = File.join(@path, filename)[1..-1] # remove trailing '/' to match required files
+            txn.remove(file_path_full, file_revisions[filename])
+            log_messages.push("Student '#{current_user.user_name}' deleted file '#{file_path_relative}' "\
+                              "for assignment '#{@assignment.short_identifier}'.")
           end
+        else
+          # prepare repo revision for next block
+          revision = repo.get_latest_revision
         end
 
         # Add new files and replace existing files
-        revision = repo.get_latest_revision
-        files = revision.files_at_path(
-          File.join(@assignment.repository_folder, @path))
-        filenames = files.keys
-
-
         new_files.each do |file_object|
           filename = file_object.original_filename
-          # sanitize_file_name in SubmissionsHelper
           if filename.nil?
             raise I18n.t('student.submission.invalid_file_name')
           end
+          filename = sanitize_file_name(filename)
+          file_path_full = File.join(assignment_folder, filename)
+          file_path_relative = File.join(@path, filename)[1..-1] # remove trailing '/' to match required files
+          # Sometimes the file pointer of file_object is at the end of the file.
+          # In order to avoid empty uploaded files, rewind it to be safe.
+          file_object.rewind
 
           # Branch on whether the file is new or a replacement
-          if filenames.include? filename
-            file_object.rewind
-            txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, revision.revision_identifier)
-            log_messages.push("Student '#{current_user.user_name}'" +
-                              " replaced content of file '#{@path}/#{filename}'" +
-                              ' for assignment' +
-                              " '#{@assignment.short_identifier}'.")
+          if revision.path_exists?(file_path_full)
+            txn.replace(file_path_full, file_object.read, file_object.content_type, revision.revision_identifier)
+            log_messages.push("Student '#{current_user.user_name}' replaced file '#{file_path_relative}' "\
+                              "for assignment '#{@assignment.short_identifier}'.")
           else
-            students_filename << filename
-            # Sometimes the file pointer of file_object is at the end of the file.
-            # In order to avoid empty uploaded files, rewind it to be save.
-            file_object.rewind
-            txn.add(File.join(assignment_folder,
-                              sanitize_file_name(filename)),
-                    file_object.read, file_object.content_type)
-            log_messages.push("Student '#{current_user.user_name}'" +
-                              ' submitted file' +
-                              " '#{@path}/#{filename}'" +
-                              ' for assignment ' +
-                              "'#{@assignment.short_identifier}'.")
+            students_filenames << file_path_relative
+            txn.add(file_path_full, file_object.read, file_object.content_type)
+            log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_path_relative}' "\
+                              "for assignment '#{@assignment.short_identifier}'.")
           end
         end
 
         # check if only required files are allowed for a submission
-        unless students_filename.length < 1 ||
-               required_files.length == 0 ||
+        unless students_filenames.empty? ||
+               required_files.empty? ||
                !@assignment.only_required_files
-          if !(students_filename - required_files).empty?
-            @file_manager_errors[:size_conflict] =
-            I18n.t('assignment.upload_file_requirement')
+          if !(students_filenames - required_files).empty?
+            @file_manager_errors[:size_conflict] = I18n.t('assignment.upload_file_requirement')
             render :file_manager
             return
           else
-            required_files = required_files - students_filename
+            required_files = required_files - students_filenames
           end
         end
         # finish transaction
