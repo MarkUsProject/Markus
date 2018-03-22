@@ -1,3 +1,7 @@
 en:
   split_pdf_logs:
-    number_of_fixed_pages: "Number of fixed pages"
+    pages_error: "Pending errors"
+    pages_fixed: "Number fixed"
+    pages: "Pages"
+    papers_found: "Papers found"
+    file_information: "File information"

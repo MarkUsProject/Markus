@@ -9,6 +9,7 @@ Markus::Application.routes.draw do
     # API routes
     namespace :api do
       resources :users, except: [:new, :edit]
+      resources :grade_entry_forms, only: [:show]
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
           collection do
@@ -97,8 +98,8 @@ Markus::Application.routes.draw do
           get 'download'
           get 'download_generate'
           get 'assign_errors'
+          get 'download_raw_split_file'
           get 'download_error_file'
-          get 'download_error_file_path'
           get 'error_pages'
           patch 'generate'
           patch 'split'

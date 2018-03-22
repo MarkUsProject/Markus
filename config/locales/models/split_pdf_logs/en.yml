@@ -7,9 +7,9 @@ en:
       split_pdf_log:
         filename: "Filename"
         exam_template: "Exam Template"
-        num_groups_in_complete: "Number of groups in complete"
-        num_groups_in_incomplete: "Number of groups in incomplete"
-        num_pages_qr_scan_error: "Number of pages with QR scan errors"
+        num_groups_in_complete: "Complete groups"
+        num_groups_in_incomplete: "Incomplete groups"
+        num_pages_qr_scan_error: "Scan errors"
         original_num_pages: "Number of pages"
         user: "User"
 

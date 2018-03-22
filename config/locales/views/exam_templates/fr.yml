@@ -76,8 +76,14 @@ fr:
       scan_error:
         "Certains fichiers n'ont pas été correctement examinés."
 
-    back_to_exam_template_page: "Retour à la page modèle de l'examen"
     back_to_log_page: "Retour à la page de connexion"
+
+    assign_errors:
+      fix_errors:     "Corriger les erreurs de numérisation"
+      document_info:  "Information sur la documentation"
+      copy_number:    "Numéro de copie"
+      page_number:    "Numéro de page"
+      upside_down:    "Page à l'envers?"
 
   flash:
     exam_templates:

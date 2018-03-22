@@ -76,8 +76,14 @@ pt:
       scan_error:
         "Alguns arquivos não foram digitalizados corretamente."
 
-    back_to_exam_template_page: "De volta à página do modelo do exame"
     back_to_log_page: "Voltar à página de log"
+
+    assign_errors:
+      fix_errors:     "Corrigir erros de varredura"
+      document_info:  "Informação do documento"
+      copy_number:    "Numero de cópia"
+      page_number:    "Número de página"
+      upside_down:    "Página de cabeça para baixo?"
 
   flash:
     exam_templates:
