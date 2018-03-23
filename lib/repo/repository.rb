@@ -215,22 +215,20 @@ module Repository
       permissions = {}
       admins = Admin.pluck(:user_name)
       tas = Ta.pluck(:user_name)
-      non_student_repos = Group.pluck(:repo_name)
+      group_repos = Group.pluck(:repo_name)
       assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
-        valid_groupings = assignment.valid_groupings
-        valid_groupings.each do |valid_grouping|
+        assignment.valid_groupings.each do |valid_grouping|
           repo_name = valid_grouping.group.repo_name
           if permissions.key?(repo_name)
             next
           end
-          accepted_students = valid_grouping.accepted_students
-          accepted_students = accepted_students.map(&:user_name)
+          accepted_students = valid_grouping.accepted_students.map(&:user_name)
           permissions[repo_name] = admins + tas + accepted_students
-          non_student_repos.delete(repo_name)
+          group_repos.delete(repo_name)
         end
       end
-      non_student_repos.each do |repo_name|
+      group_repos.each do |repo_name| # "dead" repositories
         permissions[repo_name] = admins + tas
       end
 
