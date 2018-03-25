@@ -52,17 +52,4 @@ describe ImageAnnotation do
       end
     end
   end
-
-  describe '#annotation_link_list_partial' do
-    context 'testing annotation_link_list_partial' do
-      let(:annotation) do
-        build_stubbed(:image_annotation)
-      end
-
-      it 'renders partial' do
-        expected = '/annotations/image_annotation_list_link'
-        expect(annotation.annotation_list_link_partial).to eq(expected)
-      end
-    end
-  end
 end

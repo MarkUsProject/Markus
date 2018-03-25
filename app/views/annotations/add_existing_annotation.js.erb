@@ -15,10 +15,20 @@
                      '<%= @annotation.extract_coords.to_json().html_safe %>');
 <% end %>
 
-document.getElementById('annotation_summary_list').innerHTML =
-  '<%= escape_javascript(render partial: "results/marker/annotation_summary",
-                                locals: { annots: @annotations,
-                                          submission_file_id: @submission_file_id }) %>';
+annotationTable.addAnnotation({
+  id: <%= @annotation.id %>,
+  file: '<%= File.join(@annotation.submission_file.path,
+                       @annotation.submission_file.filename) %>',
+  submission_file_id: '<%= @annotation.submission_file_id %>',
+  content: '<%= @annotation.annotation_text.escape_newlines %>',
+  annotation_category: '<%= @annotation.annotation_text
+                                       .annotation_category
+                                       &.annotation_category_name %>',
+  type:' <%= @annotation.class.name %>',
+  number: <%= @annotation.annotation_number %>,
+  line_start: <%= @annotation.line_start || 'null' %>,
+  is_remark: <%= @annotation.is_remark %>
+});
 
 hide_all_annotation_content_editors();
 reloadDOM();

@@ -31,16 +31,7 @@
                 </button>
               <% end %>
 
-              <div class="annotation_options">
-                <button id='new_annotation_button' onclick='make_new_annotation(); return false;'>
-                  <%= t('annotations.new.button')%>
-                </button>
-                <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-                  <%= render partial: 'annotations/annotation_categories',
-                             locals: { annotation_categories: annotation_categories,
-                                       result_id: result.id } %>
-                <% end %>
-            </div>
+            <div id='annotation_options'></div>
           </div>
 
           <div id='codeviewer' class='flex-col'></div>
@@ -57,7 +48,7 @@
             <p><%= t('marker.across_all_submission_files') %></p>
           </div>
 
-          <ul id='annotation_summary_list'></ul>
+          <ul id='annotation_table'></ul>
         </div>
 
         <% if !@result.is_a_review? && assignment.enable_test %>

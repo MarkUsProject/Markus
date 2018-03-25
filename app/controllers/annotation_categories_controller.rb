@@ -3,13 +3,33 @@ require 'encoding'
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 
-  before_filter      :authorize_only_for_admin
+  before_filter      :authorize_only_for_admin, except: :index
+  before_filter      :authorize_for_ta_and_admin, only: :index
 
   layout 'assignment_content'
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories(order: 'position')
+    @annotation_categories = @assignment.annotation_categories(order: 'position').includes(:annotation_texts)
+
+    respond_to do |format|
+      format.html
+      format.json {
+        data = @annotation_categories.map do |cat|
+          {
+            id: cat.id,
+            annotation_category_name: cat.annotation_category_name,
+            texts: cat.annotation_texts.map do |text|
+              {
+                id: text.id,
+                content: text.content
+              }
+            end
+          }
+        end
+        render json: data
+      }
+    end
   end
 
   def new

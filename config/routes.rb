@@ -182,6 +182,7 @@ Markus::Application.routes.draw do
           end
 
           member do
+            get 'get_annotations'
             get 'add_extra_marks'
             get 'add_extra_mark'
             get 'download'

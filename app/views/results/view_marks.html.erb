@@ -9,6 +9,20 @@
   <%= javascript_tag do -%>
     PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
   <% end -%>
+  <%= javascript_pack_tag 'result' %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.annotationTable =
+        makeAnnotationTable(document.getElementById('annotation_table'),
+          {
+            result_id: <%= @result.id %>,
+            submission_id: <%= @result.submission_id %>,
+            assignment_id: <%= @result.submission.grouping.assignment_id %>,
+            detailed: false
+          }
+        );
+    });
+  </script>
 <% end %>
 
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>

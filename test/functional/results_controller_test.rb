@@ -350,7 +350,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :focus_line
             assert_nil assigns :file_contents
             assert_empty assigns :annots
-            assert_empty assigns :all_annots
             assert_response 200
           end
 
@@ -372,7 +371,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.js.erb'
@@ -400,7 +398,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert_not_nil assigns :file_contents
             assert_not_nil assigns :code_type
             assert render_template 'results/common/codeviewer'
@@ -907,7 +904,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert_not_nil assigns :file_contents
             assert_not_nil assigns :code_type
             assert render_template 'results/common/codeviewer'
@@ -931,7 +927,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.js.erb'
@@ -1264,7 +1259,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.js.erb'
@@ -1293,7 +1287,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :file
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
-            assert_not_nil assigns :all_annots
             assert render_template 'results/common/codeviewer'
             assert_response :success
           end  # -- without error

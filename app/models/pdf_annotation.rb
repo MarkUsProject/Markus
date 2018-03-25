@@ -24,8 +24,4 @@ class PdfAnnotation < Annotation
       page: page
     }
   end
-
-  def annotation_list_link_partial
-    '/annotations/image_annotation_list_link'
-  end
 end

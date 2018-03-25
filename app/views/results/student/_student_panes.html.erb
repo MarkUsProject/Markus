@@ -38,10 +38,9 @@
             <p><%= markdown(comment) %></p>
 
             <h3><%= Annotation.model_name.human.pluralize %></h3>
-            <p><%= t('marker.across_all_submission_files') %></p>
           </div>
 
-          <ul id='annotation_summary_list'></ul>
+          <ul id='annotation_table'></ul>
         </div>
 
         <% if assignment.enable_test %>
