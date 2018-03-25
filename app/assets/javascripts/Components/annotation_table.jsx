@@ -133,8 +133,8 @@ class AnnotationTable extends React.Component {
         columns={allColumns}
         filterable
         defaultSorted={[
-          { id: 'filename' },
-          { id: 'number' }
+          {id: 'filename'},
+          {id: 'number'}
         ]}
       />
     );

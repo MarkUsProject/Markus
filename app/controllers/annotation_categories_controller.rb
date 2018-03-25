@@ -15,7 +15,7 @@ class AnnotationCategoriesController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        x = @annotation_categories.map do |cat|
+        data = @annotation_categories.map do |cat|
           {
             id: cat.id,
             annotation_category_name: cat.annotation_category_name,
@@ -27,7 +27,7 @@ class AnnotationCategoriesController < ApplicationController
             end
           }
         end
-        render json: x
+        render json: data
       }
     end
   end
