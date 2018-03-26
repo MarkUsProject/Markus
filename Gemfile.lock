@@ -1,8 +1,8 @@
 GIT
-  remote: git://github.com/inkstak/activejob-status.git
-  revision: 860514cac7e11e9600959f22bed8a17813447211
+  remote: https://github.com/inkstak/activejob-status.git
+  revision: 9c1df676f70ad2159fd6572426f7e37ac326db69
   specs:
-    activejob-status (0.1.1)
+    activejob-status (0.1.3)
       activejob (>= 4.2)
       activesupport (>= 4.2)
 
@@ -426,4 +426,4 @@ DEPENDENCIES
   zxing_cpp
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
