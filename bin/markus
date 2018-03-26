@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Go to the Markus root.
+markus_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
+cd "$markus_path"
+
 # Check if redis-server is running
 if ! redis-cli ping ; then
   echo "Starting redis-server"

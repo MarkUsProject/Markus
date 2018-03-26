@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This is where RVM is initially installed.
 echo "- - - Installing RVM, Step 1 - - -"
 sudo apt-add-repository -y ppa:rael-gc/rvm

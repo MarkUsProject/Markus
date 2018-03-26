@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "- - - Installing Ruby 2.5.0, Step 1 - - -"
 source /etc/profile.d/rvm.sh
 echo "- - - Installing Ruby 2.5.0, Step 2 - - -"
@@ -55,23 +56,12 @@ echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
 gem install bundler
 echo "- - - Installing Project-specific Dependencies, Step 2 - - -"
 bundle config libv8 -- --with-system-v8
+bundle config github.https true
 echo "- - - Installing Project-specific Dependencies, Step 3 - - -"
 bundle install --without mysql
 
-# Add webpacker
-echo "- - - Adding Webpacker, Step 1 - - -"
-yarn add @rails/webpacker
-# TODO: Is this really necessary?
-echo "- - - Adding Webpacker, Step 2 - - -"
-cp node_modules/@rails/webpacker/lib/install/config/webpacker.yml config
-
-# TODO: change to `rails webpacker:install` when rails5 upgrade is done.
-echo "- - - Installing Webpacker - - -"
-bundle exec rake webpacker:install
-
-# Install dependencies
-echo "- - - Bundle Install - - -"
-bundle install
+echo "- - - Install JavaScript dependencies - - -"
+yarn install
 
 # Setup the postgres database.
 echo "- - - Setup Postgres Database, Step 1 - - -"
@@ -105,3 +95,13 @@ sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments
 # Setup the database.
 echo "- - - Setup Database via Rake - - -"
 rake db:setup
+
+# Update .bashrc and .profile
+echo "- - - Update .bashrc - - -"
+cat >> /home/vagrant/.bashrc <<EOL
+cd /home/vagrant/Markus
+EOL
+echo "- - - Update .profile - - -"
+cat >> /home/vagrant/.profile <<EOL
+PATH=$PATH:/home/vagrant/Markus/bin
+EOL
