@@ -42,7 +42,7 @@ gem 'minitest'
 gem 'autoprefixer-rails'
 gem 'resque'
 gem 'redis-rails'
-gem 'activejob-status', github: 'inkstak/activejob-status'
+gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'net-ssh'
 gem 'pluck_to_hash'
 
