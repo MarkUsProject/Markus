@@ -367,22 +367,24 @@ module Repository
 
   end
 
-  # A repository factory
-  require_dependency File.join(File.dirname(__FILE__), 'memory_repository')
-  if MarkusConfigurator.markus_config_repository_type == 'svn'
-    require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
-  end
-  require_dependency File.join(File.dirname(__FILE__), 'git_repository')
-
   # Gets the configured repository implementation
   def self.get_class
     repo_type = MarkusConfigurator.markus_config_repository_type
     case repo_type
       when 'svn'
+        unless defined? SubversionRepository
+          require_dependency File.join(File.dirname(__FILE__), 'subversion_repository')
+        end
         return SubversionRepository
       when 'memory'
+        unless defined? MemoryRepository
+          require_dependency File.join(File.dirname(__FILE__), 'memory_repository')
+        end
         return MemoryRepository
       when 'git'
+        unless defined? GitRepository
+          require_dependency File.join(File.dirname(__FILE__), 'git_repository')
+        end
         return GitRepository
       else
         raise "Repository implementation not found: #{repo_type}"
