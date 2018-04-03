@@ -42,33 +42,30 @@ class SubmissionsController < ApplicationController
 
     # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
     assignment_path = File.join(@grouping.assignment.repository_folder, @path)
-    @revisions_history = []
-    all_revisions = []
-    repo.get_all_revisions.each do |revision|
-      if collected_submission && collected_submission.revision_identifier == revision.revision_identifier.to_s
+    assignment_revisions = []
+    all_revisions = repo.get_all_revisions
+    all_revisions.each do |revision|
+      # store the collected revision
+      if @collected_revision.nil? && collected_submission &&
+           collected_submission.revision_identifier == revision.revision_identifier.to_s
         @collected_revision = revision
       end
-      all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
-                         date: revision.timestamp }
+      # store the assignment-relevant revisions
       next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
-      @revisions_history << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
-                              date: revision.timestamp }
-    end
-    @revisions_history = all_revisions if @revisions_history.empty?
-
-    # get revision to show
-    begin
-      if params[:revision_identifier]
-        @revision = repo.get_revision(params[:revision_identifier])
-      elsif params[:revision_timestamp]
-        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]), assignment_path)
-      else # latest relevant revision
-        @revision = repo.get_revision(@revisions_history[0][:id])
+      assignment_revisions << revision
+      # store the displayed revision
+      if @revision.nil?
+        if (params[:revision_identifier] && params[:revision_identifier] == revision.revision_identifier.to_s) ||
+             (params[:revision_timestamp] && Time.parse(params[:revision_timestamp]).in_time_zone >= revision.timestamp)
+          @revision = revision
+        end
       end
-    rescue Exception => e
-      flash[:error] = e.message
-      @revision = repo.get_latest_revision
     end
+    assignment_revisions = all_revisions if assignment_revisions.empty?
+    @revision = assignment_revisions[0] if @revision.nil? # latest relevant revision
+    @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
+                                                                 id_ui: revision.revision_identifier_ui,
+                                                                 date: revision.timestamp } }
 
     respond_to do |format|
       format.html

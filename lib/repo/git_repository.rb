@@ -197,12 +197,32 @@ module Repository
     end
 
     def get_all_revisions
+      # use the git reflog to get a list of pushes
+      repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
+      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+      bare_repo = Rugged::Repository.new(bare_path)
+      reflog = bare_repo.ref('refs/heads/master').log.reverse
+      push_info = OpenStruct.new
+      push_info.index = -1
+      # walk through the commits and get revisions
+      revisions = []
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
       walker.push(@repos.last_commit)
-      walker.map do |commit|
-        get_revision(commit.oid)
+      walker.each do |commit|
+        if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+          next_reflog_entry = reflog[push_info.index + 1]
+          if commit.oid == next_reflog_entry[:id_new]
+            push_info.sha = next_reflog_entry[:id_new]
+            push_info.time = next_reflog_entry[:committer][:time]
+            push_info.index += 1
+          end
+        end
+        revision = get_revision(commit.oid)
+        revision.timestamp = push_info.time
+        revisions << revision
       end
+      revisions
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob

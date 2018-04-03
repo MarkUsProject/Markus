@@ -57,7 +57,7 @@
 
   <div class='global_actions'>
     <h2><%= raw(t('browse_submissions.viewing_revision', identifier_ui: @revision.revision_identifier_ui)) %>
-        (<span id='current_revision_timestamp_display'> <%= l(@revision.timestamp, format: :long_date) %> </span>)
+        (<span id='current_revision_timestamp_display'><%= l(@revision.timestamp, format: :long_date) %></span>)
         <br>
         <%= t('browse_submissions.currently_collected') %>
         <% if @grouping.is_collected %>
