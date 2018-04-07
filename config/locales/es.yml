@@ -81,7 +81,7 @@ es:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '(', ')', o '_'"
+      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '_' o '/'"
 
     # app/views/main/index.html.erb
     switch_role:                   "Cambio de rol"

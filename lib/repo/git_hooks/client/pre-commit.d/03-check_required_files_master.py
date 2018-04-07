@@ -7,17 +7,18 @@ import subprocess
 
 
 if __name__ == '__main__':
+
     branch = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stdout=subprocess.PIPE,
                             universal_newlines=True)
     # Only check master branch
     if branch.stdout.strip() != 'master':
         exit(0)
 
-    requirements = subprocess.run(['git', 'show', 'HEAD:.required.json'],
-                                    stdout=subprocess.PIPE, universal_newlines=True)
+    requirements = subprocess.run(['git', 'show', 'HEAD:.required.json'], stdout=subprocess.PIPE,
+                                  universal_newlines=True)
     required_files = json.loads(requirements.stdout)
-    changes = subprocess.run(['git', 'diff-index', '--name-status', '--no-renames', 'HEAD'],
-                                stdout=subprocess.PIPE, universal_newlines=True)
+    changes = subprocess.run(['git', 'diff-index', '--name-status', '--no-renames', 'HEAD'], stdout=subprocess.PIPE,
+                             universal_newlines=True)
     staged_dirs = []
 
     # Check if the assignment forbids adding non-required files.
@@ -49,19 +50,18 @@ if __name__ == '__main__':
                     print('[MarkUs] Warning: {}.'.format(msg))
         elif status == 'D' and file_path in req['required']:
             print("[MarkUs] Warning: you are deleting required file '{}' from assignment '{}'.".format(
-                file_path, assignment))
+                  file_path, assignment))
         elif status == 'M' and file_path not in req['required'] and req['required_only']:
             print("[MarkUs] Warning: you are modifying non-required '{}' in assignment '{}', but it only requires '{}'.".format(
-                file_path, assignment, ', '.join(req['required'])))
+                  file_path, assignment, ', '.join(req['required'])))
 
     # warn about missing files
-    new_ls = subprocess.run(['git', 'ls-files'], stdout=subprocess.PIPE,
-                            universal_newlines=True)
-    files = [path.split('/') for path in new_ls.stdout.splitlines()]
+    new_ls = subprocess.run(['git', 'ls-files'], stdout=subprocess.PIPE, universal_newlines=True)
+    files = {tuple(path.split('/', maxsplit=1)) for path in new_ls.stdout.splitlines()}
     for assignment in staged_dirs:
         if assignment not in required_files:
             continue
         for file_path in required_files[assignment]['required']:
-            if [assignment, file_path] not in files:
+            if (assignment, file_path) not in files:
                 print("[MarkUs] Warning: required file '{}' is missing in assignment '{}'.".format(
-                    file_path, assignment))
+                      file_path, assignment))

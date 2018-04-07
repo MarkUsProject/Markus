@@ -136,7 +136,9 @@ module AutomatedTestsClientHelper
         required_files = assignment.assignment_files.map(&:filename).to_set
       end
       submission.submission_files.each do |file|
-        unless required_files.nil? || required_files.include?(file.filename) # TODO use &. with ruby > 2.3
+        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
+        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
+        unless required_files.nil? || required_files.include?(file_path) # TODO use &. with ruby > 2.3
           # do not export non-required files, if only required files are allowed
           # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
           next
