@@ -74,7 +74,7 @@ en:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "must be alphanumeric, '.', '-', '(', ')', or '_' only"
+      format_of_assignment_file: "must include alphanumeric, '.', '-', '_' or '/' characters only"
 
     # app/views/main/index.html.erb
     switch_role:         "Switch Role"
