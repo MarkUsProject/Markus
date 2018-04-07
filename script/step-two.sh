@@ -1,11 +1,4 @@
 #!/usr/bin/env bash
-echo "- - - Installing Ruby 2.5.0, Step 1 - - -"
-source /etc/profile.d/rvm.sh
-echo "- - - Installing Ruby 2.5.0, Step 2 - - -"
-rvm install 2.5.0 --disable-binary
-echo "- - - Installing Ruby 2.5.0, Step 3 - - -"
-rvm --default use 2.5.0
-
 # Update package manager
 echo "- - - Updating Package Manager, Step 1 - - -"
 sudo apt-get update
@@ -50,6 +43,13 @@ git clone https://github.com/MarkUsProject/Markus.git
 
 echo "- - - Switch to Markus - - -"
 cd Markus
+
+echo "- - - Installing Ruby 2.5.1, Step 1 - - -"
+source /etc/profile.d/rvm.sh
+echo "- - - Installing Ruby 2.5.1, Step 2 - - -"
+rvm install 2.5.1 --disable-binary
+echo "- - - Installing Ruby 2.5.1, Step 3 - - -"
+rvm --default use 2.5.1
 
 # Project-specific dependencies now
 echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
