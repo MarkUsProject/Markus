@@ -1,41 +1,10 @@
 #!/usr/bin/env bash
-# Update package manager
-echo "- - - Updating Package Manager, Step 1 - - -"
-sudo apt-get update
-echo "- - - Updating Package Manager, Step 2 - - -"
-sudo apt-get -y upgrade
 
 # Change time zone
 echo "- - - Changing Time Zone, Step 1 - - -"
 sudo rm -f /etc/localtime
 echo "- - - Changing Time Zone, Step 2 - - -"
 sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
-
-# Install dependencies
-echo "- - - Installing Dependencies - - -"
-sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig
-
-# Git installation.
-echo "- - - Installing Git - - -"
-sudo apt-get install -y git
-
-# Install postgres
-echo "- - - Installing Postgres - - -"
-sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
-
-# Install node
-echo "- - - Installing Node, Step 1 - - -"
-curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-echo "- - - Installing Node, Step 2 - - -"
-sudo apt-get install -y nodejs
-
-# Install yarn
-echo "- - - Installing Yarn, Step 1 - - -"
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "- - - Installing Yarn, Step 2 - - -"
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-echo "- - - Installing Yarn, Step 3 - - -"
-sudo apt-get update && sudo apt-get install -y yarn
 
 # Clone the Markus repository.
 echo "- - - Cloning Markus - - -"
@@ -94,7 +63,7 @@ sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments
 
 # Setup the database.
 echo "- - - Setup Database via Rake - - -"
-rake db:setup
+bundle exec rake db:setup
 
 # Update .bashrc and .profile
 echo "- - - Update .bashrc - - -"

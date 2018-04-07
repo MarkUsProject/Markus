@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Allow instance to see project folder.
   # Warning: This may cause problems with your Vagrant box!
   #          Enable at your own risk.
-  # config.vm.synced_folder ".", "/home/vagrant/Markus"
+  config.vm.synced_folder ".", "/home/vagrant/Markus", disabled: true
 
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
@@ -23,7 +23,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.privileged = false
   end
 
-  config.vm.provision "step-two", type: "shell" do |s|
+  config.vm.provision "step-two", type: "shell", run: "never" do |s|
     s.path = "script/step-two.sh"
     s.privileged = false
   end
@@ -34,4 +34,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.name = "markus"
     vb.memory = 2048
   end
+
+  config.vm.post_up_message =
+    <<~HEREDOC
+      markus_box is running! If this is your initial installation,
+      run the following provisioning command:
+
+        $ vagrant provision --provision-with=step-two
+    HEREDOC
 end
