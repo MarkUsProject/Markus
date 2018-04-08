@@ -72,18 +72,17 @@
    * @param {string} content            Text for the annotation
    */
   function add_annotation_text(annotation_text_id, content) {
-    if (annotation_type === ANNOTATION_TYPES.PDF) {
-      add_pdf_annotation(annotation_text_id, content,
-        annotation_manager.selectionRectangleAsInts());
+    if (annotation_manager instanceof PdfAnnotationManager) {
+      if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+        let annotation_text = annotation_manager.getAnnotationTextManager().getAnnotationText(annotation_text_id);
+      } else {
+        let annotation_text = new AnnotationText(annotation_text_id, 0, content);
+        annotation_manager.getAnnotationTextManager().addAnnotationText(annotation_text);
+      }
     } else {
       var annotation_text = new AnnotationText(annotation_text_id, 0, content);
       annotation_manager.registerAnnotationText(annotation_text);
     }
-  }
-
-  // Register an image_annotation with the image annotation_grid
-  function add_to_annotation_grid(extracted_coords) {
-    annotation_manager.add_to_grid(JSON.parse(extracted_coords));
   }
 
   function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
@@ -369,7 +368,7 @@
 
   // Load a submitted file into the code-viewer based on file id's
   function load_submitted_file(submission_file_id, focus_line) {
-    textViewer.set_submission_file(submission_file_id, focus_line);
+    submissionFileViewer.set_submission_file(submission_file_id, focus_line);
     positions = null;
     annotation_manager = null;
   }

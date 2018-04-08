@@ -186,7 +186,6 @@
   PdfAnnotationManager.prototype.bindPageEvents = function() {
     var self = this;
     var $pages = this.getPages();
-
     var selectionBoxActive = false; // Is the selection box in use
 
     // Location of the mouse relative to the threshold point
@@ -407,7 +406,7 @@
    * Draw the annotation on the screen.
    *
    * @param {AnnotationText} annotation
-   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int, annot_id: int}}} coords
    */
   PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
     if (this.annotationControls[coords.annot_id]) {
@@ -439,7 +438,6 @@
       height: (((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
     });
     $control.attr('id', 'annotation_holder_' + coords.annot_id);
-
 
     var $page = this.getPageContainer(coords.page);
 

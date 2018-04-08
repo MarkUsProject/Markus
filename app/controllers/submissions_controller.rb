@@ -490,26 +490,31 @@ class SubmissionsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:submission_file_id])
+    if file.is_supported_image?
+      render json: { type: 'image' }
+    elsif file.is_pdf?
+      render json: { type: 'pdf' }
+    else
+      path = params[:path] || '/'
+      grouping.group.access_repo do |repo|
+        revision = repo.get_revision(submission.revision_identifier)
 
-    path = params[:path] || '/'
-    grouping.group.access_repo do |repo|
-      revision = repo.get_revision(submission.revision_identifier)
+        begin
+          raw_file = revision.files_at_path(File.join(assignment.repository_folder,
+                                                  path))[file.filename]
+          file_contents = repo.download_as_string(raw_file)
+        rescue Exception => e
+          render text: I18n.t('student.submission.missing_file',
+                              file_name: file.filename, message: e.message)
+          next  # exit the block
+        end
 
-      begin
-        raw_file = revision.files_at_path(File.join(assignment.repository_folder,
-                                                path))[file.filename]
-        file_contents = repo.download_as_string(raw_file)
-      rescue Exception => e
-        render text: I18n.t('student.submission.missing_file',
-                            file_name: file.filename, message: e.message)
-        return
-      end
-
-      if SubmissionFile.is_binary?(file_contents)
-        # If the file appears to be binary, send it as a download
-        render text: 'not a plaintext file'
-      else
-        render json: { content: file_contents.to_json, type: file.get_file_type }
+        if SubmissionFile.is_binary?(file_contents)
+          # If the file appears to be binary, send it as a download
+          render text: 'not a plaintext file'
+        else
+          render json: { content: file_contents.to_json, type: file.get_file_type }
+        end
       end
     end
   end

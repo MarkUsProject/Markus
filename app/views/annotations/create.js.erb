@@ -8,26 +8,21 @@ annotationTable.addAnnotation({
   annotation_text_id: <%= @annotation.annotation_text_id %>,
   type: '<%= @annotation.class.name %>',
   number: <%= @annotation.annotation_number %>,
-  line_start: <%= @annotation.line_start || 'null' %>,
-  line_end: <%= @annotation.line_end || 'null' %>,
-  column_start: <%= @annotation.column_start || 'null' %>,
-  column_end: <%= @annotation.column_end || 'null' %>,
-  is_remark: <%= @annotation.is_remark %>
+  is_remark: <%= @annotation.is_remark %>,
+  line_start: <%= @annotation.line_start || 'undefined' %>,
+  line_end: <%= @annotation.line_end || 'undefined' %>,
+  column_start: <%= @annotation.column_start || 'undefined' %>,
+  column_end: <%= @annotation.column_end || 'undefined' %>,
+  page: <%= @annotation.page || 'undefined' %>,
+  x_range: {
+    start: <%= [@annotation.x1, @annotation.x2].min || 'undefined' %>,
+    end: <%= [@annotation.x1, @annotation.x2].max || 'undefined' %>
+  },
+  y_range: {
+    start: <%= [@annotation.y1, @annotation.y2].min || 'undefined' %>,
+    end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
+  }
 });
-
-<% if @text.annotation_category_id != nil %>
-  annotationManager.fetchData();
-<% end %>
-
-<% if @annotation.is_a?(ImageAnnotation) %>
-  add_annotation_text('<%= @text.id %>', marked('<%= @text.escape_newlines%>', {sanitize: true}));
-  add_to_annotation_grid('<%= @annotation.extract_coords.to_json().html_safe %>');
-
-<% elsif @annotation.is_a?(PdfAnnotation) %>
-  add_pdf_annotation('<%= @text.id %>',
-                     marked('<%= @text.escape_newlines %>', {sanitize: true}),
-                     '<%= @annotation.extract_coords.to_json().html_safe %>');
-<% end %>
 
 hide_all_annotation_content_editors();
 reloadDOM();

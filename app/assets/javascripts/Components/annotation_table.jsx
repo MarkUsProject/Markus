@@ -91,8 +91,12 @@ class AnnotationTable extends React.Component {
 
   addAnnotation(annotation) {
     this.setState({data: this.state.data.concat([annotation])});
-    if (textViewer.state.submission_file_id === annotation.submission_file_id) {
+    if (submissionFileViewer.state.submission_file_id === annotation.submission_file_id) {
       this.display_annotation(annotation);
+    }
+
+    if (annotation.annotation_category) {
+      annotationManager.fetchData();
     }
   }
 
@@ -125,7 +129,7 @@ class AnnotationTable extends React.Component {
 
   /*
    * Called by text_viewer. Render all annotations for the given
-   * submission file (through the global textViewer object).
+   * submission file (through the global submissionFileViewer object).
    */
   display_annotations = (submission_file_id) => {
     for (let row of this.state.data) {
@@ -138,6 +142,27 @@ class AnnotationTable extends React.Component {
   display_annotation = (annotation) => {
     add_annotation_text(annotation.annotation_text_id,
                         marked(annotation.content, {sanitize: true}));
+    if (annotation.type === 'ImageAnnotation') {
+      annotation_manager.add_to_grid({
+        x_range: annotation.x_range,
+        y_range: annotation.y_range,
+        annot_id: annotation.id,
+        // TODO: rename the following
+        id: annotation.annotation_text_id
+      });
+    } else if (annotation.type === 'PdfAnnotation') {
+      annotation_manager.addAnnotation(
+        annotation.annotation_text_id,
+        marked(annotation.content, {sanitize: true}),
+        {
+          x1: annotation.x_range.start,
+          x2: annotation.x_range.end,
+          y1: annotation.y_range.start,
+          y2: annotation.y_range.end,
+          page: annotation.page,
+          annot_id: annotation.id
+        });
+    } else if (annotation.type === 'TextAnnotation') {
     add_annotation(annotation.id, {
         start: annotation.line_start,
         end: annotation.line_end,
@@ -145,6 +170,7 @@ class AnnotationTable extends React.Component {
         column_end: annotation.column_end
       },
       annotation.annotation_text_id);
+    }
   };
 
 
