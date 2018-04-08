@@ -28,9 +28,6 @@
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
         $(dp_highlighter).find(first_ol)[0]);
 
-    // Apply modifications to Syntax Highlighter
-    syntax_highlighter_adapter.applyMods();
-
     var collection   = new SourceCodeLineArray();
     var line_factory = new SourceCodeLineFactory();
     var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
@@ -372,27 +369,9 @@
 
   // Load a submitted file into the code-viewer based on file id's
   function load_submitted_file(submission_file_id, focus_line) {
-    // Clear out any annotation_texts still on the screen
-    $('.annotation_text_display').each(function() {
-      this.remove();
-    });
-
-    document.getElementById('working').style.display = '';
-
+    textViewer.set_submission_file(submission_file_id, focus_line);
     positions = null;
     annotation_manager = null;
-
-    $.ajax({
-      url: '<%= @current_user.student? ? codeviewer_assignment_result_path(uid: @uid) :
-                                         codeviewer_assignment_submission_result_path(uid: @uid) %>',
-      type: 'POST',
-      dataType: 'script',
-      data: 'submission_file_id=' + submission_file_id +
-            '&focus_line=' + focus_line +
-            '&authenticity_token=' + AUTH_TOKEN
-    }).always(function() {
-      document.getElementById('working').style.display = 'none';
-    });
   }
 
   function load_submitted_file_and_focus(submission_file_id, focus_line) {

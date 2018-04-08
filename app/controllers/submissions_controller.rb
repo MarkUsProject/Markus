@@ -9,6 +9,7 @@ class SubmissionsController < ApplicationController
                          :browse,
                          :file_manager,
                          :update_files,
+                         :get_file,
                          :download,
                          :downloads,
                          :download_groupings_files,
@@ -31,7 +32,7 @@ class SubmissionsController < ApplicationController
                        :update_files,
                        :populate_file_manager_react,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user, only: [:download, :downloads]
+  before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
@@ -473,6 +474,42 @@ class SubmissionsController < ApplicationController
         @file_manager_errors[:commit_error] = e.message
         set_filebrowser_vars(@grouping.group, @assignment)
         render :file_manager, id: assignment_id
+      end
+    end
+  end
+
+  def get_file
+    assignment = Assignment.find(params[:assignment_id])
+    submission = Submission.find(params[:id])
+    grouping = submission.grouping
+
+    if @current_user.student? &&
+        @current_user.accepted_grouping_for(assignment.id).id != grouping.id
+      render :forbidden
+      return
+    end
+
+    file = SubmissionFile.find(params[:submission_file_id])
+
+    path = params[:path] || '/'
+    grouping.group.access_repo do |repo|
+      revision = repo.get_revision(submission.revision_identifier)
+
+      begin
+        raw_file = revision.files_at_path(File.join(assignment.repository_folder,
+                                                path))[file.filename]
+        file_contents = repo.download_as_string(raw_file)
+      rescue Exception => e
+        render text: I18n.t('student.submission.missing_file',
+                            file_name: file.filename, message: e.message)
+        return
+      end
+
+      if SubmissionFile.is_binary?(file_contents)
+        # If the file appears to be binary, send it as a download
+        render text: 'not a plaintext file'
+      else
+        render json: { content: file_contents.to_json, type: file.get_file_type }
       end
     end
   end

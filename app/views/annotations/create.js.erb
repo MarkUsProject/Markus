@@ -2,12 +2,16 @@ annotationTable.addAnnotation({
   id: <%= @annotation.id %>,
   file: '<%= File.join(@annotation.submission_file.path,
                        @annotation.submission_file.filename) %>',
-  submission_file_id: '<%= @annotation.submission_file_id %>',
+  submission_file_id: <%= @annotation.submission_file_id %>,
   content: '<%= @annotation.annotation_text.escape_newlines %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
+  annotation_text_id: <%= @annotation.annotation_text_id %>,
   type: '<%= @annotation.class.name %>',
   number: <%= @annotation.annotation_number %>,
   line_start: <%= @annotation.line_start || 'null' %>,
+  line_end: <%= @annotation.line_end || 'null' %>,
+  column_start: <%= @annotation.column_start || 'null' %>,
+  column_end: <%= @annotation.column_end || 'null' %>,
   is_remark: <%= @annotation.is_remark %>
 });
 
@@ -15,15 +19,7 @@ annotationTable.addAnnotation({
   annotationManager.fetchData();
 <% end %>
 
-<% if @annotation.is_a?(TextAnnotation) %>
-  add_annotation_text('<%= @text.id %>', marked('<%= @text.escape_newlines %>', {sanitize: true}));
-  add_annotation('<%= @annotation.id %>',
-                 { start: '<%= @annotation.line_start %>',
-                   end: '<%= @annotation.line_end %>',
-                   column_start: '<%= @annotation.column_start %>',
-                   column_end: '<%= @annotation.column_end %>' },
-                 '<%= @text.id %>');
-<% elsif @annotation.is_a?(ImageAnnotation) %>
+<% if @annotation.is_a?(ImageAnnotation) %>
   add_annotation_text('<%= @text.id %>', marked('<%= @text.escape_newlines%>', {sanitize: true}));
   add_to_annotation_grid('<%= @annotation.extract_coords.to_json().html_safe %>');
 

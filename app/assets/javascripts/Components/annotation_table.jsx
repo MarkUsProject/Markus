@@ -91,6 +91,9 @@ class AnnotationTable extends React.Component {
 
   addAnnotation(annotation) {
     this.setState({data: this.state.data.concat([annotation])});
+    if (textViewer.state.submission_file_id === annotation.submission_file_id) {
+      this.display_annotation(annotation);
+    }
   }
 
   updateAnnotation(annotation) {
@@ -119,6 +122,31 @@ class AnnotationTable extends React.Component {
       this.setState({data: newAnnotations});
     }
   }
+
+  /*
+   * Called by text_viewer. Render all annotations for the given
+   * submission file (through the global textViewer object).
+   */
+  display_annotations = (submission_file_id) => {
+    for (let row of this.state.data) {
+      if (row.submission_file_id === submission_file_id) {
+        this.display_annotation(row);
+      }
+    }
+  };
+
+  display_annotation = (annotation) => {
+    add_annotation_text(annotation.annotation_text_id,
+                        marked(annotation.content, {sanitize: true}));
+    add_annotation(annotation.id, {
+        start: annotation.line_start,
+        end: annotation.line_end,
+        column_start: annotation.column_start,
+        column_end: annotation.column_end
+      },
+      annotation.annotation_text_id);
+  };
+
 
   render() {
     const {data} = this.state;

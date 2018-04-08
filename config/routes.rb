@@ -172,6 +172,7 @@ Markus::Application.routes.draw do
           get 'repo_browser'
           post 'repo_browser'
           get 'downloads'
+          get 'get_file'
         end
 
         resources :results do

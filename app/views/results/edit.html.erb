@@ -28,6 +28,14 @@
           }
         );
       <% end %>
+      window.textViewer =
+        makeTextViewer(document.getElementById('codeviewer'),
+          {
+            result_id: <%= @result.id %>,
+            submission_id: <%= @result.submission_id %>,
+            assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          }
+        );
     });
   </script>
 <% end %>
@@ -306,10 +314,12 @@
         }
       }
       if (first_file_id !== null && first_file_path !== null) {
-        // for code viewer
-        open_file(first_file_id, first_file_path, false);
-        // for download modal
-        open_file(first_file_id, first_file_path, true);
+        document.addEventListener('DOMContentLoaded', () => {
+          // for code viewer
+          open_file(first_file_id, first_file_path, false);
+          // for download modal
+          open_file(first_file_id, first_file_path, true);
+        });
       }
     <% end %>
   <% end %>

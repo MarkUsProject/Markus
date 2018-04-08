@@ -433,12 +433,16 @@ class ResultsController < ApplicationController
         file: File.join(annotation.submission_file.path,
                         annotation.submission_file.filename),
         submission_file_id: annotation.submission_file_id,
+        annotation_text_id: annotation.annotation_text_id,
         content: annotation.annotation_text.content,
         annotation_category:
           annotation.annotation_text.annotation_category&.annotation_category_name,
         type: annotation.class.name,
         number: annotation.annotation_number,
         line_start: annotation.line_start,
+        line_end: annotation.line_end,
+        column_start: annotation.column_start,
+        column_end: annotation.column_end,
         is_remark: annotation.is_remark
       }
 
