@@ -18,7 +18,7 @@
           }
       );
 
-      <% unless @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+      <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       window.annotationManager =
         makeAnnotationManager(document.getElementById('annotation_options'),
           {
