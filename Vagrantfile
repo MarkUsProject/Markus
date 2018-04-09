@@ -28,6 +28,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.privileged = false
   end
 
+  config.vm.provision "install-svn", type: "shell", run: "never" do |s|
+    s.path = "script/install-svn.sh"
+    s.privileged = false
+  end
+
   config.vm.provider "virtualbox" do |vb|
     # Uncomment the following line if you want a GUI.
     # vb.gui = true
@@ -38,8 +43,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.post_up_message =
     <<~HEREDOC
       markus_box is running! If this is your initial installation,
-      run the following provisioning command:
+      run the following provisioning commands:
 
         $ vagrant provision --provision-with=step-two
+        $ vagrant provision --provision-with=install-svn
     HEREDOC
 end
