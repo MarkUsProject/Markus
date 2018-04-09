@@ -43,13 +43,23 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
-  config.before :each do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean_with(:truncation)
-  end
-  config.after :each do
+
+  config.before :suite do
+    DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  # skip cleaning if :skip_db_clean tag used, otherwise mimic the
+  # use_transactional_fixtures option by wrapping each test in a
+  # transaction.
+  config.around :each do |example|
+    if example.metadata[:skip_db_clean]
+      example.run
+    else
+      DatabaseCleaner.cleaning do
+        example.run
+      end
+    end
   end
 
   # If true, the base class of anonymous controllers will be inferred

@@ -22,4 +22,20 @@ module Helpers
   def extract_text(string)
     Nokogiri::HTML(string).text.strip.gsub(/\s+/, ' ')
   end
+
+  def wait(time, increment = 5, &block)
+    # wait {time} seconds for the rspec test to pass
+    # the test is tried every {increment} seconds until it
+    # either passes or the time expires
+    begin
+      yield
+    rescue Exception => e
+      if time <= 0
+        raise e
+      else
+        sleep increment
+        wait(time - increment, increment, &block)
+      end
+    end
+  end
 end
