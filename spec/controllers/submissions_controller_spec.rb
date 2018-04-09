@@ -18,9 +18,10 @@ describe SubmissionsController do
                            membership_status: 'inviter',
                            grouping: @grouping)
       @student = @membership.user
+      request.env['HTTP_REFERER'] = 'back'
     end
 
-    it 'should be able to add files' do
+    it 'should be able to add and access files' do
       file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
                                    'text/java')
       file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),

@@ -190,8 +190,6 @@ Markus::Application.routes.draw do
             post 'download'
             get 'download_zip'
             delete 'cancel_remark_request'
-            get 'codeviewer'
-            post 'codeviewer'
             post 'add_extra_mark'
             post 'delete_grace_period_deduction'
             get 'next_grouping'
@@ -219,8 +217,6 @@ Markus::Application.routes.draw do
         member do
           get 'view_marks'
           post 'add_extra_mark'
-          get 'codeviewer'
-          post 'codeviewer'
           get 'next_grouping'
           post 'toggle_marking_state'
           post 'update_mark'

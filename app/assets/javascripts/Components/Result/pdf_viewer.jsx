@@ -9,32 +9,36 @@ export class PDFViewer extends React.Component {
 
   componentDidMount() {
     if (this.props.url) {
-      if (typeof(PDFView) === 'undefined') {
-        $.getScript(PDFJS_PATH).done(() => {
-          PDFJS.workerSrc = PDFJS_WORKER_PATH;
-
-          PDFView.onLoadComplete = () => {
-            window.source_code_ready_for_pdf(PDFView, 'viewer');
-            annotationTable.display_annotations(this.props.submission_file_id);
-          };
-          webViewerLoad(this.props.url);
-        });
-      } else {
-        PDFView.onLoadComplete = () => {
-          window.source_code_ready_for_pdf(PDFView, 'viewer');
-          annotationTable.display_annotations(this.props.submission_file_id);
-        };
-        webViewerLoad(this.props.url);
-      }
+      this.loadPDFFile();
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.url) {
-      loadPDFFile(this.props.url);
-      annotationTable.display_annotations(this.props.submission_file_id);
+      this.loadPDFFile();
     }
   }
+
+  loadPDFFile = () => {
+    if (typeof(PDFView) === 'undefined') {
+      $.getScript(PDFJS_PATH).done(() => {
+        PDFJS.workerSrc = PDFJS_WORKER_PATH;
+
+        PDFView.onLoadComplete = () => {
+          window.source_code_ready_for_pdf(PDFView, 'viewer');
+          annotationTable.display_annotations(this.props.submission_file_id);
+        };
+        webViewerLoad(this.props.url);
+      });
+    } else {
+      PDFView.onLoadComplete = () => {
+        window.source_code_ready_for_pdf(PDFView, 'viewer');
+        annotationTable.display_annotations(this.props.submission_file_id);
+      };
+      webViewerLoad(this.props.url);
+    }
+  }
+
 
   render() {
     return (

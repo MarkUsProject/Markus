@@ -484,7 +484,7 @@
    *
    * @param {string} annotation_text_id [description]
    * @param {string} content            [description]
-   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
+   * @param {{x1: int, y1: int, x2: int, y2: int, page: int}} coords
    */
   PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
     var annotation_text;

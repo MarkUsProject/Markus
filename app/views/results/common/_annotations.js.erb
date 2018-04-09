@@ -85,11 +85,6 @@
     }
   }
 
-  function add_pdf_annotation(annotation_text_id, content, extracted_coords) {
-    var coords = (typeof extracted_coords === 'string' ? JSON.parse(extracted_coords) : extracted_coords);
-    annotation_manager.addAnnotation(annotation_text_id, content, coords);
-  }
-
   function add_annotation(annotation_id, range, annotation_text_id) {
     annotation_manager.annotateRange(annotation_id, range, annotation_text_id);
   }

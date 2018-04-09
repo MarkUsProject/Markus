@@ -483,9 +483,14 @@ class SubmissionsController < ApplicationController
     submission = Submission.find(params[:id])
     grouping = submission.grouping
 
+    # TODO: allow for peer reviewers.
+    # current_user.is_reviewer_for?(assignment.pr_assignment, <any result>)
     if @current_user.student? &&
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
-      render :forbidden
+      flash_message(:error,
+                    t('submission_file.error.no_access',
+                          submission_file_id: params[:submission_file_id]))
+      redirect_to :back
       return
     end
 
