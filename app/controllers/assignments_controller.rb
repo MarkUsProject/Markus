@@ -105,8 +105,8 @@ class AssignmentsController < ApplicationController
       if @assignment.group_max == 1 && !@assignment.scanned_exam
         begin
           @student.create_group_for_working_alone_student(@assignment.id)
-        rescue RuntimeError => @error
-          flash_message(:error, 'Error')
+        rescue RuntimeError => error
+          flash_message(:error, error.message)
         end
         redirect_to action: 'student_interface', id: @assignment.id
       else
