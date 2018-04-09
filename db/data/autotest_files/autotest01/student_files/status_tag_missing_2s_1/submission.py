@@ -5,7 +5,7 @@ This student submission file is used to test the autotester
 It represents the test case where:
 
   The xml is missing a <status> tag in the first test in the first script
-  which causes the second test to be ignored
+  should not affect the test in the second script
 """
 import sys
 import os

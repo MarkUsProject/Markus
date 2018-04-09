@@ -9,7 +9,7 @@ It represents the test case where:
 
 response = '''
 <test>
-    <name>bad_xml_simple</name>
+    <name>status_missing_simple</name>
     <input>NA</input>
     <expected>NA</expected>
     <actual>NA</actual>

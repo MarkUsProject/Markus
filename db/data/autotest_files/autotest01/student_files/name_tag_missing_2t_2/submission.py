@@ -4,8 +4,8 @@
 This student submission file is used to test the autotester
 It represents the test case where:
 
-  The xml is missing the name tag in the first test which causes
-  the second test to be ignored
+  The xml is missing the name tag in the second test which should
+  not affect the first test
 """
 
 response = '''
