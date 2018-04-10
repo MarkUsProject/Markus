@@ -45,6 +45,18 @@
     <div class='warning'><%= flash[:transaction_warning] %></div>
   <% end %>
 
+  <% if flash[:warning] %>
+    <div class='warning'><%= flash[:warning] %></div>
+  <% end %>
+
+  <% if flash[:error] %>
+    <div class='error'><%= flash[:error] %></div>
+  <% end %>
+
+  <% if flash[:notice] %>
+    <div class='notice'><%= flash[:error] %></div>
+  <% end %>
+
   <% if flash[:success] %>
     <div class='success'><%= flash[:success] %></div>
   <% end %>

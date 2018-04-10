@@ -777,7 +777,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
         version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
-
+        empty_file_warning: "UPDATE ME"
     tas:
       create:
         success: "Avaliador %{user_name} criado com sucesso."

@@ -360,6 +360,9 @@ class SubmissionsController < ApplicationController
           render :file_manager
           return
         end
+        if f.size == 0
+          flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+        end
       end
     end
     @grouping.group.access_repo do |repo|
