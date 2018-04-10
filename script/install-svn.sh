@@ -14,8 +14,8 @@ echo "- - - Installing subversion dependencies - - -"
 sudo apt-get install -y libaprutil1-dev swig
 
 echo "- - - Downloading subversion and sqlite source - - -"
-if not wget --tries 5 ${MIRROR_PRIMARY}/${SVN_BASE}.tar.gz; then
-  if not wget --tries 5 ${MIRROR_SECONDARY}/${SVN_BASE}.tar.gz; then
+if ! wget --tries 5 ${MIRROR_PRIMARY}/${SVN_BASE}.tar.gz; then
+  if ! wget --tries 5 ${MIRROR_SECONDARY}/${SVN_BASE}.tar.gz; then
     exit 1
   fi
 fi
