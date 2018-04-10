@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 SVN_BASE=subversion-1.9.7
-MIRROR_PRIMARY=http://www-us.apache.org/dist
-MIRROR_SECONDARY=http://www-eu.apache.org/dist
+MIRROR_PRIMARY=http://www-us.apache.org/dist/subversion
+MIRROR_SECONDARY=http://www-eu.apache.org/dist/subversion
 
 echo "- - - Detecting Ruby version - - -"
 source /etc/profile.d/rvm.sh
