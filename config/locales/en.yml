@@ -484,9 +484,11 @@ en:
       find_different_revision: "Find a different revision"
       find_by_revision_timestamp: "Find by Submission Date"
       find_by_revision_number:    "Find by Revision Identifier"
-      viewing_revision:           "Viewing Revision: <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
+      viewing_revision:           "Viewing Revision:"
       currently_collected:  "Collected Revision:"
       no_rev_before_deadline: 	"No revision submitted before deadline"
+      client_time:          "commit:"
+      server_time:          "push:"
       current_path:         "Current Path:"
       all_files:            "all files"
       root:                 "[root]"
@@ -1447,7 +1449,7 @@ en:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A, %B %d, %Y, %l:%M %p"
+        long_date: "%A, %B %d, %Y, %l:%M:%S %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date:       "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT

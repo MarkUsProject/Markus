@@ -56,20 +56,32 @@
   </div>
 
   <div class='global_actions'>
-    <h2><%= raw(t('browse_submissions.viewing_revision', identifier_ui: @revision.revision_identifier_ui)) %>
-        (<span id='current_revision_timestamp_display'><%= l(@revision.timestamp, format: :long_date) %></span>)
-        <br>
-        <%= t('browse_submissions.currently_collected') %>
-        <% if @grouping.is_collected %>
-           <% if @collected_revision %>
-               <%= "#{@collected_revision.revision_identifier_ui}" +
-                   " (#{l(@collected_revision.timestamp, format: :long_date)})" %>
-           <% else %>
-               <%= t('browse_submissions.no_rev_before_deadline') %>
-           <% end %>
+    <h2>
+      <%= t('browse_submissions.viewing_revision') %>
+      <%= @revision.revision_identifier_ui %>
+      <% if @revision.timestamp != @revision.server_timestamp %>
+        (<%= "#{t('browse_submissions.client_time')} #{l(@revision.timestamp, format: :long_date)},
+              #{t('browse_submissions.server_time')} #{l(@revision.server_timestamp, format: :long_date)}" %>)
+      <% else %>
+        (<%= l(@revision.timestamp, format: :long_date) %>)
+      <% end %>
+      <br>
+      <%= t('browse_submissions.currently_collected') %>
+      <% if @grouping.is_collected %>
+        <% if @collected_revision %>
+          <%= @collected_revision.revision_identifier_ui %>
+          <% if @collected_revision.timestamp != @collected_revision.server_timestamp %>
+            (<%= "#{t('browse_submissions.client_time')} #{l(@collected_revision.timestamp, format: :long_date)},
+                  #{t('browse_submissions.server_time')} #{l(@collected_revision.server_timestamp, format: :long_date)}" %>)
+          <% else %>
+            (<%= l(@collected_revision.timestamp, format: :long_date) %>)
+          <% end %>
         <% else %>
-           <%= t('none') %>
+          <%= t('browse_submissions.no_rev_before_deadline') %>
         <% end %>
+      <% else %>
+        <%= t('none') %>
+      <% end %>
     </h2>
 
     <p>

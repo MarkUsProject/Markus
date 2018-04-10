@@ -55,8 +55,10 @@ class SubmissionsController < ApplicationController
       assignment_revisions << revision
       # store the displayed revision
       if @revision.nil?
-        if (params[:revision_identifier] && params[:revision_identifier] == revision.revision_identifier.to_s) ||
-             (params[:revision_timestamp] && Time.parse(params[:revision_timestamp]).in_time_zone >= revision.timestamp)
+        if (params[:revision_identifier] &&
+             params[:revision_identifier] == revision.revision_identifier.to_s) ||
+           (params[:revision_timestamp] &&
+             Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
           @revision = revision
         end
       end
@@ -65,7 +67,7 @@ class SubmissionsController < ApplicationController
     @revision = assignment_revisions[0] if @revision.nil? # latest relevant revision
     @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
                                                                  id_ui: revision.revision_identifier_ui,
-                                                                 date: revision.timestamp } }
+                                                                 date: revision.timestamp} }
 
     respond_to do |format|
       format.html

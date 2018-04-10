@@ -979,6 +979,7 @@ module Repository
       rescue Svn::Error::FsNoSuchRevision
         raise RevisionDoesNotExist
       end
+      @server_timestamp = @timestamp
       super(revision_number)
     end
 

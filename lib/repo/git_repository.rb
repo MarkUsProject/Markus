@@ -183,7 +183,7 @@ module Repository
           end
           revision = get_revision(commit.oid)
           if path.nil? || revision.changes_at_path?(path)
-            revision.timestamp = push_info.time
+            revision.server_timestamp = push_info.time
             return revision
           end
         end
@@ -205,11 +205,10 @@ module Repository
       push_info = OpenStruct.new
       push_info.index = -1
       # walk through the commits and get revisions
-      revisions = []
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
       walker.push(@repos.last_commit)
-      walker.each do |commit|
+      walker.map do |commit|
         if reflog.length > push_info.index + 1 # walk the reflog while walking commits
           next_reflog_entry = reflog[push_info.index + 1]
           if commit.oid == next_reflog_entry[:id_new]
@@ -219,10 +218,9 @@ module Repository
           end
         end
         revision = get_revision(commit.oid)
-        revision.timestamp = push_info.time
-        revisions << revision
+        revision.server_timestamp = push_info.time
+        revision
       end
-      revisions
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -614,6 +612,7 @@ module Repository
       @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
       @timestamp = @commit.time.in_time_zone
+      @server_timestamp = @timestamp
     end
 
     # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.
