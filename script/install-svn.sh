@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 SVN_BASE=subversion-1.9.7
+MIRROR_PRIMARY=http://www-us.apache.org/dist/subversion
+MIRROR_SECONDARY=http://www-eu.apache.org/dist/subversion
 
 echo "- - - Detecting Ruby version - - -"
 source /etc/profile.d/rvm.sh
@@ -12,7 +14,11 @@ echo "- - - Installing subversion dependencies - - -"
 sudo apt-get install -y libaprutil1-dev swig
 
 echo "- - - Downloading subversion and sqlite source - - -"
-wget http://apache.parentingamerica.com/subversion/${SVN_BASE}.tar.gz
+if ! wget --tries 5 ${MIRROR_PRIMARY}/${SVN_BASE}.tar.gz; then
+  if ! wget --tries 5 ${MIRROR_SECONDARY}/${SVN_BASE}.tar.gz; then
+    exit 1
+  fi
+fi
 tar xzf ${SVN_BASE}.tar.gz
 wget https://www.sqlite.org/sqlite-amalgamation-3071501.zip
 unzip sqlite-amalgamation-3071501.zip
