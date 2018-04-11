@@ -301,18 +301,18 @@ Markus::Application.configure do
   AUTOTEST_CLIENT_DIR = "#{::Rails.root.to_s}/data/prod/autotest"
   AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
   AUTOTEST_SERVER_HOST = 'localhost'
-  AUTOTEST_SERVER_FILES_USERNAME = 'localhost'
-  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/autotest/files"
-  AUTOTEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/prod/autotest/results"
+  AUTOTEST_SERVER_FILES_USERNAME = nil
+  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/prod/autotest/server"
+  AUTOTEST_SERVER_RESULTS_DIR = "#{AUTOTEST_SERVER_FILES_DIR}/results"
   AUTOTEST_SERVER_TESTS = [
-    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/prod/autotest/tests", queue: 'autotest'}]
+    {user: nil, dir: "#{AUTOTEST_SERVER_FILES_DIR}/tester", queue: 'tester'}]
 
   ###################################################################
   # Exam Plugin settings
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
   EXPERIMENTAL_EXAM_PLUGIN_ON = false
-  EXAM_TEMPLATE_DIR = "#{::Rails.root.to_s}/data/dev/exam_templates"
+  EXAM_TEMPLATE_DIR = "#{::Rails.root.to_s}/data/prod/exam_templates"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

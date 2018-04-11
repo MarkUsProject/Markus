@@ -272,11 +272,11 @@ Markus::Application.configure do
   AUTOTEST_CLIENT_DIR = "#{::Rails.root.to_s}/data/dev/autotest"
   AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
   AUTOTEST_SERVER_HOST = 'localhost'
-  AUTOTEST_SERVER_FILES_USERNAME = 'localhost'
-  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/dev/autotest/files"
-  AUTOTEST_SERVER_RESULTS_DIR = "#{::Rails.root.to_s}/data/dev/autotest/results"
+  AUTOTEST_SERVER_FILES_USERNAME = nil
+  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root.to_s}/data/dev/autotest/server"
+  AUTOTEST_SERVER_RESULTS_DIR = "#{AUTOTEST_SERVER_FILES_DIR}/results"
   AUTOTEST_SERVER_TESTS = [
-    {user: 'localhost', dir: "#{::Rails.root.to_s}/data/dev/autotest/tests", queue: 'autotest'}]
+    {user: nil, dir: "#{AUTOTEST_SERVER_FILES_DIR}/tester", queue: 'tester'}]
 
   ###################################################################
   # Exam Plugin settings

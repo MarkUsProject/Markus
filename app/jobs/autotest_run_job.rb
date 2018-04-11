@@ -61,7 +61,7 @@ class AutotestRunJob < ApplicationJob
     results_path = MarkusConfigurator.autotest_server_results_dir
     file_username = MarkusConfigurator.autotest_server_files_username
     test_username = tests_config[:user]
-    if test_server_host == 'localhost' || file_username == test_username
+    if file_username == test_username
       test_username = nil
     end
     server_queue = "queue:#{tests_config[:queue]}"
@@ -71,7 +71,7 @@ class AutotestRunJob < ApplicationJob
                                group.repo_name, submission_id]}
 
     begin
-      if test_server_host == 'localhost'
+      if test_server_host == 'localhost' && file_username.nil?
         # tests executed locally with no authentication:
         # create a temp folder, copying the student's submission and all test files
         FileUtils.mkdir_p(files_path, {mode: 0700}) # create base files dir if not already existing

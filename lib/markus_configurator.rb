@@ -280,7 +280,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SERVER_FILES_USERNAME)
       AUTOTEST_SERVER_FILES_USERNAME
     else
-      'localhost'
+      nil
     end
   end
 
@@ -288,7 +288,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SERVER_FILES_DIR)
       AUTOTEST_SERVER_FILES_DIR
     else
-      File.join(::Rails.root.to_s, 'autotest', 'files')
+      File.join(::Rails.root.to_s, 'autotest', 'server')
     end
   end
 
@@ -296,7 +296,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SERVER_RESULTS_DIR)
       AUTOTEST_SERVER_RESULTS_DIR
     else
-      File.join(::Rails.root.to_s, 'autotest', 'results')
+      File.join(autotest_server_files_dir, 'results')
     end
   end
 
@@ -304,7 +304,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SERVER_TESTS)
       AUTOTEST_SERVER_TESTS
     else
-      [{user: 'localhost', dir: File.join(::Rails.root.to_s, 'autotest', 'tests'), queue: 'autotest'}]
+      [{user: nil, dir: File.join(autotest_server_files_dir, 'tester'), queue: 'tester'}]
     end
   end
 
