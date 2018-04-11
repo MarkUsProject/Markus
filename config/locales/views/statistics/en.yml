@@ -3,6 +3,7 @@ en:
   average: "Average"
   class_average: "Class average"
   median: "Median"
+  class_median: "Class median"
   assignments_submitted: "Number of submissions in total"
   assignments_graded: "Number of submissions graded"
   num_failed: "Number of fails"

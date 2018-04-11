@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212204015) do
+ActiveRecord::Schema.define(version: 20180411222442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20171212204015) do
     t.boolean  "enable_student_tests",             default: false, null: false
     t.boolean  "non_regenerating_tokens",          default: false
     t.boolean  "scanned_exam",                     default: false, null: false
+    t.boolean  "display_median_to_students",       default: true
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree

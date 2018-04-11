@@ -142,6 +142,13 @@
     <% end %>
 
     <div>
+      <%= f.check_box :display_median_to_students,
+                      onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :display_median_to_students,
+                  t('assignment.display_median_to_students') %>
+    </div>
+
+    <div>
       <%= f.check_box :display_grader_names_to_students,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :display_grader_names_to_students,
