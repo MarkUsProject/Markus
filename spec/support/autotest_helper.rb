@@ -85,14 +85,18 @@ module AutotestHelper
     expected
   end
 
+  def get_server_opts
+    server = Rails::Server.new
+    server.default_options
+  end
+
   def get_test_args(test_name, current_user, test_server_user)
     n_test_scripts = test_name.match(/_2s_/).nil? ? 1 : 2
     assignment, submission, _, grouping = setup_autotest_environment(test_name, n_test_scripts: n_test_scripts)
 
     test_scripts = assignment.instructor_test_scripts.order(:seq_num).pluck_to_hash(:file_name, :timeout)
 
-    server = Rails::Server.new
-    opts = server.default_options
+    opts = get_server_opts
     host_with_port = "http://#{opts[:Host]}:#{opts[:Port]}"
     [host_with_port, test_scripts, current_user.api_key, test_server_user.api_key, grouping.id, submission.id]
   end
