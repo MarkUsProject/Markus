@@ -1,3 +1,5 @@
+require 'repo/git_repository'
+
 FactoryGirl.define do
   factory :git_repository, class: Repository::GitRepository do
     initialize_with do
