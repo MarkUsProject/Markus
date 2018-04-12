@@ -246,7 +246,7 @@ module Repository
 
   class AbstractRevision
     attr_reader :revision_identifier, :revision_identifier_ui, :timestamp, :user_id, :comment
-    attr_writer :timestamp
+    attr_accessor :server_timestamp
 
     def initialize(revision_identifier)
       @revision_identifier = revision_identifier

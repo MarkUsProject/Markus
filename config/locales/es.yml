@@ -647,9 +647,11 @@ es:
       find_different_revision:              "Encontrar una revisión diferente"
       find_by_revision_timestamp:           "Encontrar basado en la fecha y hora de modificación de la revisión"
       find_by_revision_number:              "Encontrar basado en el número de revisión"
-      viewing_revision:                     "Mirando Revisión: <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
+      viewing_revision:                     "Mirando Revisión:"
       currently_collected:                  "Versión recolectada:"
       no_rev_before_deadline: 	            "Ninguna revisión fue enviada antes de la fecha límite"
+      client_time:                          "UPDATE ME:"
+      server_time:                          "UPDATE ME:"
       current_path:                         "Ruta al Directorio:"
       all_files:                            "todos los archivos"
       root:                                 "[root]"
@@ -1670,7 +1672,7 @@ es:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second:  "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date:    "%A, %B %d, %Y, %l:%M %p"
+        long_date:    "%A, %B %d, %Y, %l:%M:%S %p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date:   "%B %d, %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT
