@@ -115,7 +115,6 @@ class Student < User
   # creates a group and a grouping for a student to work alone, for
   # assignment aid
   def create_group_for_working_alone_student(aid)
-
     @assignment = Assignment.find(aid)
     Group.transaction do
       # If an individual repo has already been created for this user
@@ -138,14 +137,9 @@ class Student < User
         end
       end
 
-      empty_grouping = Grouping.find_by(assignment_id: aid, group_id: @group.id)
-      unless empty_grouping.nil?
-        # if this is found, then the student must have an (empty) existing grouping that he is not a member of
-        # this can happen if an instructor removes the student from its grouping (see issue 627)
-        # we must delete this grouping first
-        empty_grouping.destroy
-      end
-      @grouping = Grouping.new(assignment_id: aid, group_id: @group.id)
+      # a grouping can be found if the student has an (empty) existing grouping that he is not a member of
+      # this can happen if an instructor removes the student membership from its grouping (see issue 627)
+      @grouping = Grouping.find_or_initialize_by(assignment_id: aid, group_id: @group.id)
       unless @grouping.save
         m_logger = MarkusLogger.instance
         m_logger.log("Could not create a grouping for Student '#{user_name}'"\
