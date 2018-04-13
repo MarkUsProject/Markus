@@ -33,6 +33,8 @@ class SubmissionsController < ApplicationController
                        :populate_peer_submissions_table]
   before_filter :authorize_for_user, only: [:download, :downloads]
 
+  layout 'assignment_content'
+
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @path = params[:path] || File::SEPARATOR
@@ -66,7 +68,7 @@ class SubmissionsController < ApplicationController
         @revision = repo.get_revision(@revisions_history[0][:id])
       end
     rescue Exception => e
-      flash[:error] = e.message
+      flash_message(:error,  e.message)
       @revision = repo.get_latest_revision
     end
 
@@ -98,6 +100,23 @@ class SubmissionsController < ApplicationController
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(user_group, @assignment)
+
+    # generate flash messages
+    if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
+      flash_message(:warning, @assignment.submission_rule.after_collection_message)
+    elsif @assignment.grouping_past_due_date?(@grouping)
+      flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    end
+
+    if !@grouping.is_valid?
+      flash_message(:error, t(:invalid_group_warning))
+    elsif !@missing_assignment_files.blank?
+      flash_message(:warning, partial: 'submissions/missing_assignment_file_toggle_list')
+    end
+
+    if @assignment.allow_web_submits && @assignment.vcs_submit
+      flash_message(:notice, t('student.submission.version_control_warning'))
+    end
   end
 
   def populate_file_manager_react
@@ -317,15 +336,6 @@ class SubmissionsController < ApplicationController
   end
 
   # update_files action handles transactional submission of files.
-  #
-  # Note that you shouldn't use redirect_to in this action. This
-  # is due to @file_manager_errors, which carries over some state
-  # to the file_manager view (via render calls). We need to do
-  # this, because we were storing transaction errors in the flash
-  # hash (i.e. they were stored in the browser's cookie), and in
-  # some circumstances, this produces a cookie overflow error
-  # when the state stored in the cookie exceeds 4k in serialized
-  # form. This was happening prior to the fix of Github issue #30.
   def update_files
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
@@ -335,7 +345,6 @@ class SubmissionsController < ApplicationController
 
     # We'll use this hash to carry over some error state to the
     # file_manager view.
-    @file_manager_errors = Hash.new
     required_files = AssignmentFile.where(
                            assignment_id: @assignment).pluck(:filename)
     filenames = []
@@ -350,13 +359,14 @@ class SubmissionsController < ApplicationController
     unless params[:new_files].nil?
       params[:new_files].each do |f|
         if f.size > MarkusConfigurator.markus_config_max_file_size
-          @file_manager_errors[:size_conflict] =
+          error_message =
             "Error occured while uploading file \"" +
              f.original_filename +
              '": The size of the uploaded file exceeds the maximum of ' +
              "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
 	          .round(2)}" +
              'MB.'
+          flash_message(:error, error_message)
           render :file_manager
           return
         end
@@ -434,7 +444,7 @@ class SubmissionsController < ApplicationController
                required_files.empty? ||
                !@assignment.only_required_files
           if !(filenames - required_files).empty?
-            @file_manager_errors[:size_conflict] = I18n.t('assignment.upload_file_requirement')
+            flash_message(:error, t('assignment.upload_file_requirement'))
             render :file_manager
             return
           else
@@ -443,8 +453,7 @@ class SubmissionsController < ApplicationController
         end
         # finish transaction
         unless txn.has_jobs?
-          flash[:transaction_warning] =
-              I18n.t('student.submission.no_action_detected')
+          flash_message(:warning, I18n.t('student.submission.no_action_detected'))
           # can't use redirect_to here. See comment of this action for details.
           set_filebrowser_vars(@grouping.group, @assignment)
           render :file_manager, id: assignment_id
@@ -458,13 +467,12 @@ class SubmissionsController < ApplicationController
             m_logger.log(msg)
           end
         else
-          @file_manager_errors[:update_conflicts] = txn.conflicts
+          flash_message(:error, partial: 'submissions/file_conflicts_list')
         end
 
         # Are we past collection time?
         if @assignment.submission_rule.can_collect_now?(current_user.section)
-          flash[:commit_notice] =
-              @assignment.submission_rule.commit_after_collection_message
+          flash_message(:warning,  @assignment.submission_rule.commit_after_collection_message)
         end
         # can't use redirect_to here. See comment of this action for details.
         set_filebrowser_vars(@grouping.group, @assignment)
@@ -474,7 +482,7 @@ class SubmissionsController < ApplicationController
         m_logger = MarkusLogger.instance
         m_logger.log(e.message)
         # can't use redirect_to here. See comment of this action for details.
-        @file_manager_errors[:commit_error] = e.message
+        flash_message(:warning, e.message)
         set_filebrowser_vars(@grouping.group, @assignment)
         render :file_manager, id: assignment_id
       end
