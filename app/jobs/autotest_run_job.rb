@@ -65,10 +65,10 @@ class AutotestRunJob < ApplicationJob
       tests_username = nil
     end
     server_queue = "queue:#{tests_config[:queue]}"
-    resque_params = {:class => 'AutomatedTestsServer',
-                     :args => [markus_address, user_api_key, server_api_key, tests_username, test_scripts,
-                               'files_path_placeholder', tests_config[:dir], results_path, assignment.id, group.id,
-                               group.repo_name, submission_id]}
+    resque_params = { class: 'AutomatedTestsServer',
+                      args: [markus_address, user_api_key, server_api_key, tests_username, test_scripts,
+                             'files_path_placeholder', tests_config[:dir], results_path, assignment.id, group.id,
+                             group.repo_name, submission_id] }
 
     begin
       if files_username.nil?
@@ -84,7 +84,7 @@ class AutotestRunJob < ApplicationJob
       else
         # tests executed locally or remotely with authentication:
         # copy the student's submission and all test files through ssh/scp in a temp folder
-        Net::SSH::start(test_server_host, files_username, auth_methods: ['publickey']) do |ssh|
+        Net::SSH.start(test_server_host, files_username, auth_methods: ['publickey']) do |ssh|
           ssh.exec!("mkdir -m 700 -p '#{files_path}'") # create base tests dir if not already existing
           files_path = ssh.exec!("mktemp -d --tmpdir='#{files_path}'").strip # create temp subfolder
           # copy all files using passwordless scp (natively, the net-scp gem has poor performance)

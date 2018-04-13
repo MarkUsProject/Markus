@@ -304,7 +304,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SERVER_TESTS)
       AUTOTEST_SERVER_TESTS
     else
-      [{user: nil, dir: File.join(autotest_server_files_dir, 'tester'), queue: 'tester'}]
+      [{ user: nil, dir: File.join(autotest_server_files_dir, 'tester'), queue: 'tester' }]
     end
   end
 
