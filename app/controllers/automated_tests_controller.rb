@@ -112,7 +112,7 @@ class AutomatedTestsController < ApplicationController
       assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
 
       # the given file should be in this directory
-      should_be_in = File.join(MarkusConfigurator.autotest_client_dir, assn_short_id)
+      should_be_in = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assn_short_id)
       should_be_in = File.expand_path(should_be_in)
       filename = File.expand_path(File.join(should_be_in, filename))
 
