@@ -523,7 +523,7 @@ class Grouping < ApplicationRecord
       # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
       # walk through the entire history
     end
-    revision.timestamp
+    revision.server_timestamp
   end
 
   # Returns a list of missing assignment_files yet to be submitted

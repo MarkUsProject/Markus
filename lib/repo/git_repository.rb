@@ -183,7 +183,7 @@ module Repository
           end
           revision = get_revision(commit.oid)
           if path.nil? || revision.changes_at_path?(path)
-            revision.timestamp = push_info.time
+            revision.server_timestamp = push_info.time
             return revision
           end
         end
@@ -197,11 +197,29 @@ module Repository
     end
 
     def get_all_revisions
+      # use the git reflog to get a list of pushes
+      repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
+      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+      bare_repo = Rugged::Repository.new(bare_path)
+      reflog = bare_repo.ref('refs/heads/master').log.reverse
+      push_info = OpenStruct.new
+      push_info.index = -1
+      # walk through the commits and get revisions
       walker = Rugged::Walker.new(@repos)
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
       walker.push(@repos.last_commit)
       walker.map do |commit|
-        get_revision(commit.oid)
+        if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+          next_reflog_entry = reflog[push_info.index + 1]
+          if commit.oid == next_reflog_entry[:id_new]
+            push_info.sha = next_reflog_entry[:id_new]
+            push_info.time = next_reflog_entry[:committer][:time]
+            push_info.index += 1
+          end
+        end
+        revision = get_revision(commit.oid)
+        revision.server_timestamp = push_info.time
+        revision
       end
     end
 
@@ -594,6 +612,7 @@ module Repository
       @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
       @timestamp = @commit.time.in_time_zone
+      @server_timestamp = @timestamp
     end
 
     # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.

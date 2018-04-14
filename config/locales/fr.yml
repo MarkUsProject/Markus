@@ -460,9 +460,11 @@ fr:
       find_different_revision: "Trouver une autre révision"
       find_by_revision_timestamp: "Par date de révision"
       find_by_revision_number:    "Par numéro de révision"
-      viewing_revision:           "Révision : <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
+      viewing_revision:           "Révision:"
       currently_collected:  "Version recueillies:"
       no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
+      client_time:          "UPDATE ME:"
+      server_time:          "UPDATE ME:"
       current_path:         "Chemin actuel : "
       all_files:   "tous les fichiers"
       root:                 "[racine]"
@@ -1259,7 +1261,7 @@ fr:
         long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
         only_second: "%S"
         #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A %d %B %Y %H:%M"
+        long_date: "%A %d %B %Y %H:%M:%S"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
         #MarkUs ANT_LOG_DATE_TIME_FORMAT

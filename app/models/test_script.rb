@@ -49,12 +49,6 @@ class TestScript < ApplicationRecord
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
 
-  # Upon update, if replacing a file with a different name, delete the old file first
-  before_update :delete_old_file
-
-  # Run write_file after saving to the database
-  after_save :write_file
-
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
