@@ -94,7 +94,7 @@ class TestFile < ApplicationRecord
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       name =  self.filename
-      test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+      test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
       # Folders for test, lib and parse files:
       # Test Files Folder
@@ -121,7 +121,7 @@ class TestFile < ApplicationRecord
 
   def delete_file
     # Test Framework repository to delete from
-    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+    test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
     if self.filetype == 'test'
       test_dir = File.join(test_dir, 'test')
     elsif self.filetype == 'lib'
