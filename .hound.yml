@@ -1,4 +1,4 @@
-ruby:
+rubocop:
   config_file: config/.rubocop.yml
 
 java_script:
