@@ -13,7 +13,7 @@ class Note < ApplicationRecord
   end
 
   def format_date
-    I18n.l(created_at, format: :long_date)
+    I18n.l(created_at)
   end
 
   def self.noteables_exist?

@@ -724,8 +724,7 @@ class Grouping < ApplicationRecord
   # Returns a formatted time string for the last commit time for this grouping.
   def last_commit_date
     if has_submission?
-      I18n.l(current_submission_used.revision_timestamp,
-             format: :long_date)
+      I18n.l(current_submission_used.revision_timestamp)
     else
       '-'
     end

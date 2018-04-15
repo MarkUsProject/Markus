@@ -1,0 +1,19 @@
+pt:
+  date:
+    format_string:
+      default: "DD, d 'de' MM 'de' yy"
+      placeholder: "AAAA-DD-MM"
+      short: "YYYY-DD-MM"
+      datetimepicker: "yy-dd-mm"
+
+  time:
+    formats:
+      default: "%A, %d de %B de %Y %H:%M:%S"
+
+    format_string:
+      js:          "YYYY-DD-MM h:mm A"
+      placeholder: "AAAA-DD-MM H:MM AM/PM"
+
+    next:   "Seguinte"
+    prev:   "Anterior"
+    close:  "Fechar"

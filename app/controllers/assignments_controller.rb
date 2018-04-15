@@ -193,14 +193,14 @@ class AssignmentsController < ApplicationController
                                  sections: sections))
           else
             flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
-                                 time: l(collection_time, format: :long_date),
+                                 time: l(collection_time),
                                  sections: sections))
           end
         end
       else
         collection_time = @assignment.submission_rule.calculate_collection_time
         flash_now(:notice, t('browse_submissions.grading_can_begin_after',
-                             time: l(collection_time, format: :long_date)))
+                             time: l(collection_time)))
       end
     end
   end
@@ -896,8 +896,7 @@ class AssignmentsController < ApplicationController
                                  file_name: file_name,
                                  path: path)
         f[:raw_name] = file_name
-        f[:last_revised_date] = I18n.l(file.last_modified_date,
-                                       format: :long_date)
+        f[:last_revised_date] = l(file.last_modified_date)
         f[:last_modified_revision] = file.last_modified_revision
         f[:revision_by] = file.user_id
         f
@@ -917,8 +916,7 @@ class AssignmentsController < ApplicationController
                                  id: assignment_id,
                                  revision_identifier: revision_identifier,
                                  path: File.join(path, directory_name))
-        d[:last_revised_date] = I18n.l(directory.last_modified_date,
-                                       format: :long_date)
+        d[:last_revised_date] = l(directory.last_modified_date)
         d[:last_modified_revision] = directory.last_modified_revision
         d[:revision_by] = directory.user_id
         d

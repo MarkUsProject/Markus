@@ -282,14 +282,14 @@ class SubmissionsController < ApplicationController
                                  sections: sections))
           else
             flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
-                                 time: I18n.l(collection_time, format: :long_date),
+                                 time: l(collection_time),
                                  sections: sections))
           end
         end
       else
         collection_time = @assignment.submission_rule.calculate_collection_time
         flash_now(:notice, t('browse_submissions.grading_can_begin_after',
-                             time: I18n.l(collection_time, format: :long_date)))
+                             time: l(collection_time)))
       end
     end
     render layout: 'assignment_content'
@@ -784,7 +784,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render text: I18n.l(Time.zone.now, format: :long_date)
+    render text: l(Time.zone.now)
   end
 
   private

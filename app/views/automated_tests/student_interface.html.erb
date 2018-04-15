@@ -11,7 +11,7 @@
       <div class='sub_block'>
         <div class='sub_block'>
           <%= raw t('automated_tests.token.token_start_date',
-                    date: l(@assignment.token_start_date, format: :long_date)) %>
+                    date: l(@assignment.token_start_date)) %>
         </div>
         <% if @assignment.unlimited_tokens %>
           <div class='sub_block'>

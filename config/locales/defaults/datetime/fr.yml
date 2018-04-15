@@ -1,0 +1,20 @@
+fr:
+  date:
+    format_string:
+      default: "DD d MM yy"
+      placeholder: "AAAA-JJ-MM"
+      short: "YYYY-DD-MM"
+      datetimepicker: "yy-dd-mm"
+
+  time:
+    formats:
+      default: "%A %d %B %Y %H:%M:%S"
+
+    format_string:
+      js:          "YYYY-DD-MM h:mm A"
+      placeholder: "AAAA-JJ-MM H:MM AM/PM"
+      time_only: "h:mm TT"
+
+    next:   "Suivante"
+    prev:   "Précédente"
+    close:  "Fermer"
