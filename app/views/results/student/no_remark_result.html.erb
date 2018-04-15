@@ -3,7 +3,7 @@
   <p>
     <em><%= t('marker.remark_submitted') %></em>
     <% if @submission.remark_request_timestamp %>
-      <%= l(@submission.remark_request_timestamp, format: :long_date) %>
+      <%= l(@submission.remark_request_timestamp) %>
     <% end %>
   </p>
   <div id="remark_request">

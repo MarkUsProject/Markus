@@ -1365,63 +1365,6 @@ en:
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 
-    date:
-      formats:
-        default: "%d/%m/%Y"
-        short: "%e %b"
-        long: "%e %B %Y"
-        long_ordinal: "%e %B %Y"
-        only_day: "%e"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A, %B %d, %Y, %l:%M %p"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%B %d, %Y"
-        locale_date:      "DD, MM d, yy,"
-        locale_date_only: "DD, MM d, yy"
-        js_date_time:     "dddd, MMMM D, YYYY, h:mm A"
-        js_date:          "dddd, MMMM D, YYYY"
-
-        old_date:             "yy-mm-dd"
-        js_old_date:          "YYYY-MM-DD h:mm A"
-        js_old_date_only:     "YYYY-MM-DD"
-        date_placeholder:     "YYYY-MM-DD"
-        datetime_placeholder: "YYYY-MM-DD H:MM AM/PM"
-
-      day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
-      abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
-      month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
-      abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
-      order:
-        - year
-        - month
-        - day
-      months:       ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      weekdays:     ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      weekdays_min: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-    time:
-      formats:
-        default: "%d %B %Y %H:%M"
-        time: "%H:%M"
-        short: "%d %b %H:%M"
-        long: "%A %d %B %Y %H:%M %Z"
-        long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
-        only_second: "%S"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A, %B %d, %Y, %l:%M:%S %p"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date:       "%B %d, %Y"
-        #MarkUs ANT_LOG_DATE_TIME_FORMAT
-        ant_date:         "%B-%d-%Y_%I:%M"
-        locale_time:      "h:mm TT"
-      am:     "am"
-      pm:     "pm"
-      hour:   "Hour"
-      minute: "Minute"
-      time:   "Time"
-      next:   "Next"
-      prev:   "Previous"
-      close:  "Close"
 
     keybinding:
       keyboard_help:          "Keyboard Shortcut Help"

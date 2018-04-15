@@ -36,11 +36,9 @@
 
               </td>
               <td>
-		<% if grade_entry_form.date %>
-                  <%= l(grade_entry_form.date, format: :short_date) %>
-		<% else %>
-		  <%= '' %>
-		<% end %>
+                <% unless grade_entry_form.date.nil? %>
+                  <%= l(grade_entry_form.date, format: :long) %>
+                <% end %>
               </td>
             </tr>
           <% end %>
