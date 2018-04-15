@@ -21,6 +21,14 @@
             detailed: false
           }
         );
+      window.submissionFileViewer =
+        makeFileViewer(document.getElementById('codeviewer'),
+          {
+            result_id: <%= @result.id %>,
+            submission_id: <%= @result.submission_id %>,
+            assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          }
+        );
     });
   </script>
 <% end %>

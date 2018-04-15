@@ -46,6 +46,7 @@ class AnnotationsController < ApplicationController
         **base_attributes
       )
     end
+    render :create
   end
 
   def new

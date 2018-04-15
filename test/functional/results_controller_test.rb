@@ -90,15 +90,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
     end
 
-    should 'not be able to get codeviewer' do
-      get :codeviewer,
-          assignment_id: 1,
-          submission_id: 1,
-          id: 1,
-          focus_line: 1
-      assert_response :redirect
-    end
-
     should 'not be able to update mark' do
       get :update_mark,
           assignment_id: 1,
@@ -325,83 +316,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
-          end
-        end
-
-        context 'GET on :codeviewer' do
-          setup do
-            SubmissionFile.make(submission: @submission)
-            @submission_file = @result.submission.submission_files.first
-            @request.env['HTTP_REFERER'] = '/assignments'
-          end
-
-          should 'and the student has no access to that file' do
-            @no_access_submission_file = SubmissionFile.make
-            get_as @student,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: @submission.id,
-                   id: @result.id,
-                   submission_file_id: @no_access_submission_file.id,
-                   focus_line: 1
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_nil assigns :file_contents
-            assert_empty assigns :annots
-            assert_response 200
-          end
-
-          should 'with file reading error' do
-            # We simulate a file reading error.
-            SubmissionFile.any_instance.expects(
-              :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-            get_as @student,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: @submission.id,
-                   submission_file_id: @submission_file.id,
-                   id: @result.id,
-                   focus_line: 1
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert_nil assigns :file_contents
-            assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-            # Workaround to assert that the error message made its way to
-            # the response
-            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-          end
-
-          should 'without error' do
-            # We don't want to access a real file.
-            SubmissionFile.any_instance.expects(
-              :retrieve_file).once.returns('file content')
-            get_as @student,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: @submission.id,
-                   submission_file_id: @submission_file.id,
-                   id: @result.id,
-                   focus_line: 1
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert_not_nil assigns :file_contents
-            assert_not_nil assigns :code_type
-            assert render_template 'results/common/codeviewer'
-            assert_response :success
           end
         end
 
@@ -875,68 +789,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
         end
 
-        context 'GET on :codeviewer' do
-          setup do
-            g = Grouping.make(assignment: @assignment)
-            @submission = Submission.make(grouping: g)
-            @file = SubmissionFile.make(submission: @submission)
-            annotation = TextAnnotation.make(submission_file_id: @file.id)
-            SubmissionFile.stubs(:find).returns(@file)
-            @result = Result.make
-          end
-
-          should 'without file error' do
-            @file.expects(:get_file_type).once.returns('txt')
-            SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
-            get_as @admin,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: 1,
-                   id: @result.id,
-                   focus_line: 1,
-                   submission_file_id: @file.id
-
-            assert_equal true, flash.empty?
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert_not_nil assigns :file_contents
-            assert_not_nil assigns :code_type
-            assert render_template 'results/common/codeviewer'
-            assert_response :success
-          end  # -- without file error
-
-          should 'with file error' do
-            SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-            get_as @admin,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: 1,
-                   id: @result.id,
-                   focus_line: 1,
-                   submission_file_id: @file.id
-
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert_nil assigns :file_contents
-            assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the
-            # response
-            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-          end  # --with file error
-        end
-
         context 'GET on :update_mark' do
           setup do
             g = Grouping.make(assignment: @assignment)
@@ -1233,63 +1085,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_response :success
             assert_equal 'file content', @response.body
           end
-        end
-
-        context 'GET on :codeviewer' do
-          setup do
-            @submission_file = SubmissionFile.make
-            @result = Result.make
-          end
-
-          should 'be able to codeviewer with file reading error' do
-            # We simulate a file reading error.
-            SubmissionFile.any_instance.expects(:retrieve_file
-                      ).once.raises(Exception.new(SAMPLE_ERR_MSG))
-            get_as @ta,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: 1,
-                   submission_file_id: @submission_file.id,
-                   id: @result.id,
-                   focus_line: 1
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert_nil assigns :file_contents
-            assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.js.erb'
-            assert_response :success
-            # Workaround to assert that the error message made its way to the
-            # response
-            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-          end  # -- with file reading error
-
-          should 'without error' do
-            # We don't want to access a real file.
-            SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
-            SubmissionFile.stubs(:find).returns(@submission_file)
-            get_as @ta,
-                   :codeviewer,
-                   format: :js,
-                   assignment_id: @assignment.id,
-                   submission_id: 1,
-                   submission_file_id: @submission_file.id,
-                   id: @result.id,
-                   focus_line: 1
-
-            assert_not_nil assigns :assignment
-            assert_not_nil assigns :submission_file_id
-            assert_not_nil assigns :focus_line
-            assert_not_nil assigns :file
-            assert_not_nil assigns :result
-            assert_not_nil assigns :annots
-            assert render_template 'results/common/codeviewer'
-            assert_response :success
-          end  # -- without error
         end
 
         context 'GET on :update_mark' do

@@ -705,26 +705,6 @@ describe 'An Assignment' do
             locale: 'en')
         end
 
-        it 'routes GET codeviewer properly' do
-          expect(get: res_path + '/1/codeviewer').to route_to(
-            controller: res_ctrl,
-            action: 'codeviewer',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
-        end
-
-        it 'routes POST codeviewer properly' do
-          expect(post: res_path + '/1/codeviewer').to route_to(
-            controller: res_ctrl,
-            action: 'codeviewer',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
-        end
-
         it 'routes POST add_extra_mark properly' do
           expect(post: res_path + '/1/add_extra_mark').to route_to(
             controller: res_ctrl,
