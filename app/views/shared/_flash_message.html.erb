@@ -1,9 +1,9 @@
 <% [:notice, :error, :success, :warning].each do |key| %>
   <% unless flash[key].nil? %>
-    <% flash[key] = [flash[key]] unless flash[key].is_a?(Array)%>
-    <div class="<%="#{key}"%>">
+    <% flash[key] = [flash[key]] unless flash[key].is_a?(Array) %>
+    <div class="<%= "#{key}" %>">
       <% flash[key].each do |content| %>
-          content
+          <%= content.html_safe %>
       <% end %>
     </div>
   <% end %>
