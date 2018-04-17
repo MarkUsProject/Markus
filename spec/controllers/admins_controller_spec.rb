@@ -42,8 +42,8 @@ describe AdminsController do
             user: {last_name: 'John',
                    first_name: 'Doe'}
             expect(response).to redirect_to action: 'index'
-            expect([I18n.t('admins.update.success',
-                       user_name: @a2.user_name)]).to eq(flash[:success])
+            expect([I18n.t('admins.update.success', user_name: @a2.user_name)].map {|f| extract_text f}).to
+                      eq(flash[:success].map {|f| extract_text f})
       end
 
       it 'be able to edit' do

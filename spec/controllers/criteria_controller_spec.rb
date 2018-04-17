@@ -239,7 +239,7 @@ RSpec.describe CriteriaController, type: :controller do
                    id:                 @criterion.id,
                    flexible_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:     'FlexibleCriterion'
-            assert flash[:success], I18n.t('criterion_saved_success')
+            assert extract_text(flash[:success]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -431,7 +431,8 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')].map {|f| extract_text f}).to
+                eql(flash[:success].map {|f| extract_text f})
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(@criterion.id) }
@@ -674,7 +675,7 @@ RSpec.describe CriteriaController, type: :controller do
                    id:               @criterion.id,
                    rubric_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:   'RubricCriterion'
-            assert flash[:success], I18n.t('criterion_saved_success')
+            assert extract_text(flash[:success]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -862,7 +863,8 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect([I18n.t('criterion_deleted_success')]).to eql(flash[:success])
+        expect([I18n.t('criterion_deleted_success')].map {|f| extract_text f}).to
+                eql(flash[:success].map {|f| extract_text f})
         is_expected.to respond_with(:success)
 
         expect { RubricCriterion.find(@criterion.id) }
@@ -920,9 +922,10 @@ RSpec.describe CriteriaController, type: :controller do
                 assignment_id: @assignment.id,
                 yml_upload:    { rubric: @invalid_file }
 
-        expect(flash[:error])
+        expect(flash[:error].map {|f| extract_text f})
             .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
-                    'There is an error in the file you uploaded: (<unknown>): invalid trailing UTF-8 octet at line 1 column 1'])
+                    'There is an error in the file you uploaded: (<unknown>): ' +
+                      'invalid trailing UTF-8 octet at line 1 column 1'].map {|f| extract_text f})
       end
 
       it 'raises an error if the file does not include any criteria' do
@@ -931,9 +934,9 @@ RSpec.describe CriteriaController, type: :controller do
                 assignment_id: @assignment.id,
                 yml_upload:    { rubric: @empty_file }
 
-        expect(flash[:error])
+        expect(flash[:error].map {|f| extract_text f})
           .to eq([I18n.t('criteria.upload.error.invalid_format') +
-                  '  ' + I18n.t('criteria.upload.empty_error')])
+                  '  ' + I18n.t('criteria.upload.empty_error')].map {|f| extract_text f})
       end
 
       it 'deletes all criteria previously created' do
@@ -964,8 +967,8 @@ RSpec.describe CriteriaController, type: :controller do
 
         expect(@assignment.get_criteria.map(&:name))
             .to contain_exactly('cr30', 'cr20', 'cr100', 'cr80', 'cr60')
-        expect(flash[:success])
-          .to eq([I18n.t('criteria.upload.success', num_loaded: 5)])
+        expect(flash[:success].map {|f| extract_text f})
+          .to eq([I18n.t('criteria.upload.success', num_loaded: 5)].map {|f| extract_text f})
       end
 
       it 'creates rubric criteria with properly formatted entries' do
@@ -1066,8 +1069,8 @@ RSpec.describe CriteriaController, type: :controller do
 
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr40', 'cr50', 'cr70')
-        expect(flash[:error])
-          .to eq([I18n.t('criteria.upload.error.invalid_format') + ' cr40, cr70, cr50'])
+        expect(flash[:error].map {|f| extract_text f})
+          .to eq([I18n.t('criteria.upload.error.invalid_format') + ' cr40, cr70, cr50'].map {|f| extract_text f})
       end
 
       it 'does not create criteria with an invalid mark' do

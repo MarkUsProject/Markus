@@ -346,8 +346,7 @@ class SubmissionsController < ApplicationController
         raise t('student.submission.external_submit_only')
       end
 
-      required_files = AssignmentFile.where(
-                             assignment_id: @assignment).pluck(:filename)
+      required_files = AssignmentFile.where(assignment_id: @assignment).pluck(:filename)
       filenames = []
       @path = params[:path] || '/'
       @grouping = current_user.accepted_grouping_for(assignment_id)
@@ -358,13 +357,9 @@ class SubmissionsController < ApplicationController
       unless params[:new_files].nil?
         params[:new_files].each do |f|
           if f.size > MarkusConfigurator.markus_config_max_file_size
-            error_message =
-              "Error occured while uploading file \"" +
-               f.original_filename +
-               '": The size of the uploaded file exceeds the maximum of ' +
-               "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
-              .round(2)}" +
-               'MB.'
+            max_size_MB = (MarkusConfigurator.markus_config_max_file_size / 1000000.00).round(2)
+            error_message = "Error occurred while uplading file \"#{ f.original_filename }\"" \
+               ": The size of the uploaded file exceeds the maximum of #{ max_size_MB.to_s } MB."
             flash_message(:error, error_message)
             return
           elsif f.size == 0
@@ -461,16 +456,16 @@ class SubmissionsController < ApplicationController
               m_logger.log(msg)
             end
           else
-            flash_message(:error, partial: 'submissions/file_conflicts_list', locals: {conflicts: txn.conflicts})
+            flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts })
           end
           # Are we past collection time?
           if @assignment.submission_rule.can_collect_now?(current_user.section)
-            flash_message(:warning,  @assignment.submission_rule.commit_after_collection_message)
+            flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
           end
           # can't use redirect_to here. See comment of this action for details.
           set_filebrowser_vars(@grouping.group, @assignment)
 
-        rescue Exception => e
+        rescue  => e
           m_logger = MarkusLogger.instance
           m_logger.log(e.message)
           flash_message(:warning, e.message)
