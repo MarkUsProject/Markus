@@ -114,8 +114,8 @@ describe TagsController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq([I18n.t('csv_valid_lines',
-                                            valid_line_count: 2)])
+      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('csv_valid_lines',
+                                                                valid_line_count: 2)].map { |f| extract_text f })
       expect(response).to redirect_to @redirect
 
       expect(Tag.where(name: 'tag').take['description']).to eq('desc')
@@ -158,8 +158,8 @@ describe TagsController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      expect(flash[:error][0])
-        .to eq(I18n.t('csv.upload.non_text_file_with_csv_extension'))
+      expect(extract_text flash[:error][0])
+        .to eq(extract_text I18n.t('csv.upload.non_text_file_with_csv_extension'))
       expect(response).to redirect_to @redirect
     end
   end

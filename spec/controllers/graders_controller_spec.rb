@@ -193,8 +193,8 @@ describe GradersController do
                 grader_mapping: tempfile
 
         expect(response).to be_redirect
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f })
+        i18t_string = [I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
 
       it 'gracefully handle a non csv file with a csv extension' do
@@ -206,8 +206,8 @@ describe GradersController do
                 encoding: 'UTF-8'
 
         expect(response).to be_redirect
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f })
+        i18t_string = [I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end #groups csv upload
 
@@ -373,8 +373,8 @@ describe GradersController do
                 encoding: 'UTF-8'
 
         expect(response).to be_redirect
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f })
+        i18t_string = [I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
 
       it 'gracefully handle a non csv file with a csv extension' do
@@ -386,8 +386,8 @@ describe GradersController do
                 encoding: 'UTF-8'
 
         expect(response).to be_redirect
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f })
+        i18t_string = [I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end # criteria csv upload
 

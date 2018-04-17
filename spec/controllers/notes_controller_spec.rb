@@ -242,8 +242,8 @@ describe NotesController do
                   {id: @note.id,
                    note: {notes_message: @new_message}}
           expect(assigns :note).not_to be_nil
-          expect(flash[:success].map { |f| extract_text f }).to
-                  eq([I18n.t('notes.update.success')].map { |f| extract_text f })
+          i18t_string = [I18n.t('notes.update.success')].map { |f| extract_text f }
+          expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
           expect(response).to redirect_to(controller: 'notes')
         end
       end
@@ -273,8 +273,8 @@ describe NotesController do
                   :destroy,
                   id: @note.id
         expect(assigns :note).not_to be_nil
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('notes.delete.error_permissions')].map { |f| extract_text f })
+        i18t_string = [I18n.t('notes.delete.error_permissions')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end
   end # TA context
@@ -317,8 +317,8 @@ describe NotesController do
 
     it 'for invalid type' do
       get_as @admin, :noteable_object_selector, noteable_type: 'gibberish'
-      expect(flash[:error].map { |f| extract_text f }).to
-              eq([I18n.t('notes.new.invalid_selector')].map { |f| extract_text f })
+      i18t_string = [I18n.t('notes.new.invalid_selector')].map { |f| extract_text f }
+      expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       expect(assigns :assignments).not_to be_nil
       expect(assigns :groupings).not_to be_nil
       expect(assigns :students).to be_nil

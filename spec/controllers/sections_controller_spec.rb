@@ -53,8 +53,8 @@ describe SectionsController do
       post_as @admin, :create, {section: {name: 'section_01'}}
 
       expect(response).to be_redirect
-      expect(flash[:success].map { |f| extract_text f }).to
-              eq([I18n.t('sections.create.success', name: 'section_01')].map { |f| extract_text f })
+      i18t_string = [I18n.t('sections.create.success', name: 'section_01')].map { |f| extract_text f }
+      expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       expect(Section.find_by_name('section_01')).to be_truthy
     end
 
@@ -85,8 +85,8 @@ describe SectionsController do
              section: {name: 'no section'}
 
       expect(response).to be_redirect
-      expect(flash[:success].map { |f| extract_text f }).to
-              eq([I18n.t('sections.update.success', name: 'no section')].map { |f| extract_text f })
+      i18t_string = [I18n.t('sections.update.success', name: 'no section')].map { |f| extract_text f }
+      expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       expect(Section.find_by_name('no section')).to be_truthy
     end
 
@@ -114,8 +114,8 @@ describe SectionsController do
 
       it 'be able to delete a section' do
         delete_as @admin, :destroy, id: @section.id
-        expect(flash[:success].map { |f| extract_text f }).to
-                eq([I18n.t('sections.destroy.success')].map { |f| extract_text f })
+        i18t_string = [I18n.t('sections.destroy.success')].map { |f| extract_text f }
+        expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       end
 
       it 'not be able to delete a section with students in it' do
@@ -124,8 +124,8 @@ describe SectionsController do
                                   first_name: 'john')
         @section.students << student
         delete_as @admin, :destroy, id: @section.id
-        expect(flash[:error].map { |f| extract_text f }).to
-                eq([I18n.t('sections.destroy.not_empty')].map { |f| extract_text f })
+        i18t_string = [I18n.t('sections.destroy.not_empty')].map { |f| extract_text f }
+        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
         expect(Section.find(@section.id)).to be_truthy
       end
     end

@@ -239,7 +239,7 @@ RSpec.describe CriteriaController, type: :controller do
                    id:                 @criterion.id,
                    flexible_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:     'FlexibleCriterion'
-            assert extract_text(flash[:success]), extract_text(I18n.t('criterion_saved_success'))
+            assert extract_text(flash[:success][0]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -431,8 +431,8 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect([I18n.t('criterion_deleted_success')].map { |f| extract_text f }).to
-                eql(flash[:success].map { |f| extract_text f })
+        i18t_strings = [I18n.t('criterion_deleted_success')].map { |f| extract_text f }
+        expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(@criterion.id) }
@@ -675,7 +675,7 @@ RSpec.describe CriteriaController, type: :controller do
                    id:               @criterion.id,
                    rubric_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:   'RubricCriterion'
-            assert extract_text(flash[:success]), extract_text(I18n.t('criterion_saved_success'))
+            assert extract_text(flash[:success][0]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -863,8 +863,8 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        expect([I18n.t('criterion_deleted_success')].map { |f| extract_text f }).to
-                eql(flash[:success].map { |f| extract_text f })
+        i18t_string = [I18n.t('criterion_deleted_success')].map { |f| extract_text f }
+        expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 
         expect { RubricCriterion.find(@criterion.id) }
