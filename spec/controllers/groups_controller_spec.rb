@@ -200,8 +200,8 @@ describe GroupsController do
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
-        expect(flash[:success].map {|f| extract_text f})
-          .to eq([I18n.t('csv_valid_lines', valid_line_count: 1)].map {|f| extract_text f})
+        expect(flash[:success].map { |f| extract_text f })
+          .to eq([I18n.t('csv_valid_lines', valid_line_count: 1)].map { |f| extract_text f })
         expect(response).to redirect_to(action: 'index')
 
         expect(Group.find_by(group_name: 'group1').repo_name)
