@@ -19,7 +19,7 @@
     <% if student_can_edit_remark_request(submission) %>
       <%= t('marker.remark_due_date') %>:
       <% if assignment.remark_due_date %>
-        <%= l(assignment.remark_due_date, format: :long_date) %>
+        <%= l(assignment.remark_due_date) %>
       <% else %>
         <%= t('marker.no_remark_due_date') %>
       <% end %>

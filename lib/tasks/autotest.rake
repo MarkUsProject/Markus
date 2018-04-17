@@ -41,13 +41,13 @@ class AutotestSetup
   def clear_old_files
     # remove existing files to create room for new ones
     # remove test scripts
-    autotest_dir = File.join(MarkusConfigurator.autotest_client_dir, @assg_short_id)
+    autotest_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
     FileUtils.remove_dir(autotest_dir, force: true)
   end
 
   def move_test_script_files
     # create new directories to put new autotest files into
-    test_file_destination = File.join(MarkusConfigurator.autotest_client_dir, @assg_short_id)
+    test_file_destination = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
     FileUtils.makedirs test_file_destination
 
     # copy test script files into the destination directory
@@ -159,7 +159,7 @@ class AutotestSetup
     criteria = @assignment.get_criteria
 
     # get the test files stored in db/data/autotest_files
-    test_file_dir = File.join(MarkusConfigurator.autotest_client_dir, @assg_short_id)
+    test_file_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
     test_files = Dir.glob(File.join(test_file_dir, '*')).select { |f| File.file?(f) }
 
     test_files.zip(criteria) do |test_file, criterion|

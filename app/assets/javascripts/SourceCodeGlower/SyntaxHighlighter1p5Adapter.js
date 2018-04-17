@@ -93,8 +93,4 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
 
   // Attempt to replace tools menu with these new commands
   document.getElementsByClassName('tools')[0].innerHTML = dp.sh.Toolbar.Create('code').innerHTML;
-
-  // Move the tool bar to the new div *outside* of the SyntaxHighlighter pane
-  var ordered_list_of_code = document.getElementsByClassName('dp-highlighter')[0].children[1];
-  ordered_list_of_code.addClass('code_scroller');
 }

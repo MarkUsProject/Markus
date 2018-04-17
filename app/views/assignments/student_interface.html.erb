@@ -40,8 +40,7 @@
           <h3><%= t('student.overview') %></h3>
           <div class='info'>
             <%= raw(t('student.last_revision_date',
-                      last_modified_date: l(@last_modified_date,
-                                            format: :long_date))) %>
+                      last_modified_date: l(@last_modified_date))) %>
           </div>
           <span class='info_number'>
             <%= @num_submitted_files.to_s %>

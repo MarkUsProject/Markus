@@ -2,7 +2,7 @@ require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_filter :authorize_only_for_admin,
-                except: [:codeviewer, :edit, :update_mark, :view_marks,
+                except: [:edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :get_annotations,
                          :update_overall_comment, :remove_extra_mark,
@@ -15,7 +15,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message]
   before_filter :authorize_for_user,
-                only: [:codeviewer, :download, :download_zip, :run_tests,
+                only: [:download, :download_zip, :run_tests,
                        :view_marks, :get_annotations]
   before_filter :authorize_for_student,
                 only: [:update_remark_request,
@@ -380,45 +380,6 @@ class ResultsController < ApplicationController
               filename: zip_name + '.zip'
   end
 
-  def codeviewer
-    @assignment = Assignment.find(params[:assignment_id])
-    @submission_file_id = params[:submission_file_id]
-    @focus_line = params[:focus_line]
-    @grouping = @current_user.grouping_for(Integer(params[:assignment_id]))
-    @file = SubmissionFile.find(@submission_file_id)
-    @result = Result.find(params[:id])
-
-    #Is the current user a student?
-    if current_user.student?
-      # Unless this file belongs to this user or this user is a reviewer of this result,
-      # this student isn't authorized to view these files. Display an error
-      unless (!@grouping.membership_status(current_user).nil?) ||
-          current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        flash_message(:error, t('submission_file.error.no_access',
-                                submission_file_id: @submission_file_id))
-        redirect_to :back
-        return
-      end
-    end
-
-    @annots = @file.annotations.includes(:creator, :annotation_text).select{|a| a.result_id == @result.id}
-    if @result.submission.remark_submitted?
-      original_result = @result.submission.get_original_result
-      @annots += @file.annotations.select{|a| a.result_id == original_result.id}
-    end
-
-    begin
-      @file_contents = @file.retrieve_file
-    rescue Exception => e
-      flash_message(:error, e.message)
-      render partial: 'shared/handle_error', locals: { error: e.message }
-      return
-    end
-    @code_type = @file.get_file_type
-
-    render template: 'results/common/codeviewer'
-  end
-
   def get_annotations
     result = Result.find(params[:id])
     all_annots = result.annotations.includes(:submission_file, :creator,
@@ -428,25 +389,7 @@ class ResultsController < ApplicationController
     end
 
     annotation_data = all_annots.map do |annotation|
-      data = {
-        id: annotation.id,
-        file: File.join(annotation.submission_file.path,
-                        annotation.submission_file.filename),
-        submission_file_id: annotation.submission_file_id,
-        content: annotation.annotation_text.content,
-        annotation_category:
-          annotation.annotation_text.annotation_category&.annotation_category_name,
-        type: annotation.class.name,
-        number: annotation.annotation_number,
-        line_start: annotation.line_start,
-        is_remark: annotation.is_remark
-      }
-
-      if @current_user.admin? || @current_user.ta?
-        data[:creator] = "#{annotation.creator.last_name} #{annotation.creator.last_name}"
-      end
-
-      data
+      annotation.get_data(@current_user.admin? || @current_user.ta?)
     end
 
     render json: annotation_data

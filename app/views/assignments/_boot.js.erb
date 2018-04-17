@@ -7,7 +7,7 @@
     if(!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
-        date_format: '<%= t('date.formats.js_old_date') %>',
+        date_format: I18n.t('time.format_string.js'),
         due_date: $('#assignment_due_date').val()
       });
     }
@@ -17,7 +17,7 @@
     if(!penalty_decay_periods) {
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
-        date_format: '<%= t('date.formats.js_old_date') %>',
+        date_format: I18n.t('time.format_string.js'),
         due_date: $('#assignment_due_date').val()
       });
     }
@@ -27,7 +27,7 @@
     if(!penalty_periods) {
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
-        date_format: '<%= t('date.formats.js_old_date') %>',
+        date_format: I18n.t('time.format_string.js'),
         due_date: $('#assignment_due_date').val()
       });
     }
@@ -110,7 +110,7 @@
   }
 
   function check_due_date(new_due_date) {
-    if (moment(new_due_date, '<%= t('date.formats.js_old_date') %>').isBefore(
+    if (moment(new_due_date, '<%= t('time.format_string.js') %>').isBefore(
          moment())) {
       alert('<%= t(:past_due_date_edit_warning) %>');
     }
@@ -140,66 +140,40 @@
                     .on("click", $('#assignment_file_add_link'), check_required_fields);
 
     // Handle date/time pickers
-    $('.section_due_date_input').each(function() {
+    // TODO: Set defaults globally for datetimepicker
+    $.extend($.timepicker._defaults, {
+    controlType: 'select',
+    showTime: false,
+    showTimezone: false,
+    numberOfMonths: 2,
+    secondMax: 0,
+    prevText: I18n.t('time.prev'),
+    nextText: I18n.t('time.next'),
+    closeText: I18n.t('close'),
+    hourText: I18n.t('datetime.prompts.hour'),
+    minuteText: I18n.t('datetime.prompts.minute'),
+    timeText: I18n.t('datetime.prompts.time'),
+
+    monthNames: I18n.t('date.month_names').slice(1), // Drop first null element
+    dayNames: I18n.t('date.day_names'),
+    dayNamesMin: I18n.t('date.abbr_day_names'),
+
+    dateFormat: I18n.t('date.format_string.datetimepicker'),
+    timeFormat: I18n.t('time.format_string.time_only')
+  });
+
+  $('.section_due_date_input').each(function() {
       $(this).datetimepicker({
-        controlType:      'select',
-        showTime:         false,
-        numberOfMonths:   2,
-        secondMax:        0,
         onClose:          check_due_date,
-        dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
-        timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-        showTimezone:     false,
-        monthNames:       <%= raw I18n.t('date.months') %>,
-        dayNames:         <%= raw I18n.t('date.weekdays') %>,
-        dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-        hourText:         "<%= I18n.t('time.hour') %>",
-        minuteText:       "<%= I18n.t('time.minute') %>",
-        timeText:         "<%= I18n.t('time.time') %>",
-        prevText:         "<%= I18n.t('time.prev') %>",
-        nextText:         "<%= I18n.t('time.next') %>",
-        closeText:        "<%= I18n.t('time.close') %>",
       });
     });
 
     $('#assignment_due_date').datetimepicker({
-      controlType:      'select',
-      showTime:         false,
-      numberOfMonths:   2,
-      secondMax:        0,
       onClose:          check_due_date,
-      dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-      showTimezone:     false,
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      hourText:         "<%= I18n.t('time.hour') %>",
-      minuteText:       "<%= I18n.t('time.minute') %>",
-      timeText:         "<%= I18n.t('time.time') %>",
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>",
-      closeText:        "<%= I18n.t('time.close') %>",
     });
 
     $('#assignment_remark_due_date').datetimepicker({
-      controlType:      'select',
-      showTime:         false,
-      numberOfMonths:   2,
-      secondMax:        0,
       onClose:          check_due_date,
-      dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
-      timeFormat:       "<%= I18n.t('time.formats.locale_time') %>",
-      showTimezone:     false,
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      hourText:         "<%= I18n.t('time.hour') %>",
-      minuteText:       "<%= I18n.t('time.minute') %>",
-      timeText:         "<%= I18n.t('time.time') %>",
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>",
-      closeText:        "<%= I18n.t('time.close') %>",
     });
   });
 </script>

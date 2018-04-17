@@ -230,8 +230,8 @@ module SubmissionsHelper
     e[:last_revised_date] = I18n.l(
       directories[prev_dir].nil? ?
         revision.timestamp :
-        directories[prev_dir].last_modified_date,
-      format: :long_date)
+        directories[prev_dir].last_modified_date
+    )
     e[:revision_by] =
       directories[prev_dir].nil? ? '' :
       directories[prev_dir].user_id
@@ -249,8 +249,7 @@ module SubmissionsHelper
                                file_name: file_name,
                                path: path, grouping_id: grouping_id)
       f[:raw_name] = file_name
-      f[:last_revised_date] = I18n.l(file.last_modified_date,
-                                     format: :long_date)
+      f[:last_revised_date] = I18n.l(file.last_modified_date)
       f[:last_modified_revision] = revision_identifier
       f[:revision_by] = file.user_id
       f
@@ -270,8 +269,7 @@ module SubmissionsHelper
                                id: grouping_id,
                                revision_identifier: revision_identifier,
                                path: File.join(path, directory_name))
-      d[:last_revised_date] = I18n.l(directory.last_modified_date,
-                                     format: :long_date)
+      d[:last_revised_date] = I18n.l(directory.last_modified_date)
       d[:last_modified_revision] = revision_identifier
       d[:revision_by] = directory.user_id
       d

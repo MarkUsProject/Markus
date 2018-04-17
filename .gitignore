@@ -62,6 +62,9 @@
 
 # Ignore redis dump file
 .dump.rdb
+
+# Yarn-related files
 /public/packs
+/public/packs-test
 /public/javascripts
 /node_modules

@@ -82,7 +82,7 @@ describe AnnotationsController do
       expect(response.status).to eq(200)
       expect(assigns(:annotation)).to be_truthy
       expect(assigns(:text)).to be_truthy
-      expect(response).to render_template('add_existing_annotation')
+      expect(response).to render_template('create')
     end # End context :add_existing_annotation
 
     it 'on :create to make a text annotation' do
@@ -189,7 +189,7 @@ describe AnnotationsController do
       expect(response.status).to eq(200)
       expect(assigns(:annotation)).to be_truthy
       expect(assigns(:text)).to be_truthy
-      expect(response).to render_template('add_existing_annotation')
+      expect(response).to render_template('create')
     end # End context :add_existing_annotation
 
     it 'on :create to make a text annotation' do

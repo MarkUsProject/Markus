@@ -9,6 +9,7 @@ class SubmissionsController < ApplicationController
                          :browse,
                          :file_manager,
                          :update_files,
+                         :get_file,
                          :download,
                          :downloads,
                          :download_groupings_files,
@@ -31,7 +32,7 @@ class SubmissionsController < ApplicationController
                        :update_files,
                        :populate_file_manager_react,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user, only: [:download, :downloads]
+  before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
 
   layout 'assignment_content', only: [:file_manager]
 
@@ -44,33 +45,32 @@ class SubmissionsController < ApplicationController
 
     # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
     assignment_path = File.join(@grouping.assignment.repository_folder, @path)
-    @revisions_history = []
-    all_revisions = []
-    repo.get_all_revisions.each do |revision|
-      if collected_submission && collected_submission.revision_identifier == revision.revision_identifier.to_s
+    assignment_revisions = []
+    all_revisions = repo.get_all_revisions
+    all_revisions.each do |revision|
+      # store the collected revision
+      if @collected_revision.nil? && collected_submission &&
+           collected_submission.revision_identifier == revision.revision_identifier.to_s
         @collected_revision = revision
       end
-      all_revisions << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
-                         date: revision.timestamp }
+      # store the assignment-relevant revisions
       next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
-      @revisions_history << { id: revision.revision_identifier, id_ui: revision.revision_identifier_ui,
-                              date: revision.timestamp }
-    end
-    @revisions_history = all_revisions if @revisions_history.empty?
-
-    # get revision to show
-    begin
-      if params[:revision_identifier]
-        @revision = repo.get_revision(params[:revision_identifier])
-      elsif params[:revision_timestamp]
-        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]), assignment_path)
-      else # latest relevant revision
-        @revision = repo.get_revision(@revisions_history[0][:id])
+      assignment_revisions << revision
+      # store the displayed revision
+      if @revision.nil?
+        if (params[:revision_identifier] &&
+             params[:revision_identifier] == revision.revision_identifier.to_s) ||
+           (params[:revision_timestamp] &&
+             Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
+          @revision = revision
+        end
       end
-    rescue Exception => e
-      flash_message(:error,  e.message)
-      @revision = repo.get_latest_revision
     end
+    assignment_revisions = all_revisions if assignment_revisions.empty?
+    @revision = assignment_revisions[0] if @revision.nil? # latest relevant revision
+    @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
+                                                                 id_ui: revision.revision_identifier_ui,
+                                                                 date: revision.timestamp} }
 
     respond_to do |format|
       format.html
@@ -303,14 +303,14 @@ class SubmissionsController < ApplicationController
                                  sections: sections))
           else
             flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
-                                 time: I18n.l(collection_time, format: :long_date),
+                                 time: l(collection_time),
                                  sections: sections))
           end
         end
       else
         collection_time = @assignment.submission_rule.calculate_collection_time
         flash_now(:notice, t('browse_submissions.grading_can_begin_after',
-                             time: I18n.l(collection_time, format: :long_date)))
+                             time: l(collection_time)))
       end
     end
     render layout: 'assignment_content'
@@ -474,6 +474,52 @@ class SubmissionsController < ApplicationController
       end
     ensure
       redirect_to action: :file_manager
+    end
+  end
+
+  def get_file
+    assignment = Assignment.find(params[:assignment_id])
+    submission = Submission.find(params[:id])
+    grouping = submission.grouping
+
+    # TODO: allow for peer reviewers.
+    # current_user.is_reviewer_for?(assignment.pr_assignment, <any result>)
+    if @current_user.student? &&
+        @current_user.accepted_grouping_for(assignment.id).id != grouping.id
+      flash_message(:error,
+                    t('submission_file.error.no_access',
+                          submission_file_id: params[:submission_file_id]))
+      redirect_to :back
+      return
+    end
+
+    file = SubmissionFile.find(params[:submission_file_id])
+    if file.is_supported_image?
+      render json: { type: 'image' }
+    elsif file.is_pdf?
+      render json: { type: 'pdf' }
+    else
+      path = params[:path] || '/'
+      grouping.group.access_repo do |repo|
+        revision = repo.get_revision(submission.revision_identifier)
+
+        begin
+          raw_file = revision.files_at_path(File.join(assignment.repository_folder,
+                                                  path))[file.filename]
+          file_contents = repo.download_as_string(raw_file)
+        rescue Exception => e
+          render text: I18n.t('student.submission.missing_file',
+                              file_name: file.filename, message: e.message)
+          next  # exit the block
+        end
+
+        if SubmissionFile.is_binary?(file_contents)
+          # If the file appears to be binary, send it as a download
+          render text: 'not a plaintext file'
+        else
+          render json: { content: file_contents.to_json, type: file.get_file_type }
+        end
+      end
     end
   end
 
@@ -737,7 +783,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render text: I18n.l(Time.zone.now, format: :long_date)
+    render text: l(Time.zone.now)
   end
 
   private

@@ -277,7 +277,7 @@ class StudentTest < ActiveSupport::TestCase
 
         context 'working alone' do
           setup do
-            assert @student.create_group_for_working_alone_student(@assignment.id)
+            assert_nothing_raised { @student.create_group_for_working_alone_student(@assignment.id) }
             @group = Group.where(group_name: @student.user_name).first
           end
 
@@ -307,7 +307,7 @@ class StudentTest < ActiveSupport::TestCase
           end
 
           should 'work' do
-            assert @student.create_group_for_working_alone_student(@assignment.id)
+            assert_nothing_raised { @student.create_group_for_working_alone_student(@assignment.id) }
           end
         end
       end

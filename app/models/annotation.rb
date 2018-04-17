@@ -31,4 +31,26 @@ class Annotation < ApplicationRecord
 
   validates_format_of :type,
                       with: /ImageAnnotation|TextAnnotation|PdfAnnotation/
+
+  def get_data(include_creator=false)
+    data = {
+      id: id,
+      file: File.join(submission_file.path,
+                      submission_file.filename),
+      submission_file_id: submission_file_id,
+      annotation_text_id: annotation_text_id,
+      content: annotation_text.content,
+      annotation_category:
+        annotation_text.annotation_category&.annotation_category_name,
+      type: self.class.name,
+      number: annotation_number,
+      is_remark: is_remark
+    }
+
+    if include_creator
+      data[:creator] = "#{creator.first_name} #{creator.last_name}"
+    end
+
+    data
+  end
 end

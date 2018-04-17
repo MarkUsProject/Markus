@@ -644,9 +644,11 @@ es:
       find_different_revision:              "Encontrar una revisión diferente"
       find_by_revision_timestamp:           "Encontrar basado en la fecha y hora de modificación de la revisión"
       find_by_revision_number:              "Encontrar basado en el número de revisión"
-      viewing_revision:                     "Mirando Revisión: <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
+      viewing_revision:                     "Mirando Revisión:"
       currently_collected:                  "Versión recolectada:"
       no_rev_before_deadline: 	            "Ninguna revisión fue enviada antes de la fecha límite"
+      client_time:                          "UPDATE ME:"
+      server_time:                          "UPDATE ME:"
       current_path:                         "Ruta al Directorio:"
       all_files:                            "todos los archivos"
       root:                                 "[root]"
@@ -1601,64 +1603,6 @@ es:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
                             a una sección, use the la vista de Usuarios."
-
-    date:
-      formats:
-        default:              "%d/%m/%Y"
-        short:                "%e %b"
-        long:                 "%e %B %Y"
-        long_ordinal:         "%e %B %Y"
-        only_day:             "%e"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date:            "%A, %B %d, %Y, %l:%M %p"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date:           "%B %d, %Y"
-        locale_date:          "DD, MM d, yy,"
-        locale_date_only:     "DD, MM d, yy"
-        js_date_time:         "dddd, MMMM D, YYYY, h:mm A"
-        js_date:              "dddd, MMMM D, YYYY"
-
-        old_date:             "yy-mm-dd"
-        js_old_date:          "YYYY-MM-DD h:mm A"
-        js_old_date_only:     "YYYY-MM-DD"
-        date_placeholder:     "YYYY-MM-DD"
-        datetime_placeholder: "YYYY-MM-DD H:MM AM/PM"
-
-      day_names: [Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado]
-      abbr_day_names: [Dom, Lun, Mar, Mier, Jue, Vie, Sab]
-      month_names: [~, Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre]
-      abbr_month_names: [~, Ene, Feb, Mar, Apr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dec]
-      order:
-        - year
-        - month
-        - day
-      months:       ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-      weekdays:     ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
-      weekdays_min: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sab']
-
-    time:
-      formats:
-        default:      "%d %B %Y %H:%M"
-        time:         "%H:%M"
-        short:        "%d %b %H:%M"
-        long:         "%A %d %B %Y %H:%M %Z"
-        long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
-        only_second:  "%S"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date:    "%A, %B %d, %Y, %l:%M %p"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date:   "%B %d, %Y"
-        #MarkUs ANT_LOG_DATE_TIME_FORMAT
-        ant_date:     "%B-%d-%Y_%I:%M"
-        locale_time:  "h:mm TT"
-      am:     "am"
-      pm:     "pm"
-      hour:   "Hora"
-      minute: "Minuto"
-      time:   "Tiempo"
-      next:   "Siquiente"
-      prev:   "Previo"
-      close:  "Cerrar"
 
     keybinding:
       keyboard_help:          "Ayuda del acceso directo del teclado"

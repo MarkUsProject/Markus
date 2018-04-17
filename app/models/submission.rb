@@ -58,7 +58,7 @@ class Submission < ApplicationRecord
     new_submission.grouping = grouping
     new_submission.submission_version = 1
     new_submission.submission_version_used = true
-    new_submission.revision_timestamp = revision.timestamp
+    new_submission.revision_timestamp = revision.server_timestamp
     new_submission.revision_identifier = revision.revision_identifier
     new_submission.transaction do
       begin

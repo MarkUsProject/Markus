@@ -417,6 +417,8 @@ function select_mark(mark_id, mark) {
     var rubric_div = document.getElementById('mark_' + mark_id + '_' + mark);
     rubric_div.addClass('rubric_criterion_level_selected');
     rubric_div.removeClass('rubric_criterion_level');
+    $('.active-rubric').removeClass('active-rubric');
+    rubric_div.addClass('active-rubric');
   }
 }
 

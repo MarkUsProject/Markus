@@ -224,8 +224,11 @@
     color: $dark-blue;
   }
 
-  ol {
+  > ol {
     flex-grow: 1;
+    margin: 0;
+    overflow: auto;
+    padding-left: 50px !important;
   }
 }
 

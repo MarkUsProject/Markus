@@ -18,7 +18,7 @@
 <div>
   <strong><%= t('server_time') %></strong>
   <span id='current_time'>
-    <%= I18n.l(Time.zone.now, format: :long_date)%>
+    <%= l(Time.zone.now)%>
   </span>
 
   <script>

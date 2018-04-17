@@ -460,9 +460,11 @@ fr:
       find_different_revision: "Trouver une autre révision"
       find_by_revision_timestamp: "Par date de révision"
       find_by_revision_number:    "Par numéro de révision"
-      viewing_revision:           "Révision : <span id=\"current_revision_number_display\">%{identifier_ui}</span>"
+      viewing_revision:           "Révision:"
       currently_collected:  "Version recueillies:"
       no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
+      client_time:          "UPDATE ME:"
+      server_time:          "UPDATE ME:"
       current_path:         "Chemin actuel : "
       all_files:   "tous les fichiers"
       root:                 "[racine]"
@@ -1215,64 +1217,6 @@ fr:
     Les nom des critères, leurs descriptions, les notes maximales et visibilité peuvent être modifiés."
     past_due_date_warning: "La date de retour de ce projet est passée."
     past_due_date_notice: "La date de retour de ce projet est passée pour : "
-
-    date:
-      formats:
-        default: "%d/%m/%Y"
-        short: "%e %b"
-        long: "%e %B %Y"
-        long_ordinal: "%e %B %Y"
-        only_day: "%e"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A %d %B %Y %H:%M"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%d %B %Y"
-        locale_date:      "DD d MM yy"
-        locale_date_only: "DD d MM yy"
-        js_date_time:     "dddd D MMMM YYYY HH:mm"
-        js_date:          "dddd D MMMM YYYY"
-
-        old_date:             "yy-dd-mm"
-        js_old_date:          "YYYY-DD-MM HH:mm"
-        js_old_date:          "YYYY-DD-MM"
-        date_placeholder:     "AAAA-JJ-MM"
-        datetime_placeholder: "AAAA-JJ-MM HH:MM"
-
-      day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
-      abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
-      month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
-      abbr_month_names: [~, jan., fév., mar., avr., mai, juin, juil., août, sept., oct., nov., déc.]
-      order:
-        - day
-        - month
-        - year
-      months:       ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
-      weekdays:     ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
-      weekdays_min: ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
-
-    time:
-      formats:
-        default: "%d %B %Y %H:%M"
-        time: "%H:%M"
-        short: "%d %b %H:%M"
-        long: "%A %d %B %Y %H:%M:%S %Z"
-        long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
-        only_second: "%S"
-        #MarkUs LONG_DATE_TIME_FORMAT
-        long_date: "%A %d %B %Y %H:%M"
-        #MarkUs SHORT_DATE_TIME_FORMAT
-        short_date: "%d %B %Y"
-        #MarkUs ANT_LOG_DATE_TIME_FORMAT
-        ant_date: "%d-%B-%Y_%H:%M"
-        locale_time: "HH:mm"
-      am: 'am'
-      pm: 'pm'
-      hour:   "Heure"
-      minute: "Minute"
-      time:   "Temps"
-      next:   "Suivante"
-      prev:   "Précédente"
-      close:  "Fermer"
 
     keybinding:
       keyboard_help:          "Aide sur le raccourci clavier"

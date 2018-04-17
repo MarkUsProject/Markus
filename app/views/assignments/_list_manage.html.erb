@@ -85,12 +85,12 @@
 
                 <td>
                   <div class="date">
-                    <%= l(assignment.due_date, format: :long_date ) %>
+                    <%= l(assignment.due_date) %>
                   </div>
 
                   <% if assignment.has_peer_review? %>
                     <div class="pr_date">
-                      <%= l(assignment.pr_assignment.due_date, format: :long_date ) %>
+                      <%= l(assignment.pr_assignment.due_date) %>
                     </div>
                   <% end %>
                 </td>

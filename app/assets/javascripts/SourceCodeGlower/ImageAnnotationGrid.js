@@ -19,11 +19,12 @@ function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annot
   this.annotation_text_manager   = annotation_text_manager;
   this.annotation_text_displayer = annotation_text_displayer;
 
-  this.process_grid();
+  this.annotation_grid = [];
+
   this.share_grid_with_event_handler();
   this.draw_holders();
 
-  image_event_handler.init_listeners(document.getElementById('enable_annotations?').value);
+  image_event_handler.init_listeners(true);
   document.getElementById('codeviewer').onmousemove = this.draw_holders.bind(this);
 }
 
@@ -41,11 +42,6 @@ ImageAnnotationGrid.prototype.getAnnotationTextDisplayer = function() {
 
 ImageAnnotationGrid.prototype.get_annotation_grid = function() {
   return this.annotation_grid;
-}
-
-ImageAnnotationGrid.prototype.process_grid = function() {
-  this.annotation_grid = JSON.parse(document.getElementById('annotation_grid').value);
-  var annot_grid = this.get_annotation_grid();
 }
 
 ImageAnnotationGrid.prototype.draw_holders = function() {
