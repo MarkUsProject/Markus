@@ -166,6 +166,8 @@ GEM
     prawn-qrcode (0.3.0)
       prawn (>= 1)
       rqrcode (>= 0.4.1)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.8)
@@ -391,6 +393,7 @@ DEPENDENCIES
   pluck_to_hash
   prawn
   prawn-qrcode
+  pundit
   quiet_assets
   railroady
   rails (~> 4.2.0)

@@ -46,6 +46,7 @@ gem 'redis-rails'
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'net-ssh'
 gem 'pluck_to_hash'
+gem 'pundit'
 
 gem 'actionpack-action_caching'
 gem 'actionpack-page_caching', '~>1.0.0'
