@@ -49,16 +49,16 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
   end
 
-  # skip cleaning if :skip_db_clean tag used, otherwise mimic the
-  # use_transactional_fixtures option by wrapping each test in a
-  # transaction.
-  config.around :each do |example|
-    if example.metadata[:skip_db_clean]
-      example.run
-    else
-      DatabaseCleaner.cleaning do
-        example.run
-      end
+  config.before :each do |example|
+    if example.metadata[:skip_db_clean].nil?
+      DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.clean_with(:truncation)
+    end
+  end
+  config.after :each do |example|
+    if example.metadata[:skip_db_clean].nil?
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
     end
   end
 

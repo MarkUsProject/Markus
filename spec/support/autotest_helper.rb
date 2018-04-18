@@ -19,7 +19,7 @@ module AutotestHelper
     create(:assignment_file, assignment: assignment, filename: filename)
 
     # copy test script files into the destination directory
-    test_file_destination = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder)
+    test_file_destination = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.repository_folder)
     FileUtils.makedirs test_file_destination
     n = "00"
     n_test_scripts.times do
@@ -46,7 +46,7 @@ module AutotestHelper
       file = nil
     end
 
-    repo_dir = File.join(MarkusConfigurator.autotest_client_dir, grouping.group.repo_name, assignment.repository_folder)
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, grouping.group.repo_name, assignment.repository_folder)
     FileUtils.makedirs(repo_dir)
     autotest_submission_file = File.join(repo_dir, filename)
     unless file.nil?

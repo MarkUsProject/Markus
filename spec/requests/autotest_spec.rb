@@ -41,17 +41,21 @@ end
 describe 'Autotester', skip_db_clean: true do
 
   before(:all) do
+    # clean database
     DatabaseCleaner.clean_with :truncation
+    # set up requirements for autotest users and configs
     @test_server_user = create_with_api_key(:test_server)
     @test_names = get_test_names
     opts = get_server_opts
+    # start the server
     @server_pid = spawn "rails server -b #{opts[:Host]} -p #{opts[:Port]} -e test"
   end
 
   after(:all) do
+    Process.kill 9, @server_pid
+    sleep(5)
     DatabaseCleaner.clean_with :truncation
     FileUtils.rm_rf Dir.glob File.join(MarkusConfigurator.autotest_client_dir, '*')
-    Process.kill 9, @server_pid
   end
 
   def test_result(test_name)
@@ -219,7 +223,7 @@ describe 'Autotester', skip_db_clean: true do
           it 'should not be able to write a file outside the current directory' do
             expect(test_result('write_to_parent').first).to have_attributes(completion_status: 'pass')
           end
-          it 'should be able to allocate large amounts of memory' do
+          xit 'should be able to allocate large amounts of memory' do
             # currently there is no restriction but we want to include one in the future:
             # expect(test_result('memory_allocate').where('name LIKE ?', '%stderr%').first.actual_output).to include('OSError', 'memory')
             expect(test_result('memory_allocate').first).to have_attributes(completion_status: 'fail')
