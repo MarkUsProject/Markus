@@ -35,7 +35,7 @@ describe SubmissionsController do
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      is_expected.to respond_with(:success)
+      is_expected.to respond_with(:redirect)
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -110,7 +110,7 @@ describe SubmissionsController do
                                   'TestShapes.java' =>
                                       old_file_2.from_revision }
       end
-      is_expected.to respond_with(:success)
+      is_expected.to respond_with(:redirect)
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil
@@ -164,7 +164,7 @@ describe SubmissionsController do
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      is_expected.to respond_with(:success)
+      is_expected.to respond_with(:redirect)
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil
