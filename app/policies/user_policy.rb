@@ -1,11 +1,9 @@
 class UserPolicy < ApplicationPolicy
-
   def create?
-    self.user.admin?
+    user.admin?
   end
 
   def update?
-    self.user.admin?
+    user.admin?
   end
-
 end

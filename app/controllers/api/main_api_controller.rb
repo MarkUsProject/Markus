@@ -6,13 +6,11 @@ module Api
   class MainApiController < ActionController::Base
     include Pundit
 
+    attr_reader :current_user
+
     before_filter :check_format, :authenticate
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
-    def current_user
-      @current_user
-    end
 
     # Unless overridden by a subclass, all routes are 404's by default
     def index
@@ -176,6 +174,5 @@ module Api
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
              status: 403
     end
-
   end
 end # end Api module

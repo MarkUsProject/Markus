@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe UserPolicy do
-
   let(:admin) { Admin.new(user_name: 'admin', type: User::ADMIN) }
   let(:ta) { Ta.new(user_name: 'ta', type: User::TA) }
   let(:student) { Student.new(user_name: 'student', type: User::STUDENT) }
@@ -31,5 +30,4 @@ describe UserPolicy do
       expect(subject).not_to permit(student, User)
     end
   end
-
 end
