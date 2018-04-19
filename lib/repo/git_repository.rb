@@ -133,7 +133,7 @@ module Repository
     end
 
     def self.get_checkout_command(external_repo_url, revision_hash, group_name, repo_folder=nil)
-      "git clone #{external_repo_url} \"#{group_name}\" && "\
+      "git clone \"#{external_repo_url}\" \"#{group_name}\" && "\
       "cd \"#{group_name}\" && "\
       "git reset --hard #{revision_hash} && "\
       "cd .."
