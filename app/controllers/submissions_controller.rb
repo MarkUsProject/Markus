@@ -34,6 +34,8 @@ class SubmissionsController < ApplicationController
                        :populate_peer_submissions_table]
   before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
 
+  layout 'assignment_content', only: [:file_manager]
+
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @path = params[:path] || File::SEPARATOR
@@ -98,6 +100,25 @@ class SubmissionsController < ApplicationController
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(user_group, @assignment)
+
+    # generate flash messages
+    if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
+      flash_message(:warning, @assignment.submission_rule.after_collection_message)
+    elsif @assignment.grouping_past_due_date?(@grouping)
+      flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    end
+
+    if !@grouping.is_valid?
+      flash_message(:error, t(:invalid_group_warning))
+    elsif !@missing_assignment_files.blank?
+      flash_message(:warning,
+                    partial: 'submissions/missing_assignment_file_toggle_list',
+                    locals: {missing_assignment_files: @missing_assignment_files})
+    end
+
+    if @assignment.allow_web_submits && @assignment.vcs_submit
+      flash_message(:notice, t('student.submission.version_control_warning'))
+    end
   end
 
   def populate_file_manager_react
@@ -317,164 +338,142 @@ class SubmissionsController < ApplicationController
   end
 
   # update_files action handles transactional submission of files.
-  #
-  # Note that you shouldn't use redirect_to in this action. This
-  # is due to @file_manager_errors, which carries over some state
-  # to the file_manager view (via render calls). We need to do
-  # this, because we were storing transaction errors in the flash
-  # hash (i.e. they were stored in the browser's cookie), and in
-  # some circumstances, this produces a cookie overflow error
-  # when the state stored in the cookie exceeds 4k in serialized
-  # form. This was happening prior to the fix of Github issue #30.
   def update_files
     assignment_id = params[:assignment_id]
-    @assignment = Assignment.find(assignment_id)
-    unless @assignment.allow_web_submits
-      raise t('student.submission.external_submit_only')
-    end
+    begin
+      @assignment = Assignment.find(assignment_id)
+      unless @assignment.allow_web_submits
+        raise t('student.submission.external_submit_only')
+      end
 
-    # We'll use this hash to carry over some error state to the
-    # file_manager view.
-    @file_manager_errors = Hash.new
-    required_files = AssignmentFile.where(
-                           assignment_id: @assignment).pluck(:filename)
-    filenames = []
-    @path = params[:path] || '/'
-    @grouping = current_user.accepted_grouping_for(assignment_id)
-    unless @grouping.is_valid?
-      # can't use redirect_to here. See comment of this action for more details.
-      set_filebrowser_vars(@grouping.group, @assignment)
-      render :file_manager, id: assignment_id
-      return
-    end
-    unless params[:new_files].nil?
-      params[:new_files].each do |f|
-        if f.size > MarkusConfigurator.markus_config_max_file_size
-          @file_manager_errors[:size_conflict] =
-            "Error occured while uploading file \"" +
-             f.original_filename +
-             '": The size of the uploaded file exceeds the maximum of ' +
-             "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
-	          .round(2)}" +
-             'MB.'
-          render :file_manager
-          return
+      required_files = AssignmentFile.where(assignment_id: @assignment).pluck(:filename)
+      filenames = []
+      @path = params[:path] || '/'
+      @grouping = current_user.accepted_grouping_for(assignment_id)
+      unless @grouping.is_valid?
+        set_filebrowser_vars(@grouping.group, @assignment)
+        return
+      end
+      unless params[:new_files].nil?
+        params[:new_files].each do |f|
+          if f.size > MarkusConfigurator.markus_config_max_file_size
+            max_size_MB = (MarkusConfigurator.markus_config_max_file_size / 1000000.00).round(2)
+            error_message = "Error occurred while uplading file \"#{ f.original_filename }\"" \
+               ": The size of the uploaded file exceeds the maximum of #{ max_size_MB.to_s } MB."
+            flash_message(:error, error_message)
+            return
+          elsif f.size == 0
+            flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+          end
         end
       end
-    end
-    @grouping.group.access_repo do |repo|
+      @grouping.group.access_repo do |repo|
 
-      assignment_path = Pathname.new(@assignment.repository_folder)
-      current_path = assignment_path.join(@path[1..-1]) # remove trailing '/' or join won't join
+        assignment_path = Pathname.new(@assignment.repository_folder)
+        current_path = assignment_path.join(@path[1..-1]) # remove trailing '/' or join won't join
 
-      # Get the revision numbers for the files that we've seen - these
-      # values will be the "expected revision numbers" that we'll provide
-      # to the transaction to ensure that we don't overwrite a file that's
-      # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+        # Get the revision numbers for the files that we've seen - these
+        # values will be the "expected revision numbers" that we'll provide
+        # to the transaction to ensure that we don't overwrite a file that's
+        # been revised since the user last saw it.
+        file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
 
-      # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
+        # The files that will be deleted
+        delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
 
-      # The files that will be added
-      new_files = params[:new_files].nil? ? {} : params[:new_files]
+        # The files that will be added
+        new_files = params[:new_files].nil? ? {} : params[:new_files]
 
-      # Create transaction, setting the author.  Timestamp is implicit.
-      txn = repo.get_transaction(current_user.user_name)
+        # Create transaction, setting the author.  Timestamp is implicit.
+        txn = repo.get_transaction(current_user.user_name)
 
-      log_messages = []
-      begin
-        if new_files.empty?
-          # delete files marked for deletion
-          delete_files.each do |filename|
+        log_messages = []
+        begin
+          if new_files.empty?
+            # delete files marked for deletion
+            delete_files.each do |filename|
+              file_path = current_path.join(filename)
+              file_path_relative = file_path.relative_path_from(assignment_path).to_s
+              file_path = file_path.to_s
+              txn.remove(file_path, file_revisions[filename])
+              log_messages.push("Student '#{current_user.user_name}' deleted file '#{file_path_relative}' "\
+                                "for assignment '#{@assignment.short_identifier}'.")
+            end
+          else
+            # prepare repo revision for next block
+            revision = repo.get_latest_revision
+          end
+
+          # Add new files and replace existing files
+          new_files.each do |file_object|
+            filename = file_object.original_filename
+            if filename.nil?
+              raise I18n.t('student.submission.invalid_file_name')
+            end
+            filename = sanitize_file_name(filename)
             file_path = current_path.join(filename)
             file_path_relative = file_path.relative_path_from(assignment_path).to_s
             file_path = file_path.to_s
-            txn.remove(file_path, file_revisions[filename])
-            log_messages.push("Student '#{current_user.user_name}' deleted file '#{file_path_relative}' "\
-                              "for assignment '#{@assignment.short_identifier}'.")
-          end
-        else
-          # prepare repo revision for next block
-          revision = repo.get_latest_revision
-        end
+            # Sometimes the file pointer of file_object is at the end of the file.
+            # In order to avoid empty uploaded files, rewind it to be safe.
+            file_object.rewind
 
-        # Add new files and replace existing files
-        new_files.each do |file_object|
-          filename = file_object.original_filename
-          if filename.nil?
-            raise I18n.t('student.submission.invalid_file_name')
+            # Branch on whether the file is new or a replacement
+            if revision.path_exists?(file_path)
+              txn.replace(file_path, file_object.read, file_object.content_type, revision.revision_identifier)
+              log_messages.push("Student '#{current_user.user_name}' replaced file '#{file_path_relative}' "\
+                                "for assignment '#{@assignment.short_identifier}'.")
+            else
+              filenames << file_path_relative
+              txn.add(file_path, file_object.read, file_object.content_type)
+              log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_path_relative}' "\
+                                "for assignment '#{@assignment.short_identifier}'.")
+            end
           end
-          filename = sanitize_file_name(filename)
-          file_path = current_path.join(filename)
-          file_path_relative = file_path.relative_path_from(assignment_path).to_s
-          file_path = file_path.to_s
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be safe.
-          file_object.rewind
 
-          # Branch on whether the file is new or a replacement
-          if revision.path_exists?(file_path)
-            txn.replace(file_path, file_object.read, file_object.content_type, revision.revision_identifier)
-            log_messages.push("Student '#{current_user.user_name}' replaced file '#{file_path_relative}' "\
-                              "for assignment '#{@assignment.short_identifier}'.")
-          else
-            filenames << file_path_relative
-            txn.add(file_path, file_object.read, file_object.content_type)
-            log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_path_relative}' "\
-                              "for assignment '#{@assignment.short_identifier}'.")
+          # check if only required files are allowed for a submission
+          unless filenames.empty? ||
+                 required_files.empty? ||
+                 !@assignment.only_required_files
+            if !(filenames - required_files).empty?
+              flash_message(:error, t('assignment.upload_file_requirement'))
+              return
+            else
+              required_files = required_files - filenames
+            end
           end
-        end
-
-        # check if only required files are allowed for a submission
-        unless filenames.empty? ||
-               required_files.empty? ||
-               !@assignment.only_required_files
-          if !(filenames - required_files).empty?
-            @file_manager_errors[:size_conflict] = I18n.t('assignment.upload_file_requirement')
-            render :file_manager
+          # finish transaction
+          unless txn.has_jobs?
+            flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+            set_filebrowser_vars(@grouping.group, @assignment)
             return
-          else
-            required_files = required_files - filenames
           end
-        end
-        # finish transaction
-        unless txn.has_jobs?
-          flash[:transaction_warning] =
-              I18n.t('student.submission.no_action_detected')
+          if repo.commit(txn)
+            flash_message(:success, I18n.t('update_files.success'))
+            # flush log messages
+            m_logger = MarkusLogger.instance
+            log_messages.each do |msg|
+              m_logger.log(msg)
+            end
+          else
+            flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts })
+          end
+          # Are we past collection time?
+          if @assignment.submission_rule.can_collect_now?(current_user.section)
+            flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
+          end
           # can't use redirect_to here. See comment of this action for details.
           set_filebrowser_vars(@grouping.group, @assignment)
-          render :file_manager, id: assignment_id
-          return
-        end
-        if repo.commit(txn)
-          flash_message(:success, I18n.t('update_files.success'))
-          # flush log messages
+
+        rescue  => e
           m_logger = MarkusLogger.instance
-          log_messages.each do |msg|
-            m_logger.log(msg)
-          end
-        else
-          @file_manager_errors[:update_conflicts] = txn.conflicts
+          m_logger.log(e.message)
+          flash_message(:warning, e.message)
+          set_filebrowser_vars(@grouping.group, @assignment)
         end
-
-        # Are we past collection time?
-        if @assignment.submission_rule.can_collect_now?(current_user.section)
-          flash[:commit_notice] =
-              @assignment.submission_rule.commit_after_collection_message
-        end
-        # can't use redirect_to here. See comment of this action for details.
-        set_filebrowser_vars(@grouping.group, @assignment)
-        render :file_manager, id: assignment_id
-
-      rescue Exception => e
-        m_logger = MarkusLogger.instance
-        m_logger.log(e.message)
-        # can't use redirect_to here. See comment of this action for details.
-        @file_manager_errors[:commit_error] = e.message
-        set_filebrowser_vars(@grouping.group, @assignment)
-        render :file_manager, id: assignment_id
       end
+    ensure
+      redirect_to action: :file_manager
     end
   end
 

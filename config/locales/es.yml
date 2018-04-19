@@ -1037,7 +1037,7 @@ es:
         version_control_warning:          "Entregar archivos aquí reescribe todos los cambios realizados usando
                                            version control. Asegúrese que haya trabajado en los archivos más recientes
                                            antes de realizar la entrega."
-
+        empty_file_warning: "UPDATE ME"
 
     tas:
       create:

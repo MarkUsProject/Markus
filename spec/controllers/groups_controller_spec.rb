@@ -200,8 +200,8 @@ describe GroupsController do
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
-        expect(flash[:success])
-          .to eq([I18n.t('csv_valid_lines', valid_line_count: 1)])
+        expect(flash[:success].map { |f| extract_text f })
+          .to eq([I18n.t('csv_valid_lines', valid_line_count: 1)].map { |f| extract_text f })
         expect(response).to redirect_to(action: 'index')
 
         expect(Group.find_by(group_name: 'group1').repo_name)
@@ -238,7 +238,9 @@ describe GroupsController do
              group: { grouplist: @file_bad_csv }
 
         expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_empty
+        expect(flash[:error].map { |f| extract_text(f) })
+          .to eq([I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text(f) })
+
         expect(response).to redirect_to(action: 'index')
       end
 

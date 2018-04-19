@@ -45,8 +45,8 @@ describe TasController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(flash[:success]).to eq([I18n.t('csv_valid_lines',
-                                            valid_line_count: 2)])
+      i18t_string = [I18n.t('csv_valid_lines', valid_line_count: 2)].map { |f| extract_text f }
+      expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       expect(response).to redirect_to action: 'index'
 
       ta = Ta.where(user_name: 'c6conley')
@@ -91,8 +91,8 @@ describe TasController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to action: 'index'
-      expect(flash[:error])
-        .to eq([I18n.t('upload_errors.malformed_csv')])
+      expect(flash[:error].map { |f| extract_text f })
+        .to eq([I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f })
     end
   end
 

@@ -1,0 +1,7 @@
+<h2><%= t('student.submission.conflicts') %></h2>
+<p><%= t('student.submission.file_conflicts') %></p>
+<ul>
+  <% conflicts.each do |conflict| %>
+    <li><%= conflict.to_s %></li>
+  <% end %>
+</ul>
