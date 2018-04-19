@@ -4,8 +4,13 @@ module Api
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
+    include Pundit
+
+    attr_reader :current_user
 
     before_filter :check_format, :authenticate
+
+    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     # Unless overridden by a subclass, all routes are 404's by default
     def index
@@ -162,6 +167,12 @@ module Api
         return true if params[param].blank?
       end
       false
+    end
+
+    def user_not_authorized
+      render 'shared/http_status',
+             locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+             status: 403
     end
   end
 end # end Api module
