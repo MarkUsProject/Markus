@@ -34,7 +34,6 @@ class SubmissionsController < ApplicationController
                        :populate_peer_submissions_table]
   before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
 
-  layout 'assignment_content', only: [:file_manager]
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
@@ -119,6 +118,7 @@ class SubmissionsController < ApplicationController
     if @assignment.allow_web_submits && @assignment.vcs_submit
       flash_message(:notice, t('student.submission.version_control_warning'))
     end
+    render layout: 'assignment_content'
   end
 
   def populate_file_manager_react

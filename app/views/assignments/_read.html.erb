@@ -39,7 +39,7 @@
         <span class='prop_label'><%= raw(t('deadline_max_penalty')) %></span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
       <% end %>
-      <%= I18n.l(@assignment.due_date + acc.hours, format: :long_date ) %>
+      <%= I18n.l(@assignment.due_date + acc.hours, format: :long ) %>
     </div>
 
     <div class='sub_block'>
