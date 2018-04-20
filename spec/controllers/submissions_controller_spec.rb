@@ -33,8 +33,6 @@ describe SubmissionsController do
               assignment_id: @assignment.id,
               new_files: [file_1, file_2]
 
-      # must not respond with redirect_to (see comment in
-      # app/controllers/submission_controller.rb#update_files)
       is_expected.to respond_with(:redirect)
 
       # update_files action assert assign to various instance variables.
@@ -74,6 +72,11 @@ describe SubmissionsController do
       expect(assigns :revision).to_not be_nil
       expect(assigns :files).to_not be_nil
       expect(assigns :missing_assignment_files).to_not be_nil
+    end
+
+    it 'should render with the assignment content layout' do
+      get_as @student, :file_manager, assignment_id: @assignment.id
+      expect(response).to render_template('layouts/assignment_content')
     end
 
     # TODO figure out how to test this test into the one above
@@ -162,8 +165,6 @@ describe SubmissionsController do
                                 old_file_2.from_revision })
       end
 
-      # must not respond with redirect_to (see comment in
-      # app/controllers/submission_controller.rb#update_files)
       is_expected.to respond_with(:redirect)
 
       expect(assigns :assignment).to_not be_nil
@@ -245,6 +246,17 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
+    it 'should render with the content layout' do
+      get_as @ta_membership.user,
+             :repo_browser,
+             assignment_id: @assignment.id,
+             id: Grouping.last.id,
+             revision_identifier:
+               Grouping.last.group.repo.get_latest_revision.revision_identifier,
+             path: '/'
+      expect(response).to render_template('layouts/content')
+    end
+
     it 'should be able to download the svn checkout commands' do
       get_as @ta_membership.user,
              :download_repo_checkout_commands,
@@ -288,6 +300,15 @@ describe SubmissionsController do
              id: Grouping.last.id,
              path: '/'
       is_expected.to respond_with(:success)
+    end
+
+    it 'should render with the content layout' do
+      get_as @admin,
+             :repo_browser,
+             assignment_id: @assignment.id,
+             id: Grouping.last.id,
+             path: '/'
+      expect(response).to render_template(layout: 'layouts/content')
     end
 
     it 'should be able to download the svn checkout commands' do
