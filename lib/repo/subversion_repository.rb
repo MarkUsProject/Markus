@@ -180,6 +180,9 @@ module Repository
     end
 
     def self.get_checkout_command(external_repo_url, revision_number, group_name, repo_folder=nil)
+      if revision_number.to_i == 0
+        return ''
+      end
       unless repo_folder.nil?
         external_repo_url += "/#{repo_folder}"
       end
@@ -966,7 +969,7 @@ module Repository
     # Constructor; Check if revision is actually present in
     # repository
     def initialize(revision_number, repo)
-      revision_number = revision_number.to_i if revision_number.is_a? String
+      revision_number = revision_number.to_i # can be passed as string or int
       @repo = repo
       @revision_identifier_ui = revision_number.to_s
       begin

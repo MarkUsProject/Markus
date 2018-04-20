@@ -47,14 +47,14 @@ class SubmissionsController < ApplicationController
     assignment_revisions = []
     all_revisions = repo.get_all_revisions
     all_revisions.each do |revision|
-      # store the collected revision
-      if @collected_revision.nil? && collected_submission &&
-           collected_submission.revision_identifier == revision.revision_identifier.to_s
-        @collected_revision = revision
-      end
       # store the assignment-relevant revisions
       next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
       assignment_revisions << revision
+      # store the collected revision
+      if @collected_revision.nil? && collected_submission &&
+          collected_submission.revision_identifier == revision.revision_identifier.to_s
+        @collected_revision = revision
+      end
       # store the displayed revision
       if @revision.nil?
         if (params[:revision_identifier] &&
