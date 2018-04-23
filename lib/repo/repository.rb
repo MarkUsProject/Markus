@@ -231,7 +231,9 @@ module Repository
       group_repos.each do |repo_name| # "dead" repositories
         permissions[repo_name] = admins + tas
       end
-
+      Assignment.repository_names.each do |repo_name| # starter code repositories
+        permissions[repo_name] = admins
+      end
       permissions
     end
 
