@@ -65,11 +65,12 @@ class SubmissionsController < ApplicationController
         end
       end
     end
-    assignment_revisions = all_revisions if assignment_revisions.empty?
-    @revision = assignment_revisions[0] if @revision.nil? # latest relevant revision
+    # find another relevant revision to display if @revision.nil?
+    # 1) the latest assignment revision, or 2) the first repo revision
+    @revision ||= assignment_revisions[0] || all_revisions[-1]
     @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
                                                                  id_ui: revision.revision_identifier_ui,
-                                                                 date: revision.timestamp} }
+                                                                 date: revision.timestamp } }
 
     respond_to do |format|
       format.html
