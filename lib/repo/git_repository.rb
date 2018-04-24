@@ -194,6 +194,8 @@ module Repository
       walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
       walker.push(@repos.last_commit)
       get_revision(walker.first.oid)
+    ensure
+      bare_repo.close
     end
 
     def get_all_revisions
@@ -221,6 +223,8 @@ module Repository
         revision.server_timestamp = push_info.time
         revision
       end
+    ensure
+      bare_repo.close
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
