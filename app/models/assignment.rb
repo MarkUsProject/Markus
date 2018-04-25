@@ -137,6 +137,7 @@ class Assignment < ApplicationRecord
   after_save :update_repo_auth
 
   BLANK_MARK = ''
+  STARTER_CODE_REPO_FORMAT = "%s_starter_code"
 
   # Set the default order of assignments: in ascending order of due_date
   default_scope { order('due_date ASC', 'id ASC') }
@@ -1038,8 +1039,12 @@ class Assignment < ApplicationRecord
 
   ### REPO ###
 
+  def self.repository_names
+    pluck(:short_identifier).map { |sid| STARTER_CODE_REPO_FORMAT % sid }
+  end
+
   def repository_name
-    "#{short_identifier}_starter_code"
+    STARTER_CODE_REPO_FORMAT % short_identifier
   end
 
   def build_repository
