@@ -161,21 +161,6 @@ module Repository
       return true
     end
 
-    def self.update_permissions
-      permissions = AbstractRepository.get_all_permissions
-      permissions.each do |repo_name, users|
-        begin
-          repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
-          repo = MemoryRepository.open(repo_loc)
-        rescue
-          next
-        end
-        users.each do |user|
-          repo.users[user] = Repository::Permission::READ_WRITE
-        end
-      end
-    end
-
     # Returns the latest revision number (as a RepositoryRevision object)
     def get_latest_revision
       return @current_revision
@@ -435,6 +420,23 @@ module Repository
         return @timestamps_revisions[Marshal.dump(wanted_timestamp)]
       else
         return @current_revision
+      end
+    end
+
+    private
+
+    def self.__update_permissions
+      permissions = AbstractRepository.get_all_permissions
+      permissions.each do |repo_name, users|
+        begin
+          repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
+          repo = MemoryRepository.open(repo_loc)
+        rescue
+          next
+        end
+        users.each do |user|
+          repo.users[user] = Repository::Permission::READ_WRITE
+        end
       end
     end
 

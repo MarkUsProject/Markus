@@ -62,6 +62,8 @@ module Repository
 
   class AbstractRepository
 
+    @@semaphore = Mutex.new
+
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
     def initialize(connect_string)
@@ -161,14 +163,31 @@ module Repository
       raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
     end
 
-    # Generate and write the the authorization file for all repos.
-    def self.update_permissions
-      raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
-    end
-
     #Converts a pathname to an absolute pathname
     def expand_path(file_name, dir_string)
       raise NotImplementedError, "Repository.expand_path: Not yet implemented"
+    end
+
+    # Updates permissions file unless it is being called from within a
+    # block passed to self.update_permissions_after
+    def self.update_permissions
+      begin
+        @@semaphore.synchronize { self.__update_permissions }
+        true
+      rescue ThreadError
+        false
+      end
+    end
+
+    # Executes a block of code and then updates the permissions file.
+    # Also prevents any calls to self.update_permissions or
+    # self.update_permissions_after within that block.
+    #
+    # This allows us to ensure that the permissions file will only be
+    # updated a single time once all relevant changes have been made.
+    def self.update_permissions_after
+      @@semaphore.synchronize { yield }
+      self.update_permissions
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
@@ -197,6 +216,13 @@ module Repository
         permissions[repo_name] = admins
       end
       permissions
+    end
+
+    private
+
+    # Generate and write the the authorization file for all repos.
+    def self.__update_permissions
+      raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
   end

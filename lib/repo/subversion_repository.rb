@@ -212,21 +212,6 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
-    # Generate and write the SVN authorization file for the repo.
-    def self.update_permissions
-      return true if !MarkusConfigurator.markus_config_repository_admin?
-      permissions = AbstractRepository.get_all_permissions
-      authz_string = ''
-      permissions.each do |repo_name, users|
-        authz_string += "[#{repo_name}:/]\n"
-        users.each do |user_name|
-          authz_string += "#{user_name} = rw\n"
-        end
-        authz_string += "\n"
-      end
-      __write_out_authz_file(authz_string)
-    end
-
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
     # number
@@ -597,6 +582,21 @@ module Repository
     ####################################################################
 
     private
+
+    # Generate and write the SVN authorization file for the repo.
+    def self.__update_permissions
+      return true if !MarkusConfigurator.markus_config_repository_admin?
+      permissions = AbstractRepository.get_all_permissions
+      authz_string = ''
+      permissions.each do |repo_name, users|
+        authz_string += "[#{repo_name}:/]\n"
+        users.each do |user_name|
+          authz_string += "#{user_name} = rw\n"
+        end
+        authz_string += "\n"
+      end
+      __write_out_authz_file(authz_string)
+    end
 
     # Function necessary for exporting the svn repository
     def setup_auth_baton(auth_baton)
