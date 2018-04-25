@@ -255,7 +255,7 @@ class GroupsController < ApplicationController
       # for performance reasons. Because the groups are being created as part of
       # this transaction, the race condition of the repos being created before the
       # permissions are set should not be a problem.
-      Repository.get_class.__set_all_permissions
+      Repository.get_class.update_permissions
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
     end

@@ -86,22 +86,6 @@ class Group < ApplicationRecord
     true
   end
 
-  # Set the default repo permissions.
-  def set_repo_permissions
-    return true if !MarkusConfigurator.markus_config_repository_admin?
-    # Each admin user will have read and write permissions on each repo
-    user_permissions = {}
-    Admin.all.each do |admin|
-      user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
-    end
-    # Each grader will have read and write permissions on each repo
-    Ta.all.each do |ta|
-      user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
-    end
-    Repository.get_class.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
-    true
-  end
-
   def repo_loc
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
     unless Repository.get_class.repository_exists?(repo_loc)

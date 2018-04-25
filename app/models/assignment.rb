@@ -134,7 +134,7 @@ class Assignment < ApplicationRecord
   validates :due_date, date: true
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
-  after_save :update_repo_auth
+  after_save { Repository.get_class.update_permissions }
 
   BLANK_MARK = ''
   STARTER_CODE_REPO_FORMAT = "%s_starter_code"
@@ -346,7 +346,7 @@ class Assignment < ApplicationRecord
         group = Group.create(group_name: new_group_name)
       end
     end
-    group.set_repo_permissions
+    Repository.get_class.update_permissions
     Grouping.create(group: group, assignment: self)
   end
 
@@ -395,7 +395,7 @@ class Assignment < ApplicationRecord
         end
       end
       # update all permissions at once
-      Repository.get_class.__set_all_permissions
+      Repository.get_class.update_permissions
     end
 
     warnings
@@ -560,8 +560,7 @@ class Assignment < ApplicationRecord
 
   def valid_groupings
     groupings.includes(student_memberships: :user).select do |grouping|
-      grouping.admin_approved ||
-      grouping.student_memberships.count >= group_min
+      grouping.is_valid?
     end
   end
 
@@ -1230,12 +1229,6 @@ class Assignment < ApplicationRecord
     Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
               .where(vcs_submit: true)
               .order(due_date: :desc)
-  end
-
-  def update_repo_auth
-    if self.vcs_submit_was != self.vcs_submit
-      Repository.get_class.__set_all_permissions
-    end
   end
 
   def self.get_required_files

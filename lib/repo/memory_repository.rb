@@ -161,7 +161,7 @@ module Repository
       return true
     end
 
-    def self.__set_all_permissions
+    def self.update_permissions
       permissions = AbstractRepository.get_all_permissions
       permissions.each do |repo_name, users|
         begin
@@ -171,11 +171,7 @@ module Repository
           next
         end
         users.each do |user|
-          if repo.has_user?(user)
-            repo.set_permissions(user, Repository::Permission::READ_WRITE)
-          else
-            repo.add_user(user, Repository::Permission::READ_WRITE)
-          end
+          repo.users[user] = Repository::Permission::READ_WRITE
         end
       end
     end
@@ -217,22 +213,6 @@ module Repository
       @users.key?(user_id)
     end
 
-    # Adds a user to the repository and grants him/her the provided permissions
-    def add_user(user_id, permissions)
-      if self.has_user?(user_id)
-        raise UserAlreadyExistent.new("#{user_id} exists already")
-      end
-      @users[user_id] = permissions
-    end
-
-    # Removes a user from from the repository
-    def remove_user(user_id)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users.delete(user_id)
-    end
-
     # Gets a list of users with AT LEAST the provided permissions.
     # Returns nil if there aren't any.
     def get_users(permissions)
@@ -249,48 +229,12 @@ module Repository
       end
     end
 
-    # Sets permissions for the provided user
-    def set_permissions(user_id, permissions)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users[user_id] = permissions
-    end
-
     # Gets permissions for a given user
     def get_permissions(user_id)
       unless self.has_user?(user_id)
         raise UserNotFound.new("#{user_id} not found")
       end
       @users[user_id]
-    end
-
-    # Set permissions for many repositories
-    def self.set_bulk_permissions(repo_names, user_id_permissions_map)
-      repo_names.each do |repo_name|
-        repo = MemoryRepository.open(repo_name)
-        user_id_permissions_map.each do |user_id, permissions|
-          if repo.has_user?(user_id)
-            repo.set_permissions(user_id, permissions)
-          else
-            repo.add_user(user_id, permissions)
-          end
-        end
-      end
-      return true
-    end
-
-    # Delete permissions for many repositories
-    def self.delete_bulk_permissions(repo_names, user_ids)
-      repo_names.each do |repo_name|
-        repo = MemoryRepository.open(repo_name)
-        user_ids.each do |user_id|
-          if repo.has_user?(user_id)
-            repo.remove_user(user_id)
-          end
-        end
-      end
-      return true
     end
 
     # Static method: Yields an existing Memory repository and closes it afterwards

@@ -122,7 +122,7 @@ class SplitPDFJob < ApplicationJob
       )
 
       # Update repository permissions
-      Repository.get_class.__set_all_permissions
+      Repository.get_class.update_permissions
 
       m_logger.log('Split pdf process done')
       return split_pdf_log

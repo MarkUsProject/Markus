@@ -149,16 +149,6 @@ module Repository
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
-    # Adds a user with a given permission-set to the repository
-    def add_user(user_id, permissions)
-      raise NotImplementedError,  "Repository.add_user: Not yet implemented"
-    end
-
-    # Removes user permissions for read & write access to the repository
-    def remove_user(user_id)
-      raise NotImplementedError,  "Repository.remove_user: Not yet implemented"
-    end
-
     # Gets a list of users with permissions in question on the repository
     #   use "Repository::Permission::ANY" to get a list of all users with any permissions
     #   i.e. all users with at least read permissions
@@ -172,41 +162,13 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.__set_all_permissions
-      raise NotImplementedError, "Repository.__generate_authz_file: Not yet implemented"
-    end
-
-    # Sets permissions for a particular user
-    def set_permissions(user_id, permissions)
-      raise NotImplementedError, "Repository.set_permissions: Not yet implemented"
+    def self.update_permissions
+      raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
     #Converts a pathname to an absolute pathname
     def expand_path(file_name, dir_string)
       raise NotImplementedError, "Repository.expand_path: Not yet implemented"
-    end
-
-    # Static method on Repository to set permissions on a set of users across a series
-    # of group repositories.
-    # user_id_permissions_map is a hash in the form of:
-    # {user_id => Repository::Permissions::READ, user_id =>....}
-    #
-    # set_bulk_permissions will clobber pre-existing permissions, and automatically
-    # add_user to a repository permission set.
-    #
-    # set_bulk_permissions is commonly used when setting permissions for _many_
-    # repositories
-    #
-    def self.set_bulk_permissions(groups, user_id_permissions_map)
-      raise NotImplementedError, "Repository.set_bulk_permissions: Not yet implemented"
-    end
-
-    # Static method on Repository to remove permissions on an Array of users across
-    # a series of group repositories
-    # user_ids is an Array of user_ids
-    #
-    def self.delete_bulk_permissions(groups, user_ids)
-      raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)

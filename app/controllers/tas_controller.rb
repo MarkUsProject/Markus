@@ -93,7 +93,7 @@ class TasController < ApplicationController
         flash_message(:error, result[:invalid_lines])
       end
       unless result[:valid_lines].blank?
-        Repository.get_class.__set_all_permissions
+        Repository.get_class.update_permissions
         flash_message(:success, result[:valid_lines])
       end
     else

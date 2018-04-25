@@ -534,9 +534,7 @@ class AssignmentsController < ApplicationController
     disinvited_student = membership.user
     membership.delete
     membership.save
-    # update repository permissions
-    grouping = current_user.accepted_grouping_for(assignment.id)
-    grouping.update_repository_permissions
+    Repository.get_class.update_permissions
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
                  "'#{disinvited_student.user_name}'.")

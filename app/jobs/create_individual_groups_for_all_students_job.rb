@@ -59,7 +59,7 @@ class CreateIndividualGroupsForAllStudentsJob < ApplicationJob
     end
 
     # Generate the permissions file for all valid groups
-    Repository.get_class.__set_all_permissions
+    Repository.get_class.update_permissions
     m_logger = MarkusLogger.instance
     m_logger.log('Creating all individual groups completed',
                  MarkusLogger::INFO)
