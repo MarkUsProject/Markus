@@ -287,9 +287,9 @@ class Submission < ActiveRecord::Base
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
                                 created_at: Time.zone.now,
-                                markable_id: extra_mark.markable_id,
-                                mark: extra_mark.mark,
-                                markable_type: extra_mark.markable_type)
+                                description: extra_mark.description,
+                                extra_mark: extra_mark.extra_mark,
+                                unit: extra_mark.unit)
     end
 
     remark_assignment.get_criteria(:ta).each do |criterion|
