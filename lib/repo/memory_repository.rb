@@ -54,6 +54,9 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
+      unless self.valid_location?(location)
+        raise InvalidLocation.new(location)
+      end
       MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
       true
     end
@@ -426,7 +429,7 @@ module Repository
     private
 
     def self.__update_permissions
-      permissions = AbstractRepository.get_all_permissions
+      global_permissions, permissions = AbstractRepository.get_all_permissions
       permissions.each do |repo_name, users|
         begin
           repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
@@ -434,6 +437,7 @@ module Repository
         rescue
           next
         end
+        users += global_permissions
         users.each do |user|
           repo.users[user] = Repository::Permission::READ_WRITE
         end

@@ -68,7 +68,9 @@ module Repository
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
-
+      unless self.valid_location?(connect_string)
+        raise InvalidLocation.new(connect_string)
+      end
       # create the repository using the ruby bindings
       fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]}
       repository = Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful
@@ -586,8 +588,12 @@ module Repository
     # Generate and write the SVN authorization file for the repo.
     def self.__update_permissions
       return true if !MarkusConfigurator.markus_config_repository_admin?
-      permissions = AbstractRepository.get_all_permissions
-      authz_string = ''
+      global_permissions, permissions = AbstractRepository.get_all_permissions
+      authz_string = "[/]\n"
+      global_permissions.each do |user_name|
+        authz_string += "#{user_name} = rw\n"
+      end
+      authz_string += "\n"
       permissions.each do |repo_name, users|
         authz_string += "[#{repo_name}:/]\n"
         users.each do |user_name|

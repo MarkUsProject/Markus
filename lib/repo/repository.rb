@@ -60,6 +60,15 @@ module Repository
 
   class RepositoryCollision < Exception; end
 
+  class InvalidLocation < Exception;
+    def initialize(location)
+      @location = location
+    end
+    def to_s
+      "#{@location} is not a valid repository location"
+    end
+  end
+
   class AbstractRepository
 
     @@semaphore = Mutex.new
@@ -194,9 +203,9 @@ module Repository
     def self.get_all_permissions
 
       permissions = {}
-      admins = Admin.pluck(:user_name)
-      tas = Ta.pluck(:user_name)
-      group_repos = Group.pluck(:repo_name)
+      # give admins access to all repos
+      global_permissions = Admin.pluck(:user_name)
+      grader_hash = Ta.get_all_grouping_ids_by_grader
       assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
@@ -205,17 +214,17 @@ module Repository
             next
           end
           accepted_students = valid_grouping.accepted_students.map(&:user_name)
-          permissions[repo_name] = admins + tas + accepted_students
-          group_repos.delete(repo_name)
+          graders = grader_hash[valid_grouping.id] || []
+          permissions[repo_name] = accepted_students + graders
         end
       end
-      group_repos.each do |repo_name| # "dead" repositories
-        permissions[repo_name] = admins + tas
-      end
-      Assignment.repository_names.each do |repo_name| # starter code repositories
-        permissions[repo_name] = admins
-      end
-      permissions
+      [global_permissions, permissions]
+    end
+
+    # checks to make sure the location is not '*' which is
+    # reserved to indicate all repos when setting permissions
+    def self.valid_location?(location)
+      location != '*'
     end
 
     private

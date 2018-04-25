@@ -76,7 +76,9 @@ module Repository
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
                            already")
       end
-
+      unless self.valid_location?(connect_string)
+        raise InvalidLocation.new(connect_string)
+      end
       # Repo is created bare, then clone it in the repository storage location
       repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
@@ -486,9 +488,11 @@ module Repository
       end
 
       # Create auth csv file
-      sorted_permissions = AbstractRepository.get_all_permissions.sort.to_h
+      global_permissions, permissions = AbstractRepository.get_all_permissions
+      sorted_permissions = permissions.sort.to_h
       CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
         csv.flock(File::LOCK_EX)
+        csv << ['*'] + global_permissions
         sorted_permissions.each do |repo_name, users|
           csv << [repo_name] + users
         end
