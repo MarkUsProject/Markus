@@ -71,7 +71,9 @@ module Repository
 
   class AbstractRepository
 
-    @@semaphore = Mutex.new
+    @@permission_thread_mutex = Mutex.new
+    @@permission_thread = nil
+    @@permission_write_mutex = Mutex.new
 
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
@@ -178,14 +180,37 @@ module Repository
     end
 
     # Updates permissions file unless it is being called from within a
-    # block passed to self.update_permissions_after
+    # block passed to self.update_permissions_after or if it does not
+    # read the most up to date data (using self.get_all_permissions)
+    #
+    # It may not have the most up to date data if another thread calls
+    # makes some update to the database and calls self.get_all_permissions
+    # while this thread is still processing self.get_all_permissions
     def self.update_permissions
       begin
-        @@semaphore.synchronize { self.__update_permissions }
-        true
+        unless Thread.current[:permissions_lock].nil?
+          # will raise a ThreadError if the current thread holds the lock
+          # (called from self.update_permissions_after)
+          # Note: only the current thread can hold this lock
+          Thread.current[:permissions_lock].lock
+        end
+        # indicate that this thread is trying to update permissions
+        @@permission_thread_mutex.synchronize do
+          @@permission_thread = Thread.current.object_id
+        end
+        # get permissions from the database
+        full_access_users, permissions = self.get_all_permissions
+        # only continue if this was the last thread to get permissions from the database
+        if @@permission_thread == Thread.current.object_id
+          # wait until another thread finishes writing
+          @@permission_write_mutex.synchronize do
+            self.__update_permissions(full_access_users, permissions)
+          end
+          return true
+        end
       rescue ThreadError
-        false
       end
+      false
     end
 
     # Executes a block of code and then updates the permissions file.
@@ -195,16 +220,18 @@ module Repository
     # This allows us to ensure that the permissions file will only be
     # updated a single time once all relevant changes have been made.
     def self.update_permissions_after
-      @@semaphore.synchronize { yield }
+      if Thread.current[:permissions_lock].nil?
+        Thread.current[:permissions_lock] = Mutex.new
+      end
+      Thread.current[:permissions_lock].synchronize { yield }
       self.update_permissions
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
-
       permissions = {}
       # give admins access to all repos
-      global_permissions = Admin.pluck(:user_name)
+      full_access_users = Admin.pluck(:user_name)
       grader_hash = Ta.get_all_grouping_ids_by_grader
       assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
@@ -218,7 +245,7 @@ module Repository
           permissions[repo_name] = accepted_students + graders
         end
       end
-      [global_permissions, permissions]
+      [full_access_users, permissions]
     end
 
     # checks to make sure the location is not '*' which is
@@ -227,13 +254,12 @@ module Repository
       location != '*'
     end
 
-    private
-
     # Generate and write the the authorization file for all repos.
-    def self.__update_permissions
+    def self.__update_permissions(full_access_users, permissions)
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
+    private_class_method :__update_permissions
   end
 
 

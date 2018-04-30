@@ -583,14 +583,11 @@ module Repository
     ##  Private method definitions
     ####################################################################
 
-    private
-
     # Generate and write the SVN authorization file for the repo.
-    def self.__update_permissions
+    def self.__update_permissions(full_access_users, permissions)
       return true if !MarkusConfigurator.markus_config_repository_admin?
-      global_permissions, permissions = AbstractRepository.get_all_permissions
       authz_string = "[/]\n"
-      global_permissions.each do |user_name|
+      full_access_users.each do |user_name|
         authz_string += "#{user_name} = rw\n"
       end
       authz_string += "\n"
@@ -603,6 +600,10 @@ module Repository
       end
       __write_out_authz_file(authz_string)
     end
+
+    private_class_method :__update_permissions
+
+    private
 
     # Function necessary for exporting the svn repository
     def setup_auth_baton(auth_baton)

@@ -426,10 +426,7 @@ module Repository
       end
     end
 
-    private
-
-    def self.__update_permissions
-      global_permissions, permissions = AbstractRepository.get_all_permissions
+    def self.__update_permissions(full_access_users, permissions)
       permissions.each do |repo_name, users|
         begin
           repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
@@ -437,12 +434,14 @@ module Repository
         rescue
           next
         end
-        users += global_permissions
+        users += full_access_users
         users.each do |user|
           repo.users[user] = Repository::Permission::READ_WRITE
         end
       end
     end
+
+    private_class_method :__update_permissions
 
   end # end class MemoryRepository
 
