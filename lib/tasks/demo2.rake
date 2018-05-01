@@ -372,25 +372,22 @@ namespace :markus do
 
     remark_submission = nil
     create_criteria(a)
-    Student.find_each.each_with_index do |student, i|
+    Student.find_each.each_with_index do |student, j|
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
-      if i == Student.count - 1
+      if j == Student.count - 1
         a.update_attributes(due_date: Time.now, token_start_date: Time.now)
         a.save
       end
-      unless i == 1
-        submit_files(group, a)
-        submission = collect(group, a)
-        remark_submission = submission if i.zero?
-        if [2,3].include?(i)
-          result = mark_submission(submission)
-          if i == 2
-            result.released_to_students = true
-            result.save
-          end
-        end
-      end
+      next if j == 1
+      submit_files(group, a)
+      submission = collect(group, a)
+      remark_submission = submission if j.zero?
+      next unless [2, 3].include?(j)
+      result = mark_submission(submission)
+      next unless j == 2
+      result.released_to_students = true
+      result.save
     end
     mark_submission(remark_submission)
     request_remark(remark_submission)
