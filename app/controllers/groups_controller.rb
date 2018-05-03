@@ -45,9 +45,10 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-    students_to_remove = grouping.students.to_a
-    grouping.student_memberships.each do |member|
-      grouping.remove_member(member.id)
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      grouping.student_memberships.each do |member|
+        grouping.remove_member(member.id)
+      end
     end
     # TODO: return errors through request
     if grouping.has_submission?
@@ -248,14 +249,6 @@ class GroupsController < ApplicationController
           flash_message(:success, result[:valid_lines])
         end
       end
-      # Need to reestablish repository permissions.
-      # This is not handled by the roll back.
-
-      # The generation of the permissions file has been moved out of the transaction
-      # for performance reasons. Because the groups are being created as part of
-      # this transaction, the race condition of the repos being created before the
-      # permissions are set should not be a problem.
-      Repository.get_class.update_permissions
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
     end
@@ -402,13 +395,13 @@ class GroupsController < ApplicationController
       raise I18n.t('groups.could_not_delete') # should add names of grouping we could not delete
     else
       # Remove each student from every group.
-      students_to_remove = []
-      groupings.each do |grouping|
-        students_to_remove = students_to_remove.concat(grouping.students.to_a)
-        grouping.student_memberships.each do |mem|
-          grouping.remove_member(mem.id)
+      Repository.get_class.update_permissions_after(only_on_request: true) do
+        groupings.each do |grouping|
+          grouping.student_memberships.each do |mem|
+            grouping.remove_member(mem.id)
+          end
+          grouping.delete_grouping
         end
-        grouping.delete_grouping
       end
     end
   end
@@ -491,10 +484,12 @@ class GroupsController < ApplicationController
   # This code is possibly not safe. (should add error checking)
   def remove_members(member_ids_to_remove, assignment)
     members_to_remove = Student.where(id: member_ids_to_remove)
-    members_to_remove.each do |member|
-      grouping = member.accepted_grouping_for(assignment.id)
-      membership = grouping.student_memberships.find_by_user_id(member.id)
-      remove_member(membership, grouping, assignment)
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      members_to_remove.each do |member|
+        grouping = member.accepted_grouping_for(assignment.id)
+        membership = grouping.student_memberships.find_by_user_id(member.id)
+        remove_member(membership, grouping, assignment)
+      end
     end
   end
 

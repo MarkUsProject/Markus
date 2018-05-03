@@ -204,11 +204,12 @@ module Repository
         if @@permission_thread == Thread.current.object_id
           # wait until another thread finishes writing
           @@permission_write_mutex.synchronize do
-            self.__update_permissions(full_access_users, permissions)
+            __update_permissions(full_access_users, permissions)
           end
           return true
         end
       rescue ThreadError
+        Thread.current[:requested?] = true
       end
       false
     end
@@ -217,14 +218,24 @@ module Repository
     # Also prevents any calls to self.update_permissions or
     # self.update_permissions_after within that block.
     #
+    # If only_on_request is true then self.update_permissions will be
+    # called after the block only if it would have been called in the
+    # yielded block but was prevented
+    #
     # This allows us to ensure that the permissions file will only be
     # updated a single time once all relevant changes have been made.
-    def self.update_permissions_after
+    def self.update_permissions_after(only_on_request: false)
       if Thread.current[:permissions_lock].nil?
         Thread.current[:permissions_lock] = Mutex.new
       end
-      Thread.current[:permissions_lock].synchronize { yield }
-      self.update_permissions
+      Thread.current[:requested?] = false
+      begin
+        Thread.current[:permissions_lock].synchronize { yield }
+      ensure
+        if !only_on_request || Thread.current[:requested?]
+          self.update_permissions
+        end
+      end
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)

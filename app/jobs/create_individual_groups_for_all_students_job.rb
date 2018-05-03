@@ -21,45 +21,45 @@ class CreateIndividualGroupsForAllStudentsJob < ApplicationJob
     students = Student.where(hidden: false)
     progress.total = students.count
 
-    students.find_each do |student|
-      # Check to see if the student already has a grouping for
-      # the current assignment
-      unless student.accepted_grouping_for(assignment.id).nil?
-        progress.increment
-        next
-      end
-
-      begin
-        ApplicationRecord.transaction do
-          # If an individual repo has already been created for this user
-          # then just use that one.
-          group = Group.find_by(group_name: student.user_name)
-          if group.nil?
-            group = Group.create(
-              group_name: student.user_name,
-              repo_name: student.user_name)
-            unless group.errors[:base].blank?
-              # TODO: need to output an error.
-            end
-          end
-          grouping = Grouping.create(
-               assignment_id: assignment.id,
-               group: group)
-
-          # Create the membership
-          StudentMembership.create(
-            grouping_id: grouping.id,
-            membership_status: StudentMembership::STATUSES[:inviter],
-            user_id: student.id)
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      students.find_each do |student|
+        # Check to see if the student already has a grouping for
+        # the current assignment
+        unless student.accepted_grouping_for(assignment.id).nil?
+          progress.increment
+          next
         end
-        progress.increment
-      rescue => e
-        Rails.logger.error e.message
+
+        begin
+          ApplicationRecord.transaction do
+            # If an individual repo has already been created for this user
+            # then just use that one.
+            group = Group.find_by(group_name: student.user_name)
+            if group.nil?
+              group = Group.create(
+                group_name: student.user_name,
+                repo_name: student.user_name)
+              unless group.errors[:base].blank?
+                # TODO: need to output an error.
+              end
+            end
+            grouping = Grouping.create(
+                 assignment_id: assignment.id,
+                 group: group)
+
+            # Create the membership
+            StudentMembership.create(
+              grouping_id: grouping.id,
+              membership_status: StudentMembership::STATUSES[:inviter],
+              user_id: student.id)
+          end
+          progress.increment
+        rescue => e
+          Rails.logger.error e.message
+        end
       end
     end
 
-    # Generate the permissions file for all valid groups
-    Repository.get_class.update_permissions
     m_logger = MarkusLogger.instance
     m_logger.log('Creating all individual groups completed',
                  MarkusLogger::INFO)

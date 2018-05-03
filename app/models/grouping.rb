@@ -9,8 +9,6 @@ class Grouping < ApplicationRecord
 
   before_create :create_grouping_repository_folder
 
-  before_destroy { Repository.get_class.update_permissions }
-
   belongs_to :grouping_queue
 
   has_many :memberships, dependent: :destroy
@@ -134,8 +132,9 @@ class Grouping < ApplicationRecord
     values.map! do |value|
       value.push('TaMembership')
     end
-    Membership.import(columns, values, validate: false)
-
+    Repository.get_class.update_permissions_after do
+      Membership.import(columns, values, validate: false)
+    end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
   end
@@ -145,8 +144,9 @@ class Grouping < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
-    TaMembership.delete_all(id: ta_membership_ids)
-
+    Repository.get_class.update_permissions_after do
+      TaMembership.delete_all(id: ta_membership_ids)
+    end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
   end
@@ -281,8 +281,6 @@ class Grouping < ApplicationRecord
       set_membership_status, grouping: self)
       member.save
 
-      Repository.get_class.update_permissions
-
       # remove any old deduction for this assignment
       remove_grace_period_deduction(member)
 
@@ -386,14 +384,12 @@ class Grouping < ApplicationRecord
   def validate_grouping
     self.admin_approved = true
     self.save
-    Repository.get_class.update_permissions
   end
 
   # Strips admin_approved privledge
   def invalidate_grouping
     self.admin_approved = false
     self.save
-    Repository.get_class.update_permissions
   end
 
   # Grace Credit Query
@@ -446,7 +442,6 @@ class Grouping < ApplicationRecord
     member = student_memberships.find(mbr_id)
     if member
       # Remove repository permissions first
-      Repository.get_class.update_permissions
       member.destroy
       if member.membership_status == StudentMembership::STATUSES[:inviter]
          if member.grouping.accepted_student_memberships.length > 0
@@ -459,8 +454,9 @@ class Grouping < ApplicationRecord
   end
 
   def delete_grouping
-    student_memberships.includes(:user).each(&:destroy)
-    Repository.get_class.update_permissions
+    Repository.get_class.update_permissions_after(only_on_request: true) do
+      student_memberships.includes(:user).each(&:destroy)
+    end
     self.destroy
   end
 
@@ -475,7 +471,6 @@ class Grouping < ApplicationRecord
     membership = student.memberships.where(grouping_id: id).first
     membership.membership_status = StudentMembership::STATUSES[:rejected]
     membership.save
-    Repository.get_class.update_permissions
   end
 
   # If a group is invalid OR valid and the user is the inviter of the group and
