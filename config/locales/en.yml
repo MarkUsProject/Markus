@@ -593,15 +593,13 @@ en:
       grades:
         title: "Manage Marks Spreadsheet:"
         student_title: "Marks:"
-        total: "Total:"
-        no_grade_entry_items_message: "There are currently no columns for this table."
+        total: "Total"
         must_select_a_student: "You must select at least one student to update."
-        expected_filter: "Expected a filter on select full."
         successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
         update_error: "The marking state for %{user_name} could not be saved."
         errors: "Errors"
         no_mark: "N/A"
-        marking_state: "Marking State"
+        marking_state: "State"
         download: "Download Grades"
       is_hidden: "Hide Spreadsheet"
 

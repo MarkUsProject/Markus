@@ -77,7 +77,6 @@ class GradeEntryFormsController < ApplicationController
 
   # View/modify the grades for this grade entry form
   def grades
-    @sections = Section.order(:name)
     @grade_entry_form = GradeEntryForm.find(params[:id])
   end
 
@@ -90,22 +89,15 @@ class GradeEntryFormsController < ApplicationController
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])
-    @student_id = params[:student_id]
-    @grade_entry_item_id = params[:grade_entry_item_id]
-    updated_grade = params[:updated_grade]
-
     grade_entry_student =
-      grade_entry_form.grade_entry_students.find_or_create_by(user_id:
-            @student_id)
+      grade_entry_form.grade_entry_students.find_or_create_by(user_id: params[:student_id])
+    grade =
+      grade_entry_student.grades.find_or_create_by(grade_entry_item_id: params[:grade_entry_item_id])
 
-    @grade = grade_entry_student.grades.find_or_create_by(grade_entry_item_id:
-                  @grade_entry_item_id)
-
-    @grade.grade = updated_grade
-    @grade_saved = @grade.save
-    @updated_student_total = grade_entry_student.total_grade
-
-    grade_entry_student.save # Save updated grade
+    grade.update(grade: params[:updated_grade])
+    grade_entry_student.save # Refresh total grade
+    grade_entry_student.reload
+    render text: grade_entry_student.total_grade
   end
 
   # For students
@@ -127,35 +119,13 @@ class GradeEntryFormsController < ApplicationController
 
   def get_mark_columns
     grade_entry_form = GradeEntryForm.find(params[:id])
-    grade_entry_items_columns = grade_entry_form.grade_entry_items
-    c = grade_entry_items_columns.map do |column|
+    data = grade_entry_form.grade_entry_items.map do |column|
       {
-        id: column.id,
-        content: column.name + ' (' + column.out_of.to_s + ')',
-        sortable: true,
-        compare: 'compare_gradebox'
+        accessor: column.id.to_s,
+        Header: "#{column.name} (#{column.out_of})"
       }
     end
-    if grade_entry_form.show_total
-      c <<
-        {
-          id: 'total_marks',
-          content: t('grade_entry_forms.grades.total') \
-                   + ' ' + grade_entry_form.out_of_total.to_s,
-          sortable: true,
-          compare: 'compare_gradebox'
-        }
-    end
-    if current_user.admin? || current_user.ta?
-      c <<
-        {
-          id: 'marking_state',
-          content: t('grade_entry_forms.grades.marking_state'),
-          sortable: true
-        }
-    end
-
-    render json: c
+    render json: data
   end
 
   def populate_grades_table
@@ -178,6 +148,7 @@ class GradeEntryFormsController < ApplicationController
     student_grades = students.map do |student_grade_entry|
       student = student_grade_entry.user
       s = student.attributes
+      s[:_id] = student.id
       s[:section] = student.section.try(:name) || '-'
       unless student_grade_entry.nil?
         student_grade_entry.grades.each do |grade|
@@ -269,30 +240,31 @@ class GradeEntryFormsController < ApplicationController
       end
     end
 
+    num_changed = 0
     # Releasing/unreleasing marks should be logged
     log_message = ''
-    if params[:release_results]
-      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(
+    if params[:release_results] == 'true'
+      num_changed = set_release_on_grade_entry_students(
           grade_entry_students,
           true,
           errors)
       log_message = "Marks released for marks spreadsheet '" +
           "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
-          "(for #{numGradeEntryStudentsChanged} students)."
-    elsif !params[:unrelease_results].nil?
-      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(
+          "(for #{num_changed} students)."
+    elsif params[:release_results] == 'false'
+      num_changed = set_release_on_grade_entry_students(
           grade_entry_students,
           false,
           errors)
       log_message = "Marks unreleased for marks spreadsheet '" +
           "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
-          "(for #{numGradeEntryStudentsChanged} students)."
+          "(for #{num_changed} students)."
     end
 
     # Display success message
-    if numGradeEntryStudentsChanged > 0
+    if num_changed > 0
       flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
-                                     {numGradeEntryStudentsChanged: numGradeEntryStudentsChanged}))
+                                     numGradeEntryStudentsChanged: num_changed))
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
