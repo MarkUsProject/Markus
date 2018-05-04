@@ -653,6 +653,25 @@ class Grouping < ApplicationRecord
   # the last commit
   ##
   def past_due_date?
+    # if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
+    #   due_date = assignment.due_date
+    # else
+    #   due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+    # end
+    # group.access_repo do |repo|
+    #   # we use this function because it allows to specify a path
+    #   revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, due_date)
+    #   # an alternative could have been:
+    #   # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
+    #   # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
+    #   # walk through the entire history
+    # end
+    # revision.server_timestamp
+    #TODO modify get_revision_by_timestamp so that it can stop at a certain timestamp
+    #TODO modify get_revision_by_timestamp to return nil
+    #TODO add bogus revision "zero" to use by submission when get_revision_by_timestamp returns nil
+    #TODO use revision zero in repo browser and checkout commands
+    #TODO enable past_due_date? for git again
     timestamp = assignment_folder_last_modified_date
     if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
       timestamp > assignment.due_date

@@ -56,21 +56,23 @@ class Submission < ApplicationRecord
   end
 
   def self.generate_new_submission(grouping, revision)
-    new_submission = Submission.new
-    new_submission.grouping = grouping
-    new_submission.submission_version = 1
-    new_submission.submission_version_used = true
-    new_submission.revision_timestamp = revision.server_timestamp
-    new_submission.revision_identifier = revision.revision_identifier
-    new_submission.transaction do
-      begin
-        new_submission.populate_with_submission_files(revision)
-      rescue Repository::FileDoesNotExist
-        # populate the submission with no files instead of raising an exception
+    Submission.transaction do
+      new_submission = Submission.new
+      new_submission.grouping = grouping
+      new_submission.submission_version = 1
+      new_submission.submission_version_used = true
+      new_submission.revision_timestamp = revision&.server_timestamp
+      new_submission.revision_identifier = revision&.revision_identifier
+      unless revision.nil?
+        begin
+          new_submission.populate_with_submission_files(revision)
+        rescue Repository::FileDoesNotExist
+          # populate the submission with no files instead of raising an exception
+        end
       end
-      new_submission.save
+      new_submission.save!
+      new_submission
     end
-    new_submission
   end
 
   # Returns the original result.

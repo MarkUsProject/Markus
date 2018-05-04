@@ -577,13 +577,12 @@ class Assignment < ApplicationRecord
     groupings - assigned_groupings
   end
 
-  # Get a list of subversion client commands to be used for scripting
+  # Get a list of repo checkout client commands to be used for scripting
   def get_repo_checkout_commands
-    repo_commands = [] # the commands to be exported
-
+    repo_commands = []
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if submission
+      if submission&.revision_identifier
         repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
                                                                    submission.revision_identifier,
                                                                    grouping.group.group_name, self.repository_folder)

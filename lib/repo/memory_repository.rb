@@ -201,7 +201,7 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp, path = nil)
+    def get_revision_by_timestamp(timestamp, path = nil, later_than = nil)
       if !timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end

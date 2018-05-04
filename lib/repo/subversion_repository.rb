@@ -180,9 +180,6 @@ module Repository
     end
 
     def self.get_checkout_command(external_repo_url, revision_number, group_name, repo_folder=nil)
-      if revision_number.to_i == 0
-        return ''
-      end
       unless repo_folder.nil?
         external_repo_url += "/#{repo_folder}"
       end
@@ -247,23 +244,23 @@ module Repository
     # a revision at a current timestamp
     #    target_timestamp
     # should be a Ruby Time instance
-    def get_revision_by_timestamp(target_timestamp, path = nil)
+    def get_revision_by_timestamp(target_timestamp, path = nil, later_than = nil)
       if !target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       target_timestamp = target_timestamp.utc
       if !path.nil?
         # latest_revision_number will fail if the path does not exist at the given revision number or less than
-        # the revision number.  The begin and ensure statement is to ensure that there is a revision return.
+        # the revision number. The begin and ensure statement is to ensure that there is a revision return.
         # Default is set to revision 0.
-        revision_number = 0
         begin
           revision_number = latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp))
-        ensure
-          return get_revision(revision_number)
+          get_revision(revision_number)
+        rescue
+          nil
         end
       else
-        return get_revision(get_revision_number_by_timestamp(target_timestamp))
+        get_revision(get_revision_number_by_timestamp(target_timestamp))
       end
 
     end

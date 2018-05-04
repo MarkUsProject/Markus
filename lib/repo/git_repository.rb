@@ -150,15 +150,18 @@ module Repository
     # Gets the first revision before +target_timestamp+. If +path+ is not nil, then gets the first revision before
     # +target_timestamp+ with changes under +path+. The +target_timestamp+ is matched with push dates in the git reflog,
     # because a commit date can be arbitrarily crafted.
-    def get_revision_by_timestamp(target_timestamp, path = nil)
+    def get_revision_by_timestamp(target_timestamp, path = nil, later_than = nil)
       repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-      # use the git reflog to get a list of pushes, then find first push_time <= target_timestamp
+      # use the git reflog to get a list of pushes: find first push_time <= target_timestamp && > later_than
       bare_repo = Rugged::Repository.new(bare_path)
       reflog = bare_repo.ref('refs/heads/master').log.reverse
       push_info = nil
       reflog.each_with_index do |reflog_entry, i|
         push_time = reflog_entry[:committer][:time]
+        if !later_than.nil? && push_time <= later_than.in_time_zone
+          return nil
+        end
         if push_time <= target_timestamp.in_time_zone
           push_info = OpenStruct.new
           push_info.sha = reflog_entry[:id_new]
@@ -179,6 +182,9 @@ module Repository
               push_info.sha = next_reflog_entry[:id_new]
               push_info.time = next_reflog_entry[:committer][:time]
               push_info.index += 1
+              if !later_than.nil? && push_info.time <= later_than.in_time_zone
+                return nil
+              end
             end
           end
           revision = get_revision(commit.oid)
@@ -188,12 +194,8 @@ module Repository
           end
         end
       end
-
-      # return the first revision as a backup plan
-      walker.reset
-      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
-      walker.push(@repos.last_commit)
-      get_revision(walker.first.oid)
+      # no revision found
+      nil
     ensure
       bare_repo.close
     end
