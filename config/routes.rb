@@ -288,7 +288,6 @@ Markus::Application.routes.draw do
       end
 
       member do
-        get 'populate_term_marks_table'
         get 'populate_grades_table'
         get 'get_mark_columns'
         get 'view_summary'

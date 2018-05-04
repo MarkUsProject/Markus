@@ -58,14 +58,14 @@ input + label {
 .grade-input {
 
   > input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
     border-radius: 0;
     border-width: 0;
     height: calc(100% + 2px);
     padding-right: 0.75em;
     text-align: right;
     width: 100%;
-    -moz-appearance: textfield;
-    -webkit-appearance: textfield;
 
     &:invalid {
       background-color: $light-red;
@@ -90,5 +90,28 @@ input + label {
 
   button {
     margin-left: 1em;
+  }
+}
+
+
+.marks-table {
+  table {
+    margin-bottom: 10px;
+    width: 100%;
+
+    td,
+    th {
+      padding: 10;
+      text-align: left;
+    }
+
+    td:last-child,
+    th:last-child {
+      text-align: right;
+    }
+
+    thead {
+      border-bottom: 1px solid $grey;
+    }
   }
 }

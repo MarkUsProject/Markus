@@ -30,12 +30,15 @@ class MarksSpreadsheet extends React.Component {
       method: 'GET',
       dataType: 'json'
     }).then(data => {
-      let grade_columns = data.map(c => Object.assign({}, c,
-                                             { Cell: this.inputCell,
-                                               style: {padding: '0', border: '1px solid #8d8d8d', margin: '-1px 0'},
-                                               className: 'grade-input',
-                                               minWidth: 50,
-                                             }));
+      let grade_columns = data.map(c =>
+        Object.assign({},
+                      c,
+                      { Cell: this.inputCell,
+                        style: {padding: '0', border: '1px solid #8d8d8d', margin: '-1px 0'},
+                        className: 'grade-input',
+                        minWidth: 50,
+                        defaultSortDesc: true
+                      }));
       this.setState({ grade_columns });
     });
 
@@ -96,7 +99,6 @@ class MarksSpreadsheet extends React.Component {
     return <GradeEntryCell
       grade_entry_form_id={this.props.grade_entry_form_id}
       grade_id={'grade_' + row.original.id + '_' + row.column.id}
-      data_action=''
       grade_entry_column={row.column.id}
       student_id={row.original.id}
       default_value={row.value}
@@ -108,7 +110,20 @@ class MarksSpreadsheet extends React.Component {
     accessor: 'total_marks',
     Header: `${I18n.t('grade_entry_forms.grades.total')} (${this.props.out_of_total})`,
     minWidth: 50,
-    className: 'grade-total'
+    className: 'grade-total',
+    defaultSortDesc: true,
+    sortMethod: (a, b, desc) => {
+      a = a === null || a === undefined || a === 'N/A' ? -Infinity : a;
+      b = b === null || a === undefined || b === 'N/A' ? -Infinity : b;
+      if (a < b) {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+
   }};
 
   markingStateColumn = {
@@ -231,9 +246,13 @@ class GradeEntryCell extends React.Component {
     super(props);
     this.typing_timer = undefined;
     this.state = {
-      value: props.default_value === null ? '' : props.default_value
+      value: props.default_value === null || props.default_value === undefined ? '' : props.default_value
     };
   }
+
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({value: nextProps.default_value === null || nextProps.default_value === undefined ? '' : nextProps.default_value});
+  };
 
   handleChange = (event) => {
     if (this.typing_timer) {
@@ -281,9 +300,8 @@ class GradeEntryCell extends React.Component {
 
   render() {
     return (
-      <input id={this.props.grade_id} type="number" size={4}
+      <input type="number" size={4}
              value={this.state.value}
-             className="grade-input"
              min={0}
              onChange={this.handleChange} />
     );
