@@ -43,14 +43,6 @@ fieldset {
   }
 }
 
-.react-release-marks {
-  float: right;
-
-  button {
-    margin-left: 1em;
-  }
-}
-
 label {
   display: inline-block;
   min-width: 12em;
@@ -62,30 +54,64 @@ input + label {
   min-width: 0;
 }
 
-// For Hide/Show toggle in the grades view for the Total column
-.hideTotal .total_value {
-  display: none;
-}
-
-.grade-total {
-  float: right;
-}
-
 // Styling of marks table
 .grade-input {
-  width: calc(100% + 2.5em);
-  text-align: right;
-  margin: -0.5em -1.5em -0.5em -1em;
-  height: 2.5em;
-  border-radius: 0;
-  -webkit-transition: all 0.4s ease;
-  -moz-transition: all 0.4s ease;
-  -o-transition: all 0.4s ease;
-  transition: all 0.4s ease;
+
+  > input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    border-radius: 0;
+    border-width: 0;
+    height: calc(100% + 2px);
+    padding-right: 0.75em;
+    text-align: right;
+    width: 100%;
+
+    &:invalid {
+      background-color: $light-red;
+    }
+  }
 }
 
 .updated,
 .updated:focus,
 .updated:hover {
-  background-color: #81d881;
+  background-color: $light-green;
+}
+
+.grade-total {
+  line-height: 1.5em;
+  text-align: right;
+}
+
+.react-release-marks {
+  margin-bottom: 0.5em;
+  width: 100%;
+
+  button {
+    margin-left: 1em;
+  }
+}
+
+
+.marks-table {
+  table {
+    margin-bottom: 10px;
+    width: 100%;
+
+    td,
+    th {
+      padding: 10;
+      text-align: left;
+    }
+
+    td:last-child,
+    th:last-child {
+      text-align: right;
+    }
+
+    thead {
+      border-bottom: 1px solid $grey;
+    }
+  }
 }

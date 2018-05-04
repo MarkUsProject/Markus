@@ -754,16 +754,14 @@ es:
       grades:
         title:                        "Administrar la Hoja de Notas:"
         student_title:                "Notas:"
-        total:                        "Total:"
-        no_grade_entry_items_message: "No hay columnas para esta tabla."
+        total:                        "Total"
         must_select_a_student:        "Usted debe seleccionar al menos un estudiante para lanzar la actualización."
-        expected_filter:              "Se esperaba un filtro cuando se realizó una selección completa."
         successfully_changed:         "Se han actualizado %{numGradeEntryStudentsChanged} estudiantes
                                        exitosamente."
         update_error:                 "El estado del proceso de calificación para %{user_name} no se pudo guardar."
         errors:                       "Errores"
         no_mark:                      "N/A"
-        marking_state:                "Estado del proceso de calificación"
+        marking_state:                "Estado"
       is_hidden:                      "Ocultar Hoja de Notas"
 
       students:

@@ -1,17 +1,27 @@
 <%# Grades page for students %>
-<%= render partial: 'marks_table', formats: [:'js.jsx'], handlers: [:erb] %>
-
 <% content_for :title, t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %>
 
-<div class='wrapper'>
-  <% if @grade_entry_form.grade_entry_items.empty? %>
-    <p><%= t('grade_entry_forms.students.no_results') %></p>
-  <% else %>
-    <% grade_entry_student = @grade_entry_form.grade_entry_students.find_by_user_id(@student.id) %>
-    <% if grade_entry_student.nil?  or !grade_entry_student.released_to_student %>
-      <%= t('grade_entry_forms.students.no_results') %>
-    <% else %>
-      <div id='marks_table'></div>
-    <% end %>
-  <% end %>
-</div>
+<% if @grade_entry_form.grade_entry_items.empty? %>
+  <p><%= t('grade_entry_forms.students.no_results') %></p>
+<% elsif @grade_entry_student.nil? || !@grade_entry_student.released_to_student %>
+  <p><%= t('grade_entry_forms.students.no_results') %></p>
+<% else %>
+  <div class='marks-table'>
+    <table>
+      <thead>
+      <tr>
+        <% @columns.each do |c| %>
+          <th><%= c %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <% @data.each do |grade| %>
+          <td><%= grade %></td>
+        <% end %>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -535,15 +535,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       grades:
         title: "Gerenciar planilha de notas:"
         student_title: "Notas:"
-        total: "Total:"
-        no_grade_entry_items_message: "Atualmente não há colunas para esta tabela."
+        total: "Total"
         must_select_a_student: "Você deve selecionar pelo menos um aluno para atualizar."
-        expected_filter: "Esperado um filtro na seleção completa."
         successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
         update_error: "O estado da avaliação para %{user_name} não pôde ser salvo "
         errors: "Erros"
         no_mark: "N/A"
-        marking_state: "Estado da avaliação"
+        marking_state: "Estado"
 
       students:
         title: "Suas Marcas Planilhas"
