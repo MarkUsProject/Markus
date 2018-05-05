@@ -11,6 +11,9 @@
     <% if grade_entry_student.nil?  or !grade_entry_student.released_to_student %>
       <%= t('grade_entry_forms.students.no_results') %>
     <% else %>
+      <% if !@grade_entry_form.message.empty? %>
+        <div class='marks_message'><%= "#{@grade_entry_form.message}" %></div>
+      <% end %>
       <div id='marks_table'></div>
     <% end %>
   <% end %>
