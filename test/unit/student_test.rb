@@ -51,21 +51,6 @@ class StudentTest < ActiveSupport::TestCase
       assert_equal(true, students[1].hidden)
     end
 
-    should 'hide students and have the repo remove them' do
-      # Mocks to enter into the if
-      Assignment.any_instance.stubs(:vcs_submit).returns(true)
-      Grouping.any_instance.stubs(:is_valid?).returns(true)
-
-      # Mock the repository and expect :remove_user with the student's user_name
-      mock_repo = mock('Repository::AbstractRepository')
-      Group.any_instance.stubs(:access_repo).yields(mock_repo)
-      mock_repo.stubs(:remove_user).returns(true)
-      mock_repo.stubs(:close).returns(true)
-      mock_repo.expects(:remove_user).with(any_of(@student1.user_name, @student2.user_name)).at_least(2)
-
-      Student.hide_students(@student_id_list)
-    end
-
     should 'not error when user is not found on hide and remove' do
       # Mocks to enter into the if that leads to the call to remove the student
       Assignment.any_instance.stubs(:vcs_submit).returns(true)
@@ -198,8 +183,6 @@ class StudentTest < ActiveSupport::TestCase
     context 'and a grouping' do
       should 'can be invited to a grouping' do
         grouping = Grouping.make
-        #Test that grouping.update_repository_permissions is called at least once
-        Grouping.any_instance.expects(:update_repository_permissions).at_least(1)
 
         @student.invite(grouping.id)
 
@@ -250,8 +233,6 @@ class StudentTest < ActiveSupport::TestCase
         should 'reject all other pending memberships upon joining a group' do
           grouping = @membership.grouping
           membership2 = StudentMembership.make(grouping: Grouping.make(assignment: @assignment), user: @student)
-
-          Grouping.any_instance.expects(:update_repository_permissions).at_least(1)
 
           assert @student.join(grouping.id)
 

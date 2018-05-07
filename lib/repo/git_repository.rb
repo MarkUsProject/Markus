@@ -30,7 +30,6 @@ module Repository
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if GitRepository.repository_exists?(@repos_path)
         @repos = Rugged::Repository.new(@repos_path)
         # make sure working directory is up-to-date
@@ -397,69 +396,7 @@ module Repository
       end
     end
 
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    # TODO All permissions are rw for the time being, so the provided permissions are not really used
-    def get_users(permissions)
 
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      repo_name = get_repo_name
-      full_access_users, permissions = AbstractRepository.get_all_permissions
-      users = permissions[repo_name] + full_access_users
-
-      users
-    end
-
-    # TODO All permissions are rw for the time being
-    def get_permissions(user_name)
-
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      begin
-        user = User.find_by(user_name: user_name)
-      rescue RecordNotFound
-        raise UserNotFound.new("User #{user_name} does not exist")
-      end
-      if user.admin? or user.ta?
-        return Repository::Permission::READ_WRITE
-      end
-      unless get_users(Repository::Permission::ANY).include?(user_name)
-        raise UserNotFound.new("User #{user_name} not found in this repo")
-      end
-
-      Repository::Permission::READ_WRITE
-    end
-
-    # Helper method to translate internal permissions to git
-    # permissions
-    # If we want the directory creation to have its own commit,
-    # we have to add a dummy file in that directory to do it.
-    def self.__translate_to_git_perms(permissions)
-      case (permissions)
-      when Repository::Permission::READ
-        return "R"
-      when Repository::Permission::READ_WRITE
-        return "RW+"
-      else raise "Unknown permissions"
-      end # end case
-    end
-
-    # Helper method to translate git permissions to internal
-    # permissions
-    def self.__translate_perms_from_file(perm_string)
-      case (perm_string)
-      when "R"
-        return Repository::Permission::READ
-      when "RW"
-        return Repository::Permission::READ_WRITE
-      when "RW+"
-        return Repository::Permission::READ_WRITE
-      else raise "Unknown permissions"
-      end # end case
-    end
 
     ####################################################################
     ##  Private method definitions
@@ -469,7 +406,7 @@ module Repository
     # Helper method to generate all the permissions for students for all groupings in all assignments.
     # This is done as a single operation to mirror the SVN repo code. We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
-    def self.__update_permissions(full_access_users, permissions)
+    def self.__update_permissions(permissions)
 
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
@@ -490,7 +427,7 @@ module Repository
       sorted_permissions = permissions.sort.to_h
       CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
         csv.flock(File::LOCK_EX)
-        csv << ['*'] + full_access_users
+        csv << ['*'] + self.get_full_access_users
         sorted_permissions.each do |repo_name, users|
           csv << [repo_name] + users
         end

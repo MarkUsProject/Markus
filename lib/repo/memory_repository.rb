@@ -12,6 +12,9 @@ module Repository
     #    key (location), value (reference to repo)
     @@repositories = {}
 
+    # hash containing users that have rw permissions for all repos
+    @@full_access_users = []
+
     #############################################################
     #   A MemoryRepository instance holds the following variables
     #     - current_revision
@@ -194,35 +197,6 @@ module Repository
 
     def get_all_revisions
       @revision_history + [@current_revision]
-    end
-
-    # Semi-private - used by the bulk permissions assignments
-    def has_user?(user_id)
-      @users.key?(user_id)
-    end
-
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    def get_users(permissions)
-      result_list = []
-      @users.each do |user, perm|
-        if perm >= permissions
-          result_list.push(user)
-        end
-      end
-      if !result_list.empty?
-        return result_list
-      else
-        return nil
-      end
-    end
-
-    # Gets permissions for a given user
-    def get_permissions(user_id)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users[user_id]
     end
 
     # Static method: Yields an existing Memory repository and closes it afterwards
@@ -426,7 +400,8 @@ module Repository
       end
     end
 
-    def self.__update_permissions(full_access_users, permissions)
+    def self.__update_permissions(permissions)
+      @@full_access_users = self.get_full_access_users
       permissions.each do |repo_name, users|
         begin
           repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
@@ -434,7 +409,6 @@ module Repository
         rescue
           next
         end
-        users += full_access_users
         users.each do |user|
           repo.users[user] = Repository::Permission::READ_WRITE
         end

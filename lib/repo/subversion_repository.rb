@@ -312,53 +312,6 @@ module Repository
       return true
     end
 
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    def get_users(permissions)
-      if svn_auth_file_checks() # do basic file checks
-        repo_permissions = {}
-        File.open(@repos_auth_file) do |auth_file|
-          auth_file.flock(File::LOCK_EX)
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        result_list = []
-        repo_permissions.each do |user, perm|
-          if self.class.__translate_perms_from_file(perm) >= permissions
-            result_list.push(user)
-          end
-        end
-        if !result_list.empty?
-          return result_list
-        else
-          return nil
-        end
-      end
-    end
-
-    # Gets permissions of a particular user
-    def get_permissions(user_id)
-      if svn_auth_file_checks() # do basic file checks
-        repo_permissions = {}
-        File.open(@repos_auth_file) do |auth_file|
-
-          auth_file.flock(File::LOCK_EX)
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        if !repo_permissions.key?(user_id)
-          raise UserNotFound.new(user_id + " not found")
-        end
-        return self.class.__translate_perms_from_file(repo_permissions[user_id])
-      end
-    end
-
     # Converts a pathname to an absolute pathname
     def expand_path(file_name, dir_string = "/")
       expanded = File.expand_path(file_name, dir_string)
@@ -584,10 +537,10 @@ module Repository
     ####################################################################
 
     # Generate and write the SVN authorization file for the repo.
-    def self.__update_permissions(full_access_users, permissions)
+    def self.__update_permissions(permissions)
       return true if !MarkusConfigurator.markus_config_repository_admin?
       authz_string = "[/]\n"
-      full_access_users.each do |user_name|
+      self.get_full_access_users.each do |user_name|
         authz_string += "#{user_name} = rw\n"
       end
       authz_string += "\n"

@@ -162,16 +162,37 @@ module Repository
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
-    # Gets a list of users with permissions in question on the repository
-    #   use "Repository::Permission::ANY" to get a list of all users with any permissions
-    #   i.e. all users with at least read permissions
-    def get_users(permissions)
-      raise NotImplementedError, "Repository.get_users: Not yet implemented"
+    def self.get_full_access_users
+      Admin.pluck(:user_name)
     end
 
-    # Gets permissions for a particular user
-    def get_permissions(user_id)
-      raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
+    # Gets a list of users with permission to access the repo.
+    # Returns nil if there aren't any.
+    # All permissions are rw for the time being
+    def get_users
+
+      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
+      end
+      repo_name = get_repo_name
+      permissions = self.get_all_permissions
+      users = permissions[repo_name] + self.get_full_access_users
+
+      return if users.empty?
+      users
+    end
+
+    # TODO All permissions are rw for the time being
+    def get_permissions(user_name)
+
+      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
+      end
+      unless get_users.include?(user_name)
+        raise UserNotFound.new("User #{user_name} not found in this repo")
+      end
+
+      Repository::Permission::READ_WRITE
     end
 
     #Converts a pathname to an absolute pathname
@@ -187,31 +208,26 @@ module Repository
     # makes some update to the database and calls self.get_all_permissions
     # while this thread is still processing self.get_all_permissions
     def self.update_permissions
-      begin
-        unless Thread.current[:permissions_lock].nil?
-          # will raise a ThreadError if the current thread holds the lock
-          # (called from self.update_permissions_after)
-          # Note: only the current thread can hold this lock
-          Thread.current[:permissions_lock].lock
-        end
-        # indicate that this thread is trying to update permissions
-        @@permission_thread_mutex.synchronize do
-          @@permission_thread = Thread.current.object_id
-        end
-        # get permissions from the database
-        full_access_users, permissions = self.get_all_permissions
-        # only continue if this was the last thread to get permissions from the database
-        if @@permission_thread == Thread.current.object_id
-          # wait until another thread finishes writing
-          @@permission_write_mutex.synchronize do
-            __update_permissions(full_access_users, permissions)
-          end
-          return true
-        end
-      rescue ThreadError
-        Thread.current[:requested?] = true
+      Thread.current[:requested?] = true
+      unless Thread.current[:permissions_lock].nil?
+        # abort if this is being called in a block passed to
+        # self.update_permissions_after
+        return if Thread.current[:permissions_lock].owned?
       end
-      false
+      # indicate that this thread is trying to update permissions
+      @@permission_thread_mutex.synchronize do
+        @@permission_thread = Thread.current.object_id
+      end
+      # get permissions from the database
+      permissions = self.get_all_permissions
+      # only continue if this was the last thread to get permissions from the database
+      if @@permission_thread == Thread.current.object_id
+        # wait until another thread finishes writing
+        @@permission_write_mutex.synchronize do
+          __update_permissions(permissions)
+        end
+      end
+      nil
     end
 
     # Executes a block of code and then updates the permissions file.
@@ -236,13 +252,12 @@ module Repository
           self.update_permissions
         end
       end
+      nil
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
       permissions = {}
-      # give admins access to all repos
-      full_access_users = Admin.pluck(:user_name)
       grader_hash = Ta.get_all_grouping_ids_by_grader
       assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
@@ -256,7 +271,7 @@ module Repository
           permissions[repo_name] = accepted_students + graders
         end
       end
-      [full_access_users, permissions]
+      permissions
     end
 
     # checks to make sure the location is not '*' which is
@@ -266,7 +281,7 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.__update_permissions(full_access_users, permissions)
+    def self.__update_permissions(permissions)
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
