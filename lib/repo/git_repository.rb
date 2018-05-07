@@ -147,13 +147,13 @@ module Repository
       get_revision(@repos.last_commit.oid)
     end
 
-    # Gets the first revision before +target_timestamp+. If +path+ is not nil, then gets the first revision before
-    # +target_timestamp+ with changes under +path+. The +target_timestamp+ is matched with push dates in the git reflog,
-    # because a commit date can be arbitrarily crafted.
-    def get_revision_by_timestamp(target_timestamp, path = nil, later_than = nil)
+    # Gets the first revision +at_or_earlier_than+ some timestamp and +later_than+ some other timestamp (can be nil).
+    # If +path+ is not nil, then gets only a revision with changes under +path+.
+    # Push dates in the git reflog are used to compare timestamps, because a commit date can be arbitrarily crafted.
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
       repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-      # use the git reflog to get a list of pushes: find first push_time <= target_timestamp && > later_than
+      # use the git reflog to get a list of pushes: find first push_time <= at_or_earlier_than && > later_than
       bare_repo = Rugged::Repository.new(bare_path)
       reflog = bare_repo.ref('refs/heads/master').log.reverse
       push_info = nil
@@ -162,7 +162,7 @@ module Repository
         if !later_than.nil? && push_time <= later_than.in_time_zone
           return nil
         end
-        if push_time <= target_timestamp.in_time_zone
+        if push_time <= at_or_earlier_than.in_time_zone
           push_info = OpenStruct.new
           push_info.sha = reflog_entry[:id_new]
           push_info.time = push_time

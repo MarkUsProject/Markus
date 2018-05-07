@@ -517,13 +517,13 @@ class Grouping < ApplicationRecord
     revision = nil
     group.access_repo do |repo|
       # we use this function because it allows to specify a path
-      revision = repo.get_revision_by_timestamp(Time.zone.now, assignment.repository_folder)
+      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       # an alternative could have been:
       # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
       # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
       # walk through the entire history
     end
-    revision.server_timestamp
+    revision&.server_timestamp
   end
 
   # Returns a list of missing assignment_files yet to be submitted
@@ -653,32 +653,25 @@ class Grouping < ApplicationRecord
   # the last commit
   ##
   def past_due_date?
-    # if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
-    #   due_date = assignment.due_date
-    # else
-    #   due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
-    # end
-    # group.access_repo do |repo|
-    #   # we use this function because it allows to specify a path
-    #   revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, due_date)
-    #   # an alternative could have been:
-    #   # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
-    #   # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
-    #   # walk through the entire history
-    # end
-    # revision.server_timestamp
-    #TODO modify get_revision_by_timestamp so that it can stop at a certain timestamp
-    #TODO modify get_revision_by_timestamp to return nil
-    #TODO add bogus revision "zero" to use by submission when get_revision_by_timestamp returns nil
-    #TODO use revision zero in repo browser and checkout commands
-    #TODO enable past_due_date? for git again
-    timestamp = assignment_folder_last_modified_date
     if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
-      timestamp > assignment.due_date
+      due_date = assignment.due_date
     else
-      section_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
-      timestamp > section_due_date
+      due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
     end
+    revision = nil
+    group.access_repo do |repo|
+      # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
+      # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
+      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, due_date)
+    end
+    if revision.nil? || revision.server_timestamp <= due_date
+      false
+    else
+      true
+    end
+    #TODO modify get_revision_by_timestamp so that it can stop at a certain timestamp (memory)
+    #TODO modify get_revision_by_timestamp calls to return nil (memory)
+    #TODO modify submission.revision_identifier calls to allow for nil
   end
 
   def self.get_groupings_for_assignment(assignment, user)

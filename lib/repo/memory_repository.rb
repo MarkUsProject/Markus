@@ -201,11 +201,11 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp, path = nil, later_than = nil)
-      if !timestamp.kind_of?(Time)
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
+      unless at_or_earlier_than.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
-      return get_revision_number_by_timestamp(timestamp, path)
+      get_revision_number_by_timestamp(at_or_earlier_than, path)
     end
 
     def get_all_revisions
@@ -451,9 +451,10 @@ module Repository
 
       all_timestamps_list = []
       remaining_timestamps_list = []
-      @timestamps_revisions.keys().each do |time_dump|
-        all_timestamps_list.push(Marshal.load(time_dump))
-        remaining_timestamps_list.push(Marshal.load(time_dump))
+      @timestamps_revisions.keys.each do |time_dump|
+        timestamp = Marshal.load(time_dump)
+        all_timestamps_list << timestamp
+        remaining_timestamps_list << timestamp
       end
 
       # find closest matching timestamp
@@ -462,7 +463,7 @@ module Repository
       old_diff = 0
       # find first valid revision
       all_timestamps_list.each do |best_match|
-        remaining_timestamps_list.shift()
+        remaining_timestamps_list.shift
         old_diff = wanted_timestamp - best_match
         mapping[old_diff.to_s] = best_match
         if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(best_match)].revision_at_path(path))

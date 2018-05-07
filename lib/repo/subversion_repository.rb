@@ -244,23 +244,22 @@ module Repository
     # a revision at a current timestamp
     #    target_timestamp
     # should be a Ruby Time instance
-    def get_revision_by_timestamp(target_timestamp, path = nil, later_than = nil)
-      if !target_timestamp.kind_of?(Time)
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
+      unless at_or_earlier_than.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
-      target_timestamp = target_timestamp.utc
+      at_or_earlier_than = at_or_earlier_than.utc
       if !path.nil?
         # latest_revision_number will fail if the path does not exist at the given revision number or less than
-        # the revision number. The begin and ensure statement is to ensure that there is a revision return.
-        # Default is set to revision 0.
+        # the revision number. The begin and ensure statement is to ensure that there is a nil return.
         begin
-          revision_number = latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp))
+          revision_number = latest_revision_number(path, get_revision_number_by_timestamp(at_or_earlier_than))
           get_revision(revision_number)
         rescue
           nil
         end
       else
-        get_revision(get_revision_number_by_timestamp(target_timestamp))
+        get_revision(get_revision_number_by_timestamp(at_or_earlier_than))
       end
 
     end
@@ -776,24 +775,24 @@ module Repository
     #
     # This will only work for paths that have not been deleted from the repository.
     def latest_revision_number(path = nil, revision_number = nil)
-      if (!path.nil?)
+      if path.nil?
+        @repos.fs.youngest_rev
+      else
         begin
           data = Svn::Repos.get_committed_info(@repos.fs.root(revision_number || @repos.fs.youngest_rev), path)
-          return data[0]
+          data[0]
         rescue Svn::Error::FS_NOT_FOUND
           raise Repository::FileDoesNotExistConflict.new(path)
         rescue Svn::Error::FS_NO_SUCH_REVISION
-          raise "Revision " + revision_number.to_s + " does not exist."
+          raise "Revision #{revision_number} does not exist."
         end
-      else
-        return @repos.fs.youngest_rev
       end
     end
 
     # Assumes timestamp is a Time object (which is part of the Ruby
     # standard library)
-    def get_revision_number_by_timestamp(target_timestamp, path = nil)
-      if !target_timestamp.kind_of?(Time)
+    def get_revision_number_by_timestamp(target_timestamp)
+      unless target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       @repos.dated_revision(target_timestamp)

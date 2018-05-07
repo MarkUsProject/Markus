@@ -39,6 +39,7 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @path = params[:path] || File::SEPARATOR
     @collected_revision = nil
+    @revision = nil
     repo = @grouping.group.repo
     collected_submission = @grouping.current_submission_used
 
@@ -51,8 +52,7 @@ class SubmissionsController < ApplicationController
       next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
       assignment_revisions << revision
       # store the collected revision
-      if @collected_revision.nil? && collected_submission &&
-          collected_submission.revision_identifier == revision.revision_identifier.to_s
+      if @collected_revision.nil? && collected_submission&.revision_identifier == revision.revision_identifier.to_s
         @collected_revision = revision
       end
       # store the displayed revision
