@@ -94,12 +94,11 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    user_group = @grouping.group
     @path = params[:path] || '/'
 
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
-    set_filebrowser_vars(user_group, @assignment)
+    set_filebrowser_vars(@grouping, @assignment)
 
     # generate flash messages
     if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
@@ -352,7 +351,7 @@ class SubmissionsController < ApplicationController
       @path = params[:path] || '/'
       @grouping = current_user.accepted_grouping_for(assignment_id)
       unless @grouping.is_valid?
-        set_filebrowser_vars(@grouping.group, @assignment)
+        set_filebrowser_vars(@grouping, @assignment)
         return
       end
       unless params[:new_files].nil?
@@ -446,7 +445,7 @@ class SubmissionsController < ApplicationController
           # finish transaction
           unless txn.has_jobs?
             flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-            set_filebrowser_vars(@grouping.group, @assignment)
+            set_filebrowser_vars(@grouping, @assignment)
             return
           end
           if repo.commit(txn)
@@ -464,13 +463,13 @@ class SubmissionsController < ApplicationController
             flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
           end
           # can't use redirect_to here. See comment of this action for details.
-          set_filebrowser_vars(@grouping.group, @assignment)
+          set_filebrowser_vars(@grouping, @assignment)
 
         rescue  => e
           m_logger = MarkusLogger.instance
           m_logger.log(e.message)
           flash_message(:warning, e.message)
-          set_filebrowser_vars(@grouping.group, @assignment)
+          set_filebrowser_vars(@grouping, @assignment)
         end
       end
     ensure
@@ -790,18 +789,11 @@ class SubmissionsController < ApplicationController
   private
 
   # Used in update_files and file_manager actions
-  def set_filebrowser_vars(user_group, assignment)
-    user_group.access_repo do |repo|
+  def set_filebrowser_vars(grouping, assignment)
+    grouping.group.access_repo do |repo|
       @revision = repo.get_latest_revision
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder,
-                                                 @path))
-      @missing_assignment_files = []
-      assignment.assignment_files.each do |assignment_file|
-        unless @revision.path_exists?(File.join(assignment.repository_folder,
-                                                assignment_file.filename))
-          @missing_assignment_files.push(assignment_file)
-        end
-      end
+      @files = @revision.files_at_path(File.join(assignment.repository_folder, @path))
+      @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
 end

@@ -332,18 +332,18 @@ class ResultsController < ApplicationController
              layout: false
       return
     end
-    assignment = Assignment.find(params[:assignment_id])
+
     submission = Submission.find(params[:submission_id])
-    grouping = Grouping.find(submission.grouping_id)
-
-    revision_identifier = submission.revision_identifier
-    repo_folder = assignment.repository_folder
-    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
-
-    if submission.blank?
+    if submission.revision_identifier.nil?
       render text: t('student.submission.no_files_available')
       return
     end
+
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = Grouping.find(submission.grouping_id)
+    revision_identifier = submission.revision_identifier
+    repo_folder = assignment.repository_folder
+    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
     zip_path = if params[:include_annotations] == 'true'
                  "tmp/#{assignment.short_identifier}_" +
