@@ -117,10 +117,7 @@ input + label {
 }
 
 .marks_message {
-  padding: 0.5em 1em 1em 1em;
-  border-style: solid;
-  border-color: #a6a6a6;
-  padding-bottom: 1em;
-  color: #4c4c4c;
-  background-color: #eeeeee;
+  padding: 0em 1em 1em 1em;
+  color: $dark-grey;
+  background-color: $white;
 }

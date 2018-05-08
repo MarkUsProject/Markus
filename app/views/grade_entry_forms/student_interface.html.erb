@@ -4,6 +4,7 @@
 <% if !@grade_entry_form.message.empty? %>
   <div class='marks_message'><%= "#{@grade_entry_form.message}" %></div>
 <% end %>
+
 <% if @grade_entry_form.grade_entry_items.empty? %>
   <p><%= t('grade_entry_forms.students.no_results') %></p>
 <% elsif @grade_entry_student.nil? || !@grade_entry_student.released_to_student %>
