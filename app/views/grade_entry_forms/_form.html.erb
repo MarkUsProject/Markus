@@ -38,9 +38,10 @@
 
       <div>
         <%= f.label :message %>
-        <%= f.text_area :message, rows: 8, cols: 65, placeholder: "Please enter a message that you would like to " +
-                                                                  "have displayed to the students. Note it is " +
-                                                                  "displayed regardless of marks being released."%>
+        <%= f.text_area :message,
+                        rows: 8,
+                        cols: 65,
+                        placeholder: GradeEntryForm::MESSAGE_PLACEHOLDER %>
       </div>
 
       <div>
