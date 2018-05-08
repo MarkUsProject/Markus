@@ -805,15 +805,17 @@ class Grouping < ApplicationRecord
   end
 
   def create_test_script_result(file_name, requested_by, submission=nil, time=0)
-    revision_identifier = submission.nil? ?
-      self.group.repo.get_latest_revision.revision_identifier :
-      submission.revision_identifier
-    submission_id = submission.nil? ? nil : submission.id
+    revision_identifier = nil
+    if submission.nil?
+      group.access_repo { |repo| revision_identifier = repo.get_latest_revision.revision_identifier }
+    else
+      revision_identifier = submission.revision_identifier
+    end
     test_script = TestScript.find_by(assignment_id: self.assignment.id, file_name: file_name)
 
     self.test_script_results.create(
       test_script_id: test_script.id,
-      submission_id: submission_id,
+      submission_id: submission&.id,
       marks_earned: 0.0,
       marks_total: 0.0,
       repo_revision: revision_identifier,

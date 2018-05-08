@@ -7,7 +7,11 @@ class AutotestRunJob < ApplicationJob
   # Verify that MarkUs has student files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one source file is successfully exported.
-  def repo_files_available?(assignment, repo_dir)
+  def repo_files_available?(assignment, submission, repo_dir)
+    # no commits in the submission
+    if !submission.nil? && submission.revision_identifier.nil?
+      return false
+    end
     # No assignment directory or no files in repo (only current and parent directory pointers)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
     if !File.exist?(assignment_dir) || Dir.entries(assignment_dir).length <= 2
@@ -36,8 +40,8 @@ class AutotestRunJob < ApplicationJob
 
     # create empty test results for no submission files
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
-    unless repo_files_available?(assignment, repo_dir)
-      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+    submission = if submission_id.nil? then nil else Submission.find(submission_id) end
+    unless repo_files_available?(assignment, submission, repo_dir)
       requested_by = User.find_by(api_key: user_api_key)
       error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
                              message: I18n.t('automated_tests.test_result.no_source_files'))
@@ -98,7 +102,6 @@ class AutotestRunJob < ApplicationJob
         end
       end
     rescue Exception => e
-      submission = submission_id.nil? ? nil : Submission.find(submission_id)
       requested_by = User.find_by(api_key: user_api_key)
       error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
                              message: I18n.t('automated_tests.test_result.bad_server',
