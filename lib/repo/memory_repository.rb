@@ -151,6 +151,7 @@ module Repository
       # revisions
       timestamp = Time.now
       new_rev.timestamp = timestamp
+      new_rev.server_timestamp = timestamp
       @revision_history.push(@current_revision)
       @current_revision = new_rev
       @current_revision.__increment_revision_number() # increment revision number
@@ -399,6 +400,7 @@ module Repository
       new_revision.comment = original.comment
       new_revision.files_content = {}
       new_revision.timestamp = original.timestamp
+      new_revision.server_timestamp = original.server_timestamp
       # copy files objects
       original.files.each do |object|
         if object.instance_of?(RevisionFile)

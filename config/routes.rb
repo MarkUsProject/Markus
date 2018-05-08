@@ -172,6 +172,7 @@ Markus::Application.routes.draw do
           get 'repo_browser'
           post 'repo_browser'
           get 'downloads'
+          get 'get_file'
         end
 
         resources :results do
@@ -189,8 +190,6 @@ Markus::Application.routes.draw do
             post 'download'
             get 'download_zip'
             delete 'cancel_remark_request'
-            get 'codeviewer'
-            post 'codeviewer'
             post 'add_extra_mark'
             post 'delete_grace_period_deduction'
             get 'next_grouping'
@@ -218,8 +217,6 @@ Markus::Application.routes.draw do
         member do
           get 'view_marks'
           post 'add_extra_mark'
-          get 'codeviewer'
-          post 'codeviewer'
           get 'next_grouping'
           post 'toggle_marking_state'
           post 'update_mark'
@@ -291,7 +288,6 @@ Markus::Application.routes.draw do
       end
 
       member do
-        get 'populate_term_marks_table'
         get 'populate_grades_table'
         get 'get_mark_columns'
         get 'view_summary'

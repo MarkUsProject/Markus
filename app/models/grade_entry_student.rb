@@ -6,10 +6,10 @@ class GradeEntryStudent < ApplicationRecord
   attr_accessor :total_grade
 
   belongs_to :user
-  validates_associated :user
+  validates_associated :user, on: :create
 
   belongs_to :grade_entry_form
-  validates_associated :grade_entry_form
+  validates_associated :grade_entry_form, on: :create
 
   has_many :grades, dependent: :destroy
 
@@ -21,12 +21,14 @@ class GradeEntryStudent < ApplicationRecord
   validates_numericality_of :user_id,
                             only_integer: true,
                             greater_than: 0,
-                            message: I18n.t('invalid_id')
+                            message: I18n.t('invalid_id'),
+                            on: :create
 
   validates_numericality_of :grade_entry_form_id,
                             only_integer: true,
                             greater_than: 0,
-                            message: I18n.t('invalid_id')
+                            message: I18n.t('invalid_id'),
+                            on: :create
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
@@ -206,13 +208,6 @@ class GradeEntryStudent < ApplicationRecord
     self.save
   end
 
-  # Return the total of all the grades.
-  def total_grade
-    # TODO: This should be a calculated column
-    # Why are we managing it by hand?
-    refresh_total_grade
-  end
-
   def save(*)
     refresh_total_grade # make sure the latest total grade is always saved
     super
@@ -240,7 +235,8 @@ class GradeEntryStudent < ApplicationRecord
       total = nil
     end
 
-    write_attribute(:total_grade, total)
+    # write_attribute(:total_grade, total)
+    self.total_grade = total
 
     total
   end

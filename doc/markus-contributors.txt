@@ -2,6 +2,7 @@ Aaron Lee
 Abdelhamid Benmouffok
 Adam Goucher
 Aimen Khan
+Alan Rosenthal
 Alessio Di Sandro
 Alexander Kittelberger
 Alexandre Lissy
@@ -26,6 +27,9 @@ Benjamin Thorent
 Benjamin Vialle
 Bertan Guven
 Binuri Walpitagamage
+Bo Zhou
+Brenda Huang
+Brent Simmons
 Brian Bo
 Brian Xu
 Bryan Muscedere
@@ -77,8 +81,10 @@ Irene Fung
 Isabelle Chan
 Ishan Thukral
 Jakub Subczynski
+Jason Mai
 Jay Parekh
 Jeffrey Ling
+Jenna Choi
 Jeremy Goh
 Jeremy Merkur
 Jeremy Winter
@@ -109,6 +115,7 @@ Marc Palermo
 Mark Kazakevich
 Mark Rada
 Maryna Moskalenko
+Matthew Austin
 Mélanie Gaudet
 Melissa Neubert
 Michael Ing
@@ -120,6 +127,7 @@ Mike Stewart
 Mike Wu
 Mina Almasry
 Misa Sakamoto
+Misha Schwartz
 Nathan ChowNeha Kumar
 Neha Kumar
 Nelle Varoquaux
@@ -131,15 +139,18 @@ Noé Bedetti
 Oloruntobi Ogunbiyi
 Ope Akanji
 Oussama Ben Amar
+Parker Hutcheson
 Paymahn Moghadasian
 Peter Guanjie Zhao
 Rafael Padilha
+Rathusshan Kuganesan
 Razvan Vlaicu
 Rebecca Frailich
 Robert Burke
 Ryan Spring
 Samuel Gougeon
 Sean Budning
+Seung Hoon Lee
 Severin Gehwolf
 Shaughn Finnerty
 Shenglong Gao
@@ -147,9 +158,11 @@ Shion Kashimura
 Simon Lavigne-Giroux
 Stephen Tsimicalis
 Su Zhang
+Tanveer Gill
 Tara Clark
 Tiago Chedraoui Silva
 Tianhai Hu
+Tyler Han
 Valentin Roger
 Veronica Wong
 Victoria Mui

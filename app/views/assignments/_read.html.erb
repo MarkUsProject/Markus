@@ -17,7 +17,7 @@
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= t('due_date') %></span>
-    <span class="prop_paragraph"><%= I18n.l(@due_date, format: :long_date ) %></span>
+    <span class="prop_paragraph"><%= l(@due_date) %></span>
   </div>
 
   <% unless @penalty.type == "NoLateSubmissionRule" %>
@@ -39,7 +39,7 @@
         <span class='prop_label'><%= raw(t('deadline_max_penalty')) %></span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
       <% end %>
-      <%= I18n.l(@assignment.due_date + acc.hours, format: :long_date ) %>
+      <%= I18n.l(@assignment.due_date + acc.hours) %>
     </div>
 
     <div class='sub_block'>

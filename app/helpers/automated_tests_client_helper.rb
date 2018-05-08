@@ -1,13 +1,12 @@
 module AutomatedTestsClientHelper
 
+  ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments')
+  STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students')
+
   def create_test_repo(assignment)
-    # Create the automated test repository
-    unless File.exist?(MarkusConfigurator.autotest_client_dir)
-      FileUtils.mkdir(MarkusConfigurator.autotest_client_dir)
-    end
-    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+    test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
     unless File.exist?(test_dir)
-      FileUtils.mkdir(test_dir)
+      FileUtils.mkdir_p(test_dir)
     end
   end
 
@@ -51,7 +50,7 @@ module AutomatedTestsClientHelper
         raise I18n.t('automated_tests.duplicate_filename') + new_file_name
       end
       updated_form_file[:file_name] = new_file_name
-      new_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, new_file_name)
+      new_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, new_file_name)
       files.push({path: new_file_path, upload: new_file})
     # 5) Possibly replace existing test file
     else
@@ -60,10 +59,10 @@ module AutomatedTestsClientHelper
       upd_file = params[("#{upd_name}_#{old_file_name}").to_sym]
       upd_file_name = upd_file.original_filename
       updated_form_file[:file_name] = upd_file_name
-      mod_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, upd_file_name)
+      mod_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, upd_file_name)
       f = {path: mod_file_path, upload: upd_file}
       unless upd_file_name == old_file_name
-        old_file_path = File.join(MarkusConfigurator.autotest_client_dir, assignment.repository_folder, old_file_name)
+        old_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, old_file_name)
         f[:delete] = old_file_path
       end
       files.push(f)
@@ -119,12 +118,12 @@ module AutomatedTestsClientHelper
   def self.export_group_repo(group, repo_dir, assignment, submission = nil)
 
     # Create the automated test repository
-    unless File.exists?(MarkusConfigurator.autotest_client_dir)
-      FileUtils.mkdir(MarkusConfigurator.autotest_client_dir)
+    unless File.exist?(STUDENTS_DIR)
+      FileUtils.mkdir_p(STUDENTS_DIR)
     end
     # Delete student's assignment repository if it already exists
     # TODO clean up in client worker, or try to optimize if revision is the same?
-    if File.exists?(repo_dir)
+    if File.exist?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
     # Export the correct repo revision
@@ -204,7 +203,7 @@ module AutomatedTestsClientHelper
   def self.get_test_scripts(assignment, user)
 
     # No test directory or test files
-    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+    test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
     unless File.exist?(test_dir)
       raise I18n.t('automated_tests.error.no_test_files')
     end
@@ -242,7 +241,7 @@ module AutomatedTestsClientHelper
     # if current_user is an instructor, then a submission exists and we use that repo revision
     # if current_user is a student, then we use the latest repo revision
     group = grouping.group
-    repo_dir = File.join(MarkusConfigurator.autotest_client_dir, group.repo_name)
+    repo_dir = File.join(STUDENTS_DIR, group.repo_name)
     submission = submission_id.nil? ? nil : Submission.find(submission_id)
     export_group_repo(group, repo_dir, assignment, submission)
     AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key,

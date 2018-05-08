@@ -25,6 +25,7 @@ module Api
     # Requires: user_name, type, first_name, last_name
     # Optional: section_name, grace_credits
     def create
+      authorize User
       if has_missing_params?([:user_name, :type, :first_name, :last_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
@@ -109,6 +110,7 @@ module Api
     # Requires: id
     # Optional: first_name, last_name, user_name, section_name, grace_credits
     def update
+      authorize User
       # If no user is found, render an error.
       user = User.find_by_id(params[:id])
       if user.nil?

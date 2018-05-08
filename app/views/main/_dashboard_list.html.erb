@@ -50,13 +50,13 @@
 
               <td class="due_date">
                 <div class="<%= due_date_color(assignment) %>">
-                  <%= l(assignment.due_date, format: :short_date ) %>
+                  <%= l(assignment.due_date) %>
                 </div>
 
                 <% if assignment.has_peer_review? %>
-                    <div class="<%= due_date_color(assignment.pr_assignment) %> pr_date">
-                      <%= l(assignment.pr_assignment.due_date, format: :short_date ) %>
-                    </div>
+                  <div class="<%= due_date_color(assignment.pr_assignment) %> pr_date">
+                    <%= l(assignment.pr_assignment.due_date) %>
+                  </div>
                 <% end %>
               </td>
             <% end %>

@@ -49,12 +49,6 @@ class TestScript < ApplicationRecord
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
 
-  # Upon update, if replacing a file with a different name, delete the old file first
-  before_update :delete_old_file
-
-  # Run write_file after saving to the database
-  after_save :write_file
-
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
@@ -137,7 +131,7 @@ class TestScript < ApplicationRecord
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       name = self.file_name
-      test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+      test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
       # Create the file path
       path = File.join(test_dir, name)
@@ -149,7 +143,7 @@ class TestScript < ApplicationRecord
 
   def delete_file
     # Automated tests repository to delete from
-    test_dir = File.join(MarkusConfigurator.autotest_client_dir, assignment.short_identifier)
+    test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
     # Delete file if it exists
     path = File.join(test_dir, self.file_name)

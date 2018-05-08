@@ -43,6 +43,7 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
+      grade_entry_student_with_some_grades.save
       expect(grade_entry_student_with_some_grades.total_grade).to eq 0.7
     end
 
@@ -52,6 +53,7 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 0.4)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 0.3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 60.5)
+      grade_entry_student_with_some_grades.save
       expect(grade_entry_student_with_some_grades.total_grade).to eq 61.2
     end
 
@@ -67,6 +69,7 @@ describe GradeEntryForm do
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
       end
+      grade_entry_student_with_all_zeros.save
       expect(grade_entry_student_with_all_zeros.total_grade).to eq 0.0
     end
   end
