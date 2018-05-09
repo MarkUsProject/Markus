@@ -22,6 +22,16 @@
       </tr>
 
       <tr>
+        <td><%= raw(f.label(:email, t('user.email'))) %>:</td>
+        <td><%= raw(f.text_field :email) %></td>
+      </tr>
+
+      <tr>
+        <td><%= raw(f.label(:id_number, t('user.id_number'))) %>:</td>
+        <td><%= raw(f.text_field :id_number) %></td>
+      </tr>
+
+      <tr>
         <td><%= raw(f.label(:grace_credits, t('user.grace_credits'))) %>:</td>
         <td><%= raw(f.text_field :grace_credits) %></td>
       </tr>
