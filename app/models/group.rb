@@ -16,8 +16,7 @@ class Group < ApplicationRecord
   has_many :assignments, through: :groupings
   has_many :split_pages
 
-
-  validates_presence_of :group_name
+  validates :group_name, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
   validates_uniqueness_of :group_name
   validates_length_of :group_name, maximum: 30
 
@@ -73,6 +72,7 @@ class Group < ApplicationRecord
     #
     # For more info about the exception
     # See 'self.create' of lib/repo/subversion_repository.rb.
+
     begin
       Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e

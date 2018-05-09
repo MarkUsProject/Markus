@@ -89,7 +89,7 @@ class Assignment < ApplicationRecord
 
   validates_presence_of :short_identifier
   validates_presence_of :description
-  validates_presence_of :repository_folder
+  validates :repository_folder, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
   validates_presence_of :due_date
   validates_presence_of :group_min
   validates_presence_of :group_max

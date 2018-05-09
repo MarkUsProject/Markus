@@ -110,6 +110,27 @@ describe Grouping do
           .with(assignment)
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
       end
+      it 'updates repository permissions exactly once after bulk assign TAs' do
+        expect(Repository.get_class).to receive(:__update_permissions).once
+        Grouping.assign_all_tas([], grouping_ids, assignment)
+      end
+    end
+
+    describe '.delete_grouping' do
+      it 'makes an attempt to update repository permissions when deleting a group' do
+        g = groupings
+        expect(Repository.get_class).to receive(:update_permissions_after)
+        g[0].delete_grouping
+      end
+    end
+
+    describe '.assign_tas' do
+      it 'updates repository permissions exactly once after assigning all TAs' do
+        expect(Repository.get_class).to receive(:__update_permissions).once
+        Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
+          grouping_ids.zip(ta_ids.cycle)
+        end
+      end
     end
 
     describe '.unassign_tas' do
@@ -139,6 +160,11 @@ describe Grouping do
       it 'updates assigned groups counts after bulk unassign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts)
           .with(assignment)
+        Grouping.unassign_tas([], grouping_ids, assignment)
+      end
+
+      it 'updates repository permissions exactly once after bulk unassign TAs' do
+        expect(Repository.get_class).to receive(:__update_permissions).once
         Grouping.unassign_tas([], grouping_ids, assignment)
       end
     end

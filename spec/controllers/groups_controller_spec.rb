@@ -91,6 +91,11 @@ describe GroupsController do
           expect(grouping).to receive(:delete_grouping)
           delete :remove_group, grouping_id: grouping, assignment_id: assignment
         end
+
+        it 'should attempt to update permissions file' do
+          expect(Repository.get_class).to receive(:update_permissions_after)
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
       end
 
       context 'when grouping has submissions' do
@@ -114,6 +119,11 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
+          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+        end
+
+        it 'should attempt to update permissions file' do
+          expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, grouping_id: grouping, assignment_id: assignment
         end
       end
@@ -193,6 +203,17 @@ describe GroupsController do
         end
       end
 
+      it 'calls add_csv_group' do
+        expect_any_instance_of(Assignment).to receive(:add_csv_group)
+        post :csv_upload,
+             assignment_id: @assignment.id,
+             group: { grouplist: @file_good }
+        # remove the generated repo so repeated test runs function properly
+        FileUtils.rm_r(
+          File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
+          force: true)
+      end
+
       it 'accepts a valid file' do
         post :csv_upload,
              assignment_id: @assignment.id,
@@ -206,8 +227,6 @@ describe GroupsController do
 
         expect(Group.find_by(group_name: 'group1').repo_name)
           .to eq('group_0001')
-
-        # remove the generated repo so repeated test runs function properly
         FileUtils.rm_r(
           File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
           force: true)

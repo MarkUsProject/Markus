@@ -68,9 +68,6 @@ module Repository
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
-      unless self.valid_location?(connect_string)
-        raise InvalidLocation.new(connect_string)
-      end
       # create the repository using the ruby bindings
       fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]}
       repository = Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful

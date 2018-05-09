@@ -101,11 +101,42 @@ describe Assignment do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
+    context 'fails when repository_folder is one of the reserved locations' do
+      Repository.get_class.reserved_locations.each do |loc|
+        it "#{loc}" do
+          assignment = build(:assignment, repository_folder: loc)
+          expect(assignment).not_to be_valid
+        end
+      end
+    end
   end
 
-  let(:assignment) do
-    build_stubbed(:assignment).tap do |assignment|
-      allow(assignment).to receive(:save)
+  let(:assignment) { create :assignment }
+
+  describe '#vcs_submit' do
+    it 'updates the repository permission file when updated to true' do
+      assignment.vcs_submit = false
+      assignment.save!
+      expect(Repository.get_class).to receive(:__update_permissions).once
+      assignment.vcs_submit = true
+      assignment.save!
+    end
+    it 'updates the repository permission file when updated to false' do
+      assignment.vcs_submit = true
+      assignment.save!
+      expect(Repository.get_class).to receive(:__update_permissions).once
+      assignment.vcs_submit = false
+      assignment.save!
+    end
+  end
+
+  describe '#clone_groupings_from' do
+    it 'makes an attempt to update repository permissions when cloning groupings' do
+      a1 = create :assignment, vcs_submit: true
+      a2 = create :assignment, vcs_submit: true
+      create :grouping_with_inviter, assignment: a2
+      expect(Repository.get_class).to receive(:update_permissions_after)
+      a1.clone_groupings_from(a2.id)
     end
   end
 
@@ -624,6 +655,7 @@ describe Assignment do
 
     context 'when the row is empty' do
       it 'does not add a Group or Grouping' do
+        @assignment.add_csv_group([])
         expect(Group.all).to eq []
         expect(Grouping.all).to eq []
       end
@@ -645,6 +677,7 @@ describe Assignment do
 
           expect(group.size).to eq 1
           expect(grouping.size).to eq 1
+          expect(group.first.repo_name).to eq(@row[1])
         end
 
         it 'adds the StudentMemberships for the students' do

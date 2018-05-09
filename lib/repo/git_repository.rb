@@ -75,9 +75,6 @@ module Repository
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
                            already")
       end
-      unless self.valid_location?(connect_string)
-        raise InvalidLocation.new(connect_string)
-      end
       # Repo is created bare, then clone it in the repository storage location
       repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")

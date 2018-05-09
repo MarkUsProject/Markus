@@ -12,8 +12,8 @@ module Repository
     #    key (location), value (reference to repo)
     @@repositories = {}
 
-    # hash containing users that have rw permissions for all repos
-    @@full_access_users = []
+    # hash containing user permissions
+    @@permissions = {}
 
     #############################################################
     #   A MemoryRepository instance holds the following variables
@@ -57,9 +57,6 @@ module Repository
 
     # Creates memory repository at "virtual" location (they are identifiable by location)
     def self.create(location)
-      unless self.valid_location?(location)
-        raise InvalidLocation.new(location)
-      end
       MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
       true
     end
@@ -401,17 +398,9 @@ module Repository
     end
 
     def self.__update_permissions(permissions)
-      @@full_access_users = self.get_full_access_users
-      permissions.each do |repo_name, users|
-        begin
-          repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
-          repo = MemoryRepository.open(repo_loc)
-        rescue
-          next
-        end
-        users.each do |user|
-          repo.users[user] = Repository::Permission::READ_WRITE
-        end
+      @@permissions = {'*' => get_full_access_users}
+      permissions.each do |repo_loc, users|
+        @@permissions[repo_loc] = users
       end
     end
 

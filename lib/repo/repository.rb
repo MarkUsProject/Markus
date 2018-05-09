@@ -208,6 +208,7 @@ module Repository
     # makes some update to the database and calls self.get_all_permissions
     # while this thread is still processing self.get_all_permissions
     def self.update_permissions
+      return unless MarkusConfigurator.markus_config_repository_admin?
       Thread.current[:requested?] = true
       unless Thread.current[:permissions_lock].nil?
         # abort if this is being called in a block passed to
@@ -274,10 +275,10 @@ module Repository
       permissions
     end
 
-    # checks to make sure the location is not '*' which is
-    # reserved to indicate all repos when setting permissions
-    def self.valid_location?(location)
-      location != '*'
+    # '*' which is reserved to indicate all repos when setting permissions
+    # TODO: add to this if needed
+    def self.reserved_locations
+      ['*']
     end
 
     # Generate and write the the authorization file for all repos.
