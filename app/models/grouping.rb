@@ -643,9 +643,6 @@ class Grouping < ApplicationRecord
     else
       true
     end
-    #TODO modify get_revision_by_timestamp so that it can stop at a certain timestamp (memory)
-    #TODO modify get_revision_by_timestamp calls to return nil (memory)
-    #TODO modify submission.revision_identifier calls to allow for nil
   end
 
   def self.get_groupings_for_assignment(assignment, user)
