@@ -619,9 +619,7 @@ class Grouping < ApplicationRecord
     missing_assignment_files = assignment.assignment_files.reject do |assignment_file|
       revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
     end
-    unless repo.nil?
-      repo.close
-    end
+    repo&.close
     missing_assignment_files
   end
 
@@ -802,9 +800,8 @@ class Grouping < ApplicationRecord
   end
 
   def create_test_script_result(file_name, requested_by, submission=nil, time=0)
-    revision_identifier = nil
     if submission.nil?
-      group.access_repo { |repo| revision_identifier = repo.get_latest_revision.revision_identifier }
+      revision_identifier = group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
     else
       revision_identifier = submission.revision_identifier
     end

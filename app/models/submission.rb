@@ -37,20 +37,18 @@ class Submission < ApplicationRecord
      unless timestamp.kind_of? Time
        raise 'Expected a timestamp of type Time'
      end
-     submission = nil
-     grouping.group.access_repo do |repo|
+     submission = grouping.group.access_repo do |repo|
        path = grouping.assignment.repository_folder
        revision = repo.get_revision_by_timestamp(timestamp, path)
-       submission = generate_new_submission(grouping, revision)
+       generate_new_submission(grouping, revision)
      end
      submission
   end
 
   def self.create_by_revision_identifier(grouping, revision_identifier)
-    submission = nil
-    grouping.group.access_repo do |repo|
+    submission = grouping.group.access_repo do |repo|
       revision = repo.get_revision(revision_identifier)
-      submission = generate_new_submission(grouping, revision)
+      generate_new_submission(grouping, revision)
     end
     submission
   end

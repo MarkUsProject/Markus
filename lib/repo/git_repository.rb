@@ -159,9 +159,7 @@ module Repository
       push_info = nil
       reflog.each_with_index do |reflog_entry, i|
         push_time = reflog_entry[:committer][:time]
-        if !later_than.nil? && push_time <= later_than.in_time_zone
-          return nil
-        end
+        return nil if !later_than.nil? && push_time <= later_than.in_time_zone
         if push_time <= at_or_earlier_than.in_time_zone
           push_info = OpenStruct.new
           push_info.sha = reflog_entry[:id_new]
@@ -170,28 +168,25 @@ module Repository
           break
         end
       end
+      return nil if push_info.nil?
+      # find first commit that changes path, topologically equal or before the tip of the push
       walker = Rugged::Walker.new(@repos)
-      unless push_info.nil?
-        # find first commit that changes path, topologically equal or before the tip of the push
-        walker.sorting(Rugged::SORT_TOPO)
-        walker.push(push_info.sha)
-        walker.each do |commit|
-          if reflog.length > push_info.index + 1 # walk the reflog while walking commits
-            next_reflog_entry = reflog[push_info.index + 1]
-            if commit.oid == next_reflog_entry[:id_new]
-              push_info.sha = next_reflog_entry[:id_new]
-              push_info.time = next_reflog_entry[:committer][:time]
-              push_info.index += 1
-              if !later_than.nil? && push_info.time <= later_than.in_time_zone
-                return nil
-              end
-            end
+      walker.sorting(Rugged::SORT_TOPO)
+      walker.push(push_info.sha)
+      walker.each do |commit|
+        if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+          next_reflog_entry = reflog[push_info.index + 1]
+          if commit.oid == next_reflog_entry[:id_new]
+            push_info.sha = next_reflog_entry[:id_new]
+            push_info.time = next_reflog_entry[:committer][:time]
+            push_info.index += 1
+            return nil if !later_than.nil? && push_info.time <= later_than.in_time_zone
           end
-          revision = get_revision(commit.oid)
-          if path.nil? || revision.changes_at_path?(path)
-            revision.server_timestamp = push_info.time
-            return revision
-          end
+        end
+        revision = get_revision(commit.oid)
+        if path.nil? || revision.changes_at_path?(path)
+          revision.server_timestamp = push_info.time
+          return revision
         end
       end
       # no revision found

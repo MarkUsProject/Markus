@@ -245,7 +245,7 @@ module Repository
     #    target_timestamp
     # should be a Ruby Time instance
     def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
-      unless at_or_earlier_than.kind_of?(Time)
+      unless at_or_earlier_than.is_a?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       at_or_earlier_than = at_or_earlier_than.utc
@@ -792,7 +792,7 @@ module Repository
     # Assumes timestamp is a Time object (which is part of the Ruby
     # standard library)
     def get_revision_number_by_timestamp(target_timestamp)
-      unless target_timestamp.kind_of?(Time)
+      unless target_timestamp.is_a?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       @repos.dated_revision(target_timestamp)

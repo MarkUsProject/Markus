@@ -193,17 +193,14 @@ module Repository
 
     # Return a RepositoryRevision for a given timestamp
     def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
-      unless at_or_earlier_than.kind_of?(Time)
+      unless at_or_earlier_than.is_a?(Time)
         raise "Was expecting a timestamp of type Time"
       end
 
       (@revision_history + [@current_revision]).reverse_each do |revision|
-        if !later_than.nil? && revision.server_timestamp <= later_than
-          return nil
-        end
-        if revision.server_timestamp <= at_or_earlier_than && (path.nil? || revision.revision_at_path(path))
-          return revision
-        end
+        return nil if !later_than.nil? && revision.server_timestamp <= later_than
+        return revision if revision.server_timestamp <= at_or_earlier_than &&
+                           (path.nil? || revision.revision_at_path(path))
       end
       nil
     end
