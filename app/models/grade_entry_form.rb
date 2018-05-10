@@ -34,10 +34,6 @@ class GradeEntryForm < ApplicationRecord
 
   # Constants
   BLANK_MARK = ''
-  MESSAGE_PLACEHOLDER = 'Please enter a message that you would like to '\
-    'have displayed to the students. Note it is displayed regardless of '\
-    'marks being released.'
-  MESSAGE_PLACEHOLDER.freeze
 
   # The total number of marks for this grade entry form
   def out_of_total
