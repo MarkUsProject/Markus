@@ -1,6 +1,10 @@
 <%# Grades page for students %>
 <% content_for :title, t('grade_entry_forms.grades.student_title') + ' ' + @grade_entry_form.short_identifier %>
 
+<% if !@grade_entry_form.message.empty? %>
+  <div class='marks-message'><%= "#{@grade_entry_form.message}" %></div>
+<% end %>
+
 <% if @grade_entry_form.grade_entry_items.empty? %>
   <p><%= t('grade_entry_forms.students.no_results') %></p>
 <% elsif @grade_entry_student.nil? || !@grade_entry_student.released_to_student %>

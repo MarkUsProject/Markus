@@ -602,6 +602,10 @@ en:
         marking_state: "State"
         download: "Download Grades"
       is_hidden: "Hide Spreadsheet"
+      message_placeholder: >-
+        Please enter a message that you would like to
+        have displayed to the students. Note it is displayed regardless of
+        marks being released.
 
       students:
         title: "Your Mark Spreadsheets"

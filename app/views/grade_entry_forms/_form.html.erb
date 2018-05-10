@@ -38,7 +38,11 @@
 
       <div>
         <%= f.label :message %>
-        <%= f.text_area :message, rows: 8, cols: 65 %>
+        <%= f.text_area :message,
+                        rows: 8,
+                        cols: 65,
+                        placeholder:
+                          t('grade_entry_forms.message_placeholder') %>
       </div>
 
       <div>

@@ -32,6 +32,7 @@ class GradeEntryForm < ApplicationRecord
   # Set the default order of spreadsheets: in ascending order of id
   default_scope { order('id ASC') }
 
+  # Constants
   BLANK_MARK = ''
 
   # The total number of marks for this grade entry form
