@@ -704,7 +704,7 @@ class Grouping < ApplicationRecord
   # Helper for populate_submissions_table.
   # Returns a formatted time string for the last commit time for this grouping.
   def last_commit_date
-    if has_submission?
+    if !current_submission_used&.revision_timestamp.nil?
       I18n.l(current_submission_used.revision_timestamp)
     else
       '-'

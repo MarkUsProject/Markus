@@ -32,7 +32,6 @@ class TestScriptResult < ApplicationRecord
   validates_presence_of :test_script
   validates_presence_of :marks_earned
   validates_presence_of :marks_total
-  validates_presence_of :repo_revision
 
   validates_numericality_of :marks_earned, greater_than_or_equal_to: 0
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
