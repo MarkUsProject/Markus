@@ -639,16 +639,20 @@ class SubmissionsController < ApplicationController
     full_path = File.join(repo_folder, params[:path] || '/')
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
     @grouping.group.access_repo do |repo|
-      @revision = if revision_identifier.nil?
-                    repo.get_latest_revision
-                  else
-                    repo.get_revision(revision_identifier)
-                  end
-      zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@grouping.group.group_name}_r#{@revision.revision_identifier}.zip"
+      begin
+        if revision_identifier.nil?
+          @revision = repo.get_latest_revision
+        else
+          @revision = repo.get_revision(revision_identifier)
+        end
+      rescue Repository::RevisionDoesNotExist
+        render text: t('student.submission.no_revision_available')
+        return true
+      end
 
+      zip_path = "tmp/#{@assignment.short_identifier}_#{@grouping.group.group_name}_"\
+                 "#{@revision.revision_identifier}.zip"
       no_files = false
-
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 

@@ -473,7 +473,7 @@ describe SubmissionsController do
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
       zip_path = "tmp/#{@assignment.short_identifier}_" +
-                 "#{@grouping.group.group_name}_r#{@grouping.group.repo
+                 "#{@grouping.group.group_name}_#{@grouping.group.repo
                      .get_latest_revision.revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.repository_folder}-" +

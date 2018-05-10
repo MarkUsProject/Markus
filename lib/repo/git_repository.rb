@@ -607,10 +607,14 @@ module Repository
 
     # Constructor; checks if +revision_hash+ is actually present in +repo+.
     def initialize(revision_hash, repo)
+      @repo = repo.get_repos
+      begin
+        @commit = @repo.lookup(revision_hash)
+      rescue Rugged::OdbError
+        raise RevisionDoesNotExist
+      end
       super(revision_hash)
       @revision_identifier_ui = @revision_identifier[0..6]
-      @repo = repo.get_repos
-      @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
       @timestamp = @commit.time.in_time_zone
       @server_timestamp = @timestamp

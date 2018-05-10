@@ -27,7 +27,7 @@ module Repository
 
       # variables
       @users = {}                                 # hash of users (key) with corresponding permissions (value)
-      @current_revision = MemoryRevision.new(0)   # the latest revision (we start from 0)
+      @current_revision = MemoryRevision.new(1)   # the latest revision (we start from 1)
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
       @repository_location = location
       @closed = false
@@ -145,11 +145,11 @@ module Repository
       timestamp = Time.current
       new_rev.timestamp = timestamp
       new_rev.server_timestamp = timestamp
+      new_rev.__increment_revision_number
       @revision_history.push(@current_revision)
       @current_revision = new_rev
-      @current_revision.__increment_revision_number() # increment revision number
       @@repositories[@repository_location] = self
-      return true
+      true
     end
 
     def self.__set_all_permissions
