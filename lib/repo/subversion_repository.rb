@@ -1014,13 +1014,17 @@ module Repository
     end
 
     def changes_at_path?(path)
-      !files_at_path_helper(path, true).empty?
+      !changed_filenames_at_path(path).empty?
+      # TODO: This does not take into account the creation of the empty assignment directory
     end
 
     # Return the names of changed files at this revision at 'path'
     def changed_filenames_at_path(path)
+      unless path.start_with?(File::SEPARATOR) # transform from relative to absolute
+        path = "#{File::SEPARATOR}#{path}"
+      end
       paths = @repo.__get_file_paths(@revision_identifier)
-      paths.select { |p| p.start_with? ('/' + path) }
+      paths.select { |p| p.start_with?(path) }
     end
 
     private
