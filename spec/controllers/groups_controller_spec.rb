@@ -177,9 +177,9 @@ describe GroupsController do
           File.read(fixture_file_upload(
                       'files/wrong_csv_format.xls', 'text/csv')))
 
-        # Setup for SubversionRepository
+        # Setup for Git Repository
         allow(MarkusConfigurator)
-          .to receive(:markus_config_repository_type).and_return('svn')
+          .to receive(:markus_config_repository_type).and_return('git')
 
         @assignment = create(:assignment,
                              allow_web_submits: true,

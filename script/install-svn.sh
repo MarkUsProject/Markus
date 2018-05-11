@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This file is currently not used but should be kept to install
+# svn on travis in case we want to test interactions with svn
+# in the future.
+
 SVN_BASE=subversion-1.9.7
 MIRROR_PRIMARY=http://www-us.apache.org/dist/subversion
 MIRROR_SECONDARY=http://www-eu.apache.org/dist/subversion

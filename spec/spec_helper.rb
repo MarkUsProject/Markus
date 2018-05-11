@@ -6,7 +6,7 @@ require 'pundit/rspec'
 # Loads lib repo stuff.
 require 'repo/repository'
 require 'repo/git_repository'
-require 'repo/subversion_repository'
+# require 'repo/subversion_repository'
 require 'database_cleaner'
 require 'time-warp'
 
