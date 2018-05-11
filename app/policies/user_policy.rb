@@ -1,9 +1,9 @@
-class UserPolicy < ApplicationPolicy
-  def create?
+class UserPolicy < ActionPolicy::Base
+  def manage? # this is the default rule
     user.admin?
   end
 
-  def update?
-    user.admin?
+  def destroy?
+    false
   end
 end

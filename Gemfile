@@ -32,7 +32,7 @@ gem 'resque'
 gem 'redis-rails'
 
 # Authorization
-gem 'pundit'
+gem 'action_policy'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'

@@ -9,6 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    action_policy (0.2.4)
     actioncable (5.2.1)
       actionpack (= 5.2.1)
       nio4r (~> 2.0)
@@ -159,8 +160,6 @@ GEM
     prawn-qrcode (0.3.0)
       prawn (>= 1)
       rqrcode (>= 0.4.1)
-    pundit (2.0.0)
-      activesupport (>= 3.0.0)
     rack (2.0.6)
     rack-protection (2.0.3)
       rack
@@ -350,6 +349,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action_policy
   activejob-status!
   activerecord-import
   activerecord-session_store
@@ -383,7 +383,6 @@ DEPENDENCIES
   pluck_to_hash
   prawn
   prawn-qrcode
-  pundit
   railroady
   rails
   rails-controller-testing
@@ -417,4 +416,4 @@ DEPENDENCIES
   zxing_cpp
 
 BUNDLED WITH
-   1.16.5
+   1.17.1

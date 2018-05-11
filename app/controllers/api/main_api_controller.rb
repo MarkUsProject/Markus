@@ -4,14 +4,12 @@ module Api
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
-    include Pundit
+    include ActionPolicy::Controller
 
-    attr_reader :current_user
+    authorize :current_user, as: :user
+    rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
     before_action :check_format, :authenticate
-
-    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
     skip_before_action :verify_authenticity_token
 
     # Unless overridden by a subclass, all routes are 404's by default
