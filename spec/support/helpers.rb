@@ -29,7 +29,7 @@ module Helpers
     # either passes or the time expires
     begin
       yield
-    rescue Exception => e
+    rescue => e
       if time <= 0
         raise e
       else

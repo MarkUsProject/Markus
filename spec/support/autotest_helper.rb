@@ -1,4 +1,3 @@
-
 module AutotestHelper
 
   def setup_autotest_environment(test_name, n_test_scripts: 1)
@@ -21,7 +20,7 @@ module AutotestHelper
     # copy test script files into the destination directory
     test_file_destination = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.repository_folder)
     FileUtils.makedirs test_file_destination
-    n = "00"
+    n = '00'
     n_test_scripts.times do
       test_file_name = "autotest_#{n.next!}.sh"
       test_file_path = File.join(test_file_destination, test_file_name)
@@ -46,11 +45,13 @@ module AutotestHelper
       file = nil
     end
 
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, grouping.group.repo_name, assignment.repository_folder)
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR,
+                         grouping.group.repo_name,
+                         assignment.repository_folder)
     FileUtils.makedirs(repo_dir)
     autotest_submission_file = File.join(repo_dir, filename)
     unless file.nil?
-      File.open(autotest_submission_file, 'w') {|f| f.write(file.read)}
+      File.open(autotest_submission_file, 'w') { |f| f.write(file.read) }
     end
 
     # collect submission
@@ -60,8 +61,8 @@ module AutotestHelper
     [assignment, submission, result, grouping]
   end
 
-  def run_autotests(test_names, current_user, test_server_user, global_timeout=10)
-    raise "minimum global timeout is 2 seconds" unless global_timeout > 2
+  def run_autotests(test_names, current_user, test_server_user, global_timeout: 10)
+    raise 'minimum global timeout is 2 seconds' unless global_timeout > 2
     expected = {}
     finished = []
     test_names.each do |test_name|
@@ -70,7 +71,7 @@ module AutotestHelper
       AutotestRunJob.perform_now(*args)
       expected[test_name] = grouping_id
     end
-    interval = [ (global_timeout/10.0).floor, 2 ].max
+    interval = [ (global_timeout / 10.0).floor, 2 ].max
     begin
       wait global_timeout, interval do
         finished = TestScriptResult.where(grouping_id: expected.values).select(:grouping_id).distinct
