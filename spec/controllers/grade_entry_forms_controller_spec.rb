@@ -61,7 +61,7 @@ describe GradeEntryFormsController do
     end
 
     xit 'does not accept csv file with an invalid username' do
-      # TODO: currently pending: itermitently fails with ActiveRecord::RecordNotUnique error
+      # TODO: currently pending: intermittently fails with ActiveRecord::RecordNotUnique error
       post :csv_upload,
            id: grade_entry_form_with_data,
            upload: { grades_file: @file_invalid_username }

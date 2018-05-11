@@ -60,15 +60,6 @@ module Repository
 
   class RepositoryCollision < Exception; end
 
-  class InvalidLocation < Exception;
-    def initialize(location)
-      @location = location
-    end
-    def to_s
-      "#{@location} is not a valid repository location"
-    end
-  end
-
   class AbstractRepository
 
     @@permission_thread_mutex = Mutex.new
@@ -167,7 +158,6 @@ module Repository
     end
 
     # Gets a list of users with permission to access the repo.
-    # Returns nil if there aren't any.
     # All permissions are rw for the time being
     def get_users
 
@@ -176,10 +166,7 @@ module Repository
       end
       repo_name = get_repo_name
       permissions = self.get_all_permissions
-      users = permissions[repo_name] + self.get_full_access_users
-
-      return if users.empty?
-      users
+      permissions.fetch(repo_name, []) + self.get_full_access_users
     end
 
     # TODO All permissions are rw for the time being

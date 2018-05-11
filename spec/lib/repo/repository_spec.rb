@@ -20,13 +20,13 @@ describe Repository::AbstractRepository do
           expect(Repository.get_class).to receive(:__update_permissions).once
           threads = []
           2.times { threads << Thread.new { Repository.get_class.update_permissions } }
-          threads.each { |t| t.join }
+          threads.each(&:join)
         end
         it 'when there are multiple concurrent batch updates' do
           expect(Repository.get_class).to receive(:__update_permissions).once
           threads = []
           2.times { threads << Thread.new { Repository.get_class.update_permissions_after {} } }
-          threads.each { |t| t.join }
+          threads.each(&:join)
         end
       end
     end
@@ -46,7 +46,7 @@ describe Repository::AbstractRepository do
     end
     it 'at the end of a batch update if not requested' do
       expect(Repository.get_class).not_to receive(:__update_permissions)
-      Repository.get_class.update_permissions_after(only_on_request: true) { }
+      Repository.get_class.update_permissions_after(only_on_request: true) {}
     end
   end
 end

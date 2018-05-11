@@ -76,15 +76,15 @@ end
 describe StudentMembership do
   context 'does validation' do
     it { is_expected.to validate_presence_of(:membership_status) }
-    it { is_expected.to_not allow_value('blah').for (:membership_status)}
+    it { is_expected.to_not allow_value('blah').for :membership_status }
     it 'should belong to a student' do
-      expect(create :student_membership, user: create(:student)).to be_valid
+      expect(create(:student_membership, user: create(:student))).to be_valid
     end
     it 'should not belong to an admin' do
-      expect{ create :student_membership, user: create(:admin) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { create :student_membership, user: create(:admin) }.to raise_error(ActiveRecord::RecordInvalid)
     end
     it 'should not belong to an ta' do
-      expect{ create :student_membership, user: create(:ta) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { create :student_membership, user: create(:ta) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -94,7 +94,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be true
     end
 
-    update_hash = {create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true}
+    update_hash = { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
     include_examples 'vcs_submit=true', :inviter_student_membership, update_hash
     include_examples 'vcs_submit=false', :inviter_student_membership
   end
@@ -106,7 +106,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    update_hash = {create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true}
+    update_hash = { create: true, destroy: true, inviter: false, accepted: false, pending: true, rejected: true }
     include_examples 'vcs_submit=true', :accepted_student_membership, update_hash
     include_examples 'vcs_submit=false', :accepted_student_membership
   end
@@ -118,7 +118,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    update_hash = {create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false}
+    update_hash = { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
     include_examples 'vcs_submit=true', :student_membership, update_hash
     include_examples 'vcs_submit=false', :student_membership
   end
@@ -130,7 +130,7 @@ describe StudentMembership do
       expect(membership.inviter?).to be false
     end
 
-    update_hash = {create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false}
+    update_hash = { create: false, destroy: false, inviter: true, accepted: true, pending: false, rejected: false }
     include_examples 'vcs_submit=true', :rejected_student_membership, update_hash
     include_examples 'vcs_submit=false', :rejected_student_membership
   end

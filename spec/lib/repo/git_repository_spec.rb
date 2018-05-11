@@ -5,7 +5,7 @@ describe Repository::GitRepository do
 
     before :all do
       @admin = create :admin
-      Repository::GitRepository.send :__update_permissions, {mock_repo: [:student1, :student2]}
+      Repository::GitRepository.send :__update_permissions, { mock_repo: [:student1, :student2] }
     end
 
     after :all do

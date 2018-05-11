@@ -28,11 +28,11 @@ namespace :db do
           grouping.invite(
             [student.user_name],
             StudentMembership::STATUSES[:inviter],
-            invoked_by_admin=true)
+            invoked_by_admin: true)
           grouping.invite(
             [students[time + 15].user_name],
             StudentMembership::STATUSES[:accepted],
-            invoked_by_admin=true)
+            invoked_by_admin: true)
         end
 
         group.access_repo do |repo|

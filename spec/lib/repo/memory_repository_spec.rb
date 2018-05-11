@@ -7,7 +7,7 @@ describe Repository::MemoryRepository do
       @admin = create :admin
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]
-      Repository::MemoryRepository.send :__update_permissions, {@repo_loc => @students}
+      Repository::MemoryRepository.send :__update_permissions, { @repo_loc => @students }
     end
 
     it 'give admins access to all repos' do

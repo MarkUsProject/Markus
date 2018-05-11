@@ -209,9 +209,7 @@ describe GroupsController do
              assignment_id: @assignment.id,
              group: { grouplist: @file_good }
         # remove the generated repo so repeated test runs function properly
-        FileUtils.rm_r(
-          File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
-          force: true)
+        FileUtils.rm_rf File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/')
       end
 
       it 'accepts a valid file' do

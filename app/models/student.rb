@@ -102,7 +102,7 @@ class Student < User
   end
 
   def destroy_all_pending_memberships(aid)
-    # NOTE: no repository permission updates needed since user's with
+    # NOTE: no repository permission updates needed since users with
     #       pending status don't have access to repos anyway
     self.pending_groupings_for(aid).each do |grouping|
       membership = grouping.student_memberships.where(user_id: id).first
