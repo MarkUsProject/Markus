@@ -4,8 +4,8 @@
 This student submission file is used to test the autotester
 It represents the test case where:
 
-  The xml is missing a <name> tag in the first test in the first script
-  which causes the second test to be ignored
+  The xml is missing a <name> tag in the test in the first script
+  which should not affect the test in the second script
 """
 import sys
 import os

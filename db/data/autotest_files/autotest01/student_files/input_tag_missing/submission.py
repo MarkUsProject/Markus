@@ -4,17 +4,17 @@
 This student submission file is used to test the autotester
 It represents the test case where:
 
-  The test (xml) doesn't contain a <name> tag
+  The xml is missing non-necessary tag (<input>)
 """
 
 response = '''
 <test>
-    <input>NA</input>
+    <name>input_tags_missing</name>
     <expected>NA</expected>
-    <actual>no_name_test</actual>
-    <marks_earned>0</marks_earned>
-    <marks_total>0</marks_total>
-    <status>error</status>
+    <actual>NA</actual>
+    <marks_earned>2</marks_earned>
+    <marks_total>2</marks_total>
+    <status>pass</status>
 </test>
 '''
 

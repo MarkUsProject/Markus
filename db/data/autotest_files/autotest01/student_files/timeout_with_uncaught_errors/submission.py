@@ -11,7 +11,7 @@ It represents the test case where:
 import time
 import sys
 
-sys.stderr.write('uncaught_error_test')
+sys.stderr.write('uncaught_error_test\n')
 sys.stderr.flush()
 
 time.sleep(15)
