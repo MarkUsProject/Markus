@@ -1,5 +1,5 @@
 class TasController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action :authorize!, with: UserPolicy
 
   layout 'assignment_content'
 

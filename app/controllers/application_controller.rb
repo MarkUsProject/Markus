@@ -97,4 +97,10 @@ class ApplicationController < ActionController::Base
     end
     flash.discard
   end
+
+  def user_not_authorized
+    render 'shared/http_status',
+           formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+           status: 403, layout: false
+  end
 end

@@ -1,8 +1,10 @@
 class UserPolicy < ActionPolicy::Base
-  def manage? # this is the default rule
+  # Default rule: only admins can manage users.
+  def manage?
     user.admin?
   end
 
+  # No one can delete users.
   def destroy?
     false
   end
