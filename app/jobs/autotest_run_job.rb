@@ -40,7 +40,7 @@ class AutotestRunJob < ApplicationJob
 
     # create empty test results for no submission files
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
-    submission = if submission_id.nil? then nil else Submission.find(submission_id) end
+    submission = submission_id.nil? ? nil : Submission.find(submission_id)
     unless repo_files_available?(assignment, submission, repo_dir)
       requested_by = User.find_by(api_key: user_api_key)
       error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
