@@ -41,12 +41,12 @@
 
     $('.datepicker').datepicker({
       numberOfMonths:   2,
-      dateFormat:       "<%= raw I18n.t('date.formats.old_date') %>",
-      monthNames:       <%= raw I18n.t('date.months') %>,
-      dayNames:         <%= raw I18n.t('date.weekdays') %>,
-      dayNamesMin:      <%= raw I18n.t('date.weekdays_min') %>,
-      prevText:         "<%= I18n.t('time.prev') %>",
-      nextText:         "<%= I18n.t('time.next') %>"
+      dateFormat:       I18n.t('date.format_string.datetimepicker'),
+      monthNames:       I18n.t('date.month_names').slice(1), // Drop first null element
+      dayNames:         I18n.t('date.day_names'),
+      dayNamesMin:      I18n.t('date.abbr_day_names'),
+      prevText:         I18n.t('time.prev'),
+      nextText:         I18n.t('time.next'),
     });
   });
 </script>
