@@ -147,19 +147,20 @@ module Repository
       get_revision(@repos.last_commit.oid)
     end
 
-    # Gets the first revision before +target_timestamp+. If +path+ is not nil, then gets the first revision before
-    # +target_timestamp+ with changes under +path+. The +target_timestamp+ is matched with push dates in the git reflog,
-    # because a commit date can be arbitrarily crafted.
-    def get_revision_by_timestamp(target_timestamp, path = nil)
+    # Gets the first revision +at_or_earlier_than+ some timestamp and +later_than+ some other timestamp (can be nil).
+    # If +path+ is not nil, then gets only a revision with changes under +path+.
+    # Push dates in the git reflog are used to compare timestamps, because a commit date can be arbitrarily crafted.
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
       repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-      # use the git reflog to get a list of pushes, then find first push_time <= target_timestamp
+      # use the git reflog to get a list of pushes: find first push_time <= at_or_earlier_than && > later_than
       bare_repo = Rugged::Repository.new(bare_path)
       reflog = bare_repo.ref('refs/heads/master').log.reverse
       push_info = nil
       reflog.each_with_index do |reflog_entry, i|
         push_time = reflog_entry[:committer][:time]
-        if push_time <= target_timestamp.in_time_zone
+        return nil if !later_than.nil? && push_time <= later_than.in_time_zone
+        if push_time <= at_or_earlier_than.in_time_zone
           push_info = OpenStruct.new
           push_info.sha = reflog_entry[:id_new]
           push_info.time = push_time
@@ -167,33 +168,31 @@ module Repository
           break
         end
       end
+      return nil if push_info.nil?
+      # find first commit that changes path, topologically equal or before the tip of the push
       walker = Rugged::Walker.new(@repos)
-      unless push_info.nil?
-        # find first commit that changes path, topologically equal or before the tip of the push
-        walker.sorting(Rugged::SORT_TOPO)
-        walker.push(push_info.sha)
-        walker.each do |commit|
-          if reflog.length > push_info.index + 1 # walk the reflog while walking commits
-            next_reflog_entry = reflog[push_info.index + 1]
-            if commit.oid == next_reflog_entry[:id_new]
-              push_info.sha = next_reflog_entry[:id_new]
-              push_info.time = next_reflog_entry[:committer][:time]
-              push_info.index += 1
-            end
-          end
-          revision = get_revision(commit.oid)
-          if path.nil? || revision.changes_at_path?(path)
-            revision.server_timestamp = push_info.time
-            return revision
+      walker.sorting(Rugged::SORT_TOPO)
+      walker.push(push_info.sha)
+      walker.each do |commit|
+        if reflog.length > push_info.index + 1 # walk the reflog while walking commits
+          next_reflog_entry = reflog[push_info.index + 1]
+          if commit.oid == next_reflog_entry[:id_new]
+            push_info.sha = next_reflog_entry[:id_new]
+            push_info.time = next_reflog_entry[:committer][:time]
+            push_info.index += 1
+            return nil if !later_than.nil? && push_info.time <= later_than.in_time_zone
           end
         end
+        revision = get_revision(commit.oid)
+        if path.nil? || revision.changes_at_path?(path)
+          revision.server_timestamp = push_info.time
+          return revision
+        end
       end
-
-      # return the first revision as a backup plan
-      walker.reset
-      walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
-      walker.push(@repos.last_commit)
-      get_revision(walker.first.oid)
+      # no revision found
+      nil
+    ensure
+      bare_repo.close
     end
 
     def get_all_revisions
@@ -221,6 +220,8 @@ module Repository
         revision.server_timestamp = push_info.time
         revision
       end
+    ensure
+      bare_repo.close
     end
 
     # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -606,10 +607,14 @@ module Repository
 
     # Constructor; checks if +revision_hash+ is actually present in +repo+.
     def initialize(revision_hash, repo)
+      @repo = repo.get_repos
+      begin
+        @commit = @repo.lookup(revision_hash)
+      rescue Rugged::OdbError
+        raise RevisionDoesNotExist
+      end
       super(revision_hash)
       @revision_identifier_ui = @revision_identifier[0..6]
-      @repo = repo.get_repos
-      @commit = @repo.lookup(@revision_identifier)
       @author = @commit.author[:name]
       @timestamp = @commit.time.in_time_zone
       @server_timestamp = @timestamp

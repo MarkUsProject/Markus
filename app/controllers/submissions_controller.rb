@@ -39,6 +39,7 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @path = params[:path] || File::SEPARATOR
     @collected_revision = nil
+    @revision = nil
     repo = @grouping.group.repo
     collected_submission = @grouping.current_submission_used
 
@@ -47,14 +48,13 @@ class SubmissionsController < ApplicationController
     assignment_revisions = []
     all_revisions = repo.get_all_revisions
     all_revisions.each do |revision|
-      # store the collected revision
-      if @collected_revision.nil? && collected_submission &&
-           collected_submission.revision_identifier == revision.revision_identifier.to_s
-        @collected_revision = revision
-      end
       # store the assignment-relevant revisions
       next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
       assignment_revisions << revision
+      # store the collected revision
+      if @collected_revision.nil? && collected_submission&.revision_identifier == revision.revision_identifier.to_s
+        @collected_revision = revision
+      end
       # store the displayed revision
       if @revision.nil?
         if (params[:revision_identifier] &&
@@ -65,11 +65,12 @@ class SubmissionsController < ApplicationController
         end
       end
     end
-    assignment_revisions = all_revisions if assignment_revisions.empty?
-    @revision = assignment_revisions[0] if @revision.nil? # latest relevant revision
+    # find another relevant revision to display if @revision.nil?
+    # 1) the latest assignment revision, or 2) the first repo revision
+    @revision ||= assignment_revisions[0] || all_revisions[-1]
     @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
                                                                  id_ui: revision.revision_identifier_ui,
-                                                                 date: revision.timestamp} }
+                                                                 date: revision.timestamp } }
 
     respond_to do |format|
       format.html
@@ -93,12 +94,11 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    user_group = @grouping.group
     @path = params[:path] || '/'
 
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
-    set_filebrowser_vars(user_group, @assignment)
+    set_filebrowser_vars(@grouping)
 
     # generate flash messages
     if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
@@ -351,7 +351,7 @@ class SubmissionsController < ApplicationController
       @path = params[:path] || '/'
       @grouping = current_user.accepted_grouping_for(assignment_id)
       unless @grouping.is_valid?
-        set_filebrowser_vars(@grouping.group, @assignment)
+        set_filebrowser_vars(@grouping)
         return
       end
       unless params[:new_files].nil?
@@ -445,7 +445,7 @@ class SubmissionsController < ApplicationController
           # finish transaction
           unless txn.has_jobs?
             flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-            set_filebrowser_vars(@grouping.group, @assignment)
+            set_filebrowser_vars(@grouping)
             return
           end
           if repo.commit(txn)
@@ -463,13 +463,13 @@ class SubmissionsController < ApplicationController
             flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
           end
           # can't use redirect_to here. See comment of this action for details.
-          set_filebrowser_vars(@grouping.group, @assignment)
+          set_filebrowser_vars(@grouping)
 
         rescue  => e
           m_logger = MarkusLogger.instance
           m_logger.log(e.message)
           flash_message(:warning, e.message)
-          set_filebrowser_vars(@grouping.group, @assignment)
+          set_filebrowser_vars(@grouping)
         end
       end
     ensure
@@ -633,27 +633,26 @@ class SubmissionsController < ApplicationController
   ##
   def downloads
     revision_identifier = params[:revision_identifier]
-    if revision_identifier && revision_identifier == '0'
-      render text: t('student.submission.no_revision_available')
-      return
-    end
-
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = find_appropriate_grouping(@assignment.id, params)
     repo_folder = @assignment.repository_folder
     full_path = File.join(repo_folder, params[:path] || '/')
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
     @grouping.group.access_repo do |repo|
-      @revision = if revision_identifier.nil?
-                    repo.get_latest_revision
-                  else
-                    repo.get_revision(revision_identifier)
-                  end
-      zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@grouping.group.group_name}_r#{@revision.revision_identifier}.zip"
+      begin
+        if revision_identifier.nil?
+          @revision = repo.get_latest_revision
+        else
+          @revision = repo.get_revision(revision_identifier)
+        end
+      rescue Repository::RevisionDoesNotExist
+        render text: t('student.submission.no_revision_available')
+        return
+      end
 
+      zip_path = "tmp/#{@assignment.short_identifier}_#{@grouping.group.group_name}_"\
+                 "#{@revision.revision_identifier}.zip"
       no_files = false
-
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
 
@@ -789,18 +788,11 @@ class SubmissionsController < ApplicationController
   private
 
   # Used in update_files and file_manager actions
-  def set_filebrowser_vars(user_group, assignment)
-    user_group.access_repo do |repo|
+  def set_filebrowser_vars(grouping)
+    grouping.group.access_repo do |repo|
       @revision = repo.get_latest_revision
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder,
-                                                 @path))
-      @missing_assignment_files = []
-      assignment.assignment_files.each do |assignment_file|
-        unless @revision.path_exists?(File.join(assignment.repository_folder,
-                                                assignment_file.filename))
-          @missing_assignment_files.push(assignment_file)
-        end
-      end
+      @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
+      @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
 end

@@ -31,16 +31,17 @@
       <h2><%= t('submissions') %></h2>
 
       <div class='block_content'>
-        <% if !@grouping.nil? %>
-          <% if !@grouping.is_valid? %>
+        <% if @grouping.nil? %>
+          <p class='notice'><%= t('student.no_submission_yet') %></p>
+        <% else %>
+          <% unless @grouping.is_valid? %>
             <p class='notice'>
               <%= t('student.group_not_valid') %>
             </p>
           <% end %>
           <h3><%= t('student.overview') %></h3>
           <div class='info'>
-            <%= raw(t('student.last_revision_date',
-                      last_modified_date: l(@last_modified_date))) %>
+            <%= raw(t('student.last_revision_date', last_modified_date: l(@last_modified_date))) %>
           </div>
           <span class='info_number'>
             <%= @num_submitted_files.to_s %>
@@ -51,8 +52,6 @@
                      missing_files: @num_missing_assignment_files.to_s,
                      style_class: ('red' unless @num_missing_assignment_files == 0))) %>
           <br>
-        <% else %>
-          <p class='notice'><%= t('student.no_submission_yet') %></p>
         <% end %>
       </div>
     </div>

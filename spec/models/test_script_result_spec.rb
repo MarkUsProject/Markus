@@ -7,7 +7,6 @@ describe TestScriptResult do
   it { is_expected.to validate_presence_of(:test_script) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
-  it { is_expected.to validate_presence_of(:repo_revision) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
 

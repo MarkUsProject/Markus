@@ -25,9 +25,9 @@ module Repository
   end
 
   # Exceptions for repositories
-  class ConnectionError < Exception; end
+  class ConnectionError < StandardError; end
 
-  class Conflict < Exception
+  class Conflict < StandardError
     attr_reader :path
     def initialize(path)
       super()
@@ -56,9 +56,9 @@ module Repository
     end
   end
 
-  class ExportRepositoryAlreadyExists < Exception;  end
+  class ExportRepositoryAlreadyExists < StandardError; end
 
-  class RepositoryCollision < Exception; end
+  class RepositoryCollision < StandardError; end
 
   class AbstractRepository
 
@@ -145,7 +145,7 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp, path = nil)
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
@@ -241,7 +241,7 @@ module Repository
 
 
   # Exceptions for Revisions
-  class RevisionDoesNotExist < Exception; end
+  class RevisionDoesNotExist < StandardError; end
   class RevisionOutOfSyncConflict < Conflict; end
 
   class AbstractRevision
@@ -276,16 +276,16 @@ module Repository
   end
 
   # Exceptions for Files
-  class FileOutOfDate < Exception; end
-  class FileDoesNotExist < Exception; end
+  class FileOutOfDate < StandardError; end
+  class FileDoesNotExist < StandardError; end
 
   # Exceptions for repo user management
-  class UserNotFound < Exception; end
-  class UserAlreadyExistent < Exception; end
+  class UserNotFound < StandardError; end
+  class UserAlreadyExistent < StandardError; end
   # raised when trying to modify permissions and repo is not in authoritative mode
-  class NotAuthorityError < Exception; end
+  class NotAuthorityError < StandardError; end
   # raised when configuration is wrong
-  class ConfigurationError < Exception; end
+  class ConfigurationError < StandardError; end
 
 
   #################################################

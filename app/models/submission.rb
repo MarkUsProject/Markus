@@ -37,38 +37,40 @@ class Submission < ApplicationRecord
      unless timestamp.kind_of? Time
        raise 'Expected a timestamp of type Time'
      end
-     repo = grouping.group.repo
-     path = grouping.assignment.repository_folder
-     revision = repo.get_revision_by_timestamp(timestamp, path)
-     submission = self.generate_new_submission(grouping, revision)
-     repo.close
+     submission = grouping.group.access_repo do |repo|
+       path = grouping.assignment.repository_folder
+       revision = repo.get_revision_by_timestamp(timestamp, path)
+       generate_new_submission(grouping, revision)
+     end
      submission
   end
 
   def self.create_by_revision_identifier(grouping, revision_identifier)
-    repo = grouping.group.repo
-    revision = repo.get_revision(revision_identifier)
-    submission = self.generate_new_submission(grouping, revision)
-    repo.close
+    submission = grouping.group.access_repo do |repo|
+      revision = repo.get_revision(revision_identifier)
+      generate_new_submission(grouping, revision)
+    end
     submission
   end
 
   def self.generate_new_submission(grouping, revision)
-    new_submission = Submission.new
-    new_submission.grouping = grouping
-    new_submission.submission_version = 1
-    new_submission.submission_version_used = true
-    new_submission.revision_timestamp = revision.server_timestamp
-    new_submission.revision_identifier = revision.revision_identifier
-    new_submission.transaction do
-      begin
-        new_submission.populate_with_submission_files(revision)
-      rescue Repository::FileDoesNotExist
-        # populate the submission with no files instead of raising an exception
+    Submission.transaction do
+      new_submission = Submission.new
+      new_submission.grouping = grouping
+      new_submission.submission_version = 1
+      new_submission.submission_version_used = true
+      new_submission.revision_timestamp = revision&.server_timestamp
+      new_submission.revision_identifier = revision&.revision_identifier
+      unless revision.nil?
+        begin
+          new_submission.populate_with_submission_files(revision)
+        rescue Repository::FileDoesNotExist
+          # populate the submission with no files instead of raising an exception
+        end
       end
-      new_submission.save
+      new_submission.save!
+      new_submission
     end
-    new_submission
   end
 
   # Returns the original result.
