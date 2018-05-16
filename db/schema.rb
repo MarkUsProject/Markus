@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180430184545) do
+ActiveRecord::Schema.define(version: 20180516181356) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -545,18 +545,38 @@ ActiveRecord::Schema.define(version: 20180430184545) do
 
   add_index "template_divisions", ["exam_template_id"], name: "index_template_divisions_on_exam_template_id", using: :btree
 
+  create_table "test_batches", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "test_results", force: :cascade do |t|
     t.integer  "test_script_result_id"
     t.string   "name"
-    t.string   "completion_status",                   null: false
-    t.float    "marks_earned",          default: 0.0, null: false
-    t.text     "input",                 default: "",  null: false
-    t.text     "actual_output",         default: "",  null: false
-    t.text     "expected_output",       default: "",  null: false
+    t.string   "completion_status",                             null: false
+    t.float    "marks_earned",                    default: 0.0, null: false
+    t.text     "input",                           default: "",  null: false
+    t.text     "actual_output",                   default: "",  null: false
+    t.text     "expected_output",                 default: "",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "marks_total",           default: 0.0, null: false
+    t.float    "marks_total",                     default: 0.0, null: false
+    t.integer  "time",                  limit: 8
   end
+
+  create_table "test_runs", force: :cascade do |t|
+    t.integer  "queue_len"
+    t.integer  "avg_pop_interval", limit: 8
+    t.integer  "test_batch_id"
+    t.integer  "grouping_id",                null: false
+    t.integer  "user_id",                    null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "test_runs", ["grouping_id"], name: "index_test_runs_on_grouping_id", using: :btree
+  add_index "test_runs", ["test_batch_id"], name: "index_test_runs_on_test_batch_id", using: :btree
+  add_index "test_runs", ["user_id"], name: "index_test_runs_on_user_id", using: :btree
 
   create_table "test_script_results", force: :cascade do |t|
     t.integer  "grouping_id"
@@ -569,9 +589,12 @@ ActiveRecord::Schema.define(version: 20180430184545) do
     t.integer  "requested_by_id"
     t.integer  "time",            limit: 8,               null: false
     t.float    "marks_total",               default: 0.0, null: false
+    t.integer  "test_run_id",                             null: false
+    t.text     "stderr"
   end
 
   add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree
+  add_index "test_script_results", ["test_run_id"], name: "index_test_script_results_on_test_run_id", using: :btree
 
   create_table "test_scripts", force: :cascade do |t|
     t.integer "assignment_id",           null: false
@@ -656,6 +679,10 @@ ActiveRecord::Schema.define(version: 20180430184545) do
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
+  add_foreign_key "test_runs", "groupings"
+  add_foreign_key "test_runs", "test_batches"
+  add_foreign_key "test_runs", "users"
+  add_foreign_key "test_script_results", "test_runs"
   add_foreign_key "test_script_results", "users", column: "requested_by_id"
   add_foreign_key "tokens", "groupings"
 end
