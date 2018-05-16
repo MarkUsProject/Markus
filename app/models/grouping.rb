@@ -49,6 +49,7 @@ class Grouping < ApplicationRecord
 
   has_one :token
 
+  has_many :test_runs, dependent: :destroy
   has_many :test_script_results,
            -> { order 'created_at DESC' },
            dependent: :destroy

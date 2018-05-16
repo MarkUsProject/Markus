@@ -18,22 +18,20 @@
 #############################################################
 
 class TestResult < ApplicationRecord
-  belongs_to :test_script_result
-  validates_presence_of :test_script_result
+  belongs_to :test_script_result, required: true
 
   validates_presence_of :name
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
   validates_presence_of :marks_total
-
+  # input, actual_output and expected_output could be empty in some situations
+  validates_presence_of :input, if: "input.nil?"
+  validates_presence_of :actual_output, if: "actual_output.nil?"
+  validates_presence_of :expected_output, if: "expected_output.nil?"
   validates_inclusion_of :completion_status,
                          in: %w(pass partial fail error),
                          message: "%{value} is not a valid status"
   validates_numericality_of :marks_earned, greater_than_or_equal_to: 0
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
-
-  # input, actual_output and expected_output could be empty in some situations
-  validates_presence_of :input, if: "input.nil?"
-  validates_presence_of :actual_output, if: "actual_output.nil?"
-  validates_presence_of :expected_output, if: "expected_output.nil?"
+  validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
 end
