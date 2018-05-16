@@ -19,6 +19,11 @@
         <td><%= raw(f.label(:user_name, I18n.t('user.first_name'))) %>:</td>
         <td><%= raw(f.text_field :first_name) %></td>
       </tr>
+
+      <tr>
+        <td><%= raw(f.label(:email, I18n.t('user.email'))) %>:</td>
+        <td><%= raw(f.text_field :email) %></td>
+      </tr>
     </table>
 
     <%= f.hidden_field :id %>
