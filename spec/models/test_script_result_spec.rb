@@ -20,7 +20,7 @@ describe TestScriptResult do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
-      @user = create(:user)
+      @user = create(:admin)
       @test_script = TestScript.create(
         assignment_id: @asst.id,
         seq_num: 1,
