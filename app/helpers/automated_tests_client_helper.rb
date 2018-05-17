@@ -112,50 +112,11 @@ module AutomatedTestsClientHelper
     files
   end
 
-  # Export group repository for testing. Students' submitted files
-  # are stored in the group repository. They must be exported
-  # before copying to the test server.
-  def self.export_group_repo(group, repo_dir, assignment, submission = nil)
-
-    # Create the automated test repository
-    unless File.exist?(STUDENTS_DIR)
-      FileUtils.mkdir_p(STUDENTS_DIR)
-    end
-    # Delete student's assignment repository if it already exists
-    # TODO clean up in client worker, or try to optimize if revision is the same?
-    if File.exist?(repo_dir)
-      FileUtils.rm_rf(repo_dir)
-    end
-    # Export the correct repo revision
-    if submission.nil?
-      group.repo.export(repo_dir)
-    else
-      FileUtils.mkdir(repo_dir)
-      unless assignment.only_required_files.blank?
-        required_files = assignment.assignment_files.map(&:filename).to_set
-      end
-      submission.submission_files.each do |file|
-        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
-        unless required_files.nil? || required_files.include?(file_path)
-          # do not export non-required files, if only required files are allowed
-          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-          next
-        end
-        file_content = file.retrieve_file
-        FileUtils.mkdir_p(File.join(repo_dir, file.path))
-        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-          f.write(file_content)
-        end
-      end
-    end
-  end
-
   def self.get_test_server_user
     test_server_host = MarkusConfigurator.autotest_server_host
     test_server_user = User.find_by(user_name: test_server_host)
     if test_server_user.nil? || !test_server_user.test_server?
-      raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
+      raise I18n.t('automated_tests.error.no_test_server_user', { hostname: test_server_host })
     end
     test_server_user.set_api_key
 
@@ -227,7 +188,11 @@ module AutomatedTestsClientHelper
     test_scripts
   end
 
-  def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
+  def self.request_a_test_run(host_with_port, current_user, test_runs)
+
+    grouping_id = test_runs[0][:grouping_id]
+    submission_id = test_runs[0][:submission_id]
+    #TODO everything here is just authorization stuff to be extracted in policies
 
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
@@ -240,12 +205,7 @@ module AutomatedTestsClientHelper
 
     # if current_user is an instructor, then a submission exists and we use that repo revision
     # if current_user is a student, then we use the latest repo revision
-    group = grouping.group
-    repo_dir = File.join(STUDENTS_DIR, group.repo_name)
-    submission = submission_id.nil? ? nil : Submission.find(submission_id)
-    export_group_repo(group, repo_dir, assignment, submission)
-    AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key,
-                                 grouping_id, submission_id)
+    AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key, test_runs)
   end
 
 end

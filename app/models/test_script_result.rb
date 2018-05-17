@@ -34,7 +34,7 @@ class TestScriptResult < ApplicationRecord
   validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true
 
   def create_test_result(name, input, actual, expected, marks_earned, marks_total, status)
-    self.test_results.create(
+    test_results.create(
       name: name,
       input: CGI.unescapeHTML(input),
       actual_output: CGI.unescapeHTML(actual),
@@ -52,7 +52,7 @@ class TestScriptResult < ApplicationRecord
     test_name = xml_test['name']
     if test_name.nil?
       create_test_error_result(I18n.t('automated_tests.test_result.unknown_test'),
-                               I18n.t('automated_tests.test_result.bad_results', {xml: xml_test}))
+                               I18n.t('automated_tests.test_result.bad_results', { xml: xml_test }))
       raise 'Malformed xml'
     end
 
@@ -84,7 +84,7 @@ class TestScriptResult < ApplicationRecord
       marks_total = xml_test['marks_total'].to_f
     end
     if status.nil? || !status.in?(%w(pass partial fail error))
-      actual = I18n.t('automated_tests.test_result.bad_status', {status: status}) unless stop_processing
+      actual = I18n.t('automated_tests.test_result.bad_status', { status: status }) unless stop_processing
       status = 'error'
       marks_earned = 0.0
     end

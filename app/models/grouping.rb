@@ -762,34 +762,24 @@ class Grouping < ApplicationRecord
     self.token
   end
 
-  def create_test_script_result(file_name, requested_by, submission=nil, time=0)
-    if submission.nil?
-      revision_identifier = group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-    else
-      revision_identifier = submission.revision_identifier
-    end
-    test_script = TestScript.find_by(assignment_id: self.assignment.id, file_name: file_name)
-
-    self.test_script_results.create(
-      test_script_id: test_script.id,
-      submission_id: submission&.id,
+  def create_test_script_result(test_run, test_script_name)
+    test_script = TestScript.find_by(assignment_id: assignment.id, file_name: test_script_name)
+    test_script_results.create(
+      test_script: test_script,
+      test_run: test_run,
       marks_earned: 0.0,
       marks_total: 0.0,
-      repo_revision: revision_identifier,
-      requested_by_id: requested_by.id,
       time: time)
   end
 
-  def create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
-    test_scripts.each do |file_name|
-      test_script_result = create_test_script_result(file_name, requested_by, submission)
+  def create_all_test_scripts_error_result(test_run, test_scripts, errors)
+    test_scripts.each do |test_script|
+      test_script_result = create_test_script_result(test_run, test_script)
       errors.each do |error|
-        test_script_result.create_test_error_result(error.name, error.message)
+        test_script_result.create_test_error_result(error[:name], error[:message])
       end
     end
-    unless submission.nil?
-      submission.set_marks_for_tests
-    end
+    test_run.submission&.set_marks_for_tests
   end
 
   def create_test_script_result_from_xml(xml_test_script, requested_by, submission=nil)
@@ -838,10 +828,10 @@ class Grouping < ApplicationRecord
       xml_root = Hash.from_xml(stdout)
     rescue => e
       errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))]
+                               message: I18n.t('automated_tests.test_result.bad_results', { xml: e.message }))]
       unless stderr.blank?
         errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', {errors: stderr}))
+                                 message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }))
       end
       create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
       return
@@ -850,10 +840,10 @@ class Grouping < ApplicationRecord
     xml_test_scripts = xml_test_run.nil? ? nil : xml_test_run['test_script']
     if xml_test_run.nil? || xml_test_scripts.nil?
       errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', {xml: stdout}))]
+                               message: I18n.t('automated_tests.test_result.bad_results', { xml: stdout }))]
       unless stderr.blank?
         errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', {errors: stderr}))
+                                 message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }))
       end
       create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
       return

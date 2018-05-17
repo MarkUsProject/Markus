@@ -4,6 +4,45 @@ class AutotestRunJob < ApplicationJob
   # and it is waiting for the submission files to be copied to the test location.
   queue_as MarkusConfigurator.autotest_run_queue
 
+  # Export group repository for testing. Students' submitted files
+  # are stored in the group repository. They must be exported
+  # before copying to the test server.
+  def self.export_group_repo(group, repo_dir, assignment, submission = nil)
+
+    # Create the automated test repository
+    unless File.exist?(STUDENTS_DIR)
+      FileUtils.mkdir_p(STUDENTS_DIR)
+    end
+    # Delete student's assignment repository if it already exists
+    # TODO clean up in client worker, or try to optimize if revision is the same?
+    if File.exist?(repo_dir)
+      FileUtils.rm_rf(repo_dir)
+    end
+    # Export the correct repo revision
+    if submission.nil?
+      group.repo.export(repo_dir)
+    else
+      FileUtils.mkdir(repo_dir)
+      unless assignment.only_required_files.blank?
+        required_files = assignment.assignment_files.map(&:filename).to_set
+      end
+      submission.submission_files.each do |file|
+        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
+        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
+        unless required_files.nil? || required_files.include?(file_path)
+          # do not export non-required files, if only required files are allowed
+          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+          next
+        end
+        file_content = file.retrieve_file
+        FileUtils.mkdir_p(File.join(repo_dir, file.path))
+        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+          f.write(file_content)
+        end
+      end
+    end
+  end
+
   # Verify that MarkUs has student files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one source file is successfully exported.
@@ -25,41 +64,36 @@ class AutotestRunJob < ApplicationJob
     server_tests_config = MarkusConfigurator.autotest_server_tests
     i = 0
     if server_tests_config.length > 1 # concurrent tests for real
-      i = Rails.cache.fetch('ate_server_tests_i') { 0 }
+      i = Rails.cache.fetch('autotest_server_tests_i') { 0 }
       next_i = (i + 1) % server_tests_config.length # use a round robin strategy
-      Rails.cache.write('ate_server_tests_i', next_i)
+      Rails.cache.write('autotest_server_tests_i', next_i)
     end
     server_tests_config[i]
   end
 
-  def perform(host_with_port, test_scripts, user_api_key, server_api_key, grouping_id, submission_id)
+  def enqueue_test_run(test_run, host_with_port, test_scripts, server_api_key)
 
-    grouping = Grouping.find(grouping_id)
+    grouping = test_run.grouping
+    submission = test_run.submission
+    requested_by = test_run.user
     assignment = grouping.assignment
     group = grouping.group
-
-    # create empty test results for no submission files
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
-    submission = submission_id.nil? ? nil : Submission.find(submission_id)
+    export_group_repo(group, repo_dir, assignment, submission)
     unless repo_files_available?(assignment, submission, repo_dir)
-      requested_by = User.find_by(api_key: user_api_key)
-      error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
-                             message: I18n.t('automated_tests.test_result.no_source_files'))
-      grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    [error])
+      # create empty test results for no submission files
+      error = { name: I18n.t('automated_tests.test_result.all_tests'),
+                message: I18n.t('automated_tests.test_result.no_source_files') }
+      grouping.create_all_test_scripts_error_result(test_run, test_scripts.map { |s| s['file_name'] }, [error])
       return
     end
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
     assignment_tests_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
     markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
-      host_with_port :
-      host_with_port + Rails.application.config.action_controller.relative_url_root
+                       host_with_port :
+                       host_with_port + Rails.application.config.action_controller.relative_url_root
     test_server_host = MarkusConfigurator.autotest_server_host
-    test_server_user = User.find_by(user_name: test_server_host)
-    if test_server_user.nil?
-      return
-    end
     tests_config = get_concurrent_tests_config
     files_path = MarkusConfigurator.autotest_server_files_dir
     results_path = MarkusConfigurator.autotest_server_results_dir
@@ -70,7 +104,7 @@ class AutotestRunJob < ApplicationJob
     end
     server_queue = "queue:#{tests_config[:queue]}"
     resque_params = { class: 'AutomatedTestsServer',
-                      args: [markus_address, user_api_key, server_api_key, tests_username, test_scripts,
+                      args: [markus_address, requested_by.api_key, server_api_key, tests_username, test_scripts,
                              'files_path_placeholder', tests_config[:dir], results_path, assignment.id, group.id,
                              group.repo_name, submission_id] }
 
@@ -102,12 +136,37 @@ class AutotestRunJob < ApplicationJob
         end
       end
     rescue Exception => e
-      requested_by = User.find_by(api_key: user_api_key)
-      error = OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests'),
-                             message: I18n.t('automated_tests.test_result.bad_server',
-                                             {hostname: test_server_host, error: e.message}))
-      grouping.create_all_test_scripts_error_result(test_scripts.map {|s| s['file_name']}, requested_by, submission,
-                                                    [error])
+      error = { name: I18n.t('automated_tests.test_result.all_tests'),
+                message: I18n.t('automated_tests.test_result.bad_server',
+                                { hostname: test_server_host, error: e.message }) }
+      grouping.create_all_test_scripts_error_result(test_run, test_scripts.map { |s| s['file_name'] }, [error])
+    end
+  end
+
+  def perform(host_with_port, test_scripts, user_api_key, server_api_key, test_runs)
+
+    test_batch = nil
+    if test_runs.size > 1
+      test_batch = TestBatch.create
+    end
+    user = User.find_by(api_key: user_api_key)
+    test_runs.each do |test_run|
+      grouping_id = test_run['grouping_id']
+      submission_id = test_run['submission_id']
+      grouping = Grouping.find(grouping_id)
+      submission = submission_id.nil? ? nil : Submission.find(submission_id)
+      if submission.nil?
+        revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+      else
+        revision_identifier = submission.revision_identifier
+      end
+      test_run = TestRun.create(
+        test_batch: test_batch,
+        user: user,
+        grouping: grouping,
+        submission: submission,
+        revision_identifier: revision_identifier)
+      enqueue_test_run(test_run, host_with_port, test_scripts, server_api_key)
     end
   end
 
