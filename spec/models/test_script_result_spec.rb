@@ -39,7 +39,8 @@ describe TestScriptResult do
       )
       @test_run = TestRun.create(
         grouping: @grouping,
-        user: @user
+        user: @user,
+        revision_identifier: '1'
       )
       @test_script_result = TestScriptResult.create(
         submission: @sub,
