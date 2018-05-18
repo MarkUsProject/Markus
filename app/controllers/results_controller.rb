@@ -168,14 +168,11 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    grouping_id = params[:grouping_id]
     submission_id = Result.find(params[:id]).submission.id
-
     begin
-      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port,
-                                                    grouping_id,
-                                                    @current_user,
-                                                    submission_id)
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, @current_user,
+                                                    [{ grouping_id: params[:grouping_id],
+                                                       submission_id: submission_id }])
     rescue => e
       flash_message(:error, e.message)
     end

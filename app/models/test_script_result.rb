@@ -20,7 +20,7 @@
 
 class TestScriptResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
-  belongs_to :submission
+  belongs_to :submission # TODO delete
   belongs_to :test_script, required: true
   belongs_to :test_run, required: true
   belongs_to :grouping, required: true, validate: true # TODO delete
@@ -48,18 +48,18 @@ class TestScriptResult < ApplicationRecord
     create_test_result(name, '', message, '', 0.0, 0.0, 'error')
   end
 
-  def create_test_result_from_xml(xml_test)
-    test_name = xml_test['name']
+  def create_test_result_from_json(json_test)
+    test_name = json_test['name']
     if test_name.nil?
       create_test_error_result(I18n.t('automated_tests.test_result.unknown_test'),
-                               I18n.t('automated_tests.test_result.bad_results', { xml: xml_test }))
-      raise 'Malformed xml'
+                               I18n.t('automated_tests.test_result.bad_results', { json: json_test }))
+      raise 'Malformed json'
     end
 
-    input = xml_test['input'].nil? ? '' : xml_test['input']
-    expected = xml_test['expected'].nil? ? '' : xml_test['expected']
-    actual = xml_test['actual'].nil? ? '' : xml_test['actual']
-    status = xml_test['status']
+    input = json_test['input'].nil? ? '' : json_test['input']
+    expected = json_test['expected'].nil? ? '' : json_test['expected']
+    actual = json_test['actual'].nil? ? '' : json_test['actual']
+    status = json_test['status']
     # check first if we have to stop
     if !status.nil? && status == 'error_all'
       status = 'error'
@@ -68,20 +68,20 @@ class TestScriptResult < ApplicationRecord
       stop_processing = false
     end
     # look for all status and marks errors (but only the last message will be shown)
-    if xml_test['marks_earned'].nil?
+    if json_test['marks_earned'].nil?
       actual = I18n.t('automated_tests.test_result.bad_marks_earned') unless stop_processing
       status = 'error'
       marks_earned = 0.0
     else
-      marks_earned = xml_test['marks_earned'].to_f
+      marks_earned = json_test['marks_earned'].to_f
     end
-    if xml_test['marks_total'].nil?
+    if json_test['marks_total'].nil?
       actual = I18n.t('automated_tests.test_result.bad_marks_total') unless stop_processing
       status = 'error'
       marks_earned = 0.0
       marks_total = 0.0
     else
-      marks_total = xml_test['marks_total'].to_f
+      marks_total = json_test['marks_total'].to_f
     end
     if status.nil? || !status.in?(%w(pass partial fail error))
       actual = I18n.t('automated_tests.test_result.bad_status', { status: status }) unless stop_processing

@@ -273,8 +273,7 @@ class Grouping < ApplicationRecord
   end
 
   # Add a new member to base
- def add_member(user,
-                set_membership_status=StudentMembership::STATUSES[:accepted])
+  def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
       nil
     else
@@ -762,7 +761,7 @@ class Grouping < ApplicationRecord
     self.token
   end
 
-  def create_test_script_result(test_run, test_script_name)
+  def create_test_script_result(test_run, test_script_name, time = 0)
     test_script = TestScript.find_by(assignment_id: assignment.id, file_name: test_script_name)
     test_script_results.create(
       test_script: test_script,
@@ -772,7 +771,7 @@ class Grouping < ApplicationRecord
       time: time)
   end
 
-  def create_all_test_scripts_error_result(test_run, test_scripts, errors)
+  def create_error_for_all_test_scripts(test_run, test_scripts, errors)
     test_scripts.each do |test_script|
       test_script_result = create_test_script_result(test_run, test_script)
       errors.each do |error|
@@ -782,28 +781,25 @@ class Grouping < ApplicationRecord
     test_run.submission&.set_marks_for_tests
   end
 
-  def create_test_script_result_from_xml(xml_test_script, requested_by, submission=nil)
+  def create_test_script_result_from_json(test_run, json_test_script)
 
     # create test result
-    file_name = xml_test_script['file_name']
-    time = xml_test_script['time'].nil? ? 0 : xml_test_script['time']
-    new_test_script_result = create_test_script_result(file_name, requested_by, submission, time)
-    xml_tests = xml_test_script['test']
-    if xml_tests.nil?
+    file_name = json_test_script['file_name']
+    time = json_test_script['time'].nil? ? 0 : json_test_script['time']
+    new_test_script_result = create_test_script_result(test_run, file_name, time)
+    json_tests = json_test_script['test']
+    if json_tests.nil?
       new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stdout'),
                                                       I18n.t('automated_tests.test_result.no_tests'))
       return new_test_script_result
-    end
-    unless xml_tests.is_a?(Array) # Hash.from_xml returns a hash if it's a single test
-      xml_tests = [xml_tests]
     end
 
     # process tests
     all_marks_earned = 0.0
     all_marks_total = 0.0
-    xml_tests.each do |xml_test|
+    json_tests.each do |json_test|
       begin
-        marks_earned, marks_total = new_test_script_result.create_test_result_from_xml(xml_test)
+        marks_earned, marks_total = new_test_script_result.create_test_result_from_json(json_test)
       rescue
         # with malformed xml, test results could be valid only up to a certain test
         # similarly, the test script can signal a serious failure that requires stopping and assigning zero marks
@@ -820,46 +816,43 @@ class Grouping < ApplicationRecord
     new_test_script_result
   end
 
-  def create_test_run_from_xml(stdout, stderr, test_scripts, requested_by, submission=nil)
+  def create_test_script_results_from_json(test_run, stdout, stderr, test_scripts)
 
-    # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
-    xml_root = nil
+    # check that results are well-formed and don't crash the parser
+    json_root = nil
     begin
-      xml_root = Hash.from_xml(stdout)
+      json_root = JSON.parse(stdout)
     rescue => e
-      errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', { xml: e.message }))]
+      errors = [{ name: I18n.t('automated_tests.test_result.all_tests_stdout'),
+                  message: I18n.t('automated_tests.test_result.bad_results', { json: e.message }) }]
       unless stderr.blank?
-        errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }))
+        errors << { name: I18n.t('automated_tests.test_result.all_tests_stderr'),
+                    message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }) }
       end
-      create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
+      create_error_for_all_test_scripts(test_run, test_scripts, errors)
       return
     end
-    xml_test_run = xml_root['testrun']
-    xml_test_scripts = xml_test_run.nil? ? nil : xml_test_run['test_script']
-    if xml_test_run.nil? || xml_test_scripts.nil?
-      errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', { xml: stdout }))]
+    json_test_run = json_root['testrun']
+    json_test_scripts = json_test_run.nil? ? nil : json_test_run['test_script']
+    if json_test_run.nil? || json_test_scripts.nil?
+      errors = [{ name: I18n.t('automated_tests.test_result.all_tests_stdout'),
+                  message: I18n.t('automated_tests.test_result.bad_results', { json: stdout }) }]
       unless stderr.blank?
-        errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }))
+        errors << { name: I18n.t('automated_tests.test_result.all_tests_stderr'),
+                    message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }) }
       end
-      create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
+      create_error_for_all_test_scripts(test_run, test_scripts, errors)
       return
     end
 
     # process results
-    unless xml_test_scripts.is_a?(Array) # Hash.from_xml returns a hash if it's a single test script and an array otherwise
-      xml_test_scripts = [xml_test_scripts]
-    end
     new_test_script_results = {}
-    xml_test_scripts.each do |xml_test_script|
-      file_name = xml_test_script['file_name']
-      if file_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
+    json_test_scripts.each do |json_test_script|
+      file_name = json_test_script['file_name']
+      if file_name.nil? # with malformed json, some test script results could be valid and some won't, recover later
         next
       end
-      new_test_script_result = create_test_script_result_from_xml(xml_test_script, requested_by, submission)
+      new_test_script_result = create_test_script_result_from_json(test_run, json_test_script)
       new_test_script_results[file_name] = new_test_script_result
     end
 
@@ -867,23 +860,22 @@ class Grouping < ApplicationRecord
       # try to recover from malformed xml at the test script level
       new_test_script_result = new_test_script_results[file_name]
       if new_test_script_result.nil?
-        new_test_script_result = create_test_script_result(file_name, requested_by, submission)
+        new_test_script_result = create_test_script_result(test_run, file_name)
         new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stdout'),
-                                                        I18n.t('automated_tests.test_result.bad_results', {xml: stdout}))
+                                                        I18n.t('automated_tests.test_result.bad_results',
+                                                               { json: stdout }))
         new_test_script_results[file_name] = new_test_script_result
       end
       # add unhandled errors to all test scripts
       unless stderr.blank?
         new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stderr'),
                                                         I18n.t('automated_tests.test_result.err_results',
-                                                               {errors: stderr}))
+                                                               { errors: stderr }))
       end
     end
 
     # set the marks assigned by the test
-    unless submission.nil?
-      submission.set_marks_for_tests
-    end
+    test_run.submission&.set_marks_for_tests
   end
 
 end # end class Grouping

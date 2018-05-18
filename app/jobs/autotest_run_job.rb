@@ -70,7 +70,7 @@ class AutotestRunJob < ApplicationJob
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.test_result.all_tests'),
                 message: I18n.t('automated_tests.test_result.no_source_files') }
-      grouping.create_all_test_scripts_error_result(test_run, test_scripts.keys, [error])
+      grouping.create_error_for_all_test_scripts(test_run, test_scripts.keys, [error])
       return
     end
 
@@ -112,7 +112,7 @@ class AutotestRunJob < ApplicationJob
       error = { name: I18n.t('automated_tests.test_result.all_tests'),
                 message: I18n.t('automated_tests.test_result.bad_server',
                                 { hostname: server_host, error: e.message }) }
-      grouping.create_all_test_scripts_error_result(test_run, test_scripts.keys, [error])
+      grouping.create_error_for_all_test_scripts(test_run, test_scripts.keys, [error])
     end
   end
 

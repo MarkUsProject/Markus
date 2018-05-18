@@ -130,7 +130,7 @@ class Submission < ApplicationRecord
       all_marks_earned = 0.0
       all_marks_total = 0.0
       test_scripts.each do |script|
-        res = self.test_script_results.where(test_script_id: script.id).first
+        res = test_script_results.where(test_script_id: script.id).first
         all_marks_earned += res.marks_earned
         all_marks_total += res.marks_total
       end
@@ -150,14 +150,13 @@ class Submission < ApplicationRecord
       mark.save
     end
 
-    # marking state was already complete, tests are overwriting some marks
-    if result.marking_state == Result::MARKING_STATES[:complete]
-      result.submission.assignment.assignment_stat.refresh_grade_distribution
-      result.submission.assignment.update_results_stats
     # all marks are set by tests, can set the marking state to complete
-    elsif complete_marks
+    if complete_marks
       result.marking_state = Result::MARKING_STATES[:complete]
       result.save
+    end
+    # marking state just set, or it was already complete (tests are overwriting some marks)
+    if result.marking_state == Result::MARKING_STATES[:complete]
       result.submission.assignment.assignment_stat.refresh_grade_distribution
       result.submission.assignment.update_results_stats
     end

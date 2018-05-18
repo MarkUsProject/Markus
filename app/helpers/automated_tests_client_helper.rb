@@ -190,10 +190,8 @@ module AutomatedTestsClientHelper
 
   def self.request_a_test_run(host_with_port, current_user, test_runs)
 
-    grouping_id = test_runs[0][:grouping_id]
-    submission_id = test_runs[0][:submission_id]
     #TODO everything here is just authorization stuff to be extracted in policies
-
+    grouping_id = test_runs[0][:grouping_id]
     grouping = Grouping.find(grouping_id)
     assignment = grouping.assignment
     unless assignment.enable_test

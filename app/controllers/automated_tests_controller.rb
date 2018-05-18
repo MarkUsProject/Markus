@@ -79,13 +79,13 @@ class AutomatedTestsController < ApplicationController
 
   def execute_test_run
     @assignment = Assignment.find(params[:id])
-
     begin
       grouping = current_user.accepted_grouping_for(@assignment.id)
       if grouping.nil?
         raise I18n.t('automated_tests.error.bad_group')
       end
-      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping.id, @current_user)
+      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, @current_user,
+                                                    [{ grouping_id: grouping.id, submission_id: nil }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)

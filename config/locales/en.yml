@@ -1407,7 +1407,7 @@ en:
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
         err_results: "There are unhandled errors: %{errors}"
-        bad_results: "Test results are malformed: %{xml}"
+        bad_results: "Test results are malformed: %{json}"
         no_tests: "Test results are empty"
         bad_marks_earned: "Earned marks are missing"
         bad_marks_total: "Total marks are missing"
