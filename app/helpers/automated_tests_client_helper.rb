@@ -173,11 +173,11 @@ module AutomatedTestsClientHelper
     if user.admin?
       test_scripts = assignment.instructor_test_scripts
                                .order(:seq_num)
-                               .pluck_to_hash(:file_name, :timeout)
+                               .pluck(:file_name, :timeout)
     elsif user.student?
       test_scripts = assignment.student_test_scripts
                                .order(:seq_num)
-                               .pluck_to_hash(:file_name, :timeout)
+                               .pluck(:file_name, :timeout)
     else
       test_scripts = []
     end
@@ -185,7 +185,7 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.no_test_files')
     end
 
-    test_scripts
+    test_scripts.to_h
   end
 
   def self.request_a_test_run(host_with_port, current_user, test_runs)
