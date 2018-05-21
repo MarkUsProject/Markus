@@ -27,7 +27,6 @@ gem 'sass-rails',   '5.0.0.beta1'
 gem 'uglifier',     '>= 1.3.0'
 gem 'libv8'
 gem 'json'
-gem 'minitest'
 gem 'autoprefixer-rails'
 gem 'resque'
 gem 'redis-rails'
@@ -89,6 +88,7 @@ end
 group :test do
   gem 'factory_girl_rails'
   gem 'machinist', '< 2'
+  gem 'minitest'
   gem 'mocha', require: false
   gem 'shoulda'
   gem 'simplecov'
