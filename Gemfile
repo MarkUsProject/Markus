@@ -36,7 +36,6 @@ gem 'pluck_to_hash'
 gem 'pundit'
 
 gem 'activerecord-session_store', '~>0.1.0'
-gem 'rails-perftest', '~>0.0.2'
 gem 'arel', '~>6.0.2'
 
 gem 'js-routes'
@@ -96,6 +95,7 @@ group :test do
   gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'rails-controller-testing'
+  gem 'rails-perftest'
 end
 
 # Gems needed (wanted) for both development and test can be
