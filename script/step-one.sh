@@ -13,9 +13,12 @@ sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev 
 echo "- - - Installing Git - - -"
 sudo apt-get install -y git
 
-# Install postgres
+# Install postgres (note: on 16.04+, can install postgres through the standard repository)
 echo "- - - Installing Postgres - - -"
-sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" >> /etc/apt/source s.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libpq-dev
 
 # Install node
 echo "- - - Installing Node, Step 1 - - -"
