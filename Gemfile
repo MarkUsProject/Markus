@@ -15,29 +15,17 @@ gem 'ya2yaml'
 gem 'i18n'
 gem 'rails-i18n', '~> 4.0'
 gem 'i18n-js'
-gem 'dynamic_form'
-gem 'exception_notification'
 gem 'activerecord-import'
 gem 'upsert'
-gem 'auto_complete'
-gem 'best_in_place'
-gem 'coffee-script'
 gem 'webpacker', '~> 3.0'
 gem 'rugged'
 gem 'jquery-rails'
 gem 'responders', '~> 2.0'
-gem 'sprockets', '~> 2.12.0'
 gem 'rails-html-sanitizer'
-gem 'rails-deprecated_sanitizer'
-gem 'redcarpet', '~> 3.0.0'
 
-gem 'tilt', '~> 1.3.7'
 gem 'sass-rails',   '5.0.0.beta1'
-gem 'coffee-rails', '~> 4.0.0'
 gem 'uglifier',     '>= 1.3.0'
-gem 'execjs'
 gem 'libv8'
-gem 'therubyracer'
 gem 'json'
 gem 'minitest'
 gem 'autoprefixer-rails'
@@ -48,15 +36,9 @@ gem 'net-ssh'
 gem 'pluck_to_hash'
 gem 'pundit'
 
-gem 'actionpack-action_caching'
-gem 'actionpack-page_caching', '~>1.0.0'
-gem 'actionpack-xml_parser', '~>1.0.0'
-gem 'actionview-encoded_mail_to', '~>1.0.4'
 gem 'activerecord-session_store', '~>0.1.0'
-gem 'rails-observers', '~>0.1.1'
 gem 'rails-perftest', '~>0.0.2'
 gem 'arel', '~>6.0.2'
-gem 'jbuilder', '~> 2.0'
 
 gem 'js-routes'
 
@@ -99,9 +81,8 @@ end
 group :development do
   gem 'awesome_print'
   gem 'better_errors'
-  gem 'binding_of_caller'
-  gem 'spring'
-  gem 'quiet_assets'
+  gem 'binding_of_caller' , '>= 0.8'  # supplement for better_errors
+  gem 'quiet_assets' # TODO: remove when upgrade to sprockets 3
   gem 'bullet'
 end
 
@@ -139,7 +120,6 @@ group :offline do
   gem 'rdoc'
   gem 'rubocop'
   gem 'rubocop-git'
-  gem 'thin'
 end
 
 # If you  plan to use unicorn servers for production

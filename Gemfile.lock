@@ -22,20 +22,12 @@ GEM
       rack-test (~> 0.6.2)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionpack-action_caching (1.1.1)
-      actionpack (>= 4.0.0, < 5.0)
-    actionpack-page_caching (1.0.2)
-      actionpack (>= 4.0.0, < 5)
-    actionpack-xml_parser (1.0.2)
-      actionpack (>= 4.0.0, < 5)
     actionview (4.2.10)
       activesupport (= 4.2.10)
       builder (~> 3.1)
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    actionview-encoded_mail_to (1.0.7)
-      rails
     activejob (4.2.10)
       activesupport (= 4.2.10)
       globalid (>= 0.3.0)
@@ -59,15 +51,10 @@ GEM
       tzinfo (~> 1.1)
     arel (6.0.4)
     ast (2.4.0)
-    auto_complete (0.0.1)
-      rails (>= 3.1)
     autoprefixer-rails (6.0.3)
       execjs
       json
     awesome_print (1.6.1)
-    best_in_place (3.0.3)
-      actionpack (>= 3.2)
-      railties (>= 3.2)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -81,29 +68,16 @@ GEM
     byebug (6.0.2)
     chunky_png (1.3.8)
     coderay (1.1.0)
-    coffee-rails (4.0.1)
-      coffee-script (>= 2.2.0)
-      railties (>= 4.0.0, < 5.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.9.1.1)
     combine_pdf (0.2.34)
       ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
-    daemons (1.2.5)
     database_cleaner (1.5.1)
     debug_inspector (0.0.2)
     descriptive_statistics (2.4.0)
     diff-lcs (1.3)
     docile (1.1.5)
-    dynamic_form (1.1.4)
     erubis (2.7.0)
-    eventmachine (1.2.5)
-    exception_notification (4.1.1)
-      actionmailer (>= 3.0.4)
-      activesupport (>= 3.0.4)
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -121,9 +95,6 @@ GEM
       concurrent-ruby (~> 1.0)
     i18n-js (3.0.4)
       i18n (~> 0.6, >= 0.6.6)
-    jbuilder (2.4.1)
-      activesupport (>= 3.0.0, < 5.1)
-      multi_json (~> 1.2)
     jquery-rails (4.0.5)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -203,8 +174,6 @@ GEM
     rails-i18n (4.0.9)
       i18n (~> 0.7)
       railties (~> 4.0)
-    rails-observers (0.1.2)
-      activemodel (~> 4.0)
     rails-perftest (0.0.6)
     railties (4.2.10)
       actionpack (= 4.2.10)
@@ -216,7 +185,6 @@ GEM
     rake (12.3.0)
     rdoc (4.2.0)
       json (~> 1.4)
-    redcarpet (3.0.0)
     redis (4.0.1)
     redis-actionpack (5.0.2)
       actionpack (>= 4.0, < 6)
@@ -236,7 +204,6 @@ GEM
       redis-store (>= 1.2, < 2)
     redis-store (1.4.1)
       redis (>= 2.2, < 5)
-    ref (2.0.0)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
     resque (1.27.4)
@@ -301,7 +268,6 @@ GEM
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
-    spring (1.4.0)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -312,13 +278,6 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.10)
-    therubyracer (0.12.3)
-      libv8 (~> 3.16.14.15)
-      ref
-    thin (1.7.2)
-      daemons (~> 1.0, >= 1.0.9)
-      eventmachine (~> 1.0, >= 1.0.4)
-      rack (>= 1, < 3)
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (1.3.7)
@@ -351,36 +310,24 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack-action_caching
-  actionpack-page_caching (~> 1.0.0)
-  actionpack-xml_parser (~> 1.0.0)
-  actionview-encoded_mail_to (~> 1.0.4)
   activejob-status!
   activerecord-import
   activerecord-session_store (~> 0.1.0)
   arel (~> 6.0.2)
-  auto_complete
   autoprefixer-rails
   awesome_print
-  best_in_place
   better_errors
   binding_of_caller
   bullet
   byebug
-  coffee-rails (~> 4.0.0)
-  coffee-script
   combine_pdf
   database_cleaner
   descriptive_statistics (~> 2.4.0)
-  dynamic_form
-  exception_notification
-  execjs
   factory_girl_rails
   faker
   histogram (~> 0.2.4.1)
   i18n
   i18n-js
-  jbuilder (~> 2.0)
   jquery-rails
   js-routes
   json
@@ -399,13 +346,10 @@ DEPENDENCIES
   railroady
   rails (~> 4.2.0)
   rails-controller-testing
-  rails-deprecated_sanitizer
   rails-html-sanitizer
   rails-i18n (~> 4.0)
-  rails-observers (~> 0.1.1)
   rails-perftest (~> 0.0.2)
   rdoc
-  redcarpet (~> 3.0.0)
   redis-rails
   responders (~> 2.0)
   resque
@@ -419,12 +363,7 @@ DEPENDENCIES
   shoulda
   shoulda-callback-matchers (~> 1.1.1)
   simplecov
-  spring
-  sprockets (~> 2.12.0)
   sqlite3
-  therubyracer
-  thin
-  tilt (~> 1.3.7)
   time-warp
   uglifier (>= 1.3.0)
   unicorn

@@ -1,5 +1,4 @@
 require 'encoding'
-require 'auto_complete'
 require 'csv_invalid_line_error'
 
 # Manages actions relating to editing and modifying
@@ -8,9 +7,6 @@ class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
   before_filter      :authorize_only_for_admin
-
-  auto_complete_for :student, :user_name
-  auto_complete_for :assignment, :name
 
   layout 'assignment_content'
 
