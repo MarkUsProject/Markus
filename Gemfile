@@ -120,7 +120,7 @@ end
 # Gems needed (wanted) for both development and test can be
 # listed here
 group :development, :test do
-  gem 'byebug', :platforms => [:mri_20, :mri_21, :mri_22, :mri_23]
+  gem 'byebug'
   gem "rspec-rails", '~> 3.5'
 end
 
