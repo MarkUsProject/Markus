@@ -18,13 +18,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
 
-  config.vm.provision "step-one", type: "shell" do |s|
-    s.path = "script/step-one.sh"
+  config.vm.provision "install-markus", type: "shell" do |s|
+    s.path = "script/install-markus.sh"
     s.privileged = false
   end
 
-  config.vm.provision "step-two", type: "shell", run: "never" do |s|
-    s.path = "script/step-two.sh"
+  config.vm.provision "install-markus-autotesting", type: "shell", run: "never" do |s|
+    s.path = "script/install-markus-autotesting.sh"
     s.privileged = false
   end
 
@@ -42,10 +42,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.post_up_message =
     <<~HEREDOC
-      markus_box is running! If this is your initial installation,
-      run the following provisioning commands:
+      markus_box is running! Test your installation by running
 
-        $ vagrant provision --provision-with=step-two
+        $ vagrant ssh -c markus
+
+      Then visit localhost:3000, and you should see the MarkUs login screen.
+      Login as an admin with username 'a' and any non-empty password.
+
+      Then to complete the installation, run the following provisioning commands:
+
+        $ vagrant provision --provision-with=install-markus-autotesting
         $ vagrant provision --provision-with=install-svn
     HEREDOC
 end
