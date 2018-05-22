@@ -524,6 +524,8 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       properties: "Propriedade da planilha de notas"
       required_fields: "Campos obrigatórios <span class='required_field'>*</span>"
       show_total: "Mostrar total"
+      id_number: "Número de estudante"
+      username: "Nome de usuário"
       create:
         success: "Planilha com novas notas criadas com sucesso"
         title: "Adicionar planilha de notas"

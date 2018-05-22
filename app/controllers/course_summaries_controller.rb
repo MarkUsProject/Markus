@@ -45,7 +45,8 @@ class CourseSummariesController < ApplicationController
     grade_entry_forms = GradeEntryForm.all
     marking_schemes = MarkingScheme.all
 
-    header = ['Username']
+    header = [I18n.t('grade_entry_forms.username')]
+    header.concat([I18n.t('grade_entry_forms.id_number')])
     header.concat(assignments.map(&:short_identifier))
     header.concat(grade_entry_forms.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
@@ -57,6 +58,7 @@ class CourseSummariesController < ApplicationController
     JSON.parse(get_table_json_data).each do |student|
       row = []
       row.push(student['user_name'])
+      row.push(student['id_number'])
       row.concat(student['assignment_marks'].values)
       row.concat(student['grade_entry_form_marks'].values)
       row.concat(student['weighted_marks'].values)

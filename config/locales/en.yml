@@ -565,6 +565,7 @@ en:
         last_name:      "Last Name"
         ngr:            "No Grade Received"
 
+
     grade_entry_forms:
       blank_field: "can't be blank"
       invalid_name: "is already taken"
@@ -582,6 +583,8 @@ en:
       properties: "Marks Spreadsheet Properties"
       required_fields: "Required Fields <span class='required_field'>*</span>"
       show_total: "Show Total"
+      id_number: "Student Number"
+      username: "Username"
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
