@@ -10,52 +10,64 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '~> 4.2.0'
-gem 'rubyzip'
-gem 'ya2yaml'
-gem 'i18n'
-gem 'rails-i18n', '~> 4.0'
-gem 'i18n-js'
-gem 'activerecord-import'
-gem 'upsert'
-gem 'webpacker', '~> 3.0'
-gem 'rugged'
-gem 'jquery-rails'
-gem 'responders', '~> 2.0'
-gem 'rails-html-sanitizer'
 
+# Models and database interactions
+gem 'activerecord-import'
+gem 'arel', '~>6.0.2'
+gem 'pluck_to_hash'
+gem 'upsert'
+
+# CSS and JavaScript
+gem 'autoprefixer-rails'
+gem 'js-routes'
+gem 'jquery-rails'
+gem 'libv8'
 gem 'sass-rails',   '5.0.0.beta1'
 gem 'uglifier',     '>= 1.3.0'
-gem 'libv8'
-gem 'json'
-gem 'autoprefixer-rails'
+gem 'webpacker', '~> 3.0'
+
+# Background tasks
+gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'resque'
 gem 'redis-rails'
-gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
-gem 'net-ssh'
-gem 'pluck_to_hash'
+
+# Authorization
 gem 'pundit'
 
-gem 'activerecord-session_store', '~>0.1.0'
-gem 'arel', '~>6.0.2'
-
-gem 'js-routes'
-
-gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
+# Statistics
+gem 'descriptive_statistics', '~> 2.5', :require => 'descriptive_statistics/safe'
 gem 'histogram', '~> 0.2.4.1'
 
+# Internationalization
+gem 'i18n'
+gem 'i18n-js'
+gem 'rails-i18n', '~> 4.0'
+
 # Exam template requirements
+gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
-gem 'combine_pdf'
-gem 'zxing_cpp'
 gem 'rmagick'
+gem 'zxing_cpp'
+
+# Ruby miscellany
+gem 'json'
+gem 'net-ssh'
+gem 'rubyzip'
+gem 'rugged'
+gem 'ya2yaml'
+
+# Rails miscellany
+gem 'activerecord-session_store', '~>0.1.0'
+gem 'responders', '~> 2.0'
+gem 'rails-html-sanitizer'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
 #   bundle install --without mysql sqlite
 group :postgresql do
-  gem 'pg'
+  gem 'pg', '~> 0.21'  # TODO: upgrade only when using Rails 5.1.5+
 end
 
 # If you are a MarkUs developer and use MySQL, make sure you have
