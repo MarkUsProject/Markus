@@ -397,8 +397,8 @@ module Repository
       end
     end
 
-    def self.__update_permissions(permissions)
-      @@permissions = {'*' => get_full_access_users}
+    def self.__update_permissions(permissions, full_access_users)
+      @@permissions = {'*' => full_access_users}
       permissions.each do |repo_loc, users|
         @@permissions[repo_loc] = users
       end

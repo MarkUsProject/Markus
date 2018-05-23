@@ -8,12 +8,11 @@ describe 'Subversion Repository' do
     # loading the whole module or if we start loading svn on travis again
     if false # reimplement by removing this conditional
       before :all do
-        @admin = create :admin
         @repo_name = 'mock_repo'
         @students = [:student1, :student2]
         RSpec::Mocks.with_temporary_scope do
           allow(MarkusConfigurator).to receive(:markus_config_repository_type).and_return('svn')
-          Repository.get_class.send :__update_permissions, {@repo_name => @students}
+          Repository.get_class.send :__update_permissions, {@repo_name => @students}, ['admin1']
         end
       end
 
@@ -25,7 +24,7 @@ describe 'Subversion Repository' do
 
 
       it 'give admins access to all repos' do
-        expect(file_contents).to match(/\[\/\]\s*\n\s*#{@admin.user_name}\s*=\s*rw/)
+        expect(file_contents).to match(/\[\/\]\s*\n\s*admin1\s*=\s*rw/)
       end
 
       it 'gives other users access to specific repos' do

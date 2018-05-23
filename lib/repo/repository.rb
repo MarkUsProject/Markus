@@ -208,11 +208,12 @@ module Repository
       end
       # get permissions from the database
       permissions = self.get_all_permissions
+      full_access_users = self.get_full_access_users
       # only continue if this was the last thread to get permissions from the database
       if @@permission_thread == Thread.current.object_id
         # wait until another thread finishes writing
         @@permission_write_mutex.synchronize do
-          __update_permissions(permissions)
+          __update_permissions(permissions, full_access_users)
         end
       end
       nil
@@ -269,7 +270,7 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.__update_permissions(permissions)
+    def self.__update_permissions(permissions, full_access_users)
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 

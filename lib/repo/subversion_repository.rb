@@ -534,10 +534,10 @@ module Repository
     ####################################################################
 
     # Generate and write the SVN authorization file for the repo.
-    def self.__update_permissions(permissions)
+    def self.__update_permissions(permissions, full_access_users)
       return true unless MarkusConfigurator.markus_config_repository_admin?
       authz_string = "[/]\n"
-      self.get_full_access_users.each do |user_name|
+      full_access_users.each do |user_name|
         authz_string += "#{user_name} = rw\n"
       end
       authz_string += "\n"
