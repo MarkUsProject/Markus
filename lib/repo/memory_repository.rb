@@ -30,13 +30,8 @@ module Repository
 
       # variables
       @users = {}                                 # hash of users (key) with corresponding permissions (value)
-      @current_revision = MemoryRevision.new(0)   # the latest revision (we start from 0)
+      @current_revision = MemoryRevision.new(1)   # the latest revision (we start from 1)
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
-      # mapping (hash) of timestamps and revisions
-      @timestamps_revisions = {}
-      # push first timestamp-revision mapping
-      @timestamps_revisions[Marshal.dump(
-        Marshal.load(Marshal.dump(Time.now)))] = @current_revision
       @repository_location = location
       @closed = false
       @@repositories[location] = self             # push new MemoryRepository onto repository list
@@ -149,19 +144,15 @@ module Repository
         return false
       end
 
-      # everything went fine, so push old revision to history revisions,
-      # make new_rev the latest one and create a mapping for timestamped
-      # revisions
-      timestamp = Time.now
+      # everything went fine, so push old revision to history revisions and make new_rev the latest one
+      timestamp = Time.current
       new_rev.timestamp = timestamp
       new_rev.server_timestamp = timestamp
+      new_rev.__increment_revision_number
       @revision_history.push(@current_revision)
       @current_revision = new_rev
-      @current_revision.__increment_revision_number() # increment revision number
-      @timestamps_revisions[Marshal.dump(
-        Marshal.load(Marshal.dump(timestamp)))] = @current_revision
       @@repositories[@repository_location] = self
-      return true
+      true
     end
 
     # Returns the latest revision number (as a RepositoryRevision object)
@@ -185,11 +176,17 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp, path = nil)
-      if !timestamp.kind_of?(Time)
+    def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
+      unless at_or_earlier_than.is_a?(Time)
         raise "Was expecting a timestamp of type Time"
       end
-      return get_revision_number_by_timestamp(timestamp, path)
+
+      (@revision_history + [@current_revision]).reverse_each do |revision|
+        return nil if !later_than.nil? && revision.server_timestamp <= later_than
+        return revision if revision.server_timestamp <= at_or_earlier_than &&
+                           (path.nil? || revision.revision_at_path(path))
+      end
+      nil
     end
 
     def get_all_revisions

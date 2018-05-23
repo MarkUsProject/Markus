@@ -45,14 +45,6 @@ class GroupingTest < ActiveSupport::TestCase
       assert_equal 0, @grouping.memberships.count
     end
 
-    should 'be able to report the last modified date of the assignment_folder' do
-      last_modified = @grouping.assignment_folder_last_modified_date
-      assert_not_nil(last_modified)
-      assert_instance_of(Time, last_modified)
-      # Assert change was made sometime during the last 60 seconds.
-      assert (Time.now-60..Time.now).cover?(last_modified)
-    end
-
     should 'display Empty Group since no students in the group' do
       assert_equal 'Empty Group', @grouping.get_all_students_in_group
     end
@@ -247,10 +239,6 @@ class GroupingTest < ActiveSupport::TestCase
 
       teardown do
         destroy_repos
-      end
-
-      should 'be able to report the number of files submitted' do
-        assert @grouping.number_of_submitted_files > 0
       end
 
       should 'report that grouping is not deleteable' do

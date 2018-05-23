@@ -128,36 +128,6 @@ class SubmissionFile < ApplicationRecord
     retrieved_file
   end
 
-  # Export this file from the svn repository into storage_path
-  # If a file of the same name as the one we are trying to export exists in
-  # the given repository, it will be overwritten by the svn exports
-  def export_file(storage_path)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Exporting #{self.filename} from student repository")
-    begin
-      # Create the storage directories if they dont already exist
-      FileUtils.makedirs(storage_path)
-      # but deleted the file if it already exists
-      if File.exists?(File.join(storage_path, self.filename))
-        FileUtils.rm(File.join(storage_path, self.filename))
-      end
-      repo = submission.grouping.group.repo
-      revision_identifier = submission.revision_identifier
-      repo.export(File.join(storage_path, self.filename),
-                  File.join(self.path, self.filename),
-                  revision_identifier)
-    end
-
-    # Let's check the file exists befor claiming the file has been exported
-    # properly
-    if File.exists?(File.join(storage_path, self.filename))
-      m_logger.log("Successfully exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
-    else
-      m_logger.log("Failed to export #{self.filename} from student
-                      repository")
-    end
-  end
-
   private
 
   def add_annotations(file_contents)

@@ -2,20 +2,25 @@ require 'spec_helper'
 
 describe TestScriptResult do
 
+  it { is_expected.to have_many(:test_results) }
   it { is_expected.to belong_to(:submission) }
   it { is_expected.to belong_to(:test_script) }
+  it { is_expected.to belong_to(:test_run) }
   it { is_expected.to validate_presence_of(:test_script) }
+  it { is_expected.to validate_presence_of(:test_run) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
-  it { is_expected.to validate_presence_of(:repo_revision) }
+  it { is_expected.to validate_presence_of(:time) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
+  it { is_expected.to validate_numericality_of(:time) }
 
   context 'test script result' do
     before(:each) do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
+      @user = create(:admin)
       @test_script = TestScript.create(
         assignment_id: @asst.id,
         seq_num: 1,
@@ -32,10 +37,17 @@ describe TestScriptResult do
         display_expected_output: 'do_not_display',
         display_actual_output: 'do_not_display'
       )
+      @test_run = TestRun.create(
+        grouping: @grouping,
+        user: @user,
+        revision_identifier: '1'
+      )
       @test_script_result = TestScriptResult.create(
         submission: @sub,
         grouping: @sub.grouping,
         test_script: @test_script,
+        test_run: @test_run,
+        requested_by: @user,
         marks_earned: 1,
         marks_total: 1,
         repo_revision: 0,
@@ -95,28 +107,13 @@ describe TestScriptResult do
 
     context 'An invalid test script result' do
 
-      it 'has a nil test script' do
-        @test_script_result.test_script = nil
-        expect(@test_script_result).not_to be_valid
-      end
-
       it 'has negative marks earned' do
         @test_script_result.marks_earned = -1
         expect(@test_script_result).not_to be_valid
       end
 
-      it 'has nil marks earned' do
-        @test_script_result.marks_earned = nil
-        expect(@test_script_result).not_to be_valid
-      end
-
       it 'has negative marks total' do
         @test_script_result.marks_total = -1
-        expect(@test_script_result).not_to be_valid
-      end
-
-      it 'has nil marks total' do
-        @test_script_result.marks_total = nil
         expect(@test_script_result).not_to be_valid
       end
 

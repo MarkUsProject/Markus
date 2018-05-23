@@ -172,6 +172,8 @@ class StudentsController < ApplicationController
     params.require(:user).permit(:user_name,
                                  :last_name,
                                  :first_name,
+                                 :email,
+                                 :id_number,
                                  :grace_credits,
                                  :section_id)
   end

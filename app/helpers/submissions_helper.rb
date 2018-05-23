@@ -106,12 +106,7 @@ module SubmissionsHelper
           g[:tags] = grouping.tags
           g[:commit_date] = grouping.last_commit_date
           g[:has_files] = grouping.has_files_in_submission?
-          g[:late_commit] =
-            if MarkusConfigurator.markus_config_repository_type == 'git'
-              false
-            else
-              grouping.past_due_date?
-            end
+          g[:late_commit] = grouping.past_due_date?
           g[:grace_credits_used] =
             if assignment.submission_rule.is_a? GracePeriodSubmissionRule
               grouping.grace_period_deduction_single

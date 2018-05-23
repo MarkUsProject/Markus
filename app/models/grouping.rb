@@ -47,6 +47,7 @@ class Grouping < ApplicationRecord
 
   has_one :token
 
+  has_many :test_runs, dependent: :destroy
   has_many :test_script_results,
            -> { order 'created_at DESC' },
            dependent: :destroy
@@ -485,46 +486,6 @@ class Grouping < ApplicationRecord
                           !assignment.past_collection_date?(self.inviter.section))
   end
 
-  # Returns the number of files submitted by this grouping for a
-  # particular assignment.
-  def number_of_submitted_files
-    path = '/'
-    repo = self.group.repo
-    rev = repo.get_latest_revision
-    files = rev.files_at_path(File.join(File.join(self.assignment.repository_folder, path)))
-    repo.close()
-    files.keys.length
-  end
-
-  # Returns last modified date of the assignment_folder in this grouping's repository
-  def assignment_folder_last_modified_date
-    revision = nil
-    group.access_repo do |repo|
-      # we use this function because it allows to specify a path
-      revision = repo.get_revision_by_timestamp(Time.zone.now, assignment.repository_folder)
-      # an alternative could have been:
-      # repo.get_latest_revision.directories_at_path('')[assignment.repository_folder].last_modified_date
-      # but in git, the latter returns commit times instead of push times, and would be less efficient because it has to
-      # walk through the entire history
-    end
-    revision.server_timestamp
-  end
-
-  # Returns a list of missing assignment_files yet to be submitted
-  def missing_assignment_files
-    missing_assignment_files = []
-    self.group.access_repo do |repo|
-      rev = repo.get_latest_revision
-      assignment = self.assignment
-      assignment.assignment_files.each do |assignment_file|
-        unless rev.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
-          missing_assignment_files.push(assignment_file)
-        end
-      end
-    end
-    missing_assignment_files
-  end
-
   def add_tas(tas)
     Grouping.assign_all_tas(id, Array(tas).map(&:id), assignment)
   end
@@ -610,17 +571,38 @@ class Grouping < ApplicationRecord
     '-'
   end
 
-  ##
-  # Find the correct due date (section or not) and check if it is after
-  # the last commit
-  ##
+  # Returns a list of missing assignment (required) files.
+  # A repo revision can be passed directly if the caller already opened the repo.
+  def missing_assignment_files(revision = nil)
+    repo = nil
+    if revision.nil?
+      repo = group.repo
+      revision = repo.get_latest_revision
+    end
+    missing_assignment_files = assignment.assignment_files.reject do |assignment_file|
+      revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
+    end
+    repo&.close
+    missing_assignment_files
+  end
+
+  # Finds the correct due date (section or not) and checks if the last commit is after it.
   def past_due_date?
-    timestamp = assignment_folder_last_modified_date
     if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
-      timestamp > assignment.due_date
+      due_date = assignment.due_date
     else
-      section_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
-      timestamp > section_due_date
+      due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+    end
+    revision = nil
+    group.access_repo do |repo|
+      # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
+      # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
+      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, due_date)
+    end
+    if revision.nil? || revision.server_timestamp <= due_date
+      false
+    else
+      true
     end
   end
 
@@ -685,7 +667,7 @@ class Grouping < ApplicationRecord
   # Helper for populate_submissions_table.
   # Returns a formatted time string for the last commit time for this grouping.
   def last_commit_date
-    if has_submission?
+    if !current_submission_used&.revision_timestamp.nil?
       I18n.l(current_submission_used.revision_timestamp)
     else
       '-'
@@ -781,15 +763,16 @@ class Grouping < ApplicationRecord
   end
 
   def create_test_script_result(file_name, requested_by, submission=nil, time=0)
-    revision_identifier = submission.nil? ?
-      self.group.repo.get_latest_revision.revision_identifier :
-      submission.revision_identifier
-    submission_id = submission.nil? ? nil : submission.id
+    if submission.nil?
+      revision_identifier = group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+    else
+      revision_identifier = submission.revision_identifier
+    end
     test_script = TestScript.find_by(assignment_id: self.assignment.id, file_name: file_name)
 
     self.test_script_results.create(
       test_script_id: test_script.id,
-      submission_id: submission_id,
+      submission_id: submission&.id,
       marks_earned: 0.0,
       marks_total: 0.0,
       repo_revision: revision_identifier,

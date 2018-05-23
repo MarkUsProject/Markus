@@ -109,6 +109,6 @@ class TasController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:user_name, :last_name, :first_name)
+    params.require(:user).permit(:user_name, :last_name, :first_name, :email)
   end
 end

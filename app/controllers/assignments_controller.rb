@@ -129,14 +129,7 @@ class AssignmentsController < ApplicationController
       @inviter = @grouping.inviter
 
       # Look up submission information
-      repo = @grouping.group.repo
-      @revision = repo.get_latest_revision
-      @revision_identifier = @revision.revision_identifier
-
-      @last_modified_date = @grouping.assignment_folder_last_modified_date
-      @num_submitted_files = @grouping.number_of_submitted_files
-      @num_missing_assignment_files = @grouping.missing_assignment_files.length
-      repo.close
+      set_repo_vars(@assignment, @grouping)
     end
   end
 
@@ -877,6 +870,16 @@ class AssignmentsController < ApplicationController
       end
     end
 
+  def set_repo_vars(assignment, grouping)
+    grouping.group.access_repo do |repo|
+      @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
+      @last_modified_date = @revision&.server_timestamp
+      files = @revision.files_at_path(assignment.repository_folder)
+      @num_submitted_files = files.length
+      missing_assignment_files = grouping.missing_assignment_files(@revision)
+      @num_missing_assignment_files = missing_assignment_files.length
+    end
+  end
 
     def get_files_info(files, assignment_id, revision_identifier, path)
       files.map do |file_name, file|
