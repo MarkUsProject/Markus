@@ -38,8 +38,8 @@ Markus::Application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   # Enable better_errors for 0.0.0.0 IP address
-  if defined?(BetterErrors) && ENV["SSH_CLIENT"]
-    host = ENV["SSH_CLIENT"].match(/\A([^\s]*)/)[1]
+  if defined?(BetterErrors) && ENV['SSH_CLIENT']
+    host = ENV['SSH_CLIENT'].match(/\A([^\s]*)/)[1]
     BetterErrors::Middleware.allow_ip! host if host
   end
 

@@ -19,8 +19,8 @@ gem 'upsert'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
-gem 'js-routes'
 gem 'jquery-rails'
+gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails',   '5.0.0.beta1'
 gem 'uglifier',     '>= 1.3.0'
@@ -35,7 +35,7 @@ gem 'redis-rails'
 gem 'pundit'
 
 # Statistics
-gem 'descriptive_statistics', '~> 2.5', :require => 'descriptive_statistics/safe'
+gem 'descriptive_statistics', '~> 2.5', require: 'descriptive_statistics/safe'
 gem 'histogram', '~> 0.2.4.1'
 
 # Internationalization
@@ -60,15 +60,15 @@ gem 'ya2yaml'
 
 # Rails miscellany
 gem 'activerecord-session_store', '~>0.1.0'
-gem 'responders', '~> 2.0'
 gem 'rails-html-sanitizer'
+gem 'responders', '~> 2.0'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
 #   bundle install --without mysql sqlite
 group :postgresql do
-  gem 'pg', '~> 0.21'  # TODO: upgrade only when using Rails 5.1.5+
+  gem 'pg', '~> 0.21' # TODO: upgrade only when using Rails 5.1.5+
 end
 
 # If you are a MarkUs developer and use MySQL, make sure you have
@@ -92,7 +92,7 @@ end
 group :development do
   gem 'awesome_print'
   gem 'better_errors'
-  gem 'binding_of_caller' , '>= 0.8'  # supplement for better_errors
+  gem 'binding_of_caller', '>= 0.8' # supplement for better_errors
   gem 'quiet_assets' # TODO: remove when upgrade to sprockets 3
   gem 'bullet'
 end
