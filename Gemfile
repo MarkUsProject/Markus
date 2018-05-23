@@ -53,6 +53,7 @@ gem 'zxing_cpp'
 # Ruby miscellany
 gem 'json'
 gem 'net-ssh'
+gem 'redcarpet'
 gem 'rubyzip'
 gem 'rugged'
 gem 'ya2yaml'
