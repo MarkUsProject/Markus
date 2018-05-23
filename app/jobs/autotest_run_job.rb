@@ -57,11 +57,28 @@ class AutotestRunJob < ApplicationJob
     end
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_scripts, server_api_key)
+  def get_server_api_key
+    begin
+      server_host = MarkusConfigurator.autotest_server_host
+      server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
+        user.first_name = 'Autotest'
+        user.last_name = 'Server'
+        user.hidden = true
+      end
+      server_user.set_api_key
+
+      server_user.api_key
+    rescue ActiveRecord::RecordNotUnique
+      # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
+      retry
+    end
+  end
+
+  def enqueue_test_run(test_run, host_with_port, test_scripts)
 
     grouping = test_run.grouping
     submission = test_run.submission
-    requested_by = test_run.user
+    user = test_run.user
     assignment = grouping.assignment
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
@@ -82,7 +99,8 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    server_params = { markus_address: markus_address, user_type: requested_by.type, user_api_key: requested_by.api_key,
+    server_api_key = get_server_api_key
+    server_params = { markus_address: markus_address, user_type: user.type, user_api_key: user.api_key,
                       server_api_key: server_api_key, test_scripts: test_scripts, files_path: 'files_path_placeholder',
                       assignment_id: assignment.id, group_id: group.id, submission_id: submission_id,
                       group_repo_name: group.repo_name }
@@ -116,30 +134,31 @@ class AutotestRunJob < ApplicationJob
     end
   end
 
-  def perform(host_with_port, test_scripts, user_api_key, server_api_key, test_runs)
+  def perform(host_with_port, user_id, test_scripts, test_runs)
 
     test_batch = nil
     if test_runs.size > 1
       test_batch = TestBatch.create
     end
-    user = User.find_by(api_key: user_api_key)
     test_runs.each do |test_run|
+      # if user is an instructor, then a submission exists and we use that repo revision
+      # if user is a student, then we use the latest repo revision
       grouping_id = test_run['grouping_id']
       submission_id = test_run['submission_id']
-      grouping = Grouping.find(grouping_id)
-      submission = submission_id.nil? ? nil : Submission.find(submission_id)
-      if submission.nil?
+      if submission_id.nil?
+        grouping = Grouping.find(grouping_id)
         revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       else
+        submission = Submission.find(submission_id)
         revision_identifier = submission.revision_identifier
       end
       test_run = TestRun.create(
         test_batch: test_batch,
-        user: user,
-        grouping: grouping,
-        submission: submission,
+        user_id: user_id,
+        grouping_id: grouping_id,
+        submission_id: submission_id,
         revision_identifier: revision_identifier)
-      enqueue_test_run(test_run, host_with_port, test_scripts, server_api_key)
+      enqueue_test_run(test_run, host_with_port, test_scripts)
     end
   end
 

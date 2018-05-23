@@ -1213,7 +1213,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
-        no_test_server_user: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
         bad_group: "UPDATE ME"
         no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"

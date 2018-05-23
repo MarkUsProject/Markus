@@ -1243,7 +1243,6 @@ fr:
         error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
-        no_test_server_user: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
         bad_group: "UPDATE ME"
         no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"

@@ -1634,7 +1634,6 @@ es:
         error:        "UPDATE ME"
       error:
         not_enabled:          "UPDATE ME"
-        no_test_server_user:  "UPDATE ME"
         ta_not_allowed:       "UPDATE ME"
         bad_group:            "UPDATE ME"
         no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"

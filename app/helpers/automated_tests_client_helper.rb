@@ -112,21 +112,28 @@ module AutomatedTestsClientHelper
     files
   end
 
-  def self.get_test_server_user
-    test_server_host = MarkusConfigurator.autotest_server_host
-    test_server_user = User.find_by(user_name: test_server_host)
-    if test_server_user.nil? || !test_server_user.test_server?
-      raise I18n.t('automated_tests.error.no_test_server_user', { hostname: test_server_host })
-    end
-    test_server_user.set_api_key
+  def self.get_test_scripts(assignment, user)
 
-    test_server_user
+    # Select a subset of test scripts
+    if user.admin?
+      test_scripts = assignment.instructor_test_scripts
+                       .order(:seq_num)
+                       .pluck(:file_name, :timeout)
+    elsif user.student?
+      test_scripts = assignment.student_test_scripts
+                       .order(:seq_num)
+                       .pluck(:file_name, :timeout)
+    else
+      test_scripts = []
+    end
+    if test_scripts.empty?
+      raise I18n.t('automated_tests.error.no_test_files')
+    end
+
+    test_scripts.to_h # {file_name1: timeout1, ...}
   end
 
-  # Verify the user has the permission to run the tests - admins
-  # always have the permission, while student has to
-  # belong to the group, and have at least one token.
-  def self.check_user_permission(user, grouping)
+  def self.check_user_permission(user, grouping = nil)
 
     # the user may not have an api key yet
     user.set_api_key
@@ -140,12 +147,8 @@ module AutomatedTestsClientHelper
     end
     # student checks from now on
 
-    # student tests enabled
-    unless MarkusConfigurator.autotest_student_tests_on?
-      raise I18n.t('automated_tests.error.not_enabled')
-    end
     # student belongs to the grouping
-    unless user.accepted_groupings.include?(grouping)
+    if grouping.nil? || !user.accepted_groupings.include?(grouping)
       raise I18n.t('automated_tests.error.bad_group')
     end
     # deadline has not passed
@@ -160,50 +163,16 @@ module AutomatedTestsClientHelper
     token.decrease_tokens # raises exception with no tokens available
   end
 
-  # Verify that MarkUs has test scripts to run the test and get them.
-  def self.get_test_scripts(assignment, user)
+  def self.authorize_test_run(user, assignment, grouping = nil)
 
-    # No test directory or test files
-    test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
-    unless File.exist?(test_dir)
-      raise I18n.t('automated_tests.error.no_test_files')
-    end
-
-    # Select a subset of test scripts
-    if user.admin?
-      test_scripts = assignment.instructor_test_scripts
-                               .order(:seq_num)
-                               .pluck(:file_name, :timeout)
-    elsif user.student?
-      test_scripts = assignment.student_test_scripts
-                               .order(:seq_num)
-                               .pluck(:file_name, :timeout)
-    else
-      test_scripts = []
-    end
-    if test_scripts.empty?
-      raise I18n.t('automated_tests.error.no_test_files')
-    end
-
-    test_scripts.to_h
-  end
-
-  def self.request_a_test_run(host_with_port, current_user, test_runs)
-
-    #TODO everything here is just authorization stuff to be extracted in policies
-    grouping_id = test_runs[0][:grouping_id]
-    grouping = Grouping.find(grouping_id)
-    assignment = grouping.assignment
-    unless assignment.enable_test
+    # TODO: extract in policies
+    if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
       raise I18n.t('automated_tests.error.not_enabled')
     end
-    test_server_user = get_test_server_user
-    test_scripts = get_test_scripts(assignment, current_user)
-    check_user_permission(current_user, grouping)
+    test_scripts = get_test_scripts(assignment, user)
+    check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
 
-    # if current_user is an instructor, then a submission exists and we use that repo revision
-    # if current_user is a student, then we use the latest repo revision
-    AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key, test_runs)
+    test_scripts
   end
 
 end

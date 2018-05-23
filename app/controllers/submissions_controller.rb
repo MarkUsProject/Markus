@@ -226,8 +226,9 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if test_runs.size > 0
-        AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, current_user,
-                                                      test_runs)
+        test_scripts = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
+        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
+                                     test_runs)
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')

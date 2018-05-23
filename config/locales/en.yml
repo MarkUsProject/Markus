@@ -1392,7 +1392,6 @@ en:
         error: "Error"
       error:
         not_enabled: "Tests are not enabled for this assignment"
-        no_test_server_user: "There is no test server user for %{hostname}"
         ta_not_allowed: "Graders are not allowed to run tests"
         bad_group: "Your group is not valid or you do not have one yet"
         no_tokens: "You do not have tokens to run the tests"
