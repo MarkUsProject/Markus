@@ -20,11 +20,8 @@
 
 class TestScriptResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
-  belongs_to :submission # TODO delete
   belongs_to :test_script, required: true
   belongs_to :test_run, required: true
-  belongs_to :grouping, required: true, validate: true # TODO delete
-  belongs_to :requested_by, class_name: 'User', inverse_of: :test_script_results, required: true # TODO delete
 
   validates_presence_of :marks_earned
   validates_presence_of :marks_total

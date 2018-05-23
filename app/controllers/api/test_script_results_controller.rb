@@ -64,10 +64,8 @@ module Api
         return
       end
       test_run = TestRun.find(params[:test_run_id])
-      grouping = test_run.grouping
       begin
-        grouping.create_test_script_results_from_json(test_run, params[:test_output], params[:test_errors],
-                                                      params[:test_scripts])
+        test_run.create_test_script_results_from_json(params[:test_output], params[:test_errors], params[:test_scripts])
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -114,8 +112,7 @@ module Api
 
       test_script_result = TestScriptResult.find(params[:id])
       test_run = TestRun.find(params[:test_run_id])
-      grouping = test_run.grouping
-      if grouping.create_test_script_results_from_json(test_run, params[:test_output], params[:test_errors],
+      if test_run.create_test_script_results_from_json(params[:test_output], params[:test_errors],
                                                        params[:test_scripts]) && test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200']},
                                      status: 200
