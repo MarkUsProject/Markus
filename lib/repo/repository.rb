@@ -64,7 +64,6 @@ module Repository
 
     @@permission_thread_mutex = Mutex.new
     @@permission_thread = nil
-    @@permission_write_mutex = Mutex.new
 
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
@@ -211,10 +210,7 @@ module Repository
       full_access_users = self.get_full_access_users
       # only continue if this was the last thread to get permissions from the database
       if @@permission_thread == Thread.current.object_id
-        # wait until another thread finishes writing
-        @@permission_write_mutex.synchronize do
-          __update_permissions(permissions, full_access_users)
-        end
+        __update_permissions(permissions, full_access_users)
       end
       nil
     end
@@ -236,10 +232,11 @@ module Repository
       Thread.current[:requested?] = false
       begin
         Thread.current[:permissions_lock].synchronize { yield }
-      ensure
-        if !only_on_request || Thread.current[:requested?]
-          self.update_permissions
-        end
+      rescue ThreadError
+        yield
+      end
+      if !only_on_request || Thread.current[:requested?]
+        self.update_permissions
       end
       nil
     end
