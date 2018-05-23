@@ -10,5 +10,10 @@ if ! redis-cli ping ; then
   redis-server &
 fi
 
-QUEUE=* rake environment resque:work &
-rails s
+QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work &
+
+if [ -d ~/markus-autotesting ] ; then
+  ~/markus-autotesting/server/start_resque.sh tester
+fi
+
+bundle exec rails s
