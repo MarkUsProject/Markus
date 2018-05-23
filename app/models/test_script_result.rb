@@ -19,23 +19,19 @@
 #############################################################
 
 class TestScriptResult < ApplicationRecord
-  belongs_to :submission, required: false
-  belongs_to :test_script
-  belongs_to :grouping
-  belongs_to :requested_by, class_name: 'User', inverse_of: :test_script_results
-
   has_many :test_results, dependent: :destroy
+  belongs_to :submission
+  belongs_to :test_script, required: true
+  belongs_to :test_run, required: true
+  belongs_to :grouping, required: true, validate: true # TODO delete
+  belongs_to :requested_by, class_name: 'User', inverse_of: :test_script_results, required: true # TODO delete
 
-  validates_presence_of :grouping   # we require an associated grouping
-  validates_associated  :grouping   # grouping need to be valid
-
-  validates_presence_of :test_script
   validates_presence_of :marks_earned
   validates_presence_of :marks_total
-
+  validates_presence_of :time
   validates_numericality_of :marks_earned, greater_than_or_equal_to: 0
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
-  validates_numericality_of :time, only_integer: true, greater_than_or_equal_to: 0
+  validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true
 
   def create_test_result(name, input, actual, expected, marks_earned, marks_total, status)
     self.test_results.create(

@@ -19,6 +19,7 @@ class User < ApplicationRecord
            -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Membership'
   has_many :annotations, as: :creator
+  has_many :test_runs, dependent: :destroy
   has_many :test_script_results, foreign_key: 'requested_by_id', dependent: :delete_all, inverse_of: :requested_by
   has_many :split_pdf_logs
 

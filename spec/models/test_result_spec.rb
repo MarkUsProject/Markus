@@ -10,12 +10,14 @@ describe TestResult do
   it { is_expected.to validate_presence_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
+  it { is_expected.to validate_numericality_of(:time) }
 
   context 'test result' do
     before(:each) do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
+      @user = create(:admin)
       @test_script = TestScript.create(
         assignment_id: @asst.id,
         seq_num: 1,
@@ -32,10 +34,17 @@ describe TestResult do
         display_expected_output: 'do_not_display',
         display_actual_output: 'do_not_display'
       )
+      @test_run = TestRun.create(
+        grouping: @grouping,
+        user: @user,
+        revision_identifier: '1'
+      )
       @test_script_result = TestScriptResult.create(
         submission: @sub,
         grouping: @sub.grouping,
         test_script: @test_script,
+        test_run: @test_run,
+        requested_by: @user,
         marks_earned: 1,
         marks_total: 1,
         repo_revision: 0,
@@ -115,6 +124,12 @@ describe TestResult do
         expect(@test_result.save).to be true
       end
 
+      it 'can have nil time' do
+        @test_result.time = nil
+        expect(@test_result).to be_valid
+        expect(@test_result.save).to be true
+      end
+
       it 'can be deleted' do
         expect(@test_result).to be_valid
         expect{@test_result.destroy}.to change {TestResult.count}.by(-1)
@@ -122,12 +137,6 @@ describe TestResult do
     end
 
     context 'An invalid test result' do
-
-      it 'has a nil test script result' do
-        @test_result.test_script_result = nil
-        @test_result.save
-        expect(@test_result).not_to be_valid
-      end
 
       it 'has a nil input' do
         @test_result.input = nil
@@ -161,6 +170,11 @@ describe TestResult do
 
       it 'has nil marks total' do
         @test_result.marks_total = nil
+        expect(@test_result).not_to be_valid
+      end
+
+      it 'has negative time' do
+        @test_result.time = -1
         expect(@test_result).not_to be_valid
       end
     end
