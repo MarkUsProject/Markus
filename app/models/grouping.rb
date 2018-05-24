@@ -187,7 +187,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_group_name
-    return group.group_name if assignment.group_max == 1
+    return group.group_name if assignment.group_max == 1 && !assignment.scanned_exam
 
     name = group.group_name
     student_names = accepted_students.map &:user_name
