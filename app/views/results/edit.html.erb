@@ -286,6 +286,17 @@
 <%# Javascript files %>
 <%= javascript_include_tag 'Results/main' %>
 
+<%=
+  def remove_gitkeep
+    @files.each do |file|
+      if file.filename == ".gitkeep" then
+        @files.delete(file)
+      end
+    end
+  end
+  remove_gitkeep;
+%>
+
 <!-- load the first file -->
 <script>
   var first_file_id;
