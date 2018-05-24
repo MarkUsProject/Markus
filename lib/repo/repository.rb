@@ -62,6 +62,9 @@ module Repository
 
   class AbstractRepository
 
+    @@permission_thread_mutex = Mutex.new
+    @@permission_thread = nil
+
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
     def initialize(connect_string)
@@ -149,36 +152,33 @@ module Repository
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
-    # Adds a user with a given permission-set to the repository
-    def add_user(user_id, permissions)
-      raise NotImplementedError,  "Repository.add_user: Not yet implemented"
+    def self.get_full_access_users
+      Admin.pluck(:user_name)
     end
 
-    # Removes user permissions for read & write access to the repository
-    def remove_user(user_id)
-      raise NotImplementedError,  "Repository.remove_user: Not yet implemented"
+    # Gets a list of users with permission to access the repo.
+    # All permissions are rw for the time being
+    def get_users
+
+      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
+      end
+      repo_name = get_repo_name
+      permissions = self.get_all_permissions
+      permissions.fetch(repo_name, []) + self.get_full_access_users
     end
 
-    # Gets a list of users with permissions in question on the repository
-    #   use "Repository::Permission::ANY" to get a list of all users with any permissions
-    #   i.e. all users with at least read permissions
-    def get_users(permissions)
-      raise NotImplementedError, "Repository.get_users: Not yet implemented"
-    end
+    # TODO All permissions are rw for the time being
+    def get_permissions(user_name)
 
-    # Gets permissions for a particular user
-    def get_permissions(user_id)
-      raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
-    end
+      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
+      end
+      unless get_users.include?(user_name)
+        raise UserNotFound.new("User #{user_name} not found in this repo")
+      end
 
-    # Generate and write the the authorization file for all repos.
-    def self.__set_all_permissions
-      raise NotImplementedError, "Repository.__generate_authz_file: Not yet implemented"
-    end
-
-    # Sets permissions for a particular user
-    def set_permissions(user_id, permissions)
-      raise NotImplementedError, "Repository.set_permissions: Not yet implemented"
+      Repository::Permission::READ_WRITE
     end
 
     #Converts a pathname to an absolute pathname
@@ -186,36 +186,65 @@ module Repository
       raise NotImplementedError, "Repository.expand_path: Not yet implemented"
     end
 
-    # Static method on Repository to set permissions on a set of users across a series
-    # of group repositories.
-    # user_id_permissions_map is a hash in the form of:
-    # {user_id => Repository::Permissions::READ, user_id =>....}
+    # Updates permissions file unless it is being called from within a
+    # block passed to self.update_permissions_after or if it does not
+    # read the most up to date data (using self.get_all_permissions)
     #
-    # set_bulk_permissions will clobber pre-existing permissions, and automatically
-    # add_user to a repository permission set.
-    #
-    # set_bulk_permissions is commonly used when setting permissions for _many_
-    # repositories
-    #
-    def self.set_bulk_permissions(groups, user_id_permissions_map)
-      raise NotImplementedError, "Repository.set_bulk_permissions: Not yet implemented"
+    # It may not have the most up to date data if another thread calls
+    # makes some update to the database and calls self.get_all_permissions
+    # while this thread is still processing self.get_all_permissions
+    def self.update_permissions
+      return unless MarkusConfigurator.markus_config_repository_admin?
+      Thread.current[:requested?] = true
+      unless Thread.current[:permissions_lock].nil?
+        # abort if this is being called in a block passed to
+        # self.update_permissions_after
+        return if Thread.current[:permissions_lock].owned?
+      end
+      # indicate that this thread is trying to update permissions
+      @@permission_thread_mutex.synchronize do
+        @@permission_thread = Thread.current.object_id
+      end
+      # get permissions from the database
+      permissions = self.get_all_permissions
+      full_access_users = self.get_full_access_users
+      # only continue if this was the last thread to get permissions from the database
+      if @@permission_thread == Thread.current.object_id
+        __update_permissions(permissions, full_access_users)
+      end
+      nil
     end
 
-    # Static method on Repository to remove permissions on an Array of users across
-    # a series of group repositories
-    # user_ids is an Array of user_ids
+    # Executes a block of code and then updates the permissions file.
+    # Also prevents any calls to self.update_permissions or
+    # self.update_permissions_after within that block.
     #
-    def self.delete_bulk_permissions(groups, user_ids)
-      raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"
+    # If only_on_request is true then self.update_permissions will be
+    # called after the block only if it would have been called in the
+    # yielded block but was prevented
+    #
+    # This allows us to ensure that the permissions file will only be
+    # updated a single time once all relevant changes have been made.
+    def self.update_permissions_after(only_on_request: false)
+      if Thread.current[:permissions_lock].nil?
+        Thread.current[:permissions_lock] = Mutex.new
+      end
+      Thread.current[:requested?] = false
+      begin
+        Thread.current[:permissions_lock].synchronize { yield }
+      rescue ThreadError
+        yield
+      end
+      if !only_on_request || Thread.current[:requested?]
+        self.update_permissions
+      end
+      nil
     end
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
-
       permissions = {}
-      admins = Admin.pluck(:user_name)
-      tas = Ta.pluck(:user_name)
-      group_repos = Group.pluck(:repo_name)
+      grader_hash = Ta.get_all_grouping_ids_by_grader
       assignments = Assignment.get_repo_auth_records
       assignments.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
@@ -224,19 +253,25 @@ module Repository
             next
           end
           accepted_students = valid_grouping.accepted_students.map(&:user_name)
-          permissions[repo_name] = admins + tas + accepted_students
-          group_repos.delete(repo_name)
+          graders = grader_hash[valid_grouping.id] || []
+          permissions[repo_name] = accepted_students + graders
         end
-      end
-      group_repos.each do |repo_name| # "dead" repositories
-        permissions[repo_name] = admins + tas
-      end
-      Assignment.repository_names.each do |repo_name| # starter code repositories
-        permissions[repo_name] = admins
       end
       permissions
     end
 
+    # '*' which is reserved to indicate all repos when setting permissions
+    # TODO: add to this if needed
+    def self.reserved_locations
+      ['*']
+    end
+
+    # Generate and write the the authorization file for all repos.
+    def self.__update_permissions(permissions, full_access_users)
+      raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
+    end
+
+    private_class_method :__update_permissions
   end
 
 

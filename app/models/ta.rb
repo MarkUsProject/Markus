@@ -8,10 +8,6 @@ class Ta < User
   CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
   SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
 
-  after_create  :grant_repository_permissions
-  after_destroy :revoke_repository_permissions
-  after_update  :maintain_repository_permissions
-
   has_many :criterion_ta_associations, dependent: :delete_all
 
   has_many :grade_entry_student_tas, dependent: :delete_all
@@ -59,6 +55,12 @@ class Ta < User
     grade_entry_students.where('grade_entry_form_id = ?', grade_entry_form.id)
                         .includes(:grade_entry_form)
                         .count
+  end
+
+  def self.get_all_grouping_ids_by_grader
+    h = Hash.new { |h,k| h[k]=[] }
+    TaMembership.joins(:user).pluck(:grouping_id, :user_name).each { |k,v| h[k] << v }
+    h
   end
 
   # Determine the total mark for a particular student, as a percentage

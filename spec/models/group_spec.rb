@@ -2,9 +2,20 @@ require 'spec_helper'
 
 describe Group do
 
-  it { is_expected.to validate_presence_of(:group_name) }
-  it { is_expected.to validate_uniqueness_of(:group_name) }
-  it { is_expected.to validate_length_of(:group_name).is_at_most(30) }
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:group_name) }
+    it { is_expected.to validate_uniqueness_of(:group_name) }
+    it { is_expected.to validate_length_of(:group_name).is_at_most(30) }
+
+    context 'fails when group_name is one of the reserved locations' do
+      Repository.get_class.reserved_locations.each do |loc|
+        it "#{loc}" do
+          assignment = build(:group, group_name: loc)
+          expect(assignment).not_to be_valid
+        end
+      end
+    end
+  end
 
   describe '#set_repo_name' do
     # The tests below are checking for a method that is called when

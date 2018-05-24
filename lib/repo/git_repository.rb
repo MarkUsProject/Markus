@@ -30,7 +30,6 @@ module Repository
       rescue NotImplementedError; end
       @repos_path = connect_string
       @closed = false
-      @repos_admin = MarkusConfigurator.markus_config_repository_admin?
       if GitRepository.repository_exists?(@repos_path)
         @repos = Rugged::Repository.new(@repos_path)
         # make sure working directory is up-to-date
@@ -76,7 +75,6 @@ module Repository
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists
                            already")
       end
-
       # Repo is created bare, then clone it in the repository storage location
       repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
       bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
@@ -396,66 +394,38 @@ module Repository
       end
     end
 
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    # TODO All permissions are rw for the time being, so the provided permissions are not really used
-    def get_users(permissions)
 
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      repo_name = get_repo_name
-      permissions = AbstractRepository.get_all_permissions
-      users = permissions[repo_name]
 
-      users
-    end
+    ####################################################################
+    ##  Private method definitions
+    ####################################################################
 
-    # TODO All permissions are rw for the time being
-    def get_permissions(user_name)
 
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
-      end
-      begin
-        user = User.find_by(user_name: user_name)
-      rescue RecordNotFound
-        raise UserNotFound.new("User #{user_name} does not exist")
-      end
-      if user.admin? or user.ta?
-        return Repository::Permission::READ_WRITE
-      end
-      unless get_users(Repository::Permission::ANY).include?(user_name)
-        raise UserNotFound.new("User #{user_name} not found in this repo")
-      end
-
-      Repository::Permission::READ_WRITE
-    end
-
-    # Generate all the permissions for students for all groupings in all assignments.
+    # Helper method to generate all the permissions for students for all groupings in all assignments.
     # This is done as a single operation to mirror the SVN repo code. We found
     # a substantial performance improvement by writing the auth file only once in the SVN case.
-    def self.__set_all_permissions
+    def self.__update_permissions(permissions, full_access_users)
 
       # Check if configuration is in order
       if MarkusConfigurator.markus_config_repository_admin?.nil?
         raise ConfigurationError.new(
-            "Required config 'IS_REPOSITORY_ADMIN' not set")
+          "Required config 'IS_REPOSITORY_ADMIN' not set")
       end
       if MarkusConfigurator.markus_config_repository_permission_file.nil?
         raise ConfigurationError.new(
-            "Required config 'REPOSITORY_PERMISSION_FILE' not set")
+          "Required config 'REPOSITORY_PERMISSION_FILE' not set")
       end
       # If we're not in authoritative mode, bail out
       unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
         raise NotAuthorityError.new(
-            'Unable to set bulk permissions: Not in authoritative mode!')
+          'Unable to set bulk permissions: Not in authoritative mode!')
       end
 
       # Create auth csv file
-      sorted_permissions = AbstractRepository.get_all_permissions.sort.to_h
+      sorted_permissions = permissions.sort.to_h
       CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
         csv.flock(File::LOCK_EX)
+        csv << ['*'] + full_access_users
         sorted_permissions.each do |repo_name, users|
           csv << [repo_name] + users
         end
@@ -463,83 +433,7 @@ module Repository
       end
     end
 
-    # TODO I don't think this is used anywhere
-    # Set permissions for a single given user for a given repo_name
-    def set_permissions(user_name, permissions)
-
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
-      end
-      get_permissions(user_name) # side effect if user does not exist: raise UserNotFound
-      # TODO No-op until all permissions are rw
-    end
-
-    # Delete user from access list
-    # TODO The user must have been removed from the appropriate db tables before invoking this, maybe it's better doing it all here
-    def remove_user(user_name)
-
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
-      end
-      # TODO Can't check that user exists for repo or raise UserNotFound, if it has already been removed from the db
-      GitRepository.__set_all_permissions
-    end
-
-    # TODO The user must have been added to the appropriate db tables before invoking this, maybe it's better doing it all here
-    def add_user(user_name, permissions)
-
-      unless @repos_admin # are we admin?
-        raise NotAuthorityError.new('Unable to modify permissions: Not in authoritative mode!')
-      end
-      # TODO Can't check that user does not exists for repo or raise UserAlreadyExistent, if it has already been added to the db
-      GitRepository.__set_all_permissions
-    end
-
-    # Sets permissions over several repositories. Use set_permissions to set
-    # permissions on a single repository.
-    def self.set_bulk_permissions(repo_names, user_id_permissions_map)
-
-      GitRepository.__set_all_permissions
-    end
-
-    # Deletes permissions over several repositories. Use remove_user to remove
-    # permissions of a single repository.
-    def self.delete_bulk_permissions(repo_names, user_ids)
-
-      GitRepository.__set_all_permissions
-    end
-
-    # Helper method to translate internal permissions to git
-    # permissions
-    # If we want the directory creation to have its own commit,
-    # we have to add a dummy file in that directory to do it.
-    def self.__translate_to_git_perms(permissions)
-      case (permissions)
-      when Repository::Permission::READ
-        return "R"
-      when Repository::Permission::READ_WRITE
-        return "RW+"
-      else raise "Unknown permissions"
-      end # end case
-    end
-
-    # Helper method to translate git permissions to internal
-    # permissions
-    def self.__translate_perms_from_file(perm_string)
-      case (perm_string)
-      when "R"
-        return Repository::Permission::READ
-      when "RW"
-        return Repository::Permission::READ_WRITE
-      when "RW+"
-        return Repository::Permission::READ_WRITE
-      else raise "Unknown permissions"
-      end # end case
-    end
-
-    ####################################################################
-    ##  Private method definitions
-    ####################################################################
+    private_class_method :__update_permissions
 
     private
 

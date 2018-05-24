@@ -121,9 +121,6 @@ class SplitPDFJob < ApplicationJob
         num_pages_qr_scan_error: num_pages_qr_scan_error
       )
 
-      # Update repository permissions
-      Repository.get_class.__set_all_permissions
-
       m_logger.log('Split pdf process done')
       return split_pdf_log
     rescue => e

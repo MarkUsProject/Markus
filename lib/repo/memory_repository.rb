@@ -12,6 +12,9 @@ module Repository
     #    key (location), value (reference to repo)
     @@repositories = {}
 
+    # hash containing user permissions
+    @@permissions = {}
+
     #############################################################
     #   A MemoryRepository instance holds the following variables
     #     - current_revision
@@ -152,25 +155,6 @@ module Repository
       true
     end
 
-    def self.__set_all_permissions
-      permissions = AbstractRepository.get_all_permissions
-      permissions.each do |repo_name, users|
-        begin
-          repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repo_name)
-          repo = MemoryRepository.open(repo_loc)
-        rescue
-          next
-        end
-        users.each do |user|
-          if repo.has_user?(user)
-            repo.set_permissions(user, Repository::Permission::READ_WRITE)
-          else
-            repo.add_user(user, Repository::Permission::READ_WRITE)
-          end
-        end
-      end
-    end
-
     # Returns the latest revision number (as a RepositoryRevision object)
     def get_latest_revision
       return @current_revision
@@ -207,87 +191,6 @@ module Repository
 
     def get_all_revisions
       @revision_history + [@current_revision]
-    end
-
-    # Semi-private - used by the bulk permissions assignments
-    def has_user?(user_id)
-      @users.key?(user_id)
-    end
-
-    # Adds a user to the repository and grants him/her the provided permissions
-    def add_user(user_id, permissions)
-      if self.has_user?(user_id)
-        raise UserAlreadyExistent.new("#{user_id} exists already")
-      end
-      @users[user_id] = permissions
-    end
-
-    # Removes a user from from the repository
-    def remove_user(user_id)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users.delete(user_id)
-    end
-
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    def get_users(permissions)
-      result_list = []
-      @users.each do |user, perm|
-        if perm >= permissions
-          result_list.push(user)
-        end
-      end
-      if !result_list.empty?
-        return result_list
-      else
-        return nil
-      end
-    end
-
-    # Sets permissions for the provided user
-    def set_permissions(user_id, permissions)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users[user_id] = permissions
-    end
-
-    # Gets permissions for a given user
-    def get_permissions(user_id)
-      unless self.has_user?(user_id)
-        raise UserNotFound.new("#{user_id} not found")
-      end
-      @users[user_id]
-    end
-
-    # Set permissions for many repositories
-    def self.set_bulk_permissions(repo_names, user_id_permissions_map)
-      repo_names.each do |repo_name|
-        repo = MemoryRepository.open(repo_name)
-        user_id_permissions_map.each do |user_id, permissions|
-          if repo.has_user?(user_id)
-            repo.set_permissions(user_id, permissions)
-          else
-            repo.add_user(user_id, permissions)
-          end
-        end
-      end
-      return true
-    end
-
-    # Delete permissions for many repositories
-    def self.delete_bulk_permissions(repo_names, user_ids)
-      repo_names.each do |repo_name|
-        repo = MemoryRepository.open(repo_name)
-        user_ids.each do |user_id|
-          if repo.has_user?(user_id)
-            repo.remove_user(user_id)
-          end
-        end
-      end
-      return true
     end
 
     # Static method: Yields an existing Memory repository and closes it afterwards
@@ -438,6 +341,67 @@ module Repository
       end
       return false
     end
+
+    # gets the "closest matching" revision from the revision-timestamp
+    # mapping
+    def get_revision_number_by_timestamp(wanted_timestamp, path = nil)
+      if @timestamps_revisions.empty?
+        raise "No revisions, so no timestamps."
+      end
+
+      all_timestamps_list = []
+      remaining_timestamps_list = []
+      @timestamps_revisions.keys().each do |time_dump|
+        all_timestamps_list.push(Marshal.load(time_dump))
+        remaining_timestamps_list.push(Marshal.load(time_dump))
+      end
+
+      # find closest matching timestamp
+      mapping = {}
+      first_timestamp_found = false
+      old_diff = 0
+      # find first valid revision
+      all_timestamps_list.each do |best_match|
+        remaining_timestamps_list.shift()
+        old_diff = wanted_timestamp - best_match
+        mapping[old_diff.to_s] = best_match
+        if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(best_match)].revision_at_path(path))
+          first_timestamp_found = true
+          break
+        end
+      end
+
+      # find all other valid revision
+      remaining_timestamps_list.each do |curr_timestamp|
+        new_diff = wanted_timestamp - curr_timestamp
+        mapping[new_diff.to_s] = curr_timestamp
+        if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(curr_timestamp)].revision_at_path(path))
+          if(old_diff <= 0 && new_diff <= 0) ||
+            (old_diff <= 0 && new_diff > 0) ||
+            (new_diff <= 0 && old_diff > 0)
+            old_diff = [old_diff, new_diff].max
+          else
+            old_diff = [old_diff, new_diff].min
+          end
+        end
+      end
+
+      if first_timestamp_found
+        wanted_timestamp = mapping[old_diff.to_s]
+        return @timestamps_revisions[Marshal.dump(wanted_timestamp)]
+      else
+        return @current_revision
+      end
+    end
+
+    def self.__update_permissions(permissions, full_access_users)
+      @@permissions = {'*' => full_access_users}
+      permissions.each do |repo_loc, users|
+        @@permissions[repo_loc] = users
+      end
+    end
+
+    private_class_method :__update_permissions
 
   end # end class MemoryRepository
 
