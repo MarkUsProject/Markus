@@ -99,6 +99,7 @@ class Assignment < ApplicationRecord
   validates_inclusion_of :allow_web_submits, in: [true, false]
   validates_inclusion_of :vcs_submit, in: [true, false]
   validates_inclusion_of :display_grader_names_to_students, in: [true, false]
+  validates_inclusion_of :display_median_to_students, in: [true, false]
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_inclusion_of :has_peer_review, in: [true, false]
   validates_inclusion_of :assign_graders_to_criteria, in: [true, false]

@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20180517143503) do
     t.boolean  "enable_student_tests",             default: false, null: false
     t.boolean  "non_regenerating_tokens",          default: false
     t.boolean  "scanned_exam",                     default: false, null: false
+    t.boolean  "display_median_to_students",       default: false, null: false
   end
 
   add_index "assignments", ["short_identifier"], name: "index_assignments_on_short_identifier", unique: true, using: :btree
