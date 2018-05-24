@@ -22,7 +22,7 @@ describe SectionsController do
         csv_rows = CSV.parse(response_csv)
         expect(Student.all.size + 1).to eq(csv_rows.size) # for header
         assignments = Assignment.order(:id)
-        header = [I18n.t('grade_entry_forms.username'), I18n.t('grade_entry_forms.id_number')]
+        header = [I18n.t('user.user_name'), I18n.t('user.id_number')]
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
