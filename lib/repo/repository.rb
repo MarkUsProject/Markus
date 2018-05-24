@@ -230,10 +230,12 @@ module Repository
         Thread.current[:permissions_lock] = Mutex.new
       end
       Thread.current[:requested?] = false
-      begin
-        Thread.current[:permissions_lock].synchronize { yield }
-      rescue ThreadError
+      if Thread.current[:permissions_lock].owned?
+        # if owned by the current thread, yield the block without
+        # trying to lock again (which would raise a ThreadError)
         yield
+      else
+        Thread.current[:permissions_lock].synchronize { yield }
       end
       if !only_on_request || Thread.current[:requested?]
         self.update_permissions
