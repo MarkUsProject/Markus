@@ -556,8 +556,6 @@ fr:
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       show_total: "Total"
-      id_number: "Nombre d'étudiant"
-      username: "Nom d'utilisateur"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"

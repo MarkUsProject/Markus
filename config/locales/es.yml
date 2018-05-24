@@ -743,9 +743,6 @@ es:
       properties:            "Propiedades de las Hojas de Notas"
       required_fields:       "Campos Requeridos <span class='required_field'>*</span>"
       show_total:            "Mostrar Total"
-      id_number: "Número de estudiante"
-      username: "Nombre de usuario
-"
       create:
         success: "Las nuevas hojas de notas fueron creadas exitosamente"
         title:   "Añadir Hojas de Notas"
