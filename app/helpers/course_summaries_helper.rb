@@ -62,6 +62,7 @@ module CourseSummariesHelper
 
     data = {
         id: student.id,
+        id_number: student.id_number,
         user_name: student.user_name,
         first_name: student.first_name,
         last_name: student.last_name,
