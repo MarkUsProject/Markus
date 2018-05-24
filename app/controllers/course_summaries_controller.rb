@@ -45,7 +45,7 @@ class CourseSummariesController < ApplicationController
     grade_entry_forms = GradeEntryForm.all
     marking_schemes = MarkingScheme.all
 
-    header = [I18n.t('user.user_name'),I18n.t('user.id_number')]
+    header = [I18n.t('user.user_name'), I18n.t('user.id_number')]
     header.concat(assignments.map(&:short_identifier))
     header.concat(grade_entry_forms.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
