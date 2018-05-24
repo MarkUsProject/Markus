@@ -28,13 +28,11 @@ namespace :db do
           grouping.invite(
             [student.user_name],
             StudentMembership::STATUSES[:inviter],
-            invoked_by_admin=true,
-            update_permissions=false)
+            invoked_by_admin: true)
           grouping.invite(
             [students[time + 15].user_name],
             StudentMembership::STATUSES[:accepted],
-            invoked_by_admin=true,
-            update_permissions=false)
+            invoked_by_admin: true)
         end
 
         group.access_repo do |repo|
@@ -47,7 +45,7 @@ namespace :db do
         end
       end
     end
-    Repository.get_class.__set_all_permissions
+    Repository.get_class.update_permissions
   end
 
   def copy_dir(seed_dir, txn, repo_dir)

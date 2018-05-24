@@ -77,9 +77,11 @@ class GradersController < ApplicationController
     else
       assignment = Assignment.find(params[:assignment_id])
       if params[:remove_existing_mappings]
-        TaMembership.joins(:grouping)
-          .where(groupings: { assignment_id: assignment.id })
-          .delete_all
+        Repository.get_class.update_permissions_after do
+          TaMembership.joins(:grouping)
+            .where(groupings: { assignment_id: assignment.id })
+            .delete_all
+        end
       end
       new_ta_memberships = []
       groupings = {}
@@ -104,7 +106,9 @@ class GradersController < ApplicationController
           end
         end
       end
-      TaMembership.import new_ta_memberships, validate: false
+      Repository.get_class.update_permissions_after do
+        TaMembership.import new_ta_memberships, validate: false
+      end
 
       # Recompute criteria associations
       if assignment.assign_graders_to_criteria

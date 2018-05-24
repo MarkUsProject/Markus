@@ -144,6 +144,14 @@ describe GradersController do
           )
       end
 
+      it 'and a successful call updates repository permissions exactly once' do
+        expect(Repository.get_class).to receive(:__update_permissions)
+        post_as @admin, :csv_upload_grader_groups_mapping, {
+          assignment_id: @assignment.id,
+          grader_mapping: @group_grader_map_file
+        }
+      end
+
       it 'and some graders are invalid' do
         @ta1 = create(:ta, user_name: 'g9browni')
         @ta2 = create(:ta, user_name: 'g9younas')

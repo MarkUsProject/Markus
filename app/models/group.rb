@@ -16,8 +16,7 @@ class Group < ApplicationRecord
   has_many :assignments, through: :groupings
   has_many :split_pages
 
-
-  validates_presence_of :group_name
+  validates :group_name, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
   validates_uniqueness_of :group_name
   validates_length_of :group_name, maximum: 30
 
@@ -73,6 +72,7 @@ class Group < ApplicationRecord
     #
     # For more info about the exception
     # See 'self.create' of lib/repo/subversion_repository.rb.
+
     begin
       Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
@@ -83,22 +83,6 @@ class Group < ApplicationRecord
                    "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
     end
-    true
-  end
-
-  # Set the default repo permissions.
-  def set_repo_permissions
-    return true if !MarkusConfigurator.markus_config_repository_admin?
-    # Each admin user will have read and write permissions on each repo
-    user_permissions = {}
-    Admin.all.each do |admin|
-      user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
-    end
-    # Each grader will have read and write permissions on each repo
-    Ta.all.each do |ta|
-      user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
-    end
-    Repository.get_class.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
     true
   end
 

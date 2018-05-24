@@ -338,37 +338,6 @@ class AssignmentTest < ActiveSupport::TestCase
           end
         end
       end
-
-      context 'with external commits enabled and previous groups' do
-        setup do
-          @assignment.vcs_submit = true
-          @assignment.save
-          @target = Assignment.make({vcs_submit: true, group_min: 1, group_max: 1})
-          # And for this test, let's make sure all groupings cloned have admin approval
-          3.times do
-            target_grouping = Grouping.make(
-              assignment: @target,
-              admin_approved: true)
-            StudentMembership.make(
-              membership_status: StudentMembership::STATUSES[:accepted],
-              grouping: target_grouping)
-          end
-          assert @assignment.groupings.size > 0
-        end
-
-        should 'ensure that all students have appropriate permissions on the cloned groupings' do
-          @target.clone_groupings_from(@assignment.id)
-          @target.reload
-          @target.groupings.each do |grouping|
-            grouping.group.access_repo do |repo|
-              grouping.accepted_students.each do |student|
-                assert_equal repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE,
-                             "student should have read-write permissions on their group's repository"
-              end
-            end
-          end
-        end
-      end
     end
 
     should 'not add csv group with empty row' do

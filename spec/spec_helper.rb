@@ -64,12 +64,15 @@ RSpec.configure do |config|
   config.order = 'random'
 
   # Clean up any created file folders
-  config.after(:each) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/test_repo"])
+  config.after(:suite) do
+    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
+    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 
   config.before(:suite) do
     DatabaseCleaner.clean_with :truncation
+    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
+    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 
   RSpec::Matchers.define :same_time_within_ms do |e|

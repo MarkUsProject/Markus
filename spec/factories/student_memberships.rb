@@ -11,5 +11,9 @@ FactoryGirl.define do
     factory :accepted_student_membership do
       membership_status StudentMembership::STATUSES[:accepted]
     end
+
+    factory :rejected_student_membership do
+      membership_status StudentMembership::STATUSES[:rejected]
+    end
   end
 end

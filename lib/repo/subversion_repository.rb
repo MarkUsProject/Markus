@@ -68,7 +68,6 @@ module Repository
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
-
       # create the repository using the ruby bindings
       fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]}
       repository = Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful
@@ -212,21 +211,6 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
-    # Generate and write the SVN authorization file for the repo.
-    def self.__set_all_permissions
-      return true if !MarkusConfigurator.markus_config_repository_admin?
-      permissions = AbstractRepository.get_all_permissions
-      authz_string = ''
-      permissions.each do |repo_name, users|
-        authz_string += "[#{repo_name}:/]\n"
-        users.each do |user_name|
-          authz_string += "#{user_name} = rw\n"
-        end
-        authz_string += "\n"
-      end
-      __write_out_authz_file(authz_string)
-    end
-
     # Returns a Repository::SubversionRevision instance
     # holding the latest Subversion repository revision
     # number
@@ -322,219 +306,6 @@ module Repository
       end
       txn.commit
       return true
-    end
-
-    # Adds a user with given permissions to the repository
-    # TODO Fix/simplify it or just invoke __set_all_permissions
-    def add_user(user_id, permissions)
-      if @repos_admin # Are we admin?
-        if !File.exist?(@repos_auth_file)
-          File.open(@repos_auth_file, "w").close() # create file if not existent
-        end
-
-        retval = false
-        repo_permissions = {}
-        File.open(@repos_auth_file, "r+") do |auth_file|
-          auth_file.flock(File::LOCK_EX)
-          # get current permissions from file
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          if repo_permissions.key?(user_id)
-            raise UserAlreadyExistent.new(user_id + " already existent")
-          end
-          svn_permissions = self.class.__translate_to_svn_perms(permissions)
-          repo_permissions[user_id] = svn_permissions
-          # inject new permissions into file string
-          write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-          # rewind, so that mime-type is preserved
-          auth_file.rewind
-          auth_file.truncate(0) # truncate file
-          retval = (auth_file.write(write_string) == write_string.length)
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        return retval
-      else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
-      end
-    end
-
-    # Gets a list of users with AT LEAST the provided permissions.
-    # Returns nil if there aren't any.
-    def get_users(permissions)
-      if svn_auth_file_checks() # do basic file checks
-        repo_permissions = {}
-        File.open(@repos_auth_file) do |auth_file|
-          auth_file.flock(File::LOCK_EX)
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        result_list = []
-        repo_permissions.each do |user, perm|
-          if self.class.__translate_perms_from_file(perm) >= permissions
-            result_list.push(user)
-          end
-        end
-        if !result_list.empty?
-          return result_list
-        else
-          return nil
-        end
-      end
-    end
-
-    # Gets permissions of a particular user
-    def get_permissions(user_id)
-      if svn_auth_file_checks() # do basic file checks
-        repo_permissions = {}
-        File.open(@repos_auth_file) do |auth_file|
-
-          auth_file.flock(File::LOCK_EX)
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        if !repo_permissions.key?(user_id)
-          raise UserNotFound.new(user_id + " not found")
-        end
-        return self.class.__translate_perms_from_file(repo_permissions[user_id])
-      end
-    end
-
-    # Set permissions for a given user
-    # TODO Fix/simplify it or just invoke __set_all_permissions
-    def set_permissions(user_id, permissions)
-      if @repos_admin # Are we admin?
-        if !File.exist?(@repos_auth_file)
-          File.open(@repos_auth_file, "w").close() # create file if not existent
-        end
-
-        retval = false
-        repo_permissions = {}
-        File.open(@repos_auth_file, "r+") do |auth_file|
-          auth_file.flock(File::LOCK_EX)
-          # get current permissions from file
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          if !repo_permissions.key?(user_id)
-            raise UserNotFound.new(user_id + " not found")
-          end
-          svn_permissions = self.class.__translate_to_svn_perms(permissions)
-          repo_permissions[user_id] = svn_permissions
-          # inject new permissions into file string
-          write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-          # rewind, so that mime-type is preserved
-          auth_file.rewind
-          auth_file.truncate(0) # truncate file
-          retval = (auth_file.write(write_string) == write_string.length)
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        return retval
-      else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
-      end
-    end
-
-    # Delete user from access list
-    # TODO Fix/simplify it or just invoke __set_all_permissions
-    def remove_user(user_id)
-      if @repos_admin # Are we admin?
-        if !File.exist?(@repos_auth_file)
-          File.open(@repos_auth_file, "w").close() # create file if not existent
-        end
-
-        retval = false
-        File.open(@repos_auth_file, "r+") do |auth_file|
-          auth_file.flock(File::LOCK_EX)
-          # get current permissions from file
-          file_content = auth_file.read()
-          if (file_content.length != 0)
-            repo_permissions = get_repo_permissions_from_file_string(file_content)
-          end
-          if !repo_permissions.key?(user_id)
-            raise UserNotFound.new(user_id + " not found")
-          end
-          repo_permissions.delete(user_id) # delete user_id
-          # inject new permissions into file string
-          write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-          # rewind, so that mime-type is preserved
-          auth_file.rewind
-          auth_file.truncate(0) # truncate file
-          retval = (auth_file.write(write_string) == write_string.length)
-          auth_file.flock(File::LOCK_UN) # release lock
-        end
-        return retval
-      else
-        raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
-      end
-    end
-
-    # Sets permissions over several repositories. Use set_permissions to set
-    # permissions on a single repository.
-    def self.set_bulk_permissions(repo_names, user_id_permissions_map)
-      # Check if configuration is in order
-      unless MarkusConfigurator.markus_config_repository_admin?
-        raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
-      end
-
-      # Read in the authz file
-      authz_file_contents = self.__read_in_authz_file()
-
-      # Parse the file contents into to something we can work with
-      repo_permissions = self.__parse_authz_file(authz_file_contents)
-      # Set / clobber permissions on each group for this user
-      repo_names.each do |repo_name|
-        repo_name = File.basename(repo_name)
-        user_id_permissions_map.each do |user_id, permissions|
-          if repo_permissions[repo_name].nil?
-            repo_permissions[repo_name] = {}
-          end
-          repo_permissions[repo_name][user_id] = permissions
-        end
-      end
-
-      # Translate the hash into the svn authz file format
-      authz_file_contents = self.__prepare_authz_string(repo_permissions)
-
-      # Write out the authz file
-      return self.__write_out_authz_file(authz_file_contents)
-    end
-
-    # Deletes permissions over several repositories. Use remove_user to remove
-    # permissions of a single repository.
-    def self.delete_bulk_permissions(repo_names, user_ids)
-      # Check if configuration is in order
-      if !MarkusConfigurator.markus_config_repository_admin?
-        raise NotAuthorityError.new("Unable to delete bulk permissions:  Not in authoritative mode!");
-      end
-
-      # Read in the authz file
-      authz_file_contents = self.__read_in_authz_file()
-
-      # Parse the file contents into to something we can work with
-      repo_permissions = self.__parse_authz_file(authz_file_contents)
-
-      # Delete the user_id for each repository
-      repo_names.each do |repo_name|
-        repo_name = File.basename(repo_name)
-        user_ids.each do |user_id|
-          repo_permissions[repo_name].delete(user_id)
-        end
-      end
-
-      # Translate the hash into the svn authz file format
-      authz_file_contents = self.__prepare_authz_string(repo_permissions)
-
-      # Write out the authz file
-      return self.__write_out_authz_file(authz_file_contents)
     end
 
     # Converts a pathname to an absolute pathname
@@ -760,6 +531,26 @@ module Repository
     ####################################################################
     ##  Private method definitions
     ####################################################################
+
+    # Generate and write the SVN authorization file for the repo.
+    def self.__update_permissions(permissions, full_access_users)
+      return true unless MarkusConfigurator.markus_config_repository_admin?
+      authz_string = "[/]\n"
+      full_access_users.each do |user_name|
+        authz_string += "#{user_name} = rw\n"
+      end
+      authz_string += "\n"
+      permissions.each do |repo_name, users|
+        authz_string += "[#{repo_name}:/]\n"
+        users.each do |user_name|
+          authz_string += "#{user_name} = rw\n"
+        end
+        authz_string += "\n"
+      end
+      __write_out_authz_file(authz_string)
+    end
+
+    private_class_method :__update_permissions
 
     private
 
