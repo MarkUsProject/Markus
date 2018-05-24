@@ -34,6 +34,11 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form.transaction do
       # Edit params before updating model
       new_params = update_grade_entry_form_params(params)
+      # If grade entry item is null, delete it from params
+      if new_params[:grade_entry_items].nil?
+        # new_params.delete :grade_entry_items
+        new_params.delete :grade_entry_items_attributes
+      end
       if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash_message(:success, I18n.t('grade_entry_forms.create.success'))
@@ -58,7 +63,11 @@ class GradeEntryFormsController < ApplicationController
       # Edit params before updating model
 
       new_params = update_grade_entry_form_params(params)
-
+      # If grade entry item is null, delete it from params
+      if new_params[:grade_entry_items].nil?
+        # new_params.delete :grade_entry_items
+        new_params.delete :grade_entry_items_attributes
+      end
       if params[:date_check]
         new_params.update(date: nil)
       end
