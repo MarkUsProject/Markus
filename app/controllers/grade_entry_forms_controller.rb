@@ -293,7 +293,8 @@ class GradeEntryFormsController < ApplicationController
             totals,
             @grade_entry_form,
             overwrite)
-          GradeEntryItem.import grades, on_duplicate_key_update: [:out_of, :position]
+          GradeEntryItem.import grades,
+                                on_duplicate_key_update: { conflict_target: :id, columns: [:out_of, :position] }
           columns = @grade_entry_form.grade_entry_items.reload
           next
         end
@@ -305,7 +306,7 @@ class GradeEntryFormsController < ApplicationController
         raise CSVInvalidLineError if s.nil?
 
         row.shift
-        row.zip(columns.take(row.size)).each do |grade, c|
+        row.zip(columns).take([row.size, columns.size].min).each do |grade, c|
           new_grade = grade.blank? ? nil : Float(grade)
           selector = { grade_entry_student_id: s.id,
                        grade_entry_item_id: c.id }

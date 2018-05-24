@@ -34,9 +34,6 @@ class AssignmentsController < ApplicationController
   before_filter      :authorize_for_user,
                      only: [:index, :render_feedback_file]
 
-  auto_complete_for  :assignment,
-                     :name
-
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,

@@ -33,29 +33,6 @@ Markus::Application.configure do
   # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
 
-  # Send emails in case of error
-  # (see config/initializers/07_exception_notifier for email addresses configuration)
-  config.action_mailer.perform_deliveries = true
-  # Disable delivery errors, bad email addresses will be ignored
-  config.action_mailer.raise_delivery_errors = true
-
-  # Defaults to:
-  config.action_mailer.delivery_method = :sendmail
-  #config.action_mailer.sendmail_settings = {
-  #  location: '/usr/sbin/sendmail',
-  #  arguments: '-i -t'  }
-
-  # or using smtp configuration
-  #config.action_mailer.delivery_method = :smtp
-  #config.action_mailer.smtp_settings = {
-  #  address: "smtp.gmail.com",
-  #  port: 587,
-  #  domain: 'gmail.com',
-  #  user_name: '<username>',
-  #  password: '<password>',
-  #  authentication: 'plain',
-  #  enable_starttls_auto: true  }
-
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb
   config.action_controller.allow_forgery_protection    = true
