@@ -22,13 +22,15 @@ describe SectionsController do
         csv_rows = CSV.parse(response_csv)
         expect(Student.all.size + 1).to eq(csv_rows.size) # for header
         assignments = Assignment.order(:id)
-        header = ['Username']
+        header = [I18n.t('grade_entry_forms.username')]
+        header.push(I18n.t('grade_entry_forms.id_number'))
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
         expect(csv_rows.shift).to eq(header)
         csv_rows.each do |csv_row|
           student_name = csv_row.shift
+          student_number = csv_row.shift
           student = Student.find_by_user_name(student_name)
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
