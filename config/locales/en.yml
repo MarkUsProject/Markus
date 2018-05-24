@@ -1400,8 +1400,6 @@ en:
         after_due_date: "You cannot run tests as the due date for this assignment has passed"
       test_result:
         all_tests: "All tests"
-        all_tests_stdout: "All tests (stdout)"
-        all_tests_stderr: "All tests (stderr)"
         unknown_test: "Unknown test"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"

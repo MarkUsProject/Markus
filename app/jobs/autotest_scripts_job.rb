@@ -11,7 +11,7 @@ class AutotestScriptsJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    server_params = { markus_address: markus_address, test_scripts: test_scripts, files_path: 'files_path_placeholder',
+    server_params = { markus_address: markus_address, files_path: 'files_path_placeholder',
                       assignment_id: assignment.id }
 
     begin

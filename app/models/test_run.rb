@@ -64,17 +64,19 @@ class TestRun < ApplicationRecord
     new_test_script_result
   end
 
-  def create_test_script_results_from_json(stdout, stderr, test_scripts)
+  def create_test_script_results_from_json(test_output)
 
+    test_scripts = [] # TODO: get all TestScripts in create_error_for_all_test_scripts
+    stderr = '' # TODO: print them separately per script, not as TestResults
     # check that results are well-formed and don't crash the parser
     json_root = nil
     begin
-      json_root = JSON.parse(stdout)
+      json_root = JSON.parse(test_output)
     rescue => e
-      errors = [{ name: I18n.t('automated_tests.test_result.all_tests_stdout'),
+      errors = [{ name: I18n.t('automated_tests.test_result.all_tests'),
                   message: I18n.t('automated_tests.test_result.bad_results', { json: e.message }) }]
       unless stderr.blank?
-        errors << { name: I18n.t('automated_tests.test_result.all_tests_stderr'),
+        errors << { name: I18n.t('automated_tests.test_result.all_tests'),
                     message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }) }
       end
       create_error_for_all_test_scripts(test_scripts, errors)
@@ -83,10 +85,10 @@ class TestRun < ApplicationRecord
     json_test_run = json_root['testrun']
     json_test_scripts = json_test_run.nil? ? nil : json_test_run['test_script']
     if json_test_run.nil? || json_test_scripts.nil?
-      errors = [{ name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                  message: I18n.t('automated_tests.test_result.bad_results', { json: stdout }) }]
+      errors = [{ name: I18n.t('automated_tests.test_result.all_tests'),
+                  message: I18n.t('automated_tests.test_result.bad_results', { json: test_output }) }]
       unless stderr.blank?
-        errors << { name: I18n.t('automated_tests.test_result.all_tests_stderr'),
+        errors << { name: I18n.t('automated_tests.test_result.all_tests'),
                     message: I18n.t('automated_tests.test_result.err_results', { errors: stderr }) }
       end
       create_error_for_all_test_scripts(test_scripts, errors)
@@ -109,14 +111,14 @@ class TestRun < ApplicationRecord
       new_test_script_result = new_test_script_results[file_name]
       if new_test_script_result.nil?
         new_test_script_result = create_test_script_result(file_name)
-        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stdout'),
+        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests'),
                                                         I18n.t('automated_tests.test_result.bad_results',
-                                                               { json: stdout }))
+                                                               { json: test_output }))
         new_test_script_results[file_name] = new_test_script_result
       end
       # add unhandled errors to all test scripts
       unless stderr.blank?
-        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stderr'),
+        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests'),
                                                         I18n.t('automated_tests.test_result.err_results',
                                                                { errors: stderr }))
       end

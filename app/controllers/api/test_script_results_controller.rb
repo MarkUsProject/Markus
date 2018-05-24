@@ -57,7 +57,7 @@ module Api
     #  - submission_id
     #  - test_errors: The test unhandled errors on stderr
     def create
-      if has_missing_params?([:test_output, :test_scripts, :test_run_id])
+      if has_missing_params?([:test_output, :test_run_id])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -65,7 +65,7 @@ module Api
       end
       test_run = TestRun.find(params[:test_run_id])
       begin
-        test_run.create_test_script_results_from_json(params[:test_output], params[:test_errors], params[:test_scripts])
+        test_run.create_test_script_results_from_json(params[:test_output])
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -103,7 +103,7 @@ module Api
     #  - test_output: New contents of the test results
     # Optional: submission_id
     def update
-      if has_missing_params?([:id, :test_output, :test_scripts, :test_run_id])
+      if has_missing_params?([:id, :test_output, :test_run_id])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -112,8 +112,7 @@ module Api
 
       test_script_result = TestScriptResult.find(params[:id])
       test_run = TestRun.find(params[:test_run_id])
-      if test_run.create_test_script_results_from_json(params[:test_output], params[:test_errors],
-                                                       params[:test_scripts]) && test_script_result.destroy
+      if test_run.create_test_script_results_from_json(params[:test_output]) && test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200']},
                                      status: 200
       else

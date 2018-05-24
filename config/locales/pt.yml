@@ -1221,8 +1221,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         after_due_date: "Você não pode executar o teste pois a sua entrega está fora do prazo"
       test_result:
         all_tests: "UPDATE ME"
-        all_tests_stdout: "UPDATE ME"
-        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"

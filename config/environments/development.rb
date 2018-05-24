@@ -276,7 +276,7 @@ Markus::Application.configure do
   AUTOTEST_SERVER_HOST = 'localhost'
   AUTOTEST_SERVER_USERNAME = nil
   AUTOTEST_SERVER_DIR = "#{::Rails.root}/data/dev/autotest/server"
-  AUTOTEST_SERVER_COMMAND = 'enqueuer'
+  AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer.py'
   AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
   AUTOTEST_CANCEL_QUEUE = 'CSC108_autotest_cancel'
   AUTOTEST_SCRIPTS_QUEUE = 'CSC108_autotest_scripts'

@@ -1643,8 +1643,6 @@ es:
                                proyecto ha pasado"
       test_result:
         all_tests: "UPDATE ME"
-        all_tests_stdout: "UPDATE ME"
-        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"

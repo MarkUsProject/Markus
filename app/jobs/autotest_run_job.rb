@@ -87,7 +87,7 @@ class AutotestRunJob < ApplicationJob
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.test_result.all_tests'),
                 message: I18n.t('automated_tests.test_result.no_source_files') }
-      grouping.create_error_for_all_test_scripts(test_run, test_scripts.keys, [error])
+      test_run.create_error_for_all_test_scripts(test_scripts.keys, [error])
       return
     end
 
@@ -100,10 +100,10 @@ class AutotestRunJob < ApplicationJob
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
-    server_params = { markus_address: markus_address, user_type: user.type, user_api_key: user.api_key,
+    server_params = { user_type: user.type, markus_address: markus_address, user_api_key: user.api_key,
                       server_api_key: server_api_key, test_scripts: test_scripts, files_path: 'files_path_placeholder',
                       assignment_id: assignment.id, group_id: group.id, submission_id: submission_id,
-                      group_repo_name: group.repo_name }
+                      group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
 
     begin
       out = ''
@@ -130,7 +130,7 @@ class AutotestRunJob < ApplicationJob
       error = { name: I18n.t('automated_tests.test_result.all_tests'),
                 message: I18n.t('automated_tests.test_result.bad_server',
                                 { hostname: server_host, error: e.message }) }
-      grouping.create_error_for_all_test_scripts(test_run, test_scripts.keys, [error])
+      test_run.create_error_for_all_test_scripts(test_scripts.keys, [error])
     end
   end
 
