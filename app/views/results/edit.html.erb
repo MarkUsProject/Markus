@@ -1,9 +1,7 @@
 <% content_for :head do %>
   <%# TODO: merge 'grader.scss' into 'results.scss' %>
   <%= stylesheet_link_tag 'result_main' %>
-  <%# MathML %>
-  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
-  <%= javascript_include_tag 'MathJax/mathjax_helpers', defer: true %>
+  <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
