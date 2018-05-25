@@ -85,9 +85,9 @@ class AutotestRunJob < ApplicationJob
     export_group_repo(group, repo_dir, assignment, submission)
     unless repo_files_available?(assignment, submission, repo_dir)
       # create empty test results for no submission files
-      error = { name: I18n.t('automated_tests.test_result.all_tests'),
-                message: I18n.t('automated_tests.test_result.no_source_files') }
-      test_run.create_error_for_all_test_scripts(test_scripts.keys, [error])
+      error = { name: I18n.t('automated_tests.results.all_tests'),
+                message: I18n.t('automated_tests.results.no_source_files') }
+      test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
       return
     end
 
@@ -127,10 +127,9 @@ class AutotestRunJob < ApplicationJob
       end
       # TODO use out for feedback, and possibly look at err+status
     rescue Exception => e
-      error = { name: I18n.t('automated_tests.test_result.all_tests'),
-                message: I18n.t('automated_tests.test_result.bad_server',
-                                { hostname: server_host, error: e.message }) }
-      test_run.create_error_for_all_test_scripts(test_scripts.keys, [error])
+      error = { name: I18n.t('automated_tests.results.all_tests'),
+                message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
+      test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
     end
   end
 

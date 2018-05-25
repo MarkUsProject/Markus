@@ -112,27 +112,6 @@ module AutomatedTestsClientHelper
     files
   end
 
-  def self.get_test_scripts(assignment, user)
-
-    # Select a subset of test scripts
-    if user.admin?
-      test_scripts = assignment.instructor_test_scripts
-                       .order(:seq_num)
-                       .pluck(:file_name, :timeout)
-    elsif user.student?
-      test_scripts = assignment.student_test_scripts
-                       .order(:seq_num)
-                       .pluck(:file_name, :timeout)
-    else
-      test_scripts = []
-    end
-    if test_scripts.empty?
-      raise I18n.t('automated_tests.error.no_test_files')
-    end
-
-    test_scripts.to_h # {file_name1: timeout1, ...}
-  end
-
   def self.check_user_permission(user, grouping = nil)
 
     # the user may not have an api key yet
@@ -169,7 +148,10 @@ module AutomatedTestsClientHelper
     if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
       raise I18n.t('automated_tests.error.not_enabled')
     end
-    test_scripts = get_test_scripts(assignment, user)
+    test_scripts = assignment.select_test_scripts(user).pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+    if test_scripts.empty?
+      raise I18n.t('automated_tests.error.no_test_files')
+    end
     check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
 
     test_scripts

@@ -30,65 +30,65 @@ class TestScriptResult < ApplicationRecord
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
   validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true
 
-  def create_test_result(name, input, actual, expected, marks_earned, marks_total, status)
+  def create_test_result(name:, input: '', actual: '', expected: '', marks_earned: 0.0, marks_total: 0.0,
+                          status: 'error', time: nil)
     test_results.create(
       name: name,
-      input: CGI.unescapeHTML(input),
-      actual_output: CGI.unescapeHTML(actual),
-      expected_output: CGI.unescapeHTML(expected),
+      input: input,
+      actual_output: actual,
+      expected_output: expected,
       marks_earned: marks_earned,
       marks_total: marks_total,
-      completion_status: status)
-  end
-
-  def create_test_error_result(name, message)
-    create_test_result(name, '', message, '', 0.0, 0.0, 'error')
+      completion_status: status,
+      time: time)
   end
 
   def create_test_result_from_json(json_test)
-    test_name = json_test['name']
-    if test_name.nil?
-      create_test_error_result(I18n.t('automated_tests.test_result.unknown_test'),
-                               I18n.t('automated_tests.test_result.bad_results', { json: json_test }))
-      raise 'Malformed json'
-    end
-
-    input = json_test['input'].nil? ? '' : json_test['input']
-    expected = json_test['expected'].nil? ? '' : json_test['expected']
-    actual = json_test['actual'].nil? ? '' : json_test['actual']
+    # get basic attributes
+    test_name = json_test.fetch('name', I18n.t('automated_tests.results.unknown_test'))
+    input = json_test.fetch('input', '')
+    expected = json_test.fetch('expected', '')
+    actual = json_test.fetch('actual', '')
+    time = json_test['time']
     status = json_test['status']
     # check first if we have to stop
     if !status.nil? && status == 'error_all'
-      status = 'error'
       stop_processing = true
-    else
-      stop_processing = false
-    end
-    # look for all status and marks errors (but only the last message will be shown)
-    if json_test['marks_earned'].nil?
-      actual = I18n.t('automated_tests.test_result.bad_marks_earned') unless stop_processing
-      status = 'error'
-      marks_earned = 0.0
-    else
-      marks_earned = json_test['marks_earned'].to_f
-    end
-    if json_test['marks_total'].nil?
-      actual = I18n.t('automated_tests.test_result.bad_marks_total') unless stop_processing
       status = 'error'
       marks_earned = 0.0
       marks_total = 0.0
     else
-      marks_total = json_test['marks_total'].to_f
-    end
-    if status.nil? || !status.in?(%w(pass partial fail error))
-      actual = I18n.t('automated_tests.test_result.bad_status', { status: status }) unless stop_processing
-      status = 'error'
-      marks_earned = 0.0
+      stop_processing = false
+      # look for all status and marks errors (only the last message will be shown)
+      marks_earned = json_test['marks_earned']
+      if marks_earned.nil?
+        actual = I18n.t('automated_tests.results.bad_marks_earned')
+        status = 'error'
+        marks_earned = 0.0
+      else
+        marks_earned = marks_earned.to_f
+      end
+      marks_total = json_test['marks_total']
+      if marks_total.nil?
+        actual = I18n.t('automated_tests.results.bad_marks_total')
+        status = 'error'
+        marks_earned = 0.0
+        marks_total = 0.0
+      else
+        marks_total = marks_total.to_f
+      end
+      if status.nil? || !status.in?(%w(pass partial fail error))
+        actual = I18n.t('automated_tests.results.bad_status', status: status)
+        status = 'error'
+        marks_earned = 0.0
+      end
     end
 
-    create_test_result(test_name, input, actual, expected, marks_earned, marks_total, status)
+    # create test result
+    create_test_result(name: test_name, input: input, actual: actual, expected: expected, marks_earned: marks_earned,
+                       marks_total: marks_total, status: status, time: time)
     if stop_processing
-      raise 'Test script reported a serious failure'
+      raise 'Test script reported a critical failure'
     end
 
     return marks_earned, marks_total

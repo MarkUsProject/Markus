@@ -107,9 +107,9 @@ class Submission < ApplicationRecord
   end
 
   # Sets marks when automated tests are run
-  def set_marks_for_tests
-    return if test_script_results.empty?
-
+  def set_autotest_marks
+    test_run = test_runs.last
+    return if test_run.nil? || test_run.test_script_results.empty?
     result = get_latest_result
     complete_marks = true
     if result.marks.empty? # can happen if a criterion is created after collection
@@ -123,8 +123,8 @@ class Submission < ApplicationRecord
       end
       all_marks_earned = 0.0
       all_marks_total = 0.0
-      test_scripts.each do |script|
-        res = test_script_results.where(test_script_id: script.id).first
+      test_scripts.each do |test_script|
+        res = test_run.test_script_results.find_by(test_script: test_script)
         all_marks_earned += res.marks_earned
         all_marks_total += res.marks_total
       end

@@ -1398,17 +1398,22 @@ en:
         no_test_files: "There are no test scripts to run the tests"
         already_enqueued: "You have a test already enqueued for execution, please wait for the results"
         after_due_date: "You cannot run tests as the due date for this assignment has passed"
-      test_result:
+      results:
         all_tests: "All tests"
         unknown_test: "Unknown test"
+        unknown_test_script: "Unknown test script"
+        missing_test_script: "This test script is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
-        err_results: "There are unhandled errors: %{errors}"
-        bad_results: "Test results are malformed: %{json}"
+        bad_results: "Test results are malformed: %{error}"
         no_tests: "Test results are empty"
+        timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
         bad_marks_earned: "Earned marks are missing"
         bad_marks_total: "Total marks are missing"
         bad_status: "Unrecognized test status '%{status}'"
+        extra_raw_output_html: "Raw test run output:<br />%{extra}<br />"
+        extra_stderr_html: "Messages on stderr:<br />%{extra}<br />"
+        extra_malformed_html: "Malformed results discarded by server:<br />%{extra}<br />"
 
 #Missing Activerecord Translations for english
     datetime:
