@@ -7,7 +7,7 @@ sudo apt-get -y upgrade
 
 # Install dependencies
 echo "- - - Installing Dependencies - - -"
-sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig
+sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig graphviz
 
 # Install Ruby
 sudo apt-get install software-properties-common -y
