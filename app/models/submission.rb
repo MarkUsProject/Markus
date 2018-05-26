@@ -25,6 +25,9 @@ class Submission < ApplicationRecord
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_runs, -> { order 'created_at DESC' }, dependent: :nullify
+  has_many   :test_runs_all_data,
+             -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+             class_name: 'TestRun'
   has_many   :feedback_files, dependent: :destroy
 
 

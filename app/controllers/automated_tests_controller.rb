@@ -71,7 +71,7 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = @grouping.student_test_script_results(true)
+      @test_runs = @grouping.student_test_runs(true)
       @token = @grouping.prepare_tokens_to_use
     end
     render layout: 'assignment_content'

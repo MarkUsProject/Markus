@@ -59,7 +59,7 @@ class Token < ApplicationRecord
       # first test or buffer time expired (in case some unhandled problem happened)
       false
     else
-      last_result_time = self.grouping.student_test_script_results
+      last_result_time = self.grouping.student_test_runs
                                       .limit(1)
                                       .pluck(:created_at)
       if !last_result_time.empty? && self.last_used < last_result_time[0]

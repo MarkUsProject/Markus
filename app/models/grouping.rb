@@ -48,6 +48,9 @@ class Grouping < ApplicationRecord
   has_one :token
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
+  has_many :test_runs_all_data,
+           -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           class_name: 'TestRun'
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
@@ -737,13 +740,13 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def student_test_script_results(include_all_data=false)
+  def student_test_runs(include_all_data=false)
     if include_all_data
-      results = self.test_script_results_all_data
+      runs = test_runs_all_data
     else
-      results = self.test_script_results
+      runs = test_runs
     end
-    results.where(requested_by: self.accepted_students)
+    runs.where(user: self.accepted_students)
   end
 
   def prepare_tokens_to_use

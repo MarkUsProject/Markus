@@ -55,8 +55,9 @@
   </div>
 
   <div class='block'>
-    <%= render partial: 'automated_tests/test_script_results',
-               locals: {results: @test_script_results, current_user: @current_user, ran_by: 'student'} %>
+    <%= render partial: 'automated_tests/test_run',
+               locals: { current_user: @current_user, ran_by: 'student', latest_date: @test_runs[0].created_at },
+               collection: @test_runs %>
   </div>
 
 <% elsif @grouping.nil? %>
