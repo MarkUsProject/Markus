@@ -95,6 +95,7 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller', '>= 0.8' # supplement for better_errors
+  gem 'brakeman', require: false
   gem 'bullet'
   gem 'rails-erd'
 end
