@@ -62,7 +62,7 @@ module CriteriaHelper
     num_loaded = assignment.get_criteria(:all, :all, no_cache: true).length
     if num_loaded > 0
       flash_message(:success,
-                    I18n.t('criteria.upload.success', num_loaded: num_loaded))
+                    I18n.t('upload_success', count: num_loaded))
     end
   end
 end

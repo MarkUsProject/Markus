@@ -160,4 +160,16 @@ class Criterion < ApplicationRecord
       Assignment.find(assignment_id).assignment_stat.refresh_grade_distribution
     end
   end
+
+  private
+
+  # Checks if the criterion is visible to either the ta or the peer reviewer.
+  def visible?
+    if ta_visible || peer_visible
+      true
+    else
+      errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
+      false
+    end
+  end
 end

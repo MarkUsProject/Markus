@@ -22,17 +22,18 @@ class CriteriaController < ApplicationController
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
-    unless @criterion.update(name: params[:new_criterion_prompt],
+    if @criterion.update(name: params[:new_criterion_prompt],
                              assignment_id: @assignment.id,
                              max_mark: params[:max_mark_prompt],
                              position: @assignment.next_criterion_position)
-      @errors = @criterion.errors
-      render :add_criterion_error
-      return
+      flash_now(:success, t('flash.actions.create.success',
+                            resource_name: criterion_class.model_name.human))
+    else
+      @criterion.errors.full_messages.each do |message|
+        flash_message(:error, message)
+      end
+      head :unprocessable_entity
     end
-    @criteria = @assignment.get_criteria
-    flash_now(:success, t('criterion_created_success'))
-    render :create_and_edit
   end
 
   def edit
@@ -45,7 +46,7 @@ class CriteriaController < ApplicationController
     @criteria = @assignment.get_criteria
     # Delete all marks associated with this criterion.
     @criterion.destroy
-    flash_message(:success, I18n.t('criterion_deleted_success'))
+    flash_message(:success, t('flash.criteria.delete.success'))
   end
 
   def update
@@ -76,12 +77,15 @@ class CriteriaController < ApplicationController
         assignment_file: assignment_file
       )
     end
-    unless properly_updated
-      @errors = @criterion.errors
-      render :errors
-      return
+    if properly_updated
+      flash_now(:success, t('flash.actions.update.success',
+                            resource_name: @criterion.class.model_name.human))
+    else
+      @criterion.errors.full_messages.each do |message|
+        flash_message(:error, message)
+      end
+      head :unprocessable_entity
     end
-    flash_now(:success, t('criterion_saved_success'))
   end
 
   # Handles the drag/drop criteria sorting.

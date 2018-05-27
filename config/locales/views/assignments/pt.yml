@@ -4,3 +4,6 @@ pt:
       final_due_date_passed: "O período de tolerância para este projeto já passou"
     scanned_exam:
       under_review: "Este exame está sendo marcado"
+
+    # Miscellaneous
+    marking_scheme: "Esquema de avalição: %{identifier}"

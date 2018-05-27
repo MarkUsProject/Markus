@@ -6,12 +6,12 @@
 <% end %>
 
 <% content_for :title,
-  t('criteria.marking_scheme', identifier: @assignment.is_peer_review? ?
+  t('assignments.marking_scheme', identifier: @assignment.is_peer_review? ?
     @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
     @assignment.short_identifier) %>
 
 <% @heading_buttons = [
-  { link_text: t('criteria.add_criterion'),
+  { link_text: t('criteria.new.button'),
     link_path: '#',
     html_options: { onclick:
       "if(document.getElementById('new_criterion') != null) {

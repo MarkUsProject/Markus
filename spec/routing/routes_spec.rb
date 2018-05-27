@@ -200,15 +200,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET show id: move_criterion' do
-        expect(get: criteria_path + '/move_criterion').to route_to(
-          controller: criteria_ctrl,
-          action: 'show',
-          id: 'move_criterion',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET download_yml properly' do
         expect(get: criteria_path + '/download_yml').to route_to(
           controller: criteria_ctrl,
@@ -278,15 +269,6 @@ describe 'An Assignment' do
         expect(get: autom_path + '/download').to route_to(
           controller: autom_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET move_criterion properly' do
-        expect(get: autom_path + '/move_criterion').to route_to(
-          controller: autom_ctrl,
-          action: 'show',
-          id: 'move_criterion',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

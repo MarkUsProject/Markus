@@ -248,10 +248,6 @@ es:
             due_date: "Último plazo para recalificación"
             message:  "Mensaje de recalificación"
         starter_code: "Código Inicial"
-        marking_scheme:
-            title:    "Esquema de calificación"
-            rubric:   "Rúbrica"
-            flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Cambiar el esquema de calificación eliminará sus criterios de calificación y
                                          notas."
@@ -601,7 +597,6 @@ es:
       student_to_grader:       "Usted debe proveer un archivo con formato CSV para crear los pares de estudiante y
                                 evaluador"
       invalid_csv:             "El formato del archivo no ha sido reconocido"
-      no_assignment:           "Usted ha intentado crear criterios de calificación para un proyecto inexistente"
       invalid_row:
         duplicate_entry: "Lo ingresado está duplicado"
         invalid_format:  "El formato de la fila es inválido"
@@ -714,7 +709,6 @@ es:
       marking_state:      "Estado del Proceso de Calificación"
       grace_credits_used: "Créditos de Gracia Usados"
       final_grade:        "Nota Final"
-      criterion:          "criterio"
       per_page:           "por página"
       filename:           "Nombre del Archivo"
       search_summaries:   "Buscar Resúmenes"
@@ -1376,12 +1370,6 @@ es:
         no_access:        "No existe acceso al archivo de retroalimentación con id #%{feedback_file_id}."
       no_files_available: "[El archivo de retroalimentación no está disponible]"
 
-    criteria_csv_error:
-      incomplete_row:    "no contiene suficiente información."
-      name_not_unique:   "el nombre del criterio de calificación ya es usado en el proyecto actual."
-      max_zero:          "el valor máximo es cero o no es un número."
-      weight_not_number: "el peso no es un número."
-
     csv_special_characters_html: "
     <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").<br>
     Si desea usar comillas dobles en un campo CSV, usted debe rodear el campo completo con comillas dobles y<br>
@@ -1389,97 +1377,24 @@ es:
     <p>Este es un ejemplo de un campo CSV que contiene comas y comillas dobles:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
+    criteria_csv_error:
+      incomplete_row:    "no contiene suficiente información."
+      name_not_unique:   "el nombre del criterio de calificación ya es usado en el proyecto actual."
+      max_zero:          "el valor máximo es cero o no es un número."
+      weight_not_number: "el peso no es un número."
+
     criteria:
-      title:          "Criterios de calificación"
-      name:           "Nombre del criterio"
-      type:           "Tipo de Criterio"
-      max_mark:       "Nota Máxima"
-      rubric:         "Rúbrica"
-      flexible:       "Flexible"
-      checkbox:       "Caja de Selección"
-      marking_scheme: "Esquema de Calificación: %{identifier}"
-      save:           "Guardar cambios"
-      add_criterion:  "Añadir criterio de calificación"
-      move_up:        "Subir"
-      move_down:      "Bajar"
-      download:
-        file:     "archivo con criterios de calificación"
-        prompt:   "Todos los tipos de criterios serán descargados en formato YAML."
       upload:
-        success:         "Los criterios de calificación han sido subidos exitosamente: %{num_loaded}."
         error:
           invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
           names_taken:    "Otros criterios ya tienen los siguientes nombres:"
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
-        format_yml_html: "
-          <ul>
-            <li><p>El archivo debe tener el siguiente formato para criterios de tipo rúbrica:<br>
-               <code>criterion_name:<br>
-                 &nbsp;&nbsp;max_mark: max_mark<br>
-                 &nbsp;&nbsp;level_0:<br>
-                 &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                 &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                 &nbsp;&nbsp;level_1:<br>
-                 &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-                 &nbsp;&nbsp;ta_visible: true<br>
-                 &nbsp;&nbsp;peer_visible: false<br></code>
-                 <p>Las opciones de visibilidad son opcionales.</p>
-             </p></li>
-            <li><p>El siguiente formato para criterios de tipo flexible:</p>
-              <code>criterion_name:<br>
-                &nbsp;&nbsp;type: flexible<br>
-                &nbsp;&nbsp;max_mark: max_mark<br>
-                &nbsp;&nbsp;description: description<br>
-                &nbsp;&nbsp;ta_visible: true<br>
-                &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
-            <li><p>Y el siguiente formato para criterios de tipo caja de selección:</p>
-              <code>criterion_name:<br>
-                &nbsp;&nbsp;type: checkbox<br>
-                &nbsp;&nbsp;max_mark: max_mark<br>
-                &nbsp;&nbsp;description: description<br>
-                &nbsp;&nbsp;ta_visible: true<br>
-                &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
-          </ul>"
       errors:
         messages:
           name_taken:             "Ya existe otro criterio de calificación con este nombre."
           assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
           assignment_id:          "Sólo puede ser un número entero mayor a cero."
           input_number:           "Debe ser un número mayor a 0.0."
-      ta_visible:       "Hacer visible a los asistentes de cátedra"
-      peer_visible:     "Hacer visible a los revisores de compañeros"
-      visibility_error: "Seleccionar al menos una opción en la sección de visibilidad"
-
-    flexible_criteria:
-      title:            "Criterios de Calificación Flexibles"
-      description:      "Descripción"
-      description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
-                         preliminar."
-
-    checkbox_criteria:
-      title:            "Criterio de Calificación tipo Caja de Selección"
-      description:      "Descripción"
-      description_hint: "Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista
-                         preliminar."
-
-    rubric_criteria:
-      title:     "Criterios de Calificación por Rúbrica"
-      level:
-        levels:      "Niveles"
-        level_index: "Nivel %{index}"
-      defaults:
-        level_0: "Insuficiente"
-        level_1: "Malo"
-        level_2: "Pasable"
-        level_3: "Bueno"
-        level_4: "Excelente"
-        description_0: "Este criterio de calificación no ha sido satisfecho."
-        description_1: "Este criterio de calificación fue satisfecho parcialmente."
-        description_2: "Este criterio de calificación fue satisfecho."
-        description_3: "Este criterio de calificación fue muy bien satisfecho."
-        description_4: "Este criterio de calificación fue satisfecho perfectamente o casi perfectamente."
 
     summary_table:
       title:             "Título"
@@ -1558,41 +1473,6 @@ es:
         help: "Las notas pueden ser creadas para estudiantes, grupos, o proyectos. Estas son visibles para
                administradores y evaluadores, pero no para estudiantes."
 
-    criteria_edit_total_mark:               "Este criterio de calificación será calificado sobre
-                                             %{criterion_total_mark}"
-    criterion_created_success:              "El criterio se guardó correctamente"
-    criterion_created_failure:              "No se pudo crear el criterio"
-    criterion_saved_success:                "El criterio de calificación fue guardado exitosamente"
-    criterion_saved_failure:                "El criterio de calificación no pudo ser guardado"
-    criterion_deleted_success:              "El criterio de calificación y las notas asociadas fueron eliminadas
-                                             exitosamente"
-    criterion:                              "Criterio de calificación"
-    total_mark:                             "Nota Total"
-    visibility:                             "Visibilidad"
-    editing_criteria:                       "Editando los criterios de calificación"
-    ordering_criteria:                      "Ordenando los criterios de calificación"
-    modifying_visibility:                   "Modificando la visibilidad"
-    remove_criteria_title:                  "Eliminar este criterio de calificación"
-    remove_criteria_message:                "¿Está seguro/a de querer eliminar este criterio de calificación?"
-    help_editing_criteria_message:          "Seleccione un criterio de calificación en la izquierda para editarlo.
-                                             Cambios para los diferentes criterios de calificación pueden ser realizados
-                                             de la siguiente manera:"
-    help_editing_rubric_criteria_message:   "Los nombres de los criterios de calificación, encabezados de nivel,
-                                             descripciones y visibilidad pueden ser modificados. El peso vinculado
-                                             a la nota máxima mostrada para cada criterio de calificación también puede
-                                             ser cambiado. Para cambiar el peso de un número fraccionario simplemente
-                                             escriba un número decimal en la caja de texto. Note que el número de
-                                             niveles no puede ser cambiado. Sin embargo, si una descripción no es
-                                             ingresada para un nivel, ese nivel no será usado."
-    help_ordering_criteria_message:         "Los evaluadores verán los criterios de calificación en el orden en que son
-                                             mostrados en la izquierda. Para cambiar el orden, arrastre el criterio de
-                                             calificación al lugar deseado en la lista."
-    help_modifying_visibility_message:      "Los íconos en la columna derecha debajo de visibilidad representan lo
-                                             siguiente:"
-    help_ta_visibility_message:             "Los asistentes de cátedra podrán ver el criterio de calificación."
-    help_peer_visibility_message:           "Los revisores de compañeros podrán ver el criterio de calificación."
-    help_editing_flexible_criteria_message: "Los nombres de los criterios de calificación, las descripciones, los
-                                             valores máximos y la visibilidad pueden ser modificados."
     past_due_date_warning:                  "El último plazo de entrega para este proyecto está en el pasado."
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
 

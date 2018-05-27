@@ -1,19 +1,19 @@
 <div id='criteria_edit_help'>
-  <h2><%= t(:help)%></h2>
-  <h3><%= t(:editing_criteria)%></h3>
-  <p><%= t(:help_editing_criteria_message)%></p>
+  <h2><%= t(:help) %></h2>
+  <h3><%= t('criteria.editing_criteria') %></h3>
+  <p><%= t('criteria.help_editing_criteria_message') %></p>
   <ul>
-    <li><h4><%= t('rubric_criteria.title')%></h4></li>
-    <p><%= t(:help_editing_rubric_criteria_message)%></p>
-    <li><h4><%= "#{t('flexible_criteria.title')}, #{t('checkbox_criteria.title')}" %></h4></li>
-    <p><%= t(:help_editing_flexible_criteria_message)%></p>
+    <li><h4><%= RubricCriterion.model_name.human.pluralize %></h4></li>
+    <p><%= t('criteria.help_editing_rubric_criteria_message') %></p>
+    <li><h4><%= "#{FlexibleCriterion.model_name.human.pluralize}/#{CheckboxCriterion.model_name.human.pluralize}" %></h4></li>
+    <p><%= t('criteria.help_editing_flexible_criteria_message') %></p>
   </ul>
-  <h3><%= t(:ordering_criteria) %></h3>
-  <p><%= t(:help_ordering_criteria_message)%></p>
-  <h3><%= t(:modifying_visibility) %></h3>
-  <p><%= t(:help_modifying_visibility_message)%></p>
+  <h3><%= t('criteria.ordering_criteria') %></h3>
+  <p><%= t('criteria.help_ordering_criteria_message') %></p>
+  <h3><%= t('criteria.modifying_visibility') %></h3>
+  <p><%= t('criteria.modifying_visibility_help') %></p>
   <%= image_tag 'icons/user_suit.png' %>
-  <%= t(:help_ta_visibility_message)%><br>
+  <%= t('criteria.help_ta_visibility_message') %><br>
   <%= image_tag 'icons/group.png' %>
-  <%= t(:help_peer_visibility_message)%><br>
+  <%= t('criteria.help_peer_visibility_message') %><br>
 </div>

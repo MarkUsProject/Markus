@@ -14,3 +14,7 @@ pt:
     syntax_error: "Existe um erro no arquivo carregado: %{error}"
     unparseable_yml: "Não foi possível analisar o arquivo YAML"
   uploading_please_wait: "Carregando - por favor aguarde..."
+
+  upload_success:
+    one: "%{count} objeto carregado com sucesso."
+    other: "%{count} objeto carregado com sucesso."

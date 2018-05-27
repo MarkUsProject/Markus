@@ -4,3 +4,6 @@ fr:
       final_due_date_passed: "La période de grâce pour ce projet est terminée"
     scanned_exam:
       under_review: "Cet examen est marqué"
+
+    # Miscellaneous
+    marking_scheme: "Barème: %{identifier}"

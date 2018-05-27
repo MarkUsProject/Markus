@@ -40,12 +40,15 @@ module GradersHelper
       g[:criteria] += view_context.link_to(
         view_context.image_tag(
           'icons/comment.png',
-          alt: I18n.t('criteria.title'),
-          title: I18n.t('criteria.title')),
+          alt: Criterion.model_name.human.pluralize,
+          title: Criterion.model_name.human.pluralize
+        ),
         grader_criteria_dialog_assignment_graders_path(
           id: assignment.id,
-          grader: grader.id),
-        remote: true)
+          grader: grader.id
+        ),
+        remote: true
+      )
       g
     end
   end

@@ -85,15 +85,6 @@ class CheckboxCriterion < Criterion
     add_tas(result)
   end
 
-  # Checks if the criterion is visible to either the ta or the peer reviewer.
-  def visible?
-    unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
-      false
-    end
-    true
-  end
-
   def set_mark_by_criterion(mark_to_change, mark_value)
     if mark_value == 'nil'
       mark_to_change.mark = nil

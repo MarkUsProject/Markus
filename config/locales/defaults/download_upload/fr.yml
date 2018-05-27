@@ -14,3 +14,7 @@ fr:
     syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
     unparseable_yml: "Ne pourrait pas analyzer le fichier YAML"
   uploading_please_wait: "Envoi en cours — veuillez patienter…"
+
+  upload_success:
+    one: "%{count} objet été envoyé."
+    other: "%{count} objets été envoyés."

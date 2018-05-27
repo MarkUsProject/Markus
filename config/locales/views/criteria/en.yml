@@ -1,0 +1,86 @@
+en:
+  criteria:
+    new:
+      button: "New Criterion"
+
+    upload:
+      yml_instructions_html: "
+        <ul>
+          <li><p>The file should have the following format for a rubric criterion:<br>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;level_0:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+              &nbsp;&nbsp;level_1:<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+              <p>The visibility options are optional.</p>
+          </p></li>
+          <li><p>The following for a flexible criterion:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>The description and visibility options are optional.</p></li>
+          <li><p>And the following for a checkbox criterion:</p>
+            <code>criterion_name:<br>
+            &nbsp;&nbsp;type: checkbox<br>
+            &nbsp;&nbsp;max_mark: max_mark<br>
+            &nbsp;&nbsp;description: description<br>
+            &nbsp;&nbsp;ta_visible: true<br>
+            &nbsp;&nbsp;peer_visible: false<br></code>
+          <p>The description and visibility options are optional.</p></li>
+        </ul>"
+
+    # Short type names
+    checkbox: "Checkbox"
+    flexible: "Flexible"
+    rubric: "Rubric"
+
+    # Help panel
+    editing_criteria: "Editing criteria"
+    ordering_criteria: "Ordering criteria"
+    help_editing_criteria_message: "
+    Select a criterion on the left to edit it. Changes for the different criteria can be made as follows:"
+    help_editing_rubric_criteria_message: "
+      Criteria names, level headings, descriptions and visibility can be modified.
+      The weight that matches the maximum mark shown for each criterion can also
+      be changed. To change the weight to a fractional number simply type in a
+      decimal number into the text box. Note that the number of levels cannot be
+      changed. However if no description is set for a level, that level will not
+      be used."
+    help_ordering_criteria_message: "
+      Graders will see the criteria in the order that they are displayed to
+      left. To change the order, drag a criterion to the desired location
+      in the list."
+    help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
+    help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
+    help_editing_flexible_criteria_message: "
+      Criteria names, descriptions, maximum values and visibility can be modified."
+    visibility: "Visibility"
+    modifying_visibility: "Modifying visibility"
+    modifying_visibility_help: "The icons on the rightmost column under visibility represent the following:"
+
+    # Miscellaneous
+    description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
+    max_mark_short: "Max Mark"
+
+  rubric_criteria:
+    level:
+      levels: "Levels"
+      level_index: "Level %{index}"
+    defaults:
+      level_0: "Very Poor"
+      level_1: "Weak"
+      level_2: "Passable"
+      level_3: "Good"
+      level_4: "Excellent"
+      description_0: "This criterion was not satisfied."
+      description_1: "This criterion was partially satisfied."
+      description_2: "This criterion was satisfied."
+      description_3: "This criterion was satisfied well."
+      description_4: "This criterion was satisfied perfectly or nearly perfectly."

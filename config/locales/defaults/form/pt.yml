@@ -1,2 +1,8 @@
 pt:
   optional: "opcional"
+
+  helpers:
+    confirm:
+      delete: "Você tem certeza que quer apagar esse %{model}?"
+    submit:
+      delete: "Apagar esse %{model}"

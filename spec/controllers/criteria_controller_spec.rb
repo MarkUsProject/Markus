@@ -206,7 +206,7 @@ RSpec.describe CriteriaController, type: :controller do
             expect_any_instance_of(FlexibleCriterion)
                 .to receive(:save).and_return(false)
             expect_any_instance_of(FlexibleCriterion)
-                .to receive(:errors).and_return('')
+                .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
 
             get_as @admin,
                    :update,
@@ -221,12 +221,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
           end
 
-          it 'should render the errors template' do
-            is_expected.to render_template('errors')
-          end
-
-          it 'should respond with success' do
-            is_expected.to respond_with(:success)
+          it 'should respond with unprocessable entity' do
+            is_expected.to respond_with(:unprocessable_entity)
           end
         end
 
@@ -239,7 +235,6 @@ RSpec.describe CriteriaController, type: :controller do
                    id:                 @criterion.id,
                    flexible_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:     'FlexibleCriterion'
-            assert extract_text(flash[:success][0]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -296,12 +291,10 @@ RSpec.describe CriteriaController, type: :controller do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            @errors = ActiveModel::Errors.new(self)
-            @errors['message'] = 'error message'
             expect_any_instance_of(FlexibleCriterion)
                 .to receive(:update).and_return(false)
             expect_any_instance_of(FlexibleCriterion)
-                .to receive(:errors).and_return(@errors)
+                .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
                     format:               :js,
@@ -313,17 +306,11 @@ RSpec.describe CriteriaController, type: :controller do
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:errors)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
 
-          it 'should render the add_criterion_error template' do
-            is_expected
-                .to render_template(:'criteria/add_criterion_error')
-          end
-
-          it 'should respond with success' do
-            is_expected.to respond_with(:success)
+          it 'should respond with unprocessable entity' do
+            is_expected.to respond_with(:unprocessable_entity)
           end
         end
 
@@ -342,8 +329,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
-          it 'should render the create_and_edit template' do
-            is_expected.to render_template(:'criteria/create_and_edit')
+          it 'should render the create template' do
+            is_expected.to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
@@ -366,8 +353,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
-          it 'should render the create_and_edit template' do
-            is_expected.to render_template(:'criteria/create_and_edit')
+          it 'should render the create template' do
+            is_expected.to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
@@ -431,7 +418,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        i18t_strings = [I18n.t('criterion_deleted_success')].map { |f| extract_text f }
+        i18t_strings = [I18n.t('flash.criteria.delete.success')].map { |f| extract_text f }
         expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 
@@ -642,7 +629,7 @@ RSpec.describe CriteriaController, type: :controller do
             expect_any_instance_of(RubricCriterion)
                 .to receive(:save).and_return(false)
             expect_any_instance_of(RubricCriterion)
-                .to receive(:errors).and_return('')
+                .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
 
             get_as @admin,
                    :update,
@@ -657,12 +644,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
           end
 
-          it 'should render the errors template' do
-            is_expected.to render_template('errors')
-          end
-
-          it 'should respond with success' do
-            is_expected.to respond_with(:success)
+          it 'should respond with unprocessable entity' do
+            is_expected.to respond_with(:unprocessable_entity)
           end
         end
 
@@ -675,7 +658,6 @@ RSpec.describe CriteriaController, type: :controller do
                    id:               @criterion.id,
                    rubric_criterion: { name: 'one', max_mark: 10 },
                    criterion_type:   'RubricCriterion'
-            assert extract_text(flash[:success][0]), extract_text(I18n.t('criterion_saved_success'))
           end
 
           it 'successfully assign criterion' do
@@ -729,12 +711,10 @@ RSpec.describe CriteriaController, type: :controller do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            @errors = ActiveModel::Errors.new(self)
-            @errors['message'] = 'error message'
             expect_any_instance_of(RubricCriterion)
                 .to receive(:update).and_return(false)
             expect_any_instance_of(RubricCriterion)
-                .to receive(:errors).and_return(@errors)
+                .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
                     format:               :js,
@@ -746,17 +726,11 @@ RSpec.describe CriteriaController, type: :controller do
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
-            expect(assigns(:errors)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
 
-          it 'should render the add_criterion_error template' do
-            is_expected
-                .to render_template(:'criteria/add_criterion_error')
-          end
-
-          it 'should respond with success' do
-            is_expected.to respond_with(:success)
+          it 'should respond with unprocessable entity' do
+            is_expected.to respond_with(:unprocessable_entity)
           end
         end
 
@@ -775,8 +749,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
-          it 'should render the create_and_edit template' do
-            is_expected.to render_template(:'criteria/create_and_edit')
+          it 'should render the create template' do
+            is_expected.to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
@@ -799,8 +773,8 @@ RSpec.describe CriteriaController, type: :controller do
             expect(assigns(:criterion)).to be_truthy
             expect(assigns(:assignment)).to be_truthy
           end
-          it 'should render the create_and_edit template' do
-            is_expected.to render_template(:'criteria/create_and_edit')
+          it 'should render the create template' do
+            is_expected.to render_template(:'criteria/create')
           end
 
           it 'should respond with success' do
@@ -863,7 +837,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        i18t_string = [I18n.t('criterion_deleted_success')].map { |f| extract_text f }
+        i18t_string = [I18n.t('flash.criteria.delete.success')].map { |f| extract_text f }
         expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 
@@ -968,7 +942,7 @@ RSpec.describe CriteriaController, type: :controller do
         expect(@assignment.get_criteria.map(&:name))
             .to contain_exactly('cr30', 'cr20', 'cr100', 'cr80', 'cr60')
         expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.upload.success', num_loaded: 5)].map { |f| extract_text f })
+          .to eq([I18n.t('upload_success', count: 5)].map { |f| extract_text f })
       end
 
       it 'creates rubric criteria with properly formatted entries' do
