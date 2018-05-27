@@ -106,7 +106,7 @@ group :test do
   gem 'minitest'
   gem 'mocha', require: false
   gem 'shoulda'
-  gem 'simplecov'
+  gem 'simplecov', require: false
   gem 'time-warp'
   gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
