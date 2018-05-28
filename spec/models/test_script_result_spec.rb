@@ -3,7 +3,6 @@ require 'spec_helper'
 describe TestScriptResult do
 
   it { is_expected.to have_many(:test_results) }
-  it { is_expected.to belong_to(:submission) }
   it { is_expected.to belong_to(:test_script) }
   it { is_expected.to belong_to(:test_run) }
   it { is_expected.to validate_presence_of(:test_script) }
@@ -39,18 +38,15 @@ describe TestScriptResult do
       )
       @test_run = TestRun.create(
         grouping: @grouping,
+        submission: @sub,
         user: @user,
         revision_identifier: '1'
       )
       @test_script_result = TestScriptResult.create(
-        submission: @sub,
-        grouping: @sub.grouping,
         test_script: @test_script,
         test_run: @test_run,
-        requested_by: @user,
         marks_earned: 1,
         marks_total: 1,
-        repo_revision: 0,
         time: 0
       )
     end

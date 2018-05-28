@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Submission do
   describe 'validations' do
     it { is_expected.to have_many(:submission_files) }
-    it { is_expected.to have_many(:test_script_results) }
+    it { is_expected.to have_many(:test_runs) }
   end
 
   context 'automatically create a result' do
