@@ -10,6 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '~> 4.2.0'
+gem 'sprockets', '~> 3.0'
 
 # Models and database interactions
 gem 'activerecord-import'
@@ -22,7 +23,7 @@ gem 'autoprefixer-rails'
 gem 'jquery-rails'
 gem 'js-routes'
 gem 'libv8'
-gem 'sass-rails',   '5.0.0.beta1'
+gem 'sass-rails',   '~> 5.0.0'
 gem 'uglifier',     '>= 1.3.0'
 gem 'webpacker', '~> 3.0'
 
@@ -93,7 +94,6 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller', '>= 0.8' # supplement for better_errors
-  gem 'quiet_assets' # TODO: remove when upgrade to sprockets 3
   gem 'bullet'
 end
 
