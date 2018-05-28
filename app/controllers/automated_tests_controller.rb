@@ -75,7 +75,7 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @test_runs = @grouping.student_test_runs(all_data: true)
-      @token = @grouping.prepare_tokens
+      @grouping.refresh_test_tokens!
     end
     render layout: 'assignment_content'
   end

@@ -66,7 +66,6 @@ class Assignment < ApplicationRecord
 
   has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
-  has_many :tokens, through: :groupings
 
   has_many :submissions, through: :groupings
   has_many :groups, through: :groupings
@@ -1103,8 +1102,10 @@ class Assignment < ApplicationRecord
   end
 
   def update_assigned_tokens
-    self.tokens.each do |t|
-      t.update_tokens(tokens_per_period_was, tokens_per_period)
+    groupings.each do |g|
+      difference = tokens_per_period - tokens_per_period_was
+      g.test_tokens = [g.test_tokens + difference, 0].max
+      g.save
     end
   end
 

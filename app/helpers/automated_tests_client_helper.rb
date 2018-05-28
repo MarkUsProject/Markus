@@ -138,8 +138,8 @@ module AutomatedTestsClientHelper
     if grouping.student_test_enqueued?
       raise I18n.t('automated_tests.error.already_enqueued')
     end
-    token = grouping.prepare_tokens
-    token.decrease_remaining! # raises exception with no tokens available
+    grouping.refresh_test_tokens!
+    grouping.decrease_test_tokens! # raises exception with no tokens available
   end
 
   def self.authorize_test_run(user, assignment, grouping = nil)

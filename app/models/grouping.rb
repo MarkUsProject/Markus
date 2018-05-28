@@ -45,8 +45,6 @@ class Grouping < ApplicationRecord
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
-  has_one :token
-
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
            -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
@@ -79,6 +77,9 @@ class Grouping < ApplicationRecord
   validates_associated :group, message: 'associated group need to be valid'
 
   validates_inclusion_of :is_collected, in: [true, false]
+
+  validates_presence_of :test_tokens
+  validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -740,14 +741,6 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def prepare_tokens
-    if self.token.nil?
-      self.create_token(remaining: nil, last_used: nil)
-    end
-    self.token.calculate_remaining!
-    self.token
-  end
-
   def student_test_runs(all_data: false)
     if all_data
       runs = test_runs_all_data
@@ -755,6 +748,40 @@ class Grouping < ApplicationRecord
       runs = test_runs
     end
     runs.where(user: accepted_students)
+  end
+
+  def refresh_test_tokens!
+    if Time.current < assignment.token_start_date || !is_valid?
+      self.test_tokens = 0
+    elsif assignment.unlimited_tokens
+      # grouping has always 1 token
+      self.test_tokens = 1
+    else
+      last_student_run = student_test_runs.first
+      if last_student_run.nil?
+        self.test_tokens = assignment.tokens_per_period
+      else
+        # divide time into chunks of token_period hours
+        # recharge tokens only the first time they are used during the current chunk
+        hours_from_start = (Time.current - assignment.token_start_date) / 3600
+        periods_from_start = (hours_from_start / assignment.token_period).floor
+        last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+        if last_student_run.created_at < last_period_begin
+          self.test_tokens = assignment.tokens_per_period
+        end
+      end
+    end
+    save
+  end
+
+  # Decreases the number of tokens by one, or raises an exception if there are no remaining tokens.
+  def decrease_test_tokens!
+    if self.test_tokens > 0
+      self.test_tokens -= 1
+      save
+    else
+      raise I18n.t('automated_tests.error.no_tokens')
+    end
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution
