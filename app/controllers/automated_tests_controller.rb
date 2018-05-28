@@ -37,6 +37,9 @@ class AutomatedTestsController < ApplicationController
               File.delete(file[:delete])
             end
           end
+          if files.size > 0
+            AutotestScriptsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
+          end
           flash_message(:success, t('assignment.update_success'))
         else
           flash_message(:error, @assignment.errors.full_messages)
@@ -71,8 +74,8 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_runs = @grouping.student_test_runs(true)
-      @token = @grouping.prepare_tokens_to_use
+      @test_runs = @grouping.student_test_runs(all_data: true)
+      @token = @grouping.prepare_tokens
     end
     render layout: 'assignment_content'
   end

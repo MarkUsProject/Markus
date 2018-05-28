@@ -12,7 +12,7 @@ class AutotestScriptsJob < ApplicationJob
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
     server_params = { markus_address: markus_address, files_path: 'files_path_placeholder',
-                      assignment_id: assignment.id }
+                      assignment_id: assignment_id }
 
     begin
       if server_username.nil?

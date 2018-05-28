@@ -740,21 +740,39 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def student_test_runs(include_all_data=false)
-    if include_all_data
+  def prepare_tokens
+    if self.token.nil?
+      self.create_token(remaining: nil, last_used: nil)
+    end
+    self.token.calculate_remaining!
+    self.token
+  end
+
+  def student_test_runs(all_data: false)
+    if all_data
       runs = test_runs_all_data
     else
       runs = test_runs
     end
-    runs.where(user: self.accepted_students)
+    runs.where(user: accepted_students)
   end
 
-  def prepare_tokens_to_use
-    if self.token.nil?
-      self.create_token(remaining: nil, last_used: nil)
+  # Checks whether a student test using tokens is currently being enqueued for execution
+  # (with buffer time in case of unhandled errors that prevented test results to be stored)
+  def student_test_enqueued?
+    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    last_student_run = student_test_runs.first
+    if last_student_run.nil? || (last_student_run.created_at + buffer_time) < Time.current
+      # first test or buffer time expired (in case some unhandled problem happened)
+      false
+    else
+      if last_student_run.test_script_results.empty?
+        # test results not back yet
+        true
+      else
+        false
+      end
     end
-    self.token.reassign_tokens
-    self.token
   end
 
 end # end class Grouping

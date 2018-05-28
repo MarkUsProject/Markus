@@ -51,7 +51,7 @@ module AutomatedTestsClientHelper
       end
       updated_form_file[:file_name] = new_file_name
       new_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, new_file_name)
-      files.push({path: new_file_path, upload: new_file})
+      files.push({ path: new_file_path, upload: new_file })
     # 5) Possibly replace existing test file
     else
       return updated_form_file unless form_file[:file_name].nil? # replacing a test file resets the old name
@@ -60,7 +60,7 @@ module AutomatedTestsClientHelper
       upd_file_name = upd_file.original_filename
       updated_form_file[:file_name] = upd_file_name
       mod_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, upd_file_name)
-      f = {path: mod_file_path, upload: upd_file}
+      f = { path: mod_file_path, upload: upd_file }
       unless upd_file_name == old_file_name
         old_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, old_file_name)
         f[:delete] = old_file_path
@@ -134,12 +134,12 @@ module AutomatedTestsClientHelper
     if grouping.assignment.submission_rule.can_collect_now?
       raise I18n.t('automated_tests.error.after_due_date')
     end
-    token = grouping.prepare_tokens_to_use
     # no other enqueued tests
-    if token.enqueued?
+    if grouping.student_test_enqueued?
       raise I18n.t('automated_tests.error.already_enqueued')
     end
-    token.decrease_tokens # raises exception with no tokens available
+    token = grouping.prepare_tokens
+    token.decrease_remaining! # raises exception with no tokens available
   end
 
   def self.authorize_test_run(user, assignment, grouping = nil)

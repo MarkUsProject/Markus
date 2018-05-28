@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Token do
   it { is_expected.to validate_presence_of(:remaining) }
-  it { is_expected.to validate_presence_of(:grouping_id) }
+  it { is_expected.to validate_presence_of(:grouping) }
 
   context 'token without remaining set to 5' do
     before {
@@ -40,7 +40,7 @@ describe Token do
         before {
           @grouping = create(:grouping)
           @token = Token.create(grouping_id: @grouping.id, last_used: nil, remaining: 5)
-          @token.decrease_tokens
+          @token.decrease_remaining!
         }
 
         it 'decrease number of tokens' do
@@ -59,7 +59,7 @@ describe Token do
         }
 
         it 'raise an error' do
-          expect{@token.decrease_tokens}.to raise_error(RuntimeError)
+          expect{@token.decrease_remaining!}.to raise_error(RuntimeError)
         end
       end
     end
@@ -81,7 +81,7 @@ describe Token do
             user: @student_2,
             grouping: @token.grouping,
             membership_status: StudentMembership::STATUSES[:accepted])
-          @token.reassign_tokens
+          @token.calculate_remaining!
         }
         it 'reassign assignment tokens' do
           expect(@token.remaining).to eq(10)

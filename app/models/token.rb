@@ -1,26 +1,13 @@
 class Token < ApplicationRecord
 
-  validate :last_used_date
+  belongs_to :grouping, required: true
 
-  belongs_to :grouping
-  validates_presence_of :grouping_id, :remaining
+  validates_presence_of :remaining
+  validates_numericality_of :remaining, only_integer: true, greater_than_or_equal_to: 0
 
-  validates_numericality_of :remaining,
-                            only_integer: true,
-                            greater_than_or_equal_to: 0
-
-  def last_used_date
-    if self.last_used && Time.zone.parse(self.last_used.to_s).nil?
-      errors.add :last_used, 'is not a valid date'
-      false
-    else
-      true
-    end
-  end
-
-  def reassign_tokens
+  def calculate_remaining!
     assignment = grouping.assignment
-    if Time.zone.now < assignment.token_start_date || !grouping.is_valid?
+    if Time.current < assignment.token_start_date || !grouping.is_valid?
       self.remaining = 0
     elsif assignment.unlimited_tokens
       # grouping has 1 token that is never consumed
@@ -29,8 +16,8 @@ class Token < ApplicationRecord
       self.remaining = assignment.tokens_per_period
     else
       # divide time into chunks of token_period hours
-      # reassign tokens only the first time they are used during the current chunk
-      hours_from_start = (Time.zone.now - assignment.token_start_date) / 3600
+      # recharge tokens only the first time they are used during the current chunk
+      hours_from_start = (Time.current - assignment.token_start_date) / 3600
       periods_from_start = (hours_from_start / assignment.token_period).floor
       last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
       if self.last_used < last_period_begin
@@ -40,34 +27,14 @@ class Token < ApplicationRecord
     self.save
   end
 
-  # Each test will decrease the number of tokens by one
-  def decrease_tokens
+  # Decreases the number of tokens by one, or raises an exception if there are no remaining tokens.
+  def decrease_remaining!
     if self.remaining > 0
       self.remaining -= 1
-      self.last_used = Time.zone.now
+      self.last_used = Time.current
       self.save
     else
       raise I18n.t('automated_tests.error.no_tokens')
-    end
-  end
-
-  # Checks whether a test using tokens is currently being enqueued for execution
-  # (with buffer time in case of unhandled errors that prevented a test result to be stored)
-  def enqueued?
-    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
-    if self.last_used.nil? || (self.last_used + buffer_time) < Time.zone.now
-      # first test or buffer time expired (in case some unhandled problem happened)
-      false
-    else
-      last_result_time = self.grouping.student_test_runs
-                                      .limit(1)
-                                      .pluck(:created_at)
-      if !last_result_time.empty? && self.last_used < last_result_time[0]
-        # test results already came back
-        false
-      else
-        true
-      end
     end
   end
 
