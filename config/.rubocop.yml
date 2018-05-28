@@ -1,3 +1,11 @@
+AllCops:
+  Exclude:
+    - 'bin/**/*'
+    - 'config/environments/*'
+    - 'config/routes.rb'
+    - 'db/**/*'
+    - 'Vagrantfile'
+
 # Multi-line method chaining should be done with leading dots.
 Layout/DotPosition:
   EnforcedStyle: leading
@@ -27,15 +35,26 @@ Layout/MultilineOperationIndentation:
 Metrics/AbcSize:
   Enabled: false
 
-# Have you noticed the width of your screen recently?
 Metrics/LineLength:
   Max: 120
 
+Metrics/MethodLength:
+  Max: 20
+
 Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/IfUnlessModifier:
   Enabled: false
 
 Style/NumericPredicate:
   Enabled: false
 
 Style/ConditionalAssignment:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/SymbolArray:
   Enabled: false

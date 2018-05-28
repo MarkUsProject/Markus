@@ -61,6 +61,7 @@ gem 'ya2yaml'
 
 # Rails miscellany
 gem 'activerecord-session_store', '~>0.1.0'
+gem 'bootsnap', require: false
 gem 'rails-html-sanitizer'
 gem 'responders', '~> 2.0'
 
@@ -94,7 +95,9 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller', '>= 0.8' # supplement for better_errors
+  gem 'brakeman', require: false
   gem 'bullet'
+  gem 'rails-erd'
 end
 
 group :test do
@@ -103,7 +106,7 @@ group :test do
   gem 'minitest'
   gem 'mocha', require: false
   gem 'shoulda'
-  gem 'simplecov'
+  gem 'simplecov', require: false
   gem 'time-warp'
   gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
