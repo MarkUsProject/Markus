@@ -72,11 +72,7 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    begin
-      criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
-    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
-      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
-    end
+    criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
@@ -196,15 +192,6 @@ class FlexibleCriterion < Criterion
       Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
-  end
-
-  # Checks if the criterion is visible to either the ta or the peer reviewer.
-  def visible?
-    unless ta_visible || peer_visible
-      errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
-      false
-    end
-    true
   end
 
   def set_mark_by_criterion(mark_to_change, mark_value)

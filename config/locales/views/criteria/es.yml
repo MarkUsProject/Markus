@@ -1,0 +1,86 @@
+es:
+  criteria:
+    new:
+      button: "Añadir criterio de calificación"
+
+    upload:
+      yml_instructions_html: "
+        <ul>
+          <li><p>El archivo debe tener el siguiente formato para criterios de tipo rúbrica:<br>
+             <code>criterion_name:<br>
+               &nbsp;&nbsp;max_mark: max_mark<br>
+               &nbsp;&nbsp;level_0:<br>
+               &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
+               &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
+               &nbsp;&nbsp;level_1:<br>
+               &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+               &nbsp;&nbsp;ta_visible: true<br>
+               &nbsp;&nbsp;peer_visible: false<br></code>
+               <p>Las opciones de visibilidad son opcionales.</p>
+             </p></li>
+          <li><p>El siguiente formato para criterios de tipo flexible:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;type: flexible<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
+          <li><p>Y el siguiente formato para criterios de tipo caja de selección:</p>
+            <code>criterion_name:<br>
+              &nbsp;&nbsp;type: checkbox<br>
+              &nbsp;&nbsp;max_mark: max_mark<br>
+              &nbsp;&nbsp;description: description<br>
+              &nbsp;&nbsp;ta_visible: true<br>
+              &nbsp;&nbsp;peer_visible: false<br></code>
+            <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
+        </ul>"
+
+    # Short type names
+    checkbox: "Caja de Selección"
+    flexible: "Flexible"
+    rubric: "Rúbrica"
+
+    # Help panel
+    editing_criteria: "Editando los criterios de calificación"
+    ordering_criteria: "Ordenando los criterios de calificación"
+    help_editing_criteria_message: "Seleccione un criterio de calificación en la izquierda para editarlo.
+      Cambios para los diferentes criterios de calificación pueden ser realizados de la siguiente manera:"
+    help_editing_rubric_criteria_message: "Los nombres de los criterios de calificación, encabezados de nivel,
+      descripciones y visibilidad pueden ser modificados. El peso vinculado
+      a la nota máxima mostrada para cada criterio de calificación también puede
+      ser cambiado. Para cambiar el peso de un número fraccionario simplemente
+      escriba un número decimal en la caja de texto. Note que el número de
+      niveles no puede ser cambiado. Sin embargo, si una descripción no es
+      ingresada para un nivel, ese nivel no será usado."
+    help_ordering_criteria_message: "Los evaluadores verán los criterios de calificación en el orden en que son
+      mostrados en la izquierda. Para cambiar el orden, arrastre el criterio de
+      calificación al lugar deseado en la lista."
+    help_ta_visibility_message: "Los asistentes de cátedra podrán ver el criterio de calificación."
+    help_peer_visibility_message: "Los revisores de compañeros podrán ver el criterio de calificación."
+    help_editing_flexible_criteria_message: "Los nombres de los criterios de calificación, las descripciones, los
+      valores máximos y la visibilidad pueden ser modificados."
+    visibility: "Visibilidad"
+    modifying_visibility: "Modificando la visibilidad"
+    modifying_visibility_help: "Los íconos en la columna derecha debajo de visibilidad representan lo siguiente:"
+
+    # Miscellaneous
+    description_hint: "Usted puede usar etiquetas HTML simples en este campo.
+      Guarde los cambios para ver una vista preliminar."
+    max_mark_short: "Nota Máxima"
+
+  rubric_criteria:
+    level:
+      levels: "Niveles"
+      level_index: "Nivel %{index}"
+    defaults:
+      level_0: "Insuficiente"
+      level_1: "Malo"
+      level_2: "Pasable"
+      level_3: "Bueno"
+      level_4: "Excelente"
+      description_0: "Este criterio de calificación no ha sido satisfecho."
+      description_1: "Este criterio de calificación fue satisfecho parcialmente."
+      description_2: "Este criterio de calificación fue satisfecho."
+      description_3: "Este criterio de calificación fue muy bien satisfecho."
+      description_4: "Este criterio de calificación fue satisfecho perfectamente o casi perfectamente."

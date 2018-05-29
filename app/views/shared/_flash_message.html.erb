@@ -1,8 +1,10 @@
 <% flash.discard.inspect %> <!-- keep this line until issue #3342 has been resolved (somehow it fixes it) -->
 <% [:notice, :error, :success, :warning].each do |key| %>
-  <% unless flash[key].nil? %>
+  <% if flash[key].nil? %>
+    <div class="<%= key.to_s %>" style="display: none"></div>
+  <% else %>
     <% flash[key] = [flash[key]] unless flash[key].respond_to?(:each) %>
-    <div class="<%= "#{key}" %>">
+    <div class="<%= key.to_s %>">
       <% flash[key].each do |content| %>
           <%= content.html_safe %>
       <% end %>

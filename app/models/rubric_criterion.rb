@@ -126,11 +126,7 @@ class RubricCriterion < Criterion
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
-    begin
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
-    rescue ActiveRecord::RecordNotSaved # Triggered if the assignment does not exist yet
-      raise CSVInvalidLineError, I18n.t('csv.no_assignment')
-    end
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
@@ -282,15 +278,6 @@ class RubricCriterion < Criterion
   # Updates results already entered with new criteria
   def update_existing_results
     self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
-  end
-
-  # Checks if the criterion is visible to either the ta or the peer reviewer.
-  def visible?
-    unless ta_visible || peer_visible
-        errors.add(:ta_visible, I18n.t('criteria.visibility_error'))
-        false
-    end
-    true
   end
 
   def set_mark_by_criterion(mark_to_change, mark_value)

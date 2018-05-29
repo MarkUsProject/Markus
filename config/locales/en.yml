@@ -209,10 +209,6 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         starter_code: "Starter Code"
-        marking_scheme:
-            title: "Marking Scheme"
-            rubric: "Rubric"
-            flexible: "Flexible"
         help:
             assignment_form:
                 properties: "Short Identifier: This is the title that will be used in menus, and default repository folder name. Because it is used for a directory name, it shouldn't contain spaces.<br />Assignment Name: Longer descriptive name, used as assignment title.<br />Message: Additional text displayed to students: additional information or instructions can go here.<br />Separate Section Due Dates: if checked, each sections can have a different due date.<br />Due Date: visible to students when they view assignment. Used to determine which version of a student's submission to grade. Can be changed later (e.g., for extensions). Changing the due date after assignments have been collected will not affect collected assignments.<br />Repository Folder: usually the Short Identifier.<br />Allow Web Submits: if unchecked, students must use a version control system to submit files and will not see the web submission view.<br />"
@@ -457,7 +453,6 @@ en:
       group_to_grader:         "You must supply a CSV file for group to grader mapping"
       student_to_grader:       "You must supply a CSV file for student to grader mapping"
       invalid_csv:             "The format of the CSV file was not recognized"
-      no_assignment:           "The assignment you are trying to create criteria for does not exist yet"
       invalid_row:
         duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"
@@ -554,7 +549,6 @@ en:
       marking_state:        "Marking State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
-      criterion:             "criterion"
       per_page:             "per page"
       filename:             "Filename"
       search_summaries:     "Search Summaries"
@@ -1146,12 +1140,6 @@ en:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
       no_files_available: "[No feedback file available]"
 
-    criteria_csv_error:
-      incomplete_row: "contains too little information."
-      name_not_unique: "criterion name already used in the current assignment."
-      max_zero: "maximum value is zero or not a number."
-      weight_not_number: "weight is not a number."
-
     csv_special_characters_html: "
     <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br>
     If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
@@ -1159,99 +1147,24 @@ en:
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
+    criteria_csv_error:
+      incomplete_row: "contains too little information."
+      name_not_unique: "criterion name already used in the current assignment."
+      max_zero: "maximum value is zero or not a number."
+      weight_not_number: "weight is not a number."
+
     criteria:
-      title:          "Criteria"
-      name:           "Criterion name"
-      type:           "Criterion type"
-      max_mark: "Maximum mark"
-      rubric:         "Rubric"
-      flexible:       "Flexible"
-      checkbox:       "Checkbox"
-      marking_scheme: "Marking Scheme: %{identifier}"
-      save:           "Save changes"
-      add_criterion:  "Add Criterion"
-      move_up:        "Move up"
-      move_down:      "Move down"
-      download:
-        file:     "Criteria File"
-        prompt:   "All types of criteria will be downloaded in YAML format."
       upload:
-        success:         "Criteria successfully uploaded: %{num_loaded}."
         error:
           invalid_format: "The following criteria had invalid format:"
           names_taken:    "The following criteria names are already taken:"
         empty_error:     "No criteria were found in the provided file."
-        format_yml_html: "
-          <ul>
-            <li><p>The file should have the following format for a rubric criterion:<br>
-              <code>criterion_name:<br>
-                &nbsp;&nbsp;max_mark: max_mark<br>
-                &nbsp;&nbsp;level_0:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-                &nbsp;&nbsp;level_1:<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-                &nbsp;&nbsp;ta_visible: true<br>
-                &nbsp;&nbsp;peer_visible: false<br></code>
-                <p>The visibility options are optional.</p>
-            </p></li>
-            <li><p>The following for a flexible criterion:</p>
-              <code>criterion_name:<br>
-                &nbsp;&nbsp;type: flexible<br>
-                &nbsp;&nbsp;max_mark: max_mark<br>
-                &nbsp;&nbsp;description: description<br>
-                &nbsp;&nbsp;ta_visible: true<br>
-                &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>The description and visibility options are optional.</p></li>
-            <li><p>And the following for a checkbox criterion:</p>
-              <code>criterion_name:<br>
-              &nbsp;&nbsp;type: checkbox<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>The description and visibility options are optional.</p></li>
-          </ul>"
       errors:
         messages:
           name_taken:             "Criterion name already used."
           assignment_association: "Association is not strong with an assignment."
           assignment_id:          "Can only be whole number greater than 0."
           input_number:           "Must be a number greater than 0.0."
-      ta_visible:       "Make visible to teaching assistants"
-      peer_visible:     "Make visible to peer reviewers"
-      visibility_error: "Select at least one box in the visibility section"
-
-    flexible_criteria:
-      title: "Flexible Criteria"
-      description: "Description"
-      description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-
-    checkbox_criteria:
-      title: "Checkbox Criteria"
-      description: "Description"
-      description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
-      move_criterion:
-        error: "Failed to move checkbox criteria."
-
-    rubric_criteria:
-      title: "Rubric Criteria"
-      level:
-        levels: "Levels"
-        level_index: "Level %{index}"
-      defaults:
-        level_0: "Very Poor"
-        level_1: "Weak"
-        level_2: "Passable"
-        level_3: "Good"
-        level_4: "Excellent"
-        description_0: "This criterion was not satisfied."
-        description_1: "This criterion was partially satisfied."
-        description_2: "This criterion was satisfied."
-        description_3: "This criterion was satisfied well."
-        description_4: "This criterion was satisfied perfectly or nearly perfectly."
-      move_criterion:
-        error: "Failed to move rubric."
 
     summary_table:
       title: "Title"
@@ -1329,38 +1242,6 @@ en:
             success: "Note was successfully updated."
         help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
 
-    criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
-    criterion_created_success:   "Criterion was successfully created"
-    criterion_created_failure:   "Criterion failed to be created"
-    criterion_saved_success:   "Criterion was successfully saved"
-    criterion_saved_failure:   "Criterion failed to be saved"
-    criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
-    criterion:          "Criterion"
-    total_mark:         "Total mark"
-    visibility:         "Visibility"
-    editing_criteria:   "Editing criteria"
-    ordering_criteria:  "Ordering criteria"
-    modifying_visibility: "Modifying visibility"
-    remove_criteria_title:  "Delete this criterion"
-    remove_criteria_message:  "Are you sure you want to delete this criterion?"
-    help_editing_criteria_message: "
-    Select a criterion on the left to edit it. Changes for the different criteria can be made as follows:"
-    help_editing_rubric_criteria_message: "
-      Criteria names, level headings, descriptions and visibility can be modified.
-      The weight that matches the maximum mark shown for each criterion can also
-      be changed. To change the weight to a fractional number simply type in a
-      decimal number into the text box. Note that the number of levels cannot be
-      changed. However if no description is set for a level, that level will not
-      be used."
-    help_ordering_criteria_message: "
-      Graders will see the criteria in the order that they are displayed to
-      left.  To change the order, drag a criterion to the desired location
-      in the list."
-    help_modifying_visibility_message: "The icons on the rightmost column under visibility represent the following:"
-    help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
-    help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
-    help_editing_flexible_criteria_message: "
-      Criteria names, descriptions, maximum values and visibility can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
     past_due_date_notice: "Due date for this assignment is in the past for: "
 

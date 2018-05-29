@@ -221,14 +221,6 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert_equal t('csv.invalid_row.invalid_format'), e.message
       end
 
-      should 'raise csv line error in case of an unpredicted error' do
-        e = assert_raise CSVInvalidLineError do
-          # That should fail because the assignment doesn't yet exists (in the DB)
-          RubricCriterion.create_or_update_from_csv_row(%w(name 10 l0 l1 l2 l3 l4), Assignment.new)
-        end
-        assert_instance_of CSVInvalidLineError, e
-      end
-
       context 'and the row is valid' do
 
         setup do

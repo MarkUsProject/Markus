@@ -1,11 +1,11 @@
 <div class='sortable'>
   <header>
-    <span class='left'><%= t('criteria.title') %></span>
+    <span class='left'><%= Criterion.model_name.human %></span>
     <span class='center'>
-      <%= t('total_mark') %>
+      <%= t('criteria.max_mark_short') %>
       (<span id='criteria_total_max_mark'><%= @assignment.max_mark %></span>)
     </span>
-    <span class='right'><%= t('visibility') %></span>
+    <span class='right'><%= t('criteria.visibility') %></span>
   </header>
 
   <ul id='criteria_pane_list'>

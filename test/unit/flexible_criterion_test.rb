@@ -63,16 +63,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         FlexibleCriterion.create_or_update_from_csv_row(%w(name max_value), @assignment)
       end
     end
-
-    should 'raise exceptions in case of an unpredicted error' do
-      # Capture exception in variable 'e'
-      e = assert_raise CSVInvalidLineError do
-        # That should fail because the assignment doesn't yet exists (in the DB)
-        FlexibleCriterion.create_or_update_from_csv_row(['name', 10], Assignment.new)
-      end
-      assert_instance_of CSVInvalidLineError, e
-    end
-
   end
 
   context 'An assignment, of type flexible criteria' do

@@ -4,3 +4,6 @@ en:
       final_due_date_passed: "The deadline, including late or grace periods, has passed."
     scanned_exam:
       under_review: "This exam is still under review"
+
+    # Miscellaneous
+    marking_scheme: "Marking Scheme: %{identifier}"

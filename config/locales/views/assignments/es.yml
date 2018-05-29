@@ -4,3 +4,6 @@ es:
       final_due_date_passed: "El plazo de aplazamiento de gracia para este proyecto ha pasado"
     scanned_exam:
       under_review: "Este examen todavía está en revisión"
+
+    # Miscellaneous
+    marking_scheme: "Esquema de Calificación: %{identifier}"

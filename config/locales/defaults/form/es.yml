@@ -1,2 +1,8 @@
 es:
   optional: "Opcional"
+
+  helpers:
+    confirm:
+      delete: "¿Está seguro/a de querer eliminar este %{model}?"
+    submit:
+      delete: "Eliminar este %{model}"
