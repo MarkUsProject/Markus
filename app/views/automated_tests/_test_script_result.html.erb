@@ -11,7 +11,11 @@
     (ran_by == 'student' && test_script.display_actual_output == 'display_after_collection')) %>
 
   <h4>
-    <%= "#{test_script.file_name}" %>
+    <% if test_script.nil? %>
+      <% t('automated_tests.results.unknown_test_script') %>
+    <% else %>
+      <%= "#{test_script.file_name}" %>
+    <% end %>
     <% unless test_script.description.blank? %>
       <%= "- #{test_script.description}" %>
     <% end %>
@@ -51,5 +55,8 @@
         <% end %>
       </tbody>
     </table>
+    <% unless test_script_result.extra_info.nil? %>
+      TODO The test script returned extra info <% test_script_result.extra_info %>
+    <% end %>
   </div>
 </div>

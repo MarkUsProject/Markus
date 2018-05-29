@@ -87,10 +87,6 @@ class TestRun < ApplicationRecord
   end
 
   def create_test_script_results_from_json(test_output)
-    # TODO
-    # Fix all views that use the old data from test_script_results (Handle unknown_test_script in the ui + extra_info)
-    # Remove token table, add autotest_tokens to grouping, use TestRun date as last_date
-    # TODO
     # check that the output is well-formed
     test_scripts = grouping.assignment.select_test_scripts(user).to_a
     json_root = nil
