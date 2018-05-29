@@ -178,11 +178,17 @@ class GradeEntryForm < ApplicationRecord
     self.grade_entry_items.each do |grade_entry_item|
       row.push(grade_entry_item.name)
     end
+    if self.show_total
+      row.concat([I18n.t('grade_entry_forms.grades.total')])
+    end
     csv_rows.push(row)
     # The second row in the CSV file will contain the question totals
-    row = ['']
+    row = [I18n.t('grade_entry_forms.column_out_of')]
     self.grade_entry_items.each do |grade_entry_item|
       row.push(grade_entry_item.out_of)
+    end
+    if self.show_total
+      row.concat(['100'])
     end
     csv_rows.push(row)
     # The rest of the rows in the CSV file will contain the students' grades
@@ -210,8 +216,10 @@ class GradeEntryForm < ApplicationRecord
             row.push(grade.grade || '')
           end
         end
-        total_percent = calculate_total_percent(grade_entry_student)
-        row.push(total_percent)
+        if self.show_total
+          total_percent = calculate_total_percent(grade_entry_student)
+          row.push(total_percent)
+        end
       end
       row
     end
