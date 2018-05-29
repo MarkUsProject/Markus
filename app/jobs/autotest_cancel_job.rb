@@ -15,16 +15,21 @@ class AutotestCancelJob < ApplicationJob
       cancel_command = "#{server_command} cancel '#{JSON.generate(server_params)}'"
       if server_username.nil?
         # local cancellation with no authentication
-        out, err, status = Open3.capture3(cancel_command)
+        out, status = Open3.capture2e(cancel_command)
+        if status.exitstatus != 0
+          raise out
+        else
+          # TODO: use out for something?
+        end
       else
         # local or remote cancellation with authentication
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
           out = ssh.exec!(cancel_command)
+          # TODO: use out for something?
         end
       end
-        # TODO use out for feedback, and possibly look at err+status
     rescue Exception => e
-      # TODO
+      # TODO: where to show failure?
     end
   end
 end

@@ -4,11 +4,11 @@ class AutotestRunJob < ApplicationJob
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def self.export_group_repo(group, repo_dir, assignment, submission = nil)
+  def export_group_repo(group, repo_dir, assignment, submission = nil)
 
     # Create the automated test repository
-    unless File.exist?(STUDENTS_DIR)
-      FileUtils.mkdir_p(STUDENTS_DIR)
+    unless File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+      FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
     # Delete student's assignment repository if it already exists
     # TODO clean up in client worker, or try to optimize if revision is the same?
@@ -102,7 +102,7 @@ class AutotestRunJob < ApplicationJob
     server_api_key = get_server_api_key
     server_params = { user_type: user.type, markus_address: markus_address, user_api_key: user.api_key,
                       server_api_key: server_api_key, test_scripts: test_scripts, files_path: 'files_path_placeholder',
-                      assignment_id: assignment.id, group_id: group.id, submission_id: submission_id,
+                      assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
                       group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
 
     begin
@@ -112,7 +112,12 @@ class AutotestRunJob < ApplicationJob
         server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
         FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
         server_params[:files_path] = server_path
-        out, err, status = Open3.capture3("#{server_command} run '#{JSON.generate(server_params)}'")
+        out, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+        if status.exitstatus != 0
+          raise out
+        else
+          # TODO: use out for statistics
+        end
       else
         # tests executed locally or remotely with authentication
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
@@ -123,9 +128,9 @@ class AutotestRunJob < ApplicationJob
           Open3.capture3(scp_command)
           server_params[:files_path] = server_path
           out = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+          # TODO: use out for statistics
         end
       end
-      # TODO use out for feedback, and possibly look at err+status
     rescue Exception => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
@@ -142,8 +147,8 @@ class AutotestRunJob < ApplicationJob
     test_runs.each do |test_run|
       # if user is an instructor, then a submission exists and we use that repo revision
       # if user is a student, then we use the latest repo revision
-      grouping_id = test_run['grouping_id']
-      submission_id = test_run['submission_id']
+      grouping_id = test_run[:grouping_id]
+      submission_id = test_run[:submission_id]
       if submission_id.nil?
         grouping = Grouping.find(grouping_id)
         revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }

@@ -20,7 +20,12 @@ class AutotestScriptsJob < ApplicationJob
         server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
         FileUtils.cp_r("#{assignment_tests_path}/.", server_path) # includes hidden files
         server_params[:files_path] = server_path
-        out, err, status = Open3.capture3("#{server_command} scripts '#{JSON.generate(server_params)}'")
+        out, status = Open3.capture2e("#{server_command} scripts '#{JSON.generate(server_params)}'")
+        if status.exitstatus != 0
+          raise out
+        else
+          # TODO: use out for something?
+        end
       else
         # tests executed locally or remotely with authentication
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
@@ -31,11 +36,11 @@ class AutotestScriptsJob < ApplicationJob
           Open3.capture3(scp_command)
           server_params[:files_path] = server_path
           out = ssh.exec!("#{server_command} scripts '#{JSON.generate(server_params)}'")
+          # TODO: use out for something?
         end
       end
-      # TODO use out for feedback, and possibly look at err+status
     rescue Exception => e
-      # TODO
+      # TODO: where to show failure?
     end
   end
 end
