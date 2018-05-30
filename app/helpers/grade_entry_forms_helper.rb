@@ -37,7 +37,7 @@ module GradeEntryFormsHelper
           max_position += 1
         end
         # Delete items with empty name and out_of
-        if item[:name].empty? and item[:out_of].empty?
+        if item[:name].empty? && item[:out_of].empty?
           grade_entry_items.delete(key)
         end
       end
