@@ -9,7 +9,7 @@ namespace :db do
 
     students = Student.all
     Assignment.all.each do |assignment|
-      num_groups = (assignment.short_identifier == 'A1' && ENV['A1_GROUP_AMOUNT']) ? ENV['A1_GROUP_AMOUNT'].to_i : 15
+      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 15
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment
