@@ -1,0 +1,11 @@
+en:
+  flash:
+    actions:
+      create:
+        success: "%{resource_name} was successfully created."
+      update:
+        success: "%{resource_name} was successfully updated."
+
+    criteria:
+      delete:
+        success: "Criterion and all associated marks were successfully deleted."
