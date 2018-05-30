@@ -50,7 +50,6 @@ class ResultsController < ApplicationController
     @filtered = @submission.submission_files.where('filename != ?', ".gitkeep")
     @files = @filtered.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
-
     end
     @feedback_files = @submission.feedback_files
     @marks_map = Hash.new
