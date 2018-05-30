@@ -12,9 +12,9 @@ class AutotestCancelJob < ApplicationJob
     server_command = MarkusConfigurator.autotest_server_command
     # TODO: support batches too by exploding to a list
     server_params = { markus_address: markus_address, run_ids: [test_run_id] }
+    cancel_command = "#{server_command} cancel '#{JSON.generate(server_params)}'"
 
     begin
-      cancel_command = "#{server_command} cancel '#{JSON.generate(server_params)}'"
       if server_username.nil?
         # local cancellation with no authentication
         out, status = Open3.capture2e(cancel_command)

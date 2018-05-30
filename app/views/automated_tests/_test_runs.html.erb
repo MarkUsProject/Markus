@@ -7,7 +7,7 @@
     <%# This run tests button is only for instructors before releasing the marks %>
     <% if current_user.admin? && local_assigns[:submission] && !submission.current_result.released_to_students %>
       <%= link_to t('automated_tests.run_tests'),
-                  run_tests_assignment_submission_result_path(grouping_id: submission.grouping.id),
+                  run_tests_assignment_submission_result_path,
                   class: 'button run_tests right' %>
     <% end %>
   </div>
