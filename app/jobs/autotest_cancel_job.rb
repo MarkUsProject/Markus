@@ -2,9 +2,11 @@ class AutotestCancelJob < ApplicationJob
   queue_as MarkusConfigurator.autotest_cancel_queue
 
   def perform(host_with_port, test_run_id)
-    markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
-                       host_with_port :
-                       host_with_port + Rails.application.config.action_controller.relative_url_root
+    if Rails.application.config.action_controller.relative_url_root.nil?
+      markus_address = host_with_port
+    else
+      markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
+    end
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
@@ -28,7 +30,7 @@ class AutotestCancelJob < ApplicationJob
           # TODO: use out for something?
         end
       end
-    rescue Exception => e
+    rescue StandardError => e
       # TODO: where to show failure?
     end
   end

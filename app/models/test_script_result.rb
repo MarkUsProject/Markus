@@ -31,7 +31,7 @@ class TestScriptResult < ApplicationRecord
   validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true
 
   def create_test_result(name:, input: '', actual: '', expected: '', marks_earned: 0.0, marks_total: 0.0,
-                          status: 'error', time: nil)
+                         status: 'error', time: nil)
     test_results.create(
       name: name,
       input: input,
@@ -40,7 +40,8 @@ class TestScriptResult < ApplicationRecord
       marks_earned: marks_earned,
       marks_total: marks_total,
       completion_status: status,
-      time: time)
+      time: time
+    )
   end
 
   def create_test_result_from_json(json_test)

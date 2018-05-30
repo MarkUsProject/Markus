@@ -270,7 +270,7 @@ class Grouping < ApplicationRecord
   end
 
   # Add a new member to base
-  def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
+  def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
       nil
     else
@@ -792,13 +792,11 @@ class Grouping < ApplicationRecord
     if last_student_run.nil? || (last_student_run.created_at + buffer_time) < Time.current
       # first test or buffer time expired (in case some unhandled problem happened)
       false
+    elsif last_student_run.test_script_results.empty?
+      # test results not back yet
+      true
     else
-      if last_student_run.test_script_results.empty?
-        # test results not back yet
-        true
-      else
-        false
-      end
+      false
     end
   end
 

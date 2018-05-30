@@ -51,7 +51,7 @@ module AutomatedTestsClientHelper
       end
       updated_form_file[:file_name] = new_file_name
       new_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, new_file_name)
-      files.push({ path: new_file_path, upload: new_file })
+      f = { path: new_file_path, upload: new_file }
     # 5) Possibly replace existing test file
     else
       return updated_form_file unless form_file[:file_name].nil? # replacing a test file resets the old name
@@ -65,8 +65,8 @@ module AutomatedTestsClientHelper
         old_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, old_file_name)
         f[:delete] = old_file_path
       end
-      files.push(f)
     end
+    files.push(f)
 
     updated_form_file
   end

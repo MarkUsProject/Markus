@@ -4,9 +4,11 @@ class AutotestScriptsJob < ApplicationJob
   def perform(host_with_port, assignment_id)
     assignment = Assignment.find(assignment_id)
     assignment_tests_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
-    markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
-                       host_with_port :
-                       host_with_port + Rails.application.config.action_controller.relative_url_root
+    if Rails.application.config.action_controller.relative_url_root.nil?
+      markus_address = host_with_port
+    else
+      markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
+    end
     server_host = MarkusConfigurator.autotest_server_host
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
@@ -39,7 +41,7 @@ class AutotestScriptsJob < ApplicationJob
           # TODO: use out for something?
         end
       end
-    rescue Exception => e
+    rescue StandardError => e
       # TODO: where to show failure?
     end
   end

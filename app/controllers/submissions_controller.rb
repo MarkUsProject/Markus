@@ -220,12 +220,12 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select { |g| g.has_submission? }
+    test_runs = groupings.select(&:has_submission?)
                          .map { |g| { grouping_id: g.id, submission_id: g.current_submission_used.id } }
     success = ''
     error = ''
     begin
-      if test_runs.size > 0
+      if !test_runs.empty?
         test_scripts = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
         AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                      test_runs)
@@ -233,7 +233,7 @@ class SubmissionsController < ApplicationController
       else
         error = I18n.t('automated_tests.need_submission')
       end
-    rescue => e
+    rescue StandardError => e
       error = e.message
     end
     render json: { success: success, error: error }

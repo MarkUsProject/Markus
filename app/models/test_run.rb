@@ -19,7 +19,8 @@ class TestRun < ApplicationRecord
       marks_earned: 0.0,
       marks_total: 0.0,
       time: time,
-      extra_info: extra_info)
+      extra_info: extra_info
+    )
   end
 
   def create_error_for_all_test_scripts(test_scripts, error, extra_info: nil)
@@ -51,8 +52,11 @@ class TestRun < ApplicationRecord
     timeout = json_test_script['timeout']
     json_tests = json_test_script['tests']
     if json_tests.blank?
-      message = timeout.nil? ? I18n.t('automated_tests.results.no_tests') :
-                               I18n.t('automated_tests.results.timeout', seconds: timeout)
+      if timeout.nil?
+        message = I18n.t('automated_tests.results.no_tests')
+      else
+        message = I18n.t('automated_tests.results.timeout', seconds: timeout)
+      end
       new_test_script_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
                                                 actual: message)
       return new_test_script_result
@@ -64,7 +68,7 @@ class TestRun < ApplicationRecord
     json_tests.each do |json_test|
       begin
         marks_earned, marks_total = new_test_script_result.create_test_result_from_json(json_test)
-      rescue
+      rescue StandardError
         # the test script can signal a critical failure that requires stopping and assigning zero marks
         all_marks_earned = 0.0
         break
@@ -92,7 +96,7 @@ class TestRun < ApplicationRecord
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
-    rescue => e
+    rescue StandardError => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_results', error: e.message) }
       extra = I18n.t('automated_tests.results.extra_raw_output_html', extra: test_output)
@@ -123,13 +127,11 @@ class TestRun < ApplicationRecord
     end
     # handle missing test scripts (could be added while running)
     test_scripts.each do |test_script|
-      if new_test_script_results[test_script.file_name].nil?
-        new_test_script_result = create_test_script_result(test_script)
-        new_test_script_result.create_test_result(status: 'error',
-                                                  name: I18n.t('automated_tests.results.all_tests'),
-                                                  actual: I18n.t('automated_tests.results.missing_test_script'))
-        new_test_script_results[test_script.file_name] = new_test_script_result
-      end
+      next if new_test_script_results.key?(test_script.file_name)
+      new_test_script_result = create_test_script_result(test_script)
+      new_test_script_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
+                                                actual: I18n.t('automated_tests.results.missing_test_script'))
+      new_test_script_results[test_script.file_name] = new_test_script_result
     end
     # set the marks assigned by the test run
     submission&.set_autotest_marks

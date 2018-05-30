@@ -1080,16 +1080,15 @@ class Assignment < ApplicationRecord
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
-    Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
-      .where(vcs_submit: true)
-      .order(due_date: :desc)
+    Assignment.includes(groupings: [:group, { accepted_student_memberships: :user }])
+              .where(vcs_submit: true)
+              .order(due_date: :desc)
   end
 
   ### /REPO ###
 
   def self.get_required_files
-    assignments = Assignment.includes(:assignment_files)
-                    .where(scanned_exam: false, is_hidden: false)
+    assignments = Assignment.includes(:assignment_files).where(scanned_exam: false, is_hidden: false)
     required = {}
     assignments.each do |assignment|
       files = assignment.assignment_files.map(&:filename)
@@ -1098,7 +1097,7 @@ class Assignment < ApplicationRecord
       else
         required_only = assignment.only_required_files
       end
-      required[assignment.repository_folder] = {required: files, required_only: required_only}
+      required[assignment.repository_folder] = { required: files, required_only: required_only }
     end
     required
   end

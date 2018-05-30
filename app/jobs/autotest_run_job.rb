@@ -5,7 +5,6 @@ class AutotestRunJob < ApplicationJob
   # are stored in the group repository. They must be exported
   # before copying to the test server.
   def export_group_repo(group, repo_dir, assignment, submission = nil)
-
     # Create the automated test repository
     unless File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
@@ -58,20 +57,18 @@ class AutotestRunJob < ApplicationJob
   end
 
   def get_server_api_key
-    begin
-      server_host = MarkusConfigurator.autotest_server_host
-      server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
-        user.first_name = 'Autotest'
-        user.last_name = 'Server'
-        user.hidden = true
-      end
-      server_user.set_api_key
-
-      server_user.api_key
-    rescue ActiveRecord::RecordNotUnique
-      # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
-      retry
+    server_host = MarkusConfigurator.autotest_server_host
+    server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
+      user.first_name = 'Autotest'
+      user.last_name = 'Server'
+      user.hidden = true
     end
+    server_user.set_api_key
+
+    server_user.api_key
+  rescue ActiveRecord::RecordNotUnique
+    # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
+    retry
   end
 
   def enqueue_test_run(test_run, host_with_port, test_scripts)
@@ -92,9 +89,11 @@ class AutotestRunJob < ApplicationJob
     end
 
     submission_path = File.join(repo_dir, assignment.repository_folder)
-    markus_address = Rails.application.config.action_controller.relative_url_root.nil? ?
-                       host_with_port :
-                       host_with_port + Rails.application.config.action_controller.relative_url_root
+    if Rails.application.config.action_controller.relative_url_root.nil?
+      markus_address = host_with_port
+    else
+      markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
+    end
     server_host = MarkusConfigurator.autotest_server_host
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
@@ -131,7 +130,7 @@ class AutotestRunJob < ApplicationJob
           # TODO: use out for statistics
         end
       end
-    rescue Exception => e
+    rescue StandardError => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
       test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
@@ -139,7 +138,6 @@ class AutotestRunJob < ApplicationJob
   end
 
   def perform(host_with_port, user_id, test_scripts, test_runs)
-
     test_batch = nil
     if test_runs.size > 1
       test_batch = TestBatch.create
@@ -161,7 +159,8 @@ class AutotestRunJob < ApplicationJob
         user_id: user_id,
         grouping_id: grouping_id,
         submission_id: submission_id,
-        revision_identifier: revision_identifier)
+        revision_identifier: revision_identifier
+      )
       enqueue_test_run(test_run, host_with_port, test_scripts)
     end
   end

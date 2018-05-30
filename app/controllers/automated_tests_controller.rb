@@ -37,7 +37,7 @@ class AutomatedTestsController < ApplicationController
               File.delete(file[:delete])
             end
           end
-          if files.size > 0
+          unless files.empty?
             AutotestScriptsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
           end
           flash_message(:success, t('assignment.update_success'))

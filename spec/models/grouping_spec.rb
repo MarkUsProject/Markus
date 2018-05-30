@@ -321,37 +321,39 @@ describe Grouping do
           it 'decrease number of tokens' do
             grouping.test_tokens = 5
             grouping.decrease_test_tokens!
-            expect(grouping.test_tokens).to eq (4)
+            expect(grouping.test_tokens).to eq(4)
           end
         end
 
         context 'when number of tokens is equal to 0' do
           it 'raise an error' do
             grouping.test_tokens = 0
-            expect{grouping.decrease_test_tokens!}.to raise_error(RuntimeError)
+            expect { grouping.decrease_test_tokens! }.to raise_error(RuntimeError)
           end
         end
       end
 
       describe '#refresh_test_tokens!' do
         context 'if assignment.tokens is not nil' do
-          before {
+          before do
             @assignment = FactoryGirl.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
             @group = FactoryGirl.create(:group)
             @grouping = Grouping.create(group: @group, assignment: @assignment)
-            @student_1 = FactoryGirl.create(:student)
-            @student_2 = FactoryGirl.create(:student)
+            @student1 = FactoryGirl.create(:student)
+            @student2 = FactoryGirl.create(:student)
             @grouping.test_tokens = 0
             StudentMembership.create(
-              user: @student_1,
+              user: @student1,
               grouping: @grouping,
-              membership_status: StudentMembership::STATUSES[:inviter])
+              membership_status: StudentMembership::STATUSES[:inviter]
+            )
             StudentMembership.create(
-              user: @student_2,
+              user: @student2,
               grouping: @grouping,
-              membership_status: StudentMembership::STATUSES[:accepted])
+              membership_status: StudentMembership::STATUSES[:accepted]
+            )
             @grouping.refresh_test_tokens!
-          }
+          end
           it 'refreshes assignment tokens' do
             expect(@grouping.test_tokens).to eq(10)
           end
@@ -385,6 +387,5 @@ describe Grouping do
         end
       end
     end
-
   end
 end
