@@ -30,11 +30,15 @@ module GradeEntryFormsHelper
     unless grade_entry_items.nil?
       # Update the attributes hash
       max_position = 1
-      grade_entry_items.each do |_, item|
+      grade_entry_items.each do |key, item|
         # Some items are being deleted so don't update those
         unless item[:_destroy]
           item[:position] = max_position
           max_position += 1
+        end
+        # Delete items with empty name and out_of
+        if item[:name].empty? and item[:out_of].empty?
+          grade_entry_items.delete(key)
         end
       end
     end
