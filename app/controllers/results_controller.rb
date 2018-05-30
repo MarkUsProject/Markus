@@ -47,7 +47,7 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
     assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
     @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
-    @filtered = @submission.submission_files.where('filename != ?', ".gitkeep")
+    @filtered = @submission.submission_files.where("filename != ?", ".gitkeep")
     @files = @filtered.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
