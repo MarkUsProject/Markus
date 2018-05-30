@@ -50,9 +50,11 @@ sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 MARKUS_ROOT=~/Markus
 
 # Clone the Markus repository.
+# TODO: revert these changes
 echo "- - - Cloning Markus - - -"
-git clone https://github.com/MarkUsProject/Markus.git $MARKUS_ROOT
+git clone https://github.com/adisandro/Markus.git $MARKUS_ROOT
 cd $MARKUS_ROOT
+git checkout track-autotest
 
 # Project-specific dependencies now
 echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
