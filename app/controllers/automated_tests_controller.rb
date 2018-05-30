@@ -16,10 +16,14 @@ class AutomatedTestsController < ApplicationController
 
     begin
       @assignment.transaction do
-        files = process_test_form(@assignment, params, assignment_params)
+        new_files = process_test_form(@assignment, params, assignment_params)
+        run_job = !new_files.empty? ||
+                  @assignment.test_scripts.any?(&:marked_for_destruction?) ||
+                  @assignment.test_support_files.any?(&:marked_for_destruction?)
         if @assignment.save
           # write the uploaded files
-          files.each do |file|
+          new_files.each do |file|
+            # TODO: Move write into the model
             File.open(file[:path], 'wb') do |f|
               content = file[:upload].read
               # remove carriage return or other non-LF whitespace from the end of lines
@@ -33,11 +37,12 @@ class AutomatedTestsController < ApplicationController
               end
               f.write(content)
             end
-            if file.has_key?(:delete) && File.exist?(file[:delete])
+            # delete a replaced file if it was renamed
+            if file.key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
             end
           end
-          unless files.empty?
+          if run_job
             AutotestScriptsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
           end
           flash_message(:success, t('assignment.update_success'))
