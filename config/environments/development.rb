@@ -2,6 +2,11 @@
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
 
+  # Speed up first page load with Sprockets 3. See
+  # https://github.com/rails/sprockets-rails/issues/352.
+  config.assets.check_precompiled_asset = false
+  config.assets.quiet = true
+
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.

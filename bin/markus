@@ -16,4 +16,5 @@ if ! pgrep -f resque > /dev/null ; then
   QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work &
 fi
 
+webpack-dev-server &
 bundle exec rails s
