@@ -3,7 +3,8 @@
 echo "- - - Updating Package Manager, Step 1 - - -"
 sudo apt-get update
 echo "- - - Updating Package Manager, Step 2 - - -"
-sudo apt-get -y upgrade
+# See https://github.com/chef/bento/issues/661 for details on this command.
+DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
 # Install dependencies
 echo "- - - Installing Dependencies - - -"
@@ -22,12 +23,8 @@ sudo gem install bundler
 echo "- - - Installing Git - - -"
 sudo apt-get install -y git
 
-# Install postgres (note: on 16.04+, can install postgres through the standard repository)
-echo "- - - Installing Postgres - - -"
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libpq-dev
+# Install postgres
+sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
 
 # Install node
 echo "- - - Installing Node, Step 1 - - -"
@@ -53,9 +50,11 @@ sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 MARKUS_ROOT=~/Markus
 
 # Clone the Markus repository.
+# TODO: revert these changes
 echo "- - - Cloning Markus - - -"
-git clone https://github.com/MarkUsProject/Markus.git $MARKUS_ROOT
+git clone https://github.com/adisandro/Markus.git $MARKUS_ROOT
 cd $MARKUS_ROOT
+git checkout track-autotest
 
 # Project-specific dependencies now
 echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
