@@ -1243,26 +1243,28 @@ fr:
         error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
-        no_test_server_user: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
         bad_group: "UPDATE ME"
         no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
         no_test_files: "UPDATE ME"
         already_enqueued: "UPDATE ME"
         after_due_date: "Vous ne pouvez pas exécuter de test après la date de retour"
-      test_result:
+      results:
         all_tests: "UPDATE ME"
-        all_tests_stdout: "UPDATE ME"
-        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
+        unknown_test_script: "UPDATE ME"
+        missing_test_script: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
-        err_results: "UPDATE ME"
-        bad_results: "UPDATE ME"
+        bad_results: "UPDATE ME '%{error}'"
         no_tests: "UPDATE ME"
+        timeout: "%{seconds} UPDATE ME"
         bad_marks_earned: "UPDATE ME"
         bad_marks_total: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"
+        extra_raw_output_html: "UPDATE ME<br />%{extra}<br />"
+        extra_stderr_html: "UPDATE ME<br />%{extra}<br />"
+        extra_malformed_html: "UPDATE ME<br />%{extra}<br />"
 
 #Missing Activerecord Translations for french
     datetime:

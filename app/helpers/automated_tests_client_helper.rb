@@ -51,7 +51,7 @@ module AutomatedTestsClientHelper
       end
       updated_form_file[:file_name] = new_file_name
       new_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, new_file_name)
-      files.push({path: new_file_path, upload: new_file})
+      f = { path: new_file_path, upload: new_file }
     # 5) Possibly replace existing test file
     else
       return updated_form_file unless form_file[:file_name].nil? # replacing a test file resets the old name
@@ -60,13 +60,13 @@ module AutomatedTestsClientHelper
       upd_file_name = upd_file.original_filename
       updated_form_file[:file_name] = upd_file_name
       mod_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, upd_file_name)
-      f = {path: mod_file_path, upload: upd_file}
+      f = { path: mod_file_path, upload: upd_file }
       unless upd_file_name == old_file_name
         old_file_path = File.join(ASSIGNMENTS_DIR, assignment.short_identifier, old_file_name)
         f[:delete] = old_file_path
       end
-      files.push(f)
     end
+    files.push(f)
 
     updated_form_file
   end
@@ -112,60 +112,7 @@ module AutomatedTestsClientHelper
     files
   end
 
-  # Export group repository for testing. Students' submitted files
-  # are stored in the group repository. They must be exported
-  # before copying to the test server.
-  def self.export_group_repo(group, repo_dir, assignment, submission = nil)
-
-    # Create the automated test repository
-    unless File.exist?(STUDENTS_DIR)
-      FileUtils.mkdir_p(STUDENTS_DIR)
-    end
-    # Delete student's assignment repository if it already exists
-    # TODO clean up in client worker, or try to optimize if revision is the same?
-    if File.exist?(repo_dir)
-      FileUtils.rm_rf(repo_dir)
-    end
-    # Export the correct repo revision
-    if submission.nil?
-      group.repo.export(repo_dir)
-    else
-      FileUtils.mkdir(repo_dir)
-      unless assignment.only_required_files.blank?
-        required_files = assignment.assignment_files.map(&:filename).to_set
-      end
-      submission.submission_files.each do |file|
-        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
-        unless required_files.nil? || required_files.include?(file_path)
-          # do not export non-required files, if only required files are allowed
-          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-          next
-        end
-        file_content = file.retrieve_file
-        FileUtils.mkdir_p(File.join(repo_dir, file.path))
-        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-          f.write(file_content)
-        end
-      end
-    end
-  end
-
-  def self.get_test_server_user
-    test_server_host = MarkusConfigurator.autotest_server_host
-    test_server_user = User.find_by(user_name: test_server_host)
-    if test_server_user.nil? || !test_server_user.test_server?
-      raise I18n.t('automated_tests.error.no_test_server_user', {hostname: test_server_host})
-    end
-    test_server_user.set_api_key
-
-    test_server_user
-  end
-
-  # Verify the user has the permission to run the tests - admins
-  # always have the permission, while student has to
-  # belong to the group, and have at least one token.
-  def self.check_user_permission(user, grouping)
+  def self.check_user_permission(user, grouping = nil)
 
     # the user may not have an api key yet
     user.set_api_key
@@ -179,73 +126,35 @@ module AutomatedTestsClientHelper
     end
     # student checks from now on
 
-    # student tests enabled
-    unless MarkusConfigurator.autotest_student_tests_on?
-      raise I18n.t('automated_tests.error.not_enabled')
-    end
     # student belongs to the grouping
-    unless user.accepted_groupings.include?(grouping)
+    if grouping.nil? || !user.accepted_groupings.include?(grouping)
       raise I18n.t('automated_tests.error.bad_group')
     end
     # deadline has not passed
     if grouping.assignment.submission_rule.can_collect_now?
       raise I18n.t('automated_tests.error.after_due_date')
     end
-    token = grouping.prepare_tokens_to_use
     # no other enqueued tests
-    if token.enqueued?
+    if grouping.student_test_enqueued?
       raise I18n.t('automated_tests.error.already_enqueued')
     end
-    token.decrease_tokens # raises exception with no tokens available
+    grouping.refresh_test_tokens!
+    grouping.decrease_test_tokens! # raises exception with no tokens available
   end
 
-  # Verify that MarkUs has test scripts to run the test and get them.
-  def self.get_test_scripts(assignment, user)
+  def self.authorize_test_run(user, assignment, grouping = nil)
 
-    # No test directory or test files
-    test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
-    unless File.exist?(test_dir)
-      raise I18n.t('automated_tests.error.no_test_files')
+    # TODO: extract in policies
+    if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
+      raise I18n.t('automated_tests.error.not_enabled')
     end
-
-    # Select a subset of test scripts
-    if user.admin?
-      test_scripts = assignment.instructor_test_scripts
-                               .order(:seq_num)
-                               .pluck_to_hash(:file_name, :timeout)
-    elsif user.student?
-      test_scripts = assignment.student_test_scripts
-                               .order(:seq_num)
-                               .pluck_to_hash(:file_name, :timeout)
-    else
-      test_scripts = []
-    end
+    test_scripts = assignment.select_test_scripts(user).pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
     if test_scripts.empty?
       raise I18n.t('automated_tests.error.no_test_files')
     end
+    check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
 
     test_scripts
-  end
-
-  def self.request_a_test_run(host_with_port, grouping_id, current_user, submission_id = nil)
-
-    grouping = Grouping.find(grouping_id)
-    assignment = grouping.assignment
-    unless assignment.enable_test
-      raise I18n.t('automated_tests.error.not_enabled')
-    end
-    test_server_user = get_test_server_user
-    test_scripts = get_test_scripts(assignment, current_user)
-    check_user_permission(current_user, grouping)
-
-    # if current_user is an instructor, then a submission exists and we use that repo revision
-    # if current_user is a student, then we use the latest repo revision
-    group = grouping.group
-    repo_dir = File.join(STUDENTS_DIR, group.repo_name)
-    submission = submission_id.nil? ? nil : Submission.find(submission_id)
-    export_group_repo(group, repo_dir, assignment, submission)
-    AutotestRunJob.perform_later(host_with_port, test_scripts, current_user.api_key, test_server_user.api_key,
-                                 grouping_id, submission_id)
   end
 
 end

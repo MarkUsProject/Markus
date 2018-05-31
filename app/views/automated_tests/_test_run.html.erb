@@ -1,0 +1,26 @@
+<% test_script_results = test_run.test_script_results %>
+<div class='test-run'>
+  <h3>
+    <span class='right'>
+      <%= l(test_run.created_at, format: :long) %>
+      <%= "(#{test_run.user.user_name})" %>
+    </span>
+  </h3>
+  <% if test_run.created_at == latest_date %>
+    <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
+  <% else %>
+    <%= link_to 'Show Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'expand' %>
+  <% end %>
+  <div id="<%=test_run.created_at.to_s.delete(' ')%>">
+    <% if test_script_results.empty? %>
+      TODO Test run is enqueued for execution (or lost) + button to stop it
+    <% else %>
+      <div id="test_results" class="sub_block">
+        <%= render partial: 'automated_tests/test_script_result',
+                   locals: { current_user: current_user, ran_by: ran_by },
+                   collection: test_script_results %>
+      </div>
+    <% end %>
+  </div>
+  <script>hideIfNotLatest("<%=latest_date.to_s.delete(' ')%>", "<%=test_run.created_at.to_s.delete(' ')%>")</script>
+</div>

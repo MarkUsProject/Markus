@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180517143503) do
+ActiveRecord::Schema.define(version: 20180528163425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -286,6 +286,7 @@ ActiveRecord::Schema.define(version: 20180517143503) do
     t.integer  "notes_count",             default: 0
     t.integer  "criteria_coverage_count", default: 0
     t.boolean  "error_collecting",        default: false
+    t.integer  "test_tokens",             default: 0,     null: false
   end
 
   add_index "groupings", ["assignment_id", "group_id"], name: "groupings_u1", unique: true, using: :btree
@@ -583,21 +584,16 @@ ActiveRecord::Schema.define(version: 20180517143503) do
   add_index "test_runs", ["user_id"], name: "index_test_runs_on_user_id", using: :btree
 
   create_table "test_script_results", force: :cascade do |t|
-    t.integer  "grouping_id"
     t.integer  "test_script_id"
-    t.float    "marks_earned",              default: 0.0, null: false
-    t.text     "repo_revision"
+    t.float    "marks_earned",             default: 0.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "submission_id"
-    t.integer  "requested_by_id"
-    t.integer  "time",            limit: 8,               null: false
-    t.float    "marks_total",               default: 0.0, null: false
-    t.integer  "test_run_id",                             null: false
-    t.text     "stderr"
+    t.integer  "time",           limit: 8,               null: false
+    t.float    "marks_total",              default: 0.0, null: false
+    t.integer  "test_run_id",                            null: false
+    t.text     "extra_info"
   end
 
-  add_index "test_script_results", ["requested_by_id"], name: "index_test_script_results_on_requested_by_id", using: :btree
   add_index "test_script_results", ["test_run_id"], name: "index_test_script_results_on_test_run_id", using: :btree
 
   create_table "test_scripts", force: :cascade do |t|
@@ -629,12 +625,6 @@ ActiveRecord::Schema.define(version: 20180517143503) do
   end
 
   add_index "test_support_files", ["assignment_id"], name: "index_test_files_on_assignment_id", using: :btree
-
-  create_table "tokens", force: :cascade do |t|
-    t.integer  "grouping_id"
-    t.integer  "remaining"
-    t.datetime "last_used"
-  end
 
   create_table "users", force: :cascade do |t|
     t.string   "user_name",                     null: false
@@ -688,6 +678,4 @@ ActiveRecord::Schema.define(version: 20180517143503) do
   add_foreign_key "test_runs", "test_batches"
   add_foreign_key "test_runs", "users"
   add_foreign_key "test_script_results", "test_runs"
-  add_foreign_key "test_script_results", "users", column: "requested_by_id"
-  add_foreign_key "tokens", "groupings"
 end

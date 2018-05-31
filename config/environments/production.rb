@@ -276,12 +276,13 @@ Markus::Application.configure do
   AUTOTEST_STUDENT_TESTS_ON = true
   AUTOTEST_STUDENT_TESTS_BUFFER_TIME = 1.hour
   AUTOTEST_CLIENT_DIR = "#{::Rails.root}/data/prod/autotest"
-  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
   AUTOTEST_SERVER_HOST = 'localhost'
-  AUTOTEST_SERVER_FILES_USERNAME = nil
-  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root}/data/prod/autotest/server"
-  AUTOTEST_SERVER_RESULTS_DIR = "#{AUTOTEST_SERVER_FILES_DIR}/results"
-  AUTOTEST_SERVER_TESTS = [{ user: nil, dir: "#{AUTOTEST_SERVER_FILES_DIR}/tester", queue: 'tester' }]
+  AUTOTEST_SERVER_USERNAME = nil
+  AUTOTEST_SERVER_DIR = "#{::Rails.root}/data/prod/autotest/server"
+  AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer.py'
+  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
+  AUTOTEST_CANCEL_QUEUE = 'CSC108_autotest_cancel'
+  AUTOTEST_SCRIPTS_QUEUE = 'CSC108_autotest_scripts'
 
   ###################################################################
   # Exam Plugin settings

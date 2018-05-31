@@ -1213,26 +1213,28 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
-        no_test_server_user: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
         bad_group: "UPDATE ME"
         no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
         no_test_files: "UPDATE ME"
         already_enqueued: "UPDATE ME"
         after_due_date: "Você não pode executar o teste pois a sua entrega está fora do prazo"
-      test_result:
+      results:
         all_tests: "UPDATE ME"
-        all_tests_stdout: "UPDATE ME"
-        all_tests_stderr: "UPDATE ME"
         unknown_test: "UPDATE ME"
+        unknown_test_script: "UPDATE ME"
+        missing_test_script: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
-        err_results: "UPDATE ME"
-        bad_results: "UPDATE ME"
+        bad_results: "UPDATE ME '%{error}'"
         no_tests: "UPDATE ME"
+        timeout: "%{seconds} UPDATE ME"
         bad_marks_earned: "UPDATE ME"
         bad_marks_total: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"
+        extra_raw_output_html: "UPDATE ME<br />%{extra}<br />"
+        extra_stderr_html: "UPDATE ME<br />%{extra}<br />"
+        extra_malformed_html: "UPDATE ME<br />%{extra}<br />"
 
 #Missing Activerecord Translations for english
     datetime:

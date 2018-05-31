@@ -66,7 +66,6 @@ class Assignment < ApplicationRecord
 
   has_many :ta_memberships, through: :groupings
   has_many :student_memberships, through: :groupings
-  has_many :tokens, through: :groupings
 
   has_many :submissions, through: :groupings
   has_many :groups, through: :groupings
@@ -319,16 +318,6 @@ class Assignment < ApplicationRecord
     end
     self.outstanding_remark_request_count = outstanding_count
     self.save
-  end
-
-  def instructor_test_scripts
-    self.test_scripts
-        .where(run_by_instructors: true)
-  end
-
-  def student_test_scripts
-    self.test_scripts
-        .where(run_by_students: true)
   end
 
   def add_group(new_group_name=nil)
@@ -1080,7 +1069,51 @@ class Assignment < ApplicationRecord
     Repository.get_class.access(repo_loc, &block)
   end
 
+  # Repository authentication subtleties:
+  # 1) a repository is associated with a Group, but..
+  # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
+  # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
+  # the assignment level, allowing the same Group repo to have different students according to the assignment.
+  # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
+  # Instead, we are going to take a last-deadline approach, where we assume that the valid students at any point in time
+  # are the ones valid for the last assignment due.
+  # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
+  # we may want to add or [more frequently] remove some students from it)
+  def self.get_repo_auth_records
+    Assignment.includes(groupings: [:group, { accepted_student_memberships: :user }])
+              .where(vcs_submit: true)
+              .order(due_date: :desc)
+  end
+
   ### /REPO ###
+
+  def self.get_required_files
+    assignments = Assignment.includes(:assignment_files).where(scanned_exam: false, is_hidden: false)
+    required = {}
+    assignments.each do |assignment|
+      files = assignment.assignment_files.map(&:filename)
+      if assignment.only_required_files.nil?
+        required_only = false
+      else
+        required_only = assignment.only_required_files
+      end
+      required[assignment.repository_folder] = { required: files, required_only: required_only }
+    end
+    required
+  end
+
+  # Selects the appropriate test scripts for this assignment, based on the user requesting them.
+  def select_test_scripts(user)
+    if user.admin?
+      condition = { run_by_instructors: true }
+    elsif user.student?
+      condition = { run_by_students: true }
+    else
+      return none # empty chainable ActiveRecord::Relation
+    end
+
+    test_scripts.where(condition).order(:seq_num)
+  end
 
   private
 
@@ -1113,8 +1146,13 @@ class Assignment < ApplicationRecord
   end
 
   def update_assigned_tokens
-    self.tokens.each do |t|
-      t.update_tokens(tokens_per_period_was, tokens_per_period)
+    difference = tokens_per_period - tokens_per_period_was
+    if difference == 0
+      return
+    end
+    groupings.each do |g|
+      g.test_tokens = [g.test_tokens + difference, 0].max
+      g.save
     end
   end
 
@@ -1217,38 +1255,6 @@ class Assignment < ApplicationRecord
         return true
       end
     end
-  end
-
-  # Repository authentication subtleties:
-  # 1) a repository is associated with a Group, but..
-  # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-  # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
-  # the assignment level, allowing the same Group repo to have different students according to the assignment.
-  # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
-  # Instead, we are going to take a last-deadline approach, where we assume that the valid students at any point in time
-  # are the ones valid for the last assignment due.
-  # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
-  # we may want to add or [more frequently] remove some students from it)
-  def self.get_repo_auth_records
-    Assignment.includes(groupings: [:group, {accepted_student_memberships: :user}])
-              .where(vcs_submit: true)
-              .order(due_date: :desc)
-  end
-
-  def self.get_required_files
-    assignments = Assignment.includes(:assignment_files)
-                            .where(scanned_exam: false, is_hidden: false)
-    required = {}
-    assignments.each do |assignment|
-      files = assignment.assignment_files.map(&:filename)
-      if assignment.only_required_files.nil?
-        required_only = false
-      else
-        required_only = assignment.only_required_files
-      end
-      required[assignment.repository_folder] = {required: files, required_only: required_only}
-    end
-    required
   end
 
 end

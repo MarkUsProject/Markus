@@ -1,0 +1,19 @@
+<h2><%= t('automated_tests.test_results') %></h2>
+<div class="block_content">
+  <div class="sub_block test_points">
+    <% if test_runs.empty? %>
+      <%= t('automated_tests.no_results') %>
+    <% end %>
+    <%# This run tests button is only for instructors before releasing the marks %>
+    <% if current_user.admin? && local_assigns[:submission] && !submission.current_result.released_to_students %>
+      <%= link_to t('automated_tests.run_tests'),
+                  run_tests_assignment_submission_result_path,
+                  class: 'button run_tests right' %>
+    <% end %>
+  </div>
+  <% unless test_runs.empty? %>
+    <%= render partial: 'automated_tests/test_run',
+               locals: { current_user: current_user, ran_by: ran_by, latest_date: test_runs[0].created_at },
+               collection: test_runs %>
+  <% end %>
+</div>

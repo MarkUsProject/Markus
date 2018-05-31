@@ -217,27 +217,24 @@ class SubmissionsController < ApplicationController
       head 400
       return
     end
-    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
-    partition = groupings.partition &:has_submission?
-    if partition[0].count > 0
-      success = I18n.t('automated_tests.tests_running',
-                       assignment_identifier: assignment.short_identifier)
-      error = ''
-      partition[0].each do |g|
-        begin
-          AutomatedTestsClientHelper.request_a_test_run(
-            request.protocol + request.host_with_port,
-            g.id,
-            current_user,
-            g.current_submission_used.id)
-        rescue => e
-          error += "#{g.group.group_name}: #{e.message}. "
-        end
+    # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
+    test_runs = groupings.select(&:has_submission?)
+                         .map { |g| { grouping_id: g.id, submission_id: g.current_submission_used.id } }
+    success = ''
+    error = ''
+    begin
+      if !test_runs.empty?
+        test_scripts = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
+        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
+                                     test_runs)
+        success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
+      else
+        error = I18n.t('automated_tests.need_submission')
       end
-    end
-    if partition[1].count > 0
-      flash_now(:error, I18n.t('automated_tests.need_submission'))
+    rescue StandardError => e
+      error = e.message
     end
     render json: { success: success, error: error }
   end

@@ -27,15 +27,15 @@
           <div class='sub_block'>
             <% if DateTime.now < @assignment.token_start_date %>
               <%= raw t('automated_tests.token.tokens_not_given_yet') %>
-            <% elsif @token.remaining == 0 %>
+            <% elsif @grouping.test_tokens <= 0 %>
               <%= raw t('automated_tests.token.tokens_no_more_available') %>
             <% else %>
-              <%= raw t('automated_tests.token.tokens_available', tokens: @token.remaining) %>
+              <%= raw t('automated_tests.token.tokens_available', tokens: @grouping.test_tokens) %>
             <% end %>
           </div>
         <% end %>
 
-        <% if @assignment.unlimited_tokens || @token.remaining > 0 %>
+        <% if @assignment.unlimited_tokens || @grouping.test_tokens > 0 %>
           <h3><%= t('automated_tests.run_tests') %></h3>
           <% if @grouping.assignment.submission_rule.can_collect_now? %>
             <p><%= t('automated_tests.error.after_due_date') %></p>
@@ -55,8 +55,9 @@
   </div>
 
   <div class='block'>
-    <%= render partial: 'automated_tests/test_script_results',
-               locals: {results: @test_script_results, current_user: @current_user, ran_by: 'student'} %>
+    <%= render partial: 'automated_tests/test_run',
+               locals: { current_user: @current_user, ran_by: 'student', latest_date: @test_runs[0].created_at },
+               collection: @test_runs %>
   </div>
 
 <% elsif @grouping.nil? %>

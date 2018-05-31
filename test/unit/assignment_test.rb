@@ -17,7 +17,6 @@ class AssignmentTest < ActiveSupport::TestCase
   should have_many :groupings
   should have_many(:ta_memberships).through(:groupings)
   should have_many(:student_memberships).through(:groupings)
-  should have_many(:tokens).through(:groupings)
 
   should have_many(:submissions).through(:groupings)
   should have_many(:groups).through(:groupings)
