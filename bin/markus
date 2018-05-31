@@ -20,4 +20,5 @@ if [ -d ~/markus-autotesting ] ; then
   ~/markus-autotesting/server/start_resque.sh tester
 fi
 
+webpack-dev-server &
 bundle exec rails s
