@@ -7,6 +7,7 @@ It represents the test case where:
   The student tries to write a file in the parent directory
 """
 import os
+import json
 
 new_file = os.path.join('..', 'tmp.txt')
 
@@ -19,22 +20,8 @@ while os.path.isfile(new_file):
 open(new_file, 'w').close()
 
 if os.path.isfile(new_file):
-  result = ('new file written to parent dir', 0, 2, 'fail')
+  print(json.dumps({'name': 'write_to_parent_dir_test', 'input': 'NA', 'expected': 'NA', 'actual': 'new file written to parent dir', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  result = ('new file not written to parent dir', 2, 2, 'pass')
-
-response = '''
-<test>
-    <name>write_to_parent_dir_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*result)
-
-print(response)
+  print(json.dumps({'name': 'write_to_parent_dir_test', 'input': 'NA', 'expected': 'NA', 'actual': 'new file not written to parent dir', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 
 os.remove(new_file)

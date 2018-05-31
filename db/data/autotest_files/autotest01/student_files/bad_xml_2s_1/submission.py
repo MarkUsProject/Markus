@@ -9,30 +9,9 @@ It represents the test case where:
 """
 import sys
 import os
+import json
 
 if os.path.basename(sys.argv[1]) == 'autotest_01.sh':
-  response = '''
-  <test>
-      <name>bad_xml_bad_test</name
-      <input>NA</input>
-      <expected>NA</expected>
-      <actual>NA</actual>
-      <marks_earned>2</marks_earned>
-      <marks_total>2</marks_total>
-      <status>pass</status>
-  </test>
-  '''
+  print(json.dumps({'name': 'bad_xml_good_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'})[2:])
 else:
-  response = '''
-  <test>
-      <name>bad_xml_good_test</name>
-      <input>NA</input>
-      <expected>NA</expected>
-      <actual>NA</actual>
-      <marks_earned>2</marks_earned>
-      <marks_total>2</marks_total>
-      <status>pass</status>
-  </test>
-  '''
-
-print(response)
+  print(json.dumps({'name': 'bad_xml_good_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

@@ -7,6 +7,7 @@ It represents the test case where:
   The student code tries to modify a file
 """
 import sys
+import json
 
 autotest_file = sys.argv[1]
 extra_text = '# append test'
@@ -18,20 +19,6 @@ with open(autotest_file) as f:
   contents = f.read()
 
 if extra_text in contents:
-  result = ('file was modified', 0, 2, 'fail')
+  print(json.dumps({'name': 'modify_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file was modified', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  result = ('file was not modified', 2, 2, 'pass')
-
-response = '''
-<test>
-    <name>modify_file_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*result)
-
-print(response)
+  print(json.dumps({'name': 'modify_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file was not modified', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

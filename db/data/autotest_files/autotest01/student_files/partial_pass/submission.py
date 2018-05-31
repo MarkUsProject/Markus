@@ -7,16 +7,6 @@ It represents the test case where:
   The submission partial (1 mark recieved out of maximum 2)
 """
 
-response = '''
-<test>
-    <name>partial_pass_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>1</marks_earned>
-    <marks_total>2</marks_total>
-    <status>partial</status>
-</test>
-'''
+import json
 
-print(response)
+print(json.dumps({'name': 'partial_pass_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 1, 'marks_total': 2, 'status': 'partial'}))

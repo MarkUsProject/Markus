@@ -9,28 +9,14 @@ It represents the test case where:
   then checks if the file is still around
 """
 import os
+import json
 
 filename = 'abandoned_file.txt'
 
 open(filename, 'w').close()
 
 if os.path.isfile(filename):
-  output = ('file successfully created', 2, 2, 'pass')
+  print(json.dumps({'name': 'leave_file_behind_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'file successfully created', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  output = ('failed to create file', 0, 0, 'error')
-
-response = '''
-<test>
-    <name>leave_file_behind_test_A</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*output)
-
-print(response)
-
+  print(json.dumps({'name': 'leave_file_behind_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'failed to create file', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 

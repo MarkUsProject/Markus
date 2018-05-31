@@ -14,6 +14,7 @@ It represents the test case where:
 """
 import subprocess
 import time
+import json
 
 # Note: sleeps once after the while loop to make sure the *_B.py file has time to
 #       make sure the permissions for angler.txt are set corectly
@@ -24,24 +25,8 @@ proc = subprocess.Popen(cmd, shell=True)
 time.sleep(1) # gives the process a second so .poll() can catch an early failure
 
 if proc.poll() is None:
-  output = ('child process successfully spawned', 2, 2, 'pass')
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'child process successfully spawned', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  output = ('failed to spawn child process', 0, 0, 'error')
-
-response = '''
-<test>
-    <name>spawned_proc_with_timeout_test_A</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*output)
-
-print(response)
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'failed to spawn child process', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
 
 time.sleep(15)
-
-

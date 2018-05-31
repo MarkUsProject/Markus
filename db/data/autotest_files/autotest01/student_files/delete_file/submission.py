@@ -9,6 +9,7 @@ It represents the test case where:
 import os
 import sys
 import glob
+import json
 
 autotest_file = sys.argv[1]
 
@@ -16,20 +17,7 @@ os.remove(autotest_file) # removes autotest script file (calls this file)
 files = glob.glob('*')
 
 if autotest_file in files:
-  result = ('file not deleted', 2, 2, 'pass')
+  print(json.dumps({'name': 'delete_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file not deleted', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  result = ('file deleted', 0, 2, 'fail')
+  print(json.dumps({'name': 'delete_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file deleted', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 
-response = '''
-<test>
-    <name>delete_file_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*result)
-
-print(response)
