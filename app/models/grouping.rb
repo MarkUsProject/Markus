@@ -392,7 +392,7 @@ class Grouping < ApplicationRecord
   # Grace Credit Query
   def available_grace_credits
     total = []
-    accepted_students.each do |student|
+    accepted_students.includes(:grace_period_deductions).each do |student|
       total.push(student.remaining_grace_credits)
     end
     total.min
