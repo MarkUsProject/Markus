@@ -1,7 +1,7 @@
 class AutotestCancelJob < ApplicationJob
   queue_as MarkusConfigurator.autotest_cancel_queue
 
-  def perform(host_with_port, test_run_id)
+  def perform(host_with_port, test_run_ids)
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
     else
@@ -10,8 +10,7 @@ class AutotestCancelJob < ApplicationJob
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    # TODO: support batches too by exploding to a list
-    server_params = { markus_address: markus_address, run_ids: [test_run_id] }
+    server_params = { markus_address: markus_address, run_ids: test_run_ids }
     cancel_command = "#{server_command} cancel '#{JSON.generate(server_params)}'"
 
     begin

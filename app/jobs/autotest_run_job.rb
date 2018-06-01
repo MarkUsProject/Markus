@@ -71,7 +71,7 @@ class AutotestRunJob < ApplicationJob
     retry
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_scripts)
+  def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
 
     grouping = test_run.grouping
     submission = test_run.submission
@@ -94,9 +94,7 @@ class AutotestRunJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
-    server_host = MarkusConfigurator.autotest_server_host
     server_path = MarkusConfigurator.autotest_server_dir
-    server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
     server_params = { user_type: user.type, markus_address: markus_address, user_api_key: user.api_key,
@@ -104,44 +102,51 @@ class AutotestRunJob < ApplicationJob
                       assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
                       group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
 
-    begin
-      out = ''
-      if server_username.nil?
-        # tests executed locally with no authentication
-        server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
-        FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
-        server_params[:files_path] = server_path
-        out, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
-        if status.exitstatus != 0
-          raise out
-        else
-          # TODO: use out for statistics
-        end
-      else
-        # tests executed locally or remotely with authentication
-        Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-          server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
-          # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-          scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
-                        "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
-          Open3.capture3(scp_command)
-          server_params[:files_path] = server_path
-          out = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
-          # TODO: use out for statistics
-        end
+    out = ''
+    if ssh.nil?
+      # tests executed locally with no authentication
+      server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
+      FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
+      server_params[:files_path] = server_path
+      out, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+      if status.exitstatus != 0
+        raise out
       end
-    rescue StandardError => e
-      error = { name: I18n.t('automated_tests.results.all_tests'),
-                message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-      test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+    else
+      # tests executed locally or remotely with authentication
+      server_host = MarkusConfigurator.autotest_server_host
+      server_username = MarkusConfigurator.autotest_server_username
+      server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
+      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
+      scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
+                    "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
+      Open3.capture3(scp_command)
+      server_params[:files_path] = server_path
+      out = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
     end
+    # TODO: use out for statistics
   end
 
   def perform(host_with_port, user_id, test_scripts, test_runs)
+    # create batch if needed
     test_batch = nil
     if test_runs.size > 1
       test_batch = TestBatch.create
     end
+    # set up SSH channel if needed
+    server_host = MarkusConfigurator.autotest_server_host
+    server_username = MarkusConfigurator.autotest_server_username
+    ssh = nil
+    ssh_auth_failure = nil
+    unless server_username.nil?
+      begin
+        ssh = Net::SSH.start(server_host, server_username, auth_methods: ['publickey'], keepalive: true,
+                             keepalive_interval: 60)
+      rescue StandardError => e
+        ssh_auth_failure = e
+      end
+    end
+    # create and enqueue test runs
     test_runs.each do |test_run|
       # if user is an instructor, then a submission exists and we use that repo revision
       # if user is a student, then we use the latest repo revision
@@ -161,8 +166,19 @@ class AutotestRunJob < ApplicationJob
         submission_id: submission_id,
         revision_identifier: revision_identifier
       )
-      enqueue_test_run(test_run, host_with_port, test_scripts)
+      begin
+        unless ssh_auth_failure.nil?
+          raise ssh_auth_failure
+        end
+        enqueue_test_run(test_run, host_with_port, test_scripts, ssh)
+      rescue StandardError => e
+        error = { name: I18n.t('automated_tests.results.all_tests'),
+                  message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
+        test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+      end
     end
+  ensure
+    ssh&.close
   end
 
 end
