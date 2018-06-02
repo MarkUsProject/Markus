@@ -17,6 +17,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # Webpack-dev-server listens on port 3035.
+  config.vm.network "forwarded_port", guest: 3035, host: 3035
 
   config.vm.provision "install-markus", type: "shell" do |s|
     s.path = "script/install-markus.sh"
