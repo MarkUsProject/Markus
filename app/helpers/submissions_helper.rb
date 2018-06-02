@@ -238,8 +238,16 @@ module SubmissionsHelper
 
   def get_files_info(files, assignment_id, revision_identifier, path, grouping_id)
     files.map do |file_name, file|
+      next if Repository.get_class.internal_file_names.include? file_name
       f = {}
       f[:id] = file.object_id
+      f[:url] = download_assignment_submissions_url(
+        id: assignment_id,
+        revision_identifier: revision_identifier,
+        file_name: file_name,
+        path: path,
+        grouping_id: grouping_id
+      )
       f[:filename] = view_context.image_tag('icons/page_white_text.png') +
           view_context.link_to(" #{file_name}", action: 'download',
                                id: assignment_id,
@@ -251,7 +259,7 @@ module SubmissionsHelper
       f[:last_modified_revision] = revision_identifier
       f[:revision_by] = file.user_id
       f
-    end
+    end.compact
   end
 
   def get_directories_info(directories, revision_identifier, path, grouping_id, action)

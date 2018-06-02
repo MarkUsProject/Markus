@@ -5,7 +5,7 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                         :populate_file_manager_react,
+                         :populate_student_file_manager,
                          :browse,
                          :file_manager,
                          :update_files,
@@ -30,7 +30,7 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :update_files,
-                       :populate_file_manager_react,
+                       :populate_student_file_manager,
                        :populate_peer_submissions_table]
   before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
 
@@ -121,38 +121,15 @@ class SubmissionsController < ApplicationController
     render layout: 'assignment_content'
   end
 
-  def populate_file_manager_react
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
-    user_group = @grouping.group
-    revision_identifier = params[:revision_identifier]
-    @path = params[:path] || '/'
-    @previous_path = File.split(@path).first
-
-    repo = user_group.repo
-    if revision_identifier.nil?
-      @revision = repo.get_latest_revision
-      revision_identifier = @revision.revision_identifier
-    else
-      @revision = repo.get_revision(revision_identifier)
+  def populate_student_file_manager
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = current_user.accepted_grouping_for(assignment)
+    entries = []
+    grouping.group.access_repo do |repo|
+      revision = repo.get_latest_revision
+      entries = get_all_file_data(revision, grouping, '')
     end
-    exit_directory = get_exit_directory(@previous_path, @grouping.id,
-                                        revision_identifier, @revision,
-                                        @assignment.repository_folder,
-                                        'file_manager')
-    full_path = File.join(@assignment.repository_folder, @path)
-    if @revision.path_exists?(full_path)
-      files = @revision.files_at_path(full_path)
-      files_info = get_files_info(files, @assignment.id, revision_identifier, @path,
-                                  @grouping.id)
-
-      directories = @revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_identifier,
-                                              @path, @grouping.id, 'file_manager')
-      render json: exit_directory + files_info + directories_info
-    else
-      render json: exit_directory
-    end
+    render json: entries
   end
 
   def manually_collect_and_begin_grading
@@ -389,11 +366,10 @@ class SubmissionsController < ApplicationController
           if new_files.empty?
             # delete files marked for deletion
             delete_files.each do |filename|
-              file_path = current_path.join(filename)
-              file_path_relative = file_path.relative_path_from(assignment_path).to_s
+              file_path = assignment_path.join(filename)
               file_path = file_path.to_s
               txn.remove(file_path, file_revisions[filename])
-              log_messages.push("Student '#{current_user.user_name}' deleted file '#{file_path_relative}' "\
+              log_messages.push("Student '#{current_user.user_name}' deleted file '#{file_path}' "\
                                 "for assignment '#{@assignment.short_identifier}'.")
             end
           else
@@ -791,5 +767,31 @@ class SubmissionsController < ApplicationController
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
       @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
+  end
+
+  # Recursively return data for all files in a submission.
+  # Based on Submission#populate_with_submission_files.
+  def get_all_file_data(revision, grouping, path)
+    full_path = File.join(grouping.assignment.repository_folder, path)
+    return [] unless revision.path_exists?(full_path)
+
+    files = revision.files_at_path(full_path)
+    entries = get_files_info(files, grouping.assignment.id, revision.revision_identifier, path,
+                             grouping.id)
+
+    entries.each do |data|
+      data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
+      data[:modified] = data[:last_revised_date]
+      data[:size] = 1 # Dummy value
+    end
+
+
+    revision.directories_at_path(full_path).each do |directory_name, _|
+      entries.concat(get_all_file_data(
+                       revision, grouping,
+                       path.blank? ? directory_name : File  .join(path, directory_name)))
+    end
+
+    entries
   end
 end

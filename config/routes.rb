@@ -143,7 +143,7 @@ Markus::Application.routes.draw do
 
       resources :submissions do
         collection do
-          get 'populate_file_manager_react'
+          get 'populate_student_file_manager'
           get 'populate_submissions_table'
           get 'populate_peer_submissions_table'
           get 'file_manager'

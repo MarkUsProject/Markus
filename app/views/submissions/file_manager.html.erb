@@ -5,9 +5,12 @@
              formats: [:js],
              handlers: [:erb] %>
 
-  <%= render partial: 'react_file_manager_boot_table',
-             formats: [:'js.jsx'],
-             handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeStudentFileManager(document.getElementById('file_manager'),
+                             {assignment_id: <%= @assignment.id %>});
+    });
+  </script>
 <% end %>
 
 <% content_for :title do %>
@@ -51,7 +54,7 @@
     </p>
   <% end %>
 
-  <div id='file_table'></div>
+  <div id='file_manager'></div>
 </div>
 
 <aside class='dialog' id='addnew_dialog'>

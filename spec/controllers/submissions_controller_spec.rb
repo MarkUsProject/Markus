@@ -53,11 +53,11 @@ describe SubmissionsController do
       end
     end
 
-    it 'should be able to populate a file' do
+    it 'should be able to populate the file manager' do
       get_as @student,
-             :populate_file_manager_react,
+             :populate_student_file_manager,
              assignment_id: @assignment.id,
-             format: 'js'
+             format: 'json'
       is_expected.to respond_with(:success)
     end
 
