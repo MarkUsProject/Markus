@@ -50,7 +50,6 @@ sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 MARKUS_ROOT=~/Markus
 
 # Clone the Markus repository.
-# TODO: revert these changes
 echo "- - - Cloning Markus - - -"
 git clone https://github.com/MarkUsProject/Markus.git $MARKUS_ROOT
 cd $MARKUS_ROOT
@@ -90,9 +89,6 @@ cd $MARKUS_ROOT
 # Copy the new database file.
 echo "- - - Copy Postgres Database File - - -"
 cp config/database.yml.postgresql config/database.yml
-
-echo "- - - Switch Repository Type - - -"
-sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments/development.rb
 
 # Setup the database.
 echo "- - - Setup Database via Rake - - -"

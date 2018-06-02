@@ -18,13 +18,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
 
-  config.vm.provision "install-markus", type: "shell" do |s|
-    s.path = "script/install-markus.sh"
+  # The autotesting server must be running when MarkUs populates the seed database
+  config.vm.provision "install-markus-autotesting", type: "shell" do |s|
+    s.path = "script/install-markus-autotesting.sh"
     s.privileged = false
   end
 
-  config.vm.provision "install-markus-autotesting", type: "shell", run: "never" do |s|
-    s.path = "script/install-markus-autotesting.sh"
+  config.vm.provision "install-markus", type: "shell" do |s|
+    s.path = "script/install-markus.sh"
     s.privileged = false
   end
 
