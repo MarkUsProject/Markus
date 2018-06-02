@@ -141,7 +141,7 @@ class AutotestRunJob < ApplicationJob
     unless server_username.nil?
       begin
         ssh = Net::SSH.start(server_host, server_username, auth_methods: ['publickey'], keepalive: true,
-                             keepalive_interval: 60)
+                                                           keepalive_interval: 60)
       rescue StandardError => e
         ssh_auth_failure = e
       end
