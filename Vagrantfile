@@ -50,9 +50,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       Then visit localhost:3000, and you should see the MarkUs login screen.
       Login as an admin with username 'a' and any non-empty password.
 
-      Then to complete the installation, run the following provisioning commands:
+      If you want to use MarkUs with subversion, run the following command:
 
-        $ vagrant provision --provision-with=install-markus-autotesting
         $ vagrant provision --provision-with=install-svn
     HEREDOC
 end
