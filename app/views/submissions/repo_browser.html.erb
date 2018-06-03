@@ -89,15 +89,21 @@
       <%
         path_memory = '/'
         absolute_path = @grouping.assignment.repository_folder + @path
-        absolute_path.split('/').each do |folder|
+        absolute_path_decomp = absolute_path.split('/')
+        absolute_path_decomp.each do |folder|
           if folder != @grouping.assignment.repository_folder
             path_memory = File.join(path_memory, folder)
           end %>
-          <%= link_to(" / #{folder}",
+          <%=
+            if folder == absolute_path_decomp.last
+              t(" / #{folder} ")
+            else
+              link_to(" / #{folder}",
                       action: 'repo_browser',
                       path: path_memory,
                       id: @grouping.id,
-                      revision_identifier: @revision.revision_identifier).html_safe %>
+                      revision_identifier: @revision.revision_identifier).html_safe
+            end %>
       <% end %>
     </p>
 
