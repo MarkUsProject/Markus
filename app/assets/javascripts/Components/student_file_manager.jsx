@@ -1,11 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
 import ClassNames from 'classnames'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
+import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend'
+import { DragDropContext, DragSource, DropTarget } from 'react-dnd'
 
-import { RawFileBrowser, Headers, FileRenderers } from 'react-keyed-file-browser'
-
+import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'react-keyed-file-browser'
 
 class StudentFileManger extends React.Component {
   constructor(props) {
@@ -28,6 +27,18 @@ class StudentFileManger extends React.Component {
       }
     }).then(data => data.json())
       .then(data => this.setState({files: data}));
+  };
+
+  handleCreateFiles = (files, prefix) => {
+    let data = new FormData();
+    files.forEach(f => data.append('new_files[]', f, f.name));
+    data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
+    $.post({
+      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      data: data,
+      processData: false,  // tell jQuery not to process the data
+      contentType: false   // tell jQuery not to set contentType
+    }).then(this.fetchData);
   };
 
   handleDeleteFile = (fileKey) => {
@@ -70,6 +81,7 @@ class StudentFileManger extends React.Component {
         fileRenderer={FileManagerFile}
 
         onDeleteFile={this.handleDeleteFile}
+        onCreateFiles={this.handleCreateFiles}
       />
     );
   }
@@ -275,7 +287,8 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFile === 'function' ||
       typeof this.props.browserProps.moveFolder === 'function'
     ) {
-      return this.props.connectDropTarget(header);
+      return header;
+      // return this.props.connectDropTarget(header);
     } else {
       return header;
     }
@@ -383,6 +396,14 @@ class FileManagerFile extends FileRenderers.RawTableFile {
     return this.connectDND(row)
   }
 }
+
+FileManagerFile = (
+    DragSource('file', BaseFileConnectors.dragSource, BaseFileConnectors.dragCollect)(
+    DropTarget(['file', 'folder', NativeTypes.FILE],
+      BaseFileConnectors.targetSource,
+      BaseFileConnectors.targetCollect,
+    )(FileManagerFile))
+  );
 
 export function makeStudentFileManager(elem, props) {
   render(<StudentFileManger {...props} />, elem);

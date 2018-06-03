@@ -344,7 +344,7 @@ class SubmissionsController < ApplicationController
       @grouping.group.access_repo do |repo|
 
         assignment_path = Pathname.new(@assignment.repository_folder)
-        current_path = assignment_path.join(@path[1..-1]) # remove trailing '/' or join won't join
+        current_path = assignment_path.join(@path[1..-1]) # remove leading '/' to make relative path
 
         # Get the revision numbers for the files that we've seen - these
         # values will be the "expected revision numbers" that we'll provide
