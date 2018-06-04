@@ -45,16 +45,10 @@ class Grouping < ApplicationRecord
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
-  has_one :token
-
-  has_many :test_runs, dependent: :destroy
-  has_many :test_script_results,
-           -> { order 'created_at DESC' },
-           dependent: :destroy
-
-  has_many :test_script_results_all_data,
-           -> { includes(:test_script, :test_results, :requested_by).order('created_at DESC') },
-           class_name: 'TestScriptResult'
+  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
+  has_many :test_runs_all_data,
+           -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           class_name: 'TestRun'
 
   has_one :inviter_membership,
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
@@ -83,6 +77,9 @@ class Grouping < ApplicationRecord
   validates_associated :group, message: 'associated group need to be valid'
 
   validates_inclusion_of :is_collected, in: [true, false]
+
+  validates_presence_of :test_tokens
+  validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -273,8 +270,7 @@ class Grouping < ApplicationRecord
   end
 
   # Add a new member to base
- def add_member(user,
-                set_membership_status=StudentMembership::STATUSES[:accepted])
+  def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
       nil
     else
@@ -396,7 +392,7 @@ class Grouping < ApplicationRecord
   # Grace Credit Query
   def available_grace_credits
     total = []
-    accepted_students.each do |student|
+    accepted_students.includes(:grace_period_deductions).each do |student|
       total.push(student.remaining_grace_credits)
     end
     total.min
@@ -745,154 +741,62 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def student_test_script_results(include_all_data=false)
-    if include_all_data
-      results = self.test_script_results_all_data
+  def student_test_runs(all_data: false)
+    if all_data
+      runs = test_runs_all_data
     else
-      results = self.test_script_results
+      runs = test_runs
     end
-    results.where(requested_by: self.accepted_students)
+    runs.where(user: accepted_students)
   end
 
-  def prepare_tokens_to_use
-    if self.token.nil?
-      self.create_token(remaining: nil, last_used: nil)
-    end
-    self.token.reassign_tokens
-    self.token
-  end
-
-  def create_test_script_result(file_name, requested_by, submission=nil, time=0)
-    if submission.nil?
-      revision_identifier = group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+  def refresh_test_tokens!
+    if Time.current < assignment.token_start_date || !is_valid?
+      self.test_tokens = 0
+    elsif assignment.unlimited_tokens
+      # grouping has always 1 token
+      self.test_tokens = 1
     else
-      revision_identifier = submission.revision_identifier
+      last_student_run = student_test_runs.first
+      if last_student_run.nil?
+        self.test_tokens = assignment.tokens_per_period
+      else
+        # divide time into chunks of token_period hours
+        # recharge tokens only the first time they are used during the current chunk
+        hours_from_start = (Time.current - assignment.token_start_date) / 3600
+        periods_from_start = (hours_from_start / assignment.token_period).floor
+        last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+        if last_student_run.created_at < last_period_begin
+          self.test_tokens = assignment.tokens_per_period
+        end
+      end
     end
-    test_script = TestScript.find_by(assignment_id: self.assignment.id, file_name: file_name)
-
-    self.test_script_results.create(
-      test_script_id: test_script.id,
-      submission_id: submission&.id,
-      marks_earned: 0.0,
-      marks_total: 0.0,
-      repo_revision: revision_identifier,
-      requested_by_id: requested_by.id,
-      time: time)
+    save
   end
 
-  def create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
-    test_scripts.each do |file_name|
-      test_script_result = create_test_script_result(file_name, requested_by, submission)
-      errors.each do |error|
-        test_script_result.create_test_error_result(error.name, error.message)
-      end
-    end
-    unless submission.nil?
-      submission.set_marks_for_tests
+  # Decreases the number of tokens by one, or raises an exception if there are no remaining tokens.
+  def decrease_test_tokens!
+    if self.test_tokens > 0
+      self.test_tokens -= 1
+      save
+    else
+      raise I18n.t('automated_tests.error.no_tokens')
     end
   end
 
-  def create_test_script_result_from_xml(xml_test_script, requested_by, submission=nil)
-
-    # create test result
-    file_name = xml_test_script['file_name']
-    time = xml_test_script['time'].nil? ? 0 : xml_test_script['time']
-    new_test_script_result = create_test_script_result(file_name, requested_by, submission, time)
-    xml_tests = xml_test_script['test']
-    if xml_tests.nil?
-      new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stdout'),
-                                                      I18n.t('automated_tests.test_result.no_tests'))
-      return new_test_script_result
-    end
-    unless xml_tests.is_a?(Array) # Hash.from_xml returns a hash if it's a single test
-      xml_tests = [xml_tests]
-    end
-
-    # process tests
-    all_marks_earned = 0.0
-    all_marks_total = 0.0
-    xml_tests.each do |xml_test|
-      begin
-        marks_earned, marks_total = new_test_script_result.create_test_result_from_xml(xml_test)
-      rescue
-        # with malformed xml, test results could be valid only up to a certain test
-        # similarly, the test script can signal a serious failure that requires stopping and assigning zero marks
-        all_marks_earned = 0.0
-        break
-      end
-      all_marks_earned += marks_earned
-      all_marks_total += marks_total
-    end
-    new_test_script_result.marks_earned = all_marks_earned
-    new_test_script_result.marks_total = all_marks_total
-    new_test_script_result.save
-
-    new_test_script_result
-  end
-
-  def create_test_run_from_xml(stdout, stderr, test_scripts, requested_by, submission=nil)
-
-    # check that results are somewhat well-formed xml at the top level (i.e. they don't crash the parser)
-    xml_root = nil
-    begin
-      xml_root = Hash.from_xml(stdout)
-    rescue => e
-      errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', {xml: e.message}))]
-      unless stderr.blank?
-        errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', {errors: stderr}))
-      end
-      create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
-      return
-    end
-    xml_test_run = xml_root['testrun']
-    xml_test_scripts = xml_test_run.nil? ? nil : xml_test_run['test_script']
-    if xml_test_run.nil? || xml_test_scripts.nil?
-      errors = [OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stdout'),
-                               message: I18n.t('automated_tests.test_result.bad_results', {xml: stdout}))]
-      unless stderr.blank?
-        errors << OpenStruct.new(name: I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                 message: I18n.t('automated_tests.test_result.err_results', {errors: stderr}))
-      end
-      create_all_test_scripts_error_result(test_scripts, requested_by, submission, errors)
-      return
-    end
-
-    # process results
-    unless xml_test_scripts.is_a?(Array) # Hash.from_xml returns a hash if it's a single test script and an array otherwise
-      xml_test_scripts = [xml_test_scripts]
-    end
-    new_test_script_results = {}
-    xml_test_scripts.each do |xml_test_script|
-      file_name = xml_test_script['file_name']
-      if file_name.nil? # with malformed xml, some test script results could be valid and some won't, recover later
-        next
-      end
-      new_test_script_result = create_test_script_result_from_xml(xml_test_script, requested_by, submission)
-      new_test_script_results[file_name] = new_test_script_result
-    end
-
-    test_scripts.each do |file_name|
-      # try to recover from malformed xml at the test script level
-      new_test_script_result = new_test_script_results[file_name]
-      if new_test_script_result.nil?
-        new_test_script_result = create_test_script_result(file_name, requested_by, submission)
-        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stdout'),
-                                                        I18n.t('automated_tests.test_result.bad_results', {xml: stdout}))
-        new_test_script_results[file_name] = new_test_script_result
-      end
-      # add unhandled errors to all test scripts
-      unless stderr.blank?
-        new_test_script_result.create_test_error_result(I18n.t('automated_tests.test_result.all_tests_stderr'),
-                                                        I18n.t('automated_tests.test_result.err_results',
-                                                               {errors: stderr}))
-      end
-    end
-
-    # set the marks assigned by the test
-    unless submission.nil?
-      submission.set_marks_for_tests
+  # Checks whether a student test using tokens is currently being enqueued for execution
+  # (with buffer time in case of unhandled errors that prevented test results to be stored)
+  def student_test_enqueued?
+    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    last_student_run = student_test_runs.first
+    if last_student_run.nil? || (last_student_run.created_at + buffer_time) < Time.current
+      # first test or buffer time expired (in case some unhandled problem happened)
+      false
+    elsif last_student_run.test_script_results.empty?
+      # test results not back yet
+      true
+    else
+      false
     end
   end
 

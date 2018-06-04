@@ -2,6 +2,11 @@
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
 
+  # Speed up first page load with Sprockets 3. See
+  # https://github.com/rails/sprockets-rails/issues/352.
+  config.assets.check_precompiled_asset = false
+  config.assets.quiet = true
+
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
@@ -273,12 +278,13 @@ Markus::Application.configure do
   AUTOTEST_STUDENT_TESTS_ON = true
   AUTOTEST_STUDENT_TESTS_BUFFER_TIME = 1.hour
   AUTOTEST_CLIENT_DIR = "#{::Rails.root}/data/dev/autotest"
-  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
   AUTOTEST_SERVER_HOST = 'localhost'
-  AUTOTEST_SERVER_FILES_USERNAME = nil
-  AUTOTEST_SERVER_FILES_DIR = "#{::Rails.root}/data/dev/autotest/server"
-  AUTOTEST_SERVER_RESULTS_DIR = "#{AUTOTEST_SERVER_FILES_DIR}/results"
-  AUTOTEST_SERVER_TESTS = [{ user: nil, dir: "#{AUTOTEST_SERVER_FILES_DIR}/tester", queue: 'tester' }]
+  AUTOTEST_SERVER_USERNAME = nil
+  AUTOTEST_SERVER_DIR = "#{::Rails.root}/data/dev/autotest/server"
+  AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer.py'
+  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
+  AUTOTEST_CANCEL_QUEUE = 'CSC108_autotest_cancel'
+  AUTOTEST_SCRIPTS_QUEUE = 'CSC108_autotest_scripts'
 
   ###################################################################
   # Exam Plugin settings

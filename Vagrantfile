@@ -2,7 +2,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bento/ubuntu-16.04"
   config.vm.define :markus_box
 
   # Set this to your private key if you're having trouble
@@ -17,14 +17,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Access the server running on port 3000 on the host on port 3000.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # Webpack-dev-server listens on port 3035.
+  config.vm.network "forwarded_port", guest: 3035, host: 3035
 
-  config.vm.provision "install-markus", type: "shell" do |s|
-    s.path = "script/install-markus.sh"
+  # The autotesting server must be running when MarkUs populates the seed database
+  config.vm.provision "install-markus-autotesting", type: "shell" do |s|
+    s.path = "script/install-markus-autotesting.sh"
     s.privileged = false
   end
 
-  config.vm.provision "install-markus-autotesting", type: "shell", run: "never" do |s|
-    s.path = "script/install-markus-autotesting.sh"
+  config.vm.provision "install-markus", type: "shell" do |s|
+    s.path = "script/install-markus.sh"
     s.privileged = false
   end
 
@@ -49,9 +52,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       Then visit localhost:3000, and you should see the MarkUs login screen.
       Login as an admin with username 'a' and any non-empty password.
 
-      Then to complete the installation, run the following provisioning commands:
+      If you want to use MarkUs with subversion, run the following command:
 
-        $ vagrant provision --provision-with=install-markus-autotesting
         $ vagrant provision --provision-with=install-svn
     HEREDOC
 end

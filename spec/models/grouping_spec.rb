@@ -296,4 +296,96 @@ describe Grouping do
       end
     end
   end
+
+  describe 'test tokens' do
+    it { is_expected.to validate_presence_of(:test_tokens) }
+    let(:grouping) { create(:grouping) }
+
+    context 'set to 5' do
+      it 'be valid' do
+        grouping.test_tokens = 5
+        expect(grouping).to be_valid
+      end
+    end
+
+    context 'set to 0' do
+      it 'be valid' do
+        grouping.test_tokens = 0
+        expect(grouping).to be_valid
+      end
+    end
+
+    context 'methods' do
+      describe '.decrease_test_tokens!' do
+        context 'when number of tokens is greater than 0' do
+          it 'decrease number of tokens' do
+            grouping.test_tokens = 5
+            grouping.decrease_test_tokens!
+            expect(grouping.test_tokens).to eq(4)
+          end
+        end
+
+        context 'when number of tokens is equal to 0' do
+          it 'raise an error' do
+            grouping.test_tokens = 0
+            expect { grouping.decrease_test_tokens! }.to raise_error(RuntimeError)
+          end
+        end
+      end
+
+      describe '#refresh_test_tokens!' do
+        context 'if assignment.tokens is not nil' do
+          before do
+            @assignment = FactoryGirl.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
+            @group = FactoryGirl.create(:group)
+            @grouping = Grouping.create(group: @group, assignment: @assignment)
+            @student1 = FactoryGirl.create(:student)
+            @student2 = FactoryGirl.create(:student)
+            @grouping.test_tokens = 0
+            StudentMembership.create(
+              user: @student1,
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:inviter]
+            )
+            StudentMembership.create(
+              user: @student2,
+              grouping: @grouping,
+              membership_status: StudentMembership::STATUSES[:accepted]
+            )
+            @grouping.refresh_test_tokens!
+          end
+          it 'refreshes assignment tokens' do
+            expect(@grouping.test_tokens).to eq(10)
+          end
+        end
+      end
+
+      describe '#update_assigned_tokens' do
+        before :each do
+          @assignment = FactoryGirl.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
+          @group = FactoryGirl.create(:group)
+          @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
+          @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
+        end
+
+        it 'update token count properly when it is being increased' do
+          @assignment.tokens_per_period = 9
+          @assignment.save
+          expect(@grouping.test_tokens).to eq(8)
+        end
+
+        it 'update token count properly when it is being decreased' do
+          @assignment.tokens_per_period = 3
+          @assignment.save
+          expect(@grouping.test_tokens).to eq(2)
+        end
+
+        it 'not allow token count to go below 0' do
+          @assignment.tokens_per_period = 0
+          @assignment.save
+          expect(@grouping.test_tokens).to eq(0)
+        end
+      end
+    end
+  end
 end

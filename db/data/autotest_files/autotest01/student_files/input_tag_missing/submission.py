@@ -7,15 +7,6 @@ It represents the test case where:
   The xml is missing non-necessary tag (<input>)
 """
 
-response = '''
-<test>
-    <name>input_tags_missing</name>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>2</marks_earned>
-    <marks_total>2</marks_total>
-    <status>pass</status>
-</test>
-'''
+import json
 
-print(response)
+print(json.dumps({'name': 'input_tags_missing', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

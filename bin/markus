@@ -13,11 +13,8 @@ fi
 # Start new MarkUs server resque worker if non are running
 if ! pgrep -f resque > /dev/null ; then
   echo "Starting MarkUs resque worker"
-  QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work &
+  QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work
 fi
 
-if [ -d ~/markus-autotesting ] ; then
-  ~/markus-autotesting/server/start_resque.sh tester
-fi
-
+webpack-dev-server &
 bundle exec rails s

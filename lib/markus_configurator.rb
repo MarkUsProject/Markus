@@ -276,35 +276,51 @@ module MarkusConfigurator
     end
   end
 
-  def autotest_server_files_username
-    if autotest_on? && (defined? AUTOTEST_SERVER_FILES_USERNAME)
-      AUTOTEST_SERVER_FILES_USERNAME
+  def autotest_server_username
+    if autotest_on? && (defined? AUTOTEST_SERVER_USERNAME)
+      AUTOTEST_SERVER_USERNAME
     else
       nil
     end
   end
 
-  def autotest_server_files_dir
-    if autotest_on? && (defined? AUTOTEST_SERVER_FILES_DIR)
-      AUTOTEST_SERVER_FILES_DIR
+  def autotest_server_dir
+    if autotest_on? && (defined? AUTOTEST_SERVER_DIR)
+      AUTOTEST_SERVER_DIR
     else
       File.join(::Rails.root.to_s, 'autotest', 'server')
     end
   end
 
-  def autotest_server_results_dir
-    if autotest_on? && (defined? AUTOTEST_SERVER_RESULTS_DIR)
-      AUTOTEST_SERVER_RESULTS_DIR
+  def autotest_server_command
+    if autotest_on? && (defined? AUTOTEST_SERVER_COMMAND)
+      AUTOTEST_SERVER_COMMAND
     else
-      File.join(autotest_server_files_dir, 'results')
+      'enqueuer'
     end
   end
 
-  def autotest_server_tests
-    if autotest_on? && (defined? AUTOTEST_SERVER_TESTS)
-      AUTOTEST_SERVER_TESTS
+  def autotest_run_queue
+    if autotest_on? && (defined? AUTOTEST_RUN_QUEUE)
+      AUTOTEST_RUN_QUEUE
     else
-      [{ user: nil, dir: File.join(autotest_server_files_dir, 'tester'), queue: 'tester' }]
+      'autotest_run'
+    end
+  end
+
+  def autotest_cancel_queue
+    if autotest_on? && (defined? AUTOTEST_CANCEL_QUEUE)
+      AUTOTEST_CANCEL_QUEUE
+    else
+      'autotest_cancel'
+    end
+  end
+
+  def autotest_scripts_queue
+    if autotest_on? && (defined? AUTOTEST_SCRIPTS_QUEUE)
+      AUTOTEST_SCRIPTS_QUEUE
+    else
+      'autotest_scripts'
     end
   end
 
@@ -352,14 +368,6 @@ module MarkusConfigurator
   ##########################################
   # Resque Configuration
   ##########################################
-
-  def autotest_run_queue
-    if autotest_on? && (defined? AUTOTEST_RUN_QUEUE)
-      AUTOTEST_RUN_QUEUE
-    else
-      'autotest_run'
-    end
-  end
 
   def markus_job_create_individual_groups_queue_name
     if defined? JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME

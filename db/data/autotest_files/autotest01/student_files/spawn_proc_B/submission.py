@@ -15,6 +15,7 @@ It represents the test case where:
 
 import time
 import os
+import json
 
 open('angler.txt', 'w').close()
 os.chmod('angler.txt', 0o777)
@@ -25,22 +26,8 @@ with open('angler.txt') as f:
 	contents = f.read()
 
 if 'a fish!' in contents:
-  output = ('child process was not killed', 0, 0, 'error')
+  print(json.dumps({'name': 'spawned_proc_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'child process was not killed', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
 else:
-  output = ('child process successfully killed', 2, 2, 'pass')
-
-response = '''
-<test>
-    <name>spawned_proc_test_B</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*output)
-
-print(response)
+  print(json.dumps({'name': 'spawned_proc_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'child process successfully killed', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 
 os.remove('angler.txt')

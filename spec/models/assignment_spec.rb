@@ -9,7 +9,6 @@ describe Assignment do
     it { is_expected.to have_many(:groupings) }
     it { is_expected.to have_many(:ta_memberships).through(:groupings) }
     it { is_expected.to have_many(:student_memberships).through(:groupings) }
-    it { is_expected.to have_many(:tokens).through(:groupings) }
     it { is_expected.to have_many(:submissions).through(:groupings) }
     it { is_expected.to have_many(:groups).through(:groupings) }
     it { is_expected.to have_many(:notes).dependent(:destroy) }

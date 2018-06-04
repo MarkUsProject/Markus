@@ -181,6 +181,7 @@ class AutotestSetup
         criterion: criterion
       )
     end
+    AutotestScriptsJob.perform_now('http://localhost:3000', @assignment.id)
   end
 
   def collect_submissions

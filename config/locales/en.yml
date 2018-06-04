@@ -54,7 +54,7 @@ en:
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Your session is about to expire."
+    timeout_imminent:   "Your session is about to expire: you will be logged out shortly and changes you make to this page will not be saved afterwards. Pressing ok will NOT prevent this, instead refresh this page or navigate to a different page."
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
@@ -1392,26 +1392,28 @@ en:
         error: "Error"
       error:
         not_enabled: "Tests are not enabled for this assignment"
-        no_test_server_user: "There is no test server user for %{hostname}"
         ta_not_allowed: "Graders are not allowed to run tests"
         bad_group: "Your group is not valid or you do not have one yet"
         no_tokens: "You do not have tokens to run the tests"
         no_test_files: "There are no test scripts to run the tests"
         already_enqueued: "You have a test already enqueued for execution, please wait for the results"
         after_due_date: "You cannot run tests as the due date for this assignment has passed"
-      test_result:
+      results:
         all_tests: "All tests"
-        all_tests_stdout: "All tests (stdout)"
-        all_tests_stderr: "All tests (stderr)"
         unknown_test: "Unknown test"
+        unknown_test_script: "Unknown test script"
+        missing_test_script: "This test script is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
-        err_results: "There are unhandled errors: %{errors}"
-        bad_results: "Test results are malformed: %{xml}"
+        bad_results: "Test results are malformed: %{error}"
         no_tests: "Test results are empty"
+        timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
         bad_marks_earned: "Earned marks are missing"
         bad_marks_total: "Total marks are missing"
         bad_status: "Unrecognized test status '%{status}'"
+        extra_raw_output_html: "Raw test run output:<br />%{extra}<br />"
+        extra_stderr_html: "Messages on stderr:<br />%{extra}<br />"
+        extra_malformed_html: "Malformed results discarded by server:<br />%{extra}<br />"
 
 #Missing Activerecord Translations for english
     datetime:

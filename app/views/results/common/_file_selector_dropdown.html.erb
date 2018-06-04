@@ -20,12 +20,14 @@
           <% end %>
           <% if dir[:files] != nil %>
               <% dir[:files].each do |file| %>
+                <% if file.filename != ".gitkeep" %>
                   <li class="file_item" data-path="<%= file.path %>/<%= file.filename %>" data-id="<%= file.id %>">
                     <a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                        onmouseover='close_submenu_recursive(
                            this.parentNode.parentNode, null)'>
                       <%= file.filename %>
                     </a></li>
+                <% end %>
               <% end %>
           <% end %>
       <% end %>

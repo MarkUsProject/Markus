@@ -3,7 +3,8 @@
 echo "- - - Updating Package Manager, Step 1 - - -"
 sudo apt-get update
 echo "- - - Updating Package Manager, Step 2 - - -"
-sudo apt-get -y upgrade
+# See https://github.com/chef/bento/issues/661 for details on this command.
+DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
 # Install dependencies
 echo "- - - Installing Dependencies - - -"
@@ -22,12 +23,8 @@ sudo gem install bundler
 echo "- - - Installing Git - - -"
 sudo apt-get install -y git
 
-# Install postgres (note: on 16.04+, can install postgres through the standard repository)
-echo "- - - Installing Postgres - - -"
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install -y postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 libpq-dev
+# Install postgres
+sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-dev
 
 # Install node
 echo "- - - Installing Node, Step 1 - - -"
@@ -62,7 +59,7 @@ echo "- - - Installing Project-specific Dependencies, Step 1 - - -"
 bundle config libv8 -- --with-system-v8
 bundle config github.https true
 echo "- - - Installing Project-specific Dependencies, Step 2 - - -"
-bundle install --without mysql sqlite3 --path vendor/bundle
+bundle install --without mysql sqlite unicorn --path vendor/bundle
 
 echo "- - - Install JavaScript dependencies - - -"
 yarn install
@@ -93,9 +90,6 @@ cd $MARKUS_ROOT
 echo "- - - Copy Postgres Database File - - -"
 cp config/database.yml.postgresql config/database.yml
 
-echo "- - - Switch Repository Type - - -"
-sed -i "s/REPOSITORY_TYPE = 'svn'/REPOSITORY_TYPE = 'git'/g" config/environments/development.rb
-
 # Setup the database.
 echo "- - - Setup Database via Rake - - -"
 bundle exec rake db:setup
@@ -106,6 +100,6 @@ cat >> /home/vagrant/.bashrc <<EOL
 cd /home/vagrant/Markus
 EOL
 echo "- - - Update .profile - - -"
-cat >> /home/vagrant/.profile <<EOL
-PATH=$PATH:/home/vagrant/Markus/bin
+cat >> /home/vagrant/.profile << 'EOL'
+PATH="${PATH}:/home/vagrant/Markus/bin"
 EOL

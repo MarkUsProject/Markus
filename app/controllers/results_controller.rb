@@ -47,8 +47,8 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
     assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
     @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
-
-    @files = @submission.submission_files.sort do |a, b|
+    filtered = @submission.submission_files.where.not(filename: '.gitkeep')
+    @files = filtered.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
@@ -168,14 +168,11 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    grouping_id = params[:grouping_id]
-    submission_id = Result.find(params[:id]).submission.id
-
+    submission = Result.find(params[:id]).submission
     begin
-      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port,
-                                                    grouping_id,
-                                                    @current_user,
-                                                    submission_id)
+      test_scripts = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
+                                   [{ grouping_id: submission.grouping_id, submission_id: submission.id }])
     rescue => e
       flash_message(:error, e.message)
     end

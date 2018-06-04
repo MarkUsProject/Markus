@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Submission do
   describe 'validations' do
     it { is_expected.to have_many(:submission_files) }
-    it { is_expected.to have_many(:test_script_results) }
+    it { is_expected.to have_many(:test_runs) }
   end
 
   context 'automatically create a result' do
@@ -27,12 +27,34 @@ describe Submission do
   end
 
   context 'handle remark requests' do
+    let(:submission) do
+      submission = create(:submission)
+      submission.update(remark_request_timestamp: Time.zone.now)
+      submission
+    end
+    let(:extra_mark) { create(:extra_mark, result: submission.results.first) }
+
     it 'should have proper remarking status' do
-      @submission = create(:submission)
-      @submission.update(remark_request_timestamp: Time.zone.now)
-      @submission.make_remark_result
-      expect(@submission.has_remark?).to be true
-      expect(@submission.remark_submitted?).to be true
+      submission.make_remark_result
+      expect(submission.has_remark?).to be true
+      expect(submission.remark_submitted?).to be true
+    end
+
+    it 'should create another extra mark if there was one originally' do
+      extra_mark
+      submission.make_remark_result
+      marks = ExtraMark.joins("LEFT OUTER JOIN results ON results.id=extra_marks.id")
+                .where("results.submission_id=?", submission.id)
+      expect(marks.count).to eq(2)
+    end
+
+    it 'should copy extra marks from the original result to the remark request' do
+      extra_mark
+      submission.make_remark_result
+      marks = ExtraMark.joins("LEFT OUTER JOIN results ON results.id=extra_marks.id")
+                .where("results.submission_id=?", submission.id)
+      attributes = marks.pluck('description', 'extra_mark', 'unit')
+      expect(attributes[0]).to eq(attributes[1])
     end
   end
 

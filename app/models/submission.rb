@@ -24,13 +24,10 @@ class Submission < ApplicationRecord
 
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
-  has_many   :test_runs, dependent: :nullify
-  has_many   :test_script_results,
-             -> { order 'created_at DESC' },
-             dependent: :destroy
-  has_many   :test_script_results_all_data,
-             -> { includes(:test_script, :test_results, :requested_by).order('created_at DESC') },
-             class_name: 'TestScriptResult'
+  has_many   :test_runs, -> { order 'created_at DESC' }, dependent: :nullify
+  has_many   :test_runs_all_data,
+             -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+             class_name: 'TestRun'
   has_many   :feedback_files, dependent: :destroy
 
 
@@ -113,9 +110,9 @@ class Submission < ApplicationRecord
   end
 
   # Sets marks when automated tests are run
-  def set_marks_for_tests
-    return if test_script_results.empty?
-
+  def set_autotest_marks
+    test_run = test_runs.first
+    return if test_run.nil? || test_run.test_script_results.empty?
     result = get_latest_result
     complete_marks = true
     if result.marks.empty? # can happen if a criterion is created after collection
@@ -129,8 +126,8 @@ class Submission < ApplicationRecord
       end
       all_marks_earned = 0.0
       all_marks_total = 0.0
-      test_scripts.each do |script|
-        res = self.test_script_results.where(test_script_id: script.id).first
+      test_scripts.each do |test_script|
+        res = test_run.test_script_results.find_by(test_script: test_script)
         all_marks_earned += res.marks_earned
         all_marks_total += res.marks_total
       end
@@ -150,14 +147,13 @@ class Submission < ApplicationRecord
       mark.save
     end
 
-    # marking state was already complete, tests are overwriting some marks
-    if result.marking_state == Result::MARKING_STATES[:complete]
-      result.submission.assignment.assignment_stat.refresh_grade_distribution
-      result.submission.assignment.update_results_stats
     # all marks are set by tests, can set the marking state to complete
-    elsif complete_marks
+    if complete_marks
       result.marking_state = Result::MARKING_STATES[:complete]
       result.save
+    end
+    # marking state just set, or it was already complete (tests are overwriting some marks)
+    if result.marking_state == Result::MARKING_STATES[:complete]
       result.submission.assignment.assignment_stat.refresh_grade_distribution
       result.submission.assignment.update_results_stats
     end
@@ -290,9 +286,9 @@ class Submission < ApplicationRecord
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
                                 created_at: Time.zone.now,
-                                markable_id: extra_mark.markable_id,
-                                mark: extra_mark.mark,
-                                markable_type: extra_mark.markable_type)
+                                description: extra_mark.description,
+                                extra_mark: extra_mark.extra_mark,
+                                unit: extra_mark.unit)
     end
 
     remark_assignment.get_criteria(:ta).each do |criterion|

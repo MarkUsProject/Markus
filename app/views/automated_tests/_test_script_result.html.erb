@@ -1,3 +1,8 @@
+<%# ran_by       → |               |                              |%>
+<%# current_user ↓ |               |                              |%>
+<%#                |   'student'   |         'instructor'         |%>
+<%#    .student?   | student tests | instr tests, results tab     |%>
+<%#   !.student?   | XXXXXXXXXXXXX | instr tests, submissions tab |%>
 <div class='test-result'>
   <% test_script = test_script_result.test_script %>
   <% show_output = (
@@ -5,31 +10,24 @@
     test_script.display_actual_output == 'display_after_submission' ||
     (ran_by == 'student' && test_script.display_actual_output == 'display_after_collection')) %>
 
-  <h3>
-    <%= "#{test_script.file_name}" %>
+  <h4>
+    <% if test_script.nil? %>
+      <%= t('automated_tests.results.unknown_test_script') %>
+    <% else %>
+      <%= "#{test_script.file_name}" %>
+    <% end %>
     <% unless test_script.description.blank? %>
       <%= "- #{test_script.description}" %>
     <% end %>
-    <span class='right'>
-      <%= l(test_script_result.created_at, format: :long) %>
-      <%= "(#{test_script_result.requested_by.user_name})" %>
-    </span>
-  <% if test_script_result.created_at == latest_date %>
-      <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
-  <% else %>
-      <%= link_to 'Show Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'expand' %>
-  <% end %>
-  </h3>
+  </h4>
   <div class='table'>
-    <table class="results_table" id="<%=test_script_result.created_at.to_s.delete(' ')%>">
+    <table class="results_table">
       <thead>
         <tr>
           <th><%= t('automated_tests.test_results_table.test_name') %></th>
           <% if false %><th><%= t('automated_tests.test_results_table.input') %></th><% end %>
           <% if show_output %><th><%= t('automated_tests.test_results_table.output') %></th><% end %>
-          <% if false %>
-          <th><%= t('automated_tests.test_results_table.expected') %></th>
-          <% end %>
+          <% if false %><th><%= t('automated_tests.test_results_table.expected') %></th><% end %>
           <th><%= t('automated_tests.test_results_table.status') %></th>
           <th><%= t('automated_tests.test_results_table.marks_earned') %></th>
           <th><%= t('automated_tests.test_results_table.marks_total') %></th>
@@ -42,9 +40,7 @@
             <td><%= test.name %></td>
             <% if false %><td><%= test.input %></td><% end %>
             <% if show_output %><td><%= test.actual_output %></td><% end %>
-            <% if false %>
-            <td><%= test.expected_output %></td>
-            <% end %>
+            <% if false %><td><%= test.expected_output %></td><% end %>
             <td><%= t("automated_tests.test_results_table.#{test.completion_status}") %></td>
             <td>
               <% if bonus_marks > 0 %>
@@ -59,6 +55,8 @@
         <% end %>
       </tbody>
     </table>
+    <% unless test_script_result.extra_info.nil? %>
+      TODO The test script returned extra info <%= test_script_result.extra_info %>
+    <% end %>
   </div>
-  <script>hideIfNotLatest("<%=latest_date.to_s.delete(' ')%>", "<%=test_script_result.created_at.to_s.delete(' ')%>")</script>
 </div>

@@ -57,26 +57,15 @@ module Api
     #  - submission_id
     #  - test_errors: The test unhandled errors on stderr
     def create
-      if has_missing_params?([:test_output, :test_scripts, :requested_by])
+      if has_missing_params?([:test_output, :test_run_id])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
         return
       end
-
-      if params[:submission_id].nil?
-        submission = nil
-        group = Group.find(params[:group_id])
-        grouping = group.grouping_for_assignment(params[:assignment_id])
-      else
-        submission = Submission.find(params[:submission_id])
-        grouping = submission.grouping
-      end
-      requested_by = User.find_by(api_key: params[:requested_by])
-
+      test_run = TestRun.find(params[:test_run_id])
       begin
-        grouping.create_test_run_from_xml(params[:test_output], params[:test_errors], params[:test_scripts],
-                                          requested_by, submission)
+        test_run.create_test_script_results_from_json(params[:test_output])
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       rescue
@@ -114,7 +103,7 @@ module Api
     #  - test_output: New contents of the test results
     # Optional: submission_id
     def update
-      if has_missing_params?([:id, :test_output, :test_scripts, :requested_by])
+      if has_missing_params?([:id, :test_output, :test_run_id])
         # incomplete/invalid HTTP params
         render 'shared/http_status', locals: {code: '422', message:
           HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
@@ -122,18 +111,8 @@ module Api
       end
 
       test_script_result = TestScriptResult.find(params[:id])
-      if params[:submission_id].nil?
-        submission = nil
-        group = Group.find(params[:group_id])
-        grouping = group.grouping_for_assignment(params[:assignment_id])
-      else
-        submission = Submission.find(params[:submission_id])
-        grouping = submission.grouping
-      end
-      requested_by = User.find_by(api_key: params[:requested_by])
-
-      if grouping.create_test_run_from_xml(params[:test_output], params[:test_errors], params[:test_scripts],
-                                           requested_by, submission) && test_script_result.destroy
+      test_run = TestRun.find(params[:test_run_id])
+      if test_run.create_test_script_results_from_json(params[:test_output]) && test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200']},
                                      status: 200
       else

@@ -16,10 +16,14 @@ class AutomatedTestsController < ApplicationController
 
     begin
       @assignment.transaction do
-        files = process_test_form(@assignment, params, assignment_params)
+        new_files = process_test_form(@assignment, params, assignment_params)
+        run_job = !new_files.empty? ||
+                  @assignment.test_scripts.any?(&:marked_for_destruction?) ||
+                  @assignment.test_support_files.any?(&:marked_for_destruction?)
         if @assignment.save
           # write the uploaded files
-          files.each do |file|
+          new_files.each do |file|
+            # TODO: Move write into the model
             File.open(file[:path], 'wb') do |f|
               content = file[:upload].read
               # remove carriage return or other non-LF whitespace from the end of lines
@@ -33,9 +37,13 @@ class AutomatedTestsController < ApplicationController
               end
               f.write(content)
             end
-            if file.has_key?(:delete) && File.exist?(file[:delete])
+            # delete a replaced file if it was renamed
+            if file.key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
             end
+          end
+          if run_job
+            AutotestScriptsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
           end
           flash_message(:success, t('assignment.update_success'))
         else
@@ -71,21 +79,19 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_script_results = @grouping.student_test_script_results(true)
-      @token = @grouping.prepare_tokens_to_use
+      @test_runs = @grouping.student_test_runs(all_data: true)
+      @grouping.refresh_test_tokens!
     end
     render layout: 'assignment_content'
   end
 
   def execute_test_run
     @assignment = Assignment.find(params[:id])
-
+    grouping = current_user.accepted_grouping_for(@assignment.id)
     begin
-      grouping = current_user.accepted_grouping_for(@assignment.id)
-      if grouping.nil?
-        raise I18n.t('automated_tests.error.bad_group')
-      end
-      AutomatedTestsClientHelper.request_a_test_run(request.protocol + request.host_with_port, grouping.id, @current_user)
+      test_scripts = AutomatedTestsClientHelper.authorize_test_run(@current_user, @assignment, grouping)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
+                                   [{ grouping_id: grouping.id, submission_id: nil }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)

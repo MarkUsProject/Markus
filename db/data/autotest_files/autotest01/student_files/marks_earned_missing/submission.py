@@ -6,16 +6,5 @@ It represents the test case where:
 
   The test (xml) doesn't contain a <marks_earned> tag
 """
-
-response = '''
-<test>
-    <name>no_marks_earned_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_total>0</marks_total>
-    <status>pass</status>
-</test>
-'''
-
-print(response)
+import json
+print(json.dumps({'name': 'no_marks_earned_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_total': 0, 'status': 'pass'}))

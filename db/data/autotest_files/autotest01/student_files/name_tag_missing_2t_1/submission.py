@@ -8,24 +8,7 @@ It represents the test case where:
   affect the second test
 """
 
-response = '''
-<test>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>2</marks_earned>
-    <marks_total>2</marks_total>
-    <status>pass</status>
-</test>
-<test>
-    <name>missing_name_good_test</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>2</marks_earned>
-    <marks_total>2</marks_total>
-    <status>pass</status>
-</test>
-'''
+import json
 
-print(response)
+print(json.dumps({'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+print(json.dumps({'name': 'missing_name_good_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
