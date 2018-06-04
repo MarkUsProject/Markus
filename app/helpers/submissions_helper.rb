@@ -189,7 +189,9 @@ module SubmissionsHelper
 
   def get_repo_browser_table_info(assignment, revision, revision_identifier, path,
                                   previous_path, grouping_id)
-    exit_directory = get_exit_directory(previous_path, grouping_id,
+
+    # Exit Directory link is not needed for root directory path
+    exit_directory = path == '/' ? [] : get_exit_directory(previous_path, grouping_id,
                                         revision_identifier, revision,
                                         assignment.repository_folder,
                                         'repo_browser')
@@ -203,6 +205,7 @@ module SubmissionsHelper
       directories = revision.directories_at_path(full_path)
       directories_info = get_directories_info(directories, revision_identifier,
                                               path, grouping_id, 'repo_browser')
+
       return exit_directory + files_info + directories_info
     else
       return exit_directory
