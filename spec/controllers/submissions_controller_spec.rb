@@ -55,7 +55,7 @@ describe SubmissionsController do
 
     it 'should be able to populate the file manager' do
       get_as @student,
-             :populate_student_file_manager,
+             :populate_file_manager,
              assignment_id: @assignment.id,
              format: 'json'
       is_expected.to respond_with(:success)

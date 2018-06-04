@@ -143,12 +143,11 @@ Markus::Application.routes.draw do
 
       resources :submissions do
         collection do
-          get 'populate_student_file_manager'
           get 'populate_submissions_table'
           get 'populate_peer_submissions_table'
           get 'file_manager'
           get 'browse'
-          post 'populate_file_manager'
+          get 'populate_file_manager'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'

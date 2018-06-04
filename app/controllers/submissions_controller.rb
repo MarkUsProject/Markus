@@ -5,7 +5,7 @@ class SubmissionsController < ApplicationController
 
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
-                         :populate_student_file_manager,
+                         :populate_file_manager,
                          :browse,
                          :file_manager,
                          :update_files,
@@ -30,9 +30,8 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_student,
                 only: [:file_manager,
                        :update_files,
-                       :populate_student_file_manager,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user, only: [:download, :downloads, :get_file]
+  before_filter :authorize_for_user, only: [:download, :downloads, :get_file, :populate_file_manager]
 
 
   def repo_browser
@@ -121,12 +120,20 @@ class SubmissionsController < ApplicationController
     render layout: 'assignment_content'
   end
 
-  def populate_student_file_manager
+  def populate_file_manager
     assignment = Assignment.find(params[:assignment_id])
-    grouping = current_user.accepted_grouping_for(assignment)
+    if current_user.student?
+      grouping = current_user.accepted_grouping_for(assignment)
+    else
+      grouping = Assignment.groupings.find(params[:grouping_id])
+    end
     entries = []
     grouping.group.access_repo do |repo|
-      revision = repo.get_latest_revision
+      if current_user.student?
+        revision = repo.get_latest_revision
+      else
+        revision = repo.get_latest_revision
+      end
       entries = get_all_file_data(revision, grouping, '')
     end
     render json: entries
