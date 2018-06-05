@@ -168,11 +168,20 @@ describe GradeEntryFormsController do
     end
 
     it 'expects a call to send_data' do
-      csv_array = [
-        ['', grade_entry_form_with_data.grade_entry_items[0].name],
-        ['', String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-        [@user.user_name, '', ''],
-      ]
+
+      if grade_entry_form.show_total
+        csv_array = [
+          ['', grade_entry_form_with_data.grade_entry_items[0].name,I18n.t('grade_entry_forms.grades.total')],
+          [I18n.t('grade_entry_forms.column_out_of'), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
+          [@user.user_name, '', ''],
+        ]
+      else
+        csv_array = [
+          ['', grade_entry_form_with_data.grade_entry_items[0].name],
+          [I18n.t('grade_entry_forms.column_out_of'), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
+          [@user.user_name, '', ''],
+        ]
+      end
       csv_data = MarkusCSV.generate(csv_array) do |data|
         data
       end

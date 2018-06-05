@@ -188,7 +188,7 @@ class GradeEntryForm < ApplicationRecord
       row.push(grade_entry_item.out_of)
     end
     if self.show_total
-      row.concat(['100'])
+      row.concat([self.out_of_total])
     end
     csv_rows.push(row)
     # The rest of the rows in the CSV file will contain the students' grades
@@ -217,8 +217,10 @@ class GradeEntryForm < ApplicationRecord
           end
         end
         if self.show_total
-          total_percent = calculate_total_percent(grade_entry_student)
-          row.push(total_percent)
+          total_grades = grade_entry_student_total_grades
+          ges_total_grade = total_grades[grade_entry_student.id]
+          #total_percent = calculate_total_percent(grade_entry_student)
+          row.push(ges_total_grade)
         end
       end
       row
