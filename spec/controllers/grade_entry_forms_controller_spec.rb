@@ -179,7 +179,7 @@ describe GradeEntryFormsController do
         csv_array = [
           ['', grade_entry_form_with_data.grade_entry_items[0].name],
           [I18n.t('grade_entry_forms.column_out_of'), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-          [@user.user_name, '', ''],
+          [@user.user_name, ''],
         ]
       end
       csv_data = MarkusCSV.generate(csv_array) do |data|
