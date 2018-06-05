@@ -219,7 +219,6 @@ class GradeEntryForm < ApplicationRecord
         if self.show_total
           total_grades = grade_entry_student_total_grades
           ges_total_grade = total_grades[grade_entry_student.id]
-          #total_percent = calculate_total_percent(grade_entry_student)
           row.push(ges_total_grade)
         end
       end
