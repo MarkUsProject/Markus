@@ -66,7 +66,7 @@ class Result < ActiveRecord::Base
     user_visibility = is_a_review? ? :peer : :ta
     subtotal = get_subtotal(user_visibility: user_visibility, assignment: assignment)
     extra_marks = get_total_extra_marks(user_visibility: user_visibility, assignment: assignment)
-    [0, subtotal+extra_marks].max
+    [0, subtotal + extra_marks].max
   end
 
   # The sum of the marks not including bonuses/deductions
@@ -100,22 +100,22 @@ class Result < ActiveRecord::Base
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points&.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points&.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points&.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage&.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Point deduction for late penalty

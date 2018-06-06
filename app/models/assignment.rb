@@ -235,7 +235,7 @@ class Assignment < ActiveRecord::Base
 
   # Return all released marks for this assignment
   def released_marks
-    submissions.joins(:results).where(results: {released_to_students: true})
+    submissions.joins(:results).where(results: { released_to_students: true })
   end
 
   # Returns the group by the user for this assignment. If pending=true,
