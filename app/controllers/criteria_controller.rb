@@ -15,6 +15,11 @@ class CriteriaController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.released_marks.any?
+      flash_message(:error, t('criteria.errors.messages.released_marks'))
+      render :index
+      return
+    end
   end
 
   def create
@@ -37,6 +42,12 @@ class CriteriaController < ApplicationController
 
   def edit
     @criterion = params[:criterion_type].constantize.find(params[:id])
+    @assignment = @criterion.assignment
+    if @assignment.released_marks.any?
+      flash_message(:error, t('criteria.errors.messages.released_marks'))
+      render :index
+      return
+    end
   end
 
   def destroy
@@ -111,7 +122,11 @@ class CriteriaController < ApplicationController
 
   def upload_yml
     assignment = Assignment.find(params[:assignment_id])
-
+    if assignment.released_marks.any?
+      flash_message(:error, t('criteria.errors.messages.released_marks'))
+      redirect_to action: 'index', id: assignment.id
+      return
+    end
     # Check for errors in the request or in the file uploaded.
     unless request.post?
       redirect_to action: 'index', id: assignment.id

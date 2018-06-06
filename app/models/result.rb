@@ -46,44 +46,76 @@ class Result < ActiveRecord::Base
       .order(:total_mark).pluck(:total_mark)
   end
 
+  # Update the total mark attribute
+  #
+  # If the +assignment+ value is nil, the assignment will be determined dynamically.
+  # However, passing the +assignment+ value explicitly is more efficient if we are
+  # updating multiple total marks for a single assignment since it allows for
+  # caching of criteria.
+  # Warning: this does not check if the +assignment+ passed as an argument is actually
+  # the one associate with this result.
+  def update_total_mark(assignment: nil)
+    update_attributes(total_mark: get_total_mark(assignment: assignment))
+  end
+
   # Calculate the total mark for this submission
-  def update_total_mark
+  #
+  # See the documentation for update_total_mark for information about when to explicitly
+  # pass the +assignment+ variable and associated warnings.
+  def get_total_mark(assignment: nil)
     user_visibility = is_a_review? ? :peer : :ta
-    update_attributes(total_mark:
-      [0, get_subtotal(user_visibility) + get_total_extra_points +
-          get_total_extra_percentage_as_points(user_visibility)].max)
+    subtotal = get_subtotal(user_visibility: user_visibility, assignment: assignment)
+    extra_marks = get_total_extra_marks(user_visibility: user_visibility, assignment: assignment)
+    [0, subtotal+extra_marks].max
   end
 
   # The sum of the marks not including bonuses/deductions
-  def get_subtotal(user_visibility = :ta)
+  #
+  # See the documentation for update_total_mark for information about when to explicitly
+  # pass the +assignment+ variable and associated warnings.
+  def get_subtotal(user_visibility: :ta, assignment: nil)
     if marks.empty?
       0
     else
-      assignment = submission.grouping.assignment
+      assignment ||= submission.grouping.assignment
       criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
       marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
       marks_array.sum || 0
     end
   end
 
+  # The sum of the bonuses deductions and late penalties
+  #
+  # See the documentation for update_total_mark for information about when to explicitly
+  # pass the +assignment+ variable and associated warnings.
+  def get_total_extra_marks(user_visibility: :ta, assignment: nil)
+    extras = extra_marks.pluck_to_hash(:extra_mark, :unit).group_by { |d| d['unit'] }
+    extras&.transform_values! { |a| a.map { |h| h['extra_mark'] } }
+    points = (extras['points']&.sum || 0).round(1)
+    percs = (extras['percentage']&.sum || 0).round(1)
+    assignment ||= submission.assignment
+    perc_points = (percs * assignment.max_mark(user_visibility) / 100).round(1)
+    points + perc_points
+  end
+
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.points&.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.positive.points&.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.negative.points&.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.percentage&.map(&:extra_mark).reduce(0, :+).round(1)
   end
 
   # Point deduction for late penalty

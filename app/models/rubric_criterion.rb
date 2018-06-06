@@ -7,8 +7,6 @@ class RubricCriterion < Criterion
   validates_numericality_of :max_mark
   before_save :round_max_mark
 
-  after_save :update_existing_results
-
   has_many :marks, as: :markable, dependent: :destroy
   accepts_nested_attributes_for :marks
 
@@ -277,11 +275,6 @@ class RubricCriterion < Criterion
       Ta.find_by(user_name: ta_user_name)
     end.compact
     add_tas(result)
-  end
-
-  # Updates results already entered with new criteria
-  def update_existing_results
-    self.assignment.submissions.each { |submission| submission.get_latest_result.update_total_mark }
   end
 
   # Checks if the criterion is visible to either the ta or the peer reviewer.

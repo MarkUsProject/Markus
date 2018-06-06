@@ -1257,6 +1257,7 @@ en:
           assignment_association: "Association is not strong with an assignment."
           assignment_id:          "Can only be whole number greater than 0."
           input_number:           "Must be a number greater than 0.0."
+          released_marks:         "Cannot update criteria for an assignment with released marks"
       ta_visible:       "Make visible to teaching assistants"
       peer_visible:     "Make visible to peer reviewers"
       visibility_error: "Select at least one box in the visibility section"
