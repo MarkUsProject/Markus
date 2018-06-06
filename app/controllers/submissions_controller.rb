@@ -6,6 +6,7 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager,
+                         :revisions,
                          :browse,
                          :file_manager,
                          :update_files,
@@ -22,6 +23,7 @@ class SubmissionsController < ApplicationController
   before_filter :authorize_for_ta_and_admin,
                 only: [:browse,
                        :manually_collect_and_begin_grading,
+                       :revisions,
                        :repo_browser,
                        :download_groupings_files,
                        :check_collect_status,
@@ -29,21 +31,20 @@ class SubmissionsController < ApplicationController
                        :populate_submissions_table]
   before_filter :authorize_for_student,
                 only: [:file_manager,
-                       :update_files,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user, only: [:download, :downloads, :get_file, :populate_file_manager]
+  before_filter :authorize_for_user,
+                only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
 
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
-    @path = params[:path] || File::SEPARATOR
     @collected_revision = nil
     @revision = nil
     repo = @grouping.group.repo
     collected_submission = @grouping.current_submission_used
 
     # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
-    assignment_path = File.join(@grouping.assignment.repository_folder, @path)
+    assignment_path = @grouping.assignment.repository_folder
     assignment_revisions = []
     all_revisions = repo.get_all_revisions
     all_revisions.each do |revision|
@@ -67,20 +68,37 @@ class SubmissionsController < ApplicationController
     # find another relevant revision to display if @revision.nil?
     # 1) the latest assignment revision, or 2) the first repo revision
     @revision ||= assignment_revisions[0] || all_revisions[-1]
-    @revisions_history = assignment_revisions.map { |revision| { id: revision.revision_identifier,
-                                                                 id_ui: revision.revision_identifier_ui,
-                                                                 date: revision.timestamp } }
 
-    respond_to do |format|
-      format.html
-      format.json do
-        previous_path = File.split(@path).first
-        render json: get_repo_browser_table_info(@grouping.assignment, @revision, @revision.revision_identifier, @path,
-                                                 previous_path, @grouping.id)
-      end
+    repo.close
+
+    render layout: 'assignment_content'
+  end
+
+  def revisions
+    grouping = Grouping.find(params[:grouping_id])
+    repo = grouping.group.repo
+
+    # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
+    assignment_path = grouping.assignment.repository_folder
+    assignment_revisions = []
+    all_revisions = repo.get_all_revisions
+    all_revisions.each do |revision|
+      # store the assignment-relevant revisions
+      next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
+      assignment_revisions << revision
+    end
+    revisions_history = assignment_revisions.map do |revision|
+      {
+        id: revision.revision_identifier,
+        id_ui: revision.revision_identifier_ui,
+        timestamp: l(revision.timestamp),
+        server_timestamp: l(revision.server_timestamp)
+      }
     end
 
     repo.close
+
+    render json: revisions_history
   end
 
   def file_manager
@@ -125,14 +143,14 @@ class SubmissionsController < ApplicationController
     if current_user.student?
       grouping = current_user.accepted_grouping_for(assignment)
     else
-      grouping = Assignment.groupings.find(params[:grouping_id])
+      grouping = assignment.groupings.find(params[:grouping_id])
     end
     entries = []
     grouping.group.access_repo do |repo|
-      if current_user.student?
+      if current_user.student? || params[:revision_identifier].nil?
         revision = repo.get_latest_revision
       else
-        revision = repo.get_latest_revision
+        revision = repo.get_revision(params[:revision_identifier])
       end
       entries = get_all_file_data(revision, grouping, '')
     end
@@ -323,17 +341,21 @@ class SubmissionsController < ApplicationController
     assignment_id = params[:assignment_id]
     begin
       @assignment = Assignment.find(assignment_id)
-      unless @assignment.allow_web_submits
+      if current_user.student? && !@assignment.allow_web_submits
         raise t('student.submission.external_submit_only')
       end
 
       required_files = AssignmentFile.where(assignment_id: @assignment).pluck(:filename)
       filenames = []
-      @path = params[:path] || '/'
-      @grouping = current_user.accepted_grouping_for(assignment_id)
-      unless @grouping.is_valid?
-        set_filebrowser_vars(@grouping)
-        return
+      @path = params[:path].blank? ? '/' : params[:path]
+      if current_user.student?
+        @grouping = current_user.accepted_grouping_for(assignment_id)
+        unless @grouping.is_valid?
+          set_filebrowser_vars(@grouping)
+          return
+        end
+      else
+        @grouping = @assignment.groupings.find(params[:grouping_id])
       end
       unless params[:new_files].nil?
         params[:new_files].each do |f|
@@ -439,7 +461,7 @@ class SubmissionsController < ApplicationController
             flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts })
           end
           # Are we past collection time?
-          if @assignment.submission_rule.can_collect_now?(current_user.section)
+          if current_user.student? && @assignment.submission_rule.can_collect_now?(current_user.section)
             flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
           end
           # can't use redirect_to here. See comment of this action for details.
@@ -453,7 +475,7 @@ class SubmissionsController < ApplicationController
         end
       end
     ensure
-      redirect_to action: :file_manager
+      redirect_to :back
     end
   end
 

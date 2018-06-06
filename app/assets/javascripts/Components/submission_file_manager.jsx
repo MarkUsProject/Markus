@@ -18,7 +18,16 @@ class SubmissionFileManager extends React.Component {
   }
 
   fetchData = () => {
-    fetch(Routes.populate_file_manager_assignment_submissions_path(this.props.assignment_id), {
+    let data = {assignment_id: this.props.assignment_id};
+    if (typeof this.props.grouping_id !== 'undefined') {
+      data.grouping_id = this.props.grouping_id;
+    }
+    if (typeof this.props.revision_identifier !== 'undefined') {
+      data.revision_identifier = this.props.revision_identifier;
+    }
+
+    fetch(
+      Routes.populate_file_manager_assignment_submissions_path(data), {
       credentials: 'same-origin',
       headers: {
         'content-type': 'application/json'
@@ -27,16 +36,26 @@ class SubmissionFileManager extends React.Component {
       .then(data => this.setState({files: data}));
   };
 
+  // Update state when a new revision_identifier props is passed
+  componentDidUpdate(oldProps) {
+    if (oldProps.revision_identifier !== this.props.revision_identifier) {
+      this.fetchData();
+    }
+  }
+
   handleCreateFiles = (files, prefix) => {
     let data = new FormData();
     files.forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
+    if (this.props.grouping_id) {
+      data.append('grouping_id', this.props.grouping_id);
+    }
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: data,
       processData: false,  // tell jQuery not to process the data
       contentType: false   // tell jQuery not to set contentType
-    }).then(this.fetchData);
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData);
   };
 
   handleDeleteFile = (fileKey) => {
@@ -57,9 +76,10 @@ class SubmissionFileManager extends React.Component {
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
         delete_files: [file.key],
-        file_revisions: file_revisions
+        file_revisions: file_revisions,
+        grouping_id: this.props.grouping_id
       }
-    }).then(this.fetchData)
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
       .then(this.endAction);
   };
 
@@ -84,10 +104,13 @@ class SubmissionFileManager extends React.Component {
 }
 
 SubmissionFileManager.defaultProps = {
-  readOnly: false
+  readOnly: false,
+  revision_identifier: undefined
 };
 
 
 export function makeSubmissionFileManager(elem, props) {
   render(<SubmissionFileManager {...props} />, elem);
 }
+
+export { SubmissionFileManager };

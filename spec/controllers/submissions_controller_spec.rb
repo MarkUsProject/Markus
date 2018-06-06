@@ -246,7 +246,7 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-    it 'should render with the content layout' do
+    it 'should render with the assignment_content layout' do
       get_as @ta_membership.user,
              :repo_browser,
              assignment_id: @assignment.id,
@@ -254,7 +254,7 @@ describe SubmissionsController do
              revision_identifier:
                Grouping.last.group.repo.get_latest_revision.revision_identifier,
              path: '/'
-      expect(response).to render_template('layouts/content')
+      expect(response).to render_template('layouts/assignment_content')
     end
 
     it 'should be able to download the svn checkout commands' do
@@ -302,13 +302,13 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
     end
 
-    it 'should render with the content layout' do
+    it 'should render with the assignment_content layout' do
       get_as @admin,
              :repo_browser,
              assignment_id: @assignment.id,
              id: Grouping.last.id,
              path: '/'
-      expect(response).to render_template(layout: 'layouts/content')
+      expect(response).to render_template(layout: 'layouts/assignment_content')
     end
 
     it 'should be able to download the svn checkout commands' do
@@ -500,6 +500,8 @@ describe SubmissionsController do
           @grouping,
           repo.get_latest_revision)
       end
+
+      request.env['HTTP_REFERER'] = 'back'
       get_as @admin, :downloads,
              assignment_id: @assignment.id, id: @submission.id,
              grouping_id: @grouping.id

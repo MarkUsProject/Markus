@@ -452,15 +452,10 @@ fr:
       select_clear: "Cliquer ici pour annuler la sélection."
 
     browse_submissions:
-      find_different_revision: "Trouver une autre révision"
-      find_by_revision_timestamp: "Par date de révision"
-      find_by_revision_number:    "Par numéro de révision"
+      collected:  "recueillie:"
       viewing_revision:           "Révision:"
-      currently_collected:  "Version recueillies:"
-      no_rev_before_deadline:   "Aucune révision soumise avant la date limite"
       client_time:          "UPDATE ME:"
       server_time:          "UPDATE ME:"
-      current_path:         "Chemin actuel : "
       all_files:   "tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
@@ -600,9 +595,6 @@ fr:
     student_course_summary: "Vos marques de terme"
 
     student_interface_assignments: "Vos projets"
-
-    stopping_collection_process: "Arrêt du processus de récupération…"
-    converting_pdfs: "Conversion des PDF… %{converted}/%{total}"
 
     groups:
       groups: "Groupes"

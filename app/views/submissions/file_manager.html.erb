@@ -1,6 +1,4 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'file_manager' %>
-
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
@@ -47,11 +45,10 @@
 
     <section class='dialog-actions'>
       <%= submit_tag t(:submit),
-                     disabled: !@grouping.is_valid?,
-                     onclick: 'set_onbeforeunload(false); submitFile(event)' %>
+                     disabled: !@grouping.is_valid? %>
       <%= button_tag t(:close),
                      type: 'button',
-                     onclick: 'set_onbeforeunload(false); modal_addnew.close();' %>
+                     onclick: 'modal_addnew.close(); return false;' %>
     </section>
   <% end %>
 </aside>

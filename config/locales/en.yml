@@ -476,15 +476,11 @@ en:
       select_clear: "Click here to clear selection."
 
     browse_submissions:
-      find_different_revision: "Find a different revision"
-      find_by_revision_timestamp: "Find by Submission Date"
-      find_by_revision_number:    "Find by Revision Identifier"
+      collected: "collected"
+      manual_collection: "Manual Collection"
       viewing_revision:           "Viewing Revision:"
-      currently_collected:  "Collected Revision:"
-      no_rev_before_deadline: 	"No revision submitted before deadline"
       client_time:          "commit:"
       server_time:          "push:"
-      current_path:         "Current Path:"
       all_files:            "all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
@@ -632,9 +628,6 @@ en:
     student_course_summary: "Your Term Marks"
 
     student_interface_assignments: "Your Assignments"
-
-    stopping_collection_process: "Now stopping collection process..."
-    converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
 
     groups:
       groups:           "Groups"

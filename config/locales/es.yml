@@ -636,15 +636,10 @@ es:
       select_clear: "De click aquí para borrar la selección."
 
     browse_submissions:
-      find_different_revision:              "Encontrar una revisión diferente"
-      find_by_revision_timestamp:           "Encontrar basado en la fecha y hora de modificación de la revisión"
-      find_by_revision_number:              "Encontrar basado en el número de revisión"
+      collected:                            "recolectada"
       viewing_revision:                     "Mirando Revisión:"
-      currently_collected:                  "Versión recolectada:"
-      no_rev_before_deadline: 	            "Ninguna revisión fue enviada antes de la fecha límite"
       client_time:                          "UPDATE ME:"
       server_time:                          "UPDATE ME:"
-      current_path:                         "Ruta al Directorio:"
       all_files:                            "todos los archivos"
       root:                                 "[root]"
       collect_and_grab:                     "Recolectar y Calificar esta revisión"
@@ -789,9 +784,6 @@ es:
     student_course_summary:          "Sus notas del semestre"
 
     student_interface_assignments:   "Sus Proyectos"
-
-    stopping_collection_process:     "Estamos cancelando el proceso de recolección..."
-    converting_pdfs:                 "Convirtiendo los archivos pdf...%{converted}/%{total}"
 
     groups:
       groups:                        "Grupos"

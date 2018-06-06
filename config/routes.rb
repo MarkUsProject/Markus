@@ -148,6 +148,7 @@ Markus::Application.routes.draw do
           get 'file_manager'
           get 'browse'
           get 'populate_file_manager'
+          get 'revisions'
           post 'collect_submissions'
           get 'uncollect_all_submissions'
           post 'run_tests'

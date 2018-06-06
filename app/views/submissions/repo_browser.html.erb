@@ -1,136 +1,47 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'jquery-ui-timepicker-addon' %>
-  <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
-  <%= render partial: 'repo_files_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeRepoBrowser(document.getElementById('file_manager'),
+        {
+          assignment_id: <%= @grouping.assignment_id %>,
+          grouping_id: <%= @grouping.id %>,
+          collected_revision_id: '<%= @collected_revision&.revision_identifier %>'
+        });
+    });
+  </script>
 <% end %>
 
-<% if flash[:error] -%>
-  <div class='error'>
-    <%= flash[:error] %>
-  </div>
+<% content_for :title do %>
+  <%= t('browse_submissions.repository_name', repository: @grouping.group.repository_name) %>
+  (<%= @grouping.get_all_students_in_group %>)
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('browse_submissions.repository_name', repository: @grouping.group.repository_name) %>
-    (<%= @grouping.get_all_students_in_group %>)
-  </h1>
-</div>
+<!--
+    <%= link_to t('download_the', item: t('browse_submissions.all_files')),
+                { action: :downloads,
+                  revision_identifier: @revision.revision_identifier,
+                  grouping_id: @grouping.id,
+                  path: @path },
+                class: 'button' %>
+</div>-->
 
-<div class='wrapper'>
-  <div id='repo_browser_controls'>
-    <fieldset>
-      <legend>
-        <span><%= t('browse_submissions.find_different_revision') %></span>
-      </legend>
+<div id='file_manager'></div>
 
-      <div id='find_revision_error' class='error' style='display:none;'></div>
+<aside class='dialog' id='addnew_dialog'>
+  <h2><%= t('add_new') %></h2>
 
-      <%= form_tag repo_browser_assignment_submission_path(
-                     @grouping.assignment.id,
-                     @grouping.id,
-                     find_revision_by: 'revision_timestamp') do %>
-        <%= text_field_tag 'actual_revision_timestamp',
-                           l(@revision.timestamp),
-                           class: 'hidden' %>
-        <%= text_field_tag 'revision_timestamp',
-                           l(@revision.timestamp),
-                           { class: 'datetimepicker',
-                             size: 30 } %>
-        <%= submit_tag t('browse_submissions.find_by_revision_timestamp') %>
-      <% end %>
+  <%= form_tag update_files_assignment_submissions_path(@grouping.assignment_id),
+               { multipart: true, id: 'file_form' } do %>
+    <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
+    <%= hidden_field_tag :path, @path %>
+    <%= hidden_field_tag :grouping_id, @grouping.id %>
 
-      <%= form_tag repo_browser_assignment_submission_path(
-                     @grouping.assignment,
-                     @grouping),
-                   find_revision_by: 'revision_identifier' do %>
-        <%= select_tag('revision_identifier',
-                       options_for_select(@revisions_history.collect { |rev|
-                          [t('browse_submissions.revision_history', identifier_ui: rev[:id_ui]) +
-                               l(rev[:date]),
-                           rev[:id]] },
-                       @revision.revision_identifier)) %>
-        <%= submit_tag t('browse_submissions.find_by_revision_number') %>
-      <% end %>
-    </fieldset>
-  </div>
-
-  <div class='global_actions'>
-    <h2>
-      <%= t('browse_submissions.viewing_revision') %>
-      <%= @revision.revision_identifier_ui %>
-      <% if @revision.timestamp != @revision.server_timestamp %>
-        (<%= "#{t('browse_submissions.client_time')} #{l(@revision.timestamp)},
-              #{t('browse_submissions.server_time')} #{l(@revision.server_timestamp)}" %>)
-      <% else %>
-        (<%= l(@revision.timestamp) %>)
-      <% end %>
-      <br>
-      <%= t('browse_submissions.currently_collected') %>
-      <% if @grouping.is_collected %>
-        <% if @collected_revision %>
-          <%= @collected_revision.revision_identifier_ui %>
-          <% if @collected_revision.timestamp != @collected_revision.server_timestamp %>
-            (<%= "#{t('browse_submissions.client_time')} #{l(@collected_revision.timestamp)},
-                  #{t('browse_submissions.server_time')} #{l(@collected_revision.server_timestamp)}" %>)
-          <% else %>
-            (<%= l(@collected_revision.timestamp) %>)
-          <% end %>
-        <% else %>
-          <%= t('browse_submissions.no_rev_before_deadline') %>
-        <% end %>
-      <% else %>
-        <%= t('none') %>
-      <% end %>
-    </h2>
-
-    <p>=
-      <%= t('browse_submissions.current_path') %>
-      <%
-        path_memory = '/'
-        absolute_path = @grouping.assignment.repository_folder + @path
-        absolute_path_decomp = absolute_path.split('/')
-        absolute_path_decomp.each do |folder|
-          if folder != @grouping.assignment.repository_folder
-            path_memory = File.join(path_memory, folder)
-          end %>
-          <%=
-            if folder == absolute_path_decomp.last
-              t(" / #{folder} ")
-            else
-              link_to(" / #{folder}",
-                      action: 'repo_browser',
-                      path: path_memory,
-                      id: @grouping.id,
-                      revision_identifier: @revision.revision_identifier).html_safe
-            end %>
-      <% end %>
-    </p>
-
-    <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(
-                   id: @grouping.id,
-                   assignment_id: @grouping.assignment.id) do %>
-      <%= hidden_field_tag 'current_revision_identifier', @revision.revision_identifier %>
-      <p>
-        <%= check_box_tag 'apply_late_penalty' %>
-        <%= label_tag 'apply_late_penalty',
-                      t('collect_submissions.apply_late_penalty') %>
-      </p>
-      <input type='submit'
-             value='<%= t('browse_submissions.collect_and_grab') %>'
-             onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>')) return false;
-                      $('#progress_text').html('<%=t('stopping_collection_process')%>');
-                      return true;"
-             name='commit'>
-      <%= link_to t('download_the', item: t('browse_submissions.all_files')),
-                  { action: :downloads,
-                    revision_identifier: @revision.revision_identifier,
-                    grouping_id: @grouping.id,
-                    path: @path },
-                  class: 'button' %>
-      <div id='progress_text'></div>
-    <% end %>
-  </div>
-
-  <div id='files_table'></div>
-</div>
+    <section class='dialog-actions'>
+      <%= submit_tag t(:submit) %>
+      <%= button_tag t(:close),
+                     type: 'button',
+                     onclick: 'modal_addnew.close(); return false;'
+      %>
+    </section>
+  <% end %>
+</aside>

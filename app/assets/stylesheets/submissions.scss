@@ -6,26 +6,6 @@
   color: $grey !important;
 }
 
-#repo_browser_controls {
-  fieldset {
-    box-shadow: none;
-  }
-
-  form {
-    display: inline-block;
-  }
-}
-
-.global_action {
-  margin-top: 2.5em;
-
-  input[type='button'],
-  input[type='submit'],
-  .button {
-    min-width: 8em;
-  }
-}
-
 .react_buttons {
   margin-bottom: 1em;
 
@@ -36,10 +16,6 @@
 
 #file_form {
   margin-top: 1em;
-}
-
-#files_table {
-  margin-top: 1.5em;
 }
 
 .submission_collected {
@@ -113,6 +89,16 @@
   cursor: default !important;
 }
 
+#file_manager {
+  fieldset {
+    box-shadow: none;
+    margin-bottom: 1em;
+  }
+
+  input[type=checkbox] {
+    margin-right: 3px;
+  }
+}
 
 /* Student view */
 
@@ -163,4 +149,18 @@
 
 div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
   width: 100%;
+}
+
+
+select.collected-checked,
+option.collected {
+  font-style: italic;
+}
+
+option.uncollected {
+  font-style: normal;
+}
+
+option.collected::before {
+  Content: '*';
 }

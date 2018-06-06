@@ -187,55 +187,6 @@ module SubmissionsHelper
     end
   end
 
-  def get_repo_browser_table_info(assignment, revision, revision_identifier, path,
-                                  previous_path, grouping_id)
-
-    # Exit Directory link is not needed for root directory path
-    exit_directory = path == '/' ? [] : get_exit_directory(previous_path, grouping_id,
-                                        revision_identifier, revision,
-                                        assignment.repository_folder,
-                                        'repo_browser')
-
-    full_path = File.join(assignment.repository_folder, path)
-    if revision.path_exists?(full_path)
-      files = revision.files_at_path(full_path)
-      files_info = get_files_info(files, assignment.id, revision_identifier, path,
-                                  grouping_id)
-
-      directories = revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_identifier,
-                                              path, grouping_id, 'repo_browser')
-
-      return exit_directory + files_info + directories_info
-    else
-      return exit_directory
-    end
-  end
-
-  def get_exit_directory(previous_path, grouping_id, revision_identifier,
-                         revision, folder, action)
-    full_previous_path = File.join('/', folder, previous_path)
-    parent_path_of_prev_dir, prev_dir = File.split(full_previous_path)
-
-    directories = revision.directories_at_path(parent_path_of_prev_dir)
-
-    e = {}
-    e[:id] = nil
-    e[:filename] = view_context.image_tag('icons/folder.png') +
-        view_context.link_to( ' ../', action: action,
-                                        id: grouping_id, path: previous_path,
-                              revision_identifier: revision_identifier)
-    e[:last_revised_date] = I18n.l(
-      directories[prev_dir].nil? ?
-        revision.timestamp :
-        directories[prev_dir].last_modified_date
-    )
-    e[:revision_by] =
-      directories[prev_dir].nil? ? '' :
-      directories[prev_dir].user_id
-    [e]
-  end
-
   def get_files_info(files, assignment_id, revision_identifier, path, grouping_id)
     files.map do |file_name, file|
       next if Repository.get_class.internal_file_names.include? file_name
@@ -260,26 +211,6 @@ module SubmissionsHelper
       f[:revision_by] = file.user_id
       f
     end.compact
-  end
-
-  def get_directories_info(directories, revision_identifier, path, grouping_id, action)
-    directories.map do |directory_name, directory|
-      d = {}
-      d[:id] = directory.object_id
-      d[:filename] = view_context.image_tag('icons/folder.png') +
-          # TODO: should the call below use
-          # id: assignment_id and grouping_id: grouping_id
-          # like the files info?
-          view_context.link_to(" #{directory_name}/",
-                               action: action,
-                               id: grouping_id,
-                               revision_identifier: revision_identifier,
-                               path: File.join(path, directory_name))
-      d[:last_revised_date] = I18n.l(directory.last_modified_date)
-      d[:last_modified_revision] = revision_identifier
-      d[:revision_by] = directory.user_id
-      d
-    end
   end
 
   def sanitize_file_name(file_name)
