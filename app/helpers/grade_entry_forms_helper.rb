@@ -33,12 +33,9 @@ module GradeEntryFormsHelper
       # Update the attributes hash
       max_position = 1
       grade_entry_items.each do |_, item|
-        puts "name: #{item[:name]}"
-        puts "is #{item[:name]} destroyed? #{item[:_destroy]}"
         # Some items are being deleted so don't update those
         if item[:_destroy] != 1
           item[:position] = max_position
-          puts "max position: #{max_position}"
           max_position += 1
         end
       end
