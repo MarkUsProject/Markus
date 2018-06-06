@@ -34,7 +34,7 @@ module GradeEntryFormsHelper
       max_position = 1
       grade_entry_items.each do |_, item|
         # Some items are being deleted so don't update those
-        if item[:_destroy] != 1
+        unless item[:_destroy] == 1
           item[:position] = max_position
           max_position += 1
         end
