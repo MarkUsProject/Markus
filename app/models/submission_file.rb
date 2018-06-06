@@ -108,19 +108,25 @@ class SubmissionFile < ApplicationRecord
 
   # Return the contents of this SubmissionFile.  Include annotations in the
   # file if include_annotations is true.
-  def retrieve_file(include_annotations=false)
+  def retrieve_file(include_annotations = false, repo = nil)
     student_group = self.submission.grouping.group
     revision_identifier = self.submission.revision_identifier
     retrieved_file = ''
-    student_group.access_repo do |repo|
-      revision = repo.get_revision(revision_identifier)
-      revision_file = revision.files_at_path(self.path)[self.filename]
-      if revision_file.nil?
-        raise I18n.t('results.could_not_find_file',
-                     filename: self.filename,
-                     repository_name: student_group.repository_name)
-      end
-      retrieved_file = repo.download_as_string(revision_file)
+    close_repo = false
+    if repo.nil?
+      repo = student_group.repo
+      close_repo = true
+    end
+    revision = repo.get_revision(revision_identifier)
+    revision_file = revision.files_at_path(self.path)[self.filename]
+    if revision_file.nil?
+      raise I18n.t('results.could_not_find_file',
+                   filename: self.filename,
+                   repository_name: student_group.repository_name)
+    end
+    retrieved_file = repo.download_as_string(revision_file)
+    if close_repo
+      repo.close
     end
     if include_annotations
       retrieved_file = add_annotations(retrieved_file)

@@ -4,36 +4,48 @@ class AutotestRunJob < ApplicationJob
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def export_group_repo(group, repo_dir, assignment, submission = nil)
-    # Create the automated test repository
-    unless File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+  def export_group_repo(test_run)
+    grouping = test_run.grouping
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+      if File.exist?(repo_dir)
+        # optimize if revision hasn't changed since last test run..
+        prev_test_run = TestRun.where(grouping: grouping, revision_identifier: test_run.revision_identifier)
+                               .order(created_at: :desc)
+                               .first
+        return if !prev_test_run.nil? && prev_test_run.submission_id.nil? == test_run.submission_id.nil?
+        # ..otherwise delete grouping's previous files
+        FileUtils.rm_rf(repo_dir)
+      end
+    else
+      # create the automated test repository
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
-    # Delete student's assignment repository if it already exists
-    # TODO clean up in client worker, or try to optimize if revision is the same?
-    if File.exist?(repo_dir)
-      FileUtils.rm_rf(repo_dir)
-    end
-    # Export the correct repo revision
-    if submission.nil?
-      group.repo.export(repo_dir)
-    else
-      FileUtils.mkdir(repo_dir)
-      unless assignment.only_required_files.blank?
-        required_files = assignment.assignment_files.map(&:filename).to_set
-      end
-      submission.submission_files.each do |file|
-        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
-        unless required_files.nil? || required_files.include?(file_path)
-          # do not export non-required files, if only required files are allowed
-          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-          next
+    # export the repo files
+    submission = test_run.submission
+    group.access_repo do |repo|
+      if submission.nil?
+        repo.export(repo_dir)
+      else
+        FileUtils.mkdir(repo_dir)
+        assignment = grouping.assignment
+        unless assignment.only_required_files.blank?
+          required_files = assignment.assignment_files.map(&:filename).to_set
         end
-        file_content = file.retrieve_file
-        FileUtils.mkdir_p(File.join(repo_dir, file.path))
-        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-          f.write(file_content)
+        submission.submission_files.each do |file|
+          dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
+          file_path = dir == '' ? file.filename : File.join(dir, file.filename)
+          unless required_files.nil? || required_files.include?(file_path)
+            # do not export non-required files, if only required files are allowed
+            # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+            next
+          end
+          file_content = file.retrieve_file(false, repo)
+          FileUtils.mkdir_p(File.join(repo_dir, file.path))
+          File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+            f.write(file_content)
+          end
         end
       end
     end
@@ -72,14 +84,14 @@ class AutotestRunJob < ApplicationJob
   end
 
   def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
-
     grouping = test_run.grouping
     submission = test_run.submission
     user = test_run.user
     assignment = grouping.assignment
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
-    export_group_repo(group, repo_dir, assignment, submission)
+    export_group_repo(test_run)
+    # TODO improve and include starter code
     unless repo_files_available?(assignment, submission, repo_dir)
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.results.all_tests'),
