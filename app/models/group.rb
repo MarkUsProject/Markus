@@ -53,13 +53,9 @@ class Group < ApplicationRecord
     MarkusConfigurator.markus_config_repository_external_base_url + '/' + repository_name
   end
 
-  def repository_admin?
-    MarkusConfigurator.markus_config_repository_admin?
-  end
-
   def build_repository
     # create repositories if and only if we are admin
-    return true if !MarkusConfigurator.markus_config_repository_admin?
+    return true unless MarkusConfigurator.markus_config_repository_admin?
 
     # This might cause repository collision errors, because when the group
     # maximum for an assignment is set to be one, the student's username

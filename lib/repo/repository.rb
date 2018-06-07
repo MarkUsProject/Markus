@@ -273,6 +273,11 @@ module Repository
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
+    # Returns a set of file names that are used internally by the repository and are not part of any student submission.
+    def self.internal_file_names
+      []
+    end
+
     private_class_method :__update_permissions
   end
 

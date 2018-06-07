@@ -505,33 +505,36 @@ class Grouping < ApplicationRecord
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
     # create folder only if we are repo admin
-    if self.group.repository_admin?
-      self.group.access_repo do |repo|
-        revision = repo.get_latest_revision
-        assignment_folder = assignment.repository_folder
-        result = true
-        unless revision.path_exists?(assignment_folder)
-          txn = repo.get_transaction('Markus')
-          txn.add_path(assignment_folder)
-          result = repo.commit(txn)
-        end
-        begin
-          self.assignment.access_repo do |starter_repo|
-            starter_revision = starter_repo.get_latest_revision
-            if starter_revision.path_exists?(assignment_folder)
-              txn = repo.get_transaction('Markus')
-              starter_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
-                starter_file_path = File.join(assignment_folder, starter_file_name)
-                txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
-              end
-              result = repo.commit(txn)
-            end
-          end
-        rescue
-          # repo for starter code does not exist, just continue
-        end
-        return result
+    unless MarkusConfigurator.markus_config_repository_admin?
+      return
+    end
+    self.group.access_repo do |repo|
+      revision = repo.get_latest_revision
+      assignment_folder = self.assignment.repository_folder
+      result = true
+      unless revision.path_exists?(assignment_folder)
+        txn = repo.get_transaction('Markus')
+        txn.add_path(assignment_folder)
+        result = repo.commit(txn)
       end
+      begin
+        self.assignment.access_repo do |starter_repo|
+          starter_revision = starter_repo.get_latest_revision
+          if starter_revision.path_exists?(assignment_folder)
+            txn = repo.get_transaction('Markus')
+            starter_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
+              starter_file_path = File.join(assignment_folder, starter_file_name)
+              txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
+            end
+            result = repo.commit(txn)
+          end
+          revision = repo.get_latest_revision
+          self.starter_code_revision_identifier = revision.revision_identifier
+        end
+      rescue
+        # repo for starter code does not exist, just continue
+      end
+      return result
     end
   end
 

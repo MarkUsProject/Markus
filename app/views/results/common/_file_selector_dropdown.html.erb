@@ -19,8 +19,9 @@
               <% end %>
           <% end %>
           <% if dir[:files] != nil %>
+              <% internal_repo_files = Repository.get_class.internal_file_names %>
               <% dir[:files].each do |file| %>
-                <% if file.filename != ".gitkeep" %>
+                <% unless internal_repo_files.include?(file.filename) %>
                   <li class="file_item" data-path="<%= file.path %>/<%= file.filename %>" data-id="<%= file.id %>">
                     <a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                        onmouseover='close_submenu_recursive(

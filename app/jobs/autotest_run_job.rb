@@ -54,18 +54,26 @@ class AutotestRunJob < ApplicationJob
   # Verify that MarkUs has student files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one source file is successfully exported.
-  def repo_files_available?(assignment, submission, repo_dir)
-    # no commits in the submission
-    if !submission.nil? && submission.revision_identifier.nil?
-      return false
+  def repo_files_available?(test_run)
+    grouping = test_run.grouping
+    submission = test_run.submission
+    assignment = grouping.assignment
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    unless submission.nil?
+      # no commits in the submission
+      return false if submission.revision_identifier.nil?
+      # no commits after starter code initialization
+      return false if submission.revision_identifier == grouping.starter_code_revision_identifier
     end
-    # No assignment directory or no files in repo (only current and parent directory pointers)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
-    if !File.exist?(assignment_dir) || Dir.entries(assignment_dir).length <= 2
-      false
-    else
-      true
-    end
+    # no assignment directory
+    return false unless File.exist?(assignment_dir)
+    entries = Dir.entries(assignment_dir) - ['.', '..'] - Repository.get_class.internal_file_names
+    # no files
+    return false if entries.size <= 0
+
+    true
   end
 
   def get_server_api_key
@@ -84,15 +92,8 @@ class AutotestRunJob < ApplicationJob
   end
 
   def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
-    grouping = test_run.grouping
-    submission = test_run.submission
-    user = test_run.user
-    assignment = grouping.assignment
-    group = grouping.group
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     export_group_repo(test_run)
-    # TODO improve and include starter code
-    unless repo_files_available?(assignment, submission, repo_dir)
+    unless repo_files_available?(test_run)
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.no_source_files') }
@@ -100,6 +101,12 @@ class AutotestRunJob < ApplicationJob
       return
     end
 
+    grouping = test_run.grouping
+    submission = test_run.submission
+    user = test_run.user
+    assignment = grouping.assignment
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     submission_path = File.join(repo_dir, assignment.repository_folder)
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port

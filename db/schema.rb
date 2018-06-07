@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180528163425) do
+ActiveRecord::Schema.define(version: 20180607221235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,17 +276,18 @@ ActiveRecord::Schema.define(version: 20180528163425) do
   end
 
   create_table "groupings", force: :cascade do |t|
-    t.integer  "group_id",                                null: false
-    t.integer  "assignment_id",                           null: false
+    t.integer  "group_id",                                         null: false
+    t.integer  "assignment_id",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin_approved",          default: false, null: false
+    t.boolean  "admin_approved",                   default: false, null: false
     t.integer  "grouping_queue_id"
-    t.boolean  "is_collected",            default: false
-    t.integer  "notes_count",             default: 0
-    t.integer  "criteria_coverage_count", default: 0
-    t.boolean  "error_collecting",        default: false
-    t.integer  "test_tokens",             default: 0,     null: false
+    t.boolean  "is_collected",                     default: false
+    t.integer  "notes_count",                      default: 0
+    t.integer  "criteria_coverage_count",          default: 0
+    t.boolean  "error_collecting",                 default: false
+    t.integer  "test_tokens",                      default: 0,     null: false
+    t.text     "starter_code_revision_identifier"
   end
 
   add_index "groupings", ["assignment_id", "group_id"], name: "groupings_u1", unique: true, using: :btree

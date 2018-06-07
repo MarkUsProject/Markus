@@ -71,17 +71,6 @@ describe Group do
     end
   end
 
-  describe '#repository_admin?' do
-    context 'with administrator rights' do
-      let(:group) { create(:group) }
-
-      it 'returns true' do
-        expect(group.repository_admin?).to be_truthy
-      end
-    end
-  end
-
-
   describe '#build_repository' do
     let(:group) { create(:group) }
 
