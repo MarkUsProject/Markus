@@ -132,6 +132,11 @@
   vertical-align: middle;
 }
 
+.fa-download-file-o::before {
+  content: asset_url('icons/disk.png');
+  vertical-align: middle;
+}
+
 .fa-file-o::before {
   content: asset_url('icons/page_white_text.png');
   vertical-align: middle;
@@ -151,7 +156,6 @@ div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
   width: 100%;
 }
 
-
 select.collected-checked,
 option.collected {
   font-style: italic;
@@ -159,8 +163,4 @@ option.collected {
 
 option.uncollected {
   font-style: normal;
-}
-
-option.collected::before {
-  Content: '*';
 }

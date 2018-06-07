@@ -7,7 +7,7 @@ class RepoBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      revision_identifier: props.revisions[0][1],
+      revision_identifier: props.collected_revision_id,
       revisions: []
     };
   }

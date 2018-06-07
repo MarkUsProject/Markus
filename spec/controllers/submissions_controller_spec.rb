@@ -476,11 +476,11 @@ describe SubmissionsController do
                  "#{@grouping.group.group_name}_#{@grouping.group.repo
                      .get_latest_revision.revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
-        file1_path = File.join("#{@assignment.repository_folder}-" +
-                                   "#{@grouping.group.repo_name}",
+        file1_path = File.join("#{@assignment.short_identifier}-" +
+                                   "#{@grouping.group.group_name}",
                                @file1_name)
-        file2_path = File.join("#{@assignment.repository_folder}-" +
-                                   "#{@grouping.group.repo_name}",
+        file2_path = File.join("#{@assignment.short_identifier}-" +
+                                   "#{@grouping.group.group_name}",
                                @file2_name)
         expect(zip_file.find_entry(file1_path)).to_not be_nil
         expect(zip_file.find_entry(file2_path)).to_not be_nil
@@ -506,8 +506,7 @@ describe SubmissionsController do
              assignment_id: @assignment.id, id: @submission.id,
              grouping_id: @grouping.id
 
-      expect(response.body).to eq(I18n.t(
-                                    'student.submission.no_files_available'))
+      is_expected.to respond_with(:redirect)
     end
 
     it 'not be able to download the revision 0' do
@@ -522,6 +521,7 @@ describe SubmissionsController do
           @grouping,
           repo.get_latest_revision)
       end
+      request.env['HTTP_REFERER'] = 'back'
       get_as @admin,
              :downloads,
              assignment_id: @assignment.id,
@@ -529,9 +529,7 @@ describe SubmissionsController do
              grouping_id: @grouping.id,
              revision_identifier: 0
 
-      expect(response.body).to eq(
-        I18n.t('student.submission.no_revision_available'))
-      is_expected.to respond_with(:success)
+      is_expected.to respond_with(:redirect)
     end
 
     describe 'attempting to download groupings files' do

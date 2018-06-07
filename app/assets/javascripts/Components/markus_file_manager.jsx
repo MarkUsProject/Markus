@@ -17,9 +17,6 @@ class RawFileManager extends RawFileBrowser {
   };
 
   renderActionBar(selectedItem) {
-    if (this.props.readOnly) {
-      return <div className="item-actions">&nbsp;</div>;
-    }
 
     const selectionIsFolder = (selectedItem && !selectedItem.size)
     let filter
@@ -34,7 +31,8 @@ class RawFileManager extends RawFileBrowser {
     }
 
     let actions
-    if (selectedItem) {
+
+    if (!this.props.readOnly && selectedItem) {
       // Something is selected. Build custom actions depending on what it is.
       if (selectedItem.action) {
         // Selected item has an active action against it. Disable all other actions.
@@ -130,15 +128,9 @@ class RawFileManager extends RawFileBrowser {
             </a>
           </li>
         );
-        if (actions.length) {
-          actions = (<ul className="item-actions">{actions}</ul>)
-        }
-        else {
-          actions = (<div className="item-actions">&nbsp;</div>)
-        }
       }
     }
-    else {
+    else if (!this.props.readOnly) {
       // Nothing selected: We're in the 'root' folder. Only allowed action is adding a folder.
       actions = []
       if (
@@ -171,13 +163,27 @@ class RawFileManager extends RawFileBrowser {
           </a>
         </li>
       );
+    }
 
-      if (actions.length) {
-        actions = (<ul className="item-actions">{actions}</ul>)
-      }
-      else {
-        actions = (<div className="item-actions">&nbsp;</div>)
-      }
+
+    // Download action is always available
+    actions.unshift(
+      <li key="action-download-all">
+        <a
+          href={this.props.downloadAllURL}
+          // download
+        >
+          <i className="fa fa-download-file-o" aria-hidden="true"/>
+          &nbsp;{I18n.t('download_the', {item: I18n.t('browse_submissions.all_files')})}
+        </a>
+      </li>
+    );
+
+    if (actions.length) {
+      actions = (<ul className="item-actions">{actions}</ul>)
+    }
+    else {
+      actions = (<div className="item-actions">&nbsp;</div>)
     }
 
     return (

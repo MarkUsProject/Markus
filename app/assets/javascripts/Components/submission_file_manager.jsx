@@ -90,6 +90,13 @@ class SubmissionFileManager extends React.Component {
     }
   };
 
+  getDownloadAllURL = () => {
+    return Routes.downloads_assignment_submission_path('', this.props.assignment_id, this.props.grouping_id, {
+      revision_identifier: this.props.revision_identifier,
+      grouping_id: this.props.grouping_id,
+    });
+  };
+
   render() {
     return (
       <FileManager
@@ -98,6 +105,7 @@ class SubmissionFileManager extends React.Component {
         readOnly={this.props.readOnly}
         onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
         onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
+        downloadAllURL={this.getDownloadAllURL()}
       />
     );
   }

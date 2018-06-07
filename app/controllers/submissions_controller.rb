@@ -634,40 +634,43 @@ class SubmissionsController < ApplicationController
   # Download all files from a repository folder in a Zip file.
   ##
   def downloads
-    revision_identifier = params[:revision_identifier]
-    @assignment = Assignment.find(params[:assignment_id])
-    @grouping = find_appropriate_grouping(@assignment.id, params)
-    repo_folder = @assignment.repository_folder
-    full_path = File.join(repo_folder, params[:path] || '/')
-    zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
-    @grouping.group.access_repo do |repo|
-      begin
-        if revision_identifier.nil?
-          @revision = repo.get_latest_revision
-        else
-          @revision = repo.get_revision(revision_identifier)
+    assignment = Assignment.find(params[:assignment_id])
+    if current_user.student?
+      grouping = current_user.accepted_grouping_for(assignment)
+    else
+      grouping = assignment.groupings.find(params[:grouping_id])
+    end
+    zip_name = "#{assignment.short_identifier}-#{grouping.group.group_name}"
+    grouping.group.access_repo do |repo|
+      if current_user.student? || params[:revision_identifier].nil?
+        revision = repo.get_latest_revision
+      else
+        begin
+          revision = repo.get_revision(params[:revision_identifier])
+        rescue Repository::RevisionDoesNotExist
+          flash_message(:error, t('student.submission.no_revision_available'))
+          redirect_to :back
+          return
         end
-      rescue Repository::RevisionDoesNotExist
-        render text: t('student.submission.no_revision_available')
+      end
+
+      files = revision.files_at_path(assignment.repository_folder)
+      if files.count == 0
+        flash_message(:error, t('student.submission.no_files_available'))
+        redirect_to :back
         return
       end
 
-      zip_path = "tmp/#{@assignment.short_identifier}_#{@grouping.group.group_name}_"\
-                 "#{@revision.revision_identifier}.zip"
-      no_files = false
+      zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_"\
+                 "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-
-        no_files = downloads_subdirectories('',
-                                            full_path,
-                                            zip_file, zip_name, repo)
+        downloads_subdirectories('',
+                                 assignment.repository_folder,
+                                 zip_file, zip_name, repo, revision)
       end
 
-      if no_files != true
-        # Send the Zip file
-        send_file zip_path, disposition: 'inline', filename: zip_name + '.zip'
-      end
-
+      send_file zip_path, filename: zip_name + '.zip'
     end
   end
 
@@ -677,19 +680,8 @@ class SubmissionsController < ApplicationController
   # it.
   # Helper method for downloads.
   def downloads_subdirectories(subdirectory, subdirectory_path, zip_file,
-                               zip_name, repo)
-    files = @revision.files_at_path(subdirectory_path)
-    # In order to recursively download all files, find the sub-directories
-    directories = @revision.directories_at_path(subdirectory_path)
-
-    if files.count == 0
-      if subdirectory == ''
-        render text: t('student.submission.no_files_available')
-        return true
-      end
-      # No files in subdirectory
-      return
-    end
+                               zip_name, repo, revision)
+    files = revision.files_at_path(subdirectory_path)
 
     files.each do |file|
       begin
@@ -705,6 +697,7 @@ class SubmissionsController < ApplicationController
     end
 
     # Now recursively call this function on all sub directories.
+    directories = revision.directories_at_path(subdirectory_path)
     directories.each do |new_subdirectory|
       begin
         # Recursively fill this sub-directory
@@ -716,7 +709,7 @@ class SubmissionsController < ApplicationController
                                      '/',
                                  directories[new_subdirectory[0]].path +
                                      new_subdirectory[0] + '/',
-                                 zip_file, zip_name, repo)
+                                 zip_file, zip_name, repo, revision)
       end
     end
   end
@@ -814,11 +807,11 @@ class SubmissionsController < ApplicationController
       data[:size] = 1 # Dummy value
     end
 
-
     revision.directories_at_path(full_path).each do |directory_name, _|
       entries.concat(get_all_file_data(
-                       revision, grouping,
-                       path.blank? ? directory_name : File  .join(path, directory_name)))
+        revision, grouping,
+        path.blank? ? directory_name : File.join(path, directory_name)
+      ))
     end
 
     entries
