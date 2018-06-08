@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180607221235) do
+ActiveRecord::Schema.define(version: 20180608134554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -568,15 +568,15 @@ ActiveRecord::Schema.define(version: 20180607221235) do
   end
 
   create_table "test_runs", force: :cascade do |t|
-    t.integer  "queue_len"
-    t.integer  "avg_pop_interval",    limit: 8
+    t.integer  "time_to_service_estimate", limit: 8
+    t.integer  "time_to_service",          limit: 8
     t.integer  "test_batch_id"
-    t.integer  "grouping_id",                   null: false
-    t.integer  "user_id",                       null: false
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.integer  "grouping_id",                        null: false
+    t.integer  "user_id",                            null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.integer  "submission_id"
-    t.text     "revision_identifier",           null: false
+    t.text     "revision_identifier",                null: false
   end
 
   add_index "test_runs", ["grouping_id"], name: "index_test_runs_on_grouping_id", using: :btree

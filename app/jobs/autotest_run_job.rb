@@ -121,15 +121,14 @@ class AutotestRunJob < ApplicationJob
                       assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
                       group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
 
-    out = ''
     if ssh.nil?
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
       server_params[:files_path] = server_path
-      out, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+      output, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
       if status.exitstatus != 0
-        raise out
+        raise output
       end
     else
       # tests executed locally or remotely with authentication
@@ -141,9 +140,13 @@ class AutotestRunJob < ApplicationJob
                     "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
       Open3.capture3(scp_command)
       server_params[:files_path] = server_path
-      out = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      output = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      if output.exitstatus != 0
+        raise output
+      end
     end
-    # TODO: use out for statistics
+    test_run.time_to_service_estimate = output.to_i
+    test_run.save
   end
 
   def perform(host_with_port, user_id, test_scripts, test_runs)
