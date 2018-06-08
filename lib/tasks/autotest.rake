@@ -185,6 +185,7 @@ class AutotestSetup
     # autotester uses the names as part of a hash key
     AutotestScriptsJob.perform_now('http://0.0.0.0:3000', @assignment.id)
     AutotestScriptsJob.perform_now('http://localhost:3000', @assignment.id)
+    AutotestScriptsJob.perform_now('http://127.0.0.1:3000', @assignment.id)
   end
 
   def collect_submissions
