@@ -17,9 +17,8 @@ class RawFileManager extends RawFileBrowser {
   };
 
   renderActionBar(selectedItem) {
-
-    const selectionIsFolder = (selectedItem && !selectedItem.size)
-    let filter
+    const selectionIsFolder = selectedItem && !selectedItem.size;
+    let filter;
     if (this.props.canFilter) {
       filter = (
         <this.props.filterRenderer
@@ -27,27 +26,27 @@ class RawFileManager extends RawFileBrowser {
           updateFilter={this.updateFilter}
           {...this.props.filterRendererProps}
         />
-      )
+      );
     }
 
-    let actions
+    let actions;
 
     if (!this.props.readOnly && selectedItem) {
       // Something is selected. Build custom actions depending on what it is.
       if (selectedItem.action) {
         // Selected item has an active action against it. Disable all other actions.
-        let actionText
+        let actionText;
         switch (selectedItem.action) {
           case 'delete':
-            actionText = 'Deleting ...'
+            actionText = 'Deleting ...';
             break
 
           case 'rename':
-            actionText = 'Renaming ...'
+            actionText = 'Renaming ...';
             break
 
           default:
-            actionText = 'Moving ...'
+            actionText = 'Moving ...';
             break
         }
         actions = (
@@ -58,7 +57,7 @@ class RawFileManager extends RawFileBrowser {
         )
       }
       else {
-        actions = []
+        actions = [];
         if (
           selectionIsFolder &&
           typeof this.props.onCreateFolder === 'function' &&
@@ -75,13 +74,13 @@ class RawFileManager extends RawFileBrowser {
                 &nbsp;Add Subfolder
               </a>
             </li>
-          )
+          );
         }
         if (
           selectedItem.keyDerived && (
-                                    (selectionIsFolder && typeof this.props.onRenameFile === 'function') ||
-                                    (!selectionIsFolder && typeof this.props.onRenameFolder === 'function')
-                                  )
+            (selectionIsFolder && typeof this.props.onRenameFile === 'function') ||
+            (!selectionIsFolder && typeof this.props.onRenameFolder === 'function')
+          )
         ) {
           actions.push(
             <li key="action-rename">
@@ -94,13 +93,13 @@ class RawFileManager extends RawFileBrowser {
                 &nbsp;Rename
               </a>
             </li>
-          )
+          );
         }
         if (
           selectedItem.keyDerived && (
-                                    (!selectionIsFolder && typeof this.props.onDeleteFile === 'function') ||
-                                    (selectionIsFolder && typeof this.props.onDeleteFolder === 'function')
-                                  )
+            (!selectionIsFolder && typeof this.props.onDeleteFile === 'function') ||
+            (selectionIsFolder && typeof this.props.onDeleteFolder === 'function')
+          )
         ) {
           actions.push(
             <li key="action-delete">
@@ -113,7 +112,7 @@ class RawFileManager extends RawFileBrowser {
                 &nbsp;{I18n.t('delete')}
               </a>
             </li>
-          )
+          );
         }
         // NEW
         actions.unshift(
@@ -131,8 +130,8 @@ class RawFileManager extends RawFileBrowser {
       }
     }
     else if (!this.props.readOnly) {
-      // Nothing selected: We're in the 'root' folder. Only allowed action is adding a folder.
-      actions = []
+      // Nothing selected.
+      actions = [];
       if (
         typeof this.props.onCreateFolder === 'function' &&
         !this.state.nameFilter
@@ -165,13 +164,11 @@ class RawFileManager extends RawFileBrowser {
       );
     }
 
-
     // Download action is always available
     actions.unshift(
       <li key="action-download-all">
         <a
           href={this.props.downloadAllURL}
-          // download
         >
           <i className="fa fa-download-file-o" aria-hidden="true"/>
           &nbsp;{I18n.t('download_the', {item: I18n.t('browse_submissions.all_files')})}
@@ -179,17 +176,18 @@ class RawFileManager extends RawFileBrowser {
       </li>
     );
 
+    let actionList;
     if (actions.length) {
-      actions = (<ul className="item-actions">{actions}</ul>)
+      actionList = (<ul className="item-actions">{actions}</ul>);
     }
     else {
-      actions = (<div className="item-actions">&nbsp;</div>)
+      actionList = (<div className="item-actions">&nbsp;</div>);
     }
 
     return (
       <div className="action-bar">
         {filter}
-        {actions}
+        {actionList}
       </div>
     );
   }
@@ -217,6 +215,7 @@ class FileManagerHeader extends Headers.TableHeader {
       typeof this.props.browserProps.moveFolder === 'function'
     ) {
       return header;
+      // TODO: look into activating the following instead.
       // return this.props.connectDropTarget(header);
     } else {
       return header;
@@ -232,18 +231,18 @@ class FileManagerFile extends FileRenderers.RawTableFile {
   };
 
   render() {
-    let icon
+    let icon;
     if (this.isImage()) {
-      icon = (<i className="fa fa-file-image-o" aria-hidden="true" />)
+      icon = <i className="fa fa-file-image-o" aria-hidden="true" />;
     } else if (this.isPdf()) {
-      icon = (<i className="fa fa-file-pdf-o" aria-hidden="true" />)
+      icon = <i className="fa fa-file-pdf-o" aria-hidden="true" />;
     } else {
-      icon = (<i className="fa fa-file-o" aria-hidden="true" />)
+      icon = <i className="fa fa-file-o" aria-hidden="true" />;
     }
 
-    const inAction = (this.props.isDragging || this.props.action)
+    const inAction = this.props.isDragging || this.props.action;
 
-    let name
+    let name;
     if (!inAction && this.props.isDeleting) {
       name = (
         <form className="deleting" onSubmit={this.handleDeleteSubmit}>
@@ -261,7 +260,7 @@ class FileManagerFile extends FileRenderers.RawTableFile {
             </button>
           </span>
         </form>
-      )
+      );
     } else if (!inAction && this.props.isRenaming) {
       name = (
         <form className="renaming" onSubmit={this.handleRenameSubmit}>
@@ -275,7 +274,7 @@ class FileManagerFile extends FileRenderers.RawTableFile {
             autoFocus
           />
         </form>
-      )
+      );
     } else {
       name = (
         <a
@@ -285,14 +284,14 @@ class FileManagerFile extends FileRenderers.RawTableFile {
           {icon}
           {this.getName()}
         </a>
-      )
+      );
     }
 
     let draggable = (
       <div>
         {name}
       </div>
-    )
+    );
     if (typeof this.props.browserProps.moveFile === 'function') {
       draggable = this.props.connectDragPreview(draggable)
     }
