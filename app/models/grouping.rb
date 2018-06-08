@@ -527,11 +527,11 @@ class Grouping < ApplicationRecord
               txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
             end
             result = repo.commit(txn)
+            revision = repo.get_latest_revision
+            self.starter_code_revision_identifier = revision.revision_identifier
           end
-          revision = repo.get_latest_revision
-          self.starter_code_revision_identifier = revision.revision_identifier
         end
-      rescue
+      rescue StandardError
         # repo for starter code does not exist, just continue
       end
       return result

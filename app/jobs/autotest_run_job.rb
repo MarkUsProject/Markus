@@ -9,12 +9,14 @@ class AutotestRunJob < ApplicationJob
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
-      if File.exist?(repo_dir)
-        # optimize if revision hasn't changed since last test run..
-        prev_test_run = TestRun.where(grouping: grouping, revision_identifier: test_run.revision_identifier)
-                               .order(created_at: :desc)
-                               .first
-        return if !prev_test_run.nil? && prev_test_run.submission_id.nil? == test_run.submission_id.nil?
+      if File.exist?(repo_dir) # can exist from other assignments, we don't want to store it per-assignment
+        # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
+        prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
+        if !prev_test_run.nil? &&
+           prev_test_run.revision_identifier == test_run.revision_identifier &&
+           prev_test_run.submission_id.nil? == test_run.submission_id.nil?
+          return
+        end
         # ..otherwise delete grouping's previous files
         FileUtils.rm_rf(repo_dir)
       end

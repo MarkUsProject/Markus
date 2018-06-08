@@ -10,7 +10,7 @@ module Repository
   #   2. Existing repositories are opened by using either ???
   class GitRepository < Repository::AbstractRepository
 
-    DUMMY_FILE_NAME = '.gitkeep'
+    DUMMY_FILE_NAME = '.gitkeep'.freeze
 
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
