@@ -1,13 +1,27 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'file_manager' %>
-
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 
-  <%= render partial: 'react_file_manager_boot_table',
-             formats: [:'js.jsx'],
-             handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeSubmissionFileManager(document.getElementById('file_manager'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          grouping_id: <%= @grouping.id %>,
+          readOnly: <%= !@assignment.allow_web_submits.to_s %>
+        });
+
+      window.setInterval(() => {
+        $.get({
+          url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
+          success: function(data) {
+            document.getElementById('current_time').innerHTML = data;
+          }
+        });
+      }, 60000);
+    });
+  </script>
 <% end %>
 
 <% content_for :title do %>
@@ -15,44 +29,12 @@
           short_identifier: sanitize(@assignment.short_identifier)) %>
 <% end %>
 
-<div>
+<% content_for :additional_headings do %>
   <strong><%= t('server_time') %></strong>
-  <span id='current_time'>
-    <%= l(Time.zone.now)%>
-  </span>
+  <span id='current_time'><%= l(Time.zone.now)%></span>
+<% end %>
 
-  <script>
-    window.setInterval(function () {
-      $.ajax({
-        url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
-        method: 'GET',
-        success: function(data) {
-          document.getElementById('current_time').innerHTML = data;
-        }
-      });
-    }, 60000);
-    </script>
-</div>
-
-<div class='wrapper'>
-  <% if @assignment.vcs_submit %>
-    <p>
-      <%= t('student.submission.current_path') %>
-      <%= link_to '[root]', action: 'file_manager', path: '/' %>
-      <%
-        path_memory = '/'
-        @path.split('/').each do |folder|
-          if (folder != '')
-            path_memory = File.join(path_memory, folder) %>
-            <%= link_to(" / #{folder}", action: 'file_manager', path: path_memory).html_safe %>
-          <% end
-        end
-      %>
-    </p>
-  <% end %>
-
-  <div id='file_table'></div>
-</div>
+<div id='file_manager'></div>
 
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
@@ -64,11 +46,10 @@
 
     <section class='dialog-actions'>
       <%= submit_tag t(:submit),
-                     disabled: !@grouping.is_valid?,
-                     onclick: 'set_onbeforeunload(false); submitFile(event)' %>
+                     disabled: !@grouping.is_valid? %>
       <%= button_tag t(:close),
                      type: 'button',
-                     onclick: 'set_onbeforeunload(false); modal_addnew.close();' %>
+                     onclick: 'modal_addnew.close(); return false;' %>
     </section>
   <% end %>
 </aside>

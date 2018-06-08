@@ -1,0 +1,85 @@
+div.rendered-react-keyed-file-browser div.action-bar {
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: flex-start; }
+  div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
+    display: block;
+    flex-grow: 2;
+    min-width: 300px;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    line-height: 1em;
+    margin-bottom: 0.5rem;
+    border: 0.1rem solid #ddd; }
+  div.rendered-react-keyed-file-browser div.action-bar .item-actions {
+    text-align: right;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5rem;
+    font-size: 1rem; }
+  div.rendered-react-keyed-file-browser div.action-bar ul.item-actions {
+    display: block;
+    flex-grow: 1;
+    min-width: 300px;
+    margin-left: 10px;
+    white-space: nowrap; }
+    div.rendered-react-keyed-file-browser div.action-bar ul.item-actions li {
+      display: inline-block;
+      margin: 0; }
+      div.rendered-react-keyed-file-browser div.action-bar ul.item-actions li:not(:last-child) {
+        margin-right: 0.5rem; }
+
+div.rendered-react-keyed-file-browser div.files table {
+  width: 100%;
+  margin-bottom: 2rem;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  div.rendered-react-keyed-file-browser div.files table th, div.rendered-react-keyed-file-browser div.files table td {
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: left;
+    margin: 0;
+    padding: 0.5rem; }
+  div.rendered-react-keyed-file-browser div.files table th {
+    font-weight: bold; }
+  div.rendered-react-keyed-file-browser div.files table th.size, div.rendered-react-keyed-file-browser div.files table th.modified, div.rendered-react-keyed-file-browser div.files table td.size, div.rendered-react-keyed-file-browser div.files table td.modified {
+    text-align: right; }
+  div.rendered-react-keyed-file-browser div.files table th.name i, div.rendered-react-keyed-file-browser div.files table td.name i {
+    padding-right: 0.5rem; }
+  div.rendered-react-keyed-file-browser div.files table thead th {
+    border-bottom: 0.1rem solid #ddd; }
+  div.rendered-react-keyed-file-browser div.files table tr:not(:last-child) td {
+    border-bottom: 0.1rem solid #eee; }
+  div.rendered-react-keyed-file-browser div.files table td.name {
+    padding-left: 0.8rem; }
+    div.rendered-react-keyed-file-browser div.files table td.name form.renaming {
+      display: flex;
+      align-items: center; }
+      div.rendered-react-keyed-file-browser div.files table td.name form.renaming i {
+        flex-grow: 0;
+        flex-shrink: 0; }
+      div.rendered-react-keyed-file-browser div.files table td.name form.renaming input[type="text"] {
+        flex: 1; }
+  div.rendered-react-keyed-file-browser div.files table tr td {
+    cursor: pointer; }
+  div.rendered-react-keyed-file-browser div.files table tr.selected td {
+    font-weight: bold; }
+    div.rendered-react-keyed-file-browser div.files table tr.selected td input, div.rendered-react-keyed-file-browser div.files table tr.selected td button {
+      font-weight: normal; }
+    div.rendered-react-keyed-file-browser div.files table tr.selected td.name {
+      position: relative; }
+      div.rendered-react-keyed-file-browser div.files table tr.selected td.name:after {
+        content: ' ';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0.3rem;
+        height: 100%;
+        background: #1d4567; }
+  div.rendered-react-keyed-file-browser div.files table tr.dragover td, div.rendered-react-keyed-file-browser div.files table tr.dragover th {
+    background: #eee; }

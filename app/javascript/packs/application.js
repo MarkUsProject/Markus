@@ -20,6 +20,8 @@ import { makeStudentTable } from 'javascripts/Components/student_table';
 import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
 import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
 import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
+import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
+import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
 
 import 'javascripts/react_config';
 
@@ -32,3 +34,5 @@ window.makeTATable = makeTATable;
 window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;
 window.makeExamScanLogTable = makeExamScanLogTable;
 window.makeMarksSpreadsheet = makeMarksSpreadsheet;
+window.makeSubmissionFileManager = makeSubmissionFileManager;
+window.makeRepoBrowser = makeRepoBrowser;

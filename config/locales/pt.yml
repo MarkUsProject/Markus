@@ -431,15 +431,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       select_clear: "Clique aqui para limpar seleção."
 
     browse_submissions:
-      find_different_revision: "Encontrar uma revisão diferente"
-      find_by_revision_timestamp: "Encontrar revisão por Timestamp"
-      find_by_revision_number:    "Encontrar revisão por número"
+      collected: "coletada"
       viewing_revision:           "Vendo revisão:"
-      currently_collected:  "Versão coletada:"
-      no_rev_before_deadline: 	"Nenhuma revisão apresentado antes do prazo"
       client_time:          "UPDATE ME:"
       server_time:          "UPDATE ME:"
-      current_path:         "Caminho atual:"
       all_files:   "todos os arquivos"
       root:                 "[root]"
       collect_and_grab:     "Coletar e avaliar essa revisão"
@@ -569,9 +564,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     student_course_summary: "Suas notas"
 
     student_interface_assignments: "Seus projetos"
-
-    stopping_collection_process: "Pausando processo de coleta..."
-    converting_pdfs: "Convertendo arquivos pdfs...%{converted}/%{total}"
 
     groups:
       groups: "Grupos"

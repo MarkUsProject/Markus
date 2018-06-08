@@ -442,8 +442,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST populate_file_manager properly' do
-        expect(post: sub_path + '/populate_file_manager').to route_to(
+      it 'routes GET populate_file_manager properly' do
+        expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
           assignment_id: assignment.id.to_s,
@@ -483,8 +483,8 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST populate_file_manager' do
-        expect(post: sub_path + '/populate_file_manager').to route_to(
+      it 'routes GET populate_file_manager' do
+        expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
           assignment_id: assignment.id.to_s,

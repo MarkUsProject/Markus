@@ -6,26 +6,6 @@
   color: $grey !important;
 }
 
-#repo_browser_controls {
-  fieldset {
-    box-shadow: none;
-  }
-
-  form {
-    display: inline-block;
-  }
-}
-
-.global_action {
-  margin-top: 2.5em;
-
-  input[type='button'],
-  input[type='submit'],
-  .button {
-    min-width: 8em;
-  }
-}
-
 .react_buttons {
   margin-bottom: 1em;
 
@@ -36,10 +16,6 @@
 
 #file_form {
   margin-top: 1em;
-}
-
-#files_table {
-  margin-top: 1.5em;
 }
 
 .submission_collected {
@@ -113,6 +89,16 @@
   cursor: default !important;
 }
 
+#file_manager {
+  fieldset {
+    box-shadow: none;
+    margin-bottom: 1em;
+  }
+
+  input[type=checkbox] {
+    margin-right: 3px;
+  }
+}
 
 /* Student view */
 
@@ -122,4 +108,59 @@
 
 .global_action {
   margin: 1em 0;
+}
+
+
+// Styling patches for react-keyed-file-browser
+.fa-trash-o::before {
+  content: asset_url('icons/bin_closed.png');
+  vertical-align: middle;
+}
+
+.fa-folder-open-o::before {
+  content: asset_url('icons/folder_page_white.png');
+  vertical-align: middle;
+}
+
+.fa-folder-o::before {
+  content: asset_url('icons/folder.png');
+  vertical-align: middle;
+}
+
+.fa-add-file-o::before {
+  content: asset_url('icons/page_white_add.png');
+  vertical-align: middle;
+}
+
+.fa-download-file-o::before {
+  content: asset_url('icons/disk.png');
+  vertical-align: middle;
+}
+
+.fa-file-o::before {
+  content: asset_url('icons/page_white_text.png');
+  vertical-align: middle;
+}
+
+.fa-file-image-o::before {
+  content: asset_url('icons/picture.png');
+  vertical-align: middle;
+}
+
+.fa-file-pdf-o::before {
+  content: asset_url('icons/page_white_acrobat.png');
+  vertical-align: middle;
+}
+
+div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
+  width: 100%;
+}
+
+select.collected-checked,
+option.collected {
+  font-style: italic;
+}
+
+option.uncollected {
+  font-style: normal;
 }
