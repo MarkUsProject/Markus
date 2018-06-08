@@ -6,8 +6,8 @@ class TestRun < ApplicationRecord
   belongs_to :user, required: true
 
   validates_presence_of :revision_identifier
-  validates_numericality_of :queue_len, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
-  validates_numericality_of :avg_pop_interval, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
+  validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
+  validates_numericality_of :time_to_service, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
 
   def create_test_script_result(test_script, time: 0, extra_info: nil)
     unless test_script.respond_to?(:file_name) # the ActiveRecord object can be passed directly
@@ -104,8 +104,7 @@ class TestRun < ApplicationRecord
       return
     end
     # save statistics
-    self.queue_len = json_root['queue_len']
-    self.avg_pop_interval = json_root['avg_pop_interval']
+    self.time_to_service = json_root['time_to_service']
     self.save
     # check for server errors
     server_error = json_root['error']

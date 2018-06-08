@@ -10,6 +10,8 @@ module Repository
   #   2. Existing repositories are opened by using either ???
   class GitRepository < Repository::AbstractRepository
 
+    DUMMY_FILE_NAME = '.gitkeep'.freeze
+
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
     # created using GitRepository.create(), if it is not yet existent
@@ -394,7 +396,9 @@ module Repository
       end
     end
 
-
+    def self.internal_file_names
+      [DUMMY_FILE_NAME]
+    end
 
     ####################################################################
     ##  Private method definitions
@@ -448,7 +452,7 @@ module Repository
     # Creates an empty directory into the repository.
     # The dummy file is required so the directory gets committed.
     def add_directory(path)
-      gitkeep_filename = File.join(path, '.gitkeep')
+      gitkeep_filename = File.join(path, DUMMY_FILE_NAME)
       add_file(gitkeep_filename, '')
     end
 

@@ -4,36 +4,50 @@ class AutotestRunJob < ApplicationJob
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
-  def export_group_repo(group, repo_dir, assignment, submission = nil)
-    # Create the automated test repository
-    unless File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+  def export_group_repo(test_run)
+    grouping = test_run.grouping
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+      if File.exist?(repo_dir) # can exist from other assignments, we don't want to store it per-assignment
+        # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
+        prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
+        if !prev_test_run.nil? &&
+           prev_test_run.revision_identifier == test_run.revision_identifier &&
+           prev_test_run.submission_id.nil? == test_run.submission_id.nil?
+          return
+        end
+        # ..otherwise delete grouping's previous files
+        FileUtils.rm_rf(repo_dir)
+      end
+    else
+      # create the automated test repository
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
-    # Delete student's assignment repository if it already exists
-    # TODO clean up in client worker, or try to optimize if revision is the same?
-    if File.exist?(repo_dir)
-      FileUtils.rm_rf(repo_dir)
-    end
-    # Export the correct repo revision
-    if submission.nil?
-      group.repo.export(repo_dir)
-    else
-      FileUtils.mkdir(repo_dir)
-      unless assignment.only_required_files.blank?
-        required_files = assignment.assignment_files.map(&:filename).to_set
-      end
-      submission.submission_files.each do |file|
-        dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-        file_path = if dir == '' then file.filename else File.join(dir, file.filename) end
-        unless required_files.nil? || required_files.include?(file_path)
-          # do not export non-required files, if only required files are allowed
-          # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-          next
+    # export the repo files
+    submission = test_run.submission
+    group.access_repo do |repo|
+      if submission.nil?
+        repo.export(repo_dir)
+      else
+        FileUtils.mkdir(repo_dir)
+        assignment = grouping.assignment
+        unless assignment.only_required_files.blank?
+          required_files = assignment.assignment_files.map(&:filename).to_set
         end
-        file_content = file.retrieve_file
-        FileUtils.mkdir_p(File.join(repo_dir, file.path))
-        File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-          f.write(file_content)
+        submission.submission_files.each do |file|
+          dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
+          file_path = dir == '' ? file.filename : File.join(dir, file.filename)
+          unless required_files.nil? || required_files.include?(file_path)
+            # do not export non-required files, if only required files are allowed
+            # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+            next
+          end
+          file_content = file.retrieve_file(false, repo)
+          FileUtils.mkdir_p(File.join(repo_dir, file.path))
+          File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+            f.write(file_content)
+          end
         end
       end
     end
@@ -42,18 +56,26 @@ class AutotestRunJob < ApplicationJob
   # Verify that MarkUs has student files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one source file is successfully exported.
-  def repo_files_available?(assignment, submission, repo_dir)
-    # no commits in the submission
-    if !submission.nil? && submission.revision_identifier.nil?
-      return false
+  def repo_files_available?(test_run)
+    grouping = test_run.grouping
+    submission = test_run.submission
+    assignment = grouping.assignment
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    unless submission.nil?
+      # no commits in the submission
+      return false if submission.revision_identifier.nil?
+      # no commits after starter code initialization
+      return false if submission.revision_identifier == grouping.starter_code_revision_identifier
     end
-    # No assignment directory or no files in repo (only current and parent directory pointers)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
-    if !File.exist?(assignment_dir) || Dir.entries(assignment_dir).length <= 2
-      false
-    else
-      true
-    end
+    # no assignment directory
+    return false unless File.exist?(assignment_dir)
+    entries = Dir.entries(assignment_dir) - ['.', '..'] - Repository.get_class.internal_file_names
+    # no files
+    return false if entries.size <= 0
+
+    true
   end
 
   def get_server_api_key
@@ -72,15 +94,8 @@ class AutotestRunJob < ApplicationJob
   end
 
   def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
-
-    grouping = test_run.grouping
-    submission = test_run.submission
-    user = test_run.user
-    assignment = grouping.assignment
-    group = grouping.group
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
-    export_group_repo(group, repo_dir, assignment, submission)
-    unless repo_files_available?(assignment, submission, repo_dir)
+    export_group_repo(test_run)
+    unless repo_files_available?(test_run)
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.no_source_files') }
@@ -88,6 +103,12 @@ class AutotestRunJob < ApplicationJob
       return
     end
 
+    grouping = test_run.grouping
+    submission = test_run.submission
+    user = test_run.user
+    assignment = grouping.assignment
+    group = grouping.group
+    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     submission_path = File.join(repo_dir, assignment.repository_folder)
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
@@ -102,15 +123,14 @@ class AutotestRunJob < ApplicationJob
                       assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
                       group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
 
-    out = ''
     if ssh.nil?
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
       server_params[:files_path] = server_path
-      out, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+      output, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
       if status.exitstatus != 0
-        raise out
+        raise output
       end
     else
       # tests executed locally or remotely with authentication
@@ -122,9 +142,13 @@ class AutotestRunJob < ApplicationJob
                     "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
       Open3.capture3(scp_command)
       server_params[:files_path] = server_path
-      out = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      output = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      if output.exitstatus != 0
+        raise output
+      end
     end
-    # TODO: use out for statistics
+    test_run.time_to_service_estimate = output.to_i
+    test_run.save
   end
 
   def perform(host_with_port, user_id, test_scripts, test_runs)
