@@ -31,6 +31,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.privileged = false
   end
 
+  config.vm.provision "start-autotest-workers", type: "shell", run: "always" do |s|
+    s.path = "script/start-autotest-workers.sh"
+    s.privileged = false
+  end
+
   config.vm.provision "install-svn", type: "shell", run: "never" do |s|
     s.path = "script/install-svn.sh"
     s.privileged = false
