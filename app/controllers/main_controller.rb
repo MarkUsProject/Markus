@@ -3,7 +3,7 @@
 # as well as displaying main page
 class MainController < ApplicationController
 
-  include ApplicationHelper, MainHelper, CookieDetection
+  include ApplicationHelper, MainHelper
 
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
@@ -48,21 +48,9 @@ class MainController < ApplicationController
       end
     end
 
-    # check cookies
-    if cookies_enabled
-      unless params[:cookieTest].nil?
-        # remove the cookieTest: "currentlyTesting" parameter after testing for cookies by redirecting
-        redirect_to controller: 'main', action: 'login'
-      end
-    else
-      flash_message(:error, I18n.t(:cookies_off))
-      return
-
-    end
-
     # Check if it's the user's first visit this session
-    # Need to accomodate redirects for local and cookie testing
-    if params.has_key?(:locale) && !params.has_key?(:cookieTest)
+    # Need to accommodate redirects for locale
+    if params.key?(:locale)
       if session[:first_visit].nil?
         @first_visit = true
         session[:first_visit] = 'false'

@@ -74,6 +74,8 @@ GEM
     combine_pdf (1.0.9)
       ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.0.5)
+    cookies_eu (1.7.1)
+      js_cookie_rails (~> 2.2.0)
     crass (1.0.4)
     database_cleaner (1.7.0)
     debug_inspector (0.0.3)
@@ -105,6 +107,8 @@ GEM
     js-routes (1.4.4)
       railties (>= 3.2)
       sprockets-rails
+    js_cookie_rails (2.2.0)
+      railties (>= 3.1)
     json (2.1.0)
     kgio (2.11.2)
     libv8 (6.3.292.48.1)
@@ -336,6 +340,7 @@ DEPENDENCIES
   bullet
   byebug
   combine_pdf
+  cookies_eu
   database_cleaner
   descriptive_statistics (~> 2.5)
   factory_girl_rails

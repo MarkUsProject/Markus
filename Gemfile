@@ -62,6 +62,7 @@ gem 'ya2yaml'
 # Rails miscellany
 gem 'activerecord-session_store', '~>0.1.0'
 gem 'bootsnap', require: false
+gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders', '~> 2.0'
 

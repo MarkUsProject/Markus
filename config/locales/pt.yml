@@ -22,7 +22,6 @@ pt:
     logging_in:         "Conectando..."
     login:              "Login"
     login_failed:       "Falha de conexão"
-    cookies_off:        "Por favor configure o seu browser para aceitar cookies."
     password_not_blank: "Sua senha não deve ser vazia."
     username_not_blank: "Seu nome de usuário não pode ser vazio."
     username_and_password_not_blank: "Seu nome e senha não podem ser vazios."

@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'cookies_eu' %>
+<% end %>
+
 <div class='login'>
   <div class='login-image'></div>
 
@@ -35,3 +39,5 @@
     <% end %>
   </div>
 </div>
+
+<%= render 'cookies_eu/consent_banner' %>
