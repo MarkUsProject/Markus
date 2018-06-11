@@ -1,8 +1,22 @@
-<script type='text/jsx'>
-/** @jsx React.DOM */
-<%= render partial: 'submissions_table', formats: [:'js.jsx'], handlers: [:erb] %>
-React.renderComponent(<SubmissionsTable />, document.getElementById('submissions_table'));
-</script>
+<% content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeSubmissionTable(document.getElementById('submission-table'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          show_grace_tokens:
+            <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
+          show_sections:
+            <%= Section.exists? %>,
+          show_members:
+            <%= @assignment.group_max > 1 || @assignment.scanned_exam? %>,
+          is_admin: <%= @current_user.admin? %>,
+          can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
+        }
+      );
+    });
+  </script>
+<% end %>
 
 <% content_for :title do %>
   <% if @assignment.is_peer_review? %>
@@ -53,12 +67,8 @@ React.renderComponent(<SubmissionsTable />, document.getElementById('submissions
   <% end %>
 <% end %>
 
-<% content_for :wrap_left_content do %>
-  <div id='notice'>
-    <div id='job-messenger'></div>
-  </div>
-  <div id='submissions_table'></div>
-<% end %>
+<div id='submission-table'></div>
+
 <script>
   $(document).ready(function() {
     var downloadGroupingsFiles = function() {

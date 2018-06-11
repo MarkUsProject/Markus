@@ -58,3 +58,6 @@ Style/RedundantSelf:
 
 Style/SymbolArray:
   Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
