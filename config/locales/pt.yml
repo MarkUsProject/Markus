@@ -1087,6 +1087,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
           assignment_association: "Associação não é forte com uma atribuição."
           assignment_id:          "Só pode ser o número inteiro maior que 0."
           input_number:           "Deve ser um número maior do que 0.0."
+          released_marks:         "TODO"
       ta_visible:       "Tornar visível para assistentes de ensino"
       peer_visible:     "Tornar visível a perscrutar revisores"
       visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
@@ -1232,6 +1233,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       Nome do critério, descrição, valores máximos e visibilidade podem ser modificados."
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
+    marking_started_warning: "TODO"
 
     date:
       formats:

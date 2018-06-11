@@ -1117,6 +1117,7 @@ fr:
           assignment_association: "Association est pas forte avec une mission."
           assignment_id:          "Ne peut être un nombre entier supérieur à 0."
           input_number:           "Doit être un nombre supérieur à 0.0."
+          released_marks:         "TODO"
       ta_visible:       "Rendre visible aux assistants d'enseignement"
       peer_visible:     "Rendre visible à leurs auteurs pairs"
       visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
@@ -1245,6 +1246,7 @@ fr:
     Les nom des critères, leurs descriptions, les notes maximales et visibilité peuvent être modifiés."
     past_due_date_warning: "La date de retour de ce projet est passée."
     past_due_date_notice: "La date de retour de ce projet est passée pour : "
+    marking_started_warning: "TODO"
 
     date:
       formats:

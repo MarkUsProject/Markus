@@ -7,18 +7,31 @@ class CriteriaController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_all_due_dates?
-      flash_now(:notice, I18n.t('past_due_date_warning'))
+    if @assignment.marking_started?
+      flash_now(:notice, I18n.t('marking_started_warning'))
     end
     @criteria = @assignment.get_criteria
   end
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
+
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
   end
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
@@ -37,12 +50,20 @@ class CriteriaController < ApplicationController
 
   def edit
     @criterion = params[:criterion_type].constantize.find(params[:id])
+    @assignment = @criterion.assignment
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
   end
 
   def destroy
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     # Delete all marks associated with this criterion.
     @criterion.destroy
     flash_message(:success, I18n.t('criterion_deleted_success'))
@@ -51,6 +72,11 @@ class CriteriaController < ApplicationController
   def update
     criterion_type = params[:criterion_type]
     @criterion = criterion_type.constantize.find(params[:id])
+    @assignment = @criterion.assignment
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     if criterion_type == 'RubricCriterion'
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
@@ -111,7 +137,11 @@ class CriteriaController < ApplicationController
 
   def upload_yml
     assignment = Assignment.find(params[:assignment_id])
-
+    if assignment.released_marks.any?
+      flash_message(:error, t('criteria.errors.messages.released_marks'))
+      redirect_to action: 'index', id: assignment.id
+      return
+    end
     # Check for errors in the request or in the file uploaded.
     unless request.post?
       redirect_to action: 'index', id: assignment.id

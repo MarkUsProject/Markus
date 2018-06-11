@@ -1257,6 +1257,7 @@ en:
           assignment_association: "Association is not strong with an assignment."
           assignment_id:          "Can only be whole number greater than 0."
           input_number:           "Must be a number greater than 0.0."
+          released_marks:         "Cannot update criteria for an assignment with released marks"
       ta_visible:       "Make visible to teaching assistants"
       peer_visible:     "Make visible to peer reviewers"
       visibility_error: "Select at least one box in the visibility section"
@@ -1401,6 +1402,7 @@ en:
       Criteria names, descriptions, maximum values and visibility can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
     past_due_date_notice: "Due date for this assignment is in the past for: "
+    marking_started_warning: "Marking has already started for this assignment"
 
     section:
       help:

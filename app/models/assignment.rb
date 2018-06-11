@@ -233,6 +233,11 @@ class Assignment < ActiveRecord::Base
     invalid_override || group_max > 1
   end
 
+  # Return all released marks for this assignment
+  def released_marks
+    submissions.joins(:results).where(results: { released_to_students: true })
+  end
+
   # Returns the group by the user for this assignment. If pending=true,
   # it will return the group that the user has a pending invitation to.
   # Returns nil if user does not have a group for this assignment, or if it is
@@ -258,6 +263,17 @@ class Assignment < ActiveRecord::Base
   def max_mark(user_visibility = :ta)
     s = get_criteria(user_visibility).map(&:max_mark).sum
     s.nil? ? 0 : s.round(2)
+  end
+
+  # Returns a boolean indicating whether marking has started for at least
+  # one submission for this assignment.  Only the most recently collected
+  # submissions are considered.
+  def marking_started?
+    Result.joins(:marks, submission: :grouping)
+          .where(groupings: { assignment_id: id },
+                 submissions: { submission_version_used: true })
+          .where.not(marks: { mark: nil })
+          .any?
   end
 
   # calculates summary statistics of released results for this assignment

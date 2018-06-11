@@ -454,7 +454,7 @@ class ResultsController < ApplicationController
         num_assigned = assignment.get_num_assigned(@current_user.id)
       end
       render text: "#{result_mark.mark.to_f}," +
-                   "#{result_mark.result.get_subtotal(visibility)}," +
+                   "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
                    "#{result_mark.result.total_mark}," +
                    "#{num_marked}," +
                    "#{num_assigned}"

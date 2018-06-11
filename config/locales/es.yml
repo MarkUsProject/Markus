@@ -1475,6 +1475,7 @@ es:
           assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
           assignment_id:          "Sólo puede ser un número entero mayor a cero."
           input_number:           "Debe ser un número mayor a 0.0."
+          released_marks:         "TODO"
       ta_visible:       "Hacer visible a los asistentes de cátedra"
       peer_visible:     "Hacer visible a los revisores de compañeros"
       visibility_error: "Seleccionar al menos una opción en la sección de visibilidad"
@@ -1622,6 +1623,7 @@ es:
                                              valores máximos y la visibilidad pueden ser modificados."
     past_due_date_warning:                  "El último plazo de entrega para este proyecto está en el pasado."
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
+    marking_started_warning:                "TODO"
 
     section:
       help:
