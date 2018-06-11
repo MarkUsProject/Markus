@@ -15,6 +15,7 @@ gem 'sprockets', '~> 3.0'
 # Models and database interactions
 gem 'activerecord-import'
 gem 'arel', '~>6.0.2'
+gem 'pluck_to_hash'
 gem 'upsert'
 
 # CSS and JavaScript
