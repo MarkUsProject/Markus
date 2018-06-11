@@ -148,14 +148,17 @@ class Criterion < ActiveRecord::Base
                       .where(groupings: {assignment_id: assignment_id})
       all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
       # all associated marks should have their mark value scaled to the change.
-      all_marks.each do |m|
-        m.scale_mark(max_mark, max_mark_was)
+      Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
+        all_marks.each do |m|
+          upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false) )
+        end
       end
+      # TODO: upsert causes a postgres error if upserting the Result.total_mark values below
+      #       figure out why and fix.
       a = Assignment.find(assignment_id)
       results.each do |r|
         r.update_total_mark(assignment: a)
       end
-
       a.assignment_stat.refresh_grade_distribution
     end
   end

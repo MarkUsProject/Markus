@@ -16,14 +16,22 @@ class CriteriaController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.released_marks.any?
-      flash_message(:error, t('criteria.errors.messages.released_marks'))
-      render :index
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
+
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
       return
     end
   end
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
@@ -44,8 +52,7 @@ class CriteriaController < ApplicationController
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
-      flash_message(:error, t('criteria.errors.messages.released_marks'))
-      render :index
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
       return
     end
   end
@@ -53,7 +60,10 @@ class CriteriaController < ApplicationController
   def destroy
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
-    @criteria = @assignment.get_criteria
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     # Delete all marks associated with this criterion.
     @criterion.destroy
     flash_message(:success, I18n.t('criterion_deleted_success'))
@@ -61,7 +71,12 @@ class CriteriaController < ApplicationController
 
   def update
     criterion_type = params[:criterion_type]
+    @assignment = @criterion.assignment
     @criterion = criterion_type.constantize.find(params[:id])
+    if @assignment.released_marks.any?
+      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      return
+    end
     if criterion_type == 'RubricCriterion'
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
