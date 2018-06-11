@@ -7,8 +7,8 @@ class CriteriaController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.past_all_due_dates?
-      flash_now(:notice, I18n.t('past_due_date_warning'))
+    if @assignment.marking_started?
+      flash_now(:notice, I18n.t('marking_started_warning'))
     end
     @criteria = @assignment.get_criteria
   end
@@ -71,8 +71,8 @@ class CriteriaController < ApplicationController
 
   def update
     criterion_type = params[:criterion_type]
-    @assignment = @criterion.assignment
     @criterion = criterion_type.constantize.find(params[:id])
+    @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.messages.released_marks'))
       return

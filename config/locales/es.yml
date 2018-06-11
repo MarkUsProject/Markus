@@ -1623,6 +1623,7 @@ es:
                                              valores máximos y la visibilidad pueden ser modificados."
     past_due_date_warning:                  "El último plazo de entrega para este proyecto está en el pasado."
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
+    marking_started_warning:                "TODO"
 
     section:
       help:

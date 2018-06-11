@@ -265,6 +265,17 @@ class Assignment < ActiveRecord::Base
     s.nil? ? 0 : s.round(2)
   end
 
+  # Returns a boolean indicating whether marking has started for at least
+  # one submission for this assignment.  Only the most recently collected
+  # submissions are considered.
+  def marking_started?
+    Result.joins(:marks, submission: :grouping)
+          .where(groupings: { assignment_id: id },
+                 submissions: { submission_version_used: true })
+          .where.not(marks: { mark: nil })
+          .any?
+  end
+
   # calculates summary statistics of released results for this assignment
   def update_results_stats
     marks = Result.student_marks_by_assignment(id)

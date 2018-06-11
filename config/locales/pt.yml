@@ -1233,6 +1233,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       Nome do critério, descrição, valores máximos e visibilidade podem ser modificados."
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
+    marking_started_warning: "TODO"
 
     date:
       formats:

@@ -1246,6 +1246,7 @@ fr:
     Les nom des critères, leurs descriptions, les notes maximales et visibilité peuvent être modifiés."
     past_due_date_warning: "La date de retour de ce projet est passée."
     past_due_date_notice: "La date de retour de ce projet est passée pour : "
+    marking_started_warning: "TODO"
 
     date:
       formats:
