@@ -998,6 +998,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
           assignment_association: "Associação não é forte com uma atribuição."
           assignment_id:          "Só pode ser o número inteiro maior que 0."
           input_number:           "Deve ser um número maior do que 0.0."
+          released_marks:         "TODO"
 
     summary_table:
       title: "Título"
@@ -1075,6 +1076,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     past_due_date_warning: "Já se passou do prazo de entrega do projeto."
     past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
+    marking_started_warning: "TODO"
 
     keybinding:
       keyboard_help:          "Ajuda de atalho de teclado"

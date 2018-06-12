@@ -1387,6 +1387,7 @@ es:
           assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
           assignment_id:          "Sólo puede ser un número entero mayor a cero."
           input_number:           "Debe ser un número mayor a 0.0."
+          released_marks:         "TODO"
 
     summary_table:
       title:             "Título"
@@ -1467,6 +1468,7 @@ es:
 
     past_due_date_warning:                  "El último plazo de entrega para este proyecto está en el pasado."
     past_due_date_notice:                   "El último plazo de entrega para este proyecto está en el pasado por: "
+    marking_started_warning:                "TODO"
 
     section:
       help:
