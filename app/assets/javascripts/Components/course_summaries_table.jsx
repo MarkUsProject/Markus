@@ -19,7 +19,7 @@ class CourseSummaryTable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.course_summary_path(),
+      url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
       this.setState({data: res});
@@ -34,7 +34,7 @@ class CourseSummaryTable extends React.Component {
         columns={[
           {
             Header: I18n.t('user.user_name'),
-            accessor: 'user_name',
+            accessor: 'user_name'
           },
           {
             Header: I18n.t('user.first_name'),
@@ -44,13 +44,14 @@ class CourseSummaryTable extends React.Component {
             Header: I18n.t('user.last_name'),
             accessor: 'last_name'
           }
+
         ]}
-        filterable
+
       />
     );
   }
 }
 
 export function makeCourseSummaryTable(elem) {
-  render(<CourseSummaryTable />, elem);
+  render(<CourseSummaryTable >heloooo</CourseSummaryTable>, elem);
 }
