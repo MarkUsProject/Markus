@@ -44,7 +44,7 @@ describe 'Autotester', skip_db_clean: true do
     # clean database
     DatabaseCleaner.clean_with :truncation
     # set up requirements for autotest users and configs
-    @test_server_user = create_with_api_key(:test_server)
+    create_with_api_key(:test_server)
     @test_names = get_test_names
     opts = get_server_opts
     # start the server
@@ -54,18 +54,18 @@ describe 'Autotester', skip_db_clean: true do
   after(:all) do
     Process.kill 9, @server_pid
     sleep(5)
-    DatabaseCleaner.clean_with :truncation
-    FileUtils.rm_rf Dir.glob File.join(MarkusConfigurator.autotest_client_dir, '*')
+    # DatabaseCleaner.clean_with :truncation
+    # FileUtils.rm_rf Dir.glob File.join(MarkusConfigurator.autotest_client_dir, '*')
   end
 
   def test_result(test_name)
-    TestResult.joins(:test_script_result)
-              .where(test_script_results: { grouping_id: @grouping_ids[test_name] })
+    TestResult.joins(test_script_result: :test_run)
+              .where(test_runs: { grouping_id: @grouping_ids[test_name] })
   end
 
   def test_script_result(test_name)
-    TestScriptResult.joins(:test_results)
-                    .where(test_script_results: { grouping_id: @grouping_ids[test_name] })
+    TestScriptResult.joins(:test_run)
+                    .where(test_runs: { grouping_id: @grouping_ids[test_name] })
   end
 
   context 'when current user is admin' do
@@ -75,7 +75,7 @@ describe 'Autotester', skip_db_clean: true do
       context 'expect no timeouts' do
         before :all do
           test_list = @test_names.select { |tn| !'AB'.include?(tn[-1]) && !tn.include?('timeout') }
-          @grouping_ids = run_autotests test_list, @user, @test_server_user, global_timeout: 60
+          @grouping_ids = run_autotests test_list, @user, global_timeout: 60
         end
         context 'test possible statuses' do
           it 'should accept pass status' do
@@ -234,7 +234,7 @@ describe 'Autotester', skip_db_clean: true do
       context 'expect timeouts' do
         before :all do
           test_list = @test_names.select { |tn| !'AB'.include?(tn[-1]) && tn.include?('timeout') }
-          @grouping_ids = run_autotests test_list, @user, @test_server_user, global_timeout: 60
+          @grouping_ids = run_autotests test_list, @user, global_timeout: 60
         end
         it 'should timeout' do
           expect(test_result('timeout')).to all have_attributes(completion_status: 'error')
@@ -250,8 +250,8 @@ describe 'Autotester', skip_db_clean: true do
           test_list = @test_names.select { |tn| 'AB'.include?(tn[-1]) && !tn.include?('timeout') }
           a_list = test_list.select { |tn| 'A' == tn[-1] }
           b_list = test_list.select { |tn| 'B' == tn[-1] }
-          @grouping_ids = run_autotests a_list, @user, @test_server_user, global_timeout: 60
-          @grouping_ids.merge!(run_autotests(b_list, @user, @test_server_user, global_timeout: 60))
+          @grouping_ids = run_autotests a_list, @user,  global_timeout: 60
+          @grouping_ids.merge!(run_autotests(b_list, @user, global_timeout: 60))
         end
         it 'should clean up all files' do
           expect(test_result('leave_file_behind_A').first).to have_attributes(completion_status: 'pass')
@@ -267,8 +267,8 @@ describe 'Autotester', skip_db_clean: true do
           test_list = @test_names.select { |tn| 'AB'.include?(tn[-1]) && tn.include?('timeout') }
           a_list = test_list.select { |tn| 'A' == tn[-1] }
           b_list = test_list.select { |tn| 'B' == tn[-1] }
-          @grouping_ids = run_autotests a_list, @user, @test_server_user, global_timeout: 60
-          @grouping_ids.merge!(run_autotests(b_list, @user, @test_server_user, global_timeout: 60))
+          @grouping_ids = run_autotests a_list, @user, global_timeout: 60
+          @grouping_ids.merge!(run_autotests(b_list, @user, global_timeout: 60))
         end
         it 'should clean up all processes created during the test' do
           expect(test_result('spawn_proc_with_timeout_A').first.actual_output).to include('timeout')

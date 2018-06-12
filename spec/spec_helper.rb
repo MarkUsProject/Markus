@@ -14,6 +14,9 @@ require 'time-warp'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
+# Make sure test db stays up to date with current schema
+ActiveRecord::Migration.maintain_test_schema!
+
 RSpec.configure do |config|
   # ## Mock Framework
   #

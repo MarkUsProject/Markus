@@ -46,7 +46,7 @@ module AutotestHelper
     end
 
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR,
-                         grouping.group.repo_name,
+                         grouping.group.repository_name,
                          assignment.repository_folder)
     FileUtils.makedirs(repo_dir)
     autotest_submission_file = File.join(repo_dir, filename)
@@ -61,20 +61,23 @@ module AutotestHelper
     [assignment, submission, result, grouping]
   end
 
-  def run_autotests(test_names, current_user, test_server_user, global_timeout: 10)
+  def run_autotests(test_names, current_user, global_timeout: 10)
     raise 'minimum global timeout is 2 seconds' unless global_timeout > 2
     expected = {}
     finished = []
     test_names.each do |test_name|
-      args = get_test_args(test_name, current_user, test_server_user)
-      grouping_id = args[4]
-      AutotestRunJob.perform_now(*args)
+      args = get_test_args(test_name, current_user)
+      grouping_id = args[3][0][:grouping_id]
+      RSpec::Mocks.with_temporary_scope do
+        allow_any_instance_of(AutotestRunJob).to receive(:repo_files_available?).and_return true
+        AutotestRunJob.perform_now(*args)
+      end
       expected[test_name] = grouping_id
     end
     interval = [ (global_timeout / 10.0).floor, 2 ].max
     begin
       wait global_timeout, interval do
-        finished = TestScriptResult.where(grouping_id: expected.values).select(:grouping_id).distinct
+        finished = TestRun.where(grouping_id: expected.values).each { |run| run.test_script_results } || []
         if finished.size < expected.size
           raise RuntimeError
         end
@@ -91,15 +94,15 @@ module AutotestHelper
     server.default_options
   end
 
-  def get_test_args(test_name, current_user, test_server_user)
+  def get_test_args(test_name, current_user)
     n_test_scripts = test_name.match(/_2s_/).nil? ? 1 : 2
     assignment, submission, _, grouping = setup_autotest_environment(test_name, n_test_scripts: n_test_scripts)
 
-    test_scripts = assignment.instructor_test_scripts.order(:seq_num).pluck_to_hash(:file_name, :timeout)
+    test_scripts = assignment.select_test_scripts(current_user).order(:seq_num).pluck(:file_name, :timeout).to_h
 
     opts = get_server_opts
     host_with_port = "http://#{opts[:Host]}:#{opts[:Port]}"
-    [host_with_port, test_scripts, current_user.api_key, test_server_user.api_key, grouping.id, submission.id]
+    [host_with_port, current_user.id, test_scripts, [{ grouping_id: grouping.id, submission_id: submission.id }]]
   end
 
   def create_with_api_key(type)

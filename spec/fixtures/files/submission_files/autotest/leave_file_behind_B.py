@@ -8,26 +8,11 @@ It represents the test case where:
   leave_file_behind_A/submission.py is still there
 """
 import os
+import json
 
 filename = 'abandoned_file.txt'
 
 if os.path.isfile(filename):
-  output = ('file still there', 0, 0, 'error')
+  print(json.dumps({'name': 'leave_file_behind_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'file still there', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  output = ('file removed successfully', 2, 2, 'pass')
-
-response = '''
-<test>
-    <name>leave_file_behind_test_A</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>{}</actual>
-    <marks_earned>{}</marks_earned>
-    <marks_total>{}</marks_total>
-    <status>{}</status>
-</test>
-'''.format(*output)
-
-print(response)
-
-
+  print(json.dumps({'name': 'leave_file_behind_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'file removed successfully', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

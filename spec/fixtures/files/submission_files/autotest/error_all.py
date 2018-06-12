@@ -8,35 +8,7 @@ It represents the test case where:
   prompts an "error_all" status which should invalidate
   the first test result
 """
-
-response = '''
-<test>
-    <name>error_all_test1</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>2</marks_earned>
-    <marks_total>2</marks_total>
-    <status>pass</status>
-</test>
-<test>
-    <name>error_all_test2</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>0</marks_earned>
-    <marks_total>0</marks_total>
-    <status>error_all</status>
-</test>
-<test>
-    <name>error_all_test3</name>
-    <input>NA</input>
-    <expected>NA</expected>
-    <actual>NA</actual>
-    <marks_earned>2</marks_earned>
-    <marks_total>2</marks_total>
-    <status>pass</status>
-</test>
-'''
-
-print(response)
+import json
+print(json.dumps({'name': 'error_all_test1', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+print(json.dumps({'name': 'error_all_test2', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 0, 'marks_total': 0, 'status': 'error_all'}))
+print(json.dumps({'name': 'error_all_test3', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
