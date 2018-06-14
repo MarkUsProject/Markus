@@ -9,12 +9,11 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '~> 4.2.0'
-gem 'sprockets', '~> 3.0'
+gem 'rails'
+gem 'sprockets'
 
 # Models and database interactions
 gem 'activerecord-import'
-gem 'arel', '~>6.0.2'
 gem 'pluck_to_hash'
 gem 'upsert'
 
@@ -23,9 +22,9 @@ gem 'autoprefixer-rails'
 gem 'jquery-rails'
 gem 'js-routes'
 gem 'libv8'
-gem 'sass-rails',   '~> 5.0.0'
+gem 'sass-rails'
 gem 'uglifier',     '>= 1.3.0'
-gem 'webpacker', '~> 3.0'
+gem 'webpacker'
 
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
@@ -42,7 +41,7 @@ gem 'histogram', '~> 0.2.4.1'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n', '~> 4.0'
+gem 'rails-i18n'
 
 # Exam template requirements
 gem 'combine_pdf'
@@ -60,18 +59,18 @@ gem 'rugged'
 gem 'ya2yaml'
 
 # Rails miscellany
-gem 'activerecord-session_store', '~>0.1.0'
+gem 'activerecord-session_store'
 gem 'bootsnap', require: false
 gem 'cookies_eu'
 gem 'rails-html-sanitizer'
-gem 'responders', '~> 2.0'
+gem 'responders'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
 #   bundle install --without mysql sqlite
 group :postgresql do
-  gem 'pg', '~> 0.21' # TODO: upgrade only when using Rails 5.1.5+
+  gem 'pg'
 end
 
 # If you are a MarkUs developer and use MySQL, make sure you have
@@ -95,7 +94,7 @@ end
 group :development do
   gem 'awesome_print'
   gem 'better_errors'
-  gem 'binding_of_caller', '>= 0.8' # supplement for better_errors
+  gem 'binding_of_caller' # supplement for better_errors
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'rails-erd'
@@ -119,7 +118,7 @@ end
 # listed here
 group :development, :test do
   gem 'byebug'
-  gem "rspec-rails", '~> 3.5'
+  gem 'rspec-rails'
 end
 
 # Gems needed (wanted) for development, test and production_test
