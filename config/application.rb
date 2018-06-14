@@ -1,19 +1,20 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
-require 'active_support/all'
 
-# If you have a Gemfile, require the gems listed there, including any gems
+# Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+Bundler.require(*Rails.groups)
 
 module Markus
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
 
     # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
-    # See Rails::Configuration for more options.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
 
     # Set this if MarkUs is not hosted under / of your Web-host.
     # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
@@ -31,16 +32,16 @@ module Markus
     # We need some additional load paths (e.g. for the API)
     # Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
     config.autoload_paths += %W(
-                                #{::Rails.root}/lib
-                                #{::Rails.root}/app
-                                #{::Rails.root}/controllers/api
-                                #{::Rails.root}/lib/classes
-                                #{::Rails.root}/lib/validators
-                                )
+      #{::Rails.root}/lib
+      #{::Rails.root}/app
+      #{::Rails.root}/controllers/api
+      #{::Rails.root}/lib/classes
+      #{::Rails.root}/lib/validators
+    )
     # Load any local configuration that is kept out of source control
     # (e.g. gems, patches).
     if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
-     instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+      instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
     end
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"

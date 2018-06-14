@@ -23,7 +23,7 @@ gem 'jquery-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
-gem 'uglifier',     '>= 1.3.0'
+gem 'uglifier'
 gem 'webpacker'
 
 # Background tasks
@@ -111,7 +111,6 @@ group :test do
   gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'rails-controller-testing'
-  gem 'rails-perftest'
 end
 
 # Gems needed (wanted) for both development and test can be
