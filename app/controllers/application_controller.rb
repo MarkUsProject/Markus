@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   # check for active session on every page
   before_action :authenticate, except: [:login, :page_not_found, :check_timeout]
   # check for AJAX requests
-  after_filter :flash_to_headers
+  after_action :flash_to_headers
   # Define default URL options to include the locale
   def default_url_options(options={})
     { locale: I18n.locale }

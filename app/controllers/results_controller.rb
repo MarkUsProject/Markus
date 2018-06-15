@@ -24,7 +24,7 @@ class ResultsController < ApplicationController
                        :update_overall_comment, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
                 end
-  after_filter  :update_remark_request_count,
+  after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
