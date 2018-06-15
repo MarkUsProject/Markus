@@ -1,4 +1,4 @@
-class TrackAutotestRuns < ActiveRecord::Migration
+class TrackAutotestRuns < ActiveRecord::Migration[4.2]
   def change
     create_table :test_batches do |t|
       t.timestamps null: false

@@ -1,4 +1,4 @@
-class CreateFeedbackFiles < ActiveRecord::Migration
+class CreateFeedbackFiles < ActiveRecord::Migration[4.2]
   def change
     create_table :feedback_files do |t|
       t.string :filename, null: false

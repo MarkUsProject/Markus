@@ -1,4 +1,4 @@
-class AddForeignCriterionIdToMarks < ActiveRecord::Migration
+class AddForeignCriterionIdToMarks < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     rename_column(:marks, :criterion_id, :rubric_criterion_id)

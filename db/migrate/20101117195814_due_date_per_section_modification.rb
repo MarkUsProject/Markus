@@ -1,4 +1,4 @@
-class DueDatePerSectionModification < ActiveRecord::Migration
+class DueDatePerSectionModification < ActiveRecord::Migration[4.2]
   def self.up
     change_table :section_due_dates do |t|
       t.remove :assignments_id

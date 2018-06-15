@@ -1,4 +1,4 @@
-class CreateCriterionTaAssociantion < ActiveRecord::Migration
+class CreateCriterionTaAssociantion < ActiveRecord::Migration[4.2]
   def self.up
     create_table :criterion_ta_associations do |t|
       t.integer :ta_id

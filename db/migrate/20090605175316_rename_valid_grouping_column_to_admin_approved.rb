@@ -1,4 +1,4 @@
-class RenameValidGroupingColumnToAdminApproved < ActiveRecord::Migration
+class RenameValidGroupingColumnToAdminApproved < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :groupings, :valid_grouping, :admin_approved
   end

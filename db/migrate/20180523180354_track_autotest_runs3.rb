@@ -1,4 +1,4 @@
-class TrackAutotestRuns3 < ActiveRecord::Migration
+class TrackAutotestRuns3 < ActiveRecord::Migration[4.2]
   def change
     remove_reference :test_script_results, :grouping
     remove_reference :test_script_results, :submission

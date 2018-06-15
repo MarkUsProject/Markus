@@ -1,4 +1,4 @@
-class AddColumnsInAssignments < ActiveRecord::Migration
+class AddColumnsInAssignments < ActiveRecord::Migration[4.2]
   def self.up
     # add columns to allow for auto-generated groups for assignments
     # and to allow for group names not to be displayed

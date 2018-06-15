@@ -1,4 +1,4 @@
-class CreateGradeEntryStudentsTas < ActiveRecord::Migration
+class CreateGradeEntryStudentsTas < ActiveRecord::Migration[4.2]
   def self.up
   	create_table :grade_entry_students_tas, :id => false do |t|
       t.integer  :grade_entry_student_id

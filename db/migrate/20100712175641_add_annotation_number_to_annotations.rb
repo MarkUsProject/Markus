@@ -1,4 +1,4 @@
-class AddAnnotationNumberToAnnotations < ActiveRecord::Migration
+class AddAnnotationNumberToAnnotations < ActiveRecord::Migration[4.2]
   def self.up
     add_column "annotations", "annotation_number", :integer
   end

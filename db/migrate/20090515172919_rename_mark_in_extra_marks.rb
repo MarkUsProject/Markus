@@ -1,4 +1,4 @@
-class RenameMarkInExtraMarks < ActiveRecord::Migration
+class RenameMarkInExtraMarks < ActiveRecord::Migration[4.2]
   def self.up
     # rename attribute 'mark' in extra_marks
     rename_column :extra_marks, :mark, :extra_mark

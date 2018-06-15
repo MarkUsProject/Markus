@@ -1,4 +1,4 @@
-class AnnotationLabelsRemoveName < ActiveRecord::Migration
+class AnnotationLabelsRemoveName < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :annotation_labels, :name
   end

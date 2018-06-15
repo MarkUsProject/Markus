@@ -1,4 +1,4 @@
-class RemoveCategoriesTable < ActiveRecord::Migration
+class RemoveCategoriesTable < ActiveRecord::Migration[4.2]
   def self.up
     drop_table :categories
   end

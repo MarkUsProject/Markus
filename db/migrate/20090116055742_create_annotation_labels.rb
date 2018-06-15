@@ -1,5 +1,5 @@
 require 'migration_helpers'
-class CreateAnnotationLabels < ActiveRecord::Migration
+class CreateAnnotationLabels < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     create_table :annotation_labels do |t|

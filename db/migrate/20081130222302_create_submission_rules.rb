@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateSubmissionRules < ActiveRecord::Migration
+class CreateSubmissionRules < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

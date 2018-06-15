@@ -1,4 +1,4 @@
-class AddTokenTable < ActiveRecord::Migration
+class AddTokenTable < ActiveRecord::Migration[4.2]
   def self.up
     create_table :tokens do |t|
       t.column :grouping_id, :int

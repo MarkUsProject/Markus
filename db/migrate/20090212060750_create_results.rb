@@ -1,4 +1,4 @@
-class CreateResults < ActiveRecord::Migration
+class CreateResults < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     create_table :results do |t|

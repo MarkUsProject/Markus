@@ -1,4 +1,4 @@
-class RemoveTotalMarkFromResults < ActiveRecord::Migration
+class RemoveTotalMarkFromResults < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :results, :total_mark
   end

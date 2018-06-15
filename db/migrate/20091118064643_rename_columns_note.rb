@@ -1,4 +1,4 @@
-class RenameColumnsNote < ActiveRecord::Migration
+class RenameColumnsNote < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :notes, :type, :type_association
     rename_column :notes, :message, :notes_message

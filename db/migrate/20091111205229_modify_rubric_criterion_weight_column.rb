@@ -1,4 +1,4 @@
-class ModifyRubricCriterionWeightColumn < ActiveRecord::Migration
+class ModifyRubricCriterionWeightColumn < ActiveRecord::Migration[4.2]
   # Table rubric_criteria has attribute weight.
   # Earlier migrations made the weight attribute of type decimal
   # which is translated into MySQL native type Decimal(10,0)

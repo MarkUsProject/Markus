@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateDescriptions < ActiveRecord::Migration
+class CreateDescriptions < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

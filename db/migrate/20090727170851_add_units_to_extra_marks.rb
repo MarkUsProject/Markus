@@ -1,4 +1,4 @@
-class AddUnitsToExtraMarks < ActiveRecord::Migration
+class AddUnitsToExtraMarks < ActiveRecord::Migration[4.2]
   def self.up
     add_column :extra_marks, :unit, :string
   end

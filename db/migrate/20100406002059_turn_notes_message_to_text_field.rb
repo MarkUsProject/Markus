@@ -1,4 +1,4 @@
-class TurnNotesMessageToTextField < ActiveRecord::Migration
+class TurnNotesMessageToTextField < ActiveRecord::Migration[4.2]
   def self.up
     change_column :notes, :notes_message, :text, :null => false
   end

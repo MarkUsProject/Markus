@@ -1,4 +1,4 @@
-class AddRemarkPropertiesToAssignment < ActiveRecord::Migration
+class AddRemarkPropertiesToAssignment < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :allow_remarks, :boolean, :default => true, :null => false
     add_column :assignments, :remark_due_date, :datetime

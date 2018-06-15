@@ -1,4 +1,4 @@
-class ChangeTokenColumns < ActiveRecord::Migration
+class ChangeTokenColumns < ActiveRecord::Migration[4.2]
   def change
     change_table :assignments do |t|
       t.rename :tokens_per_day, :tokens_per_period

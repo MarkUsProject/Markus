@@ -1,5 +1,5 @@
 require 'migration_helpers'
-class ModifyRubricCriteria < ActiveRecord::Migration
+class ModifyRubricCriteria < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

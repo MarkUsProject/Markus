@@ -1,4 +1,4 @@
-class AddTokenDatesToAssignments < ActiveRecord::Migration
+class AddTokenDatesToAssignments < ActiveRecord::Migration[4.2]
   def change
     add_column :assignments, :last_token_regeneration_date, :datetime
     add_column :assignments, :tokens_start_of_availability_date, :datetime

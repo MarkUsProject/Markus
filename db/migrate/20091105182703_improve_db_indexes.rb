@@ -1,4 +1,4 @@
-class ImproveDbIndexes < ActiveRecord::Migration
+class ImproveDbIndexes < ActiveRecord::Migration[4.2]
   def self.up
     add_index :groupings, [:assignment_id, :group_id], :unique => true, :name => "groupings_u1"
     remove_index :groupings, :name => "index_groupings_on_assignment_id"
