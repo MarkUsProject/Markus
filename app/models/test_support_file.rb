@@ -22,7 +22,6 @@ class TestSupportFile < ApplicationRecord
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
-  validates_presence_of :assignment
   validates_associated :assignment
 
   validates_presence_of :file_name

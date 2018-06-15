@@ -4,7 +4,6 @@ describe SubmissionFile do
   # Ensure that the the following relationship exists
   it { is_expected.to belong_to(:submission) }
   it { is_expected.to have_many(:annotations) }
-  it { is_expected.to validate_presence_of :submission }
   it { is_expected.to validate_presence_of :filename }
   it { is_expected.to validate_presence_of :path }
 

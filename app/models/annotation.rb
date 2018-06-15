@@ -12,16 +12,7 @@ class Annotation < ApplicationRecord
   validates_associated      :annotation_text
   validates_associated      :result
 
-  validates_numericality_of :annotation_text_id,
-                            only_integer: true,
-                            greater_than: 0
-  validates_numericality_of :submission_file_id,
-                            only_integer: true,
-                            greater_than: 0
   validates_numericality_of :annotation_number,
-                            only_integer: true,
-                            greater_than: 0
-  validates_numericality_of :result_id,
                             only_integer: true,
                             greater_than: 0
 

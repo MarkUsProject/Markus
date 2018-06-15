@@ -15,8 +15,6 @@ class CheckboxCriterion < Criterion
   validates_associated :assignment, message: I18n.t('criteria.errors.messages.assignment_association')
   validates_uniqueness_of :name, scope: :assignment_id, message: I18n.t('criteria.errors.messages.name_taken')
   validates_numericality_of :max_mark, greater_than: 0.0, message: I18n.t('criteria.errors.messages.input_number')
-  validates_numericality_of :assignment_id, only_integer: true,
-                            greater_than: 0, message: I18n.t('criteria.errors.messages.assignment_id')
   validate :visible?
 
   DEFAULT_MAX_MARK = 1

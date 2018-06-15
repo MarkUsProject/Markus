@@ -5,8 +5,6 @@ describe TestScriptResult do
   it { is_expected.to have_many(:test_results) }
   it { is_expected.to belong_to(:test_script) }
   it { is_expected.to belong_to(:test_run) }
-  it { is_expected.to validate_presence_of(:test_script) }
-  it { is_expected.to validate_presence_of(:test_run) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
   it { is_expected.to validate_presence_of(:time) }

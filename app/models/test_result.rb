@@ -18,7 +18,7 @@
 #############################################################
 
 class TestResult < ApplicationRecord
-  belongs_to :test_script_result, required: true
+  belongs_to :test_script_result
 
   validates_presence_of :name
   validates_presence_of :completion_status

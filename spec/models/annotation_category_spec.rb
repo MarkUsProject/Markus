@@ -8,7 +8,6 @@ describe AnnotationCategory do
     subject { FactoryGirl.create(:annotation_category) }
 
     it { is_expected.to validate_presence_of(:annotation_category_name) }
-    it { is_expected.to validate_presence_of(:assignment_id) }
     it { is_expected.to have_many(:annotation_texts) }
     it { is_expected.to belong_to(:assignment) }
 

@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe Note do
   it { is_expected.to validate_presence_of(:notes_message) }
-  it { is_expected.to validate_presence_of(:creator_id) }
-  it { is_expected.to validate_presence_of(:noteable) }
   it { is_expected.to belong_to(:noteable) }
   it { is_expected.to belong_to(:user) }
 
