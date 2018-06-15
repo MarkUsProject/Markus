@@ -22,6 +22,6 @@ class ExtraMark < ApplicationRecord
   belongs_to :result
 
   def ensure_not_released_to_students
-    !result.released_to_students
+    throw(:abort) if result.released_to_students
   end
 end

@@ -201,7 +201,7 @@ class Result < ApplicationRecord
 
     if nil_marks || num_marks < criteria.count
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
-      return false
+      throw(:abort)
     end
     true
   end
