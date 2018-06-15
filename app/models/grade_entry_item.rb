@@ -4,7 +4,7 @@ require 'histogram/array'
 # in a grade entry form.
 class GradeEntryItem < ApplicationRecord
 
-  belongs_to :grade_entry_form
+  belongs_to :grade_entry_form, optional: true
   validates_associated :grade_entry_form
 
   has_many :grades, dependent: :delete_all

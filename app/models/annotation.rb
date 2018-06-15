@@ -5,11 +5,7 @@ class Annotation < ApplicationRecord
   belongs_to                :creator, polymorphic: true
   belongs_to                :result
 
-  validates_presence_of     :submission_file
-  validates_presence_of     :annotation_text
-  validates_presence_of     :creator
   validates_presence_of     :annotation_number
-  validates_presence_of     :result
   validates_inclusion_of    :is_remark, in: [true, false]
 
   validates_associated      :submission_file

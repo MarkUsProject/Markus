@@ -19,13 +19,8 @@ class FlexibleCriterion < Criterion
                           message: I18n.t('criteria.errors.messages.name_taken')
 
   belongs_to :assignment, counter_cache: true
-  validates_presence_of :assignment_id
   validates_associated :assignment,
                        message: I18n.t('criteria.errors.messages.assignment_association')
-  validates_numericality_of :assignment_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: I18n.t('criteria.errors.messages.assignment_id')
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark,

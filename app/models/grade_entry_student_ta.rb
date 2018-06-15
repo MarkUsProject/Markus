@@ -2,8 +2,8 @@
 class GradeEntryStudentTa < ApplicationRecord
   self.table_name = 'grade_entry_students_tas'
 
-  belongs_to :grade_entry_student
-  belongs_to :ta
+  belongs_to :grade_entry_student, optional: true
+  belongs_to :ta, optional: true
 
   # Merges records of GradeEntryStudentTa that do not exist yet using a caller-
   # specified block. The block is given the passed-in grade entry student IDs

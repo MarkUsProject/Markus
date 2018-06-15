@@ -18,18 +18,6 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
-  validates_numericality_of :user_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: I18n.t('invalid_id'),
-                            on: :create
-
-  validates_numericality_of :grade_entry_form_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: I18n.t('invalid_id'),
-                            on: :create
-
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
   # entry form IDs and must return a list of (student ID, grade entry form IDs)

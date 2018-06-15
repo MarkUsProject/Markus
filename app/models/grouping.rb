@@ -9,7 +9,7 @@ class Grouping < ApplicationRecord
 
   before_create :create_grouping_repository_folder
 
-  belongs_to :grouping_queue
+  belongs_to :grouping_queue, optional: true
 
   has_many :memberships, dependent: :destroy
   has_many :student_memberships, -> { order('id') }
@@ -69,11 +69,9 @@ class Grouping < ApplicationRecord
 
   # user association/validation
   belongs_to :assignment, counter_cache: true
-  validates_presence_of :assignment_id
   validates_associated :assignment, on: :create, message: 'associated assignment need to be valid'
 
   belongs_to :group
-  validates_presence_of :group_id
   validates_associated :group, message: 'associated group need to be valid'
 
   validates_inclusion_of :is_collected, in: [true, false]
