@@ -57,7 +57,7 @@ class TestScript < ApplicationRecord
 
   validates_presence_of :seq_num
   validates_presence_of :file_name
-  validates_presence_of :description, if: "description.nil?"
+  validates_presence_of :description
 
   # validates the uniqueness of file_name for the same assignment
   validates_each :file_name do |record, attr, value|
