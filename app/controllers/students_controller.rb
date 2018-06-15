@@ -1,5 +1,5 @@
 class StudentsController < ApplicationController
-  before_filter    :authorize_only_for_admin
+  before_action    :authorize_only_for_admin
 
   def note_message
     @student = Student.find(params[:id])

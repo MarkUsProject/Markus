@@ -1,5 +1,5 @@
 class TasController < ApplicationController
-  before_filter  :authorize_only_for_admin
+  before_action  :authorize_only_for_admin
 
   layout 'assignment_content'
 

@@ -8,7 +8,7 @@ module Api
 
     attr_reader :current_user
 
-    before_filter :check_format, :authenticate
+    before_action :check_format, :authenticate
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

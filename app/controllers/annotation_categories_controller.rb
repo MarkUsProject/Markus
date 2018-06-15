@@ -3,8 +3,8 @@ require 'encoding'
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 
-  before_filter      :authorize_only_for_admin, except: :index
-  before_filter      :authorize_for_ta_and_admin, only: :index
+  before_action      :authorize_only_for_admin, except: :index
+  before_action      :authorize_for_ta_and_admin, only: :index
 
   layout 'assignment_content'
 

@@ -3,7 +3,7 @@ require 'zip'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager,
                          :revisions,
@@ -20,7 +20,7 @@ class SubmissionsController < ApplicationController
                          :update_submissions,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
-  before_filter :authorize_for_ta_and_admin,
+  before_action :authorize_for_ta_and_admin,
                 only: [:browse,
                        :manually_collect_and_begin_grading,
                        :revisions,
@@ -29,10 +29,10 @@ class SubmissionsController < ApplicationController
                        :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
-  before_filter :authorize_for_student,
+  before_action :authorize_for_student,
                 only: [:file_manager,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user,
+  before_action :authorize_for_user,
                 only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
 
 

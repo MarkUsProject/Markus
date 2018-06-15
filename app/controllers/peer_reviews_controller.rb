@@ -5,8 +5,8 @@ class PeerReviewsController < ApplicationController
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
 
-  before_filter :authorize_only_for_admin, except: [:show_reviews, :show_result]
-  before_filter :authorize_for_user, only: [:show_reviews, :show_result]
+  before_action :authorize_only_for_admin, except: [:show_reviews, :show_result]
+  before_action :authorize_for_user, only: [:show_reviews, :show_result]
 
   layout 'assignment_content'
 
