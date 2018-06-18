@@ -263,7 +263,10 @@ class Assignment < ApplicationRecord
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    s = get_criteria(user_visibility).map(&:max_mark).sum
+    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
+    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
+    max_marks = get_criteria(user_visibility).map(&:max_mark)
+    s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
 
@@ -1162,7 +1165,7 @@ class Assignment < ApplicationRecord
   end
 
   def update_assigned_tokens
-    difference = tokens_per_period - tokens_per_period_was
+    difference = tokens_per_period - tokens_per_period_before_last_save
     if difference == 0
       return
     end
