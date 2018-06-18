@@ -373,6 +373,7 @@ DEPENDENCIES
   json
   libv8
   machinist (< 2)
+  mini_mime
   minitest
   mocha
   mysql2

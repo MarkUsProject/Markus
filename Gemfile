@@ -52,6 +52,7 @@ gem 'zxing_cpp'
 
 # Ruby miscellany
 gem 'json'
+gem 'mini_mime'
 gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip'
