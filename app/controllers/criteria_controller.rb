@@ -204,8 +204,8 @@ class CriteriaController < ApplicationController
                                              :level_4_description,
                                              :ta_visible,
                                              :peer_visible,
-                                             assignment_files: []).deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark))
+                                             assignment_files: []).to_h.deep_merge(params.require(:rubric_criterion)
+                                                                           .permit(:max_mark).to_h)
   end
 
   def checkbox_criterion_params

@@ -47,6 +47,7 @@ class Criterion < ApplicationRecord
   #
   # The criteria must belong to the given assignment +assignment+.
   def self.assign_tas(criterion_ids_types, ta_ids, assignment)
+    # params can only be converted to hash with explicit permission (Rails 5.1+)
     criterion_ids_types   = Hash(criterion_ids_types)
     criterion_ids_in      = criterion_ids_types.values.map{ |id_type| id_type[0].to_i}
     criterion_types       = criterion_ids_types.values.map{ |id_type| id_type[1]}

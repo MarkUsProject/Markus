@@ -24,6 +24,11 @@ class TestResult < ApplicationRecord
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
   validates_presence_of :marks_total
+  # input, actual_output and expected_output could be empty in some situations
+  # TODO: validation fails if description is the empty string
+  validates_presence_of :input, if: -> (o) { o.input.nil? }
+  validates_presence_of :actual_output, if: -> (o) { o.actual_output.nil? }
+  validates_presence_of :expected_output, if: -> (o) { o.expected_output.nil? }
   validates_inclusion_of :completion_status,
                          in: %w(pass partial fail error),
                          message: "%{value} is not a valid status"
