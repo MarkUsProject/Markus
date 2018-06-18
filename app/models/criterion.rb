@@ -94,7 +94,7 @@ class Criterion < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(criterion_ta_ids, criterion_ids_by_type, assignment)
-    CriterionTaAssociation.delete_all(id: criterion_ta_ids)
+    CriterionTaAssociation.where(id: criterion_ta_ids).delete_all
 
     Grouping.update_criteria_coverage_counts(assignment)
     update_assigned_groups_counts(assignment, criterion_ids_by_type)

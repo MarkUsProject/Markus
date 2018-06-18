@@ -141,7 +141,7 @@ class Grouping < ApplicationRecord
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(ta_membership_ids, grouping_ids, assignment)
     Repository.get_class.update_permissions_after do
-      TaMembership.delete_all(id: ta_membership_ids)
+      TaMembership.where(id: ta_membership_ids).delete_all
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)

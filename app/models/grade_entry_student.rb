@@ -91,7 +91,7 @@ class GradeEntryStudent < ApplicationRecord
   # Unassigns TAs from grade entry students. +gest_ids+ is a list of IDs to the
   # join model GradeEntryStudentTa that specifies the unassignment to be done.
   def self.unassign_tas(gest_ids)
-    GradeEntryStudentTa.delete_all(id: gest_ids)
+    GradeEntryStudentTa.where(id: gest_ids).delete_all
   end
 
   # Given a row from a CSV file in the format
