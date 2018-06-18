@@ -64,11 +64,11 @@ describe AnnotationsController do
                          first_name: 'admin')
     end
 
-    let(:annotation_category) { FactoryGirl.create(:annotation_category) }
-    let(:annotation_text) { FactoryGirl.create(:annotation_text) }
-    let(:assignment) { FactoryGirl.create(:assignment) }
-    let(:submission) { FactoryGirl.create(:submission) }
-    let(:result) { FactoryGirl.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+    let(:annotation_category) { FactoryBot.create(:annotation_category) }
+    let(:annotation_text) { FactoryBot.create(:annotation_text) }
+    let(:assignment) { FactoryBot.create(:assignment) }
+    let(:submission) { FactoryBot.create(:submission) }
+    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do
@@ -171,11 +171,11 @@ describe AnnotationsController do
                        first_name: 'ta')
     end
 
-    let(:annotation_category) { FactoryGirl.create(:annotation_category) }
-    let(:annotation_text) { FactoryGirl.create(:annotation_text) }
-    let(:assignment) { FactoryGirl.create(:assignment) }
-    let(:submission) { FactoryGirl.create(:submission) }
-    let(:result) { FactoryGirl.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+    let(:annotation_category) { FactoryBot.create(:annotation_category) }
+    let(:annotation_text) { FactoryBot.create(:annotation_text) }
+    let(:assignment) { FactoryBot.create(:assignment) }
+    let(:submission) { FactoryBot.create(:submission) }
+    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do
@@ -278,11 +278,11 @@ describe AnnotationsController do
                       first_name: 'ta')
     end
 
-    let(:annotation_category) { FactoryGirl.create(:annotation_category) }
-    let(:annotation_text) { FactoryGirl.create(:annotation_text) }
-    let(:assignment) { FactoryGirl.create(:assignment) }
-    let(:submission) { FactoryGirl.create(:submission) }
-    let(:result) { FactoryGirl.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+    let(:annotation_category) { FactoryBot.create(:annotation_category) }
+    let(:annotation_text) { FactoryBot.create(:annotation_text) }
+    let(:assignment) { FactoryBot.create(:assignment) }
+    let(:submission) { FactoryBot.create(:submission) }
+    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do

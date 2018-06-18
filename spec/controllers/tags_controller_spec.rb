@@ -8,7 +8,7 @@ describe TagsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
-  let(:assignment) { FactoryGirl.create(:assignment) }
+  let(:assignment) { FactoryBot.create(:assignment) }
 
   context 'download_tag_list' do
     let(:csv_options) do

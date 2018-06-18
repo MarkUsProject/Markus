@@ -49,7 +49,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context 'with an assignment' do
         before :each do
-          @grouping = FactoryGirl.create(:grouping)
+          @grouping = FactoryBot.create(:grouping)
           @assignment = @grouping.assignment
         end
 
@@ -453,7 +453,7 @@ RSpec.describe CriteriaController, type: :controller do
 
         context 'with an assignment' do
           before :each do
-            @grouping = FactoryGirl.create(:grouping)
+            @grouping = FactoryBot.create(:grouping)
             @assignment = @grouping.assignment
           end
 

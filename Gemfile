@@ -102,7 +102,7 @@ group :development do
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'machinist', '< 2'
   gem 'minitest'
   gem 'mocha', require: false

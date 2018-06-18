@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :checkbox_criterion do
     sequence(:name) { |n| "Checkbox criterion #{n}" }
     association :assignment, factory: :assignment

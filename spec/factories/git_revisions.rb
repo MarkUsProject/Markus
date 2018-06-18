@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :git_revision, class: Repository::GitRevision do
 
   end

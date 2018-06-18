@@ -5,7 +5,7 @@ describe AnnotationCategory do
   let(:admin) { create(:admin) }
 
   describe 'validations hold' do
-    subject { FactoryGirl.create(:annotation_category) }
+    subject { FactoryBot.create(:annotation_category) }
 
     it { is_expected.to validate_presence_of(:annotation_category_name) }
     it { is_expected.to have_many(:annotation_texts) }

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :flexible_criterion do
     sequence(:name) { |n| "Flexible criterion #{n}" }
     association :assignment, factory: :assignment

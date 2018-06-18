@@ -8,7 +8,7 @@ describe AssignmentsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
-  let(:annotation_category) { FactoryGirl.create(:annotation_category) }
+  let(:annotation_category) { FactoryBot.create(:annotation_category) }
 
   context 'upload_assignment_list' do
     before :each do
@@ -123,7 +123,7 @@ describe AssignmentsController do
       Assignment.all.each do |asn|
         asn.delete
       end
-      @assignment = FactoryGirl.create(:assignment)
+      @assignment = FactoryBot.create(:assignment)
     end
 
     it 'responds with appropriate status' do

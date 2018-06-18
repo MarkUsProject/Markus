@@ -16,7 +16,7 @@ describe Mark do
 
     context 'when markable type is rubric' do
       let(:rubric_mark) do
-        FactoryGirl.create(:rubric_mark, mark: 4)
+        FactoryBot.create(:rubric_mark, mark: 4)
       end
       it 'is valid to have rubric criterion mark smaller or equals to four' do
         rubric_mark.valid_mark
@@ -26,7 +26,7 @@ describe Mark do
 
     context 'when markable type is flexible' do
       let(:flexible_mark) do
-        FactoryGirl.create(:flexible_mark, mark: 0)
+        FactoryBot.create(:flexible_mark, mark: 0)
       end
       it 'is valid to have rubric criterion mark equals zero' do
         flexible_mark.valid_mark
@@ -37,7 +37,7 @@ describe Mark do
 
   describe 'mark (column in marks table)' do
     let(:rubric_mark) do
-      FactoryGirl.create(:rubric_mark, mark: 4)
+      FactoryBot.create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
       markable = RubricCriterion.find(rubric_mark.markable_id)

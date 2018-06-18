@@ -282,12 +282,12 @@ describe GroupsController do
       end
 
       before :each do
-        @assignment = FactoryGirl.create(:assignment,
+        @assignment = FactoryBot.create(:assignment,
                                          allow_web_submits: true,
                                          group_max: 1,
                                          group_min: 1)
 
-        @group = FactoryGirl.create(:group)
+        @group = FactoryBot.create(:group)
 
         @student1 = create(:student, user_name: 'c8shosta')
         @student2 = create(:student, user_name: 'c5bennet')

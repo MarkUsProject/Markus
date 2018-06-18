@@ -15,7 +15,7 @@ describe SectionsController do
     end
 
     context 'with an assignment' do
-      let(:assignment) { FactoryGirl.create(:assignment) }
+      let(:assignment) { FactoryBot.create(:assignment) }
 
       it 'be able to get a csv grade report' do
         response_csv = get_as(@admin, :download_csv_grades_report).body
