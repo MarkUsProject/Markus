@@ -8,11 +8,6 @@ class MainControllerTest < AuthenticatedControllerTest
   # TODO need to change username and password for valid logins when
   # actual authentication is in place (i.e. when User.verify is implemented)
 
-  def setup
-    # bypass cookie detection in the test because the command line, which is running the test, cannot accept cookies
-    @request.cookies['cookieTest'] = 'fake cookie bypasses filter'
-  end
-
   context 'A not authenticated user' do
     should 'be redirected to login' do
       get :index

@@ -23,7 +23,6 @@ es:
     logging_in:                      "Iniciando sesión..."
     login:                           "Nombre de usuario"
     login_failed:                    "El inicio de sesión falló."
-    cookies_off:                     "Por favor configure el navegador para que acepte cookies."
     password_not_blank:              "La contraseña no puede dejarse en blanco."
     username_not_blank:              "El nombre de usuario no puede dejarse en blanco."
     username_and_password_not_blank: "Su contraseña y nombre de usuario no pueden dejarse en blanco."
