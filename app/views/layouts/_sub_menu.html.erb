@@ -110,7 +110,7 @@
           </li>
           <% unless @assignment.is_peer_review? || is_viewing_a_peer_review_result %>
             <li class='<%= "active" if controller.controller_name == 'graders' %>'>
-              <%= link_to t('graders.graders'),
+              <%= link_to Ta.model_name.human.pluralize,
                           assignment_graders_path(@assignment) %>
             </li>
           <% end %>
@@ -121,7 +121,7 @@
                     @assignment.id) %>
             </li>
             <li class='<%= "active" if controller.controller_name == 'graders' %>'>
-              <%= link_to t('graders.graders'),
+              <%= link_to Ta.model_name.human.pluralize,
                           assignment_graders_path(@assignment) %>
             </li>
 
@@ -151,16 +151,16 @@
            controller.controller_name == 'sections' %>
     <ul class='sub'>
       <li class='<%= "active" if controller.controller_name == 'students' %>'>
-        <%= link_to t('students.students'), controller: 'students' %>
+        <%= link_to Student.model_name.human.pluralize, controller: 'students' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'sections' %>'>
         <%= link_to Section.model_name.human.pluralize, controller: 'sections' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'tas' %>'>
-        <%= link_to t('graders.graders'), controller: 'tas' %>
+        <%= link_to Ta.model_name.human.pluralize, controller: 'tas' %>
       </li>
       <li class='<%= "active" if controller.controller_name == 'admins' %>'>
-        <%= link_to t('admins.admins'), controller: 'admins' %>
+        <%= link_to Admin.model_name.human.pluralize, controller: 'admins' %>
       </li>
     </ul>
   <% end %>

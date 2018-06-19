@@ -341,7 +341,7 @@
         id: 'graders',
         content:
           <input type='checkbox'
-          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= j raw t('graders.graders') %>
+          onChange={this.gradersInGroupsCheckboxAllClicked}> <%= Ta.model_name.human.pluralize %>
         </input>,
         sortable: true,
         searchable: false
@@ -410,7 +410,7 @@
       {
         id: 'graders',
         content:<input type='checkbox'
-          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= j raw t('graders.graders') %></input>,
+          onChange={this.gradersInCriteriaCheckboxAllClicked}> <%= Ta.model_name.human.pluralize %></input>,
         sortable: true,
         searchable: false
       },
@@ -556,7 +556,7 @@
             type='checkbox'
             onChange={this.graderCheckboxAllClicked}
           >
-            <%= j raw t('graders.graders') %>
+            <%= Ta.model_name.human.pluralize %>
           </input>
         ),
         sortable: true,

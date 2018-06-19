@@ -1,0 +1,12 @@
+fr:
+  flash:
+    actions:
+      create:
+        success: "Création de %{resource_name}."
+        error: "Erreur dans la création de %{resource_name}."
+      update:
+        success: "Mise à jour de %{resource_name}."
+        error: "Erreur dans la mise à jour de %{resource_name}."
+      destroy:
+        success: "Supprimé avec succès %{resource_name}."
+        error: "Impossible de supprimer %{resource_name}."

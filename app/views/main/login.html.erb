@@ -21,7 +21,7 @@
       <%= text_field_tag 'user_login',
                          nil,
                          tabindex: 1,
-                         placeholder: t(:login),
+                         placeholder: User.human_attribute_name(:user_name),
                          autocorrect: 'off',
                          autocapitalize: 'off',
                          autofocus: user_login == '',

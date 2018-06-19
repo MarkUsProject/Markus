@@ -291,7 +291,7 @@
       <h2><%= t('student.invite') %></h2>
       <p class='information'><%= t(:seperate_multiple_with_commas) %></p>
       <fieldset>
-        <span><label for='invite_member'><%= t('user.user_names') %></label></span>
+        <span><label for='invite_member'><%= User.human_attribute_name(:user_name).pluralize %></label></span>
         <%= text_field_tag 'invite_member'%>
       </fieldset>
 
