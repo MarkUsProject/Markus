@@ -40,8 +40,7 @@ describe TasController do
     end
 
     it 'accepts a valid file' do
-      post :upload_ta_list,
-           userlist: @file_good
+      post :upload_ta_list, params: { userlist: @file_good }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -58,8 +57,7 @@ describe TasController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload_ta_list,
-           userlist: @file_invalid_column
+      post :upload_ta_list, params: { userlist: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -76,8 +74,7 @@ describe TasController do
     end
 
     it 'does not accept a non-csv file with .csv extension' do
-      post :upload_ta_list,
-           userlist: @file_bad_csv
+      post :upload_ta_list, params: { userlist: @file_bad_csv }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -85,8 +82,7 @@ describe TasController do
     end
 
     it 'does not accept a .xls file' do
-      post :upload_ta_list,
-           userlist: @file_wrong_format
+      post :upload_ta_list, params: { userlist: @file_wrong_format }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -115,15 +111,13 @@ describe TasController do
       end
 
       it 'responds with appropriate status' do
-        get :download_ta_list,
-            format: 'csv'
+        get :download_ta_list, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download_ta_list,
-            format: 'csv'
+        get :download_ta_list, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -138,14 +132,12 @@ describe TasController do
           # to prevent a 'missing template' error
           @controller.render nothing: true
         }
-        get :download_ta_list,
-            format: 'csv'
+        get :download_ta_list, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get :download_ta_list,
-            format: 'csv'
+        get :download_ta_list, format: 'csv'
         expect(response.content_type).to eq 'text/csv'
       end
     end

@@ -54,8 +54,7 @@ describe MarksGradersController do
 
     it 'accepts a valid file' do
       post :csv_upload_grader_groups_mapping,
-           grade_entry_form_id: grade_entry_form_with_data.id,
-           grader_mapping: @file_good
+           params: { grade_entry_form_id: grade_entry_form_with_data.id, grader_mapping: @file_good }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -73,8 +72,7 @@ describe MarksGradersController do
 
     it 'does not accept files with invalid columns' do
       post :csv_upload_grader_groups_mapping,
-           grade_entry_form_id: grade_entry_form_with_data.id,
-           grader_mapping: @file_invalid_column
+           params: { grade_entry_form_id: grade_entry_form_with_data.id, grader_mapping: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -84,8 +82,7 @@ describe MarksGradersController do
     end
 
     it 'does not accept fileless submission' do
-      post :csv_upload_grader_groups_mapping,
-           grade_entry_form_id: grade_entry_form_with_data.id
+      post :csv_upload_grader_groups_mapping, params: { grade_entry_form_id: grade_entry_form_with_data.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -96,8 +93,7 @@ describe MarksGradersController do
 
     it 'does not accept a non-csv file with .csv extension' do
       post :csv_upload_grader_groups_mapping,
-           grade_entry_form_id: grade_entry_form_with_data.id,
-           grader_mapping: @file_bad_csv
+           params: { grade_entry_form_id: grade_entry_form_with_data.id, grader_mapping: @file_bad_csv }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -108,8 +104,7 @@ describe MarksGradersController do
 
     it 'does not accept a .xls file' do
       post :csv_upload_grader_groups_mapping,
-           grade_entry_form_id: grade_entry_form_with_data.id,
-           grader_mapping: @file_wrong_format
+           params: { grade_entry_form_id: grade_entry_form_with_data.id, grader_mapping: @file_wrong_format }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -142,17 +137,13 @@ describe MarksGradersController do
     end
 
     it 'responds with appropriate status' do
-      get :download_grader_students_mapping,
-          grade_entry_form_id: @grade_entry_form.id,
-          format: 'csv'
+      get :download_grader_students_mapping, params: { grade_entry_form_id: @grade_entry_form.id }, format: 'csv'
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download_grader_students_mapping,
-          grade_entry_form_id: @grade_entry_form.id,
-          format: 'csv'
+      get :download_grader_students_mapping, params: { grade_entry_form_id: @grade_entry_form.id }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment'
     end
@@ -163,16 +154,12 @@ describe MarksGradersController do
         # to prevent a 'missing template' error
         @controller.render nothing: true
       }
-      get :download_grader_students_mapping,
-          grade_entry_form_id: @grade_entry_form.id,
-          format: 'csv'
+      get :download_grader_students_mapping, params: { grade_entry_form_id: @grade_entry_form.id }, format: 'csv'
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :download_grader_students_mapping,
-          grade_entry_form_id: @grade_entry_form.id,
-          format: 'csv'
+      get :download_grader_students_mapping, params: { grade_entry_form_id: @grade_entry_form.id }, format: 'csv'
       expect(response.content_type).to eq 'text/csv'
     end
   end

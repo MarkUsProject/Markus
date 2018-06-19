@@ -8,22 +8,22 @@ describe AnnotationsController do
     # to the login page
 
     it 'on :add_existing_annotation' do
-      get :add_existing_annotation, submission_file_id: 1
+      get :add_existing_annotation, params: { submission_file_id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :create' do
-      get :create, id: 1
+      get :create, params: { id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :destroy' do
-      delete :destroy, id: 1
+      delete :destroy, params: { id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :update_annotation' do
-      get :update_annotation, id: 1
+      get :update_annotation, params: { id: 1 }
       expect(response).to be_redirect
     end
 
@@ -35,22 +35,22 @@ describe AnnotationsController do
     # to the login page
 
     it 'on :add_existing_annotation' do
-      post :add_existing_annotation, submission_file_id: 1
+      post :add_existing_annotation, params: { submission_file_id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :create' do
-      post :create, id: 1
+      post :create, params: { id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :destroy' do
-      post :destroy, id: 1
+      post :destroy, params: { id: 1 }
       expect(response).to be_redirect
     end
 
     it 'on :update_annotation' do
-      post :update_annotation, id: 1
+      post :update_annotation, params: { id: 1 }
       expect(response).to be_redirect
     end
 
@@ -72,13 +72,11 @@ describe AnnotationsController do
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do
-      post_as @a, :add_existing_annotation,
-              { format: :js,
-                annotation_text_id: annotation_text.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                result_id: result.id }
+      post_as @a,
+              :add_existing_annotation,
+              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:annotation)).to be_truthy
       expect(assigns(:text)).to be_truthy
@@ -86,16 +84,12 @@ describe AnnotationsController do
     end # End context :add_existing_annotation
 
     it 'on :create to make a text annotation' do
-      post_as @a, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                annotation_type: 'text',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @a,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
@@ -104,15 +98,12 @@ describe AnnotationsController do
     end # End context :create text
 
     it 'on :create to make an image annotation' do
-      post_as @a, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                x1: 0, x2: 1, y1: 0, y2: 1,
-                annotation_type: 'image',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @a,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
+                        result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
@@ -130,12 +121,11 @@ describe AnnotationsController do
                is_remark: false,
                creator: @a,
                result_id: result.id})
-      post_as @a, :destroy,
-              { format: :js,
-                id: anno.id,
-                submission_file_id: submission_file.id,
-                assignment_id: assignment.id,
-                result_id: result.id}
+      post_as @a,
+              :destroy,
+              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                        result_id: result.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(response).to render_template('destroy')
     end # End context :destroy
@@ -150,13 +140,11 @@ describe AnnotationsController do
               is_remark: false,
               creator: @a,
               result_id: result.id})
-      put_as @a, :update_annotation,
-             format: :js,
-             id: anno.id,
-             assignment_id: assignment.id,
-             submission_file_id: submission_file.id,
-             result_id: result.id,
-             content: annotation_text.content
+      put_as @a,
+             :update_annotation,
+             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                       result_id: result.id, content: annotation_text.content },
+             format: :js
       expect(response.status).to eq(200)
       expect(response).to render_template('update_annotation')
     end # End context :update_annotation
@@ -179,13 +167,11 @@ describe AnnotationsController do
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do
-      post_as @ta, :add_existing_annotation,
-              { format: :js,
-                annotation_text_id: annotation_text.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                result_id: result.id }
+      post_as @ta,
+              :add_existing_annotation,
+              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:annotation)).to be_truthy
       expect(assigns(:text)).to be_truthy
@@ -193,16 +179,12 @@ describe AnnotationsController do
     end # End context :add_existing_annotation
 
     it 'on :create to make a text annotation' do
-      post_as @ta, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                annotation_type: 'text',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @ta,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
@@ -211,15 +193,12 @@ describe AnnotationsController do
     end # End context :create text
 
     it 'on :create to make an image annotation' do
-      post_as @ta, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                x1: 0, x2: 1, y1: 0, y2: 1,
-                annotation_type: 'image',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @ta,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
+                        result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
       expect(assigns(:annotation)).to be_truthy
@@ -237,12 +216,11 @@ describe AnnotationsController do
               is_remark: false,
               creator: @ta,
               result_id: result.id})
-      post_as @ta, :destroy,
-              { format: :js,
-                id: anno.id,
-                submission_file_id: submission_file.id,
-                assignment_id: assignment.id,
-                result_id: result.id}
+      post_as @ta,
+              :destroy,
+              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                        result_id: result.id },
+              format: :js
       expect(response.status).to eq(200)
       expect(response).to render_template('destroy')
     end # End context :destroy
@@ -257,13 +235,11 @@ describe AnnotationsController do
               is_remark: false,
               creator: @ta,
               result_id: result.id})
-      put_as @ta, :update_annotation,
-             format: :js,
-             id: anno.id,
-             assignment_id: assignment.id,
-             submission_file_id: submission_file.id,
-             result_id: result.id,
-             content: annotation_text.content
+      put_as @ta,
+             :update_annotation,
+             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                       result_id: result.id, content: annotation_text.content },
+             format: :js
       expect(response.status).to eq(200)
       expect(response).to render_template('update_annotation')
     end # End context :update_annotation
@@ -286,40 +262,31 @@ describe AnnotationsController do
     let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
 
     it 'on :add_existing_annotation' do
-      post_as @stu, :add_existing_annotation,
-              { format: :js,
-                annotation_text_id: annotation_text.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                result_id: result.id }
+      post_as @stu,
+              :add_existing_annotation,
+              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+              format: :js
       expect(response.status).to eq(404)
     end # End context :add_existing_annotation
 
     it 'on :create to make a text annotation' do
-      post_as @stu, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                annotation_type: 'text',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @stu,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(404)
     end # End context :create text
 
     it 'on :create to make an image annotation' do
-      post_as @stu, :create,
-              { format: :js,
-                content: annotation_text.content,
-                category_id: annotation_category.id,
-                submission_file_id: submission_file.id,
-                x1: 0, x2: 1, y1: 0, y2: 1,
-                annotation_type: 'image',
-                result_id: result.id,
-                assignment_id: assignment.id}
+      post_as @stu,
+              :create,
+              params: { content: annotation_text.content, category_id: annotation_category.id,
+                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
+                        result_id: result.id, assignment_id: assignment.id },
+              format: :js
       expect(response.status).to eq(404)
     end # End context :create image
 
@@ -333,12 +300,11 @@ describe AnnotationsController do
                 is_remark: false,
                 creator: @stu,
                 result_id: result.id})
-      post_as @stu, :destroy,
-              { format: :js,
-                id: anno.id,
-                submission_file_id: submission_file.id,
-                assignment_id: assignment.id,
-                result_id: result.id}
+      post_as @stu,
+              :destroy,
+              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                        result_id: result.id },
+              format: :js
       expect(response.status).to eq(404)
     end # End context :destroy
 
@@ -352,13 +318,11 @@ describe AnnotationsController do
                 is_remark: false,
                 creator: @stu,
                 result_id: result.id})
-      put_as @stu, :update_annotation,
-             format: :js,
-             id: anno.id,
-             assignment_id: assignment.id,
-             submission_file_id: submission_file.id,
-             result_id: result.id,
-             content: annotation_text.content
+      put_as @stu,
+             :update_annotation,
+             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                       result_id: result.id, content: annotation_text.content },
+             format: :js
       expect(response.status).to eq(404)
     end # End context :update_annotation
 

@@ -25,7 +25,7 @@ describe GroupsController do
           expect(assignment).to receive(:add_group)
                                   .with(nil)
                                   .and_return(grouping)
-          get :new, assignment_id: assignment
+          get :new, params: { assignment_id: assignment }
         end
       end
 
@@ -37,7 +37,7 @@ describe GroupsController do
             expect(assignment).to receive(:add_group)
                                     .with(group_name)
                                     .and_return(grouping)
-            get :new, assignment_id: assignment, new_group_name: group_name
+            get :new, params: { assignment_id: assignment, new_group_name: group_name }
           end
         end
 
@@ -47,7 +47,7 @@ describe GroupsController do
                                    .with(group_name)
                                    .and_raise('Group #{group_name} already exists')
 
-            get :new, assignment_id: assignment, new_group_name: group_name
+            get :new, params: { assignment_id: assignment, new_group_name: group_name }
           end
 
           it 'assigns the error message to flash[:error]' do
@@ -67,7 +67,7 @@ describe GroupsController do
           allow(grouping).to receive(:delete_grouping)
           allow(grouping).to receive(:has_submission?).and_return(false)
 
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
 
         it 'assigns the requested grouping\'s assignment to @assignment' do
@@ -84,17 +84,17 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(false)
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
 
         it 'calls grouping.delete_groupings' do
           expect(grouping).to receive(:delete_grouping)
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
       end
 
@@ -102,7 +102,7 @@ describe GroupsController do
         before :each do
           allow(grouping).to receive(:has_submission?).and_return(true)
 
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
 
         it 'assigns the requested grouping\'s assignment to @assignment' do
@@ -119,12 +119,12 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, grouping_id: grouping, assignment_id: assignment
+          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
         end
       end
     end
@@ -138,7 +138,7 @@ describe GroupsController do
     describe 'GET #index' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)
-        get :index, assignment_id: assignment
+        get :index, params: { assignment_id: assignment }
       end
 
       it 'assigns the requested assignment to @assignment' do
@@ -205,17 +205,13 @@ describe GroupsController do
 
       it 'calls add_csv_group' do
         expect_any_instance_of(Assignment).to receive(:add_csv_group)
-        post :csv_upload,
-             assignment_id: @assignment.id,
-             group: { grouplist: @file_good }
+        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
         # remove the generated repo so repeated test runs function properly
         FileUtils.rm_rf File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/')
       end
 
       it 'accepts a valid file' do
-        post :csv_upload,
-             assignment_id: @assignment.id,
-             group: { grouplist: @file_good }
+        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
@@ -231,9 +227,7 @@ describe GroupsController do
       end
 
       it 'does not accept files with invalid columns' do
-        post :csv_upload,
-             assignment_id: @assignment.id,
-             group: { grouplist: @file_invalid_column }
+        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_invalid_column } }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty
@@ -241,8 +235,7 @@ describe GroupsController do
       end
 
       it 'does not accept fileless submission' do
-        post :csv_upload,
-             assignment_id: @assignment.id
+        post :csv_upload, params: { assignment_id: @assignment.id }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty
@@ -250,9 +243,7 @@ describe GroupsController do
       end
 
       it 'does not accept a non-csv file with .csv extension' do
-        post :csv_upload,
-             assignment_id: @assignment.id,
-             group: { grouplist: @file_bad_csv }
+        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_bad_csv } }
 
         expect(response.status).to eq(302)
         expect(flash[:error].map { |f| extract_text(f) })
@@ -262,9 +253,7 @@ describe GroupsController do
       end
 
       it 'does not accept a .xls file' do
-        post :csv_upload,
-             assignment_id: @assignment.id,
-             group: { grouplist:  @file_wrong_format }
+        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist:  @file_wrong_format } }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_empty
@@ -307,13 +296,13 @@ describe GroupsController do
       end
 
       it 'responds with appropriate status' do
-        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -325,18 +314,18 @@ describe GroupsController do
           # to prevent a 'missing template' error
           @controller.render nothing: true
         }
-        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
         expect(response.content_type).to eq 'text/csv'
       end
 
       # parse header object to check for the right file naming convention
       it 'filename passes naming conventions' do
-        get :download_grouplist, assignment_id: @assignment.id, format: 'csv'
+        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
                      .split.last.split('"').second
         expect(filename).to eq "#{@assignment.short_identifier}_group_list.csv"

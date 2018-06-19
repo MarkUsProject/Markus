@@ -14,9 +14,10 @@ describe PeerReviewsController do
     @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.map(&:id)
     @selected_reviewee_group_ids = @assignment_with_pr.groupings.map(&:id)
 
-    post :assign_groups, actionString: 'random_assign', selectedReviewerGroupIds: @selected_reviewer_group_ids,
-         selectedRevieweeGroupIds: @selected_reviewee_group_ids, assignment_id: @pr_id,
-         numGroupsToAssign: 1
+    post :assign_groups,
+         params: { actionString: 'random_assign', selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                   selectedRevieweeGroupIds: @selected_reviewee_group_ids, assignment_id: @pr_id,
+                   numGroupsToAssign: 1 }
   end
 
   context 'peer review assignment controller' do
@@ -40,7 +41,7 @@ describe PeerReviewsController do
       end
 
       # Perform downloading via GET
-      get :download_reviewer_reviewee_mapping, assignment_id: @pr_id
+      get :download_reviewer_reviewee_mapping, params: { assignment_id: @pr_id }
       downloaded_text = response.body
 
       # The header must be valid, and the CSV must end with \n
@@ -76,7 +77,7 @@ describe PeerReviewsController do
       fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
       allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
-      post :csv_upload_handler, assignment_id: @pr_id, peer_review_mapping: csv_upload, encoding: 'UTF-8'
+      post :csv_upload_handler, params: { assignment_id: @pr_id, peer_review_mapping: csv_upload, encoding: 'UTF-8' }
 
       expect(Grouping.all.size).to eq 6
       expect(PeerReview.all.size).to eq 3
