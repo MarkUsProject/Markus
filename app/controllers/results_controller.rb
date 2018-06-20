@@ -176,7 +176,7 @@ class ResultsController < ApplicationController
     rescue => e
       flash_message(:error, e.message)
     end
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   ##  Tag Methods  ##
@@ -186,7 +186,7 @@ class ResultsController < ApplicationController
                                                       params[:tag_id])
     respond_to do |format|
       format.html do
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
       end
     end
   end
@@ -196,7 +196,7 @@ class ResultsController < ApplicationController
                                     Grouping.find(params[:grouping_id]))
     respond_to do |format|
       format.html do
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
       end
     end
   end

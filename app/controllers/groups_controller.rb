@@ -307,7 +307,7 @@ class GroupsController < ApplicationController
       end
     end
 
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   # These actions act on all currently selected students & groups

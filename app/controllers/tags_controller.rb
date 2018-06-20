@@ -38,7 +38,7 @@ class TagsController < ApplicationController
       flash_message(:error, I18n.t('tags.create.error'))
     end
 
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   def get_all_tags
@@ -52,7 +52,7 @@ class TagsController < ApplicationController
     @tag.description = params[:update_tag][:description]
     if @tag.save
       flash_message(:success, I18n.t('tags.create.successful'))
-      redirect_to :back
+      redirect_back(fallback_location: root_path)
     else
       flash_message(:error, I18n.t('tags.create.error'))
     end
@@ -65,7 +65,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
       end
     end
   end
@@ -160,7 +160,7 @@ class TagsController < ApplicationController
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
     end
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   def yml_upload
@@ -178,14 +178,14 @@ class TagsController < ApplicationController
       rescue Psych::SyntaxError => e
         flash_message(:error, I18n.t('tags.upload.error') + '  ' +
             t('upload_errors.syntax_error', error: "#{e}"))
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
         return
       end
 
       unless tags
         flash_message(:error, I18n.t('tags.upload.error') +
             '  ' + I18n.t('tags.upload.empty_error'))
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
         return
       end
 
@@ -227,6 +227,6 @@ class TagsController < ApplicationController
     end
 
     # Redirects backwards.
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 end
