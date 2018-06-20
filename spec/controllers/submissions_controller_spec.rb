@@ -145,15 +145,11 @@ describe SubmissionsController do
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        post_as(
-          @student,
-          :update_files,
-          assignment_id: @assignment.id,
-          delete_files: ['Shapes.java'],
-          file_revisions: { 'Shapes.java' =>
-                                old_file_1.from_revision,
-                            'TestShapes.java' =>
-                                old_file_2.from_revision })
+        post_as @student,
+                :update_files,
+                params: { assignment_id: @assignment.id, delete_files: ['Shapes.java'],
+                          file_revisions: { 'Shapes.java' => old_file_1.from_revision,
+                                            'TestShapes.java' => old_file_2.from_revision } }
       end
 
       is_expected.to respond_with(:redirect)
