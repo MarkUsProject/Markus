@@ -127,16 +127,16 @@ class MarksGradersController < ApplicationController
 
   def randomly_assign_graders(student_ids, grader_ids, form)
     GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, form)
-    render nothing: true
+    head :ok
   end
 
   def assign_all_graders(student_ids, grader_ids, form)
     GradeEntryStudent.assign_all_tas(student_ids, grader_ids, form)
-    render nothing: true
+    head :ok
   end
 
   def unassign_graders(gest_ids)
     GradeEntryStudent.unassign_tas(gest_ids)
-    render nothing: true
+    head :ok
   end
 end

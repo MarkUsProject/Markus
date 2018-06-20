@@ -312,7 +312,7 @@ describe GroupsController do
           "#{@student1.user_name},#{@student2.user_name}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
-          @controller.render nothing: true
+          @controller.head :ok
         }
         get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
       end

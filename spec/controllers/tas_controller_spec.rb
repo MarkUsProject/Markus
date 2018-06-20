@@ -130,7 +130,7 @@ describe TasController do
         expect(@controller).to receive(:send_data)
                                  .with(csv_data, csv_options) {
           # to prevent a 'missing template' error
-          @controller.render nothing: true
+          @controller.head :ok
         }
         get :download_ta_list, format: 'csv'
       end

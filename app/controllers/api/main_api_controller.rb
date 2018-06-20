@@ -80,7 +80,7 @@ module Api
       request_format = request.format.symbol
       if request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
-        render nothing: true, status: 406
+        head :not_acceptable
       end
     end
 

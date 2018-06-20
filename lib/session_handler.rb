@@ -59,7 +59,7 @@ module SessionHandler
         # Redirect users back to referer, or else
         # they might be redirected to an rjs page.
         session[:redirect_uri] = request.referer
-        render nothing: true, status: :forbidden  # 403 http code
+        head :forbidden # 403
       else
         redirect_to controller: 'main', action: 'login'
       end

@@ -171,7 +171,7 @@ describe GradeEntryFormsController do
       end
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
       get :csv_download, params: { id: grade_entry_form_with_data }
     end

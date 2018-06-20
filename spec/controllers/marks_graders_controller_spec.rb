@@ -152,7 +152,7 @@ describe MarksGradersController do
       csv_data =  "#{@student.user_name},#{@ta.user_name}\n"
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
       get :download_grader_students_mapping, params: { grade_entry_form_id: @grade_entry_form.id }, format: 'csv'
     end

@@ -162,7 +162,7 @@ class ResultsController < ApplicationController
         end
 
         # Renders nothing.
-        render nothing: true
+        head :ok
       end
     end
   end

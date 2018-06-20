@@ -148,7 +148,7 @@ describe AssignmentsController do
       expect(@controller).to receive(:send_data)
                                .with(csv_data.join(',') + "\n", csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
       get :download_assignment_list, params: { file_format: 'csv' }
     end

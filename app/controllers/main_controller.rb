@@ -313,7 +313,7 @@ class MainController < ApplicationController
       render template: 'main/timeout_imminent'
       set_warned
     else
-      render nothing: true
+      head :ok
     end
   end
 

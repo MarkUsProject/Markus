@@ -136,7 +136,7 @@ describe AnnotationCategoriesController do
     it 'expects a call to send_data' do
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
     end

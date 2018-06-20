@@ -52,7 +52,7 @@ describe TagsController do
         "#{@tag2.name},#{@tag2.description},#{@user.first_name} #{@user.last_name}\n"
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
       get :download_tag_list, params: { assignment_id: assignment.id }, format: 'csv'
     end

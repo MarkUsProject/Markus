@@ -124,7 +124,7 @@ class AnnotationCategoriesController < ApplicationController
   # This method handles the drag/drop Annotations sorting
   def update_positions
     unless request.post?
-      render nothing: true
+      head :ok
       return
     end
 
