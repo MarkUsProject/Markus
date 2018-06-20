@@ -1,11 +1,6 @@
 require 'spec_helper'
 
-describe SectionsController do
-  before do
-    @controller = CourseSummariesController.new
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-  end
+describe CourseSummariesController do
 
   context 'An admin' do
     before do
@@ -57,31 +52,31 @@ describe SectionsController do
         expect(response.status).to eq(200)
       end
     end
+  end
 
-    context 'A grader' do
-      before do
-        @grader = Ta.create(user_name: 'adoe',
-                            last_name: 'doe',
-                            first_name: 'adam')
-      end
-
-      it 'not be able to CSV graders report' do
-        get_as @grader, :download_csv_grades_report
-        expect(response.status).to eq(403)
-      end
+  context 'A grader' do
+    before do
+      @grader = Ta.create(user_name: 'adoe',
+                          last_name: 'doe',
+                          first_name: 'adam')
     end
 
-    context 'A student' do
-      before do
-        @student = Student.create(user_name: 'adoe',
-                             last_name: 'doe',
-                             first_name: 'adam')
-      end
+    it 'not be able to CSV graders report' do
+      get_as @grader, :download_csv_grades_report
+      expect(response.status).to eq(404)
+    end
+  end
 
-      it 'not be able to access grades report' do
-        get_as @student, :download_csv_grades_report
-        expect(response.status).to eq(403)
-      end
+  context 'A student' do
+    before do
+      @student = Student.create(user_name: 'adoe',
+                                last_name: 'doe',
+                                first_name: 'adam')
+    end
+
+    it 'not be able to access grades report' do
+      get_as @student, :download_csv_grades_report
+      expect(response.status).to eq(404)
     end
   end
 end
