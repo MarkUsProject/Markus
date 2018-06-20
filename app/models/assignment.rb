@@ -48,6 +48,7 @@ class Assignment < ApplicationRecord
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  has_many :groupings # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment
@@ -60,7 +61,6 @@ class Assignment < ApplicationRecord
            class_name: 'AnnotationCategory',
 		   dependent: :destroy
 
-  has_many :groupings
   has_many :current_submissions_used, through: :groupings,
            source: :current_submission_used
 
