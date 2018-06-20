@@ -87,7 +87,7 @@ class TagsController < ApplicationController
     case params[:format]
     when 'csv'
       output = MarkusCSV.generate(tags) do |tag|
-        user = User.find(tag.user)
+        user = User.find(tag.user.id)
 
         [tag.name,
          tag.description,
