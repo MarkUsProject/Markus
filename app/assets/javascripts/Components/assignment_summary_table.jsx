@@ -134,7 +134,7 @@ class AssignmentSummaryTable extends React.Component {
                     return <li key={member[0]}>({member[0]}) {member[1]} {member[2]}</li>;
                   })}
                 </ul>
-                <h4>{I18n.t('graders.graders')}</h4>
+                <h4>{I18n.t('activerecord.models.ta', {count: 2})}</h4>
                 <ul>
                   {row.original.graders.map((grader) => {
                     return <li key={grader}>{grader}</li>;

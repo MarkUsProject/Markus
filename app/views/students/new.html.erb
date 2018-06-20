@@ -2,12 +2,8 @@
   <%= javascript_include_tag 'Students/new' %>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t('students.create_new') %></h1>
-</div>
+<% content_for :title, t('students.new') %>
 
-<div class='wrapLeft'>
-  <%= render partial: 'student_form',
-             locals: { action: 'create',
-                       new_student: true } %>
-</div>
+<%= render partial: 'student_form',
+           locals: { action: 'create',
+                     new_student: true } %>

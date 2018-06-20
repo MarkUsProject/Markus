@@ -418,7 +418,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        i18t_strings = [I18n.t('flash.criteria.delete.success')].map { |f| extract_text f }
+        i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 
@@ -837,7 +837,7 @@ RSpec.describe CriteriaController, type: :controller do
                   id:             @criterion.id,
                   criterion_type: @criterion.class.to_s
         expect(assigns(:criterion)).to be_truthy
-        i18t_string = [I18n.t('flash.criteria.delete.success')].map { |f| extract_text f }
+        i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
         is_expected.to respond_with(:success)
 

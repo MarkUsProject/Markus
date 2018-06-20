@@ -66,19 +66,19 @@
           },
           {
             id: 'user_name',
-            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            content: '<%= j raw User.human_attribute_name(:user_name) %>',
             sortable: true,
             searchable: true
           },
           {
             id: 'full_name',
-            content: '<%= j raw I18n.t(:'user.full_name') %>',
+            content: '<%= j raw User.human_attribute_name(:full_name) %>',
             sortable: true,
             searchable: true
           },
           {
             id: 'students',
-            content: '<%= j raw I18n.t(:'students.students') %>',
+            content: '<%= j raw Student.model_name.human.pluralize %>',
             sortable: true,
             searchable: false
           }

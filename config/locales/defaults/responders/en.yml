@@ -3,9 +3,13 @@ en:
     actions:
       create:
         success: "%{resource_name} was successfully created."
+        error: "%{resource_name} could not be created."
       update:
         success: "%{resource_name} was successfully updated."
-
+        error: "%{resource_name} could not be updated."
+      destroy:
+        success: "%{resource_name} was successfully deleted."
+        error: "%{resource_name} could not be deleted."
     criteria:
-      delete:
+      destroy:
         success: "Criterion and all associated marks were successfully deleted."

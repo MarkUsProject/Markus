@@ -1,8 +1,5 @@
-<% content_for :title, t('admins.manage_admins') %>
+<% content_for :title, t('admins.edit') %>
 
-<div class='wrapper'>
-  <h2><%= t('admins.edit_admin') %></h2>
-  <%= render partial: 'layouts/userform',
-             locals: { controller: 'admins',
-                       action: 'edit' } %>
-</div>
+<%= render partial: 'layouts/userform',
+           locals: { controller: 'admins',
+                     action: 'edit' } %>

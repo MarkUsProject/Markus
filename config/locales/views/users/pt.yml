@@ -1,0 +1,42 @@
+pt:
+  admins:
+    edit: "Editar Administrador"
+    help:
+      manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
+    new: "Criar novo Administrador"
+
+  students:
+    admin_actions:
+      add_section: "Adicionar a sessão"
+      give_grace_credits: "Dar créditos de tolerância"
+      mark_active: "Marcar como ativo"
+      mark_inactive: "Marcar como inativo"
+    all: "Todos os alunos"
+    edit: "Editar um Aluno"
+    help:
+      manage_students: "Mark students as active or inactive, give them grace credits."
+    new: "Criar um novo aluno"
+    no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
+    not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
+    not_successfully_added_message_2: "Tenha certeza que:"
+    not_successfully_added_message_3: "Nome dos alunos são alfa-numéricos."
+    not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
+    not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
+    upload:
+      select_csv_file: "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section,id_number,email)</code>"
+      student_same_number: "Se um estudante com o mesmo nome de usuário exsitir, então a informação do aluno será atualizada."
+
+  tas:
+    all: "Todos os avaliadores"
+    edit: "Editar avaliador"
+    new: "Criar novo avaliador"
+    help:
+      manage_graders: "Create graders."
+    upload:
+      each_field: "Cada campo é separado por uma vírgula (sem espaços)"
+      each_line: "Cada linha tem os campos requeridos especificados acima"
+      grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
+      make_sure: "Tenha certeza que:"
+      not_added: "Os seguintes corretores não foram adicionados com sucesso:"
+      select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
+      ta_names: "O nome dos corretores são alfanuméricos "
