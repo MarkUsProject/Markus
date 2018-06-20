@@ -175,8 +175,7 @@ class AnnotationCategoriesController < ApplicationController
     end
     annotation_category_list = params[:annotation_category_list_csv]
     if annotation_category_list
-      result = MarkusCSV.parse(
-        annotation_category_list, encoding: encoding) do |row|
+      result = MarkusCSV.parse(annotation_category_list.read, encoding: encoding) do |row|
         next if CSV.generate_line(row).strip.empty?
         AnnotationCategory.add_by_row(row, @assignment, current_user)
       end

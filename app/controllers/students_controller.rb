@@ -134,23 +134,12 @@ class StudentsController < ApplicationController
 
   def upload_student_list
     if params[:userlist]
-      User.transaction do
-        processed_users = []
-        result = MarkusCSV.parse(params[:userlist],
-                                 skip_blanks: true,
-                                 row_sep: :auto,
-                                 encoding: params[:encoding]) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          raise CSVInvalidLineError if processed_users.include?(row[0])
-          raise CSVInvalidLineError if User.add_user(Student, row).nil?
-          processed_users.push(row[0])
-        end
-        unless result[:invalid_lines].empty?
-          flash_message(:error, result[:invalid_lines])
-        end
-        unless result[:valid_lines].empty?
-          flash_message(:success, result[:valid_lines])
-        end
+      result = User.upload_user_list(Student, params[:userlist].read, params[:encoding])
+      unless result[:invalid_lines].blank?
+        flash_message(:error, result[:invalid_lines])
+      end
+      unless result[:valid_lines].blank?
+        flash_message(:success, result[:valid_lines])
       end
     else
       flash_message(:error, I18n.t('csv.invalid_csv'))
