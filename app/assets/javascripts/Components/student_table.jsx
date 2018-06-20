@@ -260,9 +260,9 @@ class StudentsActionBox extends React.Component {
                value={this.state.grace_credits}
                onChange={this.inputChanged} />;
     } else if (this.state.action === 'update_section') {
-      if (this.props.sections.length > 0) {
-        const section_options = this.props.sections.entries().map(
-          section => <option value={section[0]}>{section[1]}</option>
+      if (Object.keys(this.props.sections).length > 0) {
+        const section_options = Object.entries(this.props.sections).map(
+          section => <option key={section[0]} value={section[0]}>{section[1]}</option>
         );
         optionalInputBox =
           <select name='section'
