@@ -1,6 +1,4 @@
 <%= content_for :head do %>
-  <%= stylesheet_link_tag('clickable') %>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       makeTATable(document.getElementById('tas_table'));
@@ -9,16 +7,15 @@
 <% end %>
 
 <% content_for :title do %>
-  <%= t('graders.manage_graders') %>
   <span class='title-help users_graders_help'>
     <p class='help-message-title users_graders_help'>
-      <%= t('students.help.manage_graders') %>
+      <%= t('tas.help.manage_graders') %>
     </p>
   </span>
 <% end %>
 
 <% @heading_buttons = [
-  { link_text: t(:add_new_grader),
+  { link_text: t('tas.new'),
     link_path: new_ta_path },
   { link_text: t('download'),
     link_path: '#',
@@ -33,17 +30,17 @@
     <% # Display lines in csv file that has not been successfully processed %>
     <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class='errorExplanation' id='errorExplanation'>
-        <p><%=t('graders.not_added') %></p>
+        <p><%= t('tas.not_added') %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
             <li><%= line %></li>
           <% end -%>
         </ul>
-        <p><%=t('graders.make_sure') %></p>
+        <p><%= t('tas.make_sure') %></p>
         <ul>
-          <li><%=t('graders.ta_names') %></li>
-          <li><%=t('graders.each_field') %></li>
-          <li><%=t('graders.each_line') %></li>
+          <li><%= t('tas.ta_names') %></li>
+          <li><%= t('tas.each_field') %></li>
+          <li><%= t('tas.each_line') %></li>
         </ul>
       </div>
     <% end %>

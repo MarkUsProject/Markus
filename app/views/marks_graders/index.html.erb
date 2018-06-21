@@ -3,8 +3,6 @@
   <%= render partial: 'marks_grader_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'marks_graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
-
-  <%= stylesheet_link_tag('clickable') %>
 <% end %>
 
 <% content_for :title, t('graders.manage_graders') %>

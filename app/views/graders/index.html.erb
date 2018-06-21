@@ -1,6 +1,5 @@
 <%= content_for :head do %>
   <%= javascript_include_tag 'Graders/index' %>
-  <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
   <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
@@ -8,7 +7,6 @@
 <% end %>
 
 <% content_for :title do %>
-    <%= t('graders.manage_graders') %>
     <span class='title-help assignment_graders_help'>
       <p class='help-message-title assignment_graders_help'>
         <%= t('assignment.help.graders') %>

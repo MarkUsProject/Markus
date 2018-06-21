@@ -108,19 +108,19 @@
         columns: [
           {
             id: 'user_name',
-            content: '<%= j raw I18n.t('user.user_name') %>',
+            content: '<%= j raw User.human_attribute_name(:user_name) %>',
             sortable: true,
             searchable: true
           },
           {
             id: 'last_name',
-            content: '<%= j raw I18n.t('user.last_name') %>',
+            content: '<%= j raw User.human_attribute_name(:last_name) %>',
             sortable: true,
             searchable: true,
           },
           {
             id: 'first_name',
-            content: '<%= j raw I18n.t('user.first_name') %>',
+            content: '<%= j raw User.human_attribute_name(:first_name) %>',
             sortable: true,
             searchable: true
           }
@@ -128,7 +128,7 @@
         filters: [
           {
             name: 'all',
-            text: '<%= j raw I18n.t('groups.all_students') %>',
+            text: '<%= t('students.all') %>',
             func: function(student) {
               return student;
             }
@@ -181,7 +181,7 @@
                    filters={this.props.filters}
                    selectable={true}
                    onSelectedRowsChange={this.props.onSelectedStudentsChange}
-                   search_placeholder={'<%= j raw I18n.t('students.search_students') %>'} />
+                   search_placeholder={I18n.t('search')} />
           </div>
         </div>
       );

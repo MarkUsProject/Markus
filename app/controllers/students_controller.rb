@@ -1,6 +1,10 @@
 class StudentsController < ApplicationController
   before_action    :authorize_only_for_admin
 
+  layout 'assignment_content'
+
+  responders :flash, :collection
+
   def note_message
     @student = Student.find(params[:id])
     if params[:success]
@@ -43,17 +47,10 @@ class StudentsController < ApplicationController
   end
 
   def update
-    @user = Student.find_by_id(params[:id])
-    # update_attributes supplied by ActiveRecords
-    if @user.update_attributes(user_params)
-      flash_message(:success, I18n.t('students.update.success',
-                                     user_name: @user.user_name))
-      redirect_to action: 'index'
-    else
-      flash_message(:error, I18n.t('students.update.error'))
-      @sections = Section.order(:name)
-      render :edit
-    end
+    @user = Student.find(params[:id])
+    @user.update(user_params)
+    @sections = Section.order(:name)
+    respond_with(@user)
   end
 
   def bulk_modify
@@ -86,19 +83,9 @@ class StudentsController < ApplicationController
   end
 
   def create
-    # Default attributes: role = TA or role = STUDENT
-    # params[:user] is a hash of values passed to the controller
-    # by the HTML form with the help of ActiveView::Helper::
-    @user = Student.new(user_params)
-    if @user.save
-      flash_message(:success, I18n.t('students.create.success',
-                                     user_name: @user.user_name))
-      redirect_to action: 'index' # Redirect
-    else
-      @sections = Section.order(:name)
-      flash_message(:error, I18n.t('students.create.error'))
-      render :new
-    end
+    @user = Student.create(user_params)
+    @sections = Section.order(:name)
+    respond_with(@user)
   end
 
   # dummy action for remote rjs calls
@@ -165,5 +152,9 @@ class StudentsController < ApplicationController
                                  :id_number,
                                  :grace_credits,
                                  :section_id)
+  end
+
+  def flash_interpolation_options
+    { resource_name: @user.user_name }
   end
 end

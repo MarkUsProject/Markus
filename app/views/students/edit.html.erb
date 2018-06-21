@@ -2,17 +2,13 @@
   <%= javascript_include_tag 'Students/edit' %>
 <% end %>
 
-<div class='title_bar'>
-  <h1><%= t('students.edit_student') %></h1>
-</div>
+<% content_for :title, t('students.edit') %>
 
-<div class='wrapper'>
-  <%= render partial: 'student_form',
-             locals: { action: 'update' } %>
+<%= render partial: 'student_form',
+           locals: { action: 'update' } %>
 
-  <h3><%= t('submission_rules.grace_period_submission_rule.deductions') %></h3>
-  <div id='grace_period_deductions'>
-    <%= render partial: 'grace_period_deductions',
-               locals: { grace_period_deductions: @user.grace_period_deductions } %>
-  </div>
+<h3><%= t('submission_rules.grace_period_submission_rule.deductions') %></h3>
+<div id='grace_period_deductions'>
+  <%= render partial: 'grace_period_deductions',
+             locals: { grace_period_deductions: @user.grace_period_deductions } %>
 </div>

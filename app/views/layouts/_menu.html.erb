@@ -32,7 +32,7 @@
               controller.controller_name == 'sections' %>
           class='active'
         <% end %>>
-      <%= link_to t(:users), controller: 'students' %>
+      <%= link_to User.model_name.human.pluralize, controller: 'students' %>
     </li>
   <% else %>
     <li <% if controller.controller_name == 'assignments' ||

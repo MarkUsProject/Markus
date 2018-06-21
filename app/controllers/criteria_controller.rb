@@ -62,7 +62,7 @@ class CriteriaController < ApplicationController
     end
     # Delete all marks associated with this criterion.
     @criterion.destroy
-    flash_message(:success, t('flash.criteria.delete.success'))
+    flash_message(:success, t('flash.criteria.destroy.success'))
   end
 
   def update

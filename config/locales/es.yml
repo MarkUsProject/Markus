@@ -70,7 +70,6 @@ es:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Panel"
-    users:              "Usuarios"
     home:               "Inicio"
     settings:           "Configuración"
 
@@ -390,15 +389,10 @@ es:
     members:                     "Miembros"
     add_members:                 "Añadir miembros"
     remove_members:              "Remover miembros"
-    graders:                     "Evaluadores"
     search_graders:              "Buscar evaluadores"
     add_graders:                 "Añadir evaluadores"
     remove_graders:              "Remover evaluadores"
-    admins:                      "Administradores"
     add_new:                     "Añadir Nuevo Archivo"
-    add_new_student:	         "Añadir Nuevo Estudiante"
-    add_new_grader:              "Añadir Nuevo Evaluador"
-    add_new_admin:               "Añadir Nuevo Administrador"
     create_new_grade_entry_form: "Añadir Hoja de Notas"
     edit:                        "Editar"
     save:                        "Guardar"
@@ -428,8 +422,6 @@ es:
     invite:                      "Invitar"
     disinvite:                   "Retirar la invitación"
     help:                        "Ayuda"
-    give_grace_credits:          "Dar créditos de gracia:"
-    add_section:                 "Añadir sección"
     no_result:                   "No existen notas disponibles para este proyecto."
     no_remark_result:            "Los resultados de la recalificación no están disponibles para este proyecto todavía."
     unmarked:                    "No evaluado"
@@ -709,9 +701,6 @@ es:
 
     course_summaries_index:
         page_title: "Resumen"
-        user_name:  "Nombre de Usuario"
-        first_name: "Nombre"
-        last_name:  "Apellido"
         ngr:        "No ha recibido una nota"
 
     grade_entry_forms:
@@ -791,7 +780,6 @@ es:
       manage_groups:                 "Administrar Grupos"
       assign_scans:                  "Asignar Escaneado"
       skip_group:                    "UPDATE ME"
-      all_students:                  "Todos los/las estudiantes"
       unassigned_students:           "No asignados"
       assigned_students:             "Asignados"
       inactive_students:             "Inactivos"
@@ -879,43 +867,6 @@ es:
       error:
         validate_criteria: "debe ser un número entre 0 y la nota máxima para el criterio de calificación"
 
-    # Student's View (admin)
-    students:
-      processing:              "Procesando..."
-      manage_students:         "Administrar Estudiantes"
-      edit_student:            "Editar un Estudiante"
-      edit_success:            "%{user_name} ha sido actualizado."
-      create_new:              "Crear un nuevo Estudiante"
-      students:                "Estudiantes"
-      search_students:         "Buscar Estudiantes"
-      no_students_selected:    "No se ha seleccionado ningún estudiante, por lo tanto, no se han realizado cambios."
-      upload:
-        upload_a_class_list:   "Subir la lista de la clase"
-        select_csv_file:       "Seleccionar un archivo en formato CSV de la siguiente forma:
-                                <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-        student_same_number:   "Si un estudiante con el mismo número de estudiante existe, entonces la información del
-                                estudiante es actualizada."
-      download:
-        download_student_list: "Descargar Lista de Estudiantes"
-      create:
-        success: "El estudiante %{user_name} ha sido creado exitosamente."
-        error:   "No se pudo crear el estudiante."
-      update:
-        success: "Se actualizó la información del estudiante %{user_name}."
-        error:   "No se pudo actualizar la información del estudiante."
-      help:
-        manage_students: "Markar estudiantes como activos o inactivos, darles créditos de gracia."
-        manage_graders:  "Crear evaluadores."
-
-
-    hide_students:                             "Markar como inactivo"
-    unhide_students:                           "Markar como activo"
-    students_not_successfully_added_message_1: "Los siguientes estudiantes no han podido ser añadidos:"
-    students_not_successfully_added_message_2: "Asegúrese que:"
-    students_not_successfully_added_message_3: "Los nombres de los estudiantes son alfanuméricos."
-    students_not_successfully_added_message_4: "Cada campo está separado por una coma (no espacios)."
-    students_not_successfully_added_message_5: "Cada línea tiene los campos requeridos especificados cerca de la forma
-                                                para subir archivos."
     invalid_group_warning:                     "Su grupo no es válido por el momento. Usted probablemente no ha añadido
                                                 suficientes miembros al grupo, y el mínimo número de integrantes no ha
                                                 sido alcanzado. Usted no puede enviar su entrega, y su trabajo no será
@@ -924,13 +875,6 @@ es:
 
     #Sutdent's View (student)
     student:
-      create:
-        success: "El estudiante %{user_name} ha sido creado exitosamente."
-        error:   "No se ha podido crear el estudiante."
-      update:
-        success: "La información del estudiante %{user_name} ha sido actualizada exitosamente."
-        error:   "La información del estudiante no ha podido ser actualizada."
-
       assignment:                         "Proyecto %{short_identifier}"
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
       group_information:                  "Información del Grupo"
@@ -1022,25 +966,8 @@ es:
                                            antes de realizar la entrega."
         empty_file_warning: "UPDATE ME"
 
-    tas:
-      create:
-        success: "El evaluador %{user_name} se ha creado exitosamente."
-        error:   "El evaluador no pudo ser creado."
-      update:
-        success: "La información del evaluador %{user_name} se ha actualizado exitosamente."
-        error:   "La información del evaluador no ha podido ser actualizada."
-      delete:
-        confirm: "¿Está seguro/a de querer eliminar este evaluador?"
-        success: "El evaluador %{user_name} ha sido eliminado exitosamente."
-        error:   "No se pudo eliminar el evaluador."
-
     #Graders' View
     graders:
-      create_new_grader:      "Crear un nuevo evaluador"
-      edit_grader:            "Editar la información del evaluador"
-      manage_graders:         "Administrar los Evaluadores"
-      graders:                "Evaluadores"
-      all_graders:            "Todos los Evaluadores"
       assigned_graders:       "Asignar los Evaluadores"
       possible_graders:       "Posibles Evaluadores"
       unassigned_graders:     "Evaluadores sin Asignar"
@@ -1053,15 +980,6 @@ es:
       lines_not_processed:    "Las siguientes líneas no pudieron procesadas:"
       skip_empty_submissions: "No se asignará Evaluadores a los grupos con entregas vacías (requiere que las entregas
                                sean recolectadas)"
-      upload:
-        select_csv_file:  "Seleccionar el archivo en formato CSV que tiene la siguiente forma: <code>user_name,last_name,first_name</code>"
-        grader_same_user: "Si un asistente de cátedra con el mismo nombre existe, la información del asistente es
-                           actualizada."
-        not_added:        "Los siguientes asistentes de cátedra no han podido ser añadidos exitosamente:"
-        make_sure:        "Asegúrese que:"
-        ta_names:         "Los nombres de los asistentes de cátedra son alfanuméricos"
-        each_field:       "Cada campo está separado por una coma (no existen espacios)"
-        each_line:        "Cada línea tiene los campos requeridos especificados en la parte superior"
       download:
         begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
         end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
@@ -1074,28 +992,6 @@ es:
         upload_grader_map:      "Subir el par Estudiante/Evaluador"
         description_grader_map: "Formato del archivo CSV:<br>
             <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
-
-    #Admins' View
-    admins:
-      manage_admins:    "Administrar Administradores"
-      create_new_admin: "Crear un nuevo Administrador"
-      manage_admins:    "Administrar Administradores"
-      edit_admin:       "Editar la información del Administrador"
-      admins:           "Administradores"
-      upload:
-        not_added:  "Los siguientes administradores no han podido ser añadidos satisfactoriamente:"
-        make_sure:  "Asegúrese que:"
-        each_field: "Cada campo es separado por una coma (no exiten espacios)"
-        each_line:  "Cada línea tiene los campos requeridos especificados en la parte superior"
-      create:
-        success: "El administrador %{user_name} ha sido creado exitosamente."
-        error:   "El administrador no pudo ser creado."
-      update:
-        success: "La información del administrador %{user_name} ha sido actualizada exitosamente."
-        error:   "No se pudo actualizar la información del administrador."
-      help:
-        manage_admins: "Los administradores son usualmente profesores. Ellos tienen control completo sobre MarkUs,
-                        incluyendo la creación de proyectos, la asignación de evaluadores y la publicación de notas."
 
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
@@ -1134,25 +1030,6 @@ es:
         error:                "No se pudo invitar al estudiante %{user_name}."
     update_files:
       success: "Sus cambios han sido realizados."
-
-    user:
-        user:                             "Usuario"
-        id:                               "ID"
-        id_number:                        "Número de Identificación"
-        email:                            "Email"
-        user_name:                        "Nombre de Usuario"
-        user_names:                       "Nombre de Usuario"
-        first_name:                       "Nombre"
-        last_name:                        "Apellido"
-        full_name:                        "Nombre Completo"
-        type:                             "Tipo"
-        user_type:                        "Tipo"
-        grace_credits:                    "Créditos de Gracia Restantes"
-        notes_count:                      "Notas"
-        display_grader_names_to_students: "¿Desea mostrar a los estudiantes el nombre de los evaluadores?"
-
-    hide_students:   "Markar como inactivo"
-    unhide_students: "Markar como activo"
 
     tags:
       tags:        "Etiquetas"
@@ -1439,7 +1316,6 @@ es:
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
             Grouping:   "Grupo"
-            Student:    "Estudiante"
             Assignment: "Proyecto"
         author:         "Autor"
         creation_time:  "Tiempo de creación"

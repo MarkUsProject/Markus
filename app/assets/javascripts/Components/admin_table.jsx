@@ -33,19 +33,19 @@ class AdminTable extends React.Component {
         data={data}
         columns={[
           {
-            Header: I18n.t('user.user_name'),
+            Header: I18n.t('activerecord.attributes.user.user_name'),
             accessor: 'user_name',
           },
           {
-            Header: I18n.t('user.first_name'),
+            Header: I18n.t('activerecord.attributes.user.first_name'),
             accessor: 'first_name'
           },
           {
-            Header: I18n.t('user.last_name'),
+            Header: I18n.t('activerecord.attributes.user.last_name'),
             accessor: 'last_name'
           },
           {
-            Header: I18n.t('user.email'),
+            Header: I18n.t('activerecord.attributes.user.email'),
             accessor: 'email'
           },
           {

@@ -36,8 +36,6 @@ describe AdminsController do
       it 'be able to update' do
         put :update, params: { id: @a2.id, user: { last_name: 'John', first_name: 'Doe' } }
         expect(response).to redirect_to action: 'index'
-        i18t_strings = [I18n.t('admins.update.success', user_name: @a2.user_name)].map { |f| extract_text f }
-        expect(i18t_strings).to eq(flash[:success].map { |f| extract_text f })
       end
 
       it 'be able to edit' do

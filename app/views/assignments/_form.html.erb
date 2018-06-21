@@ -478,6 +478,7 @@
       <legend>
         <span><%= t('upload_the', item: t('assignment.starter_code')) %></span>
       </legend>
+      <%= MarkusConfigurator.markus_config_repository_external_base_url + '/' + @assignment.repository_name %>
       <%= render 'file_manager' %>
     </fieldset>
 <% end %>

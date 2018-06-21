@@ -1,6 +1,5 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'Groups/index' %>
-  <%= stylesheet_link_tag('clickable') %>
 
   <%= render partial: 'layouts/head' %>
   <%= render partial: 'groups_manager', formats: [:'js.jsx'], handlers: [:erb] %>

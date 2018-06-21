@@ -78,18 +78,18 @@ class MarksSpreadsheet extends React.Component {
 
   nameColumns = [
     {
-      Header: I18n.t('user.user_name'),
+      Header: I18n.t('activerecord.attributes.user.user_name'),
       accessor: 'user_name',
       id: 'user_name',
       minWidth: 120
     },
     {
-      Header: I18n.t('user.first_name'),
+      Header: I18n.t('activerecord.attributes.user.first_name'),
       accessor: 'first_name',
       minWidth: 120
     },
     {
-      Header: I18n.t('user.last_name'),
+      Header: I18n.t('activerecord.attributes.user.last_name'),
       accessor: 'last_name',
       minWidth: 120
     },
