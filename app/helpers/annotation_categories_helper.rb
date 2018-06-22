@@ -1,5 +1,3 @@
-require 'ya2yaml'
-
 module AnnotationCategoriesHelper
 
   def prepare_for_conversion(annotation_categories)

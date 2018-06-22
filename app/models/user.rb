@@ -1,4 +1,3 @@
-require 'encoding'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
 # required for repository actions

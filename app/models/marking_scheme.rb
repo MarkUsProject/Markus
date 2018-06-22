@@ -1,6 +1,3 @@
-require 'descriptive_statistics'
-require 'histogram/array'
-
 class MarkingScheme < ApplicationRecord
   include CourseSummariesHelper
   has_many :marking_weights, dependent: :destroy

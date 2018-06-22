@@ -1,35 +1,28 @@
-# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
-
-  # In the development environment your application's code is reloaded on
-  # every request.  This slows down response time but is perfect for development
-  # since you don't have to restart the webserver when you make code changes.
+  # Reload application code on each request.
+  # It's slower, but code changes are frequent in development, they are picked up automatically without having to
+  # restart the webserver.
   config.cache_classes = false
+  # Enable detailed debugging info on errors.
+  config.consider_all_requests_local = true
+  # Don't eager load all application code at boot time, autoload incrementally on page requests.
+  # It speeds up boot time.
+  config.eager_load = false
+  # Set high verbosity of logger.
+  config.log_level = :debug
+
   # Manually enable concurrency, but you'll need a concurrent web server too
   # (in production, cache_classes=true enables it automatically)
   config.allow_concurrency = true
-
-  config.eager_load = false
-
-  # Show full error reports and disable caching
-  config.consider_all_requests_local = true
 
   # FIXME: The following lines can be commented
   # out when jQuery is fully implemented
   # config.action_controller.perform_caching             = false
   # config.action_controller.allow_forgery_protection    = true
 
-  # Load any local configuration that is kept out of source control
-  if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
-    instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
-  end
-
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
-
-  config.log_level = :debug
-  # set log-level (:debug, :info, :warn, :error, :fatal)
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false

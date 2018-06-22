@@ -1,5 +1,3 @@
-require 'encoding'
-
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ApplicationRecord

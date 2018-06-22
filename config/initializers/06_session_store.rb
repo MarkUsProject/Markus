@@ -10,7 +10,7 @@
 
 Rails.application.config.session_store :cookie_store,
   key: MarkusConfigurator.markus_config_session_cookie_name,
-  secret:      MarkusConfigurator.markus_config_session_cookie_secret,
+  secret: MarkusConfigurator.markus_config_session_cookie_secret,
   path: '/',
   expire_after: MarkusConfigurator.markus_config_session_cookie_expire_after,
   http_only: MarkusConfigurator.markus_config_session_cookie_http_only,

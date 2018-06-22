@@ -1,40 +1,29 @@
-# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
+  # Don't reload application code on each request.
+  # It's faster, as the code is stable in production, but applying a patch requires a webserver restart.
+  config.cache_classes = true
+  # Disable detailed debugging info on errors.
+  config.consider_all_requests_local = false
+  # Eager load all application code at boot time.
+  # It slows down boot time, but only once, and adds consistency (autoloading can cause thread-safety issues).
+  config.eager_load = true
+  # Set low verbosity of logger.
+  config.log_level = :info
+
   # rails will fallback to en, no matter what is set as config.i18n.default_locale
   # rails will fallback to config.i18n.default_locale translation
   config.i18n.fallbacks = true
   config.i18n.fallbacks = [:en]
 
-  # The production environment is meant for finished, "live" apps.
-  # Code is not reloaded between requests
-  config.cache_classes = true
-  # set this to false, if you want automatic reload of changed code
-
-  # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
-
-  config.eager_load = true
-  # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
-  #
-  config.log_level = :info
-  # set log-level (:debug, :info, :warn, :error, :fatal)
-
   # Compress both stylesheets and JavaScripts
   config.assets.js_compressor  = :uglifier
   config.assets.css_compressor = :scss
-
-  # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local = true
-  # set to false to turn off traces
 
   # FIXME: The following lines can be commented
   # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
 
-  # Use a different cache store in production
-  # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb
   config.action_controller.allow_forgery_protection    = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server

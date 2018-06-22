@@ -1,5 +1,3 @@
-require 'histogram/array'
-
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
 class GradeEntryItem < ApplicationRecord

@@ -1,6 +1,3 @@
-require 'csv_invalid_line_error'
-require 'descriptive_statistics'
-require 'histogram/array'
 require 'csv'
 
 class Assignment < ApplicationRecord

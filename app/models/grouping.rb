@@ -1,4 +1,3 @@
-require 'encoding'
 require 'set'
 
 # we need repository permission constants

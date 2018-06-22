@@ -1,23 +1,26 @@
-# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
+  # Don't reload application code on each request.
+  # It's faster, and code changes should not be picked up automatically when running a test suite.
+  config.cache_classes = true
+  # Enable detailed debugging info on errors.
+  config.consider_all_requests_local = true
+  # Don't eager load all application code at boot time, autoload incrementally on page requests.
+  # It speeds up boot time.
+  config.eager_load = false
+  # Set high verbosity of logger.
+  config.log_level = :debug
+
   # The test environment is used exclusively to run your application's
   # test suite.  You never need to work with it otherwise.  Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs.  Don't rely on the data there!
-  config.cache_classes = true
-
-  config.eager_load = false
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
 
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection = false
-
-  config.log_level = :debug
-  # set log-level (:debug, :info, :warn, :error, :fatal)
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
