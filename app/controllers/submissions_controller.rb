@@ -3,7 +3,7 @@ require 'zip'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:server_time,
                          :populate_file_manager,
                          :revisions,
@@ -20,7 +20,7 @@ class SubmissionsController < ApplicationController
                          :update_submissions,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
-  before_filter :authorize_for_ta_and_admin,
+  before_action :authorize_for_ta_and_admin,
                 only: [:browse,
                        :manually_collect_and_begin_grading,
                        :revisions,
@@ -29,10 +29,10 @@ class SubmissionsController < ApplicationController
                        :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
-  before_filter :authorize_for_student,
+  before_action :authorize_for_student,
                 only: [:file_manager,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user,
+  before_action :authorize_for_user,
                 only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
 
 
@@ -475,7 +475,7 @@ class SubmissionsController < ApplicationController
         end
       end
     ensure
-      redirect_to :back
+      redirect_back(fallback_location: root_path)
     end
   end
 
@@ -491,7 +491,7 @@ class SubmissionsController < ApplicationController
       flash_message(:error,
                     t('submission_file.error.no_access',
                           submission_file_id: params[:submission_file_id]))
-      redirect_to :back
+      redirect_back(fallback_location: root_path)
       return
     end
 
@@ -599,7 +599,7 @@ class SubmissionsController < ApplicationController
             file_content = file.retrieve_file
           rescue Exception => e
             flash_message(:error, e.message)
-            redirect_to :back
+            redirect_back(fallback_location: root_path)
             return
           end
 
@@ -649,7 +649,7 @@ class SubmissionsController < ApplicationController
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
           flash_message(:error, t('student.submission.no_revision_available'))
-          redirect_to :back
+          redirect_back(fallback_location: root_path)
           return
         end
       end
@@ -657,7 +657,7 @@ class SubmissionsController < ApplicationController
       files = revision.files_at_path(assignment.repository_folder)
       if files.count == 0
         flash_message(:error, t('student.submission.no_files_available'))
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
         return
       end
 

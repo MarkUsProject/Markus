@@ -1,4 +1,4 @@
-class CombinedCriterion < ActiveRecord::Migration
+class CombinedCriterion < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def change
     rename_column :rubric_criteria, :rubric_criterion_name, :name

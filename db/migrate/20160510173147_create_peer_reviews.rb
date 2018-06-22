@@ -1,4 +1,4 @@
-class CreatePeerReviews < ActiveRecord::Migration
+class CreatePeerReviews < ActiveRecord::Migration[4.2]
   def change
     create_table :peer_reviews do |t|
       t.references :result, index: true, foreign_key: true, null: false

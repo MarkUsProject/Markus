@@ -1,4 +1,4 @@
-class DueDatePerSectionChanges < ActiveRecord::Migration
+class DueDatePerSectionChanges < ActiveRecord::Migration[4.2]
   def self.up
     create_table :section_due_dates do |t|
       t.references :sections

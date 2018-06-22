@@ -1,7 +1,7 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:populate]
 
   layout 'assignment_content'

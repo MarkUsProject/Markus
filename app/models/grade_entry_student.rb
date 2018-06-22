@@ -18,18 +18,6 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
-  validates_numericality_of :user_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: I18n.t('invalid_id'),
-                            on: :create
-
-  validates_numericality_of :grade_entry_form_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: I18n.t('invalid_id'),
-                            on: :create
-
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
   # entry form IDs and must return a list of (student ID, grade entry form IDs)
@@ -103,7 +91,7 @@ class GradeEntryStudent < ApplicationRecord
   # Unassigns TAs from grade entry students. +gest_ids+ is a list of IDs to the
   # join model GradeEntryStudentTa that specifies the unassignment to be done.
   def self.unassign_tas(gest_ids)
-    GradeEntryStudentTa.delete_all(id: gest_ids)
+    GradeEntryStudentTa.where(id: gest_ids).delete_all
   end
 
   # Given a row from a CSV file in the format

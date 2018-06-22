@@ -1,5 +1,5 @@
 require 'migration_helpers'
-class RemoveDescriptionTable < ActiveRecord::Migration
+class RemoveDescriptionTable < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     drop_table :descriptions

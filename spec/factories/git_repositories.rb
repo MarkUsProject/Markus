@@ -1,6 +1,6 @@
 require 'repo/git_repository'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :git_repository, class: Repository::GitRepository do
     initialize_with do
       # Open the repo that was cloned in git_revision_spec.rb

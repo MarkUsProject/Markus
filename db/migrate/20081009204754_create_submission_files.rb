@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateSubmissionFiles < ActiveRecord::Migration
+class CreateSubmissionFiles < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

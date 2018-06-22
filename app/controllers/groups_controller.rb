@@ -6,7 +6,7 @@ require 'csv_invalid_line_error'
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  before_filter      :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 
@@ -307,7 +307,7 @@ class GroupsController < ApplicationController
       end
     end
 
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   # These actions act on all currently selected students & groups

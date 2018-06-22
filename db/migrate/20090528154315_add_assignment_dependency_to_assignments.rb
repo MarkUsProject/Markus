@@ -1,4 +1,4 @@
-class AddAssignmentDependencyToAssignments < ActiveRecord::Migration
+class AddAssignmentDependencyToAssignments < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :assignment_dependency_id, :int
   end

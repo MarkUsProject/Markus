@@ -1,4 +1,4 @@
-class Testing < ActiveRecord::Migration
+class Testing < ActiveRecord::Migration[4.2]
   def self.up
     drop_table :test_files
     drop_table :test_results

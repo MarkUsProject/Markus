@@ -1,5 +1,4 @@
 require 'rake/testtask'
-require 'rails/test_unit/sub_test_task'
 
 namespace :test do
   task run: ['test:libs']

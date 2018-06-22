@@ -1,4 +1,4 @@
-class RenameInstructorFormGroupsToInvalidOverride < ActiveRecord::Migration
+class RenameInstructorFormGroupsToInvalidOverride < ActiveRecord::Migration[4.2]
   def self.up
       rename_column(:assignments, :instructor_form_groups, :invalid_override)
   end

@@ -47,6 +47,7 @@ class Criterion < ApplicationRecord
   #
   # The criteria must belong to the given assignment +assignment+.
   def self.assign_tas(criterion_ids_types, ta_ids, assignment)
+    # params can only be converted to hash with explicit permission (Rails 5.1+)
     criterion_ids_types   = Hash(criterion_ids_types)
     criterion_ids_in      = criterion_ids_types.values.map{ |id_type| id_type[0].to_i}
     criterion_types       = criterion_ids_types.values.map{ |id_type| id_type[1]}
@@ -94,7 +95,7 @@ class Criterion < ApplicationRecord
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(criterion_ta_ids, criterion_ids_by_type, assignment)
-    CriterionTaAssociation.delete_all(id: criterion_ta_ids)
+    CriterionTaAssociation.where(id: criterion_ta_ids).delete_all
 
     Grouping.update_criteria_coverage_counts(assignment)
     update_assigned_groups_counts(assignment, criterion_ids_by_type)

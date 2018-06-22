@@ -1,4 +1,4 @@
-class CreatePeriodsTable < ActiveRecord::Migration
+class CreatePeriodsTable < ActiveRecord::Migration[4.2]
   def self.up
     create_table :periods do |t|
       t.column :start_time, :datetime

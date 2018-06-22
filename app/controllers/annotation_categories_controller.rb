@@ -3,14 +3,14 @@ require 'encoding'
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 
-  before_filter      :authorize_only_for_admin, except: :index
-  before_filter      :authorize_for_ta_and_admin, only: :index
+  before_action      :authorize_only_for_admin, except: :index
+  before_action      :authorize_for_ta_and_admin, only: :index
 
   layout 'assignment_content'
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories(order: 'position').includes(:annotation_texts)
+    @annotation_categories = @assignment.annotation_categories.order(:position).includes(:annotation_texts)
 
     respond_to do |format|
       format.html
@@ -124,7 +124,7 @@ class AnnotationCategoriesController < ApplicationController
   # This method handles the drag/drop Annotations sorting
   def update_positions
     unless request.post?
-      render nothing: true
+      head :ok
       return
     end
 
@@ -175,8 +175,7 @@ class AnnotationCategoriesController < ApplicationController
     end
     annotation_category_list = params[:annotation_category_list_csv]
     if annotation_category_list
-      result = MarkusCSV.parse(
-        annotation_category_list, encoding: encoding) do |row|
+      result = MarkusCSV.parse(annotation_category_list.read, encoding: encoding) do |row|
         next if CSV.generate_line(row).strip.empty?
         AnnotationCategory.add_by_row(row, @assignment, current_user)
       end

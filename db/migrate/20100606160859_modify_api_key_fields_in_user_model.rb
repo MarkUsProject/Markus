@@ -1,4 +1,4 @@
-class ModifyApiKeyFieldsInUserModel < ActiveRecord::Migration
+class ModifyApiKeyFieldsInUserModel < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :users, :api_key_md5
   end

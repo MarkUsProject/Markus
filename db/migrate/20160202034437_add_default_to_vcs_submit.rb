@@ -1,4 +1,4 @@
-class AddDefaultToVcsSubmit < ActiveRecord::Migration
+class AddDefaultToVcsSubmit < ActiveRecord::Migration[4.2]
   def up
     change_column_default :assignments, :vcs_submit, :false
   end

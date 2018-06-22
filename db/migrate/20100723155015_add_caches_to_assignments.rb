@@ -1,4 +1,4 @@
-class AddCachesToAssignments < ActiveRecord::Migration
+class AddCachesToAssignments < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :rubric_criterions_count, :integer
     add_column :assignments, :flexible_criterions_count, :integer

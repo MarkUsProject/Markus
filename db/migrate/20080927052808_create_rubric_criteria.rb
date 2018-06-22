@@ -1,5 +1,5 @@
 require 'migration_helpers'
-class CreateRubricCriteria < ActiveRecord::Migration
+class CreateRubricCriteria < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     create_table :rubric_criteria do |t|

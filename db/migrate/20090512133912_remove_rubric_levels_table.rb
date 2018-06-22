@@ -1,5 +1,5 @@
 require 'migration_helpers'
-class RemoveRubricLevelsTable < ActiveRecord::Migration
+class RemoveRubricLevelsTable < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     drop_table :rubric_levels

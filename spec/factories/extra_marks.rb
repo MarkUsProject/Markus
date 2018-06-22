@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :extra_mark do
     association :result
     description Faker::Lorem.sentence

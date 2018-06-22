@@ -1,4 +1,4 @@
-class CreateSplitPdfLogs < ActiveRecord::Migration
+class CreateSplitPdfLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :split_pdf_logs do |t|
       t.datetime :uploaded_when

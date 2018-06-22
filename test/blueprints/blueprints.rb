@@ -322,11 +322,6 @@ TestScriptResult.blueprint do
   marks_total {1}
 end
 
-TestFile.blueprint do
-  filename {Sham.filename}
-  filetype {Sham.filetype}
-end
-
 TestResult.blueprint do
   test_script_result {TestScriptResult.make}
   name {Sham.filename}

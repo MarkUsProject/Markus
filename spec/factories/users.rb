@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user do
     sequence(:user_name) { |n| Faker::Internet.user_name + n.to_s }
     first_name { Faker::Name.first_name }

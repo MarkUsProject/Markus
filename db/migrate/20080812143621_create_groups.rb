@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateGroups < ActiveRecord::Migration
+class CreateGroups < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

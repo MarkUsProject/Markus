@@ -1,4 +1,4 @@
-class TurnOutofIntoFloat < ActiveRecord::Migration
+class TurnOutofIntoFloat < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :grade_entry_items, :out_of
     add_column :grade_entry_items, :out_of, :float

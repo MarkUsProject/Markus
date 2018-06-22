@@ -1,4 +1,4 @@
-class RemoveGradesModel < ActiveRecord::Migration
+class RemoveGradesModel < ActiveRecord::Migration[4.2]
   def self.up
     drop_table :grades
   end

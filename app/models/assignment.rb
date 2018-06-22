@@ -48,9 +48,10 @@ class Assignment < ApplicationRecord
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  has_many :groupings # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
-  belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
+  belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
@@ -60,7 +61,6 @@ class Assignment < ApplicationRecord
            class_name: 'AnnotationCategory',
 		   dependent: :destroy
 
-  has_many :groupings
   has_many :current_submissions_used, through: :groupings,
            source: :current_submission_used
 
@@ -263,7 +263,10 @@ class Assignment < ApplicationRecord
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    s = get_criteria(user_visibility).map(&:max_mark).sum
+    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
+    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
+    max_marks = get_criteria(user_visibility).map(&:max_mark)
+    s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
 
@@ -1162,7 +1165,7 @@ class Assignment < ApplicationRecord
   end
 
   def update_assigned_tokens
-    difference = tokens_per_period - tokens_per_period_was
+    difference = tokens_per_period - tokens_per_period_before_last_save
     if difference == 0
       return
     end

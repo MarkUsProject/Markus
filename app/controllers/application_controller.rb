@@ -19,11 +19,11 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers in the views, all the time
 
   # activate i18n for renaming constants in views
-  before_filter :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
+  before_action :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
   # check for active session on every page
-  before_filter :authenticate, except: [:login, :page_not_found, :check_timeout]
+  before_action :authenticate, except: [:login, :page_not_found, :check_timeout]
   # check for AJAX requests
-  after_filter :flash_to_headers
+  after_action :flash_to_headers
   # Define default URL options to include the locale
   def default_url_options(options={})
     { locale: I18n.locale }

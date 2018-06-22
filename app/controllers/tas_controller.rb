@@ -1,5 +1,5 @@
 class TasController < ApplicationController
-  before_filter  :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 
@@ -65,7 +65,7 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if params[:userlist]
-      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+      result = User.upload_user_list(Ta, params[:userlist].read, params[:encoding])
       unless result[:invalid_lines].blank?
         flash_message(:error, result[:invalid_lines])
       end

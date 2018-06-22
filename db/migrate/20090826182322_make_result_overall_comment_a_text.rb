@@ -1,4 +1,4 @@
-class MakeResultOverallCommentAText < ActiveRecord::Migration
+class MakeResultOverallCommentAText < ActiveRecord::Migration[4.2]
   def self.up
     change_column :results, :overall_comment, :text
   end

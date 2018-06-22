@@ -1,4 +1,4 @@
-class CreateExtraMarks < ActiveRecord::Migration
+class CreateExtraMarks < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     create_table :extra_marks do |t|

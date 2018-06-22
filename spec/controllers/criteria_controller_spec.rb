@@ -7,49 +7,49 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, assignment_id: 1
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, assignment_id: 1
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, assignment_id: 1, id: 1
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, assignment_id: 1, id: 1
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, assignment_id: 1, id: 1
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, assignment_id: 1
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context 'with an assignment' do
         before :each do
-          @grouping = FactoryGirl.create(:grouping)
+          @grouping = FactoryBot.create(:grouping)
           @assignment = @grouping.assignment
         end
 
@@ -60,10 +60,7 @@ RSpec.describe CriteriaController, type: :controller do
 
           context '#edit' do
             it 'should respond with redirect' do
-              get :edit,
-                  assignment_id: @assignment.id,
-                  submission_id: @submission.id,
-                  id:            1
+              get :edit, params: { assignment_id: @assignment.id, submission_id: @submission.id, id: 1 }
               is_expected.to respond_with :redirect
             end
           end
@@ -72,7 +69,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#download_yml' do
         it 'should respond with redirect' do
-          get :download_yml, assignment_id: 1
+          get :download_yml, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -81,35 +78,35 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, assignment_id: 1
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, assignment_id: 1
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, assignment_id: 1, id: 1
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, assignment_id: 1, id: 1
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, assignment_id: 1, id: 1
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -139,7 +136,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#index' do
         before(:each) do
-          get_as @admin, :index, assignment_id: @assignment.id
+          get_as @admin, :index, params: { assignment_id: @assignment.id }
         end
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
@@ -159,9 +156,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           get_as @admin,
                  :new,
-                 format:         :js,
-                 assignment_id:  @assignment.id,
-                 criterion_type: 'FlexibleCriterion'
+                 params: { assignment_id: @assignment.id, criterion_type: 'FlexibleCriterion'},
+                 format: :js
         end
 
         it 'should respond with appropriate content' do
@@ -181,10 +177,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           get_as @admin,
                  :edit,
-                 format:         :js,
-                 assignment_id:  1,
-                 id:             @criterion.id,
-                 criterion_type: @criterion.class.to_s
+                 params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                 format: :js
         end
 
         it 'should respond with appropriate content' do
@@ -210,11 +204,9 @@ RSpec.describe CriteriaController, type: :controller do
 
             get_as @admin,
                    :update,
-                   format:             :js,
-                   assignment_id:      1,
-                   id:                 @criterion.id,
-                   flexible_criterion: { name: 'one', max_mark: 10 },
-                   criterion_type:     'FlexibleCriterion'
+                   params: { assignment_id: 1, id: @criterion.id, flexible_criterion: { name: 'one', max_mark: 10 },
+                             criterion_type: 'FlexibleCriterion' },
+                   format: :js
           end
 
           it 'should respond with appropriate content' do
@@ -230,11 +222,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             get_as @admin,
                    :update,
-                   format:             :js,
-                   assignment_id:      1,
-                   id:                 @criterion.id,
-                   flexible_criterion: { name: 'one', max_mark: 10 },
-                   criterion_type:     'FlexibleCriterion'
+                   params: { assignment_id: 1, id: @criterion.id, flexible_criterion: { name: 'one', max_mark: 10 },
+                             criterion_type: 'FlexibleCriterion' },
+                   format: :js
           end
 
           it 'successfully assign criterion' do
@@ -272,7 +262,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#index' do
         before(:each) do
-          post_as @admin, :index, assignment_id: @assignment.id
+          post_as @admin, :index, params: { assignment_id: @assignment.id }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -297,12 +287,9 @@ RSpec.describe CriteriaController, type: :controller do
                 .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    flexible_criterion:   { name: 'first',
-                                            max_mark: 10 },
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'FlexibleCriterion'
+                    params: { assignment_id: @assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion' },
+                    format: :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -318,12 +305,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    flexible_criterion:   { name: 'first'},
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'FlexibleCriterion',
-                    max_mark_prompt:      10
+                    params: { assignment_id: @assignment.id, flexible_criterion: { name: 'first' },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                    format: :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -342,12 +326,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    flexible_criterion:   { name: 'first'},
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'FlexibleCriterion',
-                    max_mark_prompt:      10
+                    params: { assignment_id: @assignment.id, flexible_criterion: { name: 'first' },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                    format: :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -367,10 +348,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           post_as @admin,
                   :edit,
-                  format:         :js,
-                  assignment_id:  1,
-                  id:             @criterion.id,
-                  criterion_type: @criterion.class.to_s
+                  params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                  format: :js
         end
 
         it ' should respond with appropriate content' do
@@ -389,9 +368,9 @@ RSpec.describe CriteriaController, type: :controller do
       it 'should be able to update_positions' do
         post_as @admin,
                 :update_positions,
-                format:            :js,
-                criterion:         ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
-                assignment_id:     @assignment.id
+                params: { criterion: ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
+                          assignment_id: @assignment.id },
+                format: :js
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
 
@@ -413,10 +392,8 @@ RSpec.describe CriteriaController, type: :controller do
       it ' should be able to delete the criterion' do
         delete_as @admin,
                   :destroy,
-                  format:         :js,
-                  assignment_id:  1,
-                  id:             @criterion.id,
-                  criterion_type: @criterion.class.to_s
+                  params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                  format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_strings).to eql(flash[:success].map { |f| extract_text f })
@@ -433,27 +410,27 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, assignment_id: 1
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, assignment_id: 1
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, assignment_id: 1, id: 1
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
 
         context 'with an assignment' do
           before :each do
-            @grouping = FactoryGirl.create(:grouping)
+            @grouping = FactoryBot.create(:grouping)
             @assignment = @grouping.assignment
           end
 
@@ -464,10 +441,7 @@ RSpec.describe CriteriaController, type: :controller do
 
             context '#edit' do
               it 'should respond with redirect' do
-                get :edit,
-                    assignment_id: @assignment.id,
-                    submission_id: @submission.id,
-                    id:            1
+                get :edit, params: { assignment_id: @assignment.id, submission_id: @submission.id, id: 1 }
                 is_expected.to respond_with :redirect
               end
             end
@@ -477,28 +451,28 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, assignment_id: 1, id: 1
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, assignment_id: 1, id: 1
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, assignment_id: 1
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#download_yml' do
         it 'should respond with redirect' do
-          get :download_yml, assignment_id: 1
+          get :download_yml, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -507,35 +481,35 @@ RSpec.describe CriteriaController, type: :controller do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, assignment_id: 1
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, assignment_id: 1
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, assignment_id: 1, id: 1
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, assignment_id: 1, id: 1
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, assignment_id: 1, id: 1
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -562,7 +536,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#index' do
         before(:each) do
-          get_as @admin, :index, assignment_id: @assignment.id
+          get_as @admin, :index, params: { assignment_id: @assignment.id }
         end
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
@@ -582,9 +556,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           get_as @admin,
                  :new,
-                 format:         :js,
-                 assignment_id:  @assignment.id,
-                 criterion_type: 'RubricCriterion'
+                 params: { assignment_id:  @assignment.id, criterion_type: 'RubricCriterion' },
+                 format: :js
         end
 
         it 'should respond with appropriate content' do
@@ -604,10 +577,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           get_as @admin,
                  :edit,
-                 format:         :js,
-                 assignment_id:  1,
-                 id:             @criterion.id,
-                 criterion_type: @criterion.class.to_s
+                 params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                 format: :js
         end
 
         it 'should respond with appropriate content' do
@@ -633,11 +604,9 @@ RSpec.describe CriteriaController, type: :controller do
 
             get_as @admin,
                    :update,
-                   format:           :js,
-                   assignment_id:    1,
-                   id:               @criterion.id,
-                   rubric_criterion: { name: 'one', max_mark: 10 },
-                   criterion_type:   'RubricCriterion'
+                   params: { assignment_id: 1, id: @criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
+                             criterion_type: 'RubricCriterion' },
+                   format: :js
           end
 
           it 'should respond with appropriate content' do
@@ -653,11 +622,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             get_as @admin,
                    :update,
-                   format:           :js,
-                   assignment_id:    1,
-                   id:               @criterion.id,
-                   rubric_criterion: { name: 'one', max_mark: 10 },
-                   criterion_type:   'RubricCriterion'
+                   params: { assignment_id: 1, id: @criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
+                             criterion_type: 'RubricCriterion' },
+                   format: :js
           end
 
           it 'successfully assign criterion' do
@@ -692,7 +659,7 @@ RSpec.describe CriteriaController, type: :controller do
 
       context '#index' do
         before(:each) do
-          post_as @admin, :index, assignment_id: @assignment.id
+          post_as @admin, :index, params: { assignment_id: @assignment.id }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -717,12 +684,9 @@ RSpec.describe CriteriaController, type: :controller do
                 .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    rubric_criterion:     { name: 'first',
-                                           max_mark: 10 },
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'RubricCriterion'
+                    params: { assignment_id: @assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
+                    format:  :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -738,12 +702,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    rubric_criterion:     { name: 'first'},
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'RubricCriterion',
-                    max_mark_prompt:      10
+                    params: { assignment_id: @assignment.id, rubric_criterion: { name: 'first' },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                    format: :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -762,12 +723,9 @@ RSpec.describe CriteriaController, type: :controller do
           before(:each) do
             post_as @admin,
                     :create,
-                    format:               :js,
-                    assignment_id:        @assignment.id,
-                    rubric_criterion:     { name: 'first'},
-                    new_criterion_prompt: 'first',
-                    criterion_type:       'RubricCriterion',
-                    max_mark_prompt:      10
+                    params: { assignment_id: @assignment.id, rubric_criterion: { name: 'first' },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                    format: :js
           end
           it 'should respond with appropriate content' do
             expect(assigns(:criterion)).to be_truthy
@@ -787,10 +745,8 @@ RSpec.describe CriteriaController, type: :controller do
         before(:each) do
           post_as @admin,
                   :edit,
-                  format:         :js,
-                  assignment_id:  1,
-                  id:             @criterion.id,
-                  criterion_type: @criterion.class.to_s
+                  params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                  format: :js
         end
 
         it ' should respond with appropriate content' do
@@ -809,9 +765,9 @@ RSpec.describe CriteriaController, type: :controller do
       it 'should be able to update_positions' do
         post_as @admin,
                 :update_positions,
-                format:            :js,
-                criterion:         ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
-                assignment_id:     @assignment.id
+                params: { criterion: ["#{@criterion2.class} #{@criterion2.id}", "#{@criterion.class} #{@criterion.id}"],
+                          assignment_id: @assignment.id },
+                format: :js
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
 
@@ -831,11 +787,10 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it ' should be able to delete the criterion' do
-        delete_as @admin,         :destroy,
-                  format:         :js,
-                  assignment_id:  1,
-                  id:             @criterion.id,
-                  criterion_type: @criterion.class.to_s
+        delete_as @admin,
+                  :destroy,
+                  params: { assignment_id: 1, id: @criterion.id, criterion_type: @criterion.class.to_s },
+                  format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
         expect(i18t_string).to eql(flash[:success].map { |f| extract_text f })
@@ -891,10 +846,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'raises an error if the file does not have properly formatted entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @invalid_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @invalid_file } }
 
         expect(flash[:error].map { |f| extract_text f })
             .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
@@ -903,10 +855,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'raises an error if the file does not include any criteria' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @empty_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @empty_file } }
 
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.upload.error.invalid_format') +
@@ -914,30 +863,21 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'deletes all criteria previously created' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:id))
           .not_to include(@rubric_criterion.id, @flexible_criterion.id, @checkbox_criterion.id)
       end
 
       it 'maintains the order between entries and positions for criteria' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
           .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5]])
       end
 
       it 'creates all criteria with properly formatted entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:name))
             .to contain_exactly('cr30', 'cr20', 'cr100', 'cr80', 'cr60')
@@ -946,10 +886,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'creates rubric criteria with properly formatted entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :rubric).pluck(:name))
           .to include('cr30')
@@ -971,10 +908,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'creates flexible criteria with properly formatted entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
           .to include('cr20', 'cr80', 'cr60')
@@ -987,10 +921,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'creates checkbox criteria with properly formatted entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :checkbox).pluck(:name))
           .to include('cr100')
@@ -1003,30 +934,21 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'creates criteria; being case insensitive with the type given' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
           .to include('cr20', 'cr80')
       end
 
       it 'creates criteria that lack a description' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :flexible).map(&:name)).to include('cr80')
         expect(FlexibleCriterion.find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
         expect(CheckboxCriterion.find_by(name: 'cr100').ta_visible).to be true
@@ -1036,10 +958,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'does not create criteria with format errors in entries' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr40', 'cr50', 'cr70')
@@ -1048,20 +967,14 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'does not create criteria with an invalid mark' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr40', 'cr50')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
-        post_as @admin,
-                :upload_yml,
-                assignment_id: @assignment.id,
-                yml_upload:    { rubric: @uploaded_file }
+        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr70')
@@ -1069,25 +982,17 @@ RSpec.describe CriteriaController, type: :controller do
 
       context 'When some criteria have been previously uploaded and and admin performs a download' do
         it 'responds with appropriate status' do
-          post_as @admin,
-                  :upload_yml,
-                  assignment_id: @assignment.id,
-                  yml_upload:    { rubric: @uploaded_file }
+          post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
-          get :download_yml,
-              assignment_id: @assignment.id
+          get :download_yml, params: { assignment_id: @assignment.id }
 
           expect(response.status).to eq(200)
         end
 
         it 'sends the correct information' do
-          post_as @admin,
-                  :upload_yml,
-                  assignment_id: @assignment.id,
-                  yml_upload:    { rubric: @uploaded_file }
+          post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
-          get :download_yml,
-              assignment_id: @assignment.id
+          get :download_yml, params: { assignment_id: @assignment.id }
 
           expect(response.body).to eq(@download_expected_output.read)
         end

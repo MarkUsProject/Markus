@@ -1,4 +1,4 @@
-class ModifyGroupsAddGroupName < ActiveRecord::Migration
+class ModifyGroupsAddGroupName < ActiveRecord::Migration[4.2]
   def self.up
   	add_column :groups, :name, :text
   end

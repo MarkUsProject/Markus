@@ -3,7 +3,6 @@ require 'spec_helper'
 describe TestResult do
 
   it { is_expected.to belong_to(:test_script_result) }
-  it { is_expected.to validate_presence_of(:test_script_result) }
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:completion_status) }
   it { is_expected.to validate_presence_of(:marks_earned) }

@@ -1,14 +1,8 @@
 require 'spec_helper'
 
 describe PeerReview do
-  it { is_expected.to validate_presence_of(:result) }
-  it { is_expected.to validate_presence_of(:reviewer) }
-  it { is_expected.to validate_numericality_of(:reviewer_id) }
-  it { is_expected.to validate_numericality_of(:result_id) }
-  it { should_not allow_value(-1).for(:result_id) }
-  it { should_not allow_value(-59).for(:reviewer_id) }
-  it { should allow_value(100).for(:result_id) }
-  it { should allow_value(42).for(:reviewer_id) }
+  it { is_expected.to belong_to(:result) }
+  it { is_expected.to belong_to(:reviewer) }
 
   describe 'reviewee integrity' do
     let!(:peer_review) { create(:peer_review) }

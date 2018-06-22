@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :annotation_category, class: AnnotationCategory do
     annotation_category_name { Faker::Lorem.sentence }
     created_at { Time.now }

@@ -8,11 +8,11 @@ class MainController < ApplicationController
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
-  before_filter      :authorize_for_user,
+  before_action      :authorize_for_user,
                      except: [:login,
                               :page_not_found,
                               :check_timeout]
-  before_filter :authorize_for_admin_and_admin_logged_in_as, only: [:login_as]
+  before_action :authorize_for_admin_and_admin_logged_in_as, only: [:login_as]
 
   layout 'main'
 
@@ -313,7 +313,7 @@ class MainController < ApplicationController
       render template: 'main/timeout_imminent'
       set_warned
     else
-      render nothing: true
+      head :ok
     end
   end
 

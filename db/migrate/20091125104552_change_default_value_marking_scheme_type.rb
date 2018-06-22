@@ -1,4 +1,4 @@
-class ChangeDefaultValueMarkingSchemeType < ActiveRecord::Migration
+class ChangeDefaultValueMarkingSchemeType < ActiveRecord::Migration[4.2]
   def self.up
     change_column :assignments, :marking_scheme_type, :string, :default => 'rubric'
   end

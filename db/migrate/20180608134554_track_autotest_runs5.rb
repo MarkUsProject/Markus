@@ -1,4 +1,4 @@
-class TrackAutotestRuns5 < ActiveRecord::Migration
+class TrackAutotestRuns5 < ActiveRecord::Migration[4.2]
   def change
     change_column :test_runs, :queue_len, :bigint
     rename_column :test_runs, :queue_len, :time_to_service_estimate

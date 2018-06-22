@@ -1,4 +1,4 @@
-class AddEditorColumnToAnnotationTexts < ActiveRecord::Migration
+class AddEditorColumnToAnnotationTexts < ActiveRecord::Migration[4.2]
   def self.up
     add_column :annotation_texts, :last_editor_id, :integer
   end

@@ -1,4 +1,4 @@
-class AddUniquenessConstraintToGroupsNames < ActiveRecord::Migration
+class AddUniquenessConstraintToGroupsNames < ActiveRecord::Migration[4.2]
   def self.up
       remove_index :groups, :name => "groups_n1"
       add_index :groups, :group_name, :name => "groups_name_unique", :unique => true

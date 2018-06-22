@@ -1,6 +1,6 @@
 require 'repo/memory_repository'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :memory_repository, class: Repository::MemoryRepository do
     location { Faker::Name.first_name }
     initialize_with do

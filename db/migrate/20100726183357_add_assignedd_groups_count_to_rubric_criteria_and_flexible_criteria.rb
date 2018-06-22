@@ -1,4 +1,4 @@
-class AddAssigneddGroupsCountToRubricCriteriaAndFlexibleCriteria < ActiveRecord::Migration
+class AddAssigneddGroupsCountToRubricCriteriaAndFlexibleCriteria < ActiveRecord::Migration[4.2]
   def self.up
     add_column :rubric_criteria, :assigned_groups_count, :integer, :default => 0
     add_column :flexible_criteria, :assigned_groups_count, :integer, :default => 0

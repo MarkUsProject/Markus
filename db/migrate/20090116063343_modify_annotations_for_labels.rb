@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class ModifyAnnotationsForLabels < ActiveRecord::Migration
+class ModifyAnnotationsForLabels < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

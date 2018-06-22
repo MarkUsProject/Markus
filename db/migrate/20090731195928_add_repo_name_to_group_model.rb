@@ -1,4 +1,4 @@
-class AddRepoNameToGroupModel < ActiveRecord::Migration
+class AddRepoNameToGroupModel < ActiveRecord::Migration[4.2]
   def self.up
     add_column :groups, :repo_name, :string
   end

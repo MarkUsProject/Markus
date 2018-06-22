@@ -1,4 +1,4 @@
-class CreateMarks < ActiveRecord::Migration
+class CreateMarks < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     create_table :marks do |t|

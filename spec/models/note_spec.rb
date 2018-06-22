@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe Note do
   it { is_expected.to validate_presence_of(:notes_message) }
-  it { is_expected.to validate_presence_of(:creator_id) }
-  it { is_expected.to validate_presence_of(:noteable) }
   it { is_expected.to belong_to(:noteable) }
   it { is_expected.to belong_to(:user) }
 
@@ -16,9 +14,9 @@ describe Note do
     end
   end
 
-  {Grouping: lambda {FactoryGirl.create(:grouping)},
-   Student: lambda {FactoryGirl.create(:student)},
-   Assignment: lambda {FactoryGirl.create(:assignment)}}.each_pair do |type, noteable|
+  {Grouping: lambda {FactoryBot.create(:grouping)},
+   Student: lambda {FactoryBot.create(:student)},
+   Assignment: lambda {FactoryBot.create(:assignment)}}.each_pair do |type, noteable|
     context "when #{type.to_s} exist" do
       before {
         @noteable = noteable.call()

@@ -1,4 +1,4 @@
-class AddTotalGradeToGradeEntryStudents < ActiveRecord::Migration
+class AddTotalGradeToGradeEntryStudents < ActiveRecord::Migration[4.2]
   def self.up
     add_column :grade_entry_students, :total_grade, :float
   end

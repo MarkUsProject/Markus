@@ -6,8 +6,7 @@ class AnnotationText < ApplicationRecord
   # AnnotationText is destroyed.
   has_many :annotations, dependent: :destroy
 
-  belongs_to :annotation_category, counter_cache: true
-  validates_presence_of :user
+  belongs_to :annotation_category, optional: true, counter_cache: true
   validates_associated :annotation_category,
                        message: 'annotation_category associations failed'
 

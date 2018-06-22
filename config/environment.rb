@@ -1,9 +1,5 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
+# Load the Rails application.
+require_relative 'application'
 
-# Fix TA pluralization
-ActiveSupport::Inflector.inflections do |inflection| inflection.irregular "ta", "tas"
-end
-
-# Initialize the rails application
-Markus::Application.initialize!
+# Initialize the Rails application.
+Rails.application.initialize!

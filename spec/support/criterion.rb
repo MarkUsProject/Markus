@@ -1,6 +1,6 @@
 shared_examples 'a criterion' do
   describe 'assigning and unassigning TAs' do
-    let(:assignment) { FactoryGirl.create(:assignment) }
+    let(:assignment) { FactoryBot.create(:assignment) }
     let(:criteria) do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
@@ -133,9 +133,12 @@ shared_examples 'a criterion' do
 
       it 'can bulk unassign TAs' do
         Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
+        criteria.each { |criterion| criterion.reload }
+
         criterion_ta_ids = criteria
           .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
           .reduce(:+)
+
         Criterion.unassign_tas(criterion_ta_ids, criterion_ids_types, assignment)
 
         criteria.each do |criterion|

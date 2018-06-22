@@ -1,4 +1,4 @@
-class ChangeMarkStoredForCriteria < ActiveRecord::Migration
+class ChangeMarkStoredForCriteria < ActiveRecord::Migration[4.2]
   def change
     rename_column :flexible_criteria, :max, :max_mark
     rename_column :rubric_criteria, :weight, :max_mark

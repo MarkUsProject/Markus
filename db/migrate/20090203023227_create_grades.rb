@@ -1,4 +1,4 @@
-class CreateGrades < ActiveRecord::Migration
+class CreateGrades < ActiveRecord::Migration[4.2]
 
   def self.up
     create_table :grades do |t|

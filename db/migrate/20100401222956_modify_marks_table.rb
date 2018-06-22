@@ -1,4 +1,4 @@
-class ModifyMarksTable < ActiveRecord::Migration
+class ModifyMarksTable < ActiveRecord::Migration[4.2]
   def self.up
     change_column :marks, :mark, :float
   end

@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateAssignmentFiles < ActiveRecord::Migration
+class CreateAssignmentFiles < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

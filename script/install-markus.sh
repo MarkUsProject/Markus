@@ -91,8 +91,8 @@ echo "- - - Copy Postgres Database File - - -"
 cp config/database.yml.postgresql config/database.yml
 
 # Setup the database.
-echo "- - - Setup Database via Rake - - -"
-bundle exec rake db:setup
+echo "- - - Setup Database - - -"
+bundle exec rails db:setup
 
 # Update .bashrc and .profile
 echo "- - - Update .bashrc - - -"
@@ -101,5 +101,7 @@ cd /home/vagrant/Markus
 EOL
 echo "- - - Update .profile - - -"
 cat >> /home/vagrant/.profile << 'EOL'
-PATH="${PATH}:/home/vagrant/Markus/bin"
+export PATH="${PATH}:/home/vagrant/Markus/bin"
+export HOST="0.0.0.0"
+
 EOL
