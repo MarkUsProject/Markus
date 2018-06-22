@@ -6,7 +6,7 @@ require 'csv_invalid_line_error'
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  before_action      :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 

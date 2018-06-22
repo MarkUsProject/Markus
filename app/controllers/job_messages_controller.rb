@@ -1,5 +1,5 @@
 class JobMessagesController < ApplicationController
-  before_action  :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   def show
    @job_message = Rails.cache.fetch(params[:job_id])
