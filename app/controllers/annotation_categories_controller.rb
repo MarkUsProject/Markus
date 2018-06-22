@@ -10,7 +10,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories(order: 'position').includes(:annotation_texts)
+    @annotation_categories = @assignment.annotation_categories.order(:position).includes(:annotation_texts)
 
     respond_to do |format|
       format.html
