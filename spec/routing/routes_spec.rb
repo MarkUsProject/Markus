@@ -466,15 +466,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET update_submissions properly' do
-        expect(get: sub_path + '/update_submissions').to route_to(
-          controller: sub_ctrl,
-          action: 'show',
-          assignment_id: assignment.id.to_s,
-          id: 'update_submissions',
-          locale: 'en')
-      end
-
       it 'routes GET populate_submissions_table' do
         expect(get: sub_path + '/populate_submissions_table').to route_to(
           controller: sub_ctrl,
@@ -521,6 +512,15 @@ describe 'An Assignment' do
           action: 'update_files',
           assignment_id: assignment.id.to_s,
           locale: 'en')
+      end
+
+      it 'routes POST update_submissions properly' do
+        expect(post: sub_path + '/update_submissions').to route_to(
+          controller: sub_ctrl,
+          action: 'update_submissions',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
       end
 
       it 'routes GET server_time properly' do

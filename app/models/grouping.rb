@@ -54,7 +54,7 @@ class Grouping < ApplicationRecord
           -> { where membership_status: StudentMembership::STATUSES[:inviter] },
           class_name: 'StudentMembership'
 
-  has_one :inviter, source: :user, through: :inviter_membership
+  has_one :inviter, source: :user, through: :inviter_membership, class_name: 'Student'
 
   # The following are chained
   # 'peer_reviews' is the peer reviews given for this group via some result
@@ -723,7 +723,7 @@ class Grouping < ApplicationRecord
       end
     else
       if !has_submission?
-        'unmarked'
+        I18n.t('marking_state.not_collected')
       elsif result.released_to_students
         'released'
       elsif result.marking_state != Result::MARKING_STATES[:complete]
