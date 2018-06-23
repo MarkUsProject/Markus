@@ -259,6 +259,12 @@ class SubmissionTable extends React.Component {
     });
   };
 
+  downloadGroupingFiles = (event) => {
+    if (!window.confirm(I18n.t('collect_submissions.marking_incomplete_warning'))) {
+      event.preventDefault();
+    }
+  };
+
   runTests = () => {
     $.post({
       url: Routes.run_tests_assignment_submissions_path(this.props.assignment_id),
@@ -304,9 +310,11 @@ class SubmissionTable extends React.Component {
           ref={(r) => this.actionBox = r}
           disabled={this.state.selection.length === 0}
           is_admin={this.props.is_admin}
+          assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
 
           collectSubmissions={this.collectSubmissions}
+          downloadGroupingFiles={this.downloadGroupingFiles}
           runTests={this.runTests}
           releaseMarks={this.releaseMarks}
           unreleaseMarks={this.unreleaseMarks}
@@ -366,6 +374,7 @@ class SubmissionsActionBox extends React.Component {
       //     {I18n.t('collect_submissions.uncollect_all')}
       //   </button>
       // );
+
       releaseMarksButton = (
         <button
           disabled={this.props.disabled}
@@ -391,9 +400,21 @@ class SubmissionsActionBox extends React.Component {
       );
     }
 
+    let downloadGroupingFilesButton = (
+      <a
+        href={Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id)}
+        onClick={this.props.downloadGroupingFiles}
+        download
+        className="button"
+      >
+        {I18n.t('download_the', {item: I18n.t('browse_submissions.all_submissions')})}
+      </a>
+    );
+
     return (
       <div className='rt-action-box'>
         {collectButton}
+        {downloadGroupingFilesButton}
         {runTestsButton}
         {releaseMarksButton}
         {unreleaseMarksButton}

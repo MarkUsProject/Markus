@@ -50,12 +50,6 @@
         link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment) }
     ] %>
   <% end %>
-
-  <% @heading_buttons.push(
-    { link_text: t('download_the', item: t('browse_submissions.all_submissions')),
-      link_path: download_groupings_files_assignment_submissions_path,
-      html_options: { id: 'download_all_submissions_link' } }
-  ) %>
 <% end %>
 
 <% content_for :additional_headings do %>
@@ -68,32 +62,3 @@
 <% end %>
 
 <div id='submission-table'></div>
-
-<script>
-  $(document).ready(function() {
-    var downloadGroupingsFiles = function() {
-      window.location.href = "<%= download_groupings_files_assignment_submissions_path %>";
-    };
-
-    $('#download_all_submissions_link').on('click', function () {
-      $.ajax({
-        url: '<%= check_collect_status_assignment_submissions_path %>',
-        type: 'GET',
-        success: function (data) {
-          if (data.collect_status !== true) {
-            var proceed = confirm('<%= t('collect_submissions.collection_incomplete_warning') %>');
-
-            if (proceed !== true) {
-              return;
-            }
-          }
-          downloadGroupingsFiles();
-        },
-        error: function () {
-          alert('<%= t('collect_submissions.check_collection_status_error') %>');
-        }
-      });
-      return false;
-    });
-  });
-</script>

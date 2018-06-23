@@ -229,7 +229,8 @@ label.required::after, th.required::after {
   margin-bottom: 1em;
   width: 100%;
 
-  button {
+  button,
+  .button {
     margin-left: 1em;
   }
 }
