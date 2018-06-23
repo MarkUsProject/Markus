@@ -1,3 +1,14 @@
+<% content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeTestScriptResultTable(document.getElementById('test_script_result_table'));
+    })
+  </script>
+<% end %>
+
+
+<div id='test_script_result_table'></div>
+
 <h2><%= t('automated_tests.test_results') %></h2>
 <div class="block_content">
   <div class="sub_block test_points">

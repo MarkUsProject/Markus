@@ -22,6 +22,7 @@ import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table
 import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
 import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
 import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
+import { makeTestScriptResultTable } from 'javascripts/Components/test_script_result_table';
 
 import 'javascripts/react_config';
 
@@ -36,3 +37,4 @@ window.makeExamScanLogTable = makeExamScanLogTable;
 window.makeMarksSpreadsheet = makeMarksSpreadsheet;
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 window.makeRepoBrowser = makeRepoBrowser;
+window.makeTestScriptResultTable = makeTestScriptResultTable;

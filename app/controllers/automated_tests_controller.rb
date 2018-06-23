@@ -140,6 +140,30 @@ class AutomatedTestsController < ApplicationController
     end
   end
 
+  # should named it something else other than index..
+  def index
+
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: TestResult.select(
+          [
+            :test_script_result_id, :completion_status, TestResult.arel_table[:marks_earned], :actual_output, TestResult.arel_table[:updated_at], TestResult.arel_table[:marks_total], :name, TestScriptResult.arel_table[:test_run_id], :file_name
+          ]
+        ).joins(
+          TestResult.arel_table.join(TestScriptResult.arel_table).on(
+            TestResult.arel_table[:test_script_result_id].eq(TestScriptResult.arel_table[:id])
+          ).join_sources
+        ).joins(
+          TestResult.arel_table.join(TestScript.arel_table).on(
+            TestScriptResult.arel_table[:test_script_id].eq(TestScript.arel_table[:id])
+          ).join_sources
+        )
+      }
+    end
+
+  end
+
   private
 
   def assignment_params
