@@ -53,7 +53,7 @@
         return (<%= image_tag('icons/email_go.png',
                               alt: t('marking_state.released'),
                               title: t('marking_state.released')) %>);
-      } else if (state === 'unmarked') {
+      } else if (state === I18n.t('marking_state.not_collected')) {
         return (<%= image_tag('icons/shape_square.png',
                               alt: t('marking_state.not_collected'),
                               title: t('marking_state.not_collected')) %>);

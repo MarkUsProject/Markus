@@ -218,3 +218,19 @@ label.required::after, th.required::after {
 .ReactTable .rt-body {
   overflow-y: scroll;
 }
+
+.rt-th > select {
+  margin: 0;
+}
+
+.rt-action-box {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1em;
+  width: 100%;
+
+  button,
+  .button {
+    margin-left: 1em;
+  }
+}

@@ -181,11 +181,6 @@ es:
       successfully_collected:            "Entregas recolectadas exitosamente %{collected}."
       marking_incomplete_warning:        "Nota: Esto sólo descargará las entregas que han sido recolectadas.\n\n¿Está
                                           seguro/a de querer proceder?"
-      collection_incomplete_warning:     "La recolección sigue en proceso o no ha iniciado. ¿Está seguro/a de querer
-                                          proceder? Algunas entregas pueden faltar."
-      check_collection_status_error:     "Un error ha ocurrido mientras se verificaba el estado de la recolección."
-      uncollection_processing_message:   "Deshaciendo la anterior recolección..."
-      collection_processing_message:     "Recolectando las entregas..."
     assignment:
         hidden:                    "%{assignment_text} (oculto)"
         assignment:                "Proyecto %{short_identifier}"
