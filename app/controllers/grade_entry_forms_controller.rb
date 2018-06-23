@@ -242,7 +242,9 @@ class GradeEntryFormsController < ApplicationController
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
-    flash_message(:error, errors)
+    errors.each do |err|
+      flash_message(:error, err)
+    end
 
     head :ok
   end
