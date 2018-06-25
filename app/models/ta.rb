@@ -1,6 +1,3 @@
-# we need repository and permission constants
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository')
-
 class Ta < User
 
   CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER

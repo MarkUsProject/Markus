@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), 'repository')
 module Repository
 
   # Implements AbstractRepository for memory repositories
@@ -6,7 +5,7 @@ module Repository
   #   1. Repositories are created by using MemoryRepository.create()
   #   2. Existing repositories are opened by using either SubversionRepository.open()
   #      or SubversionRepository.new()
-  class MemoryRepository < Repository::AbstractRepository
+  class MemoryRepository < AbstractRepository
 
     # class variable which knows of all memory repositories
     #    key (location), value (reference to repo)

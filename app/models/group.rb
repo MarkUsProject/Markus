@@ -1,6 +1,3 @@
-require File.join(File.dirname(__FILE__), '..', '..',
-                  'lib', 'repo', 'repository')
-
 # Maintains group information for a given user on a specific assignment
 class Group < ApplicationRecord
 

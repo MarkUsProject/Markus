@@ -7,7 +7,6 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'pundit/rspec'
 # Loads lib repo stuff.
-require 'repo/repository'
 require 'repo/git_repository'
 # require 'repo/subversion_repository'
 require 'database_cleaner'

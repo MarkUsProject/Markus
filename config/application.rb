@@ -23,6 +23,7 @@ module Markus
 
     #TODO review initializers
     #TODO precompiled assets
+    #TODO database pool connections
     # Set this if MarkUs is not hosted under / of your Web-host.
     # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
     # then set the below directive to "/markus/instance0".

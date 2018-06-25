@@ -1,7 +1,6 @@
 require "svn/repos" # load SVN Ruby bindings
 require "svn/client"
 require "digest/md5"
-require File.join(File.dirname(__FILE__),'repository') # load repository module
 
 module Repository
 
@@ -24,7 +23,7 @@ module Repository
   #   1. Repositories are created by using SubversionRepository.create()
   #   2. Existing repositories are opened by using either SubversionRepository.open()
   #      or SubversionRepository.new()
-  class SubversionRepository < Repository::AbstractRepository
+  class SubversionRepository < AbstractRepository
 
     if !defined? CLOSEABLE_VERSION
       CLOSEABLE_VERSION = "1.6.5"
