@@ -1,4 +1,4 @@
-class AddApiTokenToUserModel < ActiveRecord::Migration
+class AddApiTokenToUserModel < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :api_key, :string
     add_column :users, :api_key_md5, :string

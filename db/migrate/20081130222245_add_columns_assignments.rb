@@ -1,4 +1,4 @@
-class AddColumnsAssignments < ActiveRecord::Migration
+class AddColumnsAssignments < ActiveRecord::Migration[4.2]
 
   def self.up
     # boolean flag to check if students are allowed to form groups

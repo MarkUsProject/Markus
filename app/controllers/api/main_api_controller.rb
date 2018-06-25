@@ -8,7 +8,7 @@ module Api
 
     attr_reader :current_user
 
-    before_filter :check_format, :authenticate
+    before_action :check_format, :authenticate
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -80,7 +80,7 @@ module Api
       request_format = request.format.symbol
       if request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
-        render nothing: true, status: 406
+        head :not_acceptable
       end
     end
 

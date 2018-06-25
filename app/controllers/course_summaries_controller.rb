@@ -1,7 +1,7 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:populate]
 
   layout 'assignment_content'
@@ -74,7 +74,7 @@ class CourseSummariesController < ApplicationController
     grade_entry_forms = GradeEntryForm.all
     marking_schemes = MarkingScheme.all
 
-    header = [I18n.t('user.user_name'), I18n.t('user.id_number')]
+    header = [User.human_attribute_name(:user_name), User.human_attribute_name(:id_number)]
     header.concat(assignments.map(&:short_identifier))
     header.concat(grade_entry_forms.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))

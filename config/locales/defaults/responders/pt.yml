@@ -1,0 +1,12 @@
+pt:
+  flash:
+    actions:
+      create:
+        success: "%{resource_name} criado com sucesso."
+        error: "Falha ao criar %{resource_name}."
+      update:
+        success: "%{resource_name} atualizado com sucesso."
+        error: "Falha ao atualizar %{resource_name}."
+      destroy:
+        success: "%{resource_name} suprimido com sucesso."
+        error: "Falha ao atualizar suprimido %{resource_name}."

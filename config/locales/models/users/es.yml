@@ -1,0 +1,21 @@
+es:
+  activerecord:
+    models:
+      admin:
+        one: "Administrador"
+      student:
+        one: "Estudiante"
+      ta:
+        one: "Evaluador"
+        other: "Evaluadores"
+      user:
+        one: "Usuario"
+    attributes:
+      user:
+        email: "Email"
+        first_name: "Nombre"
+        full_name: "Nombre Completo"
+        grace_credits: "Créditos de Gracia Restantes"
+        id_number: "Número de Identificación"
+        last_name: "Apellido"
+        user_name: "Nombre de Usuario"

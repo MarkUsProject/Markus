@@ -1,4 +1,4 @@
-class ChangeSubmissionRuleColumnDefault < ActiveRecord::Migration
+class ChangeSubmissionRuleColumnDefault < ActiveRecord::Migration[4.2]
   def up
     change_column_default :submission_rules, :type, 'NoLateSubmissionRule'
   end

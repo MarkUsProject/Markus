@@ -1,9 +1,9 @@
 class TestRun < ApplicationRecord
   has_many :test_script_results, dependent: :destroy
-  belongs_to :test_batch
-  belongs_to :submission
-  belongs_to :grouping, required: true
-  belongs_to :user, required: true
+  belongs_to :test_batch, optional: true
+  belongs_to :submission, optional: true
+  belongs_to :grouping
+  belongs_to :user
 
   validates_presence_of :revision_identifier
   validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true

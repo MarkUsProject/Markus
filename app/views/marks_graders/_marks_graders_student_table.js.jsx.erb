@@ -111,13 +111,13 @@
           },
           {
             id: 'user_name',
-            content: '<%= j raw I18n.t(:'user.user_name') %>',
+            content: '<%= User.human_attribute_name(:user_name) %>',
             sortable: true,
             searchable: true
           },
           {
             id: 'full_name',
-            content: '<%= j raw I18n.t(:'user.full_name') %>',
+            content: '<%= User.human_attribute_name(:full_name) %>',
             sortable: true,
             searchable: true
           },
@@ -126,7 +126,7 @@
             id: 'graders',
             content:
               <input type='checkbox'
-              onChange={this.gradersInStudentsCheckboxAllClicked.bind(this)}> <%= j raw I18n.t('graders.graders') %>
+              onChange={this.gradersInStudentsCheckboxAllClicked.bind(this)}> <%= Ta.model_name.human.pluralize %>
               </input>,
             sortable: true,
             searchable: false
@@ -163,7 +163,7 @@
         <div className='tab-pane ui-tabs ui-widget ui-widget-content ui-corner-all' id='groups-tabs'>
           <Table data={students_data} ref="myTable"
             filters={section_filters} filter_type={section_filters.length > 3}
-            search_placeholder={'<%= j raw I18n.t(:'students.search_students') %>'}
+            search_placeholder={'<%= j raw I18n.t('search') %>'}
             onSelectedRowsChange={this.updateSelectedStudents}
             columns={columns} />
         </div>

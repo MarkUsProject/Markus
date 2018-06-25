@@ -1,4 +1,4 @@
-class AddHiddenBooleanToStudents < ActiveRecord::Migration
+class AddHiddenBooleanToStudents < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :hidden, :boolean, :default => false, :null => false
   end

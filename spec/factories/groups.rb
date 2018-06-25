@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :group do
     sequence(:group_name) { |n| "group#{n}" }
   end

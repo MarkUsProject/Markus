@@ -120,28 +120,28 @@ class StudentTable extends React.Component {
           data={data.students}
           columns={[
             {
-              Header: I18n.t('user.user_name'),
+              Header: I18n.t('activerecord.attributes.user.user_name'),
               accessor: 'user_name',
               id: 'user_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.first_name'),
+              Header: I18n.t('activerecord.attributes.user.first_name'),
               accessor: 'first_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.last_name'),
+              Header: I18n.t('activerecord.attributes.user.last_name'),
               accessor: 'last_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.email'),
+              Header: I18n.t('activerecord.attributes.user.email'),
               accessor: 'email',
               minWidth: 150
             },
             {
-              Header: I18n.t('user.id_number'),
+              Header: I18n.t('activerecord.attributes.user.id_number'),
               accessor: 'id_number',
               minWidth: 90
             },
@@ -172,7 +172,7 @@ class StudentTable extends React.Component {
                 </select>,
             },
             {
-              Header: I18n.t('user.grace_credits'),
+              Header: I18n.t('activerecord.attributes.user.grace_credits'),
               id: 'grace_credits',
               Cell: row => `${row.original.remaining_grace_credits} / ${row.original.grace_credits}`,
               minWidth: 90
@@ -260,9 +260,9 @@ class StudentsActionBox extends React.Component {
                value={this.state.grace_credits}
                onChange={this.inputChanged} />;
     } else if (this.state.action === 'update_section') {
-      if (this.props.sections.length > 0) {
-        const section_options = this.props.sections.entries().map(
-          section => <option value={section[0]}>{section[1]}</option>
+      if (Object.keys(this.props.sections).length > 0) {
+        const section_options = Object.entries(this.props.sections).map(
+          section => <option key={section[0]} value={section[0]}>{section[1]}</option>
         );
         optionalInputBox =
           <select name='section'
@@ -283,10 +283,10 @@ class StudentsActionBox extends React.Component {
     return (
       <form onSubmit={this.props.onSubmit}>
         <select value={this.state.action} onChange={this.actionChanged}>
-          <option value='give_grace_credits'>{I18n.t('give_grace_credits')}</option>
-          <option value='update_section'>{I18n.t('add_section')}</option>
-          <option value='hide'>{I18n.t('hide_students')}</option>
-          <option value='unhide'>{I18n.t('unhide_students')}</option>
+          <option value='give_grace_credits'>{I18n.t('students.admin_actions.give_grace_credits')}</option>
+          <option value='update_section'>{I18n.t('students.admin_actions.add_section')}</option>
+          <option value='hide'>{I18n.t('students.admin_actions.mark_inactive')}</option>
+          <option value='unhide'>{I18n.t('students.admin_actions.mark_active')}</option>
         </select>
         {optionalInputBox}
         <input type='submit'

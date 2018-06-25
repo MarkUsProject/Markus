@@ -8,7 +8,7 @@ describe AssignmentsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
-  let(:annotation_category) { FactoryGirl.create(:annotation_category) }
+  let(:annotation_category) { FactoryBot.create(:annotation_category) }
 
   context 'upload_assignment_list' do
     before :each do
@@ -44,9 +44,7 @@ describe AssignmentsController do
     end
 
     it 'accepts a valid file' do
-      post :upload_assignment_list,
-           assignment_list: @file_good,
-           file_format: 'csv'
+      post :upload_assignment_list, params: { assignment_list: @file_good, file_format: 'csv' }
 
       expect(response.status).to eq(302)
       test1 = Assignment.find_by_short_identifier(@test_asn1)
@@ -61,9 +59,7 @@ describe AssignmentsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload_assignment_list,
-           assignment_list: @file_invalid_column,
-           file_format: 'csv'
+      post :upload_assignment_list, params: { assignment_list: @file_invalid_column, file_format: 'csv' }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -74,8 +70,7 @@ describe AssignmentsController do
     end
 
     it 'does not accept fileless submission' do
-      post :upload_assignment_list,
-           file_format: 'csv'
+      post :upload_assignment_list, params: { file_format: 'csv' }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -84,9 +79,7 @@ describe AssignmentsController do
     end
 
     it 'does not accept a non-csv file with .csv extension' do
-      post :upload_assignment_list,
-           assignment_list: @file_bad_csv,
-           file_format: 'csv'
+      post :upload_assignment_list, params: { assignment_list: @file_bad_csv, file_format: 'csv' }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -95,9 +88,7 @@ describe AssignmentsController do
     end
 
     it 'does not accept a .xls file' do
-      post :upload_assignment_list,
-           assignment_list: @file_wrong_format,
-           file_format: 'csv'
+      post :upload_assignment_list, params: { assignment_list: @file_wrong_format, file_format: 'csv' }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -123,17 +114,17 @@ describe AssignmentsController do
       Assignment.all.each do |asn|
         asn.delete
       end
-      @assignment = FactoryGirl.create(:assignment)
+      @assignment = FactoryBot.create(:assignment)
     end
 
     it 'responds with appropriate status' do
-      get :download_assignment_list, file_format: 'csv'
+      get :download_assignment_list, params: { file_format: 'csv' }
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download_assignment_list, file_format: 'csv'
+      get :download_assignment_list, params: { file_format: 'csv' }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -157,20 +148,20 @@ describe AssignmentsController do
       expect(@controller).to receive(:send_data)
                                .with(csv_data.join(',') + "\n", csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
-      get :download_assignment_list, file_format: 'csv'
+      get :download_assignment_list, params: { file_format: 'csv' }
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :download_assignment_list, file_format: 'csv'
+      get :download_assignment_list, params: { file_format: 'csv' }
       expect(response.content_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get :download_assignment_list, file_format: 'csv'
+      get :download_assignment_list, params: { file_format: 'csv' }
       filename = response.header['Content-Disposition']
         .split.last.split('"').second
       expect(filename).to eq 'assignment_list.csv'

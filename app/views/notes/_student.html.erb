@@ -1,6 +1,6 @@
 <%= fields_for :note do |f| %>
   <p>
-    <%= f.label :noteable_id, t('notes.noteables.Student') %>
+    <%= f.label :noteable_id, Student.model_name.human %>
     <%= f.select :noteable_id, @students.collect { |p| [p.user_name,p.id] } %>
   </p>
 <% end %>

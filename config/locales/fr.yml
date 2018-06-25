@@ -22,7 +22,6 @@ fr:
     logging_in:         "Connexion"
     login:              "Identifiant"
     login_failed:       "L'établissement de la connexion a échoué."
-    cookies_off:        "Veuillez configurer votre navigateur afin d'accepter les cookies."
     password_not_blank: "Veuillez entrer votre mot de passe."
     username_not_blank: "Veuillez entrer votre nom d'utilisateur."
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
@@ -63,7 +62,6 @@ fr:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Tableau de bord"
-    users:              "Utilisateurs"
     sections:           "Sections"
     home:               "Accueil"
     settings:           "Paramètres"
@@ -142,8 +140,6 @@ fr:
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour les sections %{section_names}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
-      collection_incomplete_warning: "La récuperation des envois est en cours. Certains envois seront manquants. Désirez-vous tout de même continuer?"
-      check_collection_status_error: "Une erreur s'est produite lors de la vérification de l'état de la récuperation."
     assignment:
         hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
@@ -240,15 +236,10 @@ fr:
     members:            "Membres"
     add_members:        "Ajouter des membres"
     remove_members:     "Enlever des membres"
-    graders:            "Correcteurs"
     search_graders:     "Recherche les correcteurs"
     add_graders:        "Ajouter des correcteurs"
     remove_graders:     "Enlever des correcteurs"
-    admins:             "Administrateurs"
     add_new:            "Nouveau"
-    add_new_student:    "Nouveau Étudiant"
-    add_new_grader:     "Nouveau Correcteur"
-    add_new_admin:      "Nouveau Administrateur"
     create_new_grade_entry_form: "Créer une feuille de notes"
     edit:               "Éditer"
     save:               "Sauvegarder"
@@ -278,8 +269,6 @@ fr:
     invite:             "Inviter"
     disinvite:          "Ne plus inviter"
     help:               "Aide"
-    give_grace_credits:  "Donner du temps supplémentaire : "
-    add_section:        "Ajouter à une section"
     no_result:          "Les notes de ce projet ne sont pas encore disponibles."
     no_remark_result:   "Les retours des remarques de ce projet ne sont pas encore disponibles."
     unmarked:           "non noté"
@@ -524,9 +513,6 @@ fr:
 
     course_summaries_index:
       page_title:     "Sommaire"
-      user_name:      "Nom d'utilisateur"
-      first_name:     "Prénom"
-      last_name:      "Nom De Famille"
       ngr:            "Aucune note reçue"
 
     grade_entry_forms:
@@ -603,7 +589,6 @@ fr:
       manage_groups: "Gérer les groupes"
       assign_scans: "Affecter des scans"
       skip_group: "UPDATE ME"
-      all_students: "Tous les étudiant"
       unassigned_students: "Non assigné(s)"
       assigned_students: "Assigné(s"
       inactive_students: "Inactif"
@@ -685,36 +670,6 @@ fr:
       error:
         validate_criteria: "La note doit être comprise entre 0 et la note maximale du critère."
 
-    # Student's View
-    students:
-      processing: "Chargement…"
-      manage_students: "Gestion des étudiants"
-      edit_student: "Modification d'un(e) étudiant(e)"
-      edit_success: "%{user_name} a été mis(e) à jour."
-      create_new: "Créer un(e) nouvel(le) étudiant(e)"
-      create:
-        success: "Création de l'étudiant(e) %{user_name}"
-        error: "Erreur dans la création de l'étudiant(e)"
-      update:
-        success: "Mise à jour de l'étudiant(e) %{user_name}"
-        error: "Erreur dans la mise à jour de l'étudiant(e)"
-      create_success: "L'étudiant(e) %{user_name} a bien été créé(e)."
-      students: "Étudiants"
-      search_students: "Rechercher les étudiants"
-      no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
-      upload:
-        upload_a_class_list: "Envoyer une liste d'étudiants"
-        select_csv_file:     "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-        student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-      download:
-        download_student_list: "Télécharger la liste des étudiants"
-    hide_students:      "Désactiver les étudiants"
-    unhide_students:    "Activer les étudiants"
-    students_not_successfully_added_message_1: "Les étudiants suivants n'ont pas été ajoutés correctement : "
-    students_not_successfully_added_message_2: "Assurez-vous que : "
-    students_not_successfully_added_message_3: "Les noms des étudiants sont en caractères alphanumériques."
-    students_not_successfully_added_message_4: "Chaque champ est séparé par une virgule (pas d'espace)."
-    students_not_successfully_added_message_5: "Chaque ligne a le bon nombre de champs comme spécifié."
     invalid_group_warning: "Votre groupe est invalide. Vous n'avez probablement pas atteint la taille minimale. Vous ne serez peut-être pas autorisés à poster vos fichiers et votre travail pourrait ne pas être noté, jusqu'à ce que vous ayez atteint ce minimum."
     rejected_invitation: "déclinée"
 
@@ -794,25 +749,9 @@ fr:
         replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
         version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
         empty_file_warning: "UPDATE ME"
-    tas:
-      create:
-        success: "Création de le correcteur %{user_name}"
-        error: "Erreur dans la création de le correcteur"
-      update:
-        success: "Mise à jour de le correcteur %{user_name}"
-        error: "Erreur dans la mise à jour de le correcteur"
-      delete:
-        confirm: "Êtes-vous sûr de vouloir supprimer cette niveleuse?"
-        success: "Supprimé avec succès niveleuse %{user_name}."
-        error:   "Impossible de supprimer niveleuse."
 
     #Graders' View
     graders:
-      create_new_grader:  "Créer un nouveau correcteur"
-      edit_grader:        "Modifier un correcteur"
-      manage_graders:     "Gestion des correcteurs"
-      graders:            "Correcteurs"
-      all_graders:        "Tous les correcteurs"
       assigned_graders:   "Correcteurs assignés"
       possible_graders:   "Correcteurs possibles"
       unassigned_graders: "Correcteurs non assignés"
@@ -824,14 +763,6 @@ fr:
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       skip_empty_submissions: "Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)"
-      upload:
-        select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
-        grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-        not_added: "Les correcteurs suivants n'ont pas été ajoutés correctement : "
-        make_sure: "Vérifiez que : "
-        ta_names: "Les noms des correcteurs sont en caractères alphanumériques."
-        each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
-        each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       download:
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
@@ -844,26 +775,6 @@ fr:
         upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
         description_grader_map: "Format du fichier CSV : <br>
             <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
-
-    #Admins' View
-    admins:
-      manage_admins: "Gestion des admninistrateurs"
-      create_new_admin: "Créer un nouvel administrateur"
-      manage_admins:    "Gestion des administrateurs"
-      edit_admin:       "Modification d'un administrateur"
-      success: "%{user_name} a été mis(e) à jour"
-      admins: "Administrateurs"
-      upload:
-        not_added: "Les administrateurs suivants n'ont pas été ajoutés correctement : "
-        make_sure: "Vérifiez que : "
-        each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
-        each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
-      create:
-        success: "Création de l'administrateur %{user_name}"
-        error: "Erreur dans la création de l'administrateur"
-      update:
-        success: "Mise à jour de l'administrateur %{user_name}"
-        error: "Erreur dans la mise à jour de l'administrateur"
 
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
@@ -897,25 +808,6 @@ fr:
         error: "Erreur. Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
-
-    user:
-        user:           "Utilisateur"
-        id:             "ID"
-        id_number:      "Numéro d'identification"
-        email:          "Email"
-        user_name:      "Nom d'utilisateur"
-        user_names:     "Nom(s) d'utilisateur"
-        first_name:     "Prénom"
-        last_name:      "Nom"
-        full_name:      "Nom complet"
-        type:           "Type"
-        user_type:      "Type"
-        grace_credits:  "Crédits de grâce"
-        notes_count:    "Notes"
-        display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
-
-    hide_students: "Désactiver les étudiants"
-    unhide_students: "Activer les étudiants"
 
     submission_rules:
       hours:  "heure(s)"
@@ -1058,7 +950,6 @@ fr:
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
             Grouping: "Groupe"
-            Student:  "Étudiant(e)"
             Assignment: "Projet"
         author: "Auteur"
         creation_time: "Date de création"

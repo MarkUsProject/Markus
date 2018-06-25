@@ -1,4 +1,4 @@
-class AddRemarkResultsIdAndRequestToSubmissions < ActiveRecord::Migration
+class AddRemarkResultsIdAndRequestToSubmissions < ActiveRecord::Migration[4.2]
   def self.up
     add_column :submissions, :remark_result_id, :integer
     add_column :submissions, :remark_request, :text

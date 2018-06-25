@@ -20,18 +20,18 @@ describe SectionsController do
     end
 
     it 'on edit section' do
-      post_as @student, :edit, id: Section.create!(name: 'test').id
+      post_as @student, :edit, params: { id: Section.create!(name: 'test').id }
       expect(response.status).to eq(404)
     end
 
     it 'on update new section' do
-      post_as @student, :update, id: Section.create!(name: 'test').id
+      post_as @student, :update, params: { id: Section.create!(name: 'test').id }
       expect(response.status).to eq(404)
     end
 
     it 'not be able to delete a section' do
       section = Section.create!(name: 'test')
-      delete_as @student, :destroy, id: section
+      delete_as @student, :destroy, params: { id: section }
       expect(response.status).to eq(404)
       expect(Section.find(section.id)).to be_truthy
     end
@@ -50,7 +50,7 @@ describe SectionsController do
     end
 
     it 'on create new section' do
-      post_as @admin, :create, {section: {name: 'section_01'}}
+      post_as @admin, :create, params: { section: { name: 'section_01' } }
 
       expect(response).to be_redirect
       i18t_string = [I18n.t('sections.create.success', name: 'section_01')].map { |f| extract_text f }
@@ -60,29 +60,26 @@ describe SectionsController do
 
     it 'not be able to create a section with the same name as a existing one' do
       section = Section.create(name: 'section_01')
-      post_as @admin, :create, {section: {name: section.name}}
+      post_as @admin, :create, params: { section: { name: section.name } }
       expect(response.status).to eq(200)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map { |f| extract_text f })
     end
 
     it 'not be able to create a section with a blank name' do
-      post_as @admin, :create, {section: {name: ''}}
+      post_as @admin, :create, params: { section: { name: '' } }
       expect(Section.find_by_name('')).to be_nil
       expect(response.status).to eq(200)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.create.error')].map { |f| extract_text f })
     end
 
     it 'on edit section' do
-      post_as @admin, :edit, id: Section.create!(name: 'test').id
+      post_as @admin, :edit, params: { id: Section.create!(name: 'test').id }
       expect(response.status).to eq(200)
     end
 
     it 'be able to update a section name to "no section"' do
       section = Section.create(name: 'section_01')
-      put_as @admin,
-             :update,
-             id: section.id,
-             section: {name: 'no section'}
+      put_as @admin, :update, params: { id: section.id, section: { name: 'no section' } }
 
       expect(response).to be_redirect
       i18t_string = [I18n.t('sections.update.success', name: 'no section')].map { |f| extract_text f }
@@ -92,17 +89,14 @@ describe SectionsController do
 
     it 'not see a table if no students in this section' do
       section = Section.create(name: 'section_01')
-      get_as @admin, :edit, id: section.id
+      get_as @admin, :edit, params: { id: section.id }
       expect(response.body.to_s.match('section_students')).to be_nil
     end
 
     it 'not be able to edit a section name to an existing name' do
       section = Section.create(name: 'section_01')
       section2 = Section.create(name: 'section_02')
-      put_as @admin,
-             :update,
-             id: section.id,
-             section: {name: section2.name}
+      put_as @admin, :update, params: { id: section.id, section: { name: section2.name } }
       expect(response.status).to eq(200)
       expect(flash[:error].map { |f| extract_text f }).to eq([I18n.t('sections.update.error')].map { |f| extract_text f })
     end
@@ -113,7 +107,7 @@ describe SectionsController do
       end
 
       it 'be able to delete a section' do
-        delete_as @admin, :destroy, id: @section.id
+        delete_as @admin, :destroy, params: { id: @section.id }
         i18t_string = [I18n.t('sections.destroy.success')].map { |f| extract_text f }
         expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       end
@@ -123,7 +117,7 @@ describe SectionsController do
                                   last_name: 'doe',
                                   first_name: 'john')
         @section.students << student
-        delete_as @admin, :destroy, id: @section.id
+        delete_as @admin, :destroy, params: { id: @section.id }
         i18t_string = [I18n.t('sections.destroy.not_empty')].map { |f| extract_text f }
         expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
         expect(Section.find(@section.id)).to be_truthy

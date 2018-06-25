@@ -7,7 +7,6 @@
 <% end %>
 
 <% content_for :title do %>
-  <%= t('admins.manage_admins') %>
   <span class='title-help users_admins_help'>
     <p class='help-message-title users_admins_help'>
       <%= t('admins.help.manage_admins') %>
@@ -16,7 +15,7 @@
 <% end %>
 
 <% @heading_buttons = [
-  { link_text: t(:add_new_admin),
+  { link_text: t('admins.new'),
     link_path: new_admin_path }
 ] %>
 

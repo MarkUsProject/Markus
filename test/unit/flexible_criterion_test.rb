@@ -20,7 +20,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     # should have_many :marks
 
     should validate_presence_of :name
-    should validate_presence_of :assignment_id
     should validate_presence_of :max_mark
 
     should validate_uniqueness_of(

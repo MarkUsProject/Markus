@@ -1,4 +1,4 @@
-class RemoveVersionAttributesFromResults < ActiveRecord::Migration
+class RemoveVersionAttributesFromResults < ActiveRecord::Migration[4.2]
   def self.up
     # remove attributes for result-versioning again (there is a wiki-page on that)
     remove_column :results, :result_version

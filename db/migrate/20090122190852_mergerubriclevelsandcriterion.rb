@@ -1,4 +1,4 @@
-class Mergerubriclevelsandcriterion < ActiveRecord::Migration
+class Mergerubriclevelsandcriterion < ActiveRecord::Migration[4.2]
   def self.up
     add_column :rubric_criteria, :level_0_name, :text
     add_column :rubric_criteria, :level_0_description, :text

@@ -4,6 +4,8 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require_self
 */
+//= require 'clickable'
 //= require OpenSans
 //= require react-table
 //= require react-keyed-file-browser
+//= require cookies_eu

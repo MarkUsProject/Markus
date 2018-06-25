@@ -1,4 +1,4 @@
-class AddColumnsTestResults < ActiveRecord::Migration
+class AddColumnsTestResults < ActiveRecord::Migration[4.2]
   def self.up
     # column to store status of executing ant (ie. success, failed, error)
     add_column :test_results, :status, :string

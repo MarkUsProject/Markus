@@ -1,4 +1,4 @@
-class CreateGroupingsTags < ActiveRecord::Migration
+class CreateGroupingsTags < ActiveRecord::Migration[4.2]
   def up
     create_table :groupings_tags, id: false do |t|
       t.integer :tag_id, null: false

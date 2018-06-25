@@ -80,7 +80,11 @@ class Result < ApplicationRecord
       assignment ||= submission.grouping.assignment
       criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
       marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
-      marks_array.sum || 0
+      # TODO: sum method does not work with empty arrays or with arrays containing nil values.
+      #       Consider updating/replacing gem:
+      #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
+      marks_array.map! { |m| m ? m : 0 }
+      marks_array.empty? ? 0 : marks_array.sum
     end
   end
 
@@ -201,7 +205,7 @@ class Result < ApplicationRecord
 
     if nil_marks || num_marks < criteria.count
       errors.add(:base, I18n.t('common.criterion_incomplete_error'))
-      return false
+      throw(:abort)
     end
     true
   end

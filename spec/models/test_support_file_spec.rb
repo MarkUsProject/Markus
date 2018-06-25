@@ -3,7 +3,6 @@ require 'spec_helper'
 describe TestSupportFile do
   it { is_expected.to belong_to(:assignment) }
 
-  it { is_expected.to validate_presence_of :assignment }
   it { is_expected.to validate_presence_of :file_name }
 
   context 'test support file' do

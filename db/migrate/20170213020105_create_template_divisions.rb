@@ -1,4 +1,4 @@
-class CreateTemplateDivisions < ActiveRecord::Migration
+class CreateTemplateDivisions < ActiveRecord::Migration[4.2]
   def change
     create_table :template_divisions do |t|
       t.references :exam_template, index: true, foreign_key: true

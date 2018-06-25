@@ -1,4 +1,4 @@
-class CreateCheckboxCriteria < ActiveRecord::Migration
+class CreateCheckboxCriteria < ActiveRecord::Migration[4.2]
   def change
     create_table :checkbox_criteria do |t|
       t.string :name, null: false

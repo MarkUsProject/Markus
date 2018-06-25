@@ -6,11 +6,7 @@ class Mark < ApplicationRecord
   after_save :update_result_mark
 
   belongs_to :result
-  validates_presence_of :result_id, :markable_id, :markable_type
-  validates_numericality_of :result_id,
-                            only_integer: true,
-                            greater_than: 0,
-                            message: 'result_id must be an id that is an integer greater than 0'
+  validates_presence_of :markable_type
 
   validates_numericality_of :mark,
                             allow_nil: true,
@@ -19,10 +15,6 @@ class Mark < ApplicationRecord
   validate :valid_mark
 
   belongs_to :markable, polymorphic: true
-  validates_numericality_of :markable_id,
-                            only_integer: true,
-                            greater_than_or_equal_to: 0,
-                            message: 'Criterion must be an id that is an integer greater than 0'
 
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
@@ -56,7 +48,7 @@ class Mark < ApplicationRecord
   private
 
   def ensure_not_released_to_students
-    !result.released_to_students
+    throw(:abort) if result.released_to_students
   end
 
   def update_result_mark

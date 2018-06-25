@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :assignment do
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }

@@ -20,9 +20,7 @@ en:
     welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
     log_in:             "Log in"
     logging_in:         "Logging in..."
-    login:              "Username"
     login_failed:       "Login failed"
-    cookies_off:        "Please configure your browser to accept cookies."
     password_not_blank: "Your password must not be blank."
     username_not_blank: "Your username must not be blank."
     username_and_password_not_blank: "Your username and password must not be blank."
@@ -64,7 +62,6 @@ en:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
-    users:              "Users"
     home:               "Home"
     settings:           "Settings"
 
@@ -150,10 +147,6 @@ en:
       no_submission_for_section: "There aren't any submissions to collect for sections: %{section_names}."
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
-      collection_incomplete_warning: "Collection is still in progress or has not started. Do you still want to proceed? Some submissions might be missing."
-      check_collection_status_error: "There was an error checking collection status."
-      uncollection_processing_message: "Undoing previous collection operation..."
-      collection_processing_message: "Collecting submissions..."
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -266,15 +259,10 @@ en:
     members:            "Members"
     add_members:        "Add Members"
     remove_members:     "Remove Members"
-    graders:            "Graders"
     search_graders:     "Search Graders"
     add_graders:        "Add Graders"
     remove_graders:     "Remove Graders"
-    admins:             "Admins"
     add_new:            "Add New File"
-    add_new_student:	"Add New Student"
-    add_new_grader:     "Add New Grader"
-    add_new_admin:      "Add New Admin"
     create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
@@ -305,8 +293,6 @@ en:
     invite:             "Invite"
     disinvite:          "Disinvite"
     help:               "Help"
-    give_grace_credits:  "Give Grace Credits:"
-    add_section:        "Add section"
     no_result:          "No marks are available for this assignment."
     no_remark_result:   "Remark results are not yet available for this assignment."
     unmarked:           "unmarked"
@@ -551,9 +537,6 @@ en:
 
     course_summaries_index:
         page_title:     "Summary"
-        user_name:      "User Name"
-        first_name:     "First Name"
-        last_name:      "Last Name"
         ngr:            "No Grade Received"
 
     grade_entry_forms:
@@ -636,7 +619,6 @@ en:
       manage_groups:    "Manage Groups"
       assign_scans:     "Assign Scans"
       skip_group:       "Skip group"
-      all_students:     "All students"
       unassigned_students: "Unassigned"
       assigned_students: "Assigned"
       inactive_students: "Inactive"
@@ -715,55 +697,11 @@ en:
       error:
         validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
-    # Student's View (admin)
-    students:
-      processing: "Processing..."
-      manage_students: "Manage Students"
-      edit_student:    "Edit a Student"
-      edit_success:     "%{user_name} has been updated."
-      create_new:       "Create a new Student"
-      students:         "Students"
-      search_students:  "Search Students"
-      no_students_selected: "No students were selected, so no changes were made."
-      upload:
-        upload_a_class_list: "Upload a class list"
-        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-        student_same_number: "If a student with the same username exists, then the student's information is updated."
-      download:
-        download_student_list: "Download Student List"
-      create:
-        success: "Successfully created student %{user_name}."
-        error: "Failed to create student."
-      update:
-        success: "Successfully updated student %{user_name}."
-        error: "Failed to update student."
-      help:
-        manage_students: "Mark students as active or inactive, give them grace credits."
-        manage_graders: "Create graders."
-
-
-    hide_students:      "Mark as inactive"
-    unhide_students:    "Mark as active"
-    students_not_successfully_added_message_1: "The following students have not been successfully added:"
-    students_not_successfully_added_message_2: "Make sure that:"
-    students_not_successfully_added_message_3: "Student names are
-    alphanumeric."
-    students_not_successfully_added_message_4: "Each field is separated
-    by a comma (no spaces)."
-    students_not_successfully_added_message_5: "Each line has the required
-    fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
 
     #Sutdent's View (student)
     student:
-      create:
-        success: "Successfully created student %{user_name}."
-        error:   "Failed to create student."
-      update:
-        success: "Successfully updated student %{user_name}."
-        error:   "Failed to update student."
-
       assignment: "Assignment %{short_identifier}"
       peer_assignment: "%{short_identifier}: Peer Reviews"
       group_information: "Group Information"
@@ -841,26 +779,8 @@ en:
         version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
 
-    tas:
-      create:
-        success: "Successfully created grader %{user_name}."
-        error:   "Failed to create grader."
-      update:
-        success: "Successfully updated grader %{user_name}."
-        error:   "Failed to update grader."
-      delete:
-        confirm: "Are you sure you want to delete this grader?"
-        success: "Successfully deleted grader %{user_name}."
-        error:   "Failed to delete grader."
-      all: "All TAs"
-
     #Graders' View
     graders:
-      create_new_grader:  "Create a new Grader"
-      edit_grader:        "Edit a Grader"
-      manage_graders:     "Manage Graders"
-      graders:            "Graders"
-      all_graders:        "All Graders"
       assigned_graders:   "Assigned Graders"
       possible_graders:   "Possible Graders"
       unassigned_graders: "Unassigned Graders"
@@ -872,14 +792,6 @@ en:
       assign_to_criteria: "Assign Graders to Criteria"
       lines_not_processed: "The following lines could not be processed:"
       skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
-      upload:
-        select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
-        grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        not_added: "The following TAs have not been successfully added:"
-        make_sure: "Make sure that:"
-        ta_names: "TA names are alphanumeric"
-        each_field: "Each field is separated by a comma (no spaces)"
-        each_line: "Each line has the required fields specified above"
       download:
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
@@ -892,27 +804,6 @@ en:
         upload_grader_map: "Upload Student / Grader Map"
         description_grader_map: "CSV file format:<br>
             <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
-
-    #Admins' View
-    admins:
-      manage_admins: "Manage Admins"
-      create_new_admin: "Create a new Admin"
-      manage_admins:    "Manage Admins"
-      edit_admin:       "Edit an Admin"
-      admins: "Admins"
-      upload:
-        not_added: "The following Admins have not been successfully added:"
-        make_sure: "Make sure that:"
-        each_field: "Each field is separated by a comma (no spaces)"
-        each_line: "Each line has the required fields specified above"
-      create:
-        success: "Successfully created admin %{user_name}."
-        error:   "Failed to create admin."
-      update:
-        success: "Successfully updated admin %{user_name}."
-        error:   "Failed to update admin."
-      help:
-        manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
 
     add_student:
       success: "Student %{user_name} added."
@@ -946,25 +837,6 @@ en:
         error: "Failed to invite student %{user_name}."
     update_files:
       success:  "Your changes have been made."
-
-    user:
-        user:           "User"
-        id:             "ID"
-        id_number:      "ID number"
-        email:          "Email"
-        user_name:      "User Name"
-        user_names:     "User Name"
-        first_name:     "First Name"
-        last_name:      "Last Name"
-        full_name:      "Full Name"
-        type:           "Type"
-        user_type:      "Type"
-        grace_credits:  "Grace Credits"
-        notes_count:    "Notes"
-        display_grader_names_to_students: "Display grader names to students?"
-
-    hide_students: "Mark as inactive"
-    unhide_students: "Mark as active"
 
     tags:
       tags: "Tags"
@@ -1212,7 +1084,6 @@ en:
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
             Grouping: "Group"
-            Student:  "Student"
             Assignment: "Assignment"
         author: "Author"
         creation_time: "Creation Time"

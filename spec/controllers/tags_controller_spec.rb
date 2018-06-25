@@ -8,7 +8,7 @@ describe TagsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
-  let(:assignment) { FactoryGirl.create(:assignment) }
+  let(:assignment) { FactoryBot.create(:assignment) }
 
   context 'download_tag_list' do
     let(:csv_options) do
@@ -35,17 +35,13 @@ describe TagsController do
     end
 
     it 'responds with appropriate status' do
-      get :download_tag_list,
-          assignment_id: assignment.id,
-          format: 'csv'
+      get :download_tag_list, params: { assignment_id: assignment.id }, format: 'csv'
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download_tag_list,
-          assignment_id: assignment.id,
-          format: 'csv'
+      get :download_tag_list, params: { assignment_id: assignment.id }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -56,18 +52,14 @@ describe TagsController do
         "#{@tag2.name},#{@tag2.description},#{@user.first_name} #{@user.last_name}\n"
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
-      get :download_tag_list,
-          assignment_id: assignment.id,
-          format: 'csv'
+      get :download_tag_list, params: { assignment_id: assignment.id }, format: 'csv'
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :download_tag_list,
-          assignment_id: assignment.id,
-          format: 'csv'
+      get :download_tag_list, params: { assignment_id: assignment.id }, format: 'csv'
       expect(response.content_type).to eq 'text/csv'
     end
   end
@@ -108,9 +100,7 @@ describe TagsController do
     end
 
     it 'accepts a valid file' do
-      post :csv_upload,
-           csv_tags: @file_good,
-           assignment_id: assignment.id
+      post :csv_upload, params: { csv_tags: @file_good, assignment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -123,9 +113,7 @@ describe TagsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :csv_upload,
-           assignment_id: assignment.id,
-           csv_tags: @file_invalid_column
+      post :csv_upload, params: { assignment_id: assignment.id, csv_tags: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -133,17 +121,14 @@ describe TagsController do
     end
 
     it 'does not accept fileless submission' do
-      post :csv_upload,
-           assignment_id: assignment.id
+      post :csv_upload, params: { assignment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(response).to redirect_to @redirect
     end
 
     it 'does not accept a non-csv file with .csv extension' do
-      post :csv_upload,
-           assignment_id: assignment.id,
-           csv_tags: @file_bad_csv
+      post :csv_upload, params: { assignment_id: assignment.id, csv_tags: @file_bad_csv }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -151,9 +136,7 @@ describe TagsController do
     end
 
     it 'does not accept a .xls file' do
-      post :csv_upload,
-           assignment_id: assignment.id,
-           csv_tags: @file_wrong_format
+      post :csv_upload, params: { assignment_id: assignment.id, csv_tags: @file_wrong_format }
 
 
       expect(response.status).to eq(302)

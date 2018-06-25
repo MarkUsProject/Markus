@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateGroupings < ActiveRecord::Migration
+class CreateGroupings < ActiveRecord::Migration[4.2]
 
   extend MigrationHelpers
 

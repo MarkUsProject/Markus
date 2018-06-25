@@ -1,4 +1,4 @@
-class AnnotationsRemovePosColumns < ActiveRecord::Migration
+class AnnotationsRemovePosColumns < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :annotations, :pos_start
     remove_column :annotations, :pos_end

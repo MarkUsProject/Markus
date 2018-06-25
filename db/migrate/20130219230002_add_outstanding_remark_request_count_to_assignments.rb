@@ -1,4 +1,4 @@
-class AddOutstandingRemarkRequestCountToAssignments < ActiveRecord::Migration
+class AddOutstandingRemarkRequestCountToAssignments < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :outstanding_remark_request_count, :integer
   end

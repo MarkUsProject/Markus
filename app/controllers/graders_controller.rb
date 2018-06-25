@@ -12,7 +12,7 @@ class GradersController < ApplicationController
 
   # Administrator
   # -
-  before_filter      :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 
@@ -194,6 +194,9 @@ class GradersController < ApplicationController
     grouping_ids = params[:groupings]
     grader_ids = params[:graders]
     criterion_ids_types = params[:criteria]
+    if criterion_ids_types.respond_to?(:permit!)
+      criterion_ids_types.permit!
+    end
 
     case params[:current_table]
     when 'groups_table'

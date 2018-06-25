@@ -1,4 +1,4 @@
-class AddIntervalToPeriods < ActiveRecord::Migration
+class AddIntervalToPeriods < ActiveRecord::Migration[4.2]
   def self.up
     add_column :periods, :interval, :int
   end

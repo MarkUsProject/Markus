@@ -1,4 +1,4 @@
-class ReplaceJoinTableWithAssignmentFileInTemplateDivisions < ActiveRecord::Migration
+class ReplaceJoinTableWithAssignmentFileInTemplateDivisions < ActiveRecord::Migration[4.2]
   def change
     # Remove criteria_assignment_files_join column from TemplateDivision
     remove_reference :template_divisions, :criteria_assignment_files_join, foreign_key: true

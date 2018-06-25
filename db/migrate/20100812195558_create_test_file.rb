@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateTestFile < ActiveRecord::Migration
+class CreateTestFile < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

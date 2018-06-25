@@ -1,4 +1,4 @@
-class AddInstructorFormGroupsToAssignment < ActiveRecord::Migration
+class AddInstructorFormGroupsToAssignment < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :instructor_form_groups, :boolean
   end

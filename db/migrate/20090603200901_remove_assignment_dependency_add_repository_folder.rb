@@ -1,4 +1,4 @@
-class RemoveAssignmentDependencyAddRepositoryFolder < ActiveRecord::Migration
+class RemoveAssignmentDependencyAddRepositoryFolder < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :assignments, :assignment_dependency_id
     add_column :assignments, :repository_folder, :string, :null => false

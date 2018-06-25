@@ -1,7 +1,9 @@
 class TasController < ApplicationController
-  before_filter  :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
+
+  responders :flash, :collection
 
   def index
     respond_to do |format|
@@ -22,44 +24,19 @@ class TasController < ApplicationController
 
   def destroy
     @user = Ta.find(params[:id])
-    if @user && @user.destroy
-      flash_message(:success, I18n.t('tas.delete.success',
-                                     user_name: @user.user_name))
-    else
-      flash_message(:error, I18n.t('tas.delete.error'))
-    end
-      redirect_to action: :index
+    @user.destroy
+    respond_with(@user)
   end
 
   def update
-    @user = Ta.find_by_id(params[:user][:id])
-    # update_attributes supplied by ActiveRecords
-    if @user.update_attributes(user_params)
-      flash_message(:success, I18n.t('tas.update.success',
-                                     user_name: @user.user_name))
-      redirect_to action: :index
-    else
-      flash_message(:error, I18n.t('tas.update.error'))
-      render :edit
-    end
+    @user = Ta.find(params[:user][:id])
+    @user.update(user_params)
+    respond_with(@user)
   end
 
   def create
-    # Default attributes: role = TA or role = STUDENT
-    # params[:user] is a hash of values passed to the controller
-    # by the HTML form with the help of ActiveView::Helper::
-    @user = Ta.new(user_params)
-    # Return unless the save is successful; save inherted from
-    # active records--creates a new record if the model is new, otherwise
-    # updates the existing record
-    if @user.save
-      flash_message(:success, I18n.t('tas.create.success',
-                                     user_name: @user.user_name))
-      redirect_to action: 'index' # Redirect
-    else
-      flash_message(:error, I18n.t('tas.create.error'))
-      render :new
-    end
+    @user = Ta.create(user_params)
+    respond_with(@user)
   end
 
   #downloads users with the given role as a csv list
@@ -88,7 +65,7 @@ class TasController < ApplicationController
 
   def upload_ta_list
     if params[:userlist]
-      result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+      result = User.upload_user_list(Ta, params[:userlist].read, params[:encoding])
       unless result[:invalid_lines].blank?
         flash_message(:error, result[:invalid_lines])
       end
@@ -110,5 +87,9 @@ class TasController < ApplicationController
 
   def user_params
     params.require(:user).permit(:user_name, :last_name, :first_name, :email)
+  end
+
+  def flash_interpolation_options
+    { resource_name: @user.user_name }
   end
 end

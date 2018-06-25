@@ -1,4 +1,4 @@
-class ModifyPeriodsToHours < ActiveRecord::Migration
+class ModifyPeriodsToHours < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :periods, :start_time
     remove_column :periods, :end_time

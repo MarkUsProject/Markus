@@ -21,10 +21,7 @@ describe AdminsController do
     end
 
     it 'be able to create Admin' do
-      post :create,
-           user: {user_name: 'jdoe',
-                  last_name: 'Doe',
-                  first_name: 'Jane'}
+      post :create, params: { user: { user_name: 'jdoe', last_name: 'Doe', first_name: 'Jane' } }
       Admin.find_by_user_name('jdoe')
       expect(response).to redirect_to action: 'index'
     end
@@ -37,18 +34,12 @@ describe AdminsController do
       end
 
       it 'be able to update' do
-        put :update,
-            id: @a2.id,
-            user: {last_name: 'John',
-                   first_name: 'Doe'}
-            expect(response).to redirect_to action: 'index'
-            i18t_strings = [I18n.t('admins.update.success', user_name: @a2.user_name)].map { |f| extract_text f }
-            expect(i18t_strings).to eq(flash[:success].map { |f| extract_text f })
+        put :update, params: { id: @a2.id, user: { last_name: 'John', first_name: 'Doe' } }
+        expect(response).to redirect_to action: 'index'
       end
 
       it 'be able to edit' do
-        get :edit,
-            id: @a2.id
+        get :edit, params: { id: @a2.id }
         expect(response.status).to eq(200)
         expect(assigns(:user)).to be_truthy
       end

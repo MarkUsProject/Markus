@@ -1,4 +1,4 @@
-class CreateGracePeriodDeductions < ActiveRecord::Migration
+class CreateGracePeriodDeductions < ActiveRecord::Migration[4.2]
   def self.up
     create_table :grace_period_deductions do |t|
       t.column :membership_id, :int

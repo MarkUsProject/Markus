@@ -9,7 +9,6 @@ class AnnotationCategory < ApplicationRecord
                           message: 'is already taken'
 
   belongs_to :assignment
-  validates_presence_of :assignment_id
   validates_associated :assignment,
                        message: 'not strongly associated with assignment'
 

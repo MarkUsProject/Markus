@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class ChangeAnnotationLabelToAnnotationText < ActiveRecord::Migration
+class ChangeAnnotationLabelToAnnotationText < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up
     delete_foreign_key :annotations, :annotation_labels

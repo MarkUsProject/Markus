@@ -3,7 +3,7 @@
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
 
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:student_interface,
                          :populate_grades_table,
                          :get_mark_columns,
@@ -11,13 +11,13 @@ class GradeEntryFormsController < ApplicationController
                          :csv_download,
                          :csv_upload,
                          :update_grade]
-  before_filter :authorize_for_ta_and_admin,
+  before_action :authorize_for_ta_and_admin,
                 only: [:grades,
                        :populate_grades_table,
                        :csv_download,
                        :csv_upload,
                        :update_grade]
-  before_filter :authorize_for_student,
+  before_action :authorize_for_student,
                 only: [:student_interface]
 
   layout 'assignment_content'

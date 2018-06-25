@@ -1,4 +1,4 @@
-class MakeNotesPolymorphiclyAssociated < ActiveRecord::Migration
+class MakeNotesPolymorphiclyAssociated < ActiveRecord::Migration[4.2]
   def self.up
     change_table :notes do |t|
       t.remove :grouping_id, :type_association

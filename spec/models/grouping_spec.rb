@@ -336,11 +336,11 @@ describe Grouping do
       describe '#refresh_test_tokens!' do
         context 'if assignment.tokens is not nil' do
           before do
-            @assignment = FactoryGirl.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
-            @group = FactoryGirl.create(:group)
+            @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
+            @group = FactoryBot.create(:group)
             @grouping = Grouping.create(group: @group, assignment: @assignment)
-            @student1 = FactoryGirl.create(:student)
-            @student2 = FactoryGirl.create(:student)
+            @student1 = FactoryBot.create(:student)
+            @student2 = FactoryBot.create(:student)
             @grouping.test_tokens = 0
             StudentMembership.create(
               user: @student1,
@@ -362,8 +362,8 @@ describe Grouping do
 
       describe '#update_assigned_tokens' do
         before :each do
-          @assignment = FactoryGirl.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
-          @group = FactoryGirl.create(:group)
+          @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
+          @group = FactoryBot.create(:group)
           @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
           @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
         end

@@ -3,36 +3,34 @@
 <div class='section'>
   <%= form_for @user, as: :user do |f| %>
 
-    <%= render 'shared/flash_message' %>
-
     <table>
       <tr>
-        <td><%= raw(f.label(:user_name, t('user.user_name'))) %>:</td>
+        <td><%= raw(f.label(:user_name, User.human_attribute_name(:user_name))) %>:</td>
         <td><%= raw(f.text_field :user_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:last_name, t('user.last_name'))) %>:</td>
+        <td><%= raw(f.label(:last_name, User.human_attribute_name(:last_name))) %>:</td>
         <td><%= raw(f.text_field :last_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:first_name, t('user.first_name'))) %>:</td>
+        <td><%= raw(f.label(:first_name, User.human_attribute_name(:first_name))) %>:</td>
         <td><%= raw(f.text_field :first_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:email, t('user.email'))) %>:</td>
+        <td><%= raw(f.label(:email, User.human_attribute_name(:email))) %>:</td>
         <td><%= raw(f.text_field :email) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:id_number, t('user.id_number'))) %>:</td>
+        <td><%= raw(f.label(:id_number, User.human_attribute_name(:id_number))) %>:</td>
         <td><%= raw(f.text_field :id_number) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:grace_credits, t('user.grace_credits'))) %>:</td>
+        <td><%= raw(f.label(:grace_credits, User.human_attribute_name(:grace_credits))) %>:</td>
         <td><%= raw(f.text_field :grace_credits) %></td>
       </tr>
 

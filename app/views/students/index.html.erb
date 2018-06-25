@@ -6,44 +6,40 @@
   </script>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= t('students.manage_students') %>
-    <span class='title-help manage_students_help'>
-      <p class='help-message-title manage_students_help'>
-        <%= t('students.help.manage_students') %>
-      </p>
-    </span>
-  </h1>
-  <div class='heading_buttons'>
-    <%= link_to t(:add_new_student),
-                new_student_path() %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:download), '#', id:'downloadModal' %>
-    <span class='menu_bar'></span>
-    <%= link_to t(:upload), '#', id:'uploadModal' %>
+<% content_for :title do %>
+  <span class='title-help manage_students_help'>
+    <p class='help-message-title manage_students_help'>
+      <%= t('students.help.manage_students') %>
+    </p>
+  </span>
+<% end %>
+
+<% @heading_buttons = [
+  { link_text: t('students.new'),
+    link_path: new_student_path },
+  { link_text: t('download'),
+    link_path: '#',
+    html_options: { id: 'downloadModal' } },
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { id: 'uploadModal' } }
+] %>
+
+<div id='list'>
+  <% # display lines in csv file that has not been successfully processed %>
+  <% if flash[:error] && flash[:error].is_a?(Array) -%>
+  <div class='errorExplanation' id='errorExplanation'>
+    <p><%= t('students.not_successfully_added_message_1') %></p>
+    <p><%= t('students.not_successfully_added_message_2') %></p>
+    <ul>
+      <li><%= t('students.not_successfully_added_message_3') %></li>
+      <li><%= t('students.not_successfully_added_message_4') %></li>
+      <li><%= t('students.not_successfully_added_message_5') %></li>
+    </ul>
   </div>
-</div>
+  <% end %>
 
-<div class='wrapLeft'>
-  <div id='list'>
-    <%= render 'shared/flash_message' %>
-
-    <% # display lines in csv file that has not been successfully processed %>
-    <% if flash[:error] && flash[:error].is_a?(Array) -%>
-    <div class='errorExplanation' id='errorExplanation'>
-      <p><%= I18n.t(:students_not_successfully_added_message_1)%></p>
-      <p><%= I18n.t(:students_not_successfully_added_message_2) %></p>
-      <ul>
-        <li><%= I18n.t(:students_not_successfully_added_message_3) %></li>
-        <li><%= I18n.t(:students_not_successfully_added_message_4) %></li>
-        <li><%= I18n.t(:students_not_successfully_added_message_5) %></li>
-      </ul>
-    </div>
-    <% end %>
-
-    <div id='students_table'></div>
-  </div>
+  <div id='students_table'></div>
 </div>
 
 <!-- Modals -->

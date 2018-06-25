@@ -10,8 +10,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
       RubricCriterion.make
     end
 
-    should validate_presence_of :assignment_id
-    should validate_numericality_of :assignment_id
+    should belong_to :assignment
     should validate_numericality_of :max_mark
     should validate_presence_of :max_mark
 

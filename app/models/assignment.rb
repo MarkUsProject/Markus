@@ -48,9 +48,10 @@ class Assignment < ApplicationRecord
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  has_many :groupings # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
-  belongs_to :parent_assignment, class_name: 'Assignment', inverse_of: :pr_assignment
+  belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
@@ -60,7 +61,6 @@ class Assignment < ApplicationRecord
            class_name: 'AnnotationCategory',
 		   dependent: :destroy
 
-  has_many :groupings
   has_many :current_submissions_used, through: :groupings,
            source: :current_submission_used
 
@@ -263,7 +263,10 @@ class Assignment < ApplicationRecord
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta)
-    s = get_criteria(user_visibility).map(&:max_mark).sum
+    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
+    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
+    max_marks = get_criteria(user_visibility).map(&:max_mark)
+    s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
 
@@ -1131,6 +1134,97 @@ class Assignment < ApplicationRecord
     test_scripts.where(condition).order(:seq_num)
   end
 
+  # Retrive data for submissions table.
+  # Uses joins and pluck rather than includes to improve query speed.
+  def current_submission_data(current_user)
+    if current_user.admin?
+      groupings = self.groupings
+    elsif current_user.ta?
+      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id = ?', current_user.id)
+    else
+      return []
+    end
+
+    data = groupings
+           .left_outer_joins(:group, :current_submission_used)
+           .pluck('groupings.id',
+                  'groups.group_name',
+                  'submissions.revision_timestamp')
+
+    empty_submissions = groupings
+                        .joins(current_submission_used: :submission_files)
+                        .group('groupings.id')
+                        .count('submission_files.*')
+                        .select! { |_, v| v == 0 }
+    empty_submissions ||= {}
+
+    tag_data = groupings
+               .joins(:tags)
+               .pluck('groupings.id', 'tags.name')
+               .group_by { |gid, _| gid }
+
+    if self.submission_rule.is_a? GracePeriodSubmissionRule
+      deductions = groupings
+                   .joins(:grace_period_deductions)
+                   .group('groupings.id')
+                   .maximum('grace_period_deductions.deduction')
+    else
+      deductions = {}
+    end
+
+    result_data = groupings
+                  .joins(:current_result)
+                  .order('results.created_at DESC')
+                  .pluck('groupings.id',
+                         'results.id',
+                         'results.marking_state',
+                         'results.total_mark',
+                         'results.released_to_students')
+                  .group_by { |x| x[0] }
+
+    member_data = groupings
+                  .joins(:accepted_students)
+                  .pluck('groupings.id', 'users.user_name')
+                  .group_by { |gid, _| gid }
+
+    section_data = groupings
+                   .joins(inviter: :section)
+                   .pluck('groupings.id', 'sections.name')
+                   .group_by { |gid, _| gid }
+
+    # This is the submission data that's actually returned
+    data.map do |g|
+      base = {
+        _id: g[0], # Needed for checkbox version of react-table
+        group_name: g[1],
+        submission_time: g[2].nil? ? '' : I18n.l(g[2]),
+        tags: (tag_data[g[0]].nil? ? [] : tag_data[g[0]].map { |_, tag| tag }),
+        no_files: empty_submissions.key?(g[0])
+      }
+
+      result = result_data[g[0]] && result_data[g[0]][0]
+      if result
+        base[:result_id], base[:final_grade] = result[1], result[3]
+        # Fixup for marking_state, based on Grouping#marking_state
+        if result[2] == 'incomplete' && result_data[g[0]].size > 1
+          base[:marking_state] = 'remark'
+        elsif result[4]
+          base[:marking_state] = 'released'
+        else
+          base[:marking_state] = result[2]
+        end
+      else
+        base[:marking_state] = I18n.t('marking_state.not_collected')
+      end
+
+      base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]
+      base[:section] = section_data[g[0]] if section_data.key? g[0]
+      base[:grace_credits_used] = deductions[g[0]] if self.submission_rule.is_a? GracePeriodSubmissionRule
+
+      base
+    end
+  end
+
   private
 
   def update_permissions_if_vcs_changed
@@ -1162,7 +1256,7 @@ class Assignment < ApplicationRecord
   end
 
   def update_assigned_tokens
-    difference = tokens_per_period - tokens_per_period_was
+    difference = tokens_per_period - tokens_per_period_before_last_save
     if difference == 0
       return
     end

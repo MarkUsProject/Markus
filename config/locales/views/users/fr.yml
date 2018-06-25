@@ -1,0 +1,42 @@
+fr:
+  admins:
+    edit: "Modification d'un administrateur"
+    help:
+      manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
+    new: "Créer un nouvel administrateur"
+
+  students:
+    admin_actions:
+      add_section: "Ajouter à une section"
+      give_grace_credits: "Donner du temps supplémentaire"
+      mark_active: "Activer les étudiants"
+      mark_inactive: "Désactiver les étudiants"
+    all: "Tous les étudiant"
+    edit: "Modification d'un(e) étudiant(e)"
+    help:
+      manage_students: "Mark students as active or inactive, give them grace credits."
+    new: "Créer un(e) nouvel(le) étudiant(e)"
+    no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
+    not_successfully_added_message_1: "Les étudiants suivants n'ont pas été ajoutés correctement : "
+    not_successfully_added_message_2: "Assurez-vous que : "
+    not_successfully_added_message_3: "Les noms des étudiants sont en caractères alphanumériques."
+    not_successfully_added_message_4: "Chaque champ est séparé par une virgule (pas d'espace)."
+    not_successfully_added_message_5: "Chaque ligne a le bon nombre de champs comme spécifié."
+    upload:
+      select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section,id_number,email)</code>"
+      student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
+
+  tas:
+    all: "Tous les correcteurs"
+    edit: "Modifier un correcteur"
+    new: "Créer un nouveau correcteur"
+    help:
+      manage_graders: "Créer un nouveau correcteur"
+    upload:
+      each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
+      each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
+      grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
+      make_sure: "Vérifiez que : "
+      not_added: "Les correcteurs suivants n'ont pas été ajoutés correctement : "
+      select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
+      ta_names: "Les noms des correcteurs sont en caractères alphanumériques."

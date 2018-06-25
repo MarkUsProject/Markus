@@ -20,8 +20,8 @@
 
 class TestScriptResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
-  belongs_to :test_script, required: true
-  belongs_to :test_run, required: true
+  belongs_to :test_script
+  belongs_to :test_run
 
   validates_presence_of :marks_earned
   validates_presence_of :marks_total

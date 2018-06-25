@@ -6,22 +6,22 @@
 
     <table>
       <tr>
-        <td><%= raw(f.label(:user_name, I18n.t('user.user_name'))) %>:</td>
+        <td><%= raw(f.label(:user_name, User.human_attribute_name(:user_name))) %>:</td>
         <td><%= raw(f.text_field :user_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:user_name, I18n.t('user.last_name'))) %>:</td>
+        <td><%= raw(f.label(:last_name, User.human_attribute_name(:last_name))) %>:</td>
         <td><%= raw(f.text_field :last_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:user_name, I18n.t('user.first_name'))) %>:</td>
+        <td><%= raw(f.label(:first_name, User.human_attribute_name(:first_name))) %>:</td>
         <td><%= raw(f.text_field :first_name) %></td>
       </tr>
 
       <tr>
-        <td><%= raw(f.label(:email, I18n.t('user.email'))) %>:</td>
+        <td><%= raw(f.label(:email, User.human_attribute_name(:email))) %>:</td>
         <td><%= raw(f.text_field :email) %></td>
       </tr>
     </table>

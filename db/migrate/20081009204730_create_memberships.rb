@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateMemberships < ActiveRecord::Migration
+class CreateMemberships < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 
   def self.up

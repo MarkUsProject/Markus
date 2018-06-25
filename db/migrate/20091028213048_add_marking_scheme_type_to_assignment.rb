@@ -1,4 +1,4 @@
-class AddMarkingSchemeTypeToAssignment < ActiveRecord::Migration
+class AddMarkingSchemeTypeToAssignment < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :marking_scheme_type, :string
   end

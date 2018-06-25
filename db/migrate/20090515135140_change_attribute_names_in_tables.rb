@@ -1,4 +1,4 @@
-class ChangeAttributeNamesInTables < ActiveRecord::Migration
+class ChangeAttributeNamesInTables < ActiveRecord::Migration[4.2]
   def self.up
     # rename attribute 'name' in rubric_criteria to 'rubric_criterion_name'
     rename_column :rubric_criteria, :name, :rubric_criterion_name

@@ -14,15 +14,6 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :submissions
   should have_many :notes
 
-  context 'A good grouping model' do
-    setup do
-      @grouping = Grouping.make
-    end
-
-    should validate_presence_of :group_id
-    should validate_presence_of :assignment_id
-  end
-
   context 'A grouping' do
     setup do
       @grouping = Grouping.make

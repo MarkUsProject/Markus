@@ -1,4 +1,4 @@
-Markus::Application.routes.draw do
+Rails.application.routes.draw do
   resources :key_pairs
 
   # Install the default routes as the lowest priority.
@@ -141,7 +141,7 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :submissions do
+      resources :submissions, only: [:index] do
         collection do
           get 'populate_submissions_table'
           get 'populate_peer_submissions_table'
