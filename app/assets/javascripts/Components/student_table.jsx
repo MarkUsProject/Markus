@@ -1,19 +1,14 @@
 import React from 'react';
 import {render} from 'react-dom';
 
-import ReactTable from 'react-table';
-import checkboxHOC from 'react-table/lib/hoc/selectTable';
-
-const CheckboxTable = checkboxHOC(ReactTable);
+import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 
 
-class StudentTable extends React.Component {
+class RawStudentTable extends React.Component {
   constructor() {
     super();
     this.state = {
       data: {students: [], sections: {}},
-      selection: [],
-      selectAll: false,
       loading: true,
     };
   }
@@ -37,50 +32,12 @@ class StudentTable extends React.Component {
     });
   };
 
-  // From https://react-table.js.org/#/story/select-table-hoc.
-  toggleSelection = (key, shift, row) => {
-    let selection = [
-      ...this.state.selection
-    ];
-    const keyIndex = selection.indexOf(key);
-    if (keyIndex >= 0) {
-      selection = [
-        ...selection.slice(0, keyIndex),
-        ...selection.slice(keyIndex + 1)
-      ]
-    } else {
-      selection.push(key);
-    }
-    // update the state
-    this.setState({ selection });
-  };
-
-  toggleAll = () => {
-    const selectAll = !this.state.selectAll;
-    const selection = [];
-    if (selectAll) {
-      // we need to get at the internals of ReactTable
-      const wrappedInstance = this.checkboxTable.getWrappedInstance();
-      // the 'sortedData' property contains the currently accessible records based on the filter and sort
-      const currentRecords = wrappedInstance.getResolvedState().sortedData;
-      // we just push all the IDs onto the selection array
-      currentRecords.forEach((item) => {
-        selection.push(item._original._id);
-      })
-    }
-    this.setState({ selectAll, selection })
-  };
-
-  isSelected = (key) => {
-    return this.state.selection.includes(key);
-  };
-
   /* Called when an action is run */
   onSubmit = (event) => {
     event.preventDefault();
 
     const data = {
-      student_ids: this.state.selection,
+      student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
       grace_credits: this.actionBox.state.grace_credits,
       section: this.actionBox.state.section
@@ -95,23 +52,14 @@ class StudentTable extends React.Component {
   };
 
   render() {
-    const { toggleSelection, toggleAll, isSelected } = this;
-    const {data, selectAll, loading } = this.state;
-
-    const checkboxProps = {
-      selectAll,
-      isSelected,
-      toggleSelection,
-      toggleAll,
-      selectType: 'checkbox',
-    };
+    const {data, loading} = this.state;
 
     return (
       <div>
         <StudentsActionBox
           ref={(r) => this.actionBox = r}
           sections={data.sections}
-          disabled={this.state.selection.length === 0}
+          disabled={this.props.selection.length === 0}
           onSubmit={this.onSubmit}
         />
         <CheckboxTable
@@ -224,7 +172,7 @@ class StudentTable extends React.Component {
           filterable
           loading={loading}
 
-          {...checkboxProps}
+          {...this.props.getCheckboxProps()}
         />
       </div>
     );
@@ -297,6 +245,10 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+
+
+let StudentTable = withSelection(RawStudentTable);
+
 
 export function makeStudentTable(elem) {
   render(<StudentTable />, elem);
