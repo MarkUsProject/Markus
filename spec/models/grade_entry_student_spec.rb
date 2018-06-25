@@ -89,15 +89,12 @@ describe GradeEntryStudent do
 
     describe '.unassign_tas' do
       it 'can bulk unassign no TAs' do
-        GradeEntryStudent.unassign_tas([])
+        GradeEntryStudent.unassign_tas([], [], form)
       end
 
       it 'can bulk unassign TAs' do
         GradeEntryStudent.assign_all_tas(student_ids, ta_ids, form)
-        gest_ids = form.grade_entry_students.map do |grade_entry_student|
-          grade_entry_student.grade_entry_student_tas.pluck(:id)
-        end.reduce(:+)
-        GradeEntryStudent.unassign_tas(gest_ids)
+        GradeEntryStudent.unassign_tas(student_ids, ta_ids, form)
 
         form.grade_entry_students.each do |grade_entry_student|
           grade_entry_student.reload

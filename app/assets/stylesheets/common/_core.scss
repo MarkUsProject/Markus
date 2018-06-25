@@ -233,4 +233,11 @@ label.required::after, th.required::after {
   .button {
     margin-left: 1em;
   }
+
+  &.icon {
+    button,
+    .button {
+      padding-left: 45px;
+    }
+  }
 }
