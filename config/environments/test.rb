@@ -118,9 +118,9 @@ Markus::Application.configure do
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
-  # Options for Repository_type are 'svn' and 'memory' for now
-  # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = "memory" # use Subversion as storage backend
+  # Options for Repository_type are 'svn' and 'memory'
+  # 'mem' is by design not persistent and only used for testing MarkUs
+  REPOSITORY_TYPE = 'mem'
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -131,9 +131,9 @@ Markus::Application.configure do
   # A hash of repository hook scripts (used only when REPOSITORY_TYPE
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
-  REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  REPOSITORY_HOOKS = {}
   # Path to the MarkUs client-side hooks (copied to all group repos).
-  REPOSITORY_CLIENT_HOOKS = "#{::Rails.root.to_s}/lib/repo/git_hooks/client/"
+  REPOSITORY_CLIENT_HOOKS = ''
 
   ###################################################################
   # Directory where authentication keys will be uploaded.

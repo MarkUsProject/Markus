@@ -416,13 +416,12 @@ module Repository
     repo_type = MarkusConfigurator.markus_config_repository_type
     case repo_type
     when 'git'
-      require_dependency File.join(Rails.root, 'lib', 'repo', 'git_repository')
       return GitRepository
-    when 'memory'
-      require_dependency File.join(Rails.root, 'lib', 'repo', 'memory_repository')
+    when 'mem'
       return MemoryRepository
     when 'svn'
-      require_dependency File.join(Rails.root, 'lib', 'repo', 'subversion_repository')
+      require 'svn/repos'
+      require 'svn/client'
       return SubversionRepository
     else
       raise "Repository implementation not found: #{repo_type}"
