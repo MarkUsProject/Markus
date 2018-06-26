@@ -36,8 +36,8 @@ gem 'redis-rails'
 gem 'pundit'
 
 # Statistics
-gem 'descriptive_statistics', '~> 2.5', require: 'descriptive_statistics/safe'
-gem 'histogram', '~> 0.2.4.1'
+gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
+gem 'histogram'
 
 # Internationalization
 gem 'i18n'

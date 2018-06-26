@@ -368,10 +368,10 @@ DEPENDENCIES
   combine_pdf
   cookies_eu
   database_cleaner
-  descriptive_statistics (~> 2.5)
+  descriptive_statistics
   factory_bot_rails
   faker
-  histogram (~> 0.2.4.1)
+  histogram
   i18n
   i18n-js
   jquery-rails

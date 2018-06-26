@@ -92,6 +92,7 @@ class Ta < User
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(assignment, intervals = 20)
     data = percentage_grades_array(assignment)
+    data.extend(Histogram)
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
