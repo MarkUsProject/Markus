@@ -227,7 +227,7 @@ class MemoryRepository < Repository::AbstractRepository
     if rev.path_exists?(full_path)
       raise FileExistsConflict # raise conflict if path exists
     end
-    dir = RevisionDirectory.new(rev.revision_identifier, {
+    dir = Repository::RevisionDirectory.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),
       last_modified_revision: rev.revision_identifier,
@@ -245,7 +245,7 @@ class MemoryRepository < Repository::AbstractRepository
       raise FileExistsConflict.new(full_path)
     end
     # file does not exist, so add it
-    file = RevisionFile.new(rev.revision_identifier, {
+    file = Repository::RevisionFile.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),
       last_modified_revision: rev.revision_identifier,
@@ -300,8 +300,8 @@ class MemoryRepository < Repository::AbstractRepository
     new_revision.server_timestamp = original.server_timestamp
     # copy files objects
     original.files.each do |object|
-      if object.instance_of?(RevisionFile)
-        new_object = RevisionFile.new(object.from_revision.to_s, {
+      if object.instance_of?(Repository::RevisionFile)
+        new_object = Repository::RevisionFile.new(object.from_revision.to_s, {
           name: object.name,
           path: object.path,
           last_modified_revision: object.last_modified_revision,
@@ -311,7 +311,7 @@ class MemoryRepository < Repository::AbstractRepository
         })
         new_revision.files_content[new_object.to_s] = original.files_content[object.to_s]
       else
-        new_object = RevisionDirectory.new(object.from_revision.to_s, {
+        new_object = Repository::RevisionDirectory.new(object.from_revision.to_s, {
           name: object.name,
           path: object.path,
           last_modified_revision: object.last_modified_revision,
@@ -446,7 +446,7 @@ class MemoryRevision < Repository::AbstractRevision
 
   def directories_at_path(path="/")
     return Hash.new if @files.empty?
-    return files_at_path_helper(path, false, RevisionDirectory)
+    return files_at_path_helper(path, false, Repository::RevisionDirectory)
   end
 
   def changes_at_path?(path)
@@ -458,7 +458,7 @@ class MemoryRevision < Repository::AbstractRevision
   # revision
   def __add_file(file, content="")
     @files.push(file)
-    if file.instance_of?(RevisionFile)
+    if file.instance_of?(Repository::RevisionFile)
       @files_content[file.to_s] = content
     end
   end
@@ -467,10 +467,10 @@ class MemoryRevision < Repository::AbstractRevision
   # A simple helper method to be used to replace the
   # content of a file
   def __replace_file_content(file, new_content)
-    if file.instance_of?(RevisionFile)
+    if file.instance_of?(Repository::RevisionFile)
       @files_content[file.to_s] = new_content
     else
-      raise "Expected file to be of type RevisionFile"
+      raise "Expected file to be of type Repository::RevisionFile"
     end
   end
 
@@ -490,7 +490,7 @@ class MemoryRevision < Repository::AbstractRevision
   private
 
 
-  def files_at_path_helper(path="/", only_changed=false, type=RevisionFile)
+  def files_at_path_helper(path="/", only_changed=false, type=Repository::RevisionFile)
     # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
