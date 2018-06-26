@@ -7,9 +7,10 @@
 <% end %>
 
 
-<div id='test_script_result_table'></div>
-
 <h2><%= t('automated_tests.test_results') %></h2>
+
+
+
 <div class="block_content">
   <div class="sub_block test_points">
     <% if test_runs.empty? %>
@@ -22,6 +23,9 @@
                   class: 'button run_tests right' %>
     <% end %>
   </div>
+
+  <div id='test_script_result_table'></div>
+
   <% unless test_runs.empty? %>
     <%= render partial: 'automated_tests/test_run',
                locals: { current_user: current_user, ran_by: ran_by, latest_date: test_runs[0].created_at },
