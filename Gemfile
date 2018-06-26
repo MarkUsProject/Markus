@@ -49,14 +49,14 @@ gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
 gem 'rmagick'
-gem 'zxing_cpp'
+gem 'zxing_cpp', require: 'zxing'
 
 # Ruby miscellany
 gem 'json'
 gem 'mini_mime'
 gem 'net-ssh'
 gem 'redcarpet'
-gem 'rubyzip'
+gem 'rubyzip', require: 'zip'
 gem 'rugged'
 gem 'ya2yaml'
 
