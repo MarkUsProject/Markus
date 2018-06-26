@@ -122,6 +122,12 @@ strong a {
 }
 
 
+.hide-flash {
+  background: transparent url(icons/cross.png) no-repeat 5px center;
+  float: right;
+  width: 2em;
+}
+
 /** Text field inputs */
 
 input,
