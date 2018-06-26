@@ -169,7 +169,7 @@ class MemoryRepository < Repository::AbstractRepository
     end
     # revision with the specified revision number does not exist,
     # so raise error
-    raise RevisionDoesNotExist
+    raise Repository::RevisionDoesNotExist
   end
 
   # Return a RepositoryRevision for a given timestamp
