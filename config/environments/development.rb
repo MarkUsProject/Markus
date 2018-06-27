@@ -1,31 +1,18 @@
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
-  # Reload application code on each request.
-  # It's slower, but code changes are frequent in development, they are picked up automatically without having to
-  # restart the webserver.
-  config.cache_classes = false
-  # Enable detailed debugging info on errors.
-  config.consider_all_requests_local = true
+
   # Don't eager load all application code at boot time, autoload incrementally on page requests.
   # It speeds up boot time.
   config.eager_load = false
+
+  # Enable detailed debugging info on errors (needed by better_errors gem).
+  config.consider_all_requests_local = true
+
   # Set high verbosity of logger.
   config.log_level = :debug
 
-  # Manually enable concurrency, but you'll need a concurrent web server too
-  # (in production, cache_classes=true enables it automatically)
-  config.allow_concurrency = true
-
-  # FIXME: The following lines can be commented
-  # out when jQuery is fully implemented
-  # config.action_controller.perform_caching             = false
-  # config.action_controller.allow_forgery_protection    = true
-
-  # Show Deprecated Warnings (to :log or to :stderr)
+  # Print deprecation warnings on stderr
   config.active_support.deprecation = :stderr
-
-  # Don't care if the mailer can't send
-  config.action_mailer.raise_delivery_errors = false
 
   # Enable better_errors for 0.0.0.0 IP address
   if defined?(BetterErrors) && ENV['SSH_CLIENT']

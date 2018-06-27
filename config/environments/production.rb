@@ -1,36 +1,25 @@
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
-  # Don't reload application code on each request.
-  # It's faster, as the code is stable in production, but applying a patch requires a webserver restart.
-  config.cache_classes = true
-  # Disable detailed debugging info on errors.
-  config.consider_all_requests_local = false
+
   # Eager load all application code at boot time.
   # It slows down boot time, but only once, and adds consistency (autoloading can cause thread-safety issues).
   config.eager_load = true
+
+  # Disable detailed debugging info on errors.
+  config.consider_all_requests_local = false
+
   # Set low verbosity of logger.
   config.log_level = :info
 
-  # rails will fallback to en, no matter what is set as config.i18n.default_locale
-  # rails will fallback to config.i18n.default_locale translation
-  config.i18n.fallbacks = true
-  config.i18n.fallbacks = [:en]
+  # Ignore deprecation warnings
+  config.active_support.deprecation = :silence
+
+  # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
+  # config.action_controller.relative_url_root = '/instance0'
 
   # Compress both stylesheets and JavaScripts
   config.assets.js_compressor  = :uglifier
   config.assets.css_compressor = :scss
-
-  # FIXME: The following lines can be commented
-  # out when jQuery is fully implemented
-  config.action_controller.perform_caching             = true
-
-  config.action_controller.allow_forgery_protection    = true
-
-  # Enable serving of images, stylesheets, and javascripts from an asset server
-  # config.action_controller.asset_host                  = "http://assets.example.com"
-
-  # Show Deprecated Warnings (to :log or to :stderr)
-  config.active_support.deprecation = :log
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION

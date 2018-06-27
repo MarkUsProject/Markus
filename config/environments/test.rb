@@ -1,39 +1,23 @@
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
-  # Don't reload application code on each request.
-  # It's faster, and code changes should not be picked up automatically when running a test suite.
-  config.cache_classes = true
-  # Enable detailed debugging info on errors.
-  config.consider_all_requests_local = true
+
   # Don't eager load all application code at boot time, autoload incrementally on page requests.
   # It speeds up boot time.
   config.eager_load = false
+
+  # Enable detailed debugging info on errors (needed by better_errors gem).
+  config.consider_all_requests_local = true
+
   # Set high verbosity of logger.
   config.log_level = :debug
+
+  # Print deprecation warnings on stderr
+  config.active_support.deprecation = :stderr
 
   # The test environment is used exclusively to run your application's
   # test suite.  You never need to work with it otherwise.  Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs.  Don't rely on the data there!
-
-  # Show full error reports and disable caching
-  config.action_controller.perform_caching = false
-
-  # Disable request forgery protection in test environment
-  config.action_controller.allow_forgery_protection = false
-
-  # Tell Action Mailer not to deliver emails to the real world.
-  # The :test delivery method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
-
-  # Show Deprecated Warnings (to :log or to :stderr)
-  config.active_support.deprecation = :stderr
-
-  # In rails 5, the default value is "random".
-  Rails.application.configure do
-    config.active_support.test_order = :sorted
-  end
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
