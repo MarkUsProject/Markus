@@ -168,13 +168,13 @@ module SessionHandler
 
   # Check if this current user's session has not yet expired.
   def session_expired?
-    return true unless !session[:timeout].nil?
+    return true if session[:timeout].nil?
     if MarkusConfigurator.markus_config_remote_user_auth
       # expire session if there is not REMOTE_USER anymore.
       return true if @markus_auth_remote_user.nil?
       # If somebody switched role this state should be recorded
       # in the session. Expire only if session timed out.
-      if !session[:real_uid].nil?
+      unless session[:real_uid].nil?
         # Roles have been switched, make sure that
         # real_user.user_name == @markus_auth_remote_user and
         # that the real user is in fact an admin.
@@ -189,7 +189,7 @@ module SessionHandler
       # Expire session if remote user does not match the session's uid.
       # We cannot have switched roles at this point.
       current_user = User.find_by_id(session[:uid])
-      if !current_user.nil?
+      unless current_user.nil?
         return true if ( current_user.user_name != @markus_auth_remote_user )
       end
     end
@@ -198,10 +198,7 @@ module SessionHandler
   end
 
   def check_imminent_expiry
-    if Time.parse(session[:timeout]) - Time.now <= 5.minutes
-      return true
-    end
-    false
+    (session[:timeout] - Time.now) <= 5.minutes
   end
 
   # Clear this current user's session set by this app
