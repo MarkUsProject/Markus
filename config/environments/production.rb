@@ -24,7 +24,7 @@ Markus::Application.configure do
 
   # Compress both stylesheets and JavaScripts
   config.assets.js_compressor = :uglifier
-  config.assets.css_compressor = :scss
+  config.assets.css_compressor = :sass
 
   # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
   # config.action_controller.relative_url_root = '/instance0'
