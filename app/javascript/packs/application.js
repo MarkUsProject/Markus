@@ -26,7 +26,6 @@ import { makeCourseSummaryTable } from 'javascripts/Components/course_summaries_
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 
-
 import 'javascripts/react_config';
 
 

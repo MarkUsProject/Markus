@@ -332,7 +332,6 @@ Rails.application.routes.draw do
 
     resources :course_summaries do
       collection do
-        get 'pop'
         get 'populate'
         get 'get_marking_scheme_details'
         get 'download_csv_grades_report'
