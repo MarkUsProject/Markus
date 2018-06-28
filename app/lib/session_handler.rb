@@ -154,7 +154,9 @@ module SessionHandler
   # SESSION_TIMEOUT seconds from now, depending on the role
   # This should be done on every page request or refresh that a user does.
   def refresh_timeout
-    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now
+    # a json session cookie will serialize time as strings, make the conversion explicit so that tests too see strings
+    # (see config.action_dispatch.cookies_serializer)
+    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now.to_s
     session[:has_warned] = false
   end
 
