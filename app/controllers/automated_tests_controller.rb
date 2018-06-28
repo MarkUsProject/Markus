@@ -142,23 +142,26 @@ class AutomatedTestsController < ApplicationController
 
   # should named it something else other than index..
   def index
+    # active record query(not completed yet)
+    test_script_results = TestScriptResult.joins(:test_run).where(test_runs: {submission_id: params[:submission_id]})
+                            .select(:test_script_id, :id, :test_run_id)
+
+    puts 'automated_test_controller: index'
+    puts "submission id: #{params}"
 
     respond_to do |format|
       format.html
       format.json {
-        render json: TestResult.select(
-          [
-            :test_script_result_id, :completion_status, TestResult.arel_table[:marks_earned], :actual_output, TestResult.arel_table[:updated_at], TestResult.arel_table[:marks_total], :name, TestScriptResult.arel_table[:test_run_id], :file_name
-          ]
-        ).joins(
-          TestResult.arel_table.join(TestScriptResult.arel_table).on(
-            TestResult.arel_table[:test_script_result_id].eq(TestScriptResult.arel_table[:id])
-          ).join_sources
-        ).joins(
-          TestResult.arel_table.join(TestScript.arel_table).on(
-            TestScriptResult.arel_table[:test_script_id].eq(TestScript.arel_table[:id])
-          ).join_sources
-        )
+        # submission id is temporarily hardcoded for the group 'pass'
+        render json: TestScriptResult.joins('
+        INNER JOIN test_results ON test_results.test_script_result_id = test_script_results.id
+        INNER JOIN test_scripts ON test_script_results.test_script_id = test_scripts.id
+        INNER JOIN test_runs ON test_script_results.test_run_id = test_runs.id')
+                       .select('test_run_id, test_script_results.marks_total, test_script_results.marks_earned,
+                          test_script_results.updated_at, test_results.completion_status, test_results.actual_output,
+                          test_results.name, test_scripts.file_name, test_runs.submission_id, test_runs.grouping_id')
+                       .where('submission_id = ?', 259)
+
       }
     end
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
+import _ from 'lodash';
 
 class TestScriptResultTable extends React.Component {
   constructor() {
@@ -33,6 +34,10 @@ class TestScriptResultTable extends React.Component {
           data={data}
           columns={[
             {
+              Header: "Runs",
+              accessor: "test_run_id"
+            },
+            {
               Header: "File Name",
               accessor: 'file_name',
             },
@@ -42,7 +47,7 @@ class TestScriptResultTable extends React.Component {
             },
             {
               Header: "Output",
-              accessor: 'actual_output'
+              accessor: 'actual_output',
             },
             {
               Header: "Status",
@@ -50,14 +55,18 @@ class TestScriptResultTable extends React.Component {
             },
             {
               Header: "Marks",
-              accessor: 'marks_earned'
+              accessor: 'marks_earned',
+              aggregate: vals => _.sum(vals)
+
             },
             {
               Header: "Out Of",
-              accessor: 'marks_total'
+              accessor: 'marks_total',
+              aggregate: vals => _.sum(vals)
             },
           ]}
-
+          pivotBy={["test_run_id", "file_name"]}
+          defaultExpanded={{1: true, 0: true}}
         />
       </div>
     );
