@@ -5,6 +5,7 @@ en:
         one: "Admin"
       student:
         one: "Student"
+        other: "Students"
       ta:
         one: "Grader"
         other: "Graders"
