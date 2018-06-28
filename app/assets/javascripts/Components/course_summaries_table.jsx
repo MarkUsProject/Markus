@@ -24,12 +24,10 @@ class CourseSummaryTable extends React.Component {
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
-      console.log(res)
       let grade_column = res.marks.map(c =>
         Object.assign([],
           c)
       );
-      console.log(grade_column)
       this.setState({data: JSON.parse(res.data),grade_columns:res.marks})
     });
   }
