@@ -7,6 +7,6 @@ include MarkusConfigurator
 
 # checks to make sure that all the config
 # in markus/config/environments/<env_name>.rb is usable
-if !Rails.env.test?
-  EnsureConfigHelper.check_config()
+unless Rails.env.test?
+  EnsureConfigHelper.check_config
 end

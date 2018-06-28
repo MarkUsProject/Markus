@@ -1,23 +1,34 @@
 # Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
 
-  # Don't eager load all application code at boot time, autoload incrementally on page requests.
-  # It speeds up boot time.
+  # In the development environment your application's code is reloaded on
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
+  config.cache_classes = false
+
+  # Do not eager load code on boot.
   config.eager_load = false
 
-  # Enable detailed debugging info on errors (needed by better_errors gem).
+  # Show full error reports.
   config.consider_all_requests_local = true
 
   # Set high verbosity of logger.
   config.log_level = :debug
 
-  # Print deprecation warnings on stderr
+  # Print deprecation notices to stderr.
   config.active_support.deprecation = :stderr
 
-  # Enable better_errors for 0.0.0.0 IP address
-  if defined?(BetterErrors) && ENV['SSH_CLIENT']
-    host = ENV['SSH_CLIENT'].match(/\A([^\s]*)/)[1]
-    BetterErrors::Middleware.allow_ip! host if host
+  # Enable/disable caching. By default caching is disabled.
+  # Run rails dev:cache to toggle caching.
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
+    config.cache_store = :null_store
   end
 
   ###################################################################

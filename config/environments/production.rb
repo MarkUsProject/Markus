@@ -1,25 +1,33 @@
 # Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
 
-  # Eager load all application code at boot time.
-  # It slows down boot time, but only once, and adds consistency (autoloading can cause thread-safety issues).
+  # Code is not reloaded between requests.
+  config.cache_classes = true
+
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both threaded web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
-  # Disable detailed debugging info on errors.
+  # Full error reports are disabled.
   config.consider_all_requests_local = false
 
   # Set low verbosity of logger.
   config.log_level = :info
 
-  # Ignore deprecation warnings
+  # Ignore deprecation notices.
   config.active_support.deprecation = :silence
+
+  # Caching is turned on.
+  config.action_controller.perform_caching = true
+
+  # Compress both stylesheets and JavaScripts
+  config.assets.js_compressor = :uglifier
+  config.assets.css_compressor = :scss
 
   # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
   # config.action_controller.relative_url_root = '/instance0'
-
-  # Compress both stylesheets and JavaScripts
-  config.assets.js_compressor  = :uglifier
-  config.assets.css_compressor = :scss
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
