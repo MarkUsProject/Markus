@@ -15,36 +15,15 @@ class CourseSummariesController < ApplicationController
 
   def populate
     if current_user.admin?
-      l = JSON.parse(get_table_json_data)
-      assignments_grade = l.map do |a|
-        data = a['assignment_marks'].map do |marks|
+      table = JSON.parse(get_table_json_data)
+      data = (table[0]['assignment_marks'].map do |marks|
 
           {
-            accessor: marks[1].to_s,
-            Header: "#{marks[0]}"
+            accessor: "assignment_marks.#{marks[0]}",
+            Header: Assignment.select("short_identifier").find(marks[0])['short_identifier']
           }
-          byebug
-        end
-      end
-      render json: get_table_json_data
-    else
-      render json: get_student_row_information
-    end
-  end
-
-  def pop
-    if current_user.admin?
-      l = JSON.parse(get_table_json_data)
-      assignments_grade = l.map do |a|
-        data = a['assignment_marks'].map do |marks|
-
-          {
-            accessor: marks[1].to_s,
-            Header: "#{marks[0]}"
-          }
-        end
-      end
-      render json: get_table_json_data
+        end)
+      render json: {data: get_table_json_data,marks: data}
     else
       render json: get_student_row_information
     end
