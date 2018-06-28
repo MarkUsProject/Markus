@@ -31,3 +31,14 @@
     margin: 0.5em auto;
   }
 }
+
+
+// New-style layout for mapping between tables
+.mapping-tables {
+  display: flex;
+}
+
+.mapping-table {
+  flex: 50%;
+  padding: 0 5px;
+}

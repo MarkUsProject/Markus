@@ -23,6 +23,7 @@ import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
 import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
 import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
+import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 
 import 'javascripts/react_config';
 
@@ -38,3 +39,4 @@ window.makeMarksSpreadsheet = makeMarksSpreadsheet;
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 window.makeRepoBrowser = makeRepoBrowser;
 window.makeSubmissionTable = makeSubmissionTable;
+window.makeMarksGradersManager = makeMarksGradersManager;

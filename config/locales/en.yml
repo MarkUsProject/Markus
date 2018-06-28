@@ -262,6 +262,8 @@ en:
     search_graders:     "Search Graders"
     add_graders:        "Add Graders"
     remove_graders:     "Remove Graders"
+    remove_all_graders: "Remove All Graders"
+    remove_grader:      "Remove Grader"
     add_new:            "Add New File"
     create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
