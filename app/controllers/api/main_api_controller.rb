@@ -120,7 +120,7 @@ module Api
               numericality = false
               collection_class.validators_on(key).each do |validator|
                 if validator.is_a?(ActiveModel::Validations::NumericalityValidator)
-                  collection = collection.where("#{key} = ?", value)
+                  collection = collection.where("? = ?", key, value)
                   numericality = true
                   break
                 end

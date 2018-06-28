@@ -1,20 +1,15 @@
 import React from 'react';
 import {render} from 'react-dom';
 
-import ReactTable from 'react-table';
-import checkboxHOC from 'react-table/lib/hoc/selectTable';
-
-const CheckboxTable = checkboxHOC(ReactTable);
+import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 
 
-class SubmissionTable extends React.Component {
+class RawSubmissionTable extends React.Component {
   constructor() {
     super();
     this.state = {
       groupings: [],
       sections: {},
-      selection: [],
-      selectAll: false,
       loading: true,
     };
   }
@@ -28,52 +23,13 @@ class SubmissionTable extends React.Component {
       url: Routes.assignment_submissions_path(this.props.assignment_id),
       dataType: 'json',
     }).then(res => {
+      this.props.resetSelection();
       this.setState({
         groupings: res.groupings,
         sections: res.sections,
         loading: false,
-        selection: [],
-        selectAll: false,
       });
     });
-  };
-
-  // From https://react-table.js.org/#/story/select-table-hoc.
-  toggleSelection = (key, shift, row) => {
-    let selection = [
-      ...this.state.selection
-    ];
-    const keyIndex = selection.indexOf(key);
-    if (keyIndex >= 0) {
-      selection = [
-        ...selection.slice(0, keyIndex),
-        ...selection.slice(keyIndex + 1)
-      ]
-    } else {
-      selection.push(key);
-    }
-    // update the state
-    this.setState({ selection });
-  };
-
-  toggleAll = () => {
-    const selectAll = !this.state.selectAll;
-    const selection = [];
-    if (selectAll) {
-      // we need to get at the internals of ReactTable
-      const wrappedInstance = this.checkboxTable.getWrappedInstance();
-      // the 'sortedData' property contains the currently accessible records based on the filter and sort
-      const currentRecords = wrappedInstance.getResolvedState().sortedData;
-      // we just push all the IDs onto the selection array
-      currentRecords.forEach((item) => {
-        selection.push(item._original._id);
-      })
-    }
-    this.setState({ selectAll, selection });
-  };
-
-  isSelected = (key) => {
-    return this.state.selection.includes(key);
   };
 
   columns = () => [
@@ -244,7 +200,7 @@ class SubmissionTable extends React.Component {
 
     $.post({
       url: Routes.collect_submissions_assignment_submissions_path(this.props.assignment_id),
-      data: { groupings: this.state.selection },
+      data: { groupings: this.props.selection },
     });
   };
 
@@ -255,7 +211,7 @@ class SubmissionTable extends React.Component {
 
     $.get({
       url: Routes.uncollect_all_submissions_assignment_submissions_path(this.props.assignment_id),
-      data: { groupings: this.state.selection },
+      data: { groupings: this.props.selection },
     });
   };
 
@@ -268,7 +224,7 @@ class SubmissionTable extends React.Component {
   runTests = () => {
     $.post({
       url: Routes.run_tests_assignment_submissions_path(this.props.assignment_id),
-      data: { groupings: this.state.selection },
+      data: { groupings: this.props.selection },
     });
   };
 
@@ -277,7 +233,7 @@ class SubmissionTable extends React.Component {
       url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
       data: {
         release_results: true,
-        groupings: this.state.selection
+        groupings: this.props.selection
       }
     }).then(this.fetchData);
   };
@@ -287,28 +243,19 @@ class SubmissionTable extends React.Component {
       url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
       data: {
         release_results: false,
-        groupings: this.state.selection
+        groupings: this.props.selection
       }
     }).then(this.fetchData);
   };
 
   render() {
-    const { toggleSelection, toggleAll, isSelected } = this;
-    const { selectAll, loading } = this.state;
-
-    const checkboxProps = {
-      selectAll,
-      isSelected,
-      toggleSelection,
-      toggleAll,
-      selectType: 'checkbox',
-    };
+    const { loading } = this.state;
 
     return (
       <div>
         <SubmissionsActionBox
           ref={(r) => this.actionBox = r}
-          disabled={this.state.selection.length === 0}
+          disabled={this.props.selection.length === 0}
           is_admin={this.props.is_admin}
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
@@ -334,7 +281,8 @@ class SubmissionTable extends React.Component {
 
           getTrProps={this.getTrProps}
 
-          {...checkboxProps}
+          {...this.props.getCheckboxProps()}
+          {...this.props.getCheckboxProps}
         />
       </div>
     );
@@ -342,6 +290,7 @@ class SubmissionTable extends React.Component {
 }
 
 
+let SubmissionTable = withSelection(RawSubmissionTable);
 SubmissionTable.defaultProps = {
   is_admin: false,
   can_run_tests: false

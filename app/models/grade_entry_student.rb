@@ -88,10 +88,12 @@ class GradeEntryStudent < ApplicationRecord
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 
-  # Unassigns TAs from grade entry students. +gest_ids+ is a list of IDs to the
-  # join model GradeEntryStudentTa that specifies the unassignment to be done.
-  def self.unassign_tas(gest_ids)
-    GradeEntryStudentTa.where(id: gest_ids).delete_all
+  def self.unassign_tas(student_ids, grader_ids, form)
+    GradeEntryStudentTa.joins(:grade_entry_student)
+                       .where('grade_entry_students.user_id': student_ids,
+                              'grade_entry_students_tas.ta_id': grader_ids,
+                              'grade_entry_students.grade_entry_form_id': form.id)
+                       .delete_all
   end
 
   # Given a row from a CSV file in the format
