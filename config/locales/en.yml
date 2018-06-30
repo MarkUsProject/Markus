@@ -619,6 +619,7 @@ en:
       search_groups:    "Search Groups"
       add_new:          "Add new group"
       manage_groups:    "Manage Groups"
+      add_to_group:     "Add student(s) to group"
       assign_scans:     "Assign Scans"
       skip_group:       "Skip group"
       unassigned_students: "Unassigned"
@@ -649,7 +650,7 @@ en:
       cant_delete: "You are not allowed to delete the group."
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
       could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
-      delete:  'Delete this group'
+      delete:  'Delete group(s)'
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
       upload:
         upload_groups_file: "Upload Groups File"
@@ -680,7 +681,7 @@ en:
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
-      add_all_groups: "Add all groups"
+      add_all_groups: "Create all groups"
       creating_groups_for_all_students: "Creating groups for all students."
 
     results:

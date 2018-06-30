@@ -59,42 +59,38 @@ describe GroupsController do
 
     describe 'DELETE #remove_group' do
       before :each do
-        allow(Grouping).to receive(:find).and_return(grouping)
+        allow(Grouping).to receive(:where).and_return([grouping])
       end
 
       context 'when grouping has no submissions' do
         before :each do
           allow(grouping).to receive(:delete_grouping)
           allow(grouping).to receive(:has_submission?).and_return(false)
-
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
-        end
-
-        it 'assigns the requested grouping\'s assignment to @assignment' do
-          expect(assigns(:assignment)).to eq(assignment)
         end
 
         it 'assigns empty array to @errors' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
           expect(assigns(:errors)).to match_array([])
         end
 
         it 'populates @removed_groupings with deleted groupings' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
           expect(assigns(:removed_groupings)).to match_array([grouping])
         end
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(false)
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'calls grouping.delete_groupings' do
           expect(grouping).to receive(:delete_grouping)
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
       end
 
@@ -102,11 +98,7 @@ describe GroupsController do
         before :each do
           allow(grouping).to receive(:has_submission?).and_return(true)
 
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
-        end
-
-        it 'assigns the requested grouping\'s assignment to @assignment' do
-          expect(assigns(:assignment)).to eq(assignment)
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'populates @errors with group_name of grouping\'s group' do
@@ -119,12 +111,12 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, params: { grouping_id: grouping, assignment_id: assignment }
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
       end
     end

@@ -4,7 +4,6 @@ require 'csv_invalid_line_error'
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
-  include GroupsHelper
   # Administrator
   before_action :authorize_only_for_admin
 
@@ -36,23 +35,24 @@ class GroupsController < ApplicationController
 
   def remove_group
     # When a success div exists we can return successfully removed groups
-    return unless request.delete?
-    grouping = Grouping.find(params[:grouping_id])
-    @assignment = grouping.assignment
+    groupings = Grouping.where(id: params[:grouping_id])
     @errors = []
     @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
-      grouping.student_memberships.each do |member|
-        grouping.remove_member(member.id)
+      groupings.each do |grouping|
+        grouping.student_memberships.each do |member|
+          grouping.remove_member(member.id)
+        end
       end
     end
     # TODO: return errors through request
-    if grouping.has_submission?
+    groupings.each do |grouping|
+      if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-    else
-      grouping.delete_grouping
-      @removed_groupings.push(grouping)
-      flash_message(:success, I18n.t('groups.delete'))
+      else
+        grouping.delete_grouping
+        @removed_groupings.push(grouping)
+      end
     end
     head :ok
   end
@@ -91,6 +91,7 @@ class GroupsController < ApplicationController
         @grouping.update_attribute(:group_id, groupexist_id)
       end
     end
+    head :ok
   end
 
   def valid_grouping
@@ -112,6 +113,13 @@ class GroupsController < ApplicationController
     @clone_assignments = Assignment.where(vcs_submit: true)
                                    .where.not(id: @assignment.id)
                                    .order(:id)
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @assignment.all_grouping_data
+      end
+    end
   end
 
   def assign_scans
@@ -212,13 +220,6 @@ class GroupsController < ApplicationController
       end
       render json: data
     end
-  end
-
-  def populate
-    @assignment = Assignment.find(params[:assignment_id])
-    students_table_info = get_students_table_info
-    groupings_table_info = get_groupings_table_info
-    render json: [students_table_info, groupings_table_info]
   end
 
   # Allows the user to upload a csv file listing groups. If group_name is equal
@@ -479,7 +480,7 @@ class GroupsController < ApplicationController
   # of the form "groupid_studentid"
   # This code is possibly not safe. (should add error checking)
   def remove_members(member_ids_to_remove, assignment)
-    members_to_remove = Student.where(id: member_ids_to_remove)
+    members_to_remove = Student.where(user_name: member_ids_to_remove)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         grouping = member.accepted_grouping_for(assignment.id)
