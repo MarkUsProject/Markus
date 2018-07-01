@@ -1,4 +1,4 @@
-class RemoveUnneededColumnsFromSubmissionRules < ActiveRecord::Migration
+class RemoveUnneededColumnsFromSubmissionRules < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :submission_rules, :allow_submit_until
     remove_column :submission_rules, :grace_day_limit

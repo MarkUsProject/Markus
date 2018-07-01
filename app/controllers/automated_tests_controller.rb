@@ -4,9 +4,9 @@ require 'helpers/ensure_config_helper.rb'
 class AutomatedTestsController < ApplicationController
   include AutomatedTestsClientHelper
 
-  before_filter      :authorize_only_for_admin,
+  before_action      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
-  before_filter      :authorize_for_student,
+  before_action      :authorize_for_student,
                      only: [:student_interface]
 
   # Update is called when files are added to the assignment

@@ -1,7 +1,7 @@
 require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
-  before_filter :authorize_only_for_admin,
+  before_action :authorize_only_for_admin,
                 except: [:edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :get_annotations,
@@ -10,21 +10,21 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request]
-  before_filter :authorize_for_ta_and_admin,
+  before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark,
                        :note_message]
-  before_filter :authorize_for_user,
+  before_action :authorize_for_user,
                 only: [:download, :download_zip, :run_tests,
                        :view_marks, :get_annotations]
-  before_filter :authorize_for_student,
+  before_action :authorize_for_student,
                 only: [:update_remark_request,
                        :cancel_remark_request]
-  before_filter only: [:edit, :update_mark, :toggle_marking_state,
+  before_action only: [:edit, :update_mark, :toggle_marking_state,
                        :update_overall_comment, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
                 end
-  after_filter  :update_remark_request_count,
+  after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
@@ -162,7 +162,7 @@ class ResultsController < ApplicationController
         end
 
         # Renders nothing.
-        render nothing: true
+        head :ok
       end
     end
   end
@@ -176,7 +176,7 @@ class ResultsController < ApplicationController
     rescue => e
       flash_message(:error, e.message)
     end
-    redirect_to :back
+    redirect_back(fallback_location: root_path)
   end
 
   ##  Tag Methods  ##
@@ -186,7 +186,7 @@ class ResultsController < ApplicationController
                                                       params[:tag_id])
     respond_to do |format|
       format.html do
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
       end
     end
   end
@@ -196,7 +196,7 @@ class ResultsController < ApplicationController
                                     Grouping.find(params[:grouping_id]))
     respond_to do |format|
       format.html do
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
       end
     end
   end

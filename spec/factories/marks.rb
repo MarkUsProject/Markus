@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :mark do
-    association :result, factory: :result, marking_state: 'complete'
+    association :result, factory: :complete_result
 
     factory :rubric_mark do
       association :markable, factory: :rubric_criterion

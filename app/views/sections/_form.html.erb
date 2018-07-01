@@ -16,9 +16,9 @@
         <table id='section_students'>
           <thead>
             <tr>
-              <th><%= t('user.user_name') %></th>
-              <th><%= t('user.first_name') %></th>
-              <th><%= t('user.last_name') %></th>
+              <th><%= User.human_attribute_name(:user_name) %></th>
+              <th><%= User.human_attribute_name(:first_name) %></th>
+              <th><%= User.human_attribute_name(:last_name) %></th>
               <th><%= t('actions') %></th>
             </tr>
           </thead>

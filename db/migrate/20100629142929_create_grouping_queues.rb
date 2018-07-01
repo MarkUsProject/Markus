@@ -1,4 +1,4 @@
-class CreateGroupingQueues < ActiveRecord::Migration
+class CreateGroupingQueues < ActiveRecord::Migration[4.2]
   def self.up
     create_table :grouping_queues do |t|
       t.column :submission_collector_id, :integer

@@ -3,11 +3,12 @@ require 'zip'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
-  before_filter :authorize_only_for_admin,
-                except: [:server_time,
+  before_action :authorize_only_for_admin,
+                except: [:index,
+                         :browse,
+                         :server_time,
                          :populate_file_manager,
                          :revisions,
-                         :browse,
                          :file_manager,
                          :update_files,
                          :get_file,
@@ -20,8 +21,9 @@ class SubmissionsController < ApplicationController
                          :update_submissions,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
-  before_filter :authorize_for_ta_and_admin,
-                only: [:browse,
+  before_action :authorize_for_ta_and_admin,
+                only: [:index,
+                       :browse,
                        :manually_collect_and_begin_grading,
                        :revisions,
                        :repo_browser,
@@ -29,12 +31,23 @@ class SubmissionsController < ApplicationController
                        :check_collect_status,
                        :update_submissions,
                        :populate_submissions_table]
-  before_filter :authorize_for_student,
+  before_action :authorize_for_student,
                 only: [:file_manager,
                        :populate_peer_submissions_table]
-  before_filter :authorize_for_user,
+  before_action :authorize_for_user,
                 only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
 
+  def index
+    respond_to do |format|
+      format.json do
+        assignment = Assignment.find(params[:assignment_id])
+        render json: {
+          groupings: assignment.current_submission_data(current_user),
+          sections: Hash[Section.all.pluck(:id, :name)]
+        }
+      end
+    end
+  end
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
@@ -244,87 +257,45 @@ class SubmissionsController < ApplicationController
   # The table of submissions for an assignment and related actions and links.
   def browse
     @assignment = Assignment.find(params[:assignment_id])
-    @groupings = Grouping.get_groupings_for_assignment(@assignment,
-                                                       current_user)
-    @sections = Section.order(:name)
-    @tas = @assignment.ta_memberships.includes(grouping: [:tas]).uniq.pluck(:user_name)
+    self.class.layout 'assignment_content'
 
-    @available_sections = Hash.new
-    if @assignment.submission_rule.can_collect_now?
-      @available_sections[t('groups.unassigned_students')] = 0
-    end
-    if Section.all.size > 0
-      @section_column = "{
-        id: 'section',
-        content: '#{Section.model_name.human}',
-        sortable: true
-      },"
-      Section.all.each do |section|
-        if @assignment.submission_rule.can_collect_now?(section)
-          @available_sections[section.name] = section.id
-        end
-      end
-    else
-      @section_column = ''
-    end
-
-    if @assignment.submission_rule.type == 'GracePeriodSubmissionRule'
-      @grace_credit_column = "{
-        id: 'grace_credits_used',
-        content: '#{t(:'browse_submissions.grace_credits_used')}',
-        sortable: true,
-        compare: compare_numeric_values,
-        searchable: false
-      },"
-    else
-      @grace_credit_column = ''
+    if current_user.ta?
+      return
     end
 
     if @assignment.past_all_collection_dates?
-      flash_now(:notice, t('browse_submissions.grading_can_begin'))
-    else
-      if @assignment.section_due_dates_type
-        section_due_dates = Hash.new
-        now = Time.zone.now
-        Section.all.each do |section|
-          collection_time = @assignment.submission_rule
-                                       .calculate_collection_time(section)
-          collection_time = now if now >= collection_time
-          if section_due_dates[collection_time].nil?
-            section_due_dates[collection_time] = Array.new
-          end
-          section_due_dates[collection_time].push(section.name)
-        end
-        section_due_dates.each do |collection_time, sections|
-          sections = sections.join(', ')
-          if(collection_time == now)
-            flash_now(:notice, t('browse_submissions.grading_can_begin_for_sections',
-                                 sections: sections))
-          else
-            flash_now(:notice, t('browse_submissions.grading_can_begin_after_for_sections',
-                                 time: l(collection_time),
-                                 sections: sections))
-          end
-        end
-      else
-        collection_time = @assignment.submission_rule.calculate_collection_time
-        flash_now(:notice, t('browse_submissions.grading_can_begin_after',
-                             time: l(collection_time)))
-      end
+      flash_now(:success, t('browse_submissions.grading_can_begin'))
+      return
     end
-    render layout: 'assignment_content'
-  end
 
-  def populate_submissions_table
-    assignment = Assignment.find(params[:assignment_id])
-    groupings = Grouping.includes(:current_result,
-                                  :tas,
-                                  :accepted_students
-    )
-                        .get_groupings_for_assignment(assignment,
-                                                      current_user)
-
-    render json: get_submissions_table_info(assignment, groupings)
+    if @assignment.section_due_dates_type
+      section_due_dates = Hash.new
+      now = Time.zone.now
+      Section.find_each do |section|
+        collection_time = @assignment.submission_rule
+                                     .calculate_collection_time(section)
+        collection_time = now if now >= collection_time
+        if section_due_dates[collection_time].nil?
+          section_due_dates[collection_time] = Array.new
+        end
+        section_due_dates[collection_time].push(section.name)
+      end
+      section_due_dates.each do |collection_time, sections|
+        sections = sections.join(', ')
+        if collection_time == now
+          flash_now(:success, t('browse_submissions.grading_can_begin_for_sections',
+                                sections: sections))
+        else
+          flash_now(:warning, t('browse_submissions.grading_can_begin_after_for_sections',
+                                time: l(collection_time),
+                                sections: sections))
+        end
+      end
+    else
+      collection_time = @assignment.submission_rule.calculate_collection_time
+      flash_now(:warning, t('browse_submissions.grading_can_begin_after',
+                            time: l(collection_time)))
+    end
   end
 
   def populate_peer_submissions_table
@@ -475,7 +446,7 @@ class SubmissionsController < ApplicationController
         end
       end
     ensure
-      redirect_to :back
+      redirect_back(fallback_location: root_path)
     end
   end
 
@@ -491,7 +462,7 @@ class SubmissionsController < ApplicationController
       flash_message(:error,
                     t('submission_file.error.no_access',
                           submission_file_id: params[:submission_file_id]))
-      redirect_to :back
+      redirect_back(fallback_location: root_path)
       return
     end
 
@@ -599,7 +570,7 @@ class SubmissionsController < ApplicationController
             file_content = file.retrieve_file
           rescue Exception => e
             flash_message(:error, e.message)
-            redirect_to :back
+            redirect_back(fallback_location: root_path)
             return
           end
 
@@ -649,7 +620,7 @@ class SubmissionsController < ApplicationController
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
           flash_message(:error, t('student.submission.no_revision_available'))
-          redirect_to :back
+          redirect_back(fallback_location: root_path)
           return
         end
       end
@@ -657,7 +628,7 @@ class SubmissionsController < ApplicationController
       files = revision.files_at_path(assignment.repository_folder)
       if files.count == 0
         flash_message(:error, t('student.submission.no_files_available'))
-        redirect_to :back
+        redirect_back(fallback_location: root_path)
         return
       end
 

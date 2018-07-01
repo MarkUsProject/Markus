@@ -10,9 +10,6 @@ class SubmissionRule < ApplicationRecord
   has_many :periods, -> { order('id') }, dependent: :destroy
   accepts_nested_attributes_for :periods, allow_destroy: true
 
-#  validates_associated :assignment
-#  validates_presence_of :assignment
-
   def self.descendants
     [NoLateSubmissionRule,
      PenaltyPeriodSubmissionRule,

@@ -1,4 +1,4 @@
-class CreateExamTemplates < ActiveRecord::Migration
+class CreateExamTemplates < ActiveRecord::Migration[4.2]
   def change
     create_table :exam_templates do |t|
       t.references :assignment, index: true, foreign_key: true

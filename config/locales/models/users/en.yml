@@ -1,0 +1,22 @@
+en:
+  activerecord:
+    models:
+      admin:
+        one: "Admin"
+      student:
+        one: "Student"
+        other: "Students"
+      ta:
+        one: "Grader"
+        other: "Graders"
+      user:
+        one: "User"
+    attributes:
+      user:
+        email: "Email"
+        first_name: "First Name"
+        full_name: "Name"
+        grace_credits: "Grace Credits"
+        id_number: "ID number"
+        last_name: "Last Name"
+        user_name: "User Name"

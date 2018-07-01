@@ -1,4 +1,4 @@
-class AddStatisticsToAssignments < ActiveRecord::Migration
+class AddStatisticsToAssignments < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :results_median, :float
     add_column :assignments, :results_fails, :integer

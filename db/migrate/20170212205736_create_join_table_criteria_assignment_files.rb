@@ -1,4 +1,4 @@
-class CreateJoinTableCriteriaAssignmentFiles < ActiveRecord::Migration
+class CreateJoinTableCriteriaAssignmentFiles < ActiveRecord::Migration[4.2]
   def change
     create_table :criteria_assignment_files_joins do |t|
       t.integer :criterion_id,       null: false

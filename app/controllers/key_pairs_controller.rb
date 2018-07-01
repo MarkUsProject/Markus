@@ -140,7 +140,7 @@ class KeyPairsController < ApplicationController
       flash_message(:error, t('key_pairs.create.invalid_key'))
       respond_to do |format|
         format.html do
-          redirect_to :back
+          redirect_back(fallback_location: root_path)
         end
       end
     end

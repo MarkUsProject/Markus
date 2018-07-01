@@ -1,4 +1,4 @@
-class RemoveUnnecessarySubmissionFileFields < ActiveRecord::Migration
+class RemoveUnnecessarySubmissionFileFields < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :submission_files, :submitted_at
     remove_column :submission_files, :submission_file_status

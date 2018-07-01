@@ -1,4 +1,4 @@
-class CreateGradeEntryForms < ActiveRecord::Migration
+class CreateGradeEntryForms < ActiveRecord::Migration[4.2]
   def self.up
     create_table :grade_entry_forms do |t|
       t.string :short_identifier, :null => false

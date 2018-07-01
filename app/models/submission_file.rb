@@ -7,9 +7,8 @@ class SubmissionFile < ApplicationRecord
   # matching the regular expression above
   SUBSTITUTION_CHAR = '_'
 
-  belongs_to  :submission
+  belongs_to :submission
   validates_associated :submission
-  validates_presence_of :submission
 
   has_many :annotations
 

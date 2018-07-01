@@ -1,19 +1,14 @@
 import React from 'react';
 import {render} from 'react-dom';
 
-import ReactTable from 'react-table';
-import checkboxHOC from 'react-table/lib/hoc/selectTable';
-
-const CheckboxTable = checkboxHOC(ReactTable);
+import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 
 
-class StudentTable extends React.Component {
+class RawStudentTable extends React.Component {
   constructor() {
     super();
     this.state = {
       data: {students: [], sections: {}},
-      selection: [],
-      selectAll: false,
       loading: true,
     };
   }
@@ -37,50 +32,12 @@ class StudentTable extends React.Component {
     });
   };
 
-  // From https://react-table.js.org/#/story/select-table-hoc.
-  toggleSelection = (key, shift, row) => {
-    let selection = [
-      ...this.state.selection
-    ];
-    const keyIndex = selection.indexOf(key);
-    if (keyIndex >= 0) {
-      selection = [
-        ...selection.slice(0, keyIndex),
-        ...selection.slice(keyIndex + 1)
-      ]
-    } else {
-      selection.push(key);
-    }
-    // update the state
-    this.setState({ selection });
-  };
-
-  toggleAll = () => {
-    const selectAll = !this.state.selectAll;
-    const selection = [];
-    if (selectAll) {
-      // we need to get at the internals of ReactTable
-      const wrappedInstance = this.checkboxTable.getWrappedInstance();
-      // the 'sortedData' property contains the currently accessible records based on the filter and sort
-      const currentRecords = wrappedInstance.getResolvedState().sortedData;
-      // we just push all the IDs onto the selection array
-      currentRecords.forEach((item) => {
-        selection.push(item._original._id);
-      })
-    }
-    this.setState({ selectAll, selection })
-  };
-
-  isSelected = (key) => {
-    return this.state.selection.includes(key);
-  };
-
   /* Called when an action is run */
   onSubmit = (event) => {
     event.preventDefault();
 
     const data = {
-      student_ids: this.state.selection,
+      student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
       grace_credits: this.actionBox.state.grace_credits,
       section: this.actionBox.state.section
@@ -95,23 +52,14 @@ class StudentTable extends React.Component {
   };
 
   render() {
-    const { toggleSelection, toggleAll, isSelected } = this;
-    const {data, selectAll, loading } = this.state;
-
-    const checkboxProps = {
-      selectAll,
-      isSelected,
-      toggleSelection,
-      toggleAll,
-      selectType: 'checkbox',
-    };
+    const {data, loading} = this.state;
 
     return (
       <div>
         <StudentsActionBox
           ref={(r) => this.actionBox = r}
           sections={data.sections}
-          disabled={this.state.selection.length === 0}
+          disabled={this.props.selection.length === 0}
           onSubmit={this.onSubmit}
         />
         <CheckboxTable
@@ -120,28 +68,28 @@ class StudentTable extends React.Component {
           data={data.students}
           columns={[
             {
-              Header: I18n.t('user.user_name'),
+              Header: I18n.t('activerecord.attributes.user.user_name'),
               accessor: 'user_name',
               id: 'user_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.first_name'),
+              Header: I18n.t('activerecord.attributes.user.first_name'),
               accessor: 'first_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.last_name'),
+              Header: I18n.t('activerecord.attributes.user.last_name'),
               accessor: 'last_name',
               minWidth: 120
             },
             {
-              Header: I18n.t('user.email'),
+              Header: I18n.t('activerecord.attributes.user.email'),
               accessor: 'email',
               minWidth: 150
             },
             {
-              Header: I18n.t('user.id_number'),
+              Header: I18n.t('activerecord.attributes.user.id_number'),
               accessor: 'id_number',
               minWidth: 90
             },
@@ -172,7 +120,7 @@ class StudentTable extends React.Component {
                 </select>,
             },
             {
-              Header: I18n.t('user.grace_credits'),
+              Header: I18n.t('activerecord.attributes.user.grace_credits'),
               id: 'grace_credits',
               Cell: row => `${row.original.remaining_grace_credits} / ${row.original.grace_credits}`,
               minWidth: 90
@@ -224,7 +172,7 @@ class StudentTable extends React.Component {
           filterable
           loading={loading}
 
-          {...checkboxProps}
+          {...this.props.getCheckboxProps()}
         />
       </div>
     );
@@ -260,9 +208,9 @@ class StudentsActionBox extends React.Component {
                value={this.state.grace_credits}
                onChange={this.inputChanged} />;
     } else if (this.state.action === 'update_section') {
-      if (this.props.sections.length > 0) {
-        const section_options = this.props.sections.entries().map(
-          section => <option value={section[0]}>{section[1]}</option>
+      if (Object.keys(this.props.sections).length > 0) {
+        const section_options = Object.entries(this.props.sections).map(
+          section => <option key={section[0]} value={section[0]}>{section[1]}</option>
         );
         optionalInputBox =
           <select name='section'
@@ -283,10 +231,10 @@ class StudentsActionBox extends React.Component {
     return (
       <form onSubmit={this.props.onSubmit}>
         <select value={this.state.action} onChange={this.actionChanged}>
-          <option value='give_grace_credits'>{I18n.t('give_grace_credits')}</option>
-          <option value='update_section'>{I18n.t('add_section')}</option>
-          <option value='hide'>{I18n.t('hide_students')}</option>
-          <option value='unhide'>{I18n.t('unhide_students')}</option>
+          <option value='give_grace_credits'>{I18n.t('students.admin_actions.give_grace_credits')}</option>
+          <option value='update_section'>{I18n.t('students.admin_actions.add_section')}</option>
+          <option value='hide'>{I18n.t('students.admin_actions.mark_inactive')}</option>
+          <option value='unhide'>{I18n.t('students.admin_actions.mark_active')}</option>
         </select>
         {optionalInputBox}
         <input type='submit'
@@ -297,6 +245,10 @@ class StudentsActionBox extends React.Component {
     );
   };
 }
+
+
+let StudentTable = withSelection(RawStudentTable);
+
 
 export function makeStudentTable(elem) {
   render(<StudentTable />, elem);

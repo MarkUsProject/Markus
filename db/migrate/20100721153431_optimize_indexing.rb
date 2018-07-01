@@ -1,4 +1,4 @@
-class OptimizeIndexing < ActiveRecord::Migration
+class OptimizeIndexing < ActiveRecord::Migration[4.2]
   def self.up
     add_index :marks, :result_id
     remove_index :rubric_criteria, [:assignment_id]

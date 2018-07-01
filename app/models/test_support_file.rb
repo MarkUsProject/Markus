@@ -22,11 +22,11 @@ class TestSupportFile < ApplicationRecord
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
-  validates_presence_of :assignment
   validates_associated :assignment
 
   validates_presence_of :file_name
-  validates_presence_of :description, if: "description.nil?"
+  # TODO: validation fails if description is the empty string
+  validates_presence_of :description, if: ->(o) { o.description.nil? }
 
   # validates the uniqueness of file_name for the same assignment
   validates_each :file_name do |record, attr, value|

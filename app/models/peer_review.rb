@@ -6,10 +6,6 @@ class PeerReview < ApplicationRecord
 
   validates_associated :reviewer
   validates_associated :result
-  validates_presence_of :reviewer
-  validates_presence_of :result
-  validates_numericality_of :reviewer_id, only_integer: true, greater_than: 0
-  validates_numericality_of :result_id, only_integer: true, greater_than: 0
   validate :no_students_should_be_reviewer_and_reviewee
 
   def reviewee

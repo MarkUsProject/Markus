@@ -1,10 +1,14 @@
 <% content_for :head do %>
-  <%= render partial: 'marks_graders_actions', formats: [:'js.jsx'], handlers: [:erb] %>
-  <%= render partial: 'marks_grader_table', formats: [:'js.jsx'], handlers: [:erb] %>
-  <%= render partial: 'marks_graders_student_table', formats: [:'js.jsx'], handlers: [:erb] %>
-  <%= render partial: 'marks_graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
-
-  <%= stylesheet_link_tag('clickable') %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeMarksGradersManager(document.getElementById('marks-graders-manager'),
+        {
+          grade_entry_form_id: <%= @grade_entry_form.id %>,
+          showSections: <%= Section.exists? %>
+        }
+      );
+    });
+  </script>
 <% end %>
 
 <% content_for :title, t('graders.manage_graders') %>
@@ -18,27 +22,8 @@
     html_options: { id: 'uploadModal' } }
 ] %>
 
-<div class="clear"></div>
 
-
-<div id='notice'>
-  <div class='success' id='add_success' style='display: none;'></div>
-
-  <%# This is for error display injected by JavaScript %>
-  <div class='error' id='errors' style='display: none; '>
-    <h3><%= t('graders.problem') %></h3>
-    <div id='errors_title'></div>
-    <div id='errors_contents'></div>
-  </div>
-
-  <div class='warning' id='global_action_warning' style='display: none;'>
-    <h3><%= t('groups.warning') %></h3>
-    <div id='global_action_warning_msg'></div>
-  </div>
-
-</div>
-
-<div id='marks_graders_manager'></div>
+<div id='marks-graders-manager'></div>
 
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>

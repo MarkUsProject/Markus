@@ -1,4 +1,4 @@
-class CreateSubmissionCollectors < ActiveRecord::Migration
+class CreateSubmissionCollectors < ActiveRecord::Migration[4.2]
   def self.up
     create_table :submission_collectors do |t|
       t.column :child_pid,  :integer, :null => true

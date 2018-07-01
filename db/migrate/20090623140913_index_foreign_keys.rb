@@ -1,4 +1,4 @@
-class IndexForeignKeys < ActiveRecord::Migration
+class IndexForeignKeys < ActiveRecord::Migration[4.2]
   def self.up
     add_index :annotation_categories, :assignment_id
     add_index :annotation_texts, :annotation_category_id

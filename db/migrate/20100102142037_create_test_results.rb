@@ -1,4 +1,4 @@
-class CreateTestResults < ActiveRecord::Migration
+class CreateTestResults < ActiveRecord::Migration[4.2]
   def self.up
     create_table :test_results do |t|
       t.string :filename

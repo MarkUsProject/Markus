@@ -1,4 +1,4 @@
-class AddColumnsCriterion < ActiveRecord::Migration
+class AddColumnsCriterion < ActiveRecord::Migration[4.2]
   def up
     add_column :rubric_criteria, :ta_visible, :boolean, :default => true, :null => false
     add_column :rubric_criteria, :peer_visible, :boolean, :default => false, :null => false

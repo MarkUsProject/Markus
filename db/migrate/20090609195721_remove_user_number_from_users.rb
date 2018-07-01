@@ -1,4 +1,4 @@
-class RemoveUserNumberFromUsers < ActiveRecord::Migration
+class RemoveUserNumberFromUsers < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :users, :user_number
   end

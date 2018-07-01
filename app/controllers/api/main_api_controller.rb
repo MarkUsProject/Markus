@@ -8,7 +8,7 @@ module Api
 
     attr_reader :current_user
 
-    before_filter :check_format, :authenticate
+    before_action :check_format, :authenticate
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -80,7 +80,7 @@ module Api
       request_format = request.format.symbol
       if request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
-        render nothing: true, status: 406
+        head :not_acceptable
       end
     end
 
@@ -120,7 +120,7 @@ module Api
               numericality = false
               collection_class.validators_on(key).each do |validator|
                 if validator.is_a?(ActiveModel::Validations::NumericalityValidator)
-                  collection = collection.where("#{key} = ?", value)
+                  collection = collection.where("? = ?", key, value)
                   numericality = true
                   break
                 end

@@ -18,10 +18,6 @@ class RubricCriterion < Criterion
 
   belongs_to :assignment, counter_cache: true
   validates_associated :assignment, on: :create
-  validates_presence_of :assignment_id
-  validates_numericality_of :assignment_id,
-                            only_integer: true,
-                            greater_than: 0
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark,

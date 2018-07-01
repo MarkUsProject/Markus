@@ -22,7 +22,7 @@ class Student < User
 
   has_many :grace_period_deductions, through: :memberships
 
-  belongs_to :section
+  belongs_to :section, optional: true
   accepts_nested_attributes_for :section
 
   validates_numericality_of :grace_credits,

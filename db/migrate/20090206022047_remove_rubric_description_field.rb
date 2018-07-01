@@ -1,4 +1,4 @@
-class RemoveRubricDescriptionField < ActiveRecord::Migration
+class RemoveRubricDescriptionField < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :rubric_criteria, :description
   end

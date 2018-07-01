@@ -62,7 +62,6 @@ pt:
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Painel"
-    users:              "Usuários"
     sections:           "Sessões"
     home:               "Home"
     settings:           "Configurações"
@@ -142,8 +141,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       no_submission_for_section: "Não existem quaisquer submissões de recolher para seções: {%section_names}"
       successfully_collected: " %{collected} submissões coletadas com sucesso."
       marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
-      collection_incomplete_warning: "Coleção ainda está em andamento. Você ainda deseja continuar? Algumas apresentações podem estar ausentes."
-      check_collection_status_error: "Houve um erro ao verificar o status da conexão."
     assignment:
         hidden: "%{assignment_text} (oculto)"
         assignment: "Projetos %{short_identifier}"
@@ -240,15 +237,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     members:            "Membros"
     add_members:        "Adicionar membros"
     remove_members:     "Remover membros"
-    graders:            "Avaliadores"
     search_graders:     "Pesquisar avaliadores"
     add_graders:        "Adicionar avaliadores"
     remove_graders:     "Remover avaliadores"
-    admins:             "Administradores"
     add_new:            "Adicionar novo"
-    add_new_student:    "Adicionar novo Étudiant"
-    add_new_grader:     "Adicionar novo Avaliador"
-    add_new_admin:      "Adicionar novo Administradore"
     create_new_grade_entry_form: "Adicionar planilha de notas"
     edit:               "Editar"
     save:               "Salvar"
@@ -278,8 +270,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     invite:             "Convidar"
     disinvite:          "Desconvidar"
     help:               "Ajuda"
-    give_grace_credits:  "Dar créditos de tolerância:"
-    add_section:        "Adicionar a sessão"
     no_result:          "Nenhuma nota está disponível para esse projeto."
     no_remark_result:   "Resultados ainda não estão disponíveis para esse projeto."
     unmarked:           "sem nota"
@@ -491,9 +481,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
 
     course_summaries_index:
       page_title:     "Sumário"
-      user_name:      "Nome de Usuário"
-      first_name:     "Primeiro Nome"
-      last_name:      "Sobrenome"
       ngr:            "Sem Grade recebida"
 
     grade_entry_forms:
@@ -571,7 +558,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       manage_groups: "Gerenciar grupos"
       assign_scans: "Atribuir varreduras"
       skip_group: "UPDATE ME"
-      all_students: "Todos os alunos"
       unassigned_students: "Não-atribuíd"
       assigned_students: "Atribuíds"
       inactive_students: "Inativo"
@@ -650,48 +636,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       error:
         validate_criteria: "deve ser entre 0 e a nota máxima do critério"
 
-    # Student's View (admin)
-    students:
-      processing: "Processando..."
-      manage_students: "Gerenciar Alunos"
-      edit_student:    "Editar um Aluno"
-      edit_success: "%{user_name} foi atualizado."
-      create_new:      "Criar um novo aluno"
-      students: "Alunos"
-      search_students:      "Pesquisar os alunos"
-      no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
-      upload:
-        upload_a_class_list: "Carregar lista de alunos"
-        select_csv_file:     "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-        student_same_number: "Se um estudante com o mesmo nome de usuário exsitir, então a informação do aluno será atualizada."
-      download:
-        download_student_list: "Baixar lista de estudantes"
-      create:
-        success: "Aluno %{user_name} criado com sucesso."
-        error: "Falha ao criar aluno."
-      update:
-        success: "Aluno %{user_name} atualizado com sucesso."
-        error: "Falha ao atualizar aluno."
-    hide_students:      "Marcar como inativo"
-    unhide_students:    "Marcar como ativo"
-    students_not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
-    students_not_successfully_added_message_2: "Tenha certeza que:"
-    students_not_successfully_added_message_3: "Nome dos alunos são
-    alfa-numéricos."
-    students_not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
-    students_not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
     invalid_group_warning: "Seu grupo é atualmente inválido. Você provavelmente não cumpriu o tamanho  mínimo do grupo. Você pode não ser capaz de enviar qualquer coisa, e seu trabalho não pode ser classificado, até que você tenha atingido esse mínimo.. "
     rejected_invitation: "recusado"
 
     #Sutdent's View (student)
     student:
-      create:
-        success: "Aluno %{user_name} criado com sucesso."
-        error:   "Falha ao criar aluno."
-      update:
-        success: "Aluno %{user_name} atualizado com sucesso."
-        error:   "Falha ao atualizar aluno."
-
       assignment: "Projeto %{short_identifier}"
       peer_assignment: "%{short_identifier}: Projeto de Revisão de Pares"
       group_information: "Informação do Grupo"
@@ -764,26 +713,10 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
         version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
         empty_file_warning: "UPDATE ME"
-    tas:
-      create:
-        success: "Avaliador %{user_name} criado com sucesso."
-        error:   "Falha ao criar avaliador."
-      update:
-        success: "Avaliador %{user_name} atualizado com sucesso."
-        error:   "Falha ao atualizar avaliador."
-      delete:
-        confirm: "Tem certeza de que deseja excluir este aluno?"
         success: "Avaliador %{user_name} suprimido com sucesso."
-        error:   "Falha ao atualizar suprimido."
-
 
     #Graders' View
     graders:
-      create_new_grader:  "Criar novo avaliador"
-      edit_grader:        "Editar avaliador"
-      manage_graders:     "Gerenciar avaliadores"
-      graders:            "Avaliadores"
-      all_graders:        "Todos os avaliadores"
       assigned_graders:   "Atribuir avaliador"
       possible_graders:   "Possiveis avaliadores"
       unassigned_graders: "Avaliadores sem atribuição"
@@ -795,14 +728,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
       skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
-      upload:
-        select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
-        grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
-        not_added: "Os seguintes corretores não foram adicionados com sucesso:"
-        make_sure: "Tenha certeza que:"
-        ta_names: "O nome dos corretores são alfanuméricos "
-        each_field: "Cada campo é separado por uma vírgula (sem espaços)"
-        each_line: "Cada linha tem os campos requeridos especificados acima"
       download:
         begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
@@ -815,25 +740,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         upload_grader_map: "Carregar alunos / Atribuição de corretores"
         description_grader_map: "Formato arquivo CSV:<br>
             <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
-
-    #Admins' View
-    admins:
-      manage_admins: "Gerenciar Administradores"
-      create_new_admin: "Criar novo Administrador"
-      manage_admins:    "Gerenciar Administradores"
-      edit_admin:       "Editar Administrador"
-      admins: "Administradores"
-      upload:
-        not_added: "Os seguintes administradores não foram adicionados com sucesso:"
-        make_sure: "Tenha certeza que:"
-        each_field: "Cada campo é separado por uma vírgula (sem espaços)"
-        each_line: "Cada linha tem os campos requeridos especificados acima"
-      create:
-        success: "Administrador %{user_name} criado com sucesso."
-        error:   "Impossível criar admin."
-      update:
-        success: "Administrador %{user_name} atualizado com sucesso."
-        error:   "Impossível  atualizar o administrador."
 
     add_student:
       success: "Aluno %{user_name} adicionado."
@@ -867,25 +773,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         error: "Não foi possível convidar estudante %{user_name}."
     update_files:
       success:  "As alterações foram feitas."
-
-    user:
-        user:           "Usuário"
-        id:             "ID"
-        id_number:      "Número de identidade"
-        email:          "Email"
-        user_name:      "Nome de usuário"
-        user_names:     "Nome(s) de usuário"
-        first_name:     "Primeiro nome"
-        last_name:      "Último nome"
-        full_name:      "Nome completo"
-        type:           "Tipo"
-        user_type:      "Tipo"
-        grace_credits:  "Créditos de tolerância"
-        notes_count:    "Notas"
-        display_grader_names_to_students: "Mostrar nome de avaliadores aos alunos?"
-
-    hide_students: "Marcar como inativo"
-    unhide_students: "Marcar como ativo"
 
     submission_rules:
       hours:  "hora(s)"
@@ -1050,7 +937,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
             Grouping: "Grupo"
-            Student:  "Aluno"
             Assignment: "Projeto"
         author: "Autor"
         creation_time: "Data de criação"

@@ -44,7 +44,7 @@
 class TestScript < ApplicationRecord
   belongs_to :assignment
   has_many :test_script_results, dependent: :delete_all
-  belongs_to :criterion, polymorphic: true
+  belongs_to :criterion, optional: true, polymorphic: true
 
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename
@@ -52,12 +52,12 @@ class TestScript < ApplicationRecord
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
-  validates_presence_of :assignment
   validates_associated :assignment
 
   validates_presence_of :seq_num
   validates_presence_of :file_name
-  validates_presence_of :description, if: "description.nil?"
+  # TODO: validation fails if description is the empty string
+  validates_presence_of :description, if: ->(o) { o.description.nil? }
 
   # validates the uniqueness of file_name for the same assignment
   validates_each :file_name do |record, attr, value|

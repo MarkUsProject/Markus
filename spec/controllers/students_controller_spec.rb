@@ -40,8 +40,7 @@ describe StudentsController do
     end
 
     it 'accepts a valid file' do
-      post :upload_student_list,
-           userlist: @file_good
+      post :upload_student_list, params: { userlist: @file_good }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -56,8 +55,7 @@ describe StudentsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload_student_list,
-           userlist: @file_invalid_column
+      post :upload_student_list, params: { userlist: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -74,8 +72,7 @@ describe StudentsController do
     end
 
     it 'does not accept a non-csv file with .csv extension' do
-      post :upload_student_list,
-           userlist: @file_bad_csv
+      post :upload_student_list, params: { userlist: @file_bad_csv }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -83,14 +80,13 @@ describe StudentsController do
     end
 
     it 'does not accept a .xls file' do
-      post :upload_student_list,
-           userlist: @file_wrong_format
+      post :upload_student_list, params: { userlist: @file_wrong_format }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to action: 'index'
       expect(flash[:error].map { |f| extract_text f })
-        .to eq([I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f })
+        .to eq([I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f })
     end
   end
 end

@@ -1,4 +1,4 @@
-class AddEnableTestToAssignment < ActiveRecord::Migration
+class AddEnableTestToAssignment < ActiveRecord::Migration[4.2]
   def self.up
     add_column :assignments, :enable_test, :boolean, :default => false, :null =>false
   end

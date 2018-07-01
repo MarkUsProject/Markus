@@ -51,9 +51,7 @@ describe GradeEntryFormsController do
     end
 
     it 'accepts valid file' do
-      post :csv_upload,
-           id: grade_entry_form_with_data,
-           upload: { grades_file: @file_good }
+      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_good } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -62,9 +60,7 @@ describe GradeEntryFormsController do
 
     xit 'does not accept csv file with an invalid username' do
       # TODO: currently pending: intermittently fails with ActiveRecord::RecordNotUnique error
-      post :csv_upload,
-           id: grade_entry_form_with_data,
-           upload: { grades_file: @file_invalid_username }
+      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_invalid_username } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       puts flash[:error]
@@ -73,9 +69,7 @@ describe GradeEntryFormsController do
     end
 
     it 'accepts files with additional columns' do
-      post :csv_upload,
-           id: grade_entry_form_with_data,
-           upload: { grades_file: @file_extra_column }
+      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_extra_column } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -83,9 +77,7 @@ describe GradeEntryFormsController do
     end
 
     it 'accepts files with a different column name' do
-      post :csv_upload,
-           id: grade_entry_form_with_data,
-           upload: { grades_file: @file_different_column_name }
+      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_different_column_name } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -93,9 +85,7 @@ describe GradeEntryFormsController do
     end
 
     it 'accepts files with a different grade total' do
-      post :csv_upload,
-           id: grade_entry_form_with_data,
-           upload: { grades_file: @file_different_total }
+      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_different_total } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
@@ -103,8 +93,7 @@ describe GradeEntryFormsController do
     end
 
     it 'does not accept a csv file corrupt line endings' do
-      post :csv_upload, id: grade_entry_form,
-           upload: { grades_file: @file_bad_endofline }
+      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_bad_endofline } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -112,16 +101,14 @@ describe GradeEntryFormsController do
     end
 
     it 'does not break on a file with no extension' do
-      post :csv_upload,
-           id: grade_entry_form,
-           upload: { grades_file: @file_without_extension }
+      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_without_extension } }
       expect(response.status).to eq(302)
       expect(response).to redirect_to(
         grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
     end
 
     it 'does not accept fileless submission' do
-      post :csv_upload, id: grade_entry_form
+      post :csv_upload, params: { id: grade_entry_form }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -129,8 +116,7 @@ describe GradeEntryFormsController do
     end
 
     it 'should gracefully fail on non-csv file with .csv extension' do
-      post :csv_upload, id: grade_entry_form,
-           upload: { grades_file: @file_bad_csv }
+      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_bad_csv } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -138,9 +124,7 @@ describe GradeEntryFormsController do
     end
 
     it 'should gracefully fail on .xls file' do
-      post :csv_upload,
-           id: grade_entry_form,
-           upload: { grades_file: @file_wrong_format }
+      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_wrong_format } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
@@ -163,7 +147,7 @@ describe GradeEntryFormsController do
     end
 
     it 'tests that action csv_downloads returns OK' do
-      get :csv_download, id: grade_entry_form
+      get :csv_download, params: { id: grade_entry_form }
       expect(response.status).to eq(200)
     end
 
@@ -187,27 +171,27 @@ describe GradeEntryFormsController do
       end
       expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
         # to prevent a 'missing template' error
-        @controller.render nothing: true
+        @controller.head :ok
       }
-      get :csv_download, id: grade_entry_form_with_data
+      get :csv_download, params: { id: grade_entry_form_with_data }
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :csv_download, id: grade_entry_form
+      get :csv_download, params: { id: grade_entry_form }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :csv_download, id: grade_entry_form
+      get :csv_download, params: { id: grade_entry_form }
       expect(response.content_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get :csv_download, id: grade_entry_form
+      get :csv_download, params: { id: grade_entry_form }
       filename = response.header['Content-Disposition']
                  .split.last.split('"').second
       expect(filename).to eq "#{grade_entry_form.short_identifier}" +

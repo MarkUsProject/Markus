@@ -1,33 +1,64 @@
 # Manages actions relating to assigning graders.
 class MarksGradersController < ApplicationController
-  include MarksGradersHelper
-
-  before_filter :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 
-  def populate
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @students = students_with_assoc
-    @sections = Section.order(:name)
-    mgsti = get_marks_graders_student_table_info(@students,
-                                                 @grade_entry_form)
-    render json: [mgsti, @sections]
-  end
-
-  def populate_graders
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render json: get_marks_graders_table_info(@grade_entry_form)
-  end
-
   def index
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @section_column = ''
-    if Section.all.size > 0
-      @section_column = "{
-          id: 'section',
-          content: '#{Section.model_name.human}',
-          sortable: true},"
+    respond_to do |format|
+      format.html { @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id]) }
+      format.json do
+        gef = GradeEntryForm.find(params[:grade_entry_form_id])
+
+        # Grader information
+        counts = Ta.joins(:grade_entry_students)
+                   .where('grade_entry_students.grade_entry_form_id': gef.id)
+                   .group('users.id')
+                   .count
+
+        graders = Ta.pluck(:id, :user_name, :first_name, :last_name).map do |ta_data|
+          {
+            _id: ta_data[0],
+            user_name: ta_data[1],
+            first_name: ta_data[2],
+            last_name: ta_data[3],
+            students: counts[ta_data[0]] || 0
+          }
+        end
+
+        # Student information
+        student_data = gef.grade_entry_students
+                          .left_outer_joins(:user, :tas)
+                          .pluck('users.id',
+                                 'users.user_name',
+                                 'users.first_name',
+                                 'users.last_name',
+                                 'tas_grade_entry_students.user_name')
+
+        students = Hash.new { |h, k| h[k] = [] }
+        student_data.each do |s0, s1, s2, s3, ta|
+          students[[s0, s1, s2, s3]] # Touch to set default value
+          unless ta.nil?
+            students[[s0, s1, s2, s3]] << ta
+          end
+        end
+        section_data = Student.joins(:section).pluck('users.id', 'sections.name').to_h
+        students = students.map do |k, v|
+          {
+            _id: k[0],
+            user_name: k[1],
+            first_name: k[2],
+            last_name: k[3],
+            section: section_data[k[0]],
+            graders: v
+          }
+        end
+
+        render json: {
+          graders: graders,
+          students: students
+        }
+      end
     end
   end
 
@@ -80,41 +111,89 @@ class MarksGradersController < ApplicationController
   end
 
   # These actions act on all currently selected graders & students
-  def global_actions
+  def assign_all
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     student_ids = params[:students]
     grader_ids = params[:graders]
 
-    if params[:students].nil? || params[:students].size == 0
-      # If there is a global action than there should be a student selected
-      if params[:global_actions]
-        flash_now(:error, t('assignment.group.select_a_student'))
-        head 400
-        return
-      end
+    if params[:students].nil? || params[:students].empty?
+      flash_now(:error, t('assignment.group.select_a_student'))
+      head :bad_request
+      return
     end
 
-    case params[:global_actions]
-    when 'assign'
-      if params[:graders].nil? || params[:graders].size == 0
-        flash_now(:error, t('assignment.group.select_a_grader'))
-        head 400
-        return
-      end
-      assign_all_graders(student_ids, grader_ids, @grade_entry_form)
-      return
-    when 'unassign'
-      unassign_graders(params[:gests])
-      return
-    when 'random_assign'
-      if params[:graders].nil? or params[:graders].size ==  0
-        flash_now(:error, t('assignment.group.select_a_grader'))
-        head 400
-        return
-      end
-      randomly_assign_graders(student_ids, grader_ids, @grade_entry_form)
+    if params[:graders].nil? || params[:graders].empty?
+      flash_now(:error, t('assignment.group.select_a_grader'))
+      head :bad_request
       return
     end
+
+    GradeEntryStudent.assign_all_tas(student_ids, grader_ids, @grade_entry_form)
+    head :ok
+  end
+
+  def unassign_all
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    student_ids = params[:students]
+    grader_ids = params[:graders]
+
+    if params[:students].nil? || params[:students].empty?
+      flash_now(:error, t('assignment.group.select_a_student'))
+      head :bad_request
+      return
+    end
+
+    if params[:graders].nil? || params[:graders].empty?
+      flash_now(:error, t('assignment.group.select_a_grader'))
+      head :bad_request
+      return
+    end
+
+    GradeEntryStudent.unassign_tas(student_ids, grader_ids, @grade_entry_form)
+    head :ok
+  end
+
+  def unassign_single
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+
+    if params[:student_id].nil?
+      flash_now(:error, t('assignment.group.select_a_student'))
+      head :bad_request
+      return
+    end
+
+    if params[:grader_user_name].nil?
+      flash_now(:error, t('assignment.group.select_a_grader'))
+      head :bad_request
+      return
+    end
+
+    student_ids = [params[:student_id]]
+    grader_ids = [Ta.find_by(user_name: params[:grader_user_name]).id]
+    GradeEntryStudent.unassign_tas(student_ids, grader_ids, @grade_entry_form)
+    head :ok
+  end
+
+  # These actions act on all currently selected graders & students
+  def randomly_assign
+    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+    student_ids = params[:students]
+    grader_ids = params[:graders]
+
+    if params[:students].nil? || params[:students].empty?
+      flash_now(:error, t('assignment.group.select_a_student'))
+      head :bad_request
+      return
+    end
+
+    if params[:graders].nil? || params[:graders].empty?
+      flash_now(:error, t('assignment.group.select_a_grader'))
+      head :bad_request
+      return
+    end
+
+    GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, @grade_entry_form)
+    head :ok
   end
 
   private
@@ -122,21 +201,7 @@ class MarksGradersController < ApplicationController
   def students_with_assoc
     Student.includes(
       :section,
-      grade_entry_students: { grade_entry_student_tas: 'ta' })
-  end
-
-  def randomly_assign_graders(student_ids, grader_ids, form)
-    GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, form)
-    render nothing: true
-  end
-
-  def assign_all_graders(student_ids, grader_ids, form)
-    GradeEntryStudent.assign_all_tas(student_ids, grader_ids, form)
-    render nothing: true
-  end
-
-  def unassign_graders(gest_ids)
-    GradeEntryStudent.unassign_tas(gest_ids)
-    render nothing: true
+      grade_entry_students: { grade_entry_student_tas: 'ta' }
+    )
   end
 end

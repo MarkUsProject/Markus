@@ -1,0 +1,42 @@
+en:
+  admins:
+    edit: "Edit an Admin"
+    help:
+      manage_admins: "Administrators are usually instructors. They have full control over the MarkUs instance, including making assignments, assigning graders, and releasing marks."
+    new: "Add an Admin"
+
+  students:
+    admin_actions:
+      add_section: "Add to section"
+      give_grace_credits: "Give grace credits"
+      mark_active: "Mark as active"
+      mark_inactive: "Mark as inactive"
+    all: "All students"
+    edit: "Edit a Student"
+    help:
+      manage_students: "Mark students as active or inactive, give them grace credits."
+    new: "Add a Student"
+    no_students_selected: "No students were selected, so no changes were made."
+    not_successfully_added_message_1: "The following students have not been successfully added:"
+    not_successfully_added_message_2: "Make sure that:"
+    not_successfully_added_message_3: "Student names are alphanumeric."
+    not_successfully_added_message_4: "Each field is separated by a comma (no spaces)."
+    not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
+    upload:
+      select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section,id_number,email)</code>"
+      student_same_number: "If a student with the same username exists, then the student's information is updated."
+
+  tas:
+    all: "All graders"
+    edit: "Edit a Grader"
+    new: "Add a Grader"
+    help:
+      manage_graders: "Create graders."
+    upload:
+      each_field: "Each field is separated by a comma (no spaces)"
+      each_line: "Each line has the required fields specified above"
+      grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
+      make_sure: "Make sure that:"
+      not_added: "The following TAs have not been successfully added:"
+      select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
+      ta_names: "TA names are alphanumeric"

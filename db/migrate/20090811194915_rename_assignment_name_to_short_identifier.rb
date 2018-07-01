@@ -1,4 +1,4 @@
-class RenameAssignmentNameToShortIdentifier < ActiveRecord::Migration
+class RenameAssignmentNameToShortIdentifier < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :assignments, :name, :short_identifier
   end

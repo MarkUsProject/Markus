@@ -1,4 +1,4 @@
-Markus::Application.routes.draw do
+Rails.application.routes.draw do
   resources :key_pairs
 
   # Install the default routes as the lowest priority.
@@ -141,7 +141,7 @@ Markus::Application.routes.draw do
         end
       end
 
-      resources :submissions do
+      resources :submissions, only: [:index] do
         collection do
           get 'populate_submissions_table'
           get 'populate_peer_submissions_table'
@@ -299,28 +299,14 @@ Markus::Application.routes.draw do
         get 'student_interface'
       end
 
-      resources :marks_graders do
+      resources :marks_graders, only: [:index] do
         collection do
-          get 'add_grader_to_grouping'
           post 'csv_upload_grader_groups_mapping'
-          post 'csv_upload_grader_criteria_mapping'
           get 'download_grader_students_mapping'
-          get 'download_grader_criteria_mapping'
-          get 'download_dialog'
-          get 'download_grouplist'
-          get 'grader_criteria_dialog'
-          get 'global_actions'
-          get 'groups_coverage_dialog'
-          post 'populate_graders'
-          post 'populate_students_table'
-          post 'populate_graders_table'
-          post 'populate'
-          post 'populate_criteria'
-          post 'set_assign_criteria'
-          get 'random_assign'
-          get 'upload_dialog'
-          get 'unassign'
-          post 'global_actions'
+          post 'assign_all'
+          post 'unassign_all'
+          post 'unassign_single'
+          post 'randomly_assign'
         end
       end
 

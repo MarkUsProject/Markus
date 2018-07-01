@@ -1,4 +1,4 @@
-class MarksPolymorphicAssociation < ActiveRecord::Migration
+class MarksPolymorphicAssociation < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :marks, :rubric_criterion_id, :markable_id
     add_column :marks, :markable_type, :string

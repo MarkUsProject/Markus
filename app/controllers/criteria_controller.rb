@@ -1,7 +1,7 @@
 class CriteriaController < ApplicationController
   include CriteriaHelper
 
-  before_filter :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   layout 'assignment_content'
 
@@ -62,7 +62,7 @@ class CriteriaController < ApplicationController
     end
     # Delete all marks associated with this criterion.
     @criterion.destroy
-    flash_message(:success, t('flash.criteria.delete.success'))
+    flash_message(:success, t('flash.criteria.destroy.success'))
   end
 
   def update
@@ -204,8 +204,8 @@ class CriteriaController < ApplicationController
                                              :level_4_description,
                                              :ta_visible,
                                              :peer_visible,
-                                             assignment_files: []).deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark))
+                                             assignment_files: []).to_h.deep_merge(params.require(:rubric_criterion)
+                                                                           .permit(:max_mark).to_h)
   end
 
   def checkbox_criterion_params

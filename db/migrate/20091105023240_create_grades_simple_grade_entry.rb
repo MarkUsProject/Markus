@@ -1,4 +1,4 @@
-class CreateGradesSimpleGradeEntry < ActiveRecord::Migration
+class CreateGradesSimpleGradeEntry < ActiveRecord::Migration[4.2]
   def self.up
     create_table :grades do |t|
       t.integer :grade_entry_item_id

@@ -1,4 +1,4 @@
-class ChangeTestResultsTable < ActiveRecord::Migration
+class ChangeTestResultsTable < ActiveRecord::Migration[4.2]
   def change
     rename_column :test_results, :input_description, :input
     change_column_default :test_results, :input, ''

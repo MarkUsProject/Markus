@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :grade_entry_item do
     sequence(:name) { |i| "Test#{i}" }
     out_of 100.0

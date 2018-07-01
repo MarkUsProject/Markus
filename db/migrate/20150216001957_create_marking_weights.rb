@@ -1,4 +1,4 @@
-class CreateMarkingWeights < ActiveRecord::Migration
+class CreateMarkingWeights < ActiveRecord::Migration[4.2]
   def change
     create_table :marking_weights do |t|
       t.integer :ms_id

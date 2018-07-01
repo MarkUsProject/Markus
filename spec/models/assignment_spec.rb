@@ -1357,7 +1357,7 @@ describe Assignment do
 
     context 'when one assignment is found' do
       before :each do
-        @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
+        @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
       end
 
       it 'returns the only assignment' do
@@ -1369,8 +1369,8 @@ describe Assignment do
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
         before :each do
-          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryGirl.create(:assignment, due_date: Date.today + 3)
+          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryBot.create(:assignment, due_date: Date.today + 3)
         end
 
         it 'returns the assignment due in 3 days' do
@@ -1382,9 +1382,9 @@ describe Assignment do
 
       context 'when the next assignment is due in more than 3 days' do
         before :each do
-          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryGirl.create(:assignment, due_date: Date.today - 1)
-          @a3 = FactoryGirl.create(:assignment, due_date: Date.today + 8)
+          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryBot.create(:assignment, due_date: Date.today - 1)
+          @a3 = FactoryBot.create(:assignment, due_date: Date.today + 8)
         end
 
         it 'returns the assignment that was most recently due' do
@@ -1396,9 +1396,9 @@ describe Assignment do
 
       context 'when all assignments are due in more than 3 days' do
         before :each do
-          @a1 = FactoryGirl.create(:assignment, due_date: Date.today + 5)
-          @a2 = FactoryGirl.create(:assignment, due_date: Date.today + 12)
-          @a3 = FactoryGirl.create(:assignment, due_date: Date.today + 19)
+          @a1 = FactoryBot.create(:assignment, due_date: Date.today + 5)
+          @a2 = FactoryBot.create(:assignment, due_date: Date.today + 12)
+          @a3 = FactoryBot.create(:assignment, due_date: Date.today + 19)
         end
 
         it 'returns the assignment that is due first' do
@@ -1410,9 +1410,9 @@ describe Assignment do
 
       context 'when all assignments are past the due date' do
         before :each do
-          @a1 = FactoryGirl.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryGirl.create(:assignment, due_date: Date.today - 12)
-          @a3 = FactoryGirl.create(:assignment, due_date: Date.today - 19)
+          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
+          @a2 = FactoryBot.create(:assignment, due_date: Date.today - 12)
+          @a3 = FactoryBot.create(:assignment, due_date: Date.today - 19)
         end
 
         it 'returns the assignment that was due most recently' do

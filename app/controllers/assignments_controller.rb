@@ -2,7 +2,7 @@ require 'base64'
 
 
 class AssignmentsController < ApplicationController
-  before_filter      :authorize_only_for_admin,
+  before_action      :authorize_only_for_admin,
                      except: [:deletegroup,
                               :delete_rejected,
                               :disinvite_member,
@@ -17,10 +17,10 @@ class AssignmentsController < ApplicationController
                               :peer_review,
                               :summary]
 
-  before_filter      :authorize_for_ta_and_admin,
+  before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
 
-  before_filter      :authorize_for_student,
+  before_action      :authorize_for_student,
                      only: [:student_interface,
                             :deletegroup,
                             :delete_rejected,
@@ -31,7 +31,7 @@ class AssignmentsController < ApplicationController
                             :decline_invitation,
                             :peer_review]
 
-  before_filter      :authorize_for_user,
+  before_action      :authorize_for_user,
                      only: [:index, :render_feedback_file]
 
   # Copy of API::AssignmentController without the id and order changed

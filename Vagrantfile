@@ -46,6 +46,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # vb.gui = true
     vb.name = "markus"
     vb.memory = 2048
+
+    # Sync time every 5 seconds so code reloads properly
+    vb.customize ["guestproperty", "set", :id, "--timesync-threshold", 5000]
   end
 
   config.vm.post_up_message =

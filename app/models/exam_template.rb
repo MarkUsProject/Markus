@@ -10,7 +10,7 @@ class ExamTemplate < ApplicationRecord
   after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
   after_update :rename_exam_template_directory
   belongs_to :assignment
-  validates :assignment, :filename, :num_pages, :name, presence: true
+  validates :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
                           scope: :assignment
   validates :num_pages, numericality: { greater_than_or_equal_to: 0,

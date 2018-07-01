@@ -1,11 +1,6 @@
 require 'spec_helper'
 
-describe SectionsController do
-  before do
-    @controller = CourseSummariesController.new
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-  end
+describe CourseSummariesController do
 
   context 'An admin' do
     before do
@@ -15,14 +10,14 @@ describe SectionsController do
     end
 
     context 'with an assignment' do
-      let(:assignment) { FactoryGirl.create(:assignment) }
+      let(:assignment) { FactoryBot.create(:assignment) }
 
       it 'be able to get a csv grade report' do
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = CSV.parse(response_csv)
         expect(Student.all.size + 1).to eq(csv_rows.size) # for header
         assignments = Assignment.order(:id)
-        header = [I18n.t('user.user_name'), I18n.t('user.id_number')]
+        header = [User.human_attribute_name(:user_name), User.human_attribute_name(:id_number)]
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
@@ -57,31 +52,31 @@ describe SectionsController do
         expect(response.status).to eq(200)
       end
     end
+  end
 
-    context 'A grader' do
-      before do
-        @grader = Ta.create(user_name: 'adoe',
-                            last_name: 'doe',
-                            first_name: 'adam')
-      end
-
-      it 'not be able to CSV graders report' do
-        get_as @grader, :download_csv_grades_report
-        expect(response.status).to eq(403)
-      end
+  context 'A grader' do
+    before do
+      @grader = Ta.create(user_name: 'adoe',
+                          last_name: 'doe',
+                          first_name: 'adam')
     end
 
-    context 'A student' do
-      before do
-        @student = Student.create(user_name: 'adoe',
-                             last_name: 'doe',
-                             first_name: 'adam')
-      end
+    it 'not be able to CSV graders report' do
+      get_as @grader, :download_csv_grades_report
+      expect(response.status).to eq(404)
+    end
+  end
 
-      it 'not be able to access grades report' do
-        get_as @student, :download_csv_grades_report
-        expect(response.status).to eq(403)
-      end
+  context 'A student' do
+    before do
+      @student = Student.create(user_name: 'adoe',
+                                last_name: 'doe',
+                                first_name: 'adam')
+    end
+
+    it 'not be able to access grades report' do
+      get_as @student, :download_csv_grades_report
+      expect(response.status).to eq(404)
     end
   end
 end

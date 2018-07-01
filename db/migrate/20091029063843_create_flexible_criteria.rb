@@ -1,4 +1,4 @@
-class CreateFlexibleCriteria < ActiveRecord::Migration
+class CreateFlexibleCriteria < ActiveRecord::Migration[4.2]
   def self.up
     create_table :flexible_criteria do |t|
       t.column :flexible_criterion_name, :string, :null => false

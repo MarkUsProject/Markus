@@ -1,4 +1,4 @@
-class AddTypeForInheritanceToMembership < ActiveRecord::Migration
+class AddTypeForInheritanceToMembership < ActiveRecord::Migration[4.2]
   def self.up
     add_column :memberships, :type, :string
   end

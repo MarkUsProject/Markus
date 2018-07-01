@@ -3,7 +3,6 @@ require 'spec_helper'
 describe TestScript do
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to have_many(:test_script_results) }
-  it { is_expected.to validate_presence_of :assignment }
   it { is_expected.to validate_presence_of :seq_num }
   it { is_expected.to validate_presence_of :file_name }
 

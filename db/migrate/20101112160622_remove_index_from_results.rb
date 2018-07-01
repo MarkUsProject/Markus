@@ -1,4 +1,4 @@
-class RemoveIndexFromResults < ActiveRecord::Migration
+class RemoveIndexFromResults < ActiveRecord::Migration[4.2]
   def self.up
     remove_index :results, :name => "results_u1"
   end

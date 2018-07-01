@@ -1,9 +1,5 @@
-<div class='title_bar'>
-  <h1><%= I18n.t('graders.create_new_grader') %></h1>
-</div>
+<% content_for :title, t('tas.new') %>
 
-<div class='wrapLeft'>
-  <%= render partial: 'layouts/userform',
-             locals: { controller: 'tas',
-                       action: 'create'} %>
-</div>
+<%= render partial: 'layouts/userform',
+           locals: { controller: 'tas',
+                     action: 'create'} %>

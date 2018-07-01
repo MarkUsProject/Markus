@@ -1,4 +1,4 @@
-class RemoveStatusPropertyFromGroups < ActiveRecord::Migration
+class RemoveStatusPropertyFromGroups < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :groups, :status
   end

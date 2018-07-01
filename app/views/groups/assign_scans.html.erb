@@ -1,6 +1,5 @@
 <% content_for :head do %>
-    <%= stylesheet_link_tag 'clickable',
-                            'grader',
+    <%= stylesheet_link_tag 'grader',
                             'pdfjs/viewer',
                             'jquery-ui' %>
     <%= javascript_include_tag 'Results/file_selector',
@@ -247,7 +246,7 @@
           <h2 id="group_name"></h2>
         </div>
         <form id="assign_student" class="side_header">
-          <input id="names" name="names" type="text" placeholder="<%= t('user.full_name') %>">
+          <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>">
           <input id="student_id" name="s_id" type="hidden">
           <input id="grouping_id" name="g_id" value="" type="hidden">
           <br>

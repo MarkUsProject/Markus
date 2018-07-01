@@ -1,20 +1,15 @@
 import React from 'react';
 import {render} from 'react-dom';
 
-import ReactTable from 'react-table';
-import checkboxHOC from 'react-table/lib/hoc/selectTable';
-
-const CheckboxTable = checkboxHOC(ReactTable);
+import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 
 
-class MarksSpreadsheet extends React.Component {
+class RawMarksSpreadsheet extends React.Component {
   constructor() {
     super();
     this.state = {
       grade_columns: [],
       data: [],
-      selection: [],
-      selectAll: false,
       loading: true,
     };
   }
@@ -48,11 +43,10 @@ class MarksSpreadsheet extends React.Component {
       method: 'GET',
       dataType: 'json',
     }).then(data => {
+      this.props.resetSelection();
       this.setState({
         data: data,
         loading: false,
-        selection: [],
-        selectAll: false
       });
     });
   };
@@ -62,7 +56,7 @@ class MarksSpreadsheet extends React.Component {
     event.preventDefault();
 
     const data = {
-      student_ids: this.state.selection,
+      student_ids: this.props.selection,
       bulk_action: this.actionBox.state.action,
       grace_credits: this.actionBox.state.grace_credits,
       section: this.actionBox.state.section
@@ -78,18 +72,18 @@ class MarksSpreadsheet extends React.Component {
 
   nameColumns = [
     {
-      Header: I18n.t('user.user_name'),
+      Header: I18n.t('activerecord.attributes.user.user_name'),
       accessor: 'user_name',
       id: 'user_name',
       minWidth: 120
     },
     {
-      Header: I18n.t('user.first_name'),
+      Header: I18n.t('activerecord.attributes.user.first_name'),
       accessor: 'first_name',
       minWidth: 120
     },
     {
-      Header: I18n.t('user.last_name'),
+      Header: I18n.t('activerecord.attributes.user.last_name'),
       accessor: 'last_name',
       minWidth: 120
     },
@@ -152,49 +146,15 @@ class MarksSpreadsheet extends React.Component {
     return columns;
   };
 
-  // From https://react-table.js.org/#/story/select-table-hoc.
-  toggleSelection = (key, shift, row) => {
-    let selection = [
-      ...this.state.selection
-    ];
-    const keyIndex = selection.indexOf(key);
-    if (keyIndex >= 0) {
-      selection = [
-        ...selection.slice(0, keyIndex),
-        ...selection.slice(keyIndex + 1)
-      ]
-    } else {
-      selection.push(key);
-    }
-    // update the state
-    this.setState({ selection });
-  };
-
-  toggleAll = () => {
-    const selectAll = !this.state.selectAll;
-    const selection = [];
-    if (selectAll) {
-      // we need to get at the internals of ReactTable
-      const wrappedInstance = this.checkboxTable.getWrappedInstance();
-      // the 'sortedData' property contains the currently accessible records based on the filter and sort
-      const currentRecords = wrappedInstance.getResolvedState().sortedData;
-      // we just push all the IDs onto the selection array
-      currentRecords.forEach((item) => {
-        selection.push(item._original._id);
-      })
-    }
-    this.setState({ selectAll, selection })
-  };
-
   isSelected = (key) => {
-    return this.state.selection.includes(key);
+    return this.props.selection.includes(key);
   };
 
   toggleRelease = (released) => {
     const dataLoad = {
       release_results: released,
       filter: 'none',
-      students: this.state.selection
+      students: this.props.selection
     };
 
     $.ajax({
@@ -205,16 +165,7 @@ class MarksSpreadsheet extends React.Component {
   };
 
   render() {
-    const { toggleSelection, toggleAll, isSelected } = this;
-    const { data, selectAll, loading } = this.state;
-
-    const checkboxProps = {
-      selectAll,
-      isSelected,
-      toggleSelection,
-      toggleAll,
-      selectType: 'checkbox',
-    };
+    const { data, loading } = this.state;
 
     return (
       <div>
@@ -233,7 +184,7 @@ class MarksSpreadsheet extends React.Component {
 
           filterable
           loading={loading}
-          {...checkboxProps}
+          {...this.props.getCheckboxProps()}
         />
       </div>
     );
@@ -323,6 +274,9 @@ class SpreadsheetActionBox extends React.Component {
     );
   }
 }
+
+
+let MarksSpreadsheet = withSelection(RawMarksSpreadsheet);
 
 
 export function makeMarksSpreadsheet(elem, props) {

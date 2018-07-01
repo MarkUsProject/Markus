@@ -1,6 +1,6 @@
 class RubricCriteriaController < ApplicationController
 
-  before_filter :authorize_only_for_admin
+  before_action :authorize_only_for_admin
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
