@@ -10,6 +10,8 @@ class CourseSummaryTable extends React.Component {
     this.state = {
       data: [],
       grade_columns: [],
+      grade_entry_form:[],
+      scheme:[],
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -24,11 +26,10 @@ class CourseSummaryTable extends React.Component {
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
-      let grade_column = res.marks.map(c =>
-        Object.assign([],
-          c)
-      );
-      this.setState({data: JSON.parse(res.data),grade_columns:res.marks})
+      this.setState({ data: JSON.parse(res.data),
+                    grade_columns:res.marks,
+                    grade_entry_form:res.grade_entry_forms,
+                    scheme:res.scheme })
     });
   }
 
@@ -51,7 +52,9 @@ class CourseSummaryTable extends React.Component {
     return (
       <ReactTable
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.grade_columns)}
+        columns={this.nameColumns.concat(this.state.grade_columns)
+          .concat(this.state.grade_entry_form)
+          .concat(this.state.scheme)}
       />
     );
 

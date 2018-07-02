@@ -16,14 +16,25 @@ class CourseSummariesController < ApplicationController
   def populate
     if current_user.admin?
       table = JSON.parse(get_table_json_data)
-      data = (table[0]['assignment_marks'].map do |marks|
-
+      marks = table[0]['assignment_marks'].map do |marks|
           {
             accessor: "assignment_marks.#{marks[0]}",
-            Header: Assignment.select("short_identifier").find(marks[0])['short_identifier']
+            Header: Assignment.find(marks[0]).short_identifier
           }
-        end)
-      render json: {data: get_table_json_data,marks: data}
+      end
+      gefm = table[0]['grade_entry_form_marks'].map do |marks|
+        {
+          accessor: "grade_entry_form_marks.#{marks[0]}",
+          Header: GradeEntryForm.find(marks[0]).short_identifier
+        }
+      end
+      markscheme = table[0]['weighted_marks'].map do |marks|
+        {
+          accessor: "weighted_marks.#{marks[0]}",
+          Header: MarkingScheme.find(marks[0]).name
+        }
+      end
+      render json: { data: get_table_json_data, marks: marks, grade_entry_forms: gefm, scheme: markscheme }
     else
       render json: get_student_row_information
     end
