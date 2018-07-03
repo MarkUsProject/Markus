@@ -117,7 +117,7 @@ class MarksGradersController < ApplicationController
     grader_ids = params[:graders]
 
     if params[:students].nil? || params[:students].empty?
-      flash_now(:error, t('assignment.group.select_a_student'))
+      flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
@@ -138,7 +138,7 @@ class MarksGradersController < ApplicationController
     grader_ids = params[:graders]
 
     if params[:students].nil? || params[:students].empty?
-      flash_now(:error, t('assignment.group.select_a_student'))
+      flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
@@ -157,7 +157,7 @@ class MarksGradersController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
     if params[:student_id].nil?
-      flash_now(:error, t('assignment.group.select_a_student'))
+      flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end
@@ -181,7 +181,7 @@ class MarksGradersController < ApplicationController
     grader_ids = params[:graders]
 
     if params[:students].nil? || params[:students].empty?
-      flash_now(:error, t('assignment.group.select_a_student'))
+      flash_now(:error, t('groups.select_a_student'))
       head :bad_request
       return
     end

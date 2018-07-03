@@ -295,10 +295,10 @@ describe 'An Assignment' do
     end
 
     context 'collection' do
-      it 'routes GET populate properly' do
-        expect(get: group_path + '/populate').to route_to(
+      it 'routes GET index properly' do
+        expect(get: group_path).to route_to(
           controller: group_ctrl,
-          action: 'populate',
+          action: 'index',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

@@ -4,7 +4,6 @@ require 'csv_invalid_line_error'
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
-  include GroupsHelper
   # Administrator
   before_action :authorize_only_for_admin
 
@@ -26,7 +25,8 @@ class GroupsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     begin
       assignment.add_group(params[:new_group_name])
-      flash_now(:success, I18n.t('groups.rename_group.success'))
+      flash_now(:success, I18n.t('flash.actions.create.success',
+                                 resource_name: Group.model_name.human))
     rescue Exception => e
       flash[:error] = e.message
     ensure
@@ -36,23 +36,24 @@ class GroupsController < ApplicationController
 
   def remove_group
     # When a success div exists we can return successfully removed groups
-    return unless request.delete?
-    grouping = Grouping.find(params[:grouping_id])
-    @assignment = grouping.assignment
+    groupings = Grouping.where(id: params[:grouping_id])
     @errors = []
     @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
-      grouping.student_memberships.each do |member|
-        grouping.remove_member(member.id)
+      groupings.each do |grouping|
+        grouping.student_memberships.each do |member|
+          grouping.remove_member(member.id)
+        end
       end
     end
     # TODO: return errors through request
-    if grouping.has_submission?
+    groupings.each do |grouping|
+      if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-    else
-      grouping.delete_grouping
-      @removed_groupings.push(grouping)
-      flash_message(:success, I18n.t('groups.delete'))
+      else
+        grouping.delete_grouping
+        @removed_groupings.push(grouping)
+      end
     end
     head :ok
   end
@@ -73,7 +74,8 @@ class GroupsController < ApplicationController
       # We update the group_name
       @group.group_name = params[:new_groupname]
       if @group.save
-        flash_message(:success, I18n.t('groups.rename_group.success'))
+        flash_now(:success, I18n.t('flash.actions.update.success',
+                                   resource_name: Group.human_attribute_name(:group_name)))
       end
     else
 
@@ -86,11 +88,12 @@ class GroupsController < ApplicationController
 
       if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id)
                  .to_a
-         flash[:error] = I18n.t('groups.rename_group.already_in_use')
+        flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end
     end
+    head :ok
   end
 
   def valid_grouping
@@ -112,6 +115,13 @@ class GroupsController < ApplicationController
     @clone_assignments = Assignment.where(vcs_submit: true)
                                    .where.not(id: @assignment.id)
                                    .order(:id)
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @assignment.all_grouping_data
+      end
+    end
   end
 
   def assign_scans
@@ -212,13 +222,6 @@ class GroupsController < ApplicationController
       end
       render json: data
     end
-  end
-
-  def populate
-    @assignment = Assignment.find(params[:assignment_id])
-    students_table_info = get_students_table_info
-    groupings_table_info = get_groupings_table_info
-    render json: [students_table_info, groupings_table_info]
   end
 
   # Allows the user to upload a csv file listing groups. If group_name is equal
@@ -366,7 +369,7 @@ class GroupsController < ApplicationController
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
     if groupings.blank?
-      raise I18n.t('assignment.group.select_a_group')
+      raise I18n.t('groups.select_a_group')
     end
   end
 
@@ -407,10 +410,10 @@ class GroupsController < ApplicationController
   # added to.
   def add_members(students, groupings, assignment)
     if groupings.size != 1
-      raise I18n.t('assignment.group.select_only_one_group')
+      raise I18n.t('groups.select_only_one_group')
     end
     if students.blank?
-      raise I18n.t('assignment.group.select_a_student')
+      raise I18n.t('groups.select_a_student')
     end
 
     grouping = groupings.first
@@ -479,7 +482,7 @@ class GroupsController < ApplicationController
   # of the form "groupid_studentid"
   # This code is possibly not safe. (should add error checking)
   def remove_members(member_ids_to_remove, assignment)
-    members_to_remove = Student.where(id: member_ids_to_remove)
+    members_to_remove = Student.where(user_name: member_ids_to_remove)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         grouping = member.accepted_grouping_for(assignment.id)

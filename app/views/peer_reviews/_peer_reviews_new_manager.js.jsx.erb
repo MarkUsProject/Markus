@@ -191,7 +191,7 @@
       var filters = [
         {
           name: 'all',
-          text: '<%= j raw t('groups.all_grouping_counts') %>',
+          text: '<%= j raw t('all') %>',
           func: function(group) {
             if (this.state.sectionName === ALL_SECTIONS) {
               return true;
@@ -227,7 +227,7 @@
               filters={filters}
               selectable={true}
               onSelectedRowsChange={this.props.onSelectedGroupsChange}
-              search_placeholder={'<%= j raw t('groups.search_groups') %>'} />
+              search_placeholder={'<%= j raw t('search') %>'} />
           </div>
         </div>
       );
@@ -296,7 +296,7 @@
       var filters = [
         {
           name: 'all',
-          text: '<%= j raw t('groups.all_grouping_counts') %>',
+          text: '<%= j raw t('all') %>',
           func: function(group) {
             if (this.state.sectionName == ALL_SECTIONS) {
               return true;
