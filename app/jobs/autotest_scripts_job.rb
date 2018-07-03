@@ -33,9 +33,8 @@ class AutotestScriptsJob < ApplicationJob
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
           server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
           # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-          scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
-                        "'#{assignment_tests_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
-          Open3.capture3(scp_command)
+          Open3.capture3('scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
+                         "'#{assignment_tests_path}'/.", "#{server_username}@#{server_host}:'#{server_path}'")
           server_params[:files_path] = server_path
           out = ssh.exec!("#{server_command} scripts '#{JSON.generate(server_params)}'")
           # TODO: use out for something?
