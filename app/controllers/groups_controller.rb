@@ -25,7 +25,8 @@ class GroupsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     begin
       assignment.add_group(params[:new_group_name])
-      flash_now(:success, I18n.t('groups.rename_group.success'))
+      flash_now(:success, I18n.t('flash.actions.create.success',
+                                 resource_name: Group.model_name.human))
     rescue Exception => e
       flash[:error] = e.message
     ensure
@@ -73,7 +74,8 @@ class GroupsController < ApplicationController
       # We update the group_name
       @group.group_name = params[:new_groupname]
       if @group.save
-        flash_message(:success, I18n.t('groups.rename_group.success'))
+        flash_now(:success, I18n.t('flash.actions.update.success',
+                                   resource_name: Group.human_attribute_name(:group_name)))
       end
     else
 
@@ -86,7 +88,7 @@ class GroupsController < ApplicationController
 
       if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id)
                  .to_a
-         flash[:error] = I18n.t('groups.rename_group.already_in_use')
+        flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end
@@ -367,7 +369,7 @@ class GroupsController < ApplicationController
   # Check that there is at least one grouping selected
   def check_for_groupings(groupings)
     if groupings.blank?
-      raise I18n.t('assignment.group.select_a_group')
+      raise I18n.t('groups.select_a_group')
     end
   end
 
@@ -408,10 +410,10 @@ class GroupsController < ApplicationController
   # added to.
   def add_members(students, groupings, assignment)
     if groupings.size != 1
-      raise I18n.t('assignment.group.select_only_one_group')
+      raise I18n.t('groups.select_only_one_group')
     end
     if students.blank?
-      raise I18n.t('assignment.group.select_a_student')
+      raise I18n.t('groups.select_a_student')
     end
 
     grouping = groupings.first

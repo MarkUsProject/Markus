@@ -169,7 +169,7 @@ class Grouping < ApplicationRecord
 
   def get_all_students_in_group
     student_user_names = student_memberships.includes(:user).collect {|m| m.user.user_name }
-    return I18n.t('assignment.group.empty') if student_user_names.size == 0
+    return I18n.t('groups.empty') if student_user_names.empty?
 	  student_user_names.join(', ')
   end
 
@@ -193,8 +193,8 @@ class Grouping < ApplicationRecord
   end
 
   def group_name_with_student_user_names
-		user_names = get_all_students_in_group
-    return group.group_name if user_names == I18n.t('assignment.group.empty')
+    user_names = get_all_students_in_group
+    return group.group_name if user_names == I18n.t('groups.empty')
     group.group_name + ': ' + user_names
   end
 

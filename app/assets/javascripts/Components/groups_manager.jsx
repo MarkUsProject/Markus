@@ -65,7 +65,7 @@ class GroupsManager extends React.Component {
   deleteGroups = () => {
     let groupings = this.groupsTable.state.selection;
     if (groupings.length === 0) {
-      alert(I18n.t('assignment.group.select_a_group'));
+      alert(I18n.t('groups.select_a_group'));
       return;
     } else if (!confirm(I18n.t('groups.delete_confirm'))) {
       return;
@@ -103,13 +103,13 @@ class GroupsManager extends React.Component {
 
   assign = () => {
     if (this.studentsTable.state.selection.length === 0) {
-      alert(I18n.t('assignment.group.select_a_student'));
+      alert(I18n.t('groups.select_a_student'));
       return;
     } else if (this.groupsTable.state.selection.length === 0) {
-      alert(I18n.t('assignment.group.select_a_group'));
+      alert(I18n.t('groups.select_a_group'));
       return;
     } else if (this.groupsTable.state.selection.length > 1) {
-      alert(I18n.t('assignment.group.select_only_one_group'));
+      alert(I18n.t('groups.select_only_one_group'));
       return;
     }
 
@@ -193,7 +193,7 @@ class RawGroupsTable extends React.Component {
       id: '_id'
     },
     {
-      Header: I18n.t('groups.group_name'),
+      Header: I18n.t('activerecord.models.groups.one'),
       accessor: 'group_name',
       id: 'group_name',
       Cell: row => {
@@ -243,7 +243,7 @@ class RawGroupsTable extends React.Component {
       sortable: false,
     },
     {
-      Header: I18n.t('groups.valid_grouping_counts') + '?',
+      Header: I18n.t('groups.valid'),
       Cell: row => {
         let isValid = row.original.admin_approved || row.original.members.length >= this.props.groupMin;
         if (isValid) {
@@ -391,7 +391,7 @@ class GroupsActionBox extends React.Component {
           className=''
           onClick={this.props.createGroup}
         >
-          {I18n.t('groups.create_new_group')}
+          {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.groups.one')})}
         </button>
         <button
           className=''
