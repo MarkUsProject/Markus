@@ -16,27 +16,40 @@ class CourseSummariesController < ApplicationController
   def populate
     if current_user.admin?
       table = JSON.parse(get_table_json_data)
-      marks = table[0]['assignment_marks'].map do |marks|
-          {
-            accessor: "assignment_marks.#{marks[0]}",
-            Header: Assignment.find(marks[0]).short_identifier
-          }
-      end
-      gefm = table[0]['grade_entry_form_marks'].map do |marks|
+      marks = table[0]['assignment_marks'].map do |mark|
         {
-          accessor: "grade_entry_form_marks.#{marks[0]}",
-          Header: GradeEntryForm.find(marks[0]).short_identifier
+          accessor: "assignment_marks.#{mark[0]}",
+          Header: Assignment.find(mark[0]).short_identifier
         }
       end
-      markscheme = table[0]['weighted_marks'].map do |marks|
+      gefm = table[0]['grade_entry_form_marks'].map do |mark|
         {
-          accessor: "weighted_marks.#{marks[0]}",
-          Header: MarkingScheme.find(marks[0]).name
+          accessor: "grade_entry_form_marks.#{mark[0]}",
+          Header: GradeEntryForm.find(mark[0]).short_identifier
         }
       end
-      render json: { data: get_table_json_data, marks: marks, grade_entry_forms: gefm, scheme: markscheme }
+      markscheme = table[0]['weighted_marks'].map do |scheme|
+        {
+          accessor: "weighted_marks.#{scheme[0]}",
+          Header: MarkingScheme.find(scheme[0]).name
+        }
+      end
+      render json: {data: table, marks: marks, grade_entry_forms: gefm, scheme: markscheme}
     else
-      render json: get_student_row_information
+      table = JSON.parse(get_student_row_information)
+      marks = table[0]['assignment_marks'].map do |mark|
+        {
+          accessor: "assignment_marks.#{mark[0]}",
+          Header: Assignment.find(mark[0]).short_identifier
+        }
+      end
+      gefm = table[0]['grade_entry_form_marks'].map do |gmark|
+        {
+          accessor: "grade_entry_form_marks.#{gmark[0]}",
+          Header: GradeEntryForm.find(gmark[0]).short_identifier
+        }
+      end
+      render json: {data: table, marks: marks, grade_entry_forms: gefm, scheme: []}
     end
   end
 

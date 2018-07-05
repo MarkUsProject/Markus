@@ -10,8 +10,8 @@ class CourseSummaryTable extends React.Component {
     this.state = {
       data: [],
       grade_columns: [],
-      grade_entry_form:[],
-      scheme:[],
+      grade_entry_form: [],
+      scheme: [],
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -21,30 +21,34 @@ class CourseSummaryTable extends React.Component {
   }
 
   fetchData() {
-
     $.ajax({
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
-      this.setState({ data: JSON.parse(res.data),
-                    grade_columns:res.marks,
-                    grade_entry_form:res.grade_entry_forms,
-                    scheme:res.scheme })
+      this.setState({
+        data: res.data,
+        grade_columns: res.marks,
+        grade_entry_form: res.grade_entry_forms,
+        scheme: res.scheme
+      })
     });
   }
 
   nameColumns = [
     {
       Header: I18n.t('activerecord.attributes.user.user_name'),
-      accessor: 'user_name'
+      accessor: 'user_name',
+      filterable: true,
     },
     {
       Header: I18n.t('activerecord.attributes.user.first_name'),
       accessor: 'first_name',
+      filterable: true,
     },
     {
       Header: I18n.t('activerecord.attributes.user.last_name'),
       accessor: 'last_name',
+      filterable: true,
     },
   ];
 
@@ -57,11 +61,9 @@ class CourseSummaryTable extends React.Component {
           .concat(this.state.scheme)}
       />
     );
-
-    }
-
+  }
 }
 
 export function makeCourseSummaryTable(elem) {
-  render(<CourseSummaryTable />, elem);
+  render(<CourseSummaryTable/>, elem);
 }
