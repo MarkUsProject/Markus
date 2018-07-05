@@ -649,21 +649,25 @@ class ResultsController < ApplicationController
   end
 
   def get_test_runs
-    puts 'Did it get here'
     # active record query(not completed yet)
-    test_script_results = TestScriptResult.joins(:test_run).where(test_runs: {submission_id: params[:submission_id]})
-                            .select(:test_script_id, :id, :test_run_id)
-    respond_to do |format|
-      format.html
-      format.json {
-        render json: TestScriptResult.joins('
+    test_script_results_ar = TestScriptResult.joins(:test_run, :test_script, :test_results)
+                               .where(test_runs: {submission_id:259})
+                               .select(:test_script_id, :id, :test_run_id, :name, :file_name,
+                                       :actual_output, :completion_status, :marks_earned, :marks_total)
+    test_script_results_raw_sql = TestScriptResult.joins('
         INNER JOIN test_results ON test_results.test_script_result_id = test_script_results.id
         INNER JOIN test_scripts ON test_script_results.test_script_id = test_scripts.id
         INNER JOIN test_runs ON test_script_results.test_run_id = test_runs.id')
-                       .select('test_run_id, test_script_results.marks_total, test_script_results.marks_earned,
+                                    .select('test_run_id, test_script_results.marks_total, test_script_results.marks_earned,
                          test_script_results.updated_at, test_results.completion_status, test_results.actual_output,
                          test_results.name, test_scripts.file_name, test_runs.submission_id, test_runs.grouping_id')
-                       .where('submission_id = ?', params[:submission_id])
+                                    .where('submission_id = ?', params[:submission_id])
+    test_script_results = Submission.find(params[:submission_id]).test_runs_all_data
+    puts 'Did it get here'
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: test_script_results_ar
       }
     end
   end
