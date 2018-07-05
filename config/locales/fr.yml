@@ -1061,7 +1061,7 @@ fr:
         unlimited: "infinis"
       test_results_table:
         test_runs: "UPDATE ME"
-        file_name: "UPDATE ME"
+        file_name: "Nom du Fichier"
         test_name: "Nom du Test"
         input: "Contribution"
         output: "Sortie"
