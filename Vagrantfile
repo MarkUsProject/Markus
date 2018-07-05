@@ -19,7 +19,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3000, host: 3000
   # Webpack-dev-server listens on port 3035.
   config.vm.network "forwarded_port", guest: 3035, host: 3035
-
+  # rq-dashboard
+  config.vm.network "forwarded_port", guest: 9181, host: 9181
+  
   # The autotesting server must be running when MarkUs populates the seed database
   config.vm.provision "install-markus-autotesting", type: "shell" do |s|
     s.path = "script/install-markus-autotesting.sh"
