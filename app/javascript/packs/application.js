@@ -25,6 +25,7 @@ import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
 import { makeTestScriptResultTable } from 'javascripts/Components/test_script_result_table';
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
+import { makeGroupsManager } from 'javascripts/Components/groups_manager';
 
 import 'javascripts/react_config';
 
@@ -42,3 +43,4 @@ window.makeRepoBrowser = makeRepoBrowser;
 window.makeTestScriptResultTable = makeTestScriptResultTable;
 window.makeSubmissionTable = makeSubmissionTable;
 window.makeMarksGradersManager = makeMarksGradersManager;
+window.makeGroupsManager = makeGroupsManager;

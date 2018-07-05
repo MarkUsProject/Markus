@@ -63,8 +63,9 @@ module GroupsHelper
       g[:rename_link] = view_context.link_to(
         view_context.image_tag(
           'icons/pencil.png',
-          alt: I18n.t('groups.rename_group.link'),
-          title: I18n.t('groups.rename_group.link')),
+          alt: I18n.t('groups.rename_group'),
+          title: I18n.t('groups.rename_group')
+        ),
         'javascript:void(0);',
         onclick:"modal_rename.open();"\
                 "$('#rename_group_dialog form').attr('action', '#{rename_link}')")

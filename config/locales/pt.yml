@@ -165,16 +165,11 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         section_due_dates_type: "Prazo de entrega por sessão: "
         group:
-            empty: "Grupo vazio"
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
             grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
-            select_a_group: "Selecione um grupo"
-            select_a_student: "Selecione um aluno"
             select_a_grader: "Selecione um avaliador"
             select_a_criterion: "Selecione pelo menos um critério"
             group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
-            select_only_one_group: "Você pode indicar cada estudante a somente um grupo."
-            deleted: "Grupo foi apagado"
             work_in_groups:  "Alunos podem trabalhar em grupos"
             persist_group_from: "Guardar grupos e propriedades de"
             properties:  "Propriedades de grupos"
@@ -277,8 +272,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     complete:           "completo"
     released:           "liberado"
     preview:            "Prever"
-    invalid_grouping:   "(inválido)"
-    validate:           "Validar"
     encoding:           "Codificação"
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
@@ -432,7 +425,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       unrelease_marks:      "Esconder notas"
       release_prs:          "Comentários liberação de pares"
       unrelease_prs:        "Avaliações pelos pares Un - lançamento"
-      group_name:           "Nome do grupo"
       reviewer_name:        "Crítico"
       reviewee_name:        "Pessoa que está sendo revisado"
       repository_name:      "Repositório: %{repository}"
@@ -552,44 +544,13 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     student_interface_assignments: "Seus projetos"
 
     groups:
-      groups: "Grupos"
-      search_groups: "Pesquisar os grupos"
-      add_new: "Adicionar um novo grupo"
-      manage_groups: "Gerenciar grupos"
       assign_scans: "Atribuir varreduras"
       skip_group: "UPDATE ME"
-      unassigned_students: "Não-atribuíd"
-      assigned_students: "Atribuíds"
-      inactive_students: "Inativo"
-      another_assignment_group: "Use grupos de outro projeto"
       graders: "Avaliadores (%{graders})"
-      all_grouping_counts: "Todos os grupos"
-      valid_grouping_counts: "Válido"
-      not_valid_grouping_counts: "Não-válid"
-      problem: "Houve um problema..."
-      warning: "Alerta"
       lines_not_processed: "As seguintes linhas não puderam ser processadas:"
-      editing_past_due_date_warning: "O prazo deste projeto já expirou. Além de designar avaliadores para grupos, não é recomendado que nenhuma outra configuração seja alterada dessa vez."
-      validate: "Valide o grupo:"
-      validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"
-      invalidate_confirm: "Isso irá impedir que o grupo envie mesmo com o número exigido de alunos. Você tem certeza disso?"
-      is_valid: "Grupo válido"
-      is_not_valid: "Grupo inválido"
       done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
-      rename_group:
-        title: "Renomear grupo"
-        link: "Renomear grupo"
-        success: "Nome do grupo atualizado."
-        already_in_use: "Já existe um projeto com este nome."
-        group_name: "Nome do Grupo"
       randomly_assign_graders: "Designar avaliadores aleatoriamente"
-      cant_delete: "Você não tem permissão para deletar este grupo."
-      cant_delete_already_submitted: "Você já enviou algo. Não pode deletar seu grupo."
-      could_not_delete: "Não foi possível deletar os seguintes grupos - grupos não podem ser deletados para este projeto se já existir algum envio."
-      delete:  'Deletar este grupo'
-      delete_confirm: 'Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?'
       upload:
-        upload_groups_file: "Carregar arquivo de grupos"
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
         upload_grader_map: "Carregar grupo / Mapa avaliador"
@@ -598,27 +559,15 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
         remove_existing_mappings: "Remover mapeamentos existentes"
       download:
-        download_groups_file: "Baixar arquivo de grupos"
         download_grader_maps: "Baixar mapeamento dos avaliadores"
         download_grader_groups_csv: "Grupo / Formato CSV mapa avaliadores"
         download_grader_criteria_csv: "Critério / Formato CSV mapa avaliadores"
-      reuse_groups: "Reutilizar grupos"
-      assignment_to_use: "Quais atribuições de grupos você gostaria de usar?"
-      delete_groups_linked: "Isto irá deletar todos os grupos ligados ao projeto. Continuar?"
-      create_new_group: "Criar novo grupo"
-      group_name: "Nome do Grupo"
       action:
-        choose: "Escolher ação"
-        validate: "Validar"
-        invalidate: "Inválidar"
-        delete: "Deletar"
         assign_grader: "Designar Avaliador(es)"
         unassign_grader: "Remover Avaliador(es)"
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
-      add_all_groups: "Adicionar todos os grupos"
-      creating_groups_for_all_students: "A criação de grupos para todos os alunos. (Tarefa de fundo. Atualize a página para ver quando todos os grupos criados.)"
 
     results:
       title:  "Projeto %{assignment_name} : %{group_name}"
@@ -636,7 +585,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       error:
         validate_criteria: "deve ser entre 0 e a nota máxima do critério"
 
-    invalid_group_warning: "Seu grupo é atualmente inválido. Você provavelmente não cumpriu o tamanho  mínimo do grupo. Você pode não ser capaz de enviar qualquer coisa, e seu trabalho não pode ser classificado, até que você tenha atingido esse mínimo.. "
     rejected_invitation: "recusado"
 
     #Sutdent's View (student)
@@ -936,7 +884,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         noteable: "Para"
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
-            Grouping: "Grupo"
             Assignment: "Projeto"
         author: "Autor"
         creation_time: "Data de criação"

@@ -118,7 +118,6 @@ Rails.application.routes.draw do
         end
 
         collection do
-          get 'populate'
           get 'add_group'
           post 'use_another_assignment_groups'
           get 'manage'

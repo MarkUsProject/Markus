@@ -15,7 +15,7 @@
                               });" %>
   </p>
   <p>
-    <%= f.label :noteable_id, t('notes.noteables.Grouping') %>
+    <%= f.label :noteable_id, Group.model_name.human %>
     <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>
   </p>
 <% end %>

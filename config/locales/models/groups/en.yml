@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    models:
+      groups:
+        one: "Group"
+    attributes:
+      group:
+        group_name: "Group name"

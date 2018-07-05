@@ -164,16 +164,11 @@ fr:
         upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         section_due_dates_type: "Activer les dates de rendu par section : "
         group:
-            empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
-            select_a_group: "Sélectionner un groupe"
-            select_a_student: "Sélectionner un(e) étudiant(e)"
             select_a_grader: "Sélectionner un correcteur"
             select_a_criterion: "Sélectionnez au moins un critère"
             group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
-            select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
-            deleted: "Le groupe a été supprimé"
             work_in_groups:  "Les étudiants peuvent travailler en groupe"
             persist_group_from: "Garder les groupes et les propriétés de"
             properties:  "Propriétés du groupe"
@@ -276,8 +271,6 @@ fr:
     complete:           "complet"
     released:           "sorti"
     preview:            "Prévisualisation"
-    invalid_grouping:   "(invalide)"
-    validate:           "Valider"
     encoding:           "Codage"
     select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
     all_csv_file:       "Tous les champs : "
@@ -454,7 +447,6 @@ fr:
       release_prs:          "Examens par les pairs de sortie"
       unrelease_prs:        "Un libération examens par les pairs"
       run_tests:            "UPDATE ME"
-      group_name:           "Nom du groupe"
       reviewer_name:        "Critique"
       reviewee_name:        "Pays examiné"
       repository:           "Répertoire"
@@ -499,7 +491,6 @@ fr:
       average_annotations:  "%{average_annotations} annotations par soumission marquée"
 
     summaries_index:
-      group_name:           "Nom du groupe"
       repository:           "Répertoire"
       repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
@@ -583,44 +574,13 @@ fr:
     student_interface_assignments: "Vos projets"
 
     groups:
-      groups: "Groupes"
-      search_groups: "Rechercher les groupes"
-      add_new: "Nouvelle groupe"
-      manage_groups: "Gérer les groupes"
       assign_scans: "Affecter des scans"
       skip_group: "UPDATE ME"
-      unassigned_students: "Non assigné(s)"
-      assigned_students: "Assigné(s"
-      inactive_students: "Inactif"
-      another_assignment_group: "Utiliser les groupes d'un autre projet"
       graders: "Correcteurs (%{graders})"
-      all_grouping_counts: "Tous"
-      valid_grouping_counts: "Valide(s)"
-      not_valid_grouping_counts: "Non valide(s)"
-      problem: "Il y a un problème…"
-      warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
-      editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correcteurs aux groupes, il n'est pas recommandé d'effectuer d'autres modifications."
-      validate: "Valider ce groupe : "
-      validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
-      invalidate_confirm: "Ceci va empêcher ce groupe de poster, même avec le bon nombre d'étudiants. Est-ce correct ?"
-      is_valid: "Groupe valide"
-      is_not_valid: "Groupe invalide"
       done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
-      rename_group:
-        title: "Renommer le groupe"
-        link: "Renommer le groupe"
-        success: "Le nom du groupe a été modifié."
-        already_in_use: "Ce nom est déjà utilisé pour ce projet."
-        group_name: "Nom du groupe"
       randomly_assign_graders: "Attribuer les correcteurs aléatoirement"
-      cant_delete: "Vous ne pouvez pas supprimer ce groupe."
-      cant_delete_already_submitted: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
-      could_not_delete: "Vous ne pouvez pas supprimer les groupes suivants — un groupe ne peut être supprimé si un envoi a déja été créé pour le groupe."
-      delete:  "Supprimer ce groupe"
-      delete_confirm: "Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?"
       upload:
-        upload_groups_file: "Envoyer un fichier contenant des groupes"
         description: "Format du fichier CSV : <br>
             <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
@@ -632,27 +592,15 @@ fr:
                        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
         remove_existing_mappings: 'Supprimer les attributions existants'
       download:
-        download_groups_file: "Télécharger groupes"
         download_grader_maps: "Télécharger les attributions des correcteurs"
         download_grader_groups_csv: "Groupes / attribution des correcteurs CSV"
         download_grader_criteria_csv: "Critères / attribution des correcteurs CSV"
-      reuse_groups: "Réutiliser les groupes"
-      assignment_to_use: "Les groupes de quel projet souhaitez-vous réutiliser ?"
-      delete_groups_linked: "Cela va supprimer tous les groupes liés à ce projet. Voulez-vous continuer ?"
-      create_new_group: "Créer un nouveau groupe"
-      group_name: "Nom du groupe"
       action:
-        choose: "Choisissez une action"
-        validate: "Valider"
-        invalidate: "Invalider"
-        delete: "Supprimer"
         assign_grader: "Attribuer un ou plusieurs correcteurs"
         unassign_grader: "Retirer un ou plusieurs correcteurs"
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
-      add_all_groups: "Ajouter tous les groupes"
-      creating_groups_for_all_students: "Création de groupes pour tous les élèves."
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
@@ -670,7 +618,6 @@ fr:
       error:
         validate_criteria: "La note doit être comprise entre 0 et la note maximale du critère."
 
-    invalid_group_warning: "Votre groupe est invalide. Vous n'avez probablement pas atteint la taille minimale. Vous ne serez peut-être pas autorisés à poster vos fichiers et votre travail pourrait ne pas être noté, jusqu'à ce que vous ayez atteint ce minimum."
     rejected_invitation: "déclinée"
 
     #Sutdent's View (student)
@@ -949,7 +896,6 @@ fr:
         noteable: "Remarque à propos de"
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
-            Grouping: "Groupe"
             Assignment: "Projet"
         author: "Auteur"
         creation_time: "Date de création"

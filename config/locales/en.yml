@@ -172,16 +172,11 @@ en:
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         section_due_dates_type: "Enable section due dates"
         group:
-            empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
-            select_a_group: "Select a group"
-            select_a_student: "Select a student"
             select_a_grader: "Select a grader"
             select_a_criterion: "Select at least one criterion"
             group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
-            select_only_one_group: "You may only assign each student to one group."
-            deleted: "Group has been deleted"
             work_in_groups:  "Students can work in groups"
             persist_group_from: "Persist Groups from"
             properties:  "Group Properties"
@@ -211,7 +206,6 @@ en:
                 remark_request_rules: "If remark requests are allowed, students will see a form they can fill in to request a remark after the marks have been released. Submitted remark requests are visible in the Submissions view. When responding to a remark request, you will see the original marks and your modifications. You will be able to add new annotations and comments. When you release the remark results, the students will see the updated marks and comments."
             submissions_admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
             submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
-            groups: "Manage student groups. You can create new groups and manually add and remove students to groups."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
             assign_scans: "Assign students to scanned exam groups based on printed student names."
         allow_web_submits: "Allow web submits"
@@ -303,8 +297,6 @@ en:
     incomplete:           "incomplete"
     released:           "released"
     preview:            "Preview"
-    invalid_grouping:   "(invalid)"
-    validate:           "Validate"
     encoding:           "Encoding"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
@@ -454,8 +446,6 @@ en:
       memberships_not_unique: "Error: Group %{group_name} cannot be created since student '%{student_user_name}' already belongs to a different group for the current assignment"
       repository_already_exists: "Error: Group %{group_name} cannot be created since a repository with path '%{repo_path}' already exists"
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
-      groups_unrecoverable_error: "Error: unrecovable"
-      groups_added_msg: "Groups successfully added: %{number_groups}, Groups unsuccessful: %{number_lines}"
 
     selects:
       all_on_page: "All %{page_items} items on this page are selected."
@@ -478,7 +468,6 @@ en:
       release_prs:          "Release Peer Reviews"
       unrelease_prs:        "Unrelease Peer Reviews"
       run_tests:            "Run Tests"
-      group_name:           "Group Name"
       reviewer_name:        "Reviewer"
       reviewee_name:        "Reviewee"
       repository_name:      "Repository: %{repository}"
@@ -526,7 +515,6 @@ en:
       average_annotations:  "%{average_annotations} annotations per marked submission"
 
     summaries_index:
-      group_name:           "Group Name"
       repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
@@ -615,44 +603,13 @@ en:
     student_interface_assignments: "Your Assignments"
 
     groups:
-      groups:           "Groups"
-      search_groups:    "Search Groups"
-      add_new:          "Add new group"
-      manage_groups:    "Manage Groups"
       assign_scans:     "Assign Scans"
       skip_group:       "Skip group"
-      unassigned_students: "Unassigned"
-      assigned_students: "Assigned"
-      inactive_students: "Inactive"
-      another_assignment_group: "Use another assignment's groups"
       graders: "Graders (%{graders})"
-      all_grouping_counts: "All Groups"
-      valid_grouping_counts: "Valid"
-      not_valid_grouping_counts: "Not Valid"
-      problem: "There was a problem..."
-      warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
-      editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
-      validate: "Validate this group:"
-      validate_confirm: "This will allow this group to submit without the required number of students. Are you sure?"
-      invalidate_confirm: "This will prevent this group from submitting, even with the required number of students. Are you sure?"
-      is_valid: "Group is valid"
-      is_not_valid: "Group is not valid"
       done_assign: "All groups have been successfully assigned students"
-      rename_group:
-        title: "Rename Group"
-        link: "Rename Group"
-        success: "Group name has been updated."
-        already_in_use: "This name is already in use for this assignment."
-        group_name: "Group Name"
       randomly_assign_graders: "Randomly assign Graders"
-      cant_delete: "You are not allowed to delete the group."
-      cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
-      could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
-      delete:  'Delete this group'
-      delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
       upload:
-        upload_groups_file: "Upload Groups File"
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
         upload_grader_map: "Upload Group / Grader Map"
@@ -661,27 +618,15 @@ en:
         description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
         remove_existing_mappings: 'Remove existing mappings'
       download:
-        download_groups_file: "Download Groups File"
         download_grader_maps: "Download Grader Maps"
         download_grader_groups_csv: "Group / Grader map CSV format"
         download_grader_criteria_csv: "Criteria / Grader map CSV format"
-      reuse_groups: "Reuse Groups"
-      assignment_to_use: "Which assignments groups would you like to use?"
-      delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
-      create_new_group: "Create new group"
-      group_name: "Group Name"
       action:
-        choose: "Choose an action"
-        validate: "Validate"
-        invalidate: "Invalidate"
-        delete: "Delete"
         assign_grader: "Assign Grader(s)"
         unassign_grader: "Unassign Grader(s)"
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
-      add_all_groups: "Add all groups"
-      creating_groups_for_all_students: "Creating groups for all students."
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
@@ -699,7 +644,6 @@ en:
       error:
         validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
-    invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
 
     #Sutdent's View (student)
@@ -1085,7 +1029,6 @@ en:
         noteable: "Noteable"
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
-            Grouping: "Group"
             Assignment: "Assignment"
         author: "Author"
         creation_time: "Creation Time"

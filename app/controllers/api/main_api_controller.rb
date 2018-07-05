@@ -128,7 +128,7 @@ module Api
 
               # Do a case-insensitive search if dealing with strings
               unless numericality
-                collection = collection.where("lower(#{key}) = ?", value.downcase)
+                collection = collection.where('? = ?', key.downcase, value.downcase)
               end
             end
           end

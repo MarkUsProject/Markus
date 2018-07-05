@@ -32,7 +32,7 @@ class AssignmentSummaryTable extends React.Component {
 
   fixedColumns = [
     {
-      Header: I18n.t('groups.group_name'),
+      Header: I18n.t('activerecord.models.groups.one'),
       id: 'group_name',
       Cell: row => {
         if (row.original.result_id) {

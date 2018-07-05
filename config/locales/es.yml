@@ -206,20 +206,15 @@ es:
                                     proyecto."
         due_dates_type:            "Habilitar último plazo de entrega por secciones"
         group:
-            empty:                        "Grupo vacío"
             assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
                                            %{group}"
             grace_day_over_limit:         "Ha asignado uno o más estudiantes que tienen menos créditos para el período
                                            de aplazamiento de gracia que la cantidad ya utilizada por el grupo
                                            %{group}."
-            select_a_group:               "Selecccionar un grupo"
-            select_a_student:             "Seleccione un estudiante"
             select_a_grader:              "Seleccione un evaluador"
             select_a_criterion:           "Seleccione al menos un criterio de calificación"
             group_submission_no_files:    "Uno o más de los grupos seleccionados no tienen archivos en su entrega. El
                                            evaluador no ha sido asignado."
-            select_only_one_group:        "Un estudiante no puede ser assignado a más de un grupo."
-            deleted:                      "El grupo ha sido eliminado"
             work_in_groups:               "Los estudiantes pueden trabajar en grupos."
             persist_group_from:           "Mantener los grupos de"
             properties:                   "Propiedades del grupo"
@@ -326,8 +321,6 @@ es:
                                   que le han sido asignadas no han sido recolectadas todavía, usted puede dar click en
                                   el nombre del grupo para recolectarlas. <strong>Precaución</strong>: La recolección
                                   eliminará cualquier anotación o nota previa."
-            groups:              "Administrar los grupos de los estudiantes. Usted puede crear nuevos grupos y
-                                  manualmente añadir y remover estudiantes de los mismos."
             graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
                                   De manera predeterminada, los evaluadores serán asignados a todos los criterios de
                                   calificación."
@@ -424,8 +417,6 @@ es:
     complete:                    "completo"
     released:                    "publicado"
     preview:                     "Vista previa"
-    invalid_grouping:            "(inválido)"
-    validate:                    "Validar"
     encoding:                    "Codificación"
     select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
     all_csv_file:                "Todos los campos: "
@@ -611,9 +602,6 @@ es:
       member_does_not_exist:                                "Error: El grupo %{group_name} no puede ser creado debido
                                                              a que ningún estudiante tiene como nombre de usuario
                                                              '%{student_user_name}'"
-      groups_unrecoverable_error:                           "Error: Irrecuperable"
-      groups_added_msg:                                     "Los siguientes grupos han sido añadidos exitosamente:
-                                                             %{number_groups}, Grupos fallidos: %{number_lines}"
 
     selects:
       all_on_page:  "Todos los %{page_items} elementos en esta página han sido seleccionados."
@@ -634,7 +622,6 @@ es:
       release_marks:                        "Publicar Notas"
       unrelease_marks:                      "Ocultar Notas"
       run_tests:                            "Lanzar pruebas"
-      group_name:                           "Nombre del Grupo"
       reviewer_name:                        "Revisor"
       reviewee_name:                        "Revisado"
       repository_name:                      "Repositorio: %{repository}"
@@ -683,7 +670,6 @@ es:
       average_annotations:                  "%{average_annotations} anotaciones por entrega calificada"
 
     summaries_index:
-      group_name:         "Nombre del Grupo"
       repository_name:    "Repositorio: %{repository}"
       repository:         "Repositorio"
       commit_date:        "Fecha del Commit"
@@ -769,51 +755,13 @@ es:
     student_interface_assignments:   "Sus Proyectos"
 
     groups:
-      groups:                        "Grupos"
-      search_groups:                 "Buscar Grupos"
-      add_new:                       "Añadir un nuevo grupo"
-      manage_groups:                 "Administrar Grupos"
       assign_scans:                  "Asignar Escaneado"
       skip_group:                    "UPDATE ME"
-      unassigned_students:           "No asignados"
-      assigned_students:             "Asignados"
-      inactive_students:             "Inactivos"
-      another_assignment_group:      "Usar los grupos de otro proyecto"
       graders:                       "Evaluadores (%{graders})"
-      all_grouping_counts:           "Todos los Grupos"
-      valid_grouping_counts:         "Válido"
-      not_valid_grouping_counts:     "No Válido"
-      problem:                       "Un problema ha ocurrido..."
-      warning:                       "Precaución"
       lines_not_processed:           "Las siguientes líneas no pudieron ser procesadas:"
-      editing_past_due_date_warning: "La fecha límite de este proyecto ha pasado. No se recomienda cambiar ninguna
-                                      configuración por el momento, excepto quizá la assignación de evaluadores a
-                                      grupos."
-      validate:                      "Validar este grupo:"
-      validate_confirm:              "Esto le permitirá a este grupo realizar el envío sin el número requerido de
-                                      estudiantes. ¿Está seguro/a de hacer esto?"
-      invalidate_confirm:            "Esto evitará que el grupo realize el envío, incluso si el grupo tiene el número
-                                      requerido de estudiantes. ¿Está seguro/a de hacer esto?"
-      is_valid:                      "El grupo es válido"
-      is_not_valid:                  "El grupo no es válido"
       done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
-      rename_group:
-        title:          "Renombrar el grupo"
-        link:           "Renombrar el grupo"
-        success:        "El grupo ha sido actualizado."
-        already_in_use: "Este nombre ya existe en este proyecto."
-        group_name:     "Nombre del Grupo"
       randomly_assign_graders:        "Asignar Evaluadores al azar"
-      cant_delete:                    "Usted no tiene permiso para eliminar el grupo."
-      cant_delete_already_submitted:  "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
-      could_not_delete:               "No se pudieron eliminar los siguientes grupos - notese que los grupos no pueden
-                                       ser eliminados para este proyecto si una entrega ya ha sido enviada para los
-                                       mismos."
-      delete:                         "Eliminar este grupo"
-      delete_confirm:                 "Esto removerá todos los miembros del grupo y eliminará toda la información
-                                       asociada con el mismo. ¿Desea continuar?"
       upload:
-        upload_groups_file:              "Subir un archivo para los grupos"
         description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
         upload_grader_map:               "Subir pares Grupo / Evaluador"
@@ -823,27 +771,15 @@ es:
         remove_existing_mapping:         "Eliminar mapeos existentes"
 
       download:
-        download_groups_file:         "Descargar Archivos del Grupo"
         download_grader_maps:         "Descargar los pares del evaluador"
         download_grader_groups_csv:   "Par Grupo / Evaluador en formato CSV"
         download_grader_criteria_csv: "Par Criterios de Calificación / Evaluador en formato CSV"
-      reuse_groups:         "Reusar Grupos"
-      assignment_to_use:    "¿Qué grupos le gustaría usar?"
-      delete_groups_linked: "Esto eliminará todos los grupos relacionados a este proyecto. ¿Desea continuar?"
-      create_new_group:     "Crear un nevo grupo"
-      group_name:           "Nombre del Grupo"
       action:
-        choose:          "Escoger una acción"
-        validate:        "Validar"
-        invalidate:      "Invalidar"
-        delete:          "Eliminar"
         assign_grader:   "Asignar Evaluador(es)"
         unassign_grader: "Eliminar Asignación para Evaluador(es)"
       csv:
         could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
-      add_all_groups:                   "Añadir todos los grupos"
-      creating_groups_for_all_students: "Crear grupos para todos los estudiantes."
 
     results:
       title:                           "Proyecto %{assignment_name} : %{group_name}"
@@ -862,10 +798,6 @@ es:
       error:
         validate_criteria: "debe ser un número entre 0 y la nota máxima para el criterio de calificación"
 
-    invalid_group_warning:                     "Su grupo no es válido por el momento. Usted probablemente no ha añadido
-                                                suficientes miembros al grupo, y el mínimo número de integrantes no ha
-                                                sido alcanzado. Usted no puede enviar su entrega, y su trabajo no será
-                                                evaluado, hasta que cumpla con el número mínimo de estudiantes. "
     rejected_invitation:                       "Declinado"
 
     #Sutdent's View (student)
@@ -1310,7 +1242,6 @@ es:
         noteable: "Objeto para el que se puede crear notas"
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
-            Grouping:   "Grupo"
             Assignment: "Proyecto"
         author:         "Autor"
         creation_time:  "Tiempo de creación"

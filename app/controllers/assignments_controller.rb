@@ -472,7 +472,7 @@ class AssignmentsController < ApplicationController
       end
 
       @grouping.destroy
-      flash_message(:success, I18n.t('assignment.group.deleted'))
+      flash_message(:success, I18n.t('flash.actions.destroy.success', resource_name: Group.model_name.human))
       m_logger.log("Student '#{current_user.user_name}' deleted group '" +
                    "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
 
