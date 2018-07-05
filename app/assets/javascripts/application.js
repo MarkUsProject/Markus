@@ -56,6 +56,9 @@ $(document).ajaxComplete(function(event, request) {
     if (flashMessage) {
       var messages = flashMessage.split(';');
       $('.' + keys[i]).empty();
+      $('.' + keys[i]).append(
+        '<a class="hide-flash" onclick="$(this).parent().hide()">&nbsp;</a>'
+      );
       for (var j = 0; j < messages.length; j++) {
         $('.' + keys[i]).append('<p>' + messages[j] + '</p>');
       }

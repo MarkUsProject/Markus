@@ -138,7 +138,7 @@ class SubmissionsController < ApplicationController
     end
 
     if !@grouping.is_valid?
-      flash_message(:error, t(:invalid_group_warning))
+      flash_message(:error, t('groups.invalid_group_warning'))
     elsif !@missing_assignment_files.blank?
       flash_message(:warning,
                     partial: 'submissions/missing_assignment_file_toggle_list',

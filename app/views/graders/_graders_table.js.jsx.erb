@@ -53,7 +53,7 @@
       },
       {
         id: 'groups',
-        content: '<%= j raw I18n.t('groups.groups') %>',
+        content: '<%= Group.model_name.human.pluralize %>',
         sortable: false,
         searchable: false
       },

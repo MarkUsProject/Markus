@@ -10,7 +10,7 @@
         columns: [
           {
             id: 'group_name',
-            content: '<%= j raw t('browse_submissions.group_name') %>',
+            content: '<%= Group.model_name.human %>',
             sortable: true,
             compare: compare_anchor_text
           },

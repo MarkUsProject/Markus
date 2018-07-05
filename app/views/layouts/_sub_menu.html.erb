@@ -104,7 +104,7 @@
                             @assignment.id %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'groups' %>'>
-            <%= link_to t('groups.groups'),
+            <%= link_to Group.model_name.human.pluralize,
                         assignment_groups_path(is_viewing_a_peer_review_result ? @assignment.pr_assignment :
                                                  @assignment) %>
           </li>

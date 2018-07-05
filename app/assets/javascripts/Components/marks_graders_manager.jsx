@@ -38,7 +38,7 @@ class MarksGradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (students.length === 0) {
-      alert(I18n.t('assignment.group.select_a_student'));
+      alert(I18n.t('groups.select_a_student'));
       return;
     }
 
@@ -61,7 +61,7 @@ class MarksGradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (students.length === 0) {
-      alert(I18n.t('assignment.group.select_a_student'));
+      alert(I18n.t('groups.select_a_student'));
       return;
     }
 
@@ -94,7 +94,7 @@ class MarksGradersManager extends React.Component {
     let graders = this.gradersTable.state.selection;
 
     if (students.length === 0) {
-      alert(I18n.t('assignment.group.select_a_student'));
+      alert(I18n.t('groups.select_a_student'));
       return;
     }
 
