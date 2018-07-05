@@ -1115,6 +1115,8 @@ fr:
         unlimited: "infinis"
       test_results_table:
         test_name: "Nom du Test"
+        file_name: "UPDATE ME"
+        test_name: "UPDATE ME"
         input: "Contribution"
         output: "Sortie"
         expected: "Attendu"

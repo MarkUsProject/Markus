@@ -26,7 +26,6 @@ import { makeTestScriptResultTable } from 'javascripts/Components/test_script_re
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 
-
 import 'javascripts/react_config';
 
 
