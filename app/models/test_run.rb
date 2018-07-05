@@ -9,6 +9,24 @@ class TestRun < ApplicationRecord
   validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
   validates_numericality_of :time_to_service, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
 
+  STATUSES = {
+    complete: 'complete',
+    in_progress: 'in_progress',
+    cancelled: 'cancelled'
+  }.freeze
+
+  def status
+    return STATUSES[:complete] unless test_script_results.empty?
+    return STATUSES[:cancelled] if time_to_service&.zero?
+    STATUSES[:in_progress]
+  end
+
+  STATUSES.each do |key, value|
+    define_method key.to_s.concat('?').to_sym do
+      return status == value
+    end
+  end
+
   def create_test_script_result(test_script, time: 0, extra_info: nil)
     unless test_script.respond_to?(:file_name) # the ActiveRecord object can be passed directly
       test_script = TestScript.find_by(assignment: grouping.assignment, file_name: test_script)

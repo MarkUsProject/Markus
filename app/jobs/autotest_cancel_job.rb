@@ -26,7 +26,8 @@ class AutotestCancelJob < ApplicationJob
         # local or remote cancellation with authentication
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
           out = ssh.exec!(cancel_command)
-          # TODO: use out for something?
+          # TODO: use out to check if test_runs were cancelled and only set time_to_service if successful
+          TestRun.find(test_run_ids).each { |test_run| test_run.update_attributes!(time_to_service: 0) }
         end
       end
     rescue StandardError => e
