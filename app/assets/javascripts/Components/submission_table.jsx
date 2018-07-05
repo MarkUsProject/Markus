@@ -39,7 +39,7 @@ class RawSubmissionTable extends React.Component {
       id: '_id'
     },
     {
-      Header: I18n.t('activerecord.model.groups.one'),
+      Header: I18n.t('activerecord.models.groups.one'),
       accessor: 'group_name',
       id: 'group_name',
       Cell: row => {
