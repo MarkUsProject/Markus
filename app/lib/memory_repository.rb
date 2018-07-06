@@ -441,10 +441,10 @@ class MemoryRevision < Repository::AbstractRevision
   # Return true if there was files submitted at the desired path for the revision
   def revision_at_path(path)
     return false if @files.empty?
-    return revision_at_path_helper(path)
+    revision_at_path_helper(path)
   end
 
-  def directories_at_path(path="/")
+  def directories_at_path(path = '/')
     return Hash.new if @files.empty?
     return files_at_path_helper(path, false, Repository::RevisionDirectory)
   end
@@ -456,7 +456,7 @@ class MemoryRevision < Repository::AbstractRevision
   # Not (!) part of the AbstractRepository API:
   # A simple helper method to be used to add files to this
   # revision
-  def __add_file(file, content="")
+  def __add_file(file, content = '')
     @files.push(file)
     if file.instance_of?(Repository::RevisionFile)
       @files_content[file.to_s] = content
@@ -470,7 +470,7 @@ class MemoryRevision < Repository::AbstractRevision
     if file.instance_of?(Repository::RevisionFile)
       @files_content[file.to_s] = new_content
     else
-      raise "Expected file to be of type Repository::RevisionFile"
+      raise 'Expected file to be of type Repository::RevisionFile'
     end
   end
 
@@ -489,12 +489,11 @@ class MemoryRevision < Repository::AbstractRevision
 
   private
 
-
-  def files_at_path_helper(path="/", only_changed=false, type=Repository::RevisionFile)
+  def files_at_path_helper(path = '/', only_changed = false, type = Repository::RevisionFile)
     # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
-      alt_path = ""
+      alt_path = ''
       if object.path == '.'
         alt_path = '/'
       elsif object.path != '/'
@@ -503,35 +502,32 @@ class MemoryRevision < Repository::AbstractRevision
       git_path = object.path + '/'
       if object.instance_of?(type) && (object.path == path ||
           alt_path == path || git_path == path)
-        if (!only_changed)
+        if !only_changed
           object.from_revision = @revision_identifier # set revision number
           result[object.name] = object
-        else
-          if object.changed
-            object.from_revision = @revision_identifier # reset revision number
-            result[object.name] = object
-          end
+        elsif object.changed
+          object.from_revision = @revision_identifier # reset revision number
+          result[object.name] = object
         end
       end
     end
-    return result
+    result
   end
 
   # Find if the revision contains files at the path
   def revision_at_path_helper(path)
     # Automatically append a root slash if not supplied
     @files.each do |object|
-      alt_path = ""
+      alt_path = ''
       if object.path != '/'
         alt_path = object.path + '/'
       end
-      if (object.path == path || alt_path == path)
+      if object.path == path || alt_path == path
         if (object.from_revision.to_i + 1) == @revision_identifier
           return true
         end
       end
     end
-    return false
+    false
   end
-
-end # end class MemoryRevision
+end

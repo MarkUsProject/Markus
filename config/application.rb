@@ -46,9 +46,9 @@ module Markus
     # Precompile additional assets.
     config.assets.precompile = %w(manifest.js)
 
-    #TODO review initializers 01 and 02
-    #TODO review markus custom config format
-    #TODO try precompiled assets in production
-    #TODO database pool connections and unicorn workers
+    # TODO review initializers 01 and 02
+    # TODO review markus custom config format
+    # TODO try precompiled assets in production
+    # TODO database pool connections and unicorn workers
   end
 end

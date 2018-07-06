@@ -1,5 +1,4 @@
 module UTF8Encoding
-
   # MarkUs extensions to the String class.
   module String
     def utf8_encode(src_encoding)

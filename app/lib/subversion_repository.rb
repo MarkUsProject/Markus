@@ -700,22 +700,20 @@ class SubversionRepository < Repository::AbstractRepository
   # to Subversions authz file format
   def perm_mapping_to_svn_authz_string(users_perms)
     if users_perms.empty?
-      return ""
+      return ''
     end
     repo_name = File.basename(@repos_path)
     result_string = "\n[#{repo_name}:/]\n"
     users_perms.each do |user, permstr|
       result_string += "#{user} = #{permstr}\n"
     end
-    return result_string
+    result_string
   end
-
-end # end class SubversionRepository
+end
 
 # Convenience class, so that we can work on Revisions rather
 # than repositories
 class SubversionRevision < Repository::AbstractRevision
-
   # Constructor; Check if revision is actually present in
   # repository
   def initialize(revision_number, repo)
@@ -738,7 +736,7 @@ class SubversionRevision < Repository::AbstractRevision
 
   # Return all of the files in this repository at the root directory
   def files_at_path(path)
-    return files_at_path_helper(path)
+    files_at_path_helper(path)
   end
 
   def path_exists?(path)
@@ -746,7 +744,7 @@ class SubversionRevision < Repository::AbstractRevision
   end
 
   # Return all directories at 'path' (including subfolders?!)
-  def directories_at_path(path='/')
+  def directories_at_path(path = '/')
     result = Hash.new(nil)
     raw_contents = @repo.__get_files(path, @revision_identifier)
     raw_contents.each do |file_name, type|
@@ -764,7 +762,7 @@ class SubversionRevision < Repository::AbstractRevision
         result[file_name] = new_directory
       end
     end
-    return result
+    result
   end
 
   def changes_at_path?(path)
@@ -783,7 +781,7 @@ class SubversionRevision < Repository::AbstractRevision
 
   private
 
-  def files_at_path_helper(path='/', only_changed=false)
+  def files_at_path_helper(path = '/', only_changed = false)
     if path.nil?
       path = '/'
     end
@@ -794,20 +792,21 @@ class SubversionRevision < Repository::AbstractRevision
         last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_identifier)
         last_modified_revision = @repo.__get_history(File.join(path, file_name), nil, @revision_identifier).last
 
-        if(!only_changed || (last_modified_revision == @revision_identifier))
+        if !only_changed || (last_modified_revision == @revision_identifier)
           new_file = Repository::RevisionFile.new(@revision_identifier, {
             name: file_name,
             path: path,
             last_modified_revision: last_modified_revision,
             changed: (last_modified_revision == @revision_identifier),
             user_id: @repo.__get_property(Svn::Core::PROP_REVISION_AUTHOR, last_modified_revision),
-            mime_type: @repo.__get_file_property(Svn::Core::PROP_MIME_TYPE, File.join(path, file_name), last_modified_revision),
+            mime_type: @repo.__get_file_property(Svn::Core::PROP_MIME_TYPE, File.join(path, file_name),
+                                                 last_modified_revision),
             last_modified_date: last_modified_date
           })
           result[file_name] = new_file
         end
       end
     end
-    return result
+    result
   end
 end
