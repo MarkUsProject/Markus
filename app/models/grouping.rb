@@ -154,17 +154,18 @@ class Grouping < ApplicationRecord
       grouping_ids = assignment.groupings.pluck(:id)
     end
     counts = CriterionTaAssociation
-      .from(
-        # subquery
-        assignment.criterion_ta_associations
-                  .joins(ta: :groupings)
-                  .where('groupings.id': grouping_ids)
-                  .select('criterion_ta_associations.criterion_id',
-                          'criterion_ta_associations.criterion_type',
-                          'groupings.id')
-                  .distinct)
-      .group('subquery.id')
-      .count
+             .from(
+               # subquery
+               assignment.criterion_ta_associations
+                         .joins(ta: :groupings)
+                         .where('groupings.id': grouping_ids)
+                         .select('criterion_ta_associations.criterion_id',
+                                 'criterion_ta_associations.criterion_type',
+                                 'groupings.id')
+                         .distinct
+             )
+             .group('subquery.id')
+             .count
 
     Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
       grouping_ids.each do |gid|

@@ -6,20 +6,16 @@ shared_examples 'a criterion' do
     end
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:criterion_ids_types) do
-      hash_criteria = {}
-      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id.to_s, criterion.class.to_s] }
-      hash_criteria
+      criteria.map { |criterion| [criterion.id, criterion.class.to_s] }
     end
     let(:criterion_ids_types_one) do
-      hash_criteria = {}
-      criteria.each_with_index{ |criterion, index| hash_criteria[index.to_s] = [criterion.id.to_s, criterion.class.to_s] if index < 1 }
-      hash_criteria
+      [[criteria[0].id, criteria[1].class.to_s]]
     end
     let(:criterion_ids_types_match) do
       criterion_ids_by_type = {}
       %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
         criterion_ids_by_type[type] =
-          criterion_ids_types.values.select{ |id_type| id_type[1] == type }.map { |c| c.first.to_i }
+          criterion_ids_types.select { |id_type| id_type[1] == type }.map { |c| c[0] }
       end
       criterion_ids_by_type
     end
@@ -69,8 +65,7 @@ shared_examples 'a criterion' do
       end
 
       it 'updates assigned groups counts after randomly bulk assign TAs' do
-        expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, match_array(criterion_ids_types_match))
+        expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
         Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
       end
     end
@@ -120,8 +115,7 @@ shared_examples 'a criterion' do
       end
 
       it 'updates assigned groups counts after bulk assign all TAs' do
-        expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, match_array(criterion_ids_types_match))
+        expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
         Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
       end
     end
@@ -154,8 +148,7 @@ shared_examples 'a criterion' do
       end
 
       it 'updates assigned groups counts after bulk unassign TAs' do
-        expect(Criterion).to receive(:update_assigned_groups_counts)
-          .with(assignment, match_array(criterion_ids_types))
+        expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
         Criterion.unassign_tas([], criterion_ids_types, assignment)
       end
     end
@@ -276,14 +269,11 @@ shared_examples 'a criterion' do
         Criterion.update_assigned_groups_counts(assignment)
       end
 
-      it 'updates the count for the specified criterion' do
+      it 'updates the count for both criteria' do
         criterion.reload
-        expect(criterion.assigned_groups_count).to eq 2
-      end
-
-      it 'does not update the count for the unspecified criterion' do
         another_criterion.reload
-        expect(another_criterion.assigned_groups_count).to eq 0
+        expect(criterion.assigned_groups_count).to eq 2
+        expect(another_criterion.assigned_groups_count).to eq 2
       end
     end
   end

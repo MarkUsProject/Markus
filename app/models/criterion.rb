@@ -13,7 +13,7 @@ class Criterion < ApplicationRecord
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
-  # criterion in a list of criteria specified by +criterion_ids+. The criteria
+  # criterion in a list of criteria specified by +criterion_ids_types+. The criteria
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
     assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
@@ -24,7 +24,7 @@ class Criterion < ApplicationRecord
   end
 
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each criterion in
-  # a list of criteria specified by +criterion_ids+. The criteria must belong
+  # a list of criteria specified by +criterion_ids_types+. The criteria must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(criterion_ids_types, ta_ids, assignment)
     assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
@@ -47,16 +47,14 @@ class Criterion < ApplicationRecord
   #
   # The criteria must belong to the given assignment +assignment+.
   def self.assign_tas(criterion_ids_types, ta_ids, assignment)
-    # params can only be converted to hash with explicit permission (Rails 5.1+)
-    criterion_ids_types   = Hash(criterion_ids_types)
-    criterion_ids_in      = criterion_ids_types.values.map{ |id_type| id_type[0].to_i}
-    criterion_types       = criterion_ids_types.values.map{ |id_type| id_type[1]}
-    ta_ids                = Array(ta_ids)
+    criterion_ids_in = criterion_ids_types.map { |id_type| id_type[0] }
+    criterion_types = criterion_ids_types.map { |id_type| id_type[1] }
+    ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     criteria = assignment.get_criteria(:ta)
-                         .select { |crit| criterion_ids_types.values.include? ["#{crit.id}", "#{crit.class}"] }
+                         .select { |crit| criterion_ids_types.include? [crit.id, crit.class.to_s] }
     columns = [:criterion_id, :criterion_type, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
@@ -105,17 +103,18 @@ class Criterion < ApplicationRecord
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation
-      .from(
-        # subquery
-        assignment.criterion_ta_associations
-          .joins(ta: :groupings)
-          .where('groupings.assignment_id': assignment.id)
-          .select('criterion_ta_associations.criterion_id',
-                  'criterion_ta_associations.criterion_type',
-                  'groupings.id')
-          .distinct)
-      .group('subquery.criterion_id', 'subquery.criterion_type')
-      .count
+             .from(
+               # subquery
+               assignment.criterion_ta_associations
+                         .joins(ta: :groupings)
+                         .where('groupings.assignment_id': assignment.id)
+                         .select('criterion_ta_associations.criterion_id',
+                                 'criterion_ta_associations.criterion_type',
+                                 'groupings.id')
+                         .distinct
+             )
+             .group('subquery.criterion_id', 'subquery.criterion_type')
+             .count
 
     [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
       Upsert.batch(klass.connection, klass.table_name) do |upsert|

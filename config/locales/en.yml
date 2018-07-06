@@ -735,7 +735,7 @@ en:
       coverage:           "Coverage"
       problem:            "There was a problem..."
       search_criteria:    "Search Criteria"
-      assign_to_criteria: "Assign Graders to Criteria"
+      assign_to_criteria: "Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)"
       lines_not_processed: "The following lines could not be processed:"
       skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
       download:
