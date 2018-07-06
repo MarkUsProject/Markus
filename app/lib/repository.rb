@@ -420,8 +420,6 @@ module Repository
     when 'mem'
       return MemoryRepository
     when 'svn'
-      require 'svn/repos'
-      require 'svn/client'
       return SubversionRepository
     else
       raise "Repository implementation not found: #{repo_type}"
