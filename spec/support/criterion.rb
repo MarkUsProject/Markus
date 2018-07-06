@@ -273,8 +273,7 @@ shared_examples 'a criterion' do
         criterion.add_tas(ta)
         another_criterion.add_tas(ta)
         create_ta_memberships([grouping, another_grouping], ta)
-        # Update only `criterion` not `another_criterion`.
-        Criterion.update_assigned_groups_counts(assignment, { criterion.class.to_s => [criterion.id] })
+        Criterion.update_assigned_groups_counts(assignment)
       end
 
       it 'updates the count for the specified criterion' do

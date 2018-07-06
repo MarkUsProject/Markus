@@ -150,21 +150,27 @@ class Grouping < ApplicationRecord
   # Updates the +criteria_coverage_count+ field of all groupings specified
   # by +grouping_ids+.
   def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
-    # Sanitize the IDs in the input.
-    grouping_ids_str = Array(grouping_ids)
-      .map { |grouping_id| connection.quote(grouping_id) }
-      .join(',')
-    # TODO replace this raw SQL with dynamic SET clause with Active Record
-    # language when the latter supports subquery in the SET clause.
-    connection.execute(<<-UPDATE_SQL)
-      UPDATE groupings AS g SET criteria_coverage_count =
-        (SELECT count(DISTINCT c.criterion_id) FROM memberships AS m
-          INNER JOIN criterion_ta_associations AS c ON m.user_id = c.ta_id
-          WHERE m.grouping_id = g.id AND m.type = 'TaMembership'
-            AND c.assignment_id = g.assignment_id)
-        WHERE assignment_id = #{assignment.id}
-          #{"AND id IN (#{grouping_ids_str})" unless grouping_ids_str.empty?}
-    UPDATE_SQL
+    if grouping_ids.nil?
+      grouping_ids = assignment.groupings.pluck(:id)
+    end
+    counts = CriterionTaAssociation
+      .from(
+        # subquery
+        assignment.criterion_ta_associations
+                  .joins(ta: :groupings)
+                  .where('groupings.id': grouping_ids)
+                  .select('criterion_ta_associations.criterion_id',
+                          'criterion_ta_associations.criterion_type',
+                          'groupings.id')
+                  .distinct)
+      .group('subquery.id')
+      .count
+
+    Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
+      grouping_ids.each do |gid|
+        upsert.row({ id: gid }, criteria_coverage_count: counts[gid.to_i] || 0)
+      end
+    end
   end
 
   def get_all_students_in_group

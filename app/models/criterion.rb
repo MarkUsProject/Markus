@@ -87,7 +87,7 @@ class Criterion < ApplicationRecord
                         .select { |_, crit_type| crit_type == type}
                         .map { |crit_id, _| crit_id }
     end
-    update_assigned_groups_counts(assignment, criterion_ids_by_type)
+    update_assigned_groups_counts(assignment)
   end
 
   # Unassigns TAs from groupings. +criterion_ta_ids+ is a list of TA
@@ -98,46 +98,31 @@ class Criterion < ApplicationRecord
     CriterionTaAssociation.where(id: criterion_ta_ids).delete_all
 
     Grouping.update_criteria_coverage_counts(assignment)
-    update_assigned_groups_counts(assignment, criterion_ids_by_type)
+    update_assigned_groups_counts(assignment)
   end
 
   # Updates the +assigned_groups_count+ field of all criteria that belong to
   # an assignment with ID +assignment_id+.
-  def self.update_assigned_groups_counts(assignment, criterion_ids_by_type = nil)
-    # Sanitize the IDs in the input.
-    rubric_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'RubricCriterion')
-    flexible_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'FlexibleCriterion')
-    checkbox_criterion_ids_str = generate_criterion_ids_str(criterion_ids_by_type, 'CheckboxCriterion')
+  def self.update_assigned_groups_counts(assignment)
+    counts = CriterionTaAssociation
+      .from(
+        # subquery
+        assignment.criterion_ta_associations
+          .joins(ta: :groupings)
+          .where('groupings.assignment_id': assignment.id)
+          .select('criterion_ta_associations.criterion_id',
+                  'criterion_ta_associations.criterion_type',
+                  'groupings.id')
+          .distinct)
+      .group('subquery.criterion_id', 'subquery.criterion_type')
+      .count
 
-    # TODO replace these raw SQL with dynamic SET clause with Active Record
-    # language when the latter supports subquery in the SET clause.
-    criteria_str = Hash.new
-    criteria_str[RubricCriterion] = rubric_criterion_ids_str
-    criteria_str[FlexibleCriterion] = flexible_criterion_ids_str
-    criteria_str[CheckboxCriterion] = checkbox_criterion_ids_str
-
-    criteria_str.each do |criterion, str|
-      criterion.connection.execute(<<-UPDATE_SQL)
-      UPDATE #{criterion.table_name} AS c SET assigned_groups_count =
-        (SELECT count(DISTINCT g.id) FROM memberships AS m
-          INNER JOIN groupings AS g ON m.grouping_id = g.id
-          INNER JOIN criterion_ta_associations AS ct ON m.user_id = ct.ta_id
-          WHERE g.assignment_id = #{assignment.id}
-            AND ct.criterion_id = c.id AND ct.assignment_id = c.assignment_id
-            AND m.type = 'TaMembership')
-        WHERE assignment_id = #{assignment.id}
-      #{"AND id IN (#{str})" unless str.empty?}
-      UPDATE_SQL
-    end
-  end
-
-  def self.generate_criterion_ids_str(criterion_ids_by_type, type)
-    if criterion_ids_by_type.nil? or criterion_ids_by_type[type].nil?
-      ''
-    else
-      Array(criterion_ids_by_type[type])
-                                   .map { |criterion_id| connection.quote(criterion_id) }
-                                   .join(',')
+    [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
+      Upsert.batch(klass.connection, klass.table_name) do |upsert|
+        klass.where(assignment_id: assignment.id).find_each do |crit|
+          upsert.row({ id: crit.id }, assigned_groups_count: counts[[crit.id, klass.to_s]] || 0)
+        end
+      end
     end
   end
 
