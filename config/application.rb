@@ -36,21 +36,19 @@ module Markus
       g.test_framework :rspec
     end
 
-    #TODO review initializers 01 and 02
-    #TODO review markus custom config format
-    #TODO precompiled assets
-    #TODO database pool connections and unicorn workers
-    # Enable the asset pipeline
+    # Assets
+    # Enable the asset pipeline.
     config.assets.enabled = true
-    # Version of your assets, change this if you want to expire all your assets.
-    config.assets.version = '1.0'
     # Suppress logger output for asset requests.
     config.assets.quiet = true
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
-    # precompile additional assets
+    # Precompile additional assets.
     config.assets.precompile = %w(manifest.js)
-    # Do not fallback to assets pipeline if a precompiled asset is missed.
-   # config.assets.compile = false #TODO production?
+
+    #TODO review initializers 01 and 02
+    #TODO review markus custom config format
+    #TODO try precompiled assets in production
+    #TODO database pool connections and unicorn workers
   end
 end

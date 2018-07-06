@@ -26,6 +26,9 @@ Markus::Application.configure do
   config.assets.js_compressor = :uglifier
   config.assets.css_compressor = :sass
 
+  # Set this to change the location of precompiled assets (RAILS_ENV=production bin/rails assets:precompile)
+  # config.assets.prefix = '/assets'
+
   # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
   # config.action_controller.relative_url_root = '/instance0'
 
