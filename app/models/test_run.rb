@@ -7,7 +7,7 @@ class TestRun < ApplicationRecord
 
   validates_presence_of :revision_identifier
   validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
-  validates_numericality_of :time_to_service, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
+  validates_numericality_of :time_to_service, greater_than_or_equal_to: -1, only_integer: true, allow_nil: true
 
   STATUSES = {
     complete: 'complete',
@@ -17,7 +17,7 @@ class TestRun < ApplicationRecord
 
   def status
     return STATUSES[:complete] unless test_script_results.empty?
-    return STATUSES[:cancelled] if time_to_service&.zero?
+    return STATUSES[:cancelled] if time_to_service&.negative?
     STATUSES[:in_progress]
   end
 
