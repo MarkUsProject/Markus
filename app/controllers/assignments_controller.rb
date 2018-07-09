@@ -822,7 +822,7 @@ class AssignmentsController < ApplicationController
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render text: I18n.t('student.submission.missing_file',
+        render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
         return
       end
@@ -835,7 +835,7 @@ class AssignmentsController < ApplicationController
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
         sanitized_contents = ERB::Util.html_escape(file_contents)
-        render text: sanitized_contents, layout: 'sanitized_html'
+        render plain: sanitized_contents, layout: 'sanitized_html'
       end
     end
   end
