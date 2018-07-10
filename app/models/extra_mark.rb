@@ -12,7 +12,7 @@ class ExtraMark < ApplicationRecord
   scope :points,     -> { where(unit: ExtraMark::POINTS)     }
 
   validates_presence_of :unit
-  validates_format_of   :unit, with: /percentage|points/
+  validates_format_of   :unit, with: /\Apercentage|points\z/
 
   scope :positive, -> { where('extra_mark > 0') }
   scope :negative, -> { where('extra_mark < 0') }
