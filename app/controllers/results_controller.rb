@@ -332,7 +332,7 @@ class ResultsController < ApplicationController
 
     submission = Submission.find(params[:submission_id])
     if submission.revision_identifier.nil?
-      render text: t('student.submission.no_files_available')
+      render plain: t('student.submission.no_files_available')
       return
     end
 
@@ -360,7 +360,7 @@ class ResultsController < ApplicationController
             file_content = file.retrieve_file
           end
         rescue Exception => e
-          render text: t('student.submission.missing_file',
+          render plain: t('student.submission.missing_file',
                             file_name: file.filename, message: e.message)
           return
         end
@@ -425,7 +425,7 @@ class ResultsController < ApplicationController
         num_marked = assignment.get_num_marked(@current_user.id)
         num_assigned = assignment.get_num_assigned(@current_user.id)
       end
-      render text: "#{result_mark.mark.to_f}," +
+      render plain: "#{result_mark.mark.to_f}," +
                    "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
                    "#{result_mark.result.total_mark}," +
                    "#{num_marked}," +
@@ -437,7 +437,7 @@ class ResultsController < ApplicationController
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
-      render text: result_mark.errors.full_messages.join, status: :bad_request
+      render plain: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 
