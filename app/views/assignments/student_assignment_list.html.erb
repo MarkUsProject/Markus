@@ -1,8 +1,12 @@
 <%= content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeCourseSummaryTable(document.getElementById('course_summaries_table'));
-    })
+      makeCourseSummaryTable(document.getElementById('course_summaries_table'),
+        {
+          is_admin: <%= @current_user.admin? %>
+        }
+      );
+    });
   </script>
 <% end %>
 

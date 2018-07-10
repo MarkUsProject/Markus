@@ -49,7 +49,7 @@ class CourseSummariesController < ApplicationController
           Header: GradeEntryForm.find(gmark[0]).short_identifier
         }
       end
-      render json: { data: table, marks: marks, grade_entry_forms: gefm, scheme: []}
+      render json: { data: table, marks: marks, grade_entry_forms: gefm}
     end
   end
 

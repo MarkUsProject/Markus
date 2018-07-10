@@ -29,8 +29,11 @@ class CourseSummaryTable extends React.Component {
         data: res.data,
         grade_columns: res.marks,
         grade_entry_form: res.grade_entry_forms,
-        scheme: res.scheme
-      })
+      });
+      if (this.props.is_admin){
+        console.log(res.scheme);
+        this.setState({scheme: res.scheme})
+      }
     });
   }
 
@@ -52,18 +55,25 @@ class CourseSummaryTable extends React.Component {
     },
   ];
 
+  generateColumns() {
+    let columns = this.nameColumns.concat(this.state.grade_columns)
+      .concat(this.state.grade_entry_form)
+    if (this.props.is_admin){
+      columns.concat(this.state.scheme)
+    }
+    return columns
+  }
+
   render() {
     return (
       <ReactTable
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.grade_columns)
-          .concat(this.state.grade_entry_form)
-          .concat(this.state.scheme)}
+        columns={this.generateColumns()}
       />
     );
   }
 }
 
-export function makeCourseSummaryTable(elem) {
-  render(<CourseSummaryTable/>, elem);
+export function makeCourseSummaryTable(elem, props) {
+  render(<CourseSummaryTable {...props} />, elem);
 }
