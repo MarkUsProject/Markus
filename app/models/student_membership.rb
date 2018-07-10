@@ -22,7 +22,7 @@ class StudentMembership < Membership
 
   validates_presence_of :membership_status
   validates_format_of :membership_status,
-                      with: /inviter|pending|accepted|rejected/
+                      with: /\Ainviter|pending|accepted|rejected\z/
 
   before_update :update_repo_permissions_before_update
   before_create :update_repo_permissions_before_create
