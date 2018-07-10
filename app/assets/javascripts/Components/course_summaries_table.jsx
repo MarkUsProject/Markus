@@ -9,9 +9,7 @@ class CourseSummaryTable extends React.Component {
     super();
     this.state = {
       data: [],
-      assignment_marks: [],
-      grade_entry_forms: [],
-      schemes: [],
+      marks: [],
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -27,12 +25,8 @@ class CourseSummaryTable extends React.Component {
     }).then(res => {
       this.setState({
         data: res.data,
-        assignment_marks: res.assignment_marks,
-        grade_entry_forms: res.grade_entry_forms,
+        marks: res.marks,
       });
-      if (this.props.is_admin){
-        this.setState({schemes: res.schemes})
-      }
     });
   }
 
@@ -54,20 +48,12 @@ class CourseSummaryTable extends React.Component {
     },
   ];
 
-  generateColumns() {
-    let columns = this.nameColumns.concat(this.state.assignment_marks)
-      .concat(this.state.grade_entry_forms)
-    if (this.props.is_admin){
-      columns.concat(this.state.schemes)
-    }
-    return columns
-  }
 
   render() {
     return (
       <ReactTable
         data={this.state.data}
-        columns={this.generateColumns()}
+        columns={this.nameColumns.concat(this.state.marks)}
         defaultSorted={[
           {
             id: 'user_name'
@@ -78,6 +64,6 @@ class CourseSummaryTable extends React.Component {
   }
 }
 
-export function makeCourseSummaryTable(elem, props) {
-  render(<CourseSummaryTable {...props} />, elem);
+export function makeCourseSummaryTable(elem) {
+  render(<CourseSummaryTable/>, elem);
 }

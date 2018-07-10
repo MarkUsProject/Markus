@@ -34,7 +34,7 @@ class CourseSummariesController < ApplicationController
           Header: MarkingScheme.find(scheme[0]).name
         }
       end
-      render json: { data: table, assignment_marks: assignment_marks, grade_entry_forms: gefm, scheme: markscheme}
+      render json: { data: table, marks: assignment_marks.concat(gefm).concat(markscheme)}
     else
       table = JSON.parse(get_student_row_information)
       assignment_marks = table[0]['assignment_marks'].map do |mark|
@@ -49,7 +49,7 @@ class CourseSummariesController < ApplicationController
           Header: GradeEntryForm.find(gmark[0]).short_identifier
         }
       end
-      render json: { data: table, assignment_marks: assignment_marks, grade_entry_forms: gefm}
+      render json: { data: table, marks: assignment_marks.concat(gefm)}
     end
   end
 
