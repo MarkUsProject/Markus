@@ -3,6 +3,7 @@ en:
     models:
       criterion:
         one: "Criterion"
+        other: "Criteria"
       checkbox_criterion:
         one: "Checkbox Criterion"
       flexible_criterion:

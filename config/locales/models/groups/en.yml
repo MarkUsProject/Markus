@@ -3,6 +3,7 @@ en:
     models:
       groups:
         one: "Group"
+        other: "Groups"
     attributes:
       group:
         group_name: "Group name"
