@@ -16,7 +16,7 @@ class CourseSummariesController < ApplicationController
   def populate
     if current_user.admin?
       table = JSON.parse(get_table_json_data)
-      marks = table[0]['assignment_marks'].map do |mark|
+      assignment_marks = table[0]['assignment_marks'].map do |mark|
         {
           accessor: "assignment_marks.#{mark[0]}",
           Header: Assignment.find(mark[0]).short_identifier
@@ -34,10 +34,10 @@ class CourseSummariesController < ApplicationController
           Header: MarkingScheme.find(scheme[0]).name
         }
       end
-      render json: { data: table, marks: marks, grade_entry_forms: gefm, scheme: markscheme}
+      render json: { data: table, assignment_marks: assignment_marks, grade_entry_forms: gefm, scheme: markscheme}
     else
       table = JSON.parse(get_student_row_information)
-      marks = table[0]['assignment_marks'].map do |mark|
+      assignment_marks = table[0]['assignment_marks'].map do |mark|
         {
           accessor: "assignment_marks.#{mark[0]}",
           Header: Assignment.find(mark[0]).short_identifier
@@ -49,7 +49,7 @@ class CourseSummariesController < ApplicationController
           Header: GradeEntryForm.find(gmark[0]).short_identifier
         }
       end
-      render json: { data: table, marks: marks, grade_entry_forms: gefm}
+      render json: { data: table, assignment_marks: assignment_marks, grade_entry_forms: gefm}
     end
   end
 
