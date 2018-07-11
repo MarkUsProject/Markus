@@ -481,14 +481,14 @@ class SubmissionsController < ApplicationController
                                                   path))[file.filename]
           file_contents = repo.download_as_string(raw_file)
         rescue Exception => e
-          render text: I18n.t('student.submission.missing_file',
+          render plain: I18n.t('student.submission.missing_file',
                               file_name: file.filename, message: e.message)
           next  # exit the block
         end
 
         if SubmissionFile.is_binary?(file_contents)
           # If the file appears to be binary, send it as a download
-          render text: 'not a plaintext file'
+          render plain: 'not a plaintext file'
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
@@ -515,7 +515,7 @@ class SubmissionsController < ApplicationController
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render text: I18n.t('student.submission.missing_file',
+        render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
         return
       end
@@ -528,7 +528,7 @@ class SubmissionsController < ApplicationController
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
         sanitized_contents = ERB::Util.html_escape(file_contents)
-        render text: sanitized_contents, layout: 'sanitized_html'
+        render plain: sanitized_contents, layout: 'sanitized_html'
       end
     end
   end
@@ -748,7 +748,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render text: l(Time.zone.now)
+    render plain: l(Time.zone.now)
   end
 
   private

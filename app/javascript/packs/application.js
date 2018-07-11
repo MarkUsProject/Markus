@@ -26,6 +26,7 @@ import { makeTestScriptResultTable } from 'javascripts/Components/test_script_re
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 import { makeGroupsManager } from 'javascripts/Components/groups_manager';
+import { makeGradersManager } from 'javascripts/Components/graders_manager';
 
 import 'javascripts/react_config';
 
@@ -44,3 +45,4 @@ window.makeTestScriptResultTable = makeTestScriptResultTable;
 window.makeSubmissionTable = makeSubmissionTable;
 window.makeMarksGradersManager = makeMarksGradersManager;
 window.makeGroupsManager = makeGroupsManager;
+window.makeGradersManager = makeGradersManager;

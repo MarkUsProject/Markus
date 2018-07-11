@@ -1,9 +1,14 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'Graders/index' %>
-
-  <%= render partial: 'graders_action_column', formats: [:'js.jsx'], handlers: [:erb] %>
-  <%= render partial: 'graders_table', formats: [:'js.jsx'], handlers: [:erb] %>
-  <%= render partial: 'graders_manager', formats: [:'js.jsx'], handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeGradersManager(document.getElementById('graders-manager'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          showSections: <%= Section.exists? %>
+        }
+      );
+    });
+  </script>
 <% end %>
 
 <% content_for :title do %>
@@ -23,26 +28,8 @@
     html_options: { id: 'uploadModal' } }
 ] %>
 
-
-<div class="clear"></div>
-
-
-<div id='notice'>
-  <div class='success' id='add_success' style='display: none;'></div>
-
-  <%# This is for error display injected by JavaScript %>
-  <div class='error' id='errors' style='display: none; '>
-    <h3><%= t('graders.problem') %></h3>
-    <div id='errors_title'></div>
-    <div id='errors_contents'></div>
-  </div>
-</div>
-
-<div id='graders_manager'></div>
+<div id='graders-manager'></div>
 
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 <%= render partial: 'upload_modal', layout: 'layouts/modal_dialog'  %>
-
-<aside class='dialog' id="groups_coverage_dialog"></aside>
-<aside class='dialog' id="grader_criteria_dialog"></aside>

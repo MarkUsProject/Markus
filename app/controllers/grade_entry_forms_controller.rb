@@ -95,7 +95,7 @@ class GradeEntryFormsController < ApplicationController
     grade.update(grade: params[:updated_grade])
     grade_entry_student.save # Refresh total grade
     grade_entry_student.reload
-    render text: grade_entry_student.total_grade
+    render plain: grade_entry_student.total_grade
   end
 
   # For students

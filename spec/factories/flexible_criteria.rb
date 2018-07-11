@@ -5,6 +5,7 @@ FactoryBot.define do
     max_mark 1.0
     ta_visible true
     peer_visible false
+    sequence(:position)
   end
 end
 

@@ -241,21 +241,15 @@ Rails.application.routes.draw do
 
       resources :graders do
         collection do
-          get 'populate'
-          get 'add_grader_to_grouping'
           post 'csv_upload_grader_groups_mapping'
           post 'csv_upload_grader_criteria_mapping'
           get 'download_grader_groupings_mapping'
           get 'download_grader_criteria_mapping'
           get 'download_dialog'
           get 'download_grouplist'
-          get 'grader_criteria_dialog'
           get 'global_actions'
-          get 'groups_coverage_dialog'
           post 'set_assign_criteria'
-          get 'random_assign'
           get 'upload_dialog'
-          get 'unassign'
           post 'global_actions'
           get 'grader_summary'
         end

@@ -15,5 +15,6 @@ FactoryBot.define do
     level_3_description 'This criterion was satisfied very well.'
     level_4_name 'Excellent'
     level_4_description 'This criterion was satisfied exceptionally well.'
+    sequence(:position)
   end
 end
