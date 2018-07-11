@@ -27,6 +27,15 @@ class MainController < ApplicationController
 
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
+      # if not in production environment, this fakes an external authentication
+      unless Rails.env.production?
+        if params[:user_login].nil?
+          render 'login'
+          return
+        else
+          @markus_auth_remote_user = params[:user_login]
+        end
+      end
       if @markus_auth_remote_user.nil?
         render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
