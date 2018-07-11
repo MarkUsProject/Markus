@@ -311,9 +311,16 @@ class MainController < ApplicationController
       #The user was not assuming another role
       m_logger.log("WARNING: Possible break in attempt from '#{current_user.user_name}'.")
     end
+    real_user_id = session[:real_uid]
     clear_session
     cookies.delete :auth_token
     reset_session
+    unless Rails.env.production?
+      # only used to reset current user if we are faking the external login
+      # in test/development environments
+      redirect_to action: 'login', user_login: User.find(real_user_id).user_name
+      return
+    end
     redirect_to action: 'login'
   end
 
