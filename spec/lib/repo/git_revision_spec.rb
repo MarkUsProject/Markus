@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Repository::GitRevision do
+describe GitRevision do
   context 'with a git repo' do
     before(:context) do
       repo_path = "#{::Rails.root}/data/test/repos/test_repo_workdir"
-      unless Repository::GitRepository.repository_exists?(repo_path)
-        Repository::GitRepository.create(repo_path)
+      unless GitRepository.repository_exists?(repo_path)
+        GitRepository.create(repo_path)
       end
     end
     let!(:repo) { build(:git_repository) }

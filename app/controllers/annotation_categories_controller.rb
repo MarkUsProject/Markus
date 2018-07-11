@@ -1,5 +1,3 @@
-require 'encoding'
-
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 

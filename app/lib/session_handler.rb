@@ -154,7 +154,9 @@ module SessionHandler
   # SESSION_TIMEOUT seconds from now, depending on the role
   # This should be done on every page request or refresh that a user does.
   def refresh_timeout
-    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now
+    # a json session cookie will serialize time as strings, make the conversion explicit so that tests too see strings
+    # (see config.action_dispatch.cookies_serializer)
+    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now.to_s
     session[:has_warned] = false
   end
 
@@ -168,13 +170,13 @@ module SessionHandler
 
   # Check if this current user's session has not yet expired.
   def session_expired?
-    return true unless !session[:timeout].nil?
+    return true if session[:timeout].nil?
     if MarkusConfigurator.markus_config_remote_user_auth
       # expire session if there is not REMOTE_USER anymore.
       return true if @markus_auth_remote_user.nil?
       # If somebody switched role this state should be recorded
       # in the session. Expire only if session timed out.
-      if !session[:real_uid].nil?
+      unless session[:real_uid].nil?
         # Roles have been switched, make sure that
         # real_user.user_name == @markus_auth_remote_user and
         # that the real user is in fact an admin.
@@ -184,24 +186,21 @@ module SessionHandler
           return true
         end
         # Otherwise, expire only if the session timed out.
-        return session[:timeout] < Time.now
+        return Time.parse(session[:timeout]) < Time.now
       end
       # Expire session if remote user does not match the session's uid.
       # We cannot have switched roles at this point.
       current_user = User.find_by_id(session[:uid])
-      if !current_user.nil?
-        return true if ( current_user.user_name != @markus_auth_remote_user )
+      unless current_user.nil?
+        return true if current_user.user_name != @markus_auth_remote_user
       end
     end
     # No REMOTE_USER is involed.
-    session[:timeout] < Time.now
+    Time.parse(session[:timeout]) < Time.now
   end
 
   def check_imminent_expiry
-    if Time.parse(session[:timeout]) - Time.now <= 5.minutes
-      return true
-    end
-    false
+    (Time.parse(session[:timeout]) - Time.now) <= 5.minutes
   end
 
   # Clear this current user's session set by this app

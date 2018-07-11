@@ -1,36 +1,28 @@
-# encoding: utf-8
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
+
   # The test environment is used exclusively to run your application's
-  # test suite.  You never need to work with it otherwise.  Remember that
+  # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
-  # and recreated between test runs.  Don't rely on the data there!
+  # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
 
+  # Do not eager load code on boot. This avoids loading your whole application
+  # just for the purpose of running a single test. If you are using a tool that
+  # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
 
-  # Show full error reports and disable caching
+  # Show full error reports.
   config.consider_all_requests_local = true
-  config.action_controller.perform_caching = false
 
-  # Disable request forgery protection in test environment
-  config.action_controller.allow_forgery_protection = false
-
+  # Set high verbosity of logger.
   config.log_level = :debug
-  # set log-level (:debug, :info, :warn, :error, :fatal)
 
-  # Tell Action Mailer not to deliver emails to the real world.
-  # The :test delivery method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
-
-  # Show Deprecated Warnings (to :log or to :stderr)
+  # Print deprecation notices to stderr
   config.active_support.deprecation = :stderr
 
-  # In rails 5, the default value is "random".
-  Rails.application.configure do
-    config.active_support.test_order = :sorted
-  end
+  # Disable caching.
+  config.action_controller.perform_caching = false
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
@@ -115,9 +107,9 @@ Markus::Application.configure do
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
-  # Options for Repository_type are 'svn' and 'memory' for now
-  # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = "memory" # use Subversion as storage backend
+  # Options for Repository_type are 'svn' and 'memory'
+  # 'mem' is by design not persistent and only used for testing MarkUs
+  REPOSITORY_TYPE = 'mem'
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -128,9 +120,9 @@ Markus::Application.configure do
   # A hash of repository hook scripts (used only when REPOSITORY_TYPE
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
-  REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  REPOSITORY_HOOKS = {}
   # Path to the MarkUs client-side hooks (copied to all group repos).
-  REPOSITORY_CLIENT_HOOKS = "#{::Rails.root.to_s}/lib/repo/git_hooks/client/"
+  REPOSITORY_CLIENT_HOOKS = ''
 
   ###################################################################
   # Directory where authentication keys will be uploaded.

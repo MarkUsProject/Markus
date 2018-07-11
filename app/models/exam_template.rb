@@ -1,9 +1,4 @@
 require 'fileutils'
-require 'combine_pdf'
-require 'prawn'
-require 'prawn/qrcode'
-require 'zxing'
-require 'rmagick'
 
 class ExamTemplate < ApplicationRecord
   before_save :set_formats_for_name_and_filename

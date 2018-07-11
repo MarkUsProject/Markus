@@ -1,6 +1,5 @@
 
-# Contains additional PostgreSQL statements not available in
-# default migration class.
+# Contains additional PostgreSQL statements not available in legacy migration class.
 module MigrationHelpers
 
   # Applies foreign key constraints of the form:

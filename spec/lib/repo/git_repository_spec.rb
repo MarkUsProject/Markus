@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Repository::GitRepository do
+describe GitRepository do
   context 'writes to repository permissions file' do
 
     before :all do
-      Repository::GitRepository.send :__update_permissions, { mock_repo: [:student1, :student2] }, ['admin1']
+      GitRepository.send :__update_permissions, { mock_repo: [:student1, :student2] }, ['admin1']
     end
 
     after :all do

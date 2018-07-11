@@ -1,4 +1,3 @@
-require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_action :authorize_only_for_admin,

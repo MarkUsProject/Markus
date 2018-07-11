@@ -36,8 +36,8 @@ gem 'redis-rails'
 gem 'pundit'
 
 # Statistics
-gem 'descriptive_statistics', '~> 2.5', require: 'descriptive_statistics/safe'
-gem 'histogram', '~> 0.2.4.1'
+gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
+gem 'histogram'
 
 # Internationalization
 gem 'i18n'
@@ -49,14 +49,14 @@ gem 'combine_pdf'
 gem 'prawn'
 gem 'prawn-qrcode'
 gem 'rmagick'
-gem 'zxing_cpp'
+gem 'zxing_cpp', require: 'zxing'
 
 # Ruby miscellany
 gem 'json'
 gem 'mini_mime'
 gem 'net-ssh'
 gem 'redcarpet'
-gem 'rubyzip'
+gem 'rubyzip', require: 'zip'
 gem 'rugged'
 gem 'ya2yaml'
 
