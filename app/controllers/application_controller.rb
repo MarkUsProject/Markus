@@ -46,6 +46,13 @@ class ApplicationController < ActionController::Base
   def set_remote_user
     unless request.env['HTTP_X_FORWARDED_USER'].blank?
       @markus_auth_remote_user = request.env['HTTP_X_FORWARDED_USER']
+      return
+    end
+    unless Rails.env.production?
+      uid = session[:real_uid] || session[:uid]
+      unless uid.blank?
+        @markus_auth_remote_user = User.find(uid).user_name
+      end
     end
   end
 

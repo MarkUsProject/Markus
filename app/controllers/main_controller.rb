@@ -27,6 +27,15 @@ class MainController < ApplicationController
 
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
+      # if not in production environment, this fakes an external authentication
+      unless Rails.env.production?
+        if params[:user_login].nil?
+          render 'login'
+          return
+        else
+          @markus_auth_remote_user = params[:user_login]
+        end
+      end
       if @markus_auth_remote_user.nil?
         render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
@@ -302,9 +311,16 @@ class MainController < ApplicationController
       #The user was not assuming another role
       m_logger.log("WARNING: Possible break in attempt from '#{current_user.user_name}'.")
     end
+    real_user_id = session[:real_uid]
     clear_session
     cookies.delete :auth_token
     reset_session
+    unless Rails.env.production?
+      # only used to reset current user if we are faking the external login
+      # in test/development environments
+      redirect_to action: 'login', user_login: User.find(real_user_id).user_name
+      return
+    end
     redirect_to action: 'login'
   end
 
