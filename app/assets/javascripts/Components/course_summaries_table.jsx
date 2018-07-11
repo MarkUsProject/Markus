@@ -23,6 +23,7 @@ class CourseSummaryTable extends React.Component {
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
+      console.log(res.marks)
       this.setState({
         data: res.data,
         marks: res.marks,

@@ -15,26 +15,39 @@ class CourseSummariesController < ApplicationController
 
   def populate
     if current_user.admin?
-      table = JSON.parse(get_table_json_data)
-      assignment_marks = table[0]['assignment_marks'].map do |mark|
-        {
-          accessor: "assignment_marks.#{mark[0]}",
-          Header: Assignment.find(mark[0]).short_identifier
-        }
+      table = get_table_json_data
+      assignment_marks = []
+      gefms = []
+      markschemes = []
+      table[0][:assignment_marks].each do |key|
+        assignment_marks.concat([
+                                  {
+          accessor: "assignment_marks.#{key[0].to_s}",
+          Header: Assignment.find(key[0].to_s).short_identifier
+                                  }
+                                ])
       end
-      gefm = table[0]['grade_entry_form_marks'].map do |mark|
-        {
-          accessor: "grade_entry_form_marks.#{mark[0]}",
-          Header: GradeEntryForm.find(mark[0]).short_identifier
-        }
+      table[0][:grade_entry_form_marks].each do |key|
+        gefms.concat([
+                      {
+          accessor: "grade_entry_form_marks.#{key[0].to_s}",
+          Header: GradeEntryForm.find(key[0].to_s).short_identifier
+                      }
+                    ])
       end
-      markscheme = table[0]['weighted_marks'].map do |scheme|
-        {
-          accessor: "weighted_marks.#{scheme[0]}",
-          Header: MarkingScheme.find(scheme[0]).name
-        }
+      table[0][:weighted_marks].each_key do |key|
+        markschemes.concat([
+                            {
+          accessor: "weighted_marks.#{key.to_s}",
+          Header: MarkingScheme.find(key.to_s).name
+                            }
+                          ])
       end
-      render json: { data: table, marks: assignment_marks.concat(gefm).concat(markscheme)}
+      userdata = table.map do |student|
+        student.select { |s, _| [:user_name, :first_name, :last_name, :weighted_marks,
+                                 :grade_entry_form_marks, :assignment_marks].include? s}
+      end
+      render json: { data: JSON.parse(userdata.to_json), marks: assignment_marks.concat(gefms).concat(markschemes)}
     else
       table = JSON.parse(get_student_row_information)
       assignment_marks = table[0]['assignment_marks'].map do |mark|
