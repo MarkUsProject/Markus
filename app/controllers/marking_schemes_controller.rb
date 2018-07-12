@@ -29,7 +29,7 @@ class MarkingSchemesController < ApplicationController
         }
       end)
     end
-    render json: {data: table, marks: assignment_weights.concat(spreadsheet_weights)}
+    render json: { data: table, marks: assignment_weights.concat(spreadsheet_weights)}
   end
 
   def create
