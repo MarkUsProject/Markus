@@ -5,7 +5,8 @@ import ReactTable from 'react-table';
 const reducer = (accumulator, currentValue) => accumulator + currentValue;
 const makeDefaultState = () => ({
   data: [],
-  expanded: {}
+  expanded: {},
+  resized: []
 });
 
 class TestScriptResultTable extends React.Component {
@@ -43,6 +44,7 @@ class TestScriptResultTable extends React.Component {
 
   render() {
     const {data} = this.state;
+
     // Set the row map to expand the latest test run
     let sub_row_map = {};
     for(let i = 0; i<this.state.data.length; i++){
@@ -104,8 +106,10 @@ class TestScriptResultTable extends React.Component {
           getTrProps={this.getTrProps}
           // Controlled props
           expanded={this.state.expanded}
+          resized={this.state.resized}
           // Callbacks
           onExpandedChange={expanded => this.setState({ expanded })}
+          onResizedChange={resized => this.setState({ resized })}
         />
       </div>
     );
