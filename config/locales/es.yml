@@ -1415,7 +1415,7 @@ es:
         unlimited:                "Ilimitado"
         hours:                    "horas"
       test_results_table:
-        test_runs: "UPDATE ME"
+        time: "UPDATE ME"
         file_name: "UPDATE ME"
         test_name:    "Nombre de la Prueba"
         input:        "Ingreso"

@@ -203,7 +203,7 @@ Rails.application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
-            get 'get_test_runs'
+            get 'get_test_runs_results'
           end
         end
       end

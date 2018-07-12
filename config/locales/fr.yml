@@ -1060,7 +1060,7 @@ fr:
         unlimited_tokens: "<span class=\"prop_label\">Jetons disponibles :</span> ∞"
         unlimited: "infinis"
       test_results_table:
-        test_runs: "UPDATE ME"
+        time: "UPDATE ME"
         file_name: "Nom du Fichier"
         test_name: "Nom du Test"
         input: "Contribution"

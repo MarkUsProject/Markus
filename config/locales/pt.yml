@@ -1025,7 +1025,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
         tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
         tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
       test_results_table:
-        test_runs: "UPDATE ME"
+        time: "UPDATE ME"
         file_name: "UPDATE ME"
         test_name: "Nome do Teste"
         input: "Entrada"

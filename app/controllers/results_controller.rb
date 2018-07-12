@@ -648,15 +648,33 @@ class ResultsController < ApplicationController
     grace_deduction.destroy
   end
 
-  def get_test_runs
-    test_script_results_ar = TestScriptResult.joins(:test_run, :test_script, :test_results)
+  def get_test_runs_results
+    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
                                .where(test_runs: {submission_id: params[:submission_id]})
-                               .select(:test_script_id, :id, :test_run_id, :name, :file_name,
+                               .select(:test_script_id, :id, :test_run_id, :created_at, :name, :file_name,
                                        :actual_output, :completion_status, :marks_earned, :marks_total)
+    # TODO: Format the date and add user name after it
+    # test_script_results.map do |g|
+      # puts "Did it get here!"
+      # puts "#{g[:created_at]}"
+      # puts "#{I18n.l(g[:created_at])}"
+      # puts "======"
+      # g[:created_at] = I18n.l(g[:created_at])
+      # base = {
+      #   test_run_id:g[:test_run_id],
+      #   created_at: g[3].nil? ? '' : I18n.l(g[3]),
+      #   name:g[4],
+      #   file_name:g[5],
+      #   actual_output:g[6],
+      #   completion_status:g[7],
+      #   marks_earned:g[8],
+      #   marks_total:g[9]
+      #}
+    # end
     respond_to do |format|
       format.html
       format.json {
-        render json: test_script_results_ar
+        render json: test_script_results
       }
     end
   end
