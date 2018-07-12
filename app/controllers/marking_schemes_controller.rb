@@ -12,7 +12,26 @@ class MarkingSchemesController < ApplicationController
   end
 
   def populate
-    render json: get_table_json_data
+    table = JSON.parse(get_table_json_data)
+    assignment_weights = []
+    spreadsheet_weights =[]
+    modify = []
+    table.map do |scheme|
+      assignment_weights.concat(scheme['assignment_weights'].map do |mark|
+        {
+          accessor: "assignment_weights.#{mark[0]}",
+          Header: Assignment.find(mark[0]).short_identifier
+        }
+      end)
+      spreadsheet_weights.concat(scheme['spreadsheet_weights'].map do |gmark|
+        {
+          accessor: "spreadsheet_weights.#{gmark[0]}",
+          Header: GradeEntryForm.find(gmark[0]).short_identifier
+        }
+      end)
+    end
+    puts table[0]
+    render json: { data: table, marks: assignment_weights.concat(spreadsheet_weights)}
   end
 
   def create
