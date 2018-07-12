@@ -1,5 +1,3 @@
-require 'zip'
-
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 

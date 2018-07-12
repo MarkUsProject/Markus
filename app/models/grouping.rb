@@ -1,8 +1,4 @@
-require 'encoding'
 require 'set'
-
-# we need repository permission constants
-require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ApplicationRecord

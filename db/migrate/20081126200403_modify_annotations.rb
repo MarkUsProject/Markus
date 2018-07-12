@@ -1,5 +1,3 @@
-require 'migration_helpers'
-
 class ModifyAnnotations < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
 

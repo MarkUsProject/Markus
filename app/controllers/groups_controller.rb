@@ -1,6 +1,3 @@
-require 'encoding'
-require 'csv_invalid_line_error'
-
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController

@@ -1,6 +1,3 @@
-require 'csv_invalid_line_error'
-require 'descriptive_statistics'
-require 'histogram/array'
 require 'csv'
 
 class Assignment < ApplicationRecord
@@ -291,24 +288,14 @@ class Assignment < ApplicationRecord
     self.results_zeros = marks.count(&:zero?)
 
     # Avoid division by 0.
-    self.results_average, self.results_median =
-      if max_mark.zero?
-        [0, 0]
-      else
-        # Calculates average and median in percentage.
-        [average(marks), median(marks)].map do |stat|
-          (stat * 100 / max_mark).round(2)
-        end
-      end
+    if max_mark.zero?
+      self.results_average = 0
+      self.results_median = 0
+    else
+      self.results_average = (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
+      self.results_median = (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
+    end
     self.save
-  end
-
-  def average(marks)
-    marks.empty? ? 0 : marks.mean
-  end
-
-  def median(marks)
-    marks.empty? ? 0 : marks.median
   end
 
   def self.get_current_assignment
@@ -883,6 +870,7 @@ class Assignment < ApplicationRecord
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
+    data.extend(Histogram)
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }

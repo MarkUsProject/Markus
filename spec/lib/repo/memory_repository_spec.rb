@@ -1,20 +1,20 @@
 require 'spec_helper'
 
-describe Repository::MemoryRepository do
+describe MemoryRepository do
   context 'writes to repository permissions file' do
 
     before :all do
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]
-      Repository::MemoryRepository.send :__update_permissions, { @repo_loc => @students }, ['admin1']
+      MemoryRepository.send :__update_permissions, { @repo_loc => @students }, ['admin1']
     end
 
     it 'give admins access to all repos' do
-      expect(Repository::MemoryRepository.class_variable_get(:@@permissions)['*']).to eq(['admin1'])
+      expect(MemoryRepository.class_variable_get(:@@permissions)['*']).to eq(['admin1'])
     end
 
     it 'gives other users access to specific repos' do
-      expect(Repository::MemoryRepository.class_variable_get(:@@permissions)[@repo_loc]).to eq(@students)
+      expect(MemoryRepository.class_variable_get(:@@permissions)[@repo_loc]).to eq(@students)
     end
   end
 end

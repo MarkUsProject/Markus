@@ -1,4 +1,3 @@
-require 'migration_helpers'
 class CreateRubricCriteria < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up

@@ -1,5 +1,3 @@
-require 'histogram/array'
-
 # GradeEntryItem represents column names (i.e. question names and totals)
 # in a grade entry form.
 class GradeEntryItem < ApplicationRecord
@@ -42,6 +40,7 @@ class GradeEntryItem < ApplicationRecord
     data = grades.where.not(grade: nil)
              .pluck(:grade)
              .map { |g| calculate_total_percent(g) }
+    data.extend(Histogram)
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }

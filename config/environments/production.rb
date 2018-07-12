@@ -1,47 +1,36 @@
-# encoding: utf-8
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
-  # rails will fallback to en, no matter what is set as config.i18n.default_locale
-  # rails will fallback to config.i18n.default_locale translation
-  config.i18n.fallbacks = true
-  config.i18n.fallbacks = [:en]
 
-  # The production environment is meant for finished, "live" apps.
-  # Code is not reloaded between requests
+  # Code is not reloaded between requests.
   config.cache_classes = true
-  # set this to false, if you want automatic reload of changed code
 
-  # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
-
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both threaded web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
-  # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
-  #
+
+  # Full error reports are disabled.
+  config.consider_all_requests_local = false
+
+  # Set low verbosity of logger.
   config.log_level = :info
-  # set log-level (:debug, :info, :warn, :error, :fatal)
+
+  # Ignore deprecation notices.
+  config.active_support.deprecation = :silence
+
+  # Caching is turned on.
+  config.action_controller.perform_caching = true
 
   # Compress both stylesheets and JavaScripts
-  config.assets.js_compressor  = :uglifier
-  config.assets.css_compressor = :scss
+  config.assets.js_compressor = :uglifier
+  config.assets.css_compressor = :sass
 
-  # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local = true
-  # set to false to turn off traces
+  # Set this to change the location of precompiled assets (RAILS_ENV=production bin/rails assets:precompile)
+  # config.assets.prefix = '/assets'
 
-  # FIXME: The following lines can be commented
-  # out when jQuery is fully implemented
-  config.action_controller.perform_caching             = true
-
-  # Use a different cache store in production
-  # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb
-  config.action_controller.allow_forgery_protection    = true
-
-  # Enable serving of images, stylesheets, and javascripts from an asset server
-  # config.action_controller.asset_host                  = "http://assets.example.com"
-
-  # Show Deprecated Warnings (to :log or to :stderr)
-  config.active_support.deprecation = :log
+  # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
+  # config.action_controller.relative_url_root = '/instance0'
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
@@ -126,9 +115,9 @@ Markus::Application.configure do
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
-  # Options for Repository_type are 'svn' and 'memory' for now
-  # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = "svn" # use Subversion as storage backend
+  # Options for Repository_type are 'svn','git' and 'mem'
+  # 'mem' is by design not persistent and only used for testing MarkUs
+  REPOSITORY_TYPE = 'svn'
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
@@ -139,9 +128,9 @@ Markus::Application.configure do
   # A hash of repository hook scripts (used only when REPOSITORY_TYPE
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
-  REPOSITORY_HOOKS = {'update': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  REPOSITORY_HOOKS = {}
   # Path to the MarkUs client-side hooks (copied to all group repos).
-  REPOSITORY_CLIENT_HOOKS = ""
+  REPOSITORY_CLIENT_HOOKS = ''
 
   ###################################################################
   # Directory where authentication keys will be uploaded. Make sure MarkUs

@@ -1,5 +1,3 @@
-require 'encoding'
-
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
 

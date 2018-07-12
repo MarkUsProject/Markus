@@ -1,5 +1,4 @@
 require 'set'
-require 'upsert/active_record_upsert'
 
 class UnableToRandomlyAssignGroupException < Exception
 end

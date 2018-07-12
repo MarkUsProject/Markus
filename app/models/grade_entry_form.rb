@@ -1,7 +1,3 @@
-require 'encoding'
-require 'descriptive_statistics'
-require 'histogram/array'
-
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
@@ -123,6 +119,7 @@ class GradeEntryForm < ApplicationRecord
   # Returns grade distribution for a grade entry form for all students
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
+    data.extend(Histogram)
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
@@ -135,27 +132,31 @@ class GradeEntryForm < ApplicationRecord
   # released so far (return a percentage).
   def calculate_released_average
     percentage_grades = released_percentage_grades_array
-    percentage_grades.blank? ? 0 : percentage_grades.mean
+    percentage_grades.blank? ? 0 : DescriptiveStatistics.mean(percentage_grades)
   end
 
   # Determine the median of all of the students' marks that have been
   # released so far (return a percentage).
   def calculate_released_median
-    released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.median
+    percentage_grades = released_percentage_grades_array
+    percentage_grades.blank? ? 0 : DescriptiveStatistics.median(percentage_grades)
   end
 
   # Determine the number of grade_entry_students that have submitted
   # the grade_entry_form
   def grade_entry_forms_submitted
-    percentage_grades_array.blank? ? 0 : percentage_grades_array.number.round
+    percentage_grades = percentage_grades_array
+    percentage_grades.blank? ? 0 : percentage_grades.size
   end
 
   def calculate_released_failed
-    released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.count { |mark| mark < 50 }
+    percentage_grades = released_percentage_grades_array
+    percentage_grades.blank? ? 0 : percentage_grades.count { |mark| mark < 50 }
   end
 
   def calculate_released_zeros
-    released_percentage_grades_array.blank? ? 0 : released_percentage_grades_array.count(&:zero?)
+    percentage_grades = released_percentage_grades_array
+    percentage_grades.blank? ? 0 : percentage_grades.count(&:zero?)
   end
 
   # Create grade_entry_student for each student in the course
