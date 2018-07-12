@@ -26,11 +26,10 @@ class MarkingSchemeTable extends React.Component {
       this.setState({
         data: res.data,
         marks: res.marks,
-
       });
     });
   }
-  //edit_link = this.data['edit_link'];
+
   nameColumns = [
     {
       Header: I18n.t('marking_schemes.name'),
@@ -41,13 +40,13 @@ class MarkingSchemeTable extends React.Component {
   modifyColumn = [
     {
       Header: I18n.t('marking_schemes.table_modify_column'),
-      Cell: ({original }) => (
+      Cell: ({original}) => (
         <span>
                 <a href={original.edit_link}>
                   {I18n.t('edit')}
                 </a>
-                &nbsp;|&nbsp;
-                <a href={original.delete_link}>
+          &nbsp;|&nbsp;
+          <a href={original.delete_link}>
                   {I18n.t('delete')}
                 </a>
         </span>
@@ -61,7 +60,7 @@ class MarkingSchemeTable extends React.Component {
       <ReactTable
         data={this.state.data}
         columns={this.nameColumns.concat(this.state.marks).concat(this.modifyColumn)}
-        defaultSorted={[
+        defaultSorted = {[
           {
             id: 'name'
           }
