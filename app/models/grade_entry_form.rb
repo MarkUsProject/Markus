@@ -181,11 +181,11 @@ class GradeEntryForm < ApplicationRecord
       row.push(grade_entry_item.name)
     end
     if self.show_total
-      row.concat([I18n.t('grade_entry_forms.grades.total')])
+      row.push(GradeEntryForm.human_attribute_name(:total))
     end
     csv_rows.push(row)
     # The second row in the CSV file will contain the question totals
-    row = [I18n.t('grade_entry_forms.column_out_of')]
+    row = [GradeEntryItem.human_attribute_name(:out_of)]
     self.grade_entry_items.each do |grade_entry_item|
       row.push(grade_entry_item.out_of)
     end

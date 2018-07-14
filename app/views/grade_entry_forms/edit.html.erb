@@ -1,6 +1,5 @@
 <% content_for :title do %>
-    <%= t('grade_entry_forms.edit.title') +
-           " #{@grade_entry_form.short_identifier}" %>
+    <%= t('helpers.submit.update', model: GradeEntryForm.model_name.human) %>
 <% end %>
 
 <%= render partial: 'form' %>

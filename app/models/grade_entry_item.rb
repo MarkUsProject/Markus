@@ -10,13 +10,11 @@ class GradeEntryItem < ApplicationRecord
 
   validates_presence_of :name
   validates_uniqueness_of :name,
-                          scope: :grade_entry_form_id,
-                          message: I18n.t('grade_entry_forms.invalid_name')
+                          scope: :grade_entry_form_id
 
   validates_presence_of :out_of
   validates_numericality_of :out_of,
-                            greater_than_or_equal_to: 0,
-                            message: I18n.t('grade_entry_forms.invalid_column_out_of')
+                            greater_than_or_equal_to: 0
 
   validates_presence_of :position
   validates_numericality_of :position, greater_than_or_equal_to: 0

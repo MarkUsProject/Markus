@@ -102,7 +102,7 @@ class RawMarksSpreadsheet extends React.Component {
 
   totalColumn = () => { return {
     accessor: 'total_marks',
-    Header: `${I18n.t('grade_entry_forms.grades.total')} (${this.props.out_of_total})`,
+    Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.out_of_total})`,
     minWidth: 50,
     className: 'grade-total',
     defaultSortDesc: true,
