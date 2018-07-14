@@ -2,8 +2,7 @@
 # in a grade entry form.
 class GradeEntryItem < ApplicationRecord
 
-  belongs_to :grade_entry_form
-  validates_associated :grade_entry_form
+  belongs_to :grade_entry_form, inverse_of: :grade_entry_items
 
   has_many :grades, dependent: :delete_all
 

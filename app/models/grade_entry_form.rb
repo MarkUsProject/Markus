@@ -5,7 +5,8 @@
 class GradeEntryForm < ApplicationRecord
   has_many                  :grade_entry_items,
                             -> { order(:position) },
-                            dependent: :destroy
+                            dependent: :destroy,
+                            inverse_of: :grade_entry_form
 
   has_many                  :grade_entry_students,
                             dependent: :destroy
