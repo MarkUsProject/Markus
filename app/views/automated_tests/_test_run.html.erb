@@ -13,9 +13,9 @@
   <% end %>
   <div id="<%=test_run.created_at.to_s.delete(' ')%>">
     <% if test_script_results.empty? %>
-      Test run with id <%= test_run.id.to_s %> is in progress .. (created at: <%= test_run.created_at.to_s %>)
+      <%= t('automated_tests.test_run_info', test_run_id: test_run.id.to_s, created_at: test_run.created_at.to_s)%>
 
-      <%= link_to t('automated_tests.stop_tests') ,
+      <%= link_to t('automated_tests.stop_tests'),
                   stop_tests_assignment_submission_result_path + "?test_run_id=" + test_run.id.to_s,
                   class: 'button stop_tests left' %>
     <% else %>
