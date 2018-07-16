@@ -13,7 +13,11 @@
   <% end %>
   <div id="<%=test_run.created_at.to_s.delete(' ')%>">
     <% if test_script_results.empty? %>
-      TODO Test run is enqueued for execution (or lost) + button to stop it
+      Test run with id <%= test_run.id.to_s %> is in progress .. (created at: <%= test_run.created_at.to_s %>)
+
+      <%= link_to t('automated_tests.stop_tests') ,
+                  stop_tests_assignment_submission_result_path + "?test_run_id=" + test_run.id.to_s,
+                  class: 'button stop_tests left' %>
     <% else %>
       <div id="test_results" class="sub_block">
         <%= render partial: 'automated_tests/test_script_result',
