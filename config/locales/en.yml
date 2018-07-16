@@ -67,7 +67,6 @@ en:
 
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Quick links"
-    spreadsheets: "Marks spreadsheets"
 
     # app/models/assignment_file.rb
     validation_messages:
@@ -79,8 +78,6 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:       "Current assignments"
-    assignment_item:           "Assignment"
     due:                       "Due date"
     submission_status:         "Submission Status"
     no_assignments:            "There are currently no assignments."
@@ -102,7 +99,6 @@ en:
     remove_date:        "Remove Date"
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
-    create_new_assignment:      "Add Assignment"
     create_new_scanned_assignment:  "Add Scanned Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
@@ -259,7 +255,6 @@ en:
     remove_all_graders: "Remove All Graders"
     remove_grader:      "Remove Grader"
     add_new:            "Add New File"
-    create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
     save_changes:       "Save Changes"
@@ -279,7 +274,6 @@ en:
     not_active:         "Not active"
     choose_assignment:  "Choose..."
     properties:         "Properties"
-    grades:             "Grades"
     submissions:        "Submissions"
     peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
@@ -529,74 +523,7 @@ en:
         page_title:     "Summary"
         ngr:            "No Grade Received"
 
-    grade_entry_forms:
-      blank_field: "can't be blank"
-      invalid_name: "is already taken"
-      invalid_date: "is not a valid date"
-      invalid_column_out_of: "can only be a whole number greater than 0"
-      invalid_identifier: "has already been taken"
-      invalid_grade: "can only be greater than or equal to 0"
-      column: "Column"
-      column_name: "Name"
-      column_out_of: "Out Of"
-      add_column: "Add a column"
-      bonus_column: "Bonus Mark"
-      remove_column: "Remove"
-      toggle_column: "hide/show"
-      properties: "Marks Spreadsheet Properties"
-      required_fields: "Required Fields <span class='required_field'>*</span>"
-      show_total: "Show Total"
-      create:
-        success: "Successfully created new marks spreadsheet"
-        title: "Add Marks Spreadsheet"
-        submit: "Add Marks Spreadsheet"
-      edit:
-        title: "Edit Marks Spreadsheet:"
-        success: "Successfully updated marks spreadsheet"
-        submit: "Update Marks Spreadsheet"
-      grades:
-        title: "Manage Marks Spreadsheet:"
-        student_title: "Marks:"
-        total: "Total"
-        must_select_a_student: "You must select at least one student to update."
-        successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
-        update_error: "The marking state for %{user_name} could not be saved."
-        errors: "Errors"
-        no_mark: "N/A"
-        marking_state: "State"
-        download: "Download Grades"
-      is_hidden: "Hide Spreadsheet"
-      message_placeholder: >-
-        Please enter a message that you would like to
-        have displayed to the students. Note it is displayed regardless of
-        marks being released.
-
-      students:
-        title: "Your Mark Spreadsheets"
-        no_results: "There are no marks available yet."
-        detailed_marks_message: "Detailed marks are available."
-      csv:
-        overwrite: "Overwrite existing grades?"
-        incomplete_header: "Incomplete grade entry item names or totals."
-        incomplete_row: "Contains too little information."
-        invalid_user_name: "Invalid user name."
-        upload_success: "Grades table successfully uploaded: %{num_updates} update(s)."
-        upload_title: "Upload Grades File"
-        upload_format_html: "<p>The file should have the following format:</p>
-                             <ul><li>two lines at the top which specify the question names and totals;</li>
-                             <li>the first item for the first two lines is ignored;</li>
-                             <li>one line for each student record;</li>
-                             <li>each line should be terminated by a carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                             <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-
-    no_grade_entry_forms_message: "There are currently no marks spreadsheets."
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets"
-    spreadsheet_item: "Marks spreadsheet"
-    spreadsheet_date: "Date"
-    mark_message: "Your mark:"
 
     student_course_summary: "Your Term Marks"
 

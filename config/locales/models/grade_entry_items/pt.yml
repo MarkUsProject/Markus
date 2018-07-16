@@ -1,0 +1,10 @@
+pt:
+  activerecord:
+    models:
+      grade_entry_item:
+        one: "Coluna"
+    attributes:
+      grade_entry_item:
+        bonus: "Nota Bonus"
+        name: "Nome"
+        out_of: "De"

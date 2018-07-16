@@ -68,7 +68,6 @@ pt:
 
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Links rápidos"
-    spreadsheets: "Notas nas planilhas"
 
     # app/models/assignment_file.rb
     validation_messages:
@@ -80,8 +79,6 @@ pt:
     cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:       "Projetos atuais"
-    assignment_item:           "Projetos"
     due:                       "Prazo de entrega"
     submission_status:         "Status"
     no_assignments:            "Não existem projetos atualmente."
@@ -103,7 +100,6 @@ pt:
     remove_date:        "Remover data"
     deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"
     deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
-    create_new_assignment:      "Inserir projeto"
     create_new_scanned_assignment:  "Inserir novo projeto digitalizado"
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório"
@@ -236,7 +232,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     add_graders:        "Adicionar avaliadores"
     remove_graders:     "Remover avaliadores"
     add_new:            "Adicionar novo"
-    create_new_grade_entry_form: "Adicionar planilha de notas"
     edit:               "Editar"
     save:               "Salvar"
     save_changes:       "Saval mudanças"
@@ -255,7 +250,6 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
     not_active:         "Não ativo"
     choose_assignment:  "Escolher..."
     properties:         "Propriedades"
-    grades:             "Notas"
     submissions:        "Submissões"
     peer_reviews:       "Avaliações pelos pares"
     rubrics:            "Rúbricas"
@@ -475,69 +469,7 @@ Aplicar pênalti no final / Deduzir fichas de carência ( Deixando esta caixa de
       page_title:     "Sumário"
       ngr:            "Sem Grade recebida"
 
-    grade_entry_forms:
-      blank_field: "Não pode ser branco"
-      invalid_name: "já foi utilizado"
-      invalid_date: "não é uma data válida"
-      invalid_column_out_of: "deve ser um número maior que 0"
-      invalid_identifier: "já foi utilizado"
-      invalid_grade: "deve ser maior ou igual à 0"
-      column: "Coluna"
-      column_name: "Nome"
-      column_out_of: "De"
-      add_column: "Inserir coluna"
-      bonus_column: "Nota Bonus"
-      remove_column: "Remover"
-      toggle_column: "esconder/mostrar"
-      properties: "Propriedade da planilha de notas"
-      required_fields: "Campos obrigatórios <span class='required_field'>*</span>"
-      show_total: "Mostrar total"
-      create:
-        success: "Planilha com novas notas criadas com sucesso"
-        title: "Adicionar planilha de notas"
-        submit: "Adicionar marcas Spreadsheet"
-      edit:
-        title: "Editar planilha de notas:"
-        success: "Planilha de notas atualizada com sucesso"
-        submit: "Atualização Marcas Spreadsheet"
-      grades:
-        title: "Gerenciar planilha de notas:"
-        student_title: "Notas:"
-        total: "Total"
-        must_select_a_student: "Você deve selecionar pelo menos um aluno para atualizar."
-        successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
-        update_error: "O estado da avaliação para %{user_name} não pôde ser salvo "
-        errors: "Erros"
-        no_mark: "N/A"
-        marking_state: "Estado"
-
-      students:
-        title: "Suas Marcas Planilhas"
-        no_results: "Não há notas disponíveis ainda..."
-        detailed_marks_message: "Notas detalhadas estão disponíveis."
-      csv:
-        overwrite: "Substituir notas existentes?"
-        incomplete_header: "Os totais ou os nomes dos itens estão faltando"
-        incomplete_row: "Contém pouca informação."
-        invalid_user_name: "Nome de usuário inválido."
-        upload_success: "Tabela de notas carregada com sucesso:%{num_updates} atualização (s)."
-        upload_title: "Arquivo de notas carregado"
-        upload_format_html: "<p>O arquivo deve conter o seguinte formato:</p>
-                             <ul><li>duas linhas no topo que devem especificar o nome da questão e o total;</li>
-                             <li>o primeiro objeto para as duas primeiras linhas é ignorado;</li>
-                             <li>uma linha para cada aluno;</li>
-                             <li>cada linha deve ser terminada por um carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                             <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-        is_hidden: "Ocultar Planilha"
-
-    no_grade_entry_forms_message: "Atualmente não há notas nas planilhas."
     no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
-    current_grade_entry_forms_title: "Planilha atual de notas"
-    spreadsheet_item: "Notas nas planilhas"
-    spreadsheet_date: "Data"
-    mark_message: "Sua nota:"
 
     student_course_summary: "Suas notas"
 

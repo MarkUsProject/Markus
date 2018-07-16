@@ -8,13 +8,10 @@ describe GradeEntryItem do
     it { is_expected.to have_many(:grade_entry_students).through(:grades) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(
-      :grade_entry_form_id).with_message(
-      I18n.t('grade_entry_forms.invalid_name')) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:grade_entry_form_id) }
 
     it { is_expected.to validate_presence_of(:out_of) }
-    it { is_expected.to validate_numericality_of(:out_of).with_message(
-      I18n.t('grade_entry_forms.invalid_column_out_of')) }
+    it { is_expected.to validate_numericality_of(:out_of) }
 
     it { is_expected.to allow_value(0).for(:out_of) }
     it { is_expected.to allow_value(1).for(:out_of) }

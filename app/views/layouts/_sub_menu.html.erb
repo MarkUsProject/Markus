@@ -26,11 +26,11 @@
           <% elsif controller.controller_name == 'assignments' &&
                    (controller.action_name == 'new' ||
                     controller.action_name == 'create') %>
-            <%= t(:create_new_assignment) %>
+            <%= t('helpers.submit.create', model: Assignment.model_name.human) %>
           <% elsif controller.controller_name == 'grade_entry_forms' &&
                    (controller.action_name == 'new' ||
                     controller.action_name == 'create') %>
-            <%= t(:create_new_grade_entry_form) %>
+            <%= t('helpers.submit.create', model: GradeEntryForm.model_name.human) %>
           <% elsif !@assignment.nil? %>
             <%# Display the assignment's short identifier %>
             <%# Check to see if the assignment is hidden %>
@@ -74,7 +74,7 @@
                         edit_grade_entry_form_path(@grade_entry_form) %>
           </li>
           <li class='<%= "active" if controller.action_name == 'grades' %>'>
-            <%= link_to t(:grades),
+            <%= link_to GradeEntryForm.human_attribute_name(:grades),
                         grades_grade_entry_form_path(@grade_entry_form) %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
@@ -225,7 +225,7 @@
 
       <% if !@grade_entry_form.nil? %>
         <li class='<%= "active" if controller.controller_name == 'grade_entry_forms' %>'>
-          <%= link_to t(:grades),
+          <%= link_to GradeEntryForm.human_attribute_name(:grades),
                       controller: 'grade_entry_forms',
                       action: 'student_interface',
                       id: @grade_entry_form.id %>

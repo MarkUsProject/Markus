@@ -1,0 +1,29 @@
+en:
+  grade_entry_forms:
+    add_column: "Add a column"
+    csv:
+      overwrite: "Overwrite existing grades?"
+      upload_format_html: "<p>The file should have the following format:</p>
+                           <ul><li>two lines at the top which specify the question names and totals;</li>
+                           <li>the first item for the first two lines is ignored;</li>
+                           <li>one line for each student record;</li>
+                           <li>each line should be terminated by a carriage-return line-feed.</li></ul>
+                           <code>\"\",q1_name,q2_name,q3_name</code><br>
+                           <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
+                           <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
+    grades:
+      marking_state: "State"
+      no_mark: "N/A"
+      select_a_student: "You must select at least one student to update."
+      successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
+      update_error: "The marking state for %{user_name} could not be saved."
+    message_placeholder: "Please enter a message that you would like to
+      have displayed to the students. Note it is displayed regardless of
+      marks being released."
+    none: "There are currently no marks spreadsheets."
+    required_fields_html: "Required Fields <span class='required_field'>*</span>"
+    students:
+      detailed_marks_message: "Detailed marks are available."
+      mark_message: "Your mark:"
+      no_results: "There are no marks available yet."
+      title: "Marks:"
