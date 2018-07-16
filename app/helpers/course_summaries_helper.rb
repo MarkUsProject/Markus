@@ -14,7 +14,7 @@ module CourseSummariesHelper
 
   def get_student_row_information
     course_information
-    return [get_student_information(@current_user, false)]
+    [get_student_information(@current_user, false)]
   end
 
   def course_information
