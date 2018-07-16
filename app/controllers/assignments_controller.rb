@@ -371,6 +371,18 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def batch_runs
+    @assignment = Assignment.find(params[:id])
+    respond_to do |format|
+      format.html {
+        render layout: 'assignment_content'
+      }
+      format.json {
+        render json: @assignment.summary_json(@current_user)
+      }
+    end
+  end
+
   def csv_summary
     assignment = Assignment.find(params[:id])
     if params[:download] == 'Download'
