@@ -6,10 +6,13 @@ const reducer = (accumulator, currentValue) => accumulator + currentValue;
 const makeDefaultState = () => ({
   data: [],
   expanded: {},
-  resized: []
+  resized: [],
+  first_load: false
 });
 
 class TestScriptResultTable extends React.Component {
+
+
   constructor() {
     super();
     this.state = makeDefaultState();
@@ -18,6 +21,7 @@ class TestScriptResultTable extends React.Component {
 
   componentDidMount() {
     this.fetchData();
+    this.state.first_load = true;
   }
 
   fetchData() {
@@ -44,17 +48,21 @@ class TestScriptResultTable extends React.Component {
 
   render() {
     const {data} = this.state;
-
-    // Set the row map to expand the latest test run
-    let sub_row_map = {};
-    for(let i = 0; i<this.state.data.length; i++){
-      sub_row_map[i] = true;
+    if (this.state.first_load){
+      console.log("first load");
+      // Set the row map to expand the latest test run
+      let sub_row_map = {};
+      for(let i = 0; i<this.state.data.length; i++){
+        sub_row_map[i] = true;
+      }
+      console.log(sub_row_map);
+      // this.setState({expanded: {0: sub_row_map}});
+      this.state.expanded = {0: sub_row_map};
+      this.state.first_load = false;
     }
-    this.state.expanded = {0: sub_row_map};
 
     return(
       <div>
-        <h2>New React Table</h2>
         <ReactTable
           data={data}
           columns={[
