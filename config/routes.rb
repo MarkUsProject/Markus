@@ -58,6 +58,7 @@ Rails.application.routes.draw do
         get 'peer_review'
         get 'summary'
         get 'csv_summary'
+        get 'batch_runs'
       end
 
       resources :tags do
