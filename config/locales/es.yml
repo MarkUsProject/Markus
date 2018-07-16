@@ -75,7 +75,6 @@ es:
 
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Enlaces rápidos"
-    spreadsheets: "Hojas de notas"
 
     # app/models/assignment_file.rb
     validation_messages:
@@ -87,8 +86,6 @@ es:
     cannot_login_as_another_admin: "Usted no puede iniciar la sesión como otro administrador."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:       "Proyectos recientes"
-    assignment_item:           "Proyecto"
     due:                       "Último plazo de entrega"
     submission_status:         "Estado"
     no_assignments:            "No existen proyectos por el momento."
@@ -110,7 +107,6 @@ es:
     remove_date:               "Remover Fecha"
     deadline_grace_tokens:     "Fecha límite utilizando todos los <br> aplazamientos de gracia restantes <br>"
     deadline_max_penalty:      "Fecha límite incluyendo la <br> máxima penalidad por demora <br>"
-    create_new_assignment:     "Añadir proyecto"
     create_new_scanned_assignment:  "Añadir proyecto escaneado"
     manage_course_work:        "Administrar trabajos del curso"
     repository_folder:         "Carpeta del repositorio"
@@ -381,7 +377,6 @@ es:
     add_graders:                 "Añadir evaluadores"
     remove_graders:              "Remover evaluadores"
     add_new:                     "Añadir Nuevo Archivo"
-    create_new_grade_entry_form: "Añadir Hoja de Notas"
     edit:                        "Editar"
     save:                        "Guardar"
     save_changes:                "Guardar cambios"
@@ -400,7 +395,6 @@ es:
     not_active:                  "Inactivo"
     choose_assignment:           "Escoger..."
     properties:                  "Propiedades"
-    grades:                      "Evaluadores"
     submissions:                 "Entregas"
     peer_reviews:                "Revisiones de Compañeros"
     rubrics:                     "Rúbricas"
@@ -684,71 +678,7 @@ es:
         page_title: "Resumen"
         ngr:        "No ha recibido una nota"
 
-    grade_entry_forms:
-      blank_field:           "no puede dejarse en blanco"
-      invalid_name:          "ya ha sido tomado"
-      invalid_date:          "no es una fecha válida"
-      invalid_column_out_of: "sólo puede ser un número entero mayor a 0"
-      invalid_identifier:    "ya ha sido tomado"
-      invalid_grade:         "sólo puede ser mayor que o igual a 0"
-      column:                "Columna"
-      column_name:           "Nombre"
-      column_out_of:         "de"
-      add_column:            "Añadir una columna"
-      bonus_column:          "Notas de bonificación"
-      remove_column:         "Remover"
-      toggle_column:         "ocultar/mostrar"
-      properties:            "Propiedades de las Hojas de Notas"
-      required_fields:       "Campos Requeridos <span class='required_field'>*</span>"
-      show_total:            "Mostrar Total"
-      create:
-        success: "Las nuevas hojas de notas fueron creadas exitosamente"
-        title:   "Añadir Hojas de Notas"
-        submit:  "Añadir Hojas de Notas"
-      edit:
-        title:   "Editar Hoja de Notas:"
-        success: "La Hoja de Notas fue actualizada exitosamente"
-        submit:  "Actualizar la Hoja de Notas"
-      grades:
-        title:                        "Administrar la Hoja de Notas:"
-        student_title:                "Notas:"
-        total:                        "Total"
-        must_select_a_student:        "Usted debe seleccionar al menos un estudiante para lanzar la actualización."
-        successfully_changed:         "Se han actualizado %{numGradeEntryStudentsChanged} estudiantes
-                                       exitosamente."
-        update_error:                 "El estado del proceso de calificación para %{user_name} no se pudo guardar."
-        errors:                       "Errores"
-        no_mark:                      "N/A"
-        marking_state:                "Estado"
-      is_hidden:                      "Ocultar Hoja de Notas"
-
-      students:
-        title:                  "Sus Hojas de Notas"
-        no_results:             "No existen notas disponibles todavía."
-        detailed_marks_message: "Notas detalladas están disponibles."
-      csv:
-        overwrite:          "¿Está seguro/a de reescribir las notas existentes?"
-        incomplete_header:  "Los nombres de los elementos o los totales para la nota ingresada están incompletos."
-        incomplete_row:     "No contiene suficiente información."
-        invalid_user_name:  "Nombre de usuario inválido."
-        upload_success:     "La tabla de notas ha sido subida exitosamente: %{num_updates} actualización(es)."
-        upload_title:       "Subir el Archivo de Notas"
-        upload_format_html: "<p>El archivo debería tener el siguiente formato:</p>
-                             <ul><li>dos líneas en la parte superior, las cuales especifican los nombres y totales de
-                             las preguntas;</li>
-                             <li>el primer elemento para las primeras dos líneas es ignorado;</li>
-                             <li>una línea para el registro de cada estudiante;</li>
-                             <li>cada línea debe terminar en un carriage-return o en un line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                             <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-
-    no_grade_entry_forms_message:    "No existen hojas de notas por el momento."
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
-    current_grade_entry_forms_title: "Hojas de notas recientes"
-    spreadsheet_item:                "Hoja de Notas"
-    spreadsheet_date:                "Fecha"
-    mark_message:                    "Su nota:"
 
     student_course_summary:          "Sus notas del semestre"
 

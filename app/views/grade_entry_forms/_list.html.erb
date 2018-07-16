@@ -2,15 +2,15 @@
 
 <div class='section'>
   <% if @grade_entry_forms.empty? %>
-    <p><%= t(:no_grade_entry_forms_message) %></p>
+    <p><%= t('grade_entry_forms.none') %></p>
   <% else %>
     <%# Table listing grade entry forms %>
     <div class='table'>
       <table>
         <thead>
           <tr>
-            <th><%= t(:description) %></th>
-            <th><%= t(:shortened_date).html_safe %></th>
+            <th><%= GradeEntryForm.human_attribute_name(:description) %></th>
+            <th><%= GradeEntryForm.human_attribute_name(:date) %></th>
             <%# Note: this hides the results column within the student view %>
             <th><%= t('results.results_name') %></th>
           </tr>
@@ -41,7 +41,7 @@
               <td class="grade_entry_form_result">
                 <% if !@g_id_entries.empty? && !@g_id_entries[grade_entry_form.id].nil? %>
                   <% if grade_entry_form.show_total %>
-                    <strong><%= t('mark_message') %></strong>
+                    <strong><%= t('grade_entry_forms.students.mark_message') %></strong>
                     <% if @g_id_entries[grade_entry_form.id].all_blank_grades? %>
                       <%= t('grade_entry_forms.grades.no_mark') %>
                     <% else %>

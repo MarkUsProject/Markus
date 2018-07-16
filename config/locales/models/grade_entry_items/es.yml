@@ -1,0 +1,10 @@
+es:
+  activerecord:
+    models:
+      grade_entry_item:
+        one: "Columna"
+    attributes:
+      grade_entry_item:
+        bonus: "Notas de bonificación"
+        name: "Nombre"
+        out_of: "de"

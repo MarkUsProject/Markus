@@ -29,7 +29,7 @@ module GradeEntryFormsHelper
 
     unless grade_entry_items.nil?
       # Delete items with empty name and out_of
-      grade_entry_items.delete_if{|_, item| item[:name].empty? && item[:out_of].empty?}
+      grade_entry_items.delete_if { |_, item| item[:name].empty? && item[:out_of].empty? }
       # Update the attributes hash
       max_position = 1
       grade_entry_items.each do |_, item|

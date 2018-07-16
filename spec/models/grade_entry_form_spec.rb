@@ -17,7 +17,6 @@ describe GradeEntryForm do
 
   it do
     is_expected.to validate_uniqueness_of(:short_identifier)
-                     .with_message(I18n.t('grade_entry_forms.invalid_identifier'))
   end
 
   # Tests for out_of_total

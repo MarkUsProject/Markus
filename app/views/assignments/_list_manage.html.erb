@@ -2,13 +2,13 @@
   <% if @assignments.empty? %>
     <p><%= t(:no_assignments) %></p>
   <% else %>
-    <h3><%= t(:current_assignments) %></h3>
+    <h3><%= Assignment.model_name.human.pluralize %></h3>
 
     <div class='table'>
       <table>
         <thead>
           <tr>
-            <th><%= t(:assignment_item) %></th>
+            <th><%= Assignment.model_name.human.pluralize %></th>
             <th><%= t(:due) %></th>
             <th><%= t(:submission_status) %></th>
           </tr>

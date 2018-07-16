@@ -11,7 +11,7 @@
                    locals: { controller: 'main' } %>
       </div>
       <div id='spreadsheet_list'>
-        <h3 class='title'><%= t(:spreadsheets) %></h3>
+        <h3 class='title'><%= GradeEntryForm.model_name.human.pluralize %></h3>
         <%= render partial: 'spreadsheet_list',
                    locals: { controller: 'main' } %>
       </div>

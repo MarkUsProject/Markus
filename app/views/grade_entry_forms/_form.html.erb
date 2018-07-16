@@ -16,15 +16,14 @@
 <% end %>
 
 <div class='wrapper'>
-  <p><%= t('grade_entry_forms.required_fields').html_safe %></p>
+  <p><%= t('grade_entry_forms.required_fields_html') %></p>
   <%= form_for @grade_entry_form, as: :grade_entry_form do |f| %>
 
     <%= render partial: 'shared/error_explanation',
                locals: { model: @grade_entry_form } %>
 
     <fieldset>
-      <legend><%= t('grade_entry_forms.properties') %></legend>
-
+      <legend><h3><%= t(:properties) %></h3></legend>
       <div>
         <%= f.label :short_identifier, t(:short_identifier),
                     class: 'required' %>
@@ -32,7 +31,7 @@
       </div>
 
       <div>
-        <%= f.label :description, t(:description) %>
+        <%= f.label :description, GradeEntryForm.human_attribute_name(:description) %>
         <%= f.text_field :description %>
       </div>
 
@@ -46,7 +45,7 @@
       </div>
 
       <div>
-        <%= f.label :date, t(:shortened_date) %>
+        <%= f.label :date, GradeEntryForm.human_attribute_name(:date) %>
         <%= f.text_field :date,
                          class: 'datepicker',
                          size: 30,
@@ -59,12 +58,12 @@
       </div>
 
       <div>
-        <%= f.label :show_total, t('grade_entry_forms.show_total') %>
+        <%= f.label :show_total, GradeEntryForm.human_attribute_name(:show_total) %>
         <%= f.check_box :show_total %>
       </div>
 
       <div>
-        <%= f.label :is_hidden, t('grade_entry_forms.is_hidden') %>
+        <%= f.label :is_hidden, GradeEntryForm.human_attribute_name(:is_hidden) %>
         <%= f.check_box :is_hidden %>
       </div>
 
@@ -93,9 +92,8 @@
 
     </fieldset>
 
-    <%= f.submit t(f.object.new_record? ? 'grade_entry_forms.create.submit' :
-                                          'grade_entry_forms.edit.submit'),
+    <%= f.submit (f.object.new_record? ? t('helpers.submit.create', model: GradeEntryForm.model_name.human) :
+                                         t('helpers.submit.update', model: GradeEntryForm.model_name.human)),
                  data: { disable_with: t('working') } %>
   <% end %>
 </div>
-
