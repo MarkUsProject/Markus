@@ -4,11 +4,11 @@
   <% unless @result.is_a_review? && !@current_user.student? %>
     <span class='left'>
       <% if !previous_grouping.nil?%>
-        <%= link_to t('marker.previous_submission'), action: 'next_grouping',
+        <%= link_to t('results.previous_submission'), action: 'next_grouping',
                     assignment_id: @assignment.id, id: @result.id,
                     grouping_id: previous_grouping.id %>
       <% else %>
-        <span class='disable'><%= t('marker.previous_submission') %></span>
+        <span class='disable'><%= t('results.previous_submission') %></span>
       <% end %>
     </span>
   <% end %>
@@ -29,20 +29,20 @@
     |
     <% end %>
     (
-    <em><%= t('marker.marks.total_mark') %></em>
+    <em><%= Result.human_attribute_name(:total_mark) %>:</em>
     <span id='current_mark_div'><%= result.total_mark %></span>/
     <span id='total_mark_div'><%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     )
     |
     <% unless @result.is_a_review? && !@current_user.student? %>
       <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
-        <%= button_to t('marker.revert_to_incomplete'),
+        <%= button_to t('results.set_to_incomplete'),
                       url_for(action: 'toggle_marking_state', id: @result.id),
                       disabled: @result.released_to_students,
                       form: { style: 'display:inline-block;', id: 'toggle_marking_state' },
                       remote: true %>
       <% else %>
-        <%= button_to t('marker.set_to_complete'),
+        <%= button_to t('results.set_to_complete'),
                       url_for(action: 'toggle_marking_state', id: @result.id),
                       disabled: @result.released_to_students,
                       form: { style: 'display:inline-block;', id: 'toggle_marking_state' },
@@ -52,13 +52,13 @@
 
     <% if @current_user.admin? %>
       <% if @result.released_to_students %>
-        <%= button_to t('marker.marks.unrelease'),
+        <%= button_to t('submissions.unrelease_marks'),
                       url_for(action: 'set_released_to_students', id: @result.id),
                       disabled: @result.is_a_review? ? false : @result.marking_state != Result::MARKING_STATES[:complete],
                       form: { style: 'display:inline-block;', id: 'toggle_released' },
                       remote: true %>
       <% else %>
-        <%= button_to t('marker.marks.release'),
+        <%= button_to t('submissions.release_marks'),
                       url_for(action: 'set_released_to_students', id: @result.id),
                       disabled: @result.is_a_review? ? false : @result.marking_state != Result::MARKING_STATES[:complete],
                       form: { style: 'display:inline-block;', id: 'toggle_released' },
@@ -70,11 +70,11 @@
   <% unless @result.is_a_review? && !@current_user.student? %>
     <span class='right'>
       <% if !next_grouping.nil? %>
-        <%= link_to t('marker.next_submission'), action: 'next_grouping',
+        <%= link_to t('results.next_submission'), action: 'next_grouping',
                     assignment_id: @assignment.id, id: @result.id,
                     grouping_id: @next_grouping.id%>
       <% else %>
-        <span class='disable'><%= t('marker.next_submission') %></span>
+        <span class='disable'><%= t('results.next_submission') %></span>
       <% end %>
     </span>
   <% end %>

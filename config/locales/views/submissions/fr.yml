@@ -1,0 +1,43 @@
+fr:
+  submissions:
+    collect:
+      apply_late_penalty: "Appliquer pénalité de retard / Déduire jetons de grâce ( Laissant cette case cochée signifie la soumission ne sera pas pénalisé , indépendamment du moment de la soumission . )"
+      collection_job_started_for_groups: "La récupération des envois pour les groupements sélectionnés pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
+      could_not_collect_some: "Impossible de recueillir des soumissions pour certains groupements et projet %{assignment_identifier} - la date de collecte n'a pas été atteint pour ces groupes."
+      overwrite_warning: "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes-vous sûr de vouloir faire cela ?"
+      progress: "%{count}/%{size} envois récupérés"
+      results_loss_warning: "Attention : cette action effacera vos annotations et évaluations. Êtes-vous sûr de vouloir continuer ?"
+      submit: "Récupérer les envois"
+      successfully_collected: "Récupération de %{collected} envoi(s)."
+      this_revision: "Récupérer et évaluer cette révision"
+    errors:
+      no_submission: "%{group_name} n'a pas d'envoi"
+      not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
+      not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
+    repo_browser:
+      client_time: "commit:"
+      collected: "recueillie"
+      last_revised: "Dernière révision"
+      repository: "Répertoire"
+      repository_name: "Répertoire : %{repository}"
+      revised_by: "Révision par"
+      viewing_revision: "Révision:"
+      server_time: "push:"
+    student:
+      no_submission: "Vous n'avez encore rien envoyé"
+
+    # Miscellaneous
+    commit_date: "Date d'envoi (commit)"
+    detailed_csv_report: "Rappost CSV détaillé"
+    grace_credits_used: "Utilisation des \"grace credits\""
+    grading_can_begin: "L'évaluation peut commencer"
+    grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
+    grading_can_begin_for_sections: "L'évaluation peut commencer pour les sections: %{sections}"
+    grading_can_begin_after_for_sections: "L'évaluation commencera à partir du %{time} pour les sections: %{sections}"
+    how_many_marked: "%{num_marked}/%{num_assigned} soumissions sont corrigés"
+    marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
+    release_marks: "Montrer les notes"
+    repo_list: "Liste des dépôts"
+    repo_checkout_file: "Commandes pour extraire les projets"
+    status: "Statut"
+    unrelease_marks: "Cacher les notes"

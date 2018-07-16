@@ -726,7 +726,7 @@ class Grouping < ApplicationRecord
       end
     else
       if !has_submission?
-        I18n.t('marking_state.not_collected')
+        I18n.t('results.state.not_collected')
       elsif result.released_to_students
         'released'
       elsif result.marking_state != Result::MARKING_STATES[:complete]

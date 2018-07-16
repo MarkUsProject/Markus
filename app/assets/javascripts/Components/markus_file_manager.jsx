@@ -171,7 +171,7 @@ class RawFileManager extends RawFileBrowser {
           href={this.props.downloadAllURL}
         >
           <i className="fa fa-download-file-o" aria-hidden="true"/>
-          &nbsp;{I18n.t('download_the', {item: I18n.t('browse_submissions.all_files')})}
+          &nbsp;{I18n.t('download_the', {item: I18n.t('all')})}
         </a>
       </li>
     );
@@ -203,9 +203,9 @@ class FileManagerHeader extends Headers.TableHeader {
           selected: this.props.isSelected,
         })}
       >
-        <th>{I18n.t('browse_submissions.filename')}</th>
-        <th className="modified">{I18n.t('browse_submissions.last_revised')}</th>
-        <th className="modified">{I18n.t('browse_submissions.revised_by')}</th>
+        <th>{I18n.t('filename')}</th>
+        <th className="modified">{I18n.t('submissions.repo_browser.last_revised')}</th>
+        <th className="modified">{I18n.t('submissions.repo_browser.revised_by')}</th>
       </tr>
     );
 
