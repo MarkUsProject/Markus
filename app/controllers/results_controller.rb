@@ -180,11 +180,7 @@ class ResultsController < ApplicationController
 
   def stop_tests
     test_id = params[:test_run_id].to_i
-    begin
-      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
-    rescue => e
-      flash_message(:error, e.message)
-    end
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
     redirect_back(fallback_location: root_path)
   end
 
