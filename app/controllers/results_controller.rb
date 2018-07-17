@@ -14,7 +14,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests,
+                only: [:download, :download_zip, :run_tests, :stop_tests,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
@@ -175,6 +175,12 @@ class ResultsController < ApplicationController
     rescue => e
       flash_message(:error, e.message)
     end
+    redirect_back(fallback_location: root_path)
+  end
+
+  def stop_tests
+    test_id = params[:test_run_id].to_i
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
     redirect_back(fallback_location: root_path)
   end
 

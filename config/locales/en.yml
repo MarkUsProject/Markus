@@ -898,6 +898,8 @@ en:
       revision_used_for_test: "<span class='prop_label'>Revision used:</span> %{revision}"
       information: "Information"
       run_tests: "Run tests"
+      test_run_info: "Test run with id %{test_run_id} is in progress .. (created at: %{created_at})"
+      stop_tests: "Stop tests"
       test_run: "Test Run"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests.<br><br>If you have already submitted a file and want to run tests on it, use the \"Run Tests\" button below."
