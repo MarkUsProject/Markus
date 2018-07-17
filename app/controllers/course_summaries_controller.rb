@@ -99,13 +99,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def insert_student_marks(csv)
-    JSON.parse(get_table_json_data).each do |student|
+    get_table_json_data.each do |student|
       row = []
-      row.push(student['user_name'])
-      row.push(student['id_number'])
-      row.concat(student['assignment_marks'].values)
-      row.concat(student['grade_entry_form_marks'].values)
-      row.concat(student['weighted_marks'].values)
+      row.push(student[:user_name])
+      row.push(student[:id_number])
+      row.concat(student[:assignment_marks].values)
+      row.concat(student[:grade_entry_form_marks].values)
+      row.concat(student[:weighted_marks].values)
       csv << row
     end
   end
