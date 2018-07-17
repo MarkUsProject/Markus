@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :test_server, class: TestServer do
     user_name MarkusConfigurator.autotest_server_host
     last_name { Faker::Name.last_name }

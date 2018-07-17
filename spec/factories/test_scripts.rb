@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :test_script, class: TestScript do
     association :assignment
     file_name "#{Faker::Lorem}.txt"
