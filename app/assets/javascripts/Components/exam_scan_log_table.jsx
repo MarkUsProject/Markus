@@ -77,11 +77,11 @@ class ExamScanLogTable extends React.Component {
       Header: I18n.t('split_pdf_logs.papers_found'),
       columns: [
         {
-          Header: I18n.t('complete'),
+          Header: I18n.t('results.state.complete'),
           accessor: 'num_groups_in_complete'
         },
         {
-          Header: I18n.t('incomplete'),
+          Header: I18n.t('results.state.incomplete'),
           accessor: 'num_groups_in_incomplete'
         },
       ]

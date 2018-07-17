@@ -1,0 +1,6 @@
+es:
+  activerecord:
+    models:
+      submission:
+        one: "Entrega"
+        other: "Entregas"

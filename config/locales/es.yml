@@ -87,9 +87,7 @@ es:
 
     # app/views/assignments/_list_manage.html.erb
     due:                       "Último plazo de entrega"
-    submission_status:         "Estado"
     no_assignments:            "No existen proyectos por el momento."
-    submissions_collected:     "%{count}/%{size} Entregas recolectadas"
 
     # app/views/assignments/
     name:                      "Nombre"
@@ -111,72 +109,6 @@ es:
     manage_course_work:        "Administrar trabajos del curso"
     repository_folder:         "Carpeta del repositorio"
     incorrect_format:          "Formato incorrecto"
-    marking_state:
-      not_collected:          "No ha sido recolectado"
-      in_progress:            "En progreso"
-      completed:              "Completado"
-      released:               "Publicado"
-      remark_requested:       "Recalificación solicitada"
-      not_complete:           "No puede publicar los resultados para %{group_name}: el proceso de calificación no ha
-                               sido completado."
-      not_complete_unrelease: "No puede ocultar los resultados para %{group_name}: el proceso de calificación no ha sido
-                               completado."
-      no_submission:          "%{group_name} no tiene entregas"
-      result_not_saved:       "El resultado de las entregas del grupo %{group_name} no pudo ser guardado."
-    collect_submissions:
-      apply_late_penalty:                "Aplicar penalidad por demora/Deducir aplazamiento de gracia (Si esta opción no
-                                          es seleccionada, las entregas no serán penalizadas, sin importar la hora o
-                                          fecha de la entrega.)"
-      collect_all:                       "Recolectar todas las entregas"
-      collect:                           "Recolectar entregas"
-      uncollect_all:                     "Deshacer recolección anterior"
-      collect_section:                   "Recolectar las entregas de esta sección"
-      all_available:                     "Todas las entregas disponibles"
-      collect_ta:                        "Recolectar todas las entregas que le han sido assignadas"
-      disable_collect:                   "Recolección deshabilitada, más de un asistente de cátedra está calificando
-                                          la entrega mostrada."
-      could_not_collect:                 "No se pudieron recolectar las entregas para el proyecto %{assignment_identifier}
-                                          - la fecha para la recolección no ha llegado."
-      collection_job_started:            "La recolección de las entregas para el proyecto %{assignment_identifier} ha
-                                          iniciado. El proceso puede demorar, pero usted puede acceder las entregas
-                                          tan pronto como se vuelvan disponibles."
-      collection_job_started_for_groups: "La recolección de las entregas para las agrupaciones seleccionadas del
-                                          proyecto %{assignment_identifier} ha iniciado. El proceso puede demorar,
-                                          pero usted puede acceder las entregas tan pronto como se vuelvan disponibles."
-      uncollection_started:              "Deshaciendo la recolección de los proyectos"
-      section_collection_job_started:    "La recolección de las entregas para las secciones %{section_names} del
-                                          proyecto %{assignment_identifier} ha iniciado. El proceso puede demorar,
-                                          pero usted puede acceder las entregas tan pronto como se vuelvan disponibles."
-      priority_given:                    "Las entregas ahora tienen prioridad para ser recolectadas. El proceso
-                                          finalizará pronto."
-      errors:                            "Errores"
-      results_loss_warning:              "Esta operación:
-                                          Identifica la versión del archivo para cada entrega que satisface el plazo
-                                          de entrega y/o la penalidad por demora establecidos para este proyecto.
-                                          Crea las páginas web para anotar y calificar cada entrega.
-                                          Precaución: Si la operación se lleva a cabo después de que el proceso de
-                                          calificación ha iniciado, los datos serán reescritos. Los datos pueden ser
-                                          recuperados usando el botón para deshacer la recolección."
-
-      undo_results_loss_warning:         "Esta operación deshacera las operaciones anteriores del tipo Recolectar
-                                          Todas las Entregas. Esto se deberá hacer sólo si las operaciones anteriores
-                                          del mismo tipo fueron realizadas por error. PRECAUCIÓN: Todo el proceso de
-                                          calificación realizado desde la anterior operación de tipo Recolectar Todas
-                                          las Entregas se perderá."
-      must_select_a_section:             "Usted debe seleccionar una sección para recolectar las entregas de sus
-                                          grupos."
-      could_not_find_section:            "No se pudo encontrar la sección solicitada."
-      could_not_collect_section:         "No se pudo recolectar las entregas para la sección %{section_name} y el
-                                          proyecto %{assignment_identifier} - la fecha de recolección para la sección
-                                          no ha llegado."
-      could_not_collect_some:            "No se pudo recolectar las entregas para algunas agrupaciones del proyecto
-                                          %{assignment_identifier} -  la fecha de recolección para estas
-                                          agrupaciones no ha llegado."
-      no_submission_for_section:         "No existe ninguna entrega por recolectar para las secciones:
-                                          %{section_names}."
-      successfully_collected:            "Entregas recolectadas exitosamente %{collected}."
-      marking_incomplete_warning:        "Nota: Esto sólo descargará las entregas que han sido recolectadas.\n\n¿Está
-                                          seguro/a de querer proceder?"
     assignment:
         hidden:                    "%{assignment_text} (oculto)"
         assignment:                "Proyecto %{short_identifier}"
@@ -197,7 +129,6 @@ es:
         required_files_by_student: "Añadir nombre(s) de (el/los) archivo(s) que los estudiantes deberán presentar:"
         add_required_file:         "Añadir un archivo requerido"
         type:                      "Tipo de proyecto"
-        overall_comment:           "Comentario general"
         upload_file_requirement:   "La lista de archivos entregados no coincide con los archivos necesarios para este
                                     proyecto."
         due_dates_type:            "Habilitar último plazo de entrega por secciones"
@@ -289,34 +220,6 @@ es:
                                         de recalificación. Usted podrá añadir nuevas anotaciones y comentarios, y una vez
                                         que el proceso de recalificación finalize y usted publique los resultados, los
                                         estudiantes mirarán las notas y comentarios actualizados."
-            submissions_admins:  "Chequear el estado de las entregas de los estudiantes. Antes de que el proceso de
-                                  calificación inicie, los proyectos de los estudiantes deben ser recolectados.
-                                  Esto asocia cada grupo con la versión de sus archivos a ser evaluada; lo que significa
-                                  que cuando el evaluador añade anotaciones y notas, estas pertenecen a esta entrega en
-                                  particular. Existen tres maneras diferentes de recolectar entregas: Recolectar Todas
-                                  las Entregas, lo que recolecta automáticamente todas las entregas basándose en el
-                                  último plazo de entrega y las penalidades por entrega tardía. Dar click en el nombre
-                                  de un grupo, desencadena la recolección automática para ese grupo. Dar click en el
-                                  nombre del repositorio, lo lleva a la página del mismo. En esta página, usted puede
-                                  escoger manualmente la versión a ser recolectada.<br>Las filas en verde han sido
-                                  recolectadas y están listas para ser calificadas. Dar click en el nombre del grupo,
-                                  le lleva a la página del evaluador. Cuando el evaluador marca el estado del proceso de
-                                  calificación como completo y usted está listo(a) para pemitir a los estudiantes ver sus
-                                  resultados, seleccione los estudiantes y presione \"Publicar notas\".<br>El reporte de
-                                  notas y el reporte de notas detallado, ambos en formato CSV, son dos maneras diferentes
-                                  de descargar notas. La lista de repositorios en Subversion descarga un archivo de texto
-                                  que vincula el nombre del grupo con la ruta del repositorio.
-                                  El archivo de revisión en Subversion descarga un archivo de texto donde cada línea es
-                                  un comando de revisión en svn para la versión recolectada de la entrega de cada
-                                  estudiante. Crear Nueva Copia del Archivo: Descarga un archivo de texto, donde cada
-                                  línea es un commando svn checkout para la versión recolectada de la entrega de cada
-                                  estudiante. Descargar Todas las Entregas: Descarga un archivo de tipo zip, el cual
-                                  contendrá los repositorios de todos los estudiantes."
-            submissions_graders: "Da click en los proyectos para calificarlos. Las filas en verde han sido recolectadas
-                                  y las entregas correspondientes están listas para ser calificadas. Si las entregas
-                                  que le han sido asignadas no han sido recolectadas todavía, usted puede dar click en
-                                  el nombre del grupo para recolectarlas. <strong>Precaución</strong>: La recolección
-                                  eliminará cualquier anotación o nota previa."
             graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
                                   De manera predeterminada, los evaluadores serán asignados a todos los criterios de
                                   calificación."
@@ -395,7 +298,6 @@ es:
     not_active:                  "Inactivo"
     choose_assignment:           "Escoger..."
     properties:                  "Propiedades"
-    submissions:                 "Entregas"
     peer_reviews:                "Revisiones de Compañeros"
     rubrics:                     "Rúbricas"
     marking_scheme:              "Esquema de calificación"
@@ -404,33 +306,23 @@ es:
     invite:                      "Invitar"
     disinvite:                   "Retirar la invitación"
     help:                        "Ayuda"
-    no_result:                   "No existen notas disponibles para este proyecto."
     no_remark_result:            "Los resultados de la recalificación no están disponibles para este proyecto todavía."
-    unmarked:                    "No evaluado"
-    partial:                     "parcial"
-    complete:                    "completo"
-    released:                    "publicado"
     preview:                     "Vista previa"
     encoding:                    "Codificación"
     select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
     all_csv_file:                "Todos los campos: "
 
-    marks_released_notice:             "Las notas han sido publicadas. Usted no puede cambiar las notas."
     commit_after_due_date:             "Este commit ha sido enviado después de la fecha límite de entrega."
-    no_files_submitted:                "Esta entrega no tiene archivos."
     past_due_date_edit_warning:        "PRECAUCIÓN: El último plazo de entrega seleccionado está en el pasado."
     past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
     past_due_date_edit_result_warning: "El %{href} de este grupo se ha realizado después de la fecha límite de entrega."
     last_commit:                       "último commit"
-    release_marks:                     "Publicar Notas"
-    unrelease_marks:                   "Ocultar Notas"
 
     #app/views/assignments/grader_index.html
     grade_assignments: "Calificar Proyectos"
 
     #app/views/results/marker/
     marker:
-      overall_comments:            "Comentarios Generales"
       overall_comments_success:    "Los Comentarios Generales han sido actualizados exitosamente."
       across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
                                     número de línea para ser redirigido al lugar exacto en el archivo que contiene la
@@ -451,20 +343,10 @@ es:
                                     disponibles. Usted tampoco podrá editar la solicitud."
       cancel_remark_to_change:     "Si desea modificar su solicitud, usted deberá cancelar la misma y crear una nueva."
       remark_submitted:            "Su solicitud de recalificación ha sido enviada:"
-      previous_submission:         "Entrega Anterior"
-      next_submission:             "Siguiente Entrega"
-      marking_status:              "Estado del proceso de calificación:"
-      set_to_complete:             "Marcar como Completo"
-      revert_to_incomplete:        "Marcar como Incompleto"
       notes:                       "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations:         "Incluir Anotaciones"
       include_annotations_warning: "Precaución! Las anotaciones en los PDFs no pueden ser descargados por el momento."
-      select_a_test:               "Por favor seleccione una prueba"
       marks:
-        total_mark:                "Nota total:"
-        released:                  "Publicado:"
-        release:                   "Publicar"
-        unrelease:                 "Ocultar"
         comment:                   "Comentario"
         percentage:                "Porcentaje"
         invalid_mark:              "Nota Inválida!"
@@ -494,11 +376,11 @@ es:
         total_extra_marks:         "Notas adicionales totales:&nbsp;"
         total_extra_percentages:   "Porcentajes adicionales totales:&nbsp;"
         translated_to_points:      "Convertidos a Puntos:"
-        final_mark:                "Nota Final&nbsp;"
         previous_mark:             "Nota Previa&nbsp;"
         old:                       "Anterior: "
         show_old_marks:            "Ver el Resumen de Notas Anteriores"
       annotation:
+        average_annotations:            "%{average_annotations} anotaciones por entrega calificada"
         placeholder:                    "Notación de Markdown y LaTeX"
         remark_flag:                    "(Recalificación)"
         new_annotation:                 "Crear una nueva anotación"
@@ -524,16 +406,10 @@ es:
 
     #app/views/results/common
     common:
-      submission_file:            "Archivo de la entrega:"
-      test_results:               "Resultados de la prueba:"
       feedback_files:             "Archivos de retroalimentación"
-      no_file_in_repository:      "[No existen archivos en el repositorio]"
       cant_display_image:         "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
                                    por favor asegurese de habilitar el soporte para pdf. De click en el botón de
                                    descargas para descargar el archivo"
-      image_downloading:          "La página PDF esta descargándose. Por favor espere."
-      highlighting:               "En espera - Resaltando..."
-      test_code:                  "Código de prueba"
       criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
                                    sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                    ellos tenga su nota correspondiente."
@@ -546,9 +422,6 @@ es:
     csv_invalid_lines:                   "Las siguientes líneas en formato CSV fueron inválidas: "
     csv_valid_lines:                     "Se han actualizado %{valid_line_count} líneas exitosamente"
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
-    collect_and_grade_overwrite_warning: "Recolectar y calificar esta revisión reescribirá toda
-                                          recolección/calificación realizada anteriormente para este grupo en el
-                                          proyecto. ¿Está seguro/a de querer hacer esto?"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
     discard_changes_message:             "¿Está seguro/a de querer descartar sus cambios?"
@@ -597,86 +470,16 @@ es:
                                                              a que ningún estudiante tiene como nombre de usuario
                                                              '%{student_user_name}'"
 
-    selects:
-      all_on_page:  "Todos los %{page_items} elementos en esta página han sido seleccionados."
-      all:          "Todos los %{total_items} elementos han sido seleccionados."
-      select_full:  "De click aquí para seleccionar todos los %{total_items} elementos."
-      select_clear: "De click aquí para borrar la selección."
-
     browse_submissions:
-      collected:                            "recolectada"
-      viewing_revision:                     "Mirando Revisión:"
-      client_time:                          "UPDATE ME:"
-      server_time:                          "UPDATE ME:"
-      all_files:                            "todos los archivos"
-      root:                                 "[root]"
-      collect_and_grab:                     "Recolectar y Calificar esta revisión"
-      could_not_collect:                    "No se pudo recolectar las entregas para el grupo %{group_name} - la fecha
-                                             de recolección no ha llegado todavía."
-      release_marks:                        "Publicar Notas"
-      unrelease_marks:                      "Ocultar Notas"
-      run_tests:                            "Lanzar pruebas"
       reviewer_name:                        "Revisor"
       reviewee_name:                        "Revisado"
-      repository_name:                      "Repositorio: %{repository}"
-      repository:                           "Repositorio"
-      commit_date:                          "Fecha del Commit"
-      marking_state:                        "Estado del Proceso de Calificación"
       review_state:                         "Estado de la Revisión"
-      grace_credits_used:                   "Créditos de Gracia Usados"
-      final_grade:                          "Nota Final"
-      show_all:                             "Mostrar todos"
-      show_unmarked:                        "Mostrar no calificados"
-      show_partial:                         "Mostrar Parciales"
-      show_complete:                        "Mostrar Completos"
-      show_released:                        "Mostrar Publicados"
-      show_remark_request:                  "Mostrar Recalificaciones"
-      show_assigned_to_me:                  "Mostrar los que me han sido Asignados"
-      grading_can_begin:                    "El proceso de calificación puede iniciar"
-      grading_can_begin_after:              "El proceso de calificación puede iniciar después de %{time}"
-      grading_can_begin_for_sections:       "El proceso de calificación puede iniciar para las secciones: %{sections}"
-      grading_can_begin_after_for_sections: "El proceso de calificación puede iniciar después de %{time} para las
-                                             secciones: %{sections}"
-      submissions:	                        "Entregas: %{short_identifier}"
-      csv_report:                           "Reporte en formato CSV"
-      detailed_csv_report:                  "Reporte Detallado en formato CSV"
-      repo_list:                            "Lista de Repositorios"
-      repo_checkout_file:                   "Nueva Copia de Archivo"
-      errors:                               "Errores"
-      filter:                               "Filtro:"
-      show:                                 "Mostrar"
-      per_page:                             "por página"
-      filename:                             "Nombre del Archivo"
-      last_revised:                         "Revisado por última vez"
-      revised_by:                           "Revisado Por"
-      replace:                              "Reemplazar"
-      delete:                               "Eliminar"
-      error_collecting:                     "Algunos problemas ocurrieron mientras se recolectaban los archivos."
-      collect_work_for_section:             "Recolectar los trabajos para esta sección:"
-      all_submissions:                      "todas las entregas"
-      revision_history:                     "%{identifier_ui}: "
       tags_used:                            "Etiquetas Usadas"
       tags_search:                          "Buscar por Etiquetas:"
       tags_list:                            "Filtrar por Etiqueta:"
-      search_submissions:                   "Buscar Entregas"
-      how_many_marked:                      "%{num_marked}/%{num_assigned} proyectos han sido calificados"
-      how_many_marked_short:                "%{num_marked}/%{num_assigned} calificados"
-      average_annotations:                  "%{average_annotations} anotaciones por entrega calificada"
-
-    summaries_index:
-      repository_name:    "Repositorio: %{repository}"
-      repository:         "Repositorio"
-      commit_date:        "Fecha del Commit"
-      marking_state:      "Estado del Proceso de Calificación"
-      grace_credits_used: "Créditos de Gracia Usados"
-      final_grade:        "Nota Final"
-      per_page:           "por página"
-      filename:           "Nombre del Archivo"
-      search_summaries:   "Buscar Resúmenes"
 
     course_summaries_index:
         page_title: "Resumen"
-        ngr:        "No ha recibido una nota"
 
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
@@ -712,17 +515,10 @@ es:
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
 
     results:
-      title:                           "Proyecto %{assignment_name} : %{group_name}"
       review_title:                    "%{assignment_name} Revisión de pares para %{group_name} –
                                         revisado por %{reviewer_name}"
-      results_name:                    "Resultados"
       successfully_changed:            "%{changed} resultados han sido actualizados exitosamente"
-      must_select_a_group:             "Usted debe seleccionar al menos un grupo a actualizar"
-      must_select_a_group_to_collect:  "Usted debe seleccionar al menos un grupo a recolectar"
-      editing_after_release_fail:      "Las notas han sido publicadas. Usted no puede cambiarlas."
       could_not_find_file:             "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
-      results_for:                     "Resultados para "
-      review_for:                      "Revisión para "
 
     mark:
       error:
@@ -742,7 +538,6 @@ es:
       files:                              "Archivos"
       missing_required_files:             "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\">
                                            archivos requeridos no encontrados</span>"
-      no_submission_yet:                  "Usted no ha enviado ninguna entrega todavía"
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       no_group_yet:                       "Usted no tiene un grupo todavía"
@@ -1210,8 +1005,6 @@ es:
     keybinding:
       keyboard_help:          "Ayuda del acceso directo del teclado"
       toggle_compact:         "Cambiar vista compacta"
-      next_submission:        "Siguiente Entrega"
-      previous_submission:    "Entrega Anterior"
       next_criterion:         "Seleccione el siguiente criterio"
       previous_criterion:     "Seleccione el criterio anterior"
       next_level:             "Seleccione el siguiente nivel"

@@ -10,21 +10,21 @@
         columns: [
           {
             id: 'filename',
-            content: '<%= j raw I18n.t('browse_submissions.filename') %>',
+            content: '<%= j raw I18n.t(:filename) %>',
             sortable: true,
             compare: compare_anchor_text,
             searchable: true
           },
           {
             id: 'last_revised_date',
-            content: '<%= j raw I18n.t(:'browse_submissions.last_revised') %>',
+            content: '<%= j raw I18n.t(:'submissions.repo_browser.last_revised') %>',
             sortable: true,
             compare: compare_dates,
             searchable: true
           },
           {
             id: 'revision_by',
-            content: '<%= j raw I18n.t(:'browse_submissions.revised_by') %>',
+            content: '<%= j raw I18n.t(:'submissions.repo_browser.revised_by') %>',
             sortable: true,
             searchable: true
           }

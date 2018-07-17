@@ -6,7 +6,7 @@
       <div id='remark_request_show_results'>
         <%= markdown(submission.remark_request) %>
           <div id='overall_comments_show'>
-            <h3><%= t('marker.overall_comments') %></h3>
+            <h3><%= Result.human_attribute_name(:overall_comment) %></h3>
             <%= result.overall_comment %>
           </div>
       </div>
@@ -37,7 +37,7 @@
       <div id='remark_request_show'>
         <%= markdown(submission.remark_request) %>
           <div id='overall_comments_show'>
-            <h3><%= t('marker.overall_comments') %></h3>
+            <h3><%= Result.human_attribute_name(:overall_comment) %></h3>
             <%= result.overall_comment %>
           </div>
       </div>

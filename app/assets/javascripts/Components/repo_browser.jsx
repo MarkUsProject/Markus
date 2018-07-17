@@ -40,8 +40,8 @@ class RepoBrowser extends React.Component {
   revisionToOption = rev => {
     let text = `${rev.id_ui} `;
     if (rev.timestamp !== rev.server_timestamp) {
-      text += `(${I18n.t('browse_submissions.client_time')} ${rev.timestamp},` +
-              `${I18n.t('browse_submissions.server_time')} ${rev.server_timestamp}`;
+      text += `(${I18n.t('submissions.repo_browser.client_time')} ${rev.timestamp},` +
+              `${I18n.t('submissions.repo_browser.server_time')} ${rev.server_timestamp}`;
     } else {
       text += `(${rev.timestamp})`;
     }
@@ -50,7 +50,7 @@ class RepoBrowser extends React.Component {
     let className = '';
     if (rev.id === this.props.collected_revision_id) {
       className = 'collected';
-      text += ` — ${I18n.t('browse_submissions.collected')}`;
+      text += ` — ${I18n.t('submissions.repo_browser.collected')}`;
     } else {
       className = 'uncollected';
     }
@@ -66,7 +66,7 @@ class RepoBrowser extends React.Component {
     return (
       <div>
         <h3>
-          <label>{I18n.t('browse_submissions.viewing_revision')}</label>
+          <label>{I18n.t('submissions.repo_browser.viewing_revision')}</label>
           <select
             value={this.state.revision_identifier}
             onChange={this.selectRevision}
@@ -101,7 +101,7 @@ class ManualCollectionForm extends React.Component {
 
     return (
       <fieldset>
-        <legend><span>{I18n.t('browse_submissions.manual_collection')}</span></legend>
+        <legend><span>{I18n.t('submissions.collect.manual_collection')}</span></legend>
       <form
         method="POST"
         action={action}
@@ -114,13 +114,13 @@ class ManualCollectionForm extends React.Component {
                value={AUTH_TOKEN} />
         <p>
           <input type="checkbox" name="apply_late_penalty" id="apply_late_penalty" />
-          <label htmlFor="apply_late_penalty">{I18n.t('collect_submissions.apply_late_penalty')}</label>
+          <label htmlFor="apply_late_penalty">{I18n.t('submissions.collect.apply_late_penalty')}</label>
         </p>
         <input type="submit"
                name="commit"
-               value={I18n.t('browse_submissions.collect_and_grab')}
+               value={I18n.t('submissions.collect.this_revision')}
                onClick={(event) => {
-                 if (!confirm(I18n.t('collect_and_grade_overwrite_warning'))) {
+                 if (!confirm(I18n.t('submissions.collect.overwrite_warning'))) {
                    event.preventDefault();
                  }
                }} />

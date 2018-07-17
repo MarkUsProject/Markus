@@ -11,8 +11,7 @@
           <tr>
             <th><%= GradeEntryForm.human_attribute_name(:description) %></th>
             <th><%= GradeEntryForm.human_attribute_name(:date) %></th>
-            <%# Note: this hides the results column within the student view %>
-            <th><%= t('results.results_name') %></th>
+            <th><%= Result.model_name.human.pluralize %></th>
           </tr>
         </thead>
         <tbody>
