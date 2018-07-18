@@ -1,7 +1,10 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
+import "react-table/react-table.css";
+import treeTableHOC from "react-table/lib/hoc/treeTable";
 
+const TreeTable = treeTableHOC(ReactTable);
 const reducer = (accumulator, currentValue) => accumulator + currentValue;
 const makeDefaultState = () => ({
   data: [],
@@ -11,7 +14,6 @@ const makeDefaultState = () => ({
 });
 
 class TestScriptResultTable extends React.Component {
-
 
   constructor() {
     super();
@@ -36,8 +38,8 @@ class TestScriptResultTable extends React.Component {
     });
   }
 
-  // Custom getTrProps function to highlight submissions that have been collected.
-  getTrProps = (state, rowInfo, colInfo, instance) => {
+  // Custom getTdProps function to highlight submissions that have been collected.
+  getTdProps = (state, rowInfo, colInfo) => {
     if (rowInfo) {
       return {
         className: 'test-result-' + rowInfo.row.completion_status
@@ -63,45 +65,36 @@ class TestScriptResultTable extends React.Component {
 
     return(
       <div>
-        <ReactTable
+        <TreeTable
           data={data}
           columns={[
             {
-              Header: I18n.t('automated_tests.test_results_table.time'),
               accessor: "created_at",
-              Cell: row => {
-                return row.value
-              }
+              PivotValue: ({ value }) => <span style={{ color: "red" }}>{value}</span>
             },
             {
-              Header: I18n.t('automated_tests.test_results_table.file_name'),
               accessor: 'file_name',
-              Aggregated: <span></span>
+              PivotValue: ({ value }) => <span>{value}</span>
             },
             {
               Header: I18n.t('automated_tests.test_results_table.test_name'),
-              accessor: 'name',
-              Aggregated: <span></span>
+              accessor: 'name'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.output'),
-              accessor: 'actual_output',
-              Aggregated: <span></span>
+              accessor: 'actual_output'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.status'),
-              accessor: 'completion_status',
-              Aggregated: <span></span>
+              accessor: 'completion_status'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.marks_earned'),
-              accessor: 'marks_earned',
-              aggregate: vals => vals.reduce(reducer)
+              accessor: 'marks_earned'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.marks_total'),
-              accessor: 'marks_total',
-              aggregate: vals => vals.reduce(reducer)
+              accessor: 'marks_total'
             },
           ]}
           pivotBy={["created_at", "file_name"]}
@@ -111,7 +104,7 @@ class TestScriptResultTable extends React.Component {
               desc: true
             }
           ]}
-          getTrProps={this.getTrProps}
+          getTdProps={this.getTdProps}
           // Controlled props
           expanded={this.state.expanded}
           resized={this.state.resized}
