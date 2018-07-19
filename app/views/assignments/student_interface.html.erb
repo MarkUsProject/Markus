@@ -28,11 +28,11 @@
     </div>
 
     <div class='block'>
-      <h2><%= t('submissions') %></h2>
+      <h2><%= Submission.model_name.human.pluralize %></h2>
 
       <div class='block_content'>
         <% if @grouping.nil? %>
-          <p class='notice'><%= t('student.no_submission_yet') %></p>
+          <p class='notice'><%= t('submissions.student.no_submission') %></p>
         <% else %>
           <% unless @grouping.is_valid? %>
             <p class='notice'>

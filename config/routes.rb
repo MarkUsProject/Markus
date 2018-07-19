@@ -204,6 +204,7 @@ Rails.application.routes.draw do
             post 'remove_tag'
             get 'run_tests'
             get 'get_test_runs_results'
+            get 'stop_tests'
           end
         end
       end

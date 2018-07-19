@@ -39,7 +39,7 @@
 
         <div id='annotations_summary' class='flex-col'>
           <div id='annotations_summary_head'>
-            <h3><%= t('marker.overall_comments') %></h3>
+            <h3><%= Result.human_attribute_name(:overall_comment) %></h3>
 
             <%= render partial: 'results/marker/overall_comment',
                        locals: { result: old_result ? old_result : result } %>
