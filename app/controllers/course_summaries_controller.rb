@@ -16,53 +16,58 @@ class CourseSummariesController < ApplicationController
   def populate
     assignment_marks = []
     gefms = []
+
+    assignment_names = Assignment.pluck(:id)
+    gefms_names = GradeEntryForm.pluck(:id)
+
     if current_user.admin?
       table = get_table_json_data
-      markschemes = []
-      table[0][:assignment_marks].each do |key|
-        assignment_marks.concat([
-                                  {
-                                    accessor: "assignment_marks.#{key[0]}",
-                                    Header: Assignment.find(key[0]).short_identifier
-                                  }
-                                ])
-      end
-      table[0][:grade_entry_form_marks].each do |key|
-        gefms.concat([
-                       {
-                         accessor: "grade_entry_form_marks.#{key[0]}",
-                         Header: GradeEntryForm.find(key[0]).short_identifier
-                       }
-                     ])
-      end
-      table[0][:weighted_marks].each_key do |key|
-        markschemes.concat([
-                             {
-                               accessor: "weighted_marks.#{key}",
-                               Header: MarkingScheme.find(key).name
-                             }
-                           ])
-      end
-      render json: { data: table, marks: assignment_marks.concat(gefms).concat(markschemes) }
+      mark_schemes = []
+
+      markscheme_names = MarkingScheme.pluck(:id)
+
+      assignment_marks.concat(assignment_names.map do |aname|
+        {
+          accessor: "assignment_marks.#{aname}",
+          Header: Assignment.find(aname).short_identifier
+        }
+      end)
+
+      gefms.concat(gefms_names.map do |sname|
+        {
+          accessor: "grade_entry_form_marks.#{sname}",
+          Header: GradeEntryForm.find(sname).short_identifier
+        }
+      end)
+
+      mark_schemes.concat(markscheme_names.map do |mname|
+        {
+          accessor: "weighted_marks.#{mname}",
+          Header: MarkingScheme.find(mname).name
+        }
+      end)
+
+      render json: { data: table, marks: assignment_marks.concat(gefms).concat(mark_schemes) }
+
     else
       table = get_student_row_information
-      table[0][:assignment_marks].each do |key|
-        assignment_marks.concat([
-                                  {
-                                    accessor: "assignment_marks.#{key[0]}",
-                                    Header: Assignment.find(key[0]).short_identifier
-                                  }
-                                ])
-      end
-      table[0][:grade_entry_form_marks].each do |key|
-        gefms.concat([
-                       {
-                         accessor: "grade_entry_form_marks.#{key[0]}",
-                         Header: GradeEntryForm.find(key[0]).short_identifier
-                       }
-                     ])
-      end
+
+      assignment_marks.concat(assignment_names.map do |aname|
+        {
+          accessor: "assignment_marks.#{aname}",
+          Header: Assignment.find(aname).short_identifier
+        }
+      end)
+
+      gefms.concat(gefms_names.map do |sname|
+        {
+          accessor: "grade_entry_form_marks.#{sname}",
+          Header: GradeEntryForm.find(sname).short_identifier
+        }
+      end)
+
       render json: { data: table, marks: assignment_marks.concat(gefms) }
+
     end
   end
 
