@@ -42,13 +42,20 @@ class MarkingSchemeTable extends React.Component {
       Header: I18n.t('marking_schemes.table_modify_column'),
       Cell: ({original}) => (
         <span>
-                <a href={original.edit_link}>
-                  {I18n.t('edit')}
-                </a>
+          <a
+            onClick={this.refresh}
+            href={original.edit_link}
+            data-remote='true'>
+            {I18n.t('edit')}
+          </a>
           &nbsp;|&nbsp;
-          <a href={original.delete_link}>
-                  {I18n.t('delete')}
-                </a>
+          <a
+            href={original.delete_link}
+            onClick={this.refresh}
+            data-remote='true'
+            data-method='delete'>
+            {I18n.t('delete')}
+          </a>
         </span>
       ),
       sortable: false

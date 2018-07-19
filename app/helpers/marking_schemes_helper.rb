@@ -15,7 +15,7 @@ module MarkingSchemesHelper
       }
     end
 
-    req_data.to_json
+    req_data
   end
 
   def get_edit_link_for_marking_scheme_id(id)
