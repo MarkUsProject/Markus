@@ -1,3 +1,17 @@
+<% content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeTestScriptResultTable(document.getElementById('test_script_result_table'),{
+        result_id: <%= @result.id %>,
+        submission_id: <%= @result.submission_id %>,
+        assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        detailed: <%= @current_user.admin? || @current_user.ta? ||
+                          @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+      });
+    })
+  </script>
+<% end %>
+
 <h2><%= t('automated_tests.test_results') %></h2>
 <div class="block_content">
   <div class="sub_block test_points">
@@ -11,6 +25,7 @@
                   class: 'button run_tests right' %>
     <% end %>
   </div>
+  <div id='test_script_result_table'></div>
   <% unless test_runs.empty? %>
     <%= render partial: 'automated_tests/test_run',
                locals: { current_user: current_user, ran_by: ran_by, latest_date: test_runs[0].created_at },

@@ -1,3 +1,4 @@
+require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_action :authorize_only_for_admin,
@@ -651,6 +652,25 @@ class ResultsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
     grace_deduction.destroy
+  end
+
+  def get_test_runs_results
+    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
+                                          .where(test_runs: { submission_id: params[:submission_id] })
+                                          .select(:created_at, :user_id, :name, :file_name,
+                                                  :actual_output, :completion_status,
+                                                  'test_results.marks_earned', 'test_results.marks_total')
+    # Create new entries that combine created_at and user_name together
+    test_script_results = test_script_results.as_json
+    test_script_results.each do |g|
+      g['created_at_user_name'] = I18n.l(g['created_at']) + ' (' + User.find(g['user_id']).user_name + ')'
+    end
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: test_script_results
+      }
+    end
   end
 
   private
