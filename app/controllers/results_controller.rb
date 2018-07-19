@@ -662,7 +662,7 @@ class ResultsController < ApplicationController
                                                   'test_results.marks_earned', 'test_results.marks_total')
     # Create new entries that combine created_at and user_name together
     test_script_results = test_script_results.as_json
-    for g in test_script_results do
+    test_script_results.each do |g|
       g['created_at_user_name'] = I18n.l(g['created_at']) + ' (' + User.find(g['user_id']).user_name + ')'
     end
     respond_to do |format|
