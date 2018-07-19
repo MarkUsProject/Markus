@@ -372,13 +372,21 @@ class AssignmentsController < ApplicationController
   end
 
   def batch_runs
+    puts "Did it get here"
     @assignment = Assignment.find(params[:id])
+    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
+                            .select(:created_at, :user_id, :name, :file_name,
+                                    :actual_output, :completion_status,
+                                    'test_results.marks_earned', 'test_results.marks_total')
+    # Create new entries that combine created_at and user_name together
+    test_script_results = test_script_results.as_json
+    test_script_results.each do |g|
+      g['user_name'] = User.find(g['user_id']).user_name
+    end
     respond_to do |format|
-      format.html {
-        render layout: 'assignment_content'
-      }
+      format.html
       format.json {
-        render json: @assignment.summary_json(@current_user)
+        render json: test_script_results
       }
     end
   end
