@@ -1,16 +1,15 @@
 <%= content_for :head do %>
-<script>
+  <script>
   document.addEventListener('DOMContentLoaded', () => {
-    makeAssignmentSummaryTable(
-      document.getElementById('assignment_summary_table'),
-      {
-        assignment_id: <%= @assignment.id %>,
-  is_admin: <%= @current_user.admin? %>
-  }
-  );
-  });
+    makeBatchTestRunTable(document.getElementById('batch_test_run_table'),{
+      assignment_id: <%= @assignment.id %>,
+      detailed: <%= @current_user.admin? || @current_user.ta? ||
+                        @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+    });
+  })
 </script>
 <% end %>
 
-
-<div id='assignment_summary_table'></div>
+<h1>New React Table here</h1>
+<br/>
+<div id='batch_test_run_table'></div>
