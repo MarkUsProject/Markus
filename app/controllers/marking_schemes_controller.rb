@@ -16,17 +16,9 @@ class MarkingSchemesController < ApplicationController
     assignment_weights = []
     spreadsheet_weights = []
 
-    assignment_names = []
-    table.pluck(:assignment_weights).map do |weights|
-      extra = weights.keys-assignment_names
-      assignment_names.concat(extra)
-    end
+    assignment_names = Assignment.pluck(:id)
 
-    spreadsheet_names = []
-    table.pluck(:spreadsheet_weights).map do |weights|
-      extra = weights.keys - spreadsheet_names
-      spreadsheet_names.concat(extra)
-    end
+    spreadsheet_names = GradeEntryForm.pluck(:id)
 
     assignment_weights.concat(assignment_names.map do |aname|
       {
