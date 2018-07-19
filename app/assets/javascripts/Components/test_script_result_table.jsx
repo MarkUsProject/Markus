@@ -5,11 +5,11 @@ import "react-table/react-table.css";
 import treeTableHOC from "react-table/lib/hoc/treeTable";
 
 const TreeTable = treeTableHOC(ReactTable);
-const reducer = (accumulator, currentValue) => accumulator + currentValue;
 const makeDefaultState = () => ({
   data: [],
   expanded: {},
   resized: [],
+  sorted: [{id: "created_at_user_name", desc: true}],
   first_load: false
 });
 
@@ -50,15 +50,13 @@ class TestScriptResultTable extends React.Component {
 
   render() {
     const {data} = this.state;
+    // Set the row map to expand the latest test run when the webpage is loaded
     if (this.state.first_load){
-      console.log("first load");
-      // Set the row map to expand the latest test run
       let sub_row_map = {};
       for(let i = 0; i<this.state.data.length; i++){
         sub_row_map[i] = true;
       }
       console.log(sub_row_map);
-      // this.setState({expanded: {0: sub_row_map}});
       this.state.expanded = {0: sub_row_map};
       this.state.first_load = false;
     }
@@ -69,12 +67,10 @@ class TestScriptResultTable extends React.Component {
           data={data}
           columns={[
             {
-              accessor: "created_at",
-              PivotValue: ({ value }) => <span style={{ color: "red" }}>{value}</span>
+              accessor: "created_at_user_name"
             },
             {
-              accessor: 'file_name',
-              PivotValue: ({ value }) => <span>{value}</span>
+              accessor: 'file_name'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.test_name'),
@@ -97,20 +93,35 @@ class TestScriptResultTable extends React.Component {
               accessor: 'marks_total'
             },
           ]}
-          pivotBy={["created_at", "file_name"]}
-          defaultSorted={[
-            {
-              id: "created_at",
-              desc: true
-            }
-          ]}
+          pivotBy={["created_at_user_name", "file_name"]}
           getTdProps={this.getTdProps}
           // Controlled props
           expanded={this.state.expanded}
           resized={this.state.resized}
+          sorted={this.state.sorted}
           // Callbacks
           onExpandedChange={expanded => this.setState({ expanded })}
           onResizedChange={resized => this.setState({ resized })}
+          onSortedChange={sorted => this.setState({ sorted })}
+          // Custom Sort Method to sort by latest date first
+          defaultSortMethod={ (a, b) => {
+            // sorting for created_at_user_name to ensure it's sorted by date
+            if (this.state.sorted[0].id === "created_at_user_name"){
+              if (typeof a === "string" && typeof b === "string") {
+                let a_date = Date.parse(a.split('(')[0]);
+                let b_date = Date.parse(b.split('(')[0]);
+                return a_date > b_date ? 1 : -1;
+              }
+            }else{
+              return a > b ? 1 : -1
+            }
+          }}
+          defaultSorted={[
+          {
+            id: "created_at_user_name",
+            desc: true
+          }
+          ]}
         />
       </div>
     );

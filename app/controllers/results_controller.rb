@@ -651,27 +651,12 @@ class ResultsController < ApplicationController
   def get_test_runs_results
     test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
                                .where(test_runs: {submission_id: params[:submission_id]})
-                               .select(:test_script_id, :id, :test_run_id, :created_at, :name, :file_name,
-                                       :actual_output, :completion_status, :marks_earned, :marks_total)
-    # test_script_results.map do |g|
-    #   puts "Did it get here!"
-    #   puts "#{g[:created_at]}"
-    #   puts "#{I18n.l(g[:created_at])}"
-    #   puts "======"
-    #   g[:created_at] = I18n.l(g[:created_at])
-    #   base = {
-    #     test_run_id:g[:test_run_id],
-    #     created_at: g[3].nil? ? '' : I18n.l(g[3]),
-    #     name:g[4],
-    #     file_name:g[5],
-    #     actual_output:g[6],
-    #     completion_status:g[7],
-    #     marks_earned:g[8],
-    #     marks_total:g[9]
-    #   }
-    # end
+                               .select(:created_at, :user_id, :name, :file_name,
+                                       :actual_output, :completion_status, 'test_results.marks_earned', 'test_results.marks_total')
+    # Create new entries that combine created_at and user_name together
+    test_script_results = test_script_results.as_json
     for g in test_script_results do
-      g[:created_at] = g[:created_at].to_time.to_formatted_s(:long)
+      g["created_at_user_name"] = I18n.l(g["created_at"]) + ' (' + User.find(g["user_id"]).user_name + ')'
     end
     respond_to do |format|
       format.html
