@@ -37,21 +37,21 @@ class MarkingSchemeTable extends React.Component {
       filterable: true,
     }
   ];
+
   modifyColumn = [
     {
       Header: I18n.t('marking_schemes.table_modify_column'),
       Cell: ({original}) => (
         <span>
           <a
-            onClick={this.refresh}
             href={original.edit_link}
             data-remote='true'>
             {I18n.t('edit')}
           </a>
           &nbsp;|&nbsp;
           <a
+            onClick={this.fetchData}
             href={original.delete_link}
-            onClick={this.refresh}
             data-remote='true'
             data-method='delete'>
             {I18n.t('delete')}
