@@ -116,12 +116,6 @@ class TestScriptResultTable extends React.Component {
               return a > b ? 1 : -1
             }
           }}
-          defaultSorted={[
-          {
-            id: "created_at_user_name",
-            desc: true
-          }
-          ]}
         />
       </div>
     );
