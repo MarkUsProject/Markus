@@ -1,30 +1,9 @@
-<% test_script_results = test_run.test_script_results %>
 <div class='test-run'>
-  <h3>
-    <span class='right'>
-      <%= l(test_run.created_at, format: :long) %>
-      <%= "(#{test_run.user.user_name})" %>
-    </span>
-  </h3>
-  <% if test_run.created_at == latest_date %>
-    <%= link_to 'Hide Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'collapse'%>
-  <% else %>
-    <%= link_to 'Show Results', 'javascript:void(0)', onclick: 'toggleResult(this);', class: 'expand' %>
-  <% end %>
-  <div>
-    <% if test_run.in_progress? %>
-      <%= t('automated_tests.test_run_info', test_run_id: test_run.id.to_s, created_at: test_run.created_at.to_s) %>
+  <% if test_run.in_progress? %>
+    <%= t('automated_tests.test_run_info', test_run_id: test_run.id.to_s, created_at: test_run.created_at.to_s) %>
 
-      <%= link_to t('automated_tests.stop_tests'),
-                  stop_tests_assignment_submission_result_path + "?test_run_id=#{test_run.id}",
-                  class: 'button left' %>
-    <% else %>
-      <div id="test_results" class="sub_block">
-        <%= render partial: 'automated_tests/test_script_result',
-                   locals: { current_user: current_user, ran_by: ran_by },
-                   collection: test_script_results %>
-      </div>
-    <% end %>
-  </div>
-  <script>hideIfNotLatest("<%=latest_date.to_s.delete(' ')%>", "<%=test_run.created_at.to_s.delete(' ')%>")</script>
+    <%= link_to t('automated_tests.stop_tests'),
+                stop_tests_assignment_submission_result_path + "?test_run_id=#{test_run.id}",
+                class: 'button left' %>
+  <% end %>
 </div>

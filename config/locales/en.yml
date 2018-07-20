@@ -965,6 +965,9 @@ en:
         unlimited: "Unlimited"
         hours: "hours"
       test_results_table:
+        time: "Time"
+        test_runs: "Runs"
+        file_name: "File Name"
         test_name: "Test Name"
         input: "Input"
         output: "Output"

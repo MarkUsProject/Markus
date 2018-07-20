@@ -4,7 +4,6 @@
   <%= stylesheet_link_tag('pdfjs/viewer') %>
   <%= javascript_include_tag 'panes.js' %>
   <%= javascript_include_tag 'pdfjs' %>
-  <%= javascript_include_tag 'testresults_config' %>
   <%= javascript_tag do -%>
     PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
   <% end -%>
