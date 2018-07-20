@@ -329,10 +329,12 @@ class SubmissionsController < ApplicationController
       unless params[:new_files].nil?
         params[:new_files].each do |f|
           if f.size > MarkusConfigurator.markus_config_max_file_size
-            max_size_MB = (MarkusConfigurator.markus_config_max_file_size / 1000000.00).round(2)
-            error_message = "Error occurred while uplading file \"#{ f.original_filename }\"" \
-               ": The size of the uploaded file exceeds the maximum of #{ max_size_MB.to_s } MB."
-            flash_message(:error, error_message)
+            flash_message(
+              :error,
+              t('student.submission.file_too_large',
+                file_name: f.original_filename,
+                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))
+            )
             return
           elsif f.size == 0
             flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

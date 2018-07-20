@@ -655,24 +655,14 @@ class AssignmentsController < ApplicationController
     redirect_to action: 'index'
   end
 
-
   def populate_file_manager
     assignment = Assignment.find(params[:id])
-    path = '/'
-    revision = assignment.repo.get_latest_revision
-    revision_identifier = revision.revision_identifier
-
-    full_path = File.join(assignment.repository_folder, path)
-    if revision.path_exists?(full_path)
-      files = revision.files_at_path(full_path)
-      files_info = get_files_info(files, assignment.id, revision_identifier, path)
-      directories = revision.directories_at_path(full_path)
-      directories_info = get_directories_info(directories, revision_identifier,
-                                              path, assignment.id, 'populate_file_manager')
-      render json: files_info + directories_info
-    else
-      render json: []
+    entries = []
+    assignment.access_repo do |repo|
+      revision = repo.get_latest_revision
+      entries = get_all_file_data(revision, assignment, '')
     end
+    render json: entries
   end
 
   def update_files
@@ -681,149 +671,101 @@ class AssignmentsController < ApplicationController
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 
-    # We'll use this hash to carry over some error state to the
-    # file_manager view.
-    @file_manager_errors = Hash.new
     students_filename = []
-    @path = params[:path] || '/'
+    path = params[:path] || '/'
+    assignment_folder = File.join(@assignment.repository_folder, path)
+    file_revisions = params[:file_revisions] || {}
+    delete_files = params[:delete_files] || []   # The files that will be deleted
+    new_files = params[:new_files] || []         # The files that will be added
 
-    unless params[:new_files].nil?
-      params[:new_files].each do |f|
-        if f.size > MarkusConfigurator.markus_config_max_file_size
-          @file_manager_errors[:size_conflict] =
-              "Error occured while uploading file \"" +
-                  f.original_filename +
-                  '": The size of the uploaded file exceeds the maximum of ' +
-                  "#{(MarkusConfigurator.markus_config_max_file_size/ 1000000.00)
-                         .round(2)}" +
-                  'MB.'
-          render :file_manager
-          return
-        end
+    new_files.each do |f|
+      if f.size > MarkusConfigurator.markus_config_max_file_size
+        flash_message(
+          :error,
+          t('student.submission.file_too_large',
+            file_name: f.original_filename,
+            max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))
+        )
+        head :bad_request
+        return
+      elsif f.size == 0
+        flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
     end
 
     @assignment.access_repo do |repo|
-      assignment_folder = File.join(@assignment.repository_folder, @path)
-
-      # Get the revision numbers for the files that we've seen - these
-      # values will be the "expected revision numbers" that we'll provide
-      # to the transaction to ensure that we don't overwrite a file that's
-      # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
-
-      # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
-
-      # The files that will be added
-      new_files = params[:new_files].nil? ? {} : params[:new_files]
-
-      # Create transaction, setting the author.  Timestamp is implicit.
+      # Create transaction, setting the author.
       txn = repo.get_transaction(current_user.user_name)
 
-      log_messages = []
-      begin
-        if new_files.empty?
-          # delete files marked for deletion
-          delete_files.each do |filename|
-            txn.remove(File.join(assignment_folder, filename),
-                       file_revisions[filename])
-            log_messages.push("Deleted file '#{filename}' for assignment" +
-                              " '#{@assignment.short_identifier}' starter code.")
-          end
+      # delete files marked for deletion
+      delete_files.each do |filename|
+        txn.remove(File.join(assignment_folder, filename),
+                   file_revisions[filename])
+      end
+
+      # Add new files and replace existing files
+      revision = repo.get_latest_revision
+      files = revision.files_at_path(File.join(@assignment.repository_folder, path))
+
+      new_files.each do |file_object|
+        filename = file_object.original_filename
+        if filename.blank?
+          raise I18n.t('student.submission.invalid_file_name')
         end
 
-        # Add new files and replace existing files
-        revision = repo.get_latest_revision
-        files = revision.files_at_path(
-            File.join(@assignment.repository_folder, @path))
-        filenames = files.keys
-
-
-        new_files.each do |file_object|
-          filename = file_object.original_filename
-          # sanitize_file_name in SubmissionsHelper
-          if filename.nil?
-            raise I18n.t('student.submission.invalid_file_name')
-          end
-
-          # Branch on whether the file is new or a replacement
-          if filenames.include? filename
-            file_object.rewind
-            txn.replace(File.join(assignment_folder, filename), file_object.read,
-                        file_object.content_type, revision.revision_identifier)
-            log_messages.push("Replaced content of file '#{filename}'" +
-                              ' for assignment' +
-                              " '#{@assignment.short_identifier}' starter code.")
-          else
-            students_filename << filename
-            # Sometimes the file pointer of file_object is at the end of the file.
-            # In order to avoid empty uploaded files, rewind it to be save.
-            file_object.rewind
-            txn.add(File.join(assignment_folder,
-                              sanitize_file_name(filename)),
-                    file_object.read, file_object.content_type)
-            log_messages.push("Submitted file '#{filename}'" +
-                              " for assignment '#{@assignment.short_identifier}'" +
-                              " starter code.")
-          end
-        end
-
-        # finish transaction
-        unless txn.has_jobs?
-          flash[:transaction_warning] =
-              I18n.t('student.submission.no_action_detected')
-          # can't use redirect_to here. See comment of this action for details.
-          set_filebrowser_vars(@assignment)
-          render :file_manager, id: assignment_id
-          return
-        end
-        if repo.commit(txn)
-          flash[:success] = I18n.t('update_files.success')
-          # flush log messages
-          m_logger = MarkusLogger.instance
-          log_messages.each do |msg|
-            m_logger.log(msg)
-          end
+        # Branch on whether the file is new or a replacement
+        if files.key? filename
+          file_object.rewind
+          txn.replace(File.join(assignment_folder, filename), file_object.read,
+                      file_object.content_type, revision.revision_identifier)
         else
-          @file_manager_errors[:update_conflicts] = txn.conflicts
+          students_filename << filename
+          # Sometimes the file pointer of file_object is at the end of the file.
+          # In order to avoid empty uploaded files, rewind it to be save.
+          file_object.rewind
+          txn.add(File.join(assignment_folder,
+                            sanitize_file_name(filename)),
+                  file_object.read, file_object.content_type)
         end
+      end
 
-        # can't use redirect_to here. See comment of this action for details.
-        set_filebrowser_vars(@assignment)
-        redirect_to edit_assignment_path(@assignment)
-
-      rescue Exception => e
-        m_logger = MarkusLogger.instance
-        m_logger.log(e.message)
-        # can't use redirect_to here. See comment of this action for details.
-        @file_manager_errors[:commit_error] = e.message
-        set_filebrowser_vars(@assignment)
-        redirect_to edit_assignment_path(@assignment)
+      if !txn.has_jobs?
+        flash_message(:error, I18n.t('student.submission.no_action_detected'))
+        head :bad_request
+      elsif repo.commit(txn)
+        flash_message(:success, t('update_files.success'))
+        if new_files
+          redirect_back(fallback_location: root_path)
+        else
+          head :ok
+        end
+      else
+        flash_message(:error, txn.conflicts.to_s)
+        head :bad_request
       end
     end
   end
 
-  def download
-    @assignment = Assignment.find(params[:id])
+  def download_starter_code
+    assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
 
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
-    @assignment.access_repo do |repo|
+    assignment.access_repo do |repo|
       if revision_identifier.nil?
-        @revision = repo.get_latest_revision
+        revision = repo.get_latest_revision
       else
-        @revision = repo.get_revision(revision_identifier)
+        revision = repo.get_revision(revision_identifier)
       end
 
       begin
-        file = @revision.files_at_path(File.join(@assignment.repository_folder,
-                                                 path))[params[:file_name]]
+        file = revision.files_at_path(File.join(assignment.repository_folder,
+                                                path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render plain: I18n.t('student.submission.missing_file',
-                            file_name: params[:file_name], message: e.message)
+        render plain: t('student.submission.missing_file',
+                        file_name: params[:file_name], message: e.message)
         return
       end
 
@@ -840,9 +782,6 @@ class AssignmentsController < ApplicationController
     end
   end
 
-
-
-
   private
 
     def sanitize_file_name(file_name)
@@ -851,21 +790,6 @@ class AssignmentsController < ApplicationController
       File.basename(file_name).gsub(
           SubmissionFile::FILENAME_SANITIZATION_REGEXP,
           SubmissionFile::SUBSTITUTION_CHAR)
-    end
-
-    def set_filebrowser_vars(assignment)
-      assignment.access_repo do |repo|
-        @revision = repo.get_latest_revision
-        @files = @revision.files_at_path(File.join(@assignment.repository_folder,
-                                                   @path))
-        @missing_assignment_files = []
-        assignment.assignment_files.each do |assignment_file|
-          unless @revision.path_exists?(File.join(assignment.repository_folder,
-                                                  assignment_file.filename))
-            @missing_assignment_files.push(assignment_file)
-          end
-        end
-      end
     end
 
   def set_repo_vars(assignment, grouping)
@@ -879,43 +803,53 @@ class AssignmentsController < ApplicationController
     end
   end
 
-    def get_files_info(files, assignment_id, revision_identifier, path)
-      files.map do |file_name, file|
-        f = {}
-        f[:id] = file.object_id
-        f[:filename] = view_context.image_tag('icons/page_white_text.png') +
-            view_context.link_to(" #{file_name}", action: 'download',
-                                 id: assignment_id,
-                                 revision_identifier: revision_identifier,
-                                 file_name: file_name,
-                                 path: path)
-        f[:raw_name] = file_name
-        f[:last_revised_date] = l(file.last_modified_date)
-        f[:last_modified_revision] = file.last_modified_revision
-        f[:revision_by] = file.user_id
-        f
-      end
+  # Recursively return data for all starter code files.
+  # TODO: remove code duplication with the equivalent SubmissionsController method.
+  def get_all_file_data(revision, assignment, path)
+    full_path = File.join(assignment.repository_folder, path)
+    return [] unless revision.path_exists?(full_path)
+
+    files = revision.files_at_path(full_path)
+    entries = get_files_info(files, assignment.id, revision.revision_identifier, path)
+
+    entries.each do |data|
+      data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
+      data[:modified] = data[:last_revised_date]
+      data[:size] = 1 # Dummy value
     end
 
-    def get_directories_info(directories, revision_identifier, path, assignment_id, action)
-      directories.map do |directory_name, directory|
-        d = {}
-        d[:id] = directory.object_id
-        d[:filename] = view_context.image_tag('icons/folder.png') +
-            # TODO: should the call below use
-            # id: assignment_id and grouping_id: grouping_id
-            # like the files info?
-            view_context.link_to(" #{directory_name}/",
-                                 action: action,
-                                 id: assignment_id,
-                                 revision_identifier: revision_identifier,
-                                 path: File.join(path, directory_name))
-        d[:last_revised_date] = l(directory.last_modified_date)
-        d[:last_modified_revision] = directory.last_modified_revision
-        d[:revision_by] = directory.user_id
-        d
-      end
+    revision.directories_at_path(full_path).each do |directory_name, _|
+      entries.concat(get_all_file_data(
+                       revision,
+                       path.blank? ? directory_name : File.join(path, directory_name)
+                     ))
     end
+
+    entries
+  end
+
+  def get_files_info(files, assignment_id, revision_identifier, path)
+    files.map do |file_name, file|
+      {
+        id: file.object_id,
+        url: download_starter_code_assignment_url(
+          id: assignment_id,
+          file_name: file_name,
+          path: path,
+        ),
+        filename: view_context.image_tag('icons/page_white_text.png') +
+          view_context.link_to(file_name,
+                               action: 'download_starter_code',
+                               id: assignment_id,
+                               file_name: file_name,
+                               path: path),
+        raw_name: file_name,
+        last_revised_date: l(file.last_modified_date),
+        last_modified_revision: file.last_modified_revision,
+        revision_by: file.user_id
+      }
+    end
+  end
 
     def update_assignment!(map)
       assignment = Assignment.

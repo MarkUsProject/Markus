@@ -150,6 +150,8 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         starter_code: "Starter Code"
+        starter_code_edit_html: "Starter code files you upload will be automatically added to every new group's repositories. However, you can only add starter code files if no groups have been created yet for this assignment."
+        starter_code_read_only: "Because at least one group exists for this assignment, you may not modify any starter code files at this point."
         help:
             assignment_form:
                 properties: "Short Identifier: This is the title that will be used in menus, and default repository folder name. Because it is used for a directory name, it shouldn't contain spaces.<br />Assignment Name: Longer descriptive name, used as assignment title.<br />Message: Additional text displayed to students: additional information or instructions can go here.<br />Separate Section Due Dates: if checked, each sections can have a different due date.<br />Due Date: visible to students when they view assignment. Used to determine which version of a student's submission to grade. Can be changed later (e.g., for extensions). Changing the due date after assignments have been collected will not affect collected assignments.<br />Repository Folder: usually the Short Identifier.<br />Allow Web Submits: if unchecked, students must use a version control system to submit files and will not see the web submission view.<br />"
@@ -500,6 +502,7 @@ en:
         replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
         version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
+        file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
     #Graders' View
     graders:

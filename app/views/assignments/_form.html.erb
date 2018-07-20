@@ -467,18 +467,17 @@
     </div>
   </fieldset>
 
-  <%# Starter Code %>
-
   <%= f.submit t(:submit),
                data: { disable_with: t('working') },
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>
-<% if @assignment.can_upload_starter_code? && @assignment.id %>
-    <fieldset>
-      <legend>
-        <span><%= t('upload_the', item: t('assignment.starter_code')) %></span>
-      </legend>
-      <%= MarkusConfigurator.markus_config_repository_external_base_url + '/' + @assignment.repository_name %>
-      <%= render 'file_manager' %>
-    </fieldset>
+
+<%# Starter Code %>
+<% if MarkusConfigurator.markus_starter_code_on && @assignment.id %>
+  <fieldset>
+    <legend>
+      <span><%= t('upload_the', item: t('assignment.starter_code')) %></span>
+    </legend>
+    <%= render 'file_manager' %>
+  </fieldset>
 <% end %>
