@@ -29,7 +29,7 @@ class RawFileManager extends RawFileBrowser {
       );
     }
 
-    let actions;
+    let actions = [];
 
     if (!this.props.readOnly && selectedItem) {
       // Something is selected. Build custom actions depending on what it is.
@@ -57,7 +57,6 @@ class RawFileManager extends RawFileBrowser {
         )
       }
       else {
-        actions = [];
         if (
           selectionIsFolder &&
           typeof this.props.onCreateFolder === 'function' &&
@@ -131,7 +130,6 @@ class RawFileManager extends RawFileBrowser {
     }
     else if (!this.props.readOnly) {
       // Nothing selected.
-      actions = [];
       if (
         typeof this.props.onCreateFolder === 'function' &&
         !this.state.nameFilter
@@ -164,17 +162,18 @@ class RawFileManager extends RawFileBrowser {
       );
     }
 
-    // Download action is always available
-    actions.unshift(
-      <li key="action-download-all">
-        <a
-          href={this.props.downloadAllURL}
-        >
-          <i className="fa fa-download-file-o" aria-hidden="true"/>
-          &nbsp;{I18n.t('download_the', {item: I18n.t('all')})}
-        </a>
-      </li>
-    );
+    if (this.props.downloadAllURL) {
+      actions.unshift(
+        <li key="action-download-all">
+          <a
+            href={this.props.downloadAllURL}
+          >
+            <i className="fa fa-download-file-o" aria-hidden="true"/>
+            &nbsp;{I18n.t('download_the', {item: I18n.t('all')})}
+          </a>
+        </li>
+      );
+    }
 
     let actionList;
     if (actions.length) {

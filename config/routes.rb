@@ -54,7 +54,7 @@ Rails.application.routes.draw do
         get 'view_summary'
         get 'populate_file_manager'
         post 'update_files'
-        get 'download'
+        get 'download_starter_code'
         get 'peer_review'
         get 'summary'
         get 'csv_summary'
