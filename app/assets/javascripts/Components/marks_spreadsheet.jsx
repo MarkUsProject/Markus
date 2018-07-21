@@ -102,7 +102,7 @@ class RawMarksSpreadsheet extends React.Component {
 
   totalColumn = () => { return {
     accessor: 'total_marks',
-    Header: `${I18n.t('grade_entry_forms.grades.total')} (${this.props.out_of_total})`,
+    Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.out_of_total})`,
     minWidth: 50,
     className: 'grade-total',
     defaultSortDesc: true,
@@ -265,10 +265,10 @@ class SpreadsheetActionBox extends React.Component {
     return (
       <div className='react-release-marks'>
         <button onClick={() => this.props.toggleRelease(true)}>
-          {I18n.t('browse_submissions.release_marks')}
+          {I18n.t('submissions.release_marks')}
         </button>
         <button onClick={() => this.props.toggleRelease(false)}>
-          {I18n.t('browse_submissions.unrelease_marks')}
+          {I18n.t('submissions.unrelease_marks')}
         </button>
       </div>
     );

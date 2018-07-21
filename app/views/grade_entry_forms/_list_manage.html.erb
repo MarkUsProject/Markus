@@ -1,17 +1,17 @@
 <%# Display a list of the current grade entry forms %>
 
 <div class='section'>
-  <h3><%= t(:current_grade_entry_forms_title) %></h3>
+  <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
 
   <% if @grade_entry_forms.empty? %>
-    <p><%= t(:no_grade_entry_forms_message) %></p>
+    <p><%= t('grade_entry_forms.none') %></p>
   <% else %>
     <div class='table'>
       <table>
         <thead>
           <tr>
-            <th><%= t(:spreadsheet_item) %></th>
-            <th><%= t(:spreadsheet_date) %></th>
+            <th><%= GradeEntryForm.model_name.human %></th>
+            <th><%= GradeEntryForm.human_attribute_name(:date) %></th>
           </tr>
         </thead>
         <tbody>

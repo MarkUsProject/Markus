@@ -12,6 +12,8 @@ module Api
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+    skip_before_action :verify_authenticity_token
+
     # Unless overridden by a subclass, all routes are 404's by default
     def index
       render 'shared/http_status', locals: {code: '404', message:

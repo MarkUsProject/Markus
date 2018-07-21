@@ -18,12 +18,7 @@ module SubmissionsHelper
       results = result_prs.map &:result
       results.each do |result|
         result.released_to_students = release
-        unless result.save!
-          raise t('marking_state.result_not_saved', group_name: name)
-        end
-
-        #TODO: no error is thrown, but result.released_to_students is suddenly false
-
+        result.save
         changed += 1
       end
     end
@@ -42,23 +37,20 @@ module SubmissionsHelper
       name = grouping.group.group_name
 
       unless grouping.has_submission?
-        raise t('marking_state.no_submission', group_name: name)
+        raise t('submissions.errors.no_submission', group_name: name)
       end
 
       unless grouping.marking_completed?
         if release
-          raise t('marking_state.not_complete', group_name: name)
+          raise t('submissions.errors.not_complete', group_name: name)
         else
-          raise t('marking_state.not_complete_unrelease', group_name: name)
+          raise t('submissions.errors.not_complete_unrelease', group_name: name)
         end
       end
 
       result = grouping.current_submission_used.get_latest_result
       result.released_to_students = release
-      unless result.save
-        raise t('marking_state.result_not_saved', group_name: name)
-      end
-
+      result.save
       changed += 1
     end
     changed

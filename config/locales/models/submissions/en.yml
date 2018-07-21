@@ -1,0 +1,9 @@
+en:
+  activerecord:
+    models:
+      submission:
+        one: "Submission"
+        other: "Submissions"
+    attributes:
+      submission:
+        name: "Name"

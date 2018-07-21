@@ -2,7 +2,6 @@ describe Grade do
 
   it do
     is_expected.to validate_numericality_of(:grade)
-    .with_message(I18n.t('grade_entry_forms.invalid_grade'))
   end
 
   it { should belong_to(:grade_entry_item) }

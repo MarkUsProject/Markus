@@ -167,7 +167,7 @@
     <span id='current_total_mark_div'><%= result.total_mark %> </span>
     <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
   </span>
-  <span><%= t('marker.marks.final_mark').html_safe %></span>
+  <span><%= Result.human_attribute_name(:total_mark) %></span>
 </div>
 
 <script>

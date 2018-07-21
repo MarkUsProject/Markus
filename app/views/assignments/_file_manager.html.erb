@@ -1,53 +1,19 @@
 <% content_for :head do %>
-    <%= javascript_include_tag 'file_manager' %>
-
-    <%= render partial: 'shared/navigation_warning',
-               formats: [:js],
-               handlers: [:erb] %>
-
-    <%= render partial: 'react_file_manager_boot_table',
-               formats: [:'js.jsx'],
-               handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeStarterCodeFileManager(document.getElementById('starter-code-file-manager'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          repo_url: '<%= MarkusConfigurator.markus_config_repository_external_base_url +
+                         '/' + @assignment.repository_name %>',
+          readOnly: <%= @assignment.can_upload_starter_code? ? 'false' : 'true' %>
+        }
+      );
+    });
+  </script>
 <% end %>
 
-<div class='wrapper'>
-  <% if flash[:submit_notice] -%>
-      <p class='success'><%= flash[:submit_notice] %></p>
-  <% end %>
-
-  <% if !@file_manager_errors.nil? && @file_manager_errors[:update_conflicts] %>
-      <div class='error'>
-        <h2><%= I18n.t('student.submission.conflicts') %></h2>
-        <p><%= I18n.t('student.submission.file_conflicts') %></p>
-        <ul>
-          <% @file_manager_errors[:update_conflicts].each do |conflict| %>
-              <li><%= conflict.to_s %></li>
-          <% end %>
-        </ul>
-      </div>
-  <% end %>
-
-  <% if flash[:commit_notice] %>
-      <div class='warning'>
-        <%= flash[:commit_notice] %>
-      </div>
-  <% end %>
-
-  <% if !@file_manager_errors.nil? && @file_manager_errors[:commit_error] %>
-      <div class='warning'>
-        <%= @file_manager_errors[:commit_error] %>
-      </div>
-  <% end %>
-
-  <% if !@file_manager_errors.nil? && @file_manager_errors[:size_conflict] %>
-      <div class='error'>
-        <%= @file_manager_errors[:size_conflict] %>
-      </div>
-  <% end %>
-
-
-  <div id='file_table'></div>
-</div>
+<div id='starter-code-file-manager'></div>
 
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
@@ -57,9 +23,8 @@
       <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
 
       <section class='dialog-actions'>
-        <%= submit_tag t(:submit),
-                       onclick: 'set_onbeforeunload(false); submitFile(event)' %>
-        <%= button_tag t(:close), onclick: 'modal_addnew.close();' %>
+        <%= submit_tag t(:submit) %>
+        <%= button_tag t(:close), onclick: 'modal_addnew.close(); return false;' %>
       </section>
   <% end %>
 </aside>

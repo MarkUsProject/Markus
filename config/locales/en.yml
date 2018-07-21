@@ -67,7 +67,6 @@ en:
 
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Quick links"
-    spreadsheets: "Marks spreadsheets"
 
     # app/models/assignment_file.rb
     validation_messages:
@@ -79,12 +78,8 @@ en:
     cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
-    current_assignments:       "Current assignments"
-    assignment_item:           "Assignment"
     due:                       "Due date"
-    submission_status:         "Submission Status"
     no_assignments:            "There are currently no assignments."
-    submissions_collected:     "%{count}/%{size} Submissions collected"
 
     # app/views/assignments/
     name: "Name"
@@ -102,51 +97,10 @@ en:
     remove_date:        "Remove Date"
     deadline_grace_tokens: "Deadline using all <br> remaining grace <br> tokens"
     deadline_max_penalty: "Deadline including <br> maximum late <br> penalty"
-    create_new_assignment:      "Add Assignment"
     create_new_scanned_assignment:  "Add Scanned Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     incorrect_format:   "Incorrect format"
-    marking_state:
-      not_collected: "Not Collected"
-      in_progress: "In Progress"
-      completed: "Completed"
-      released: "Released"
-      remark_requested: "Remark Requested"
-      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
-      not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
-      no_submission: "%{group_name} has no submissions"
-      result_not_saved: "%{group_name}'s submission result could not be saved"
-    collect_submissions:
-      apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
-      collect_all: "Collect All Submissions"
-      collect: "Collect Submissions"
-      uncollect_all: "Undo Previous Collection"
-      collect_section: "Collect Section Submissions"
-      all_available: "All Available Submissions"
-      collect_ta: "Collect all your assigned submissions"
-      disable_collect: "Collection disabled, more than one TA marking displayed submissions."
-      could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
-      collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
-      collection_job_started_for_groups: "Submission collection for selected groupings for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
-      uncollection_started: "Starting uncollection of assignments"
-      section_collection_job_started: "Submission collection for sections %{section_names} for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
-      priority_given: "The submission has been given collection priority. It will be ready soon."
-      errors:               "Errors"
-      results_loss_warning: "This operation:
-                             Identifies the file version for each submission that meets the due date and/or late penalty set for this assignment.
-                             Creates the views for annotating and grading each submission.
-                             Warning: If this operation is carried out after grading has begun, this grading work will be overwritten. This work can be recovered using the Undo Collection button."
-
-      undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
-                                  WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
-      must_select_a_section: "You must select a section to collect the submissions of its groups."
-      could_not_find_section: "Could not find requested section."
-      could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
-      could_not_collect_some: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings."
-      no_submission_for_section: "There aren't any submissions to collect for sections: %{section_names}."
-      successfully_collected: "Successfully collected %{collected} submissions."
-      marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
     assignment:
         hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
@@ -168,7 +122,6 @@ en:
         add_required_file:  "Add a Required File"
         download: "Download Assignments"
         type:  "Assignment type"
-        overall_comment: "Overall Comment"
         upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         section_due_dates_type: "Enable section due dates"
         group:
@@ -197,6 +150,8 @@ en:
             due_date:  "Remark Due Date"
             message:   "Remark Message"
         starter_code: "Starter Code"
+        starter_code_edit_html: "Starter code files you upload will be automatically added to every new group's repositories. However, you can only add starter code files if no groups have been created yet for this assignment."
+        starter_code_read_only: "Because at least one group exists for this assignment, you may not modify any starter code files at this point."
         help:
             assignment_form:
                 properties: "Short Identifier: This is the title that will be used in menus, and default repository folder name. Because it is used for a directory name, it shouldn't contain spaces.<br />Assignment Name: Longer descriptive name, used as assignment title.<br />Message: Additional text displayed to students: additional information or instructions can go here.<br />Separate Section Due Dates: if checked, each sections can have a different due date.<br />Due Date: visible to students when they view assignment. Used to determine which version of a student's submission to grade. Can be changed later (e.g., for extensions). Changing the due date after assignments have been collected will not affect collected assignments.<br />Repository Folder: usually the Short Identifier.<br />Allow Web Submits: if unchecked, students must use a version control system to submit files and will not see the web submission view.<br />"
@@ -204,8 +159,6 @@ en:
                 assignment_type: "Persist Groups/Properties from ___: use the same groups and repositories from previous assignment. If selected, assignment folders will be created for every group immediately, rather than when a student clicks on the assignment for the first time.<br />If students can form their own groups, group names are always autogenerated. You can also create groups manually or by uploading a file."
                 submission_rules: "Several different late submission policies are available. If Accept no late submissions is selected then students will be warned that their submission will not be graded if they attempt to submit after the deadline.  You may choose to give students some number of Grace credits in the Users view, and you can choose the grace period times here.  The Penalty Decay formula allows you to deduct X marks for every Y time period.  The Penalty Formula allows you to specify both the value of the penalty and the time period. If students are working in a group, grace credits will be deducted from every group member."
                 remark_request_rules: "If remark requests are allowed, students will see a form they can fill in to request a remark after the marks have been released. Submitted remark requests are visible in the Submissions view. When responding to a remark request, you will see the original marks and your modifications. You will be able to add new annotations and comments. When you release the remark results, the students will see the updated marks and comments."
-            submissions_admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
-            submissions_graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
             assign_scans: "Assign students to scanned exam groups based on printed student names."
         allow_web_submits: "Allow web submits"
@@ -259,7 +212,6 @@ en:
     remove_all_graders: "Remove All Graders"
     remove_grader:      "Remove Grader"
     add_new:            "Add New File"
-    create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
     save_changes:       "Save Changes"
@@ -279,8 +231,6 @@ en:
     not_active:         "Not active"
     choose_assignment:  "Choose..."
     properties:         "Properties"
-    grades:             "Grades"
-    submissions:        "Submissions"
     peer_reviews:       "Peer reviews"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
@@ -289,34 +239,23 @@ en:
     invite:             "Invite"
     disinvite:          "Disinvite"
     help:               "Help"
-    no_result:          "No marks are available for this assignment."
     no_remark_result:   "Remark results are not yet available for this assignment."
-    unmarked:           "unmarked"
-    partial:           "partial"
-    complete:           "complete"
-    incomplete:           "incomplete"
-    released:           "released"
     preview:            "Preview"
     encoding:           "Encoding"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
-    marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
-    no_files_submitted: "This submission has no files."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
     past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
     last_commit: "last commit"
-    release_marks: "Release Marks"
-    unrelease_marks: "Unrelease Marks"
 
     #app/views/assignments/grader_index.html
     grade_assignments: "Grade Assignments"
 
     #app/views/results/marker/
     marker:
-      overall_comments: "Overall Comments"
       overall_comments_success: "Overall comments successfully updated."
       across_all_submission_files: "New: click on the filename to jump to the annotation. You can edit/remove annotations by right-clicking on them."
       source_code: "Source Code"
@@ -332,20 +271,10 @@ en:
       about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request."
       cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
       remark_submitted: "Your remark request has been submitted:"
-      previous_submission:  "Previous Submission"
-      next_submission:      "Next Submission"
-      marking_status:       "Marking Status:"
-      set_to_complete:      "Set to Complete"
-      revert_to_incomplete: "Revert to Incomplete"
       notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations"
       include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
-      select_a_test: "Please select a test"
       marks:
-        total_mark: "Total Mark:"
-        released:   "Released:"
-        release:    "Release"
-        unrelease:  "Unrelease"
         comment: "Comment"
         percentage: "Percentage"
         invalid_mark: "Invalid Mark!"
@@ -375,11 +304,11 @@ en:
         total_extra_marks: "Total Extra Marks:&nbsp;"
         total_extra_percentages: "Total Extra Percentage:&nbsp;"
         translated_to_points: "Translated to Points:"
-        final_mark: "Final Mark&nbsp;"
         previous_mark: "Previous Mark&nbsp;"
         old: "Old: "
         show_old_marks: "Show Old Mark Summary"
       annotation:
+        average_annotations: "%{average_annotations} annotations per marked submission"
         placeholder: "Markdown and basic LaTeX notation is supported"
         remark_flag: "(remark)"
         new_annotation: "Create new annotation"
@@ -404,14 +333,8 @@ en:
 
     #app/views/results/common
     common:
-      submission_file: "Submission File:"
-      test_results: "Test Results:"
       feedback_files: "Feedback Files"
-      no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
-      image_downloading: "PDF page downloading. Please wait."
-      highlighting: "Standby - Highlighting..."
-      test_code: "Test Code"
       criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
@@ -419,7 +342,6 @@ en:
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
-    collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
     discard_changes_message: "Are you sure you want to discard your changes?"
     cancel_remark_request: "Are you sure you want to cancel your remark request?  Your existing request will be deleted, and this cannot be undone."
@@ -447,156 +369,20 @@ en:
       repository_already_exists: "Error: Group %{group_name} cannot be created since a repository with path '%{repo_path}' already exists"
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
 
-    selects:
-      all_on_page: "All %{page_items} items on this page are selected."
-      all: "All %{total_items} items are selected."
-      select_full: "Click here to select all %{total_items} items."
-      select_clear: "Click here to clear selection."
-
     browse_submissions:
-      collected: "collected"
-      manual_collection: "Manual Collection"
-      viewing_revision:           "Viewing Revision:"
-      client_time:          "commit:"
-      server_time:          "push:"
-      all_files:            "all files"
-      root:                 "[root]"
-      collect_and_grab:     "Collect and Grade This Revision"
-      could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
-      release_marks:        "Release Marks"
-      unrelease_marks:      "Unrelease Marks"
       release_prs:          "Release Peer Reviews"
       unrelease_prs:        "Unrelease Peer Reviews"
-      run_tests:            "Run Tests"
       reviewer_name:        "Reviewer"
       reviewee_name:        "Reviewee"
-      repository_name:      "Repository: %{repository}"
-      repository:           "Repository"
-      commit_date:          "Submission Date"
-      marking_state:        "Marking State"
       review_state:         "Review State"
-      grace_credits_used:   "Grace Credits Used"
-      final_grade:          "Final Grade"
-      show_all:             "Show All"
-      show_unmarked:        "Show Unmarked"
-      show_partial:         "Show Partial"
-      show_complete:        "Show Complete"
-      show_released:        "Show Released"
-      show_remark_request:  "Show Remarks"
-      show_assigned_to_me:  "Show Assigned to Me"
-      grading_can_begin:    "Grading can begin"
-      grading_can_begin_after: "Grading can begin after %{time}"
-      grading_can_begin_for_sections:   "Grading can begin for sections: %{sections}"
-      grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
-      submissions:	    "Submissions: %{short_identifier}"
-      csv_report:           "CSV Report"
-      detailed_csv_report: "Detailed CSV Report"
-      repo_list: "Repo List"
-      repo_checkout_file: "Repo Checkout File"
-      errors:               "Errors"
-      filter:               "Filter:"
-      show:                 "Show"
-      per_page:             "per page"
-      filename:             "Filename"
-      last_revised:         "Last Revised"
-      revised_by:           "Revised By"
-      replace:              "Replace"
-      delete:               "Delete"
-      error_collecting:     "There were problems collecting some files."
-      collect_work_for_section: "Collect work for section:"
-      all_submissions:      "all submissions"
-      revision_history:     "%{identifier_ui}: "
       tags_used:            "Tags Used"
       tags_search:          "Search for Tags:"
       tags_list:            "Filter by Tag:"
-      search_submissions:   "Search Submissions"
-      how_many_marked:      "%{num_marked}/%{num_assigned} completed"
-      how_many_marked_short: "%{num_marked}/%{num_assigned} marked"
-      average_annotations:  "%{average_annotations} annotations per marked submission"
-
-    summaries_index:
-      repository_name:      "Repository: %{repository}"
-      repository:           "Repository"
-      commit_date:          "Commit Date"
-      marking_state:        "Marking State"
-      grace_credits_used:   "Grace Credits Used"
-      final_grade:          "Final Grade"
-      per_page:             "per page"
-      filename:             "Filename"
-      search_summaries:     "Search Summaries"
 
     course_summaries_index:
         page_title:     "Summary"
-        ngr:            "No Grade Received"
 
-    grade_entry_forms:
-      blank_field: "can't be blank"
-      invalid_name: "is already taken"
-      invalid_date: "is not a valid date"
-      invalid_column_out_of: "can only be a whole number greater than 0"
-      invalid_identifier: "has already been taken"
-      invalid_grade: "can only be greater than or equal to 0"
-      column: "Column"
-      column_name: "Name"
-      column_out_of: "Out Of"
-      add_column: "Add a column"
-      bonus_column: "Bonus Mark"
-      remove_column: "Remove"
-      toggle_column: "hide/show"
-      properties: "Marks Spreadsheet Properties"
-      required_fields: "Required Fields <span class='required_field'>*</span>"
-      show_total: "Show Total"
-      create:
-        success: "Successfully created new marks spreadsheet"
-        title: "Add Marks Spreadsheet"
-        submit: "Add Marks Spreadsheet"
-      edit:
-        title: "Edit Marks Spreadsheet:"
-        success: "Successfully updated marks spreadsheet"
-        submit: "Update Marks Spreadsheet"
-      grades:
-        title: "Manage Marks Spreadsheet:"
-        student_title: "Marks:"
-        total: "Total"
-        must_select_a_student: "You must select at least one student to update."
-        successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
-        update_error: "The marking state for %{user_name} could not be saved."
-        errors: "Errors"
-        no_mark: "N/A"
-        marking_state: "State"
-        download: "Download Grades"
-      is_hidden: "Hide Spreadsheet"
-      message_placeholder: >-
-        Please enter a message that you would like to
-        have displayed to the students. Note it is displayed regardless of
-        marks being released.
-
-      students:
-        title: "Your Mark Spreadsheets"
-        no_results: "There are no marks available yet."
-        detailed_marks_message: "Detailed marks are available."
-      csv:
-        overwrite: "Overwrite existing grades?"
-        incomplete_header: "Incomplete grade entry item names or totals."
-        incomplete_row: "Contains too little information."
-        invalid_user_name: "Invalid user name."
-        upload_success: "Grades table successfully uploaded: %{num_updates} update(s)."
-        upload_title: "Upload Grades File"
-        upload_format_html: "<p>The file should have the following format:</p>
-                             <ul><li>two lines at the top which specify the question names and totals;</li>
-                             <li>the first item for the first two lines is ignored;</li>
-                             <li>one line for each student record;</li>
-                             <li>each line should be terminated by a carriage-return line-feed.</li></ul>
-                             <code>\"\",q1_name,q2_name,q3_name</code><br>
-                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                             <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-
-    no_grade_entry_forms_message: "There are currently no marks spreadsheets."
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
-    current_grade_entry_forms_title: "Current marks spreadsheets"
-    spreadsheet_item: "Marks spreadsheet"
-    spreadsheet_date: "Date"
-    mark_message: "Your mark:"
 
     student_course_summary: "Your Term Marks"
 
@@ -629,16 +415,9 @@ en:
         could_not_find_target: "Could not find target assignment for cloning groups"
 
     results:
-      title:  "Assignment %{assignment_name} : %{group_name}"
       review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
-      results_name:  "Results"
       successfully_changed: "Successfully updated %{changed} results"
-      must_select_a_group:  "You must select at least one group to update"
-      must_select_a_group_to_collect:  "You must select at least one group to collect"
-      editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
-      results_for: "Results for "
-      review_for: "Peer reviews for "
 
     mark:
       error:
@@ -656,7 +435,6 @@ en:
       last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
-      no_submission_yet: "You have not made any submissions yet"
       no_peer_submission_yet: "You have no submissions to review yet."
       no_reviews: "No one has reviewed you yet."
       no_group_yet: "You don't have a group yet"
@@ -724,6 +502,7 @@ en:
         replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
         version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
+        file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
     #Graders' View
     graders:
@@ -1064,8 +843,6 @@ en:
     keybinding:
       keyboard_help:          "Keyboard Shortcut Help"
       toggle_compact:         "Toggle compact view"
-      next_submission:        "Next submission"
-      previous_submission:    "Previous submission"
       next_criterion:         "Select next criterion"
       previous_criterion:     "Select previous criterion"
       next_level:             "Select next level"
@@ -1124,6 +901,8 @@ en:
       revision_used_for_test: "<span class='prop_label'>Revision used:</span> %{revision}"
       information: "Information"
       run_tests: "Run tests"
+      test_run_info: "Test run with id %{test_run_id} is in progress .. (created at: %{created_at})"
+      stop_tests: "Stop tests"
       test_run: "Test Run"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests.<br><br>If you have already submitted a file and want to run tests on it, use the \"Run Tests\" button below."
@@ -1189,6 +968,9 @@ en:
         unlimited: "Unlimited"
         hours: "hours"
       test_results_table:
+        time: "Time"
+        test_runs: "Runs"
+        file_name: "File Name"
         test_name: "Test Name"
         input: "Input"
         output: "Output"

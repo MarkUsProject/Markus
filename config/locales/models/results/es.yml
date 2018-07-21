@@ -1,0 +1,10 @@
+es:
+  activerecord:
+    models:
+      result:
+        one: "Resultado"
+    attributes:
+      result:
+        marking_state: "Estado del Proceso de Calificación"
+        overall_comments: "Comentarios Generales"
+        total_mark: "Nota total"

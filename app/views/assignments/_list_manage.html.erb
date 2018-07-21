@@ -2,15 +2,15 @@
   <% if @assignments.empty? %>
     <p><%= t(:no_assignments) %></p>
   <% else %>
-    <h3><%= t(:current_assignments) %></h3>
+    <h3><%= Assignment.model_name.human.pluralize %></h3>
 
     <div class='table'>
       <table>
         <thead>
           <tr>
-            <th><%= t(:assignment_item) %></th>
+            <th><%= Assignment.model_name.human.pluralize %></th>
             <th><%= t(:due) %></th>
-            <th><%= t(:submission_status) %></th>
+            <th><%= t('submissions.status') %></th>
           </tr>
         </thead>
         <tbody>
@@ -98,7 +98,7 @@
                 <td>
                   <span id='collected_submissions_<%= assignment.short_identifier %>'>
                     <% if assignment.submission_rule.can_collect_all_now? %>
-                      <%= link_to t('submissions_collected',
+                      <%= link_to t('submissions.collect.progress',
                                     count: assignment.groupings
                                                      .where(is_collected: true)
                                                      .size,
@@ -124,11 +124,11 @@
                     <br>
                     <span id='ta_marked__<%= assignment.short_identifier %>'>
                       <% if @current_user.admin? %>
-                        <%= t('browse_submissions.how_many_marked',
+                        <%= t('submissions.how_many_marked',
                               num_marked: assignment.get_num_marked(),
                               num_assigned: assignment.get_num_assigned()) %>
                       <% else %>
-                        <%= t('browse_submissions.how_many_marked',
+                        <%= t('submissions.how_many_marked',
                               num_marked: assignment.get_num_marked(@current_user.id),
                               num_assigned: assignment.get_num_assigned(@current_user.id)) %>
                       <% end %>
@@ -136,10 +136,10 @@
                     <br>
                     <span id='ta_avg_annotations__<%= assignment.short_identifier %>'>
                       <% if @current_user.admin? %>
-                        <%= t('browse_submissions.average_annotations',
+                        <%= t('annotation.average_annotations',
                               average_annotations: assignment.average_annotations()) %>
                       <% else %>
-                        <%= t('browse_submissions.average_annotations',
+                        <%= t('annotation.average_annotations',
                               average_annotations: assignment.average_annotations(@current_user.id)) %>
                       <% end %>
                     </span>

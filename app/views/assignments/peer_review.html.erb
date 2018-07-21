@@ -14,7 +14,7 @@
     </div>
 
     <div class='block'>
-      <h2><%= t('submissions') %></h2>
+      <h2><%= Submission.model_name.human.pluralize %></h2>
 
       <div class='block_content'>
         <% unless PeerReview.find_by(reviewer_id: @grouping.id).nil? %>

@@ -1,26 +1,26 @@
 <fieldset class='grade_entry_item'>
   <legend>
-    <span><%= t('grade_entry_forms.column') %></span>
+    <span><%= GradeEntryItem.model_name.human %></span>
   </legend>
   <div>
     <%= form.label :name,
-                   t('grade_entry_forms.column_name'),
+                   GradeEntryItem.human_attribute_name(:name),
                    class: 'required' %>
     <%= form.text_field :name, size: 20 %>
 
     <%= form.label :out_of,
-                   t('grade_entry_forms.column_out_of'),
+                   GradeEntryItem.human_attribute_name(:out_of),
                    class: 'required' %>
     <%= form.text_field :out_of, size: 5, maxlength: 3 %>
   </div>
   <div>
-    <%= form.label :bonus, t('grade_entry_forms.bonus_column') %>
+    <%= form.label :bonus, GradeEntryItem.human_attribute_name(:bonus) %>
     <%= form.check_box :bonus %>
   </div>
   <div>
     <% if !grade_entry_item.nil? && !grade_entry_item.new_record? %>
       <%= form.label :_destroy,
-                     t('grade_entry_forms.remove_column') %>
+                     t('remove') %>
       <%= form.check_box :_destroy %>
     <% else %>
       <%= link_to t(:delete), '#', onclick:

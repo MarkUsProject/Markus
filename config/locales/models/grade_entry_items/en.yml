@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    models:
+      grade_entry_item:
+        one: "Column"
+    attributes:
+      grade_entry_item:
+        bonus: "Bonus Mark"
+        name: "Name"
+        out_of: "Out Of"
