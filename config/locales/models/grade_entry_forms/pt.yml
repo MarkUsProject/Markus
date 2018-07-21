@@ -1,0 +1,15 @@
+pt:
+  activerecord:
+    models:
+      grade_entry_form:
+        one: "Notas nas planilha"
+    attributes:
+      grade_entry_form:
+        date: "Data"
+        description: "Descrição"
+        grades: "Notas"
+        is_hidden: "Ocultar Planilha"
+        message: "Mensagem"
+        show_total: "Mostrar Total"
+        short_identifier: "Identificador"
+        total: "Total"

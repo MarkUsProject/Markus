@@ -1,6 +1,4 @@
 module Api
-  require 'zip'
-
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionDownloadsController < MainApiController

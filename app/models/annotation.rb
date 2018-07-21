@@ -17,7 +17,7 @@ class Annotation < ApplicationRecord
                             greater_than: 0
 
   validates_format_of :type,
-                      with: /ImageAnnotation|TextAnnotation|PdfAnnotation/
+                      with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
   def get_data(include_creator=false)
     data = {

@@ -1,0 +1,6 @@
+pt:
+  activerecord:
+    models:
+      submission:
+        one: "Submissõ"
+        other: "Submissões"

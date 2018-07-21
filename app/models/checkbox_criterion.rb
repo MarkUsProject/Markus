@@ -1,5 +1,3 @@
-require 'encoding'
-
 class CheckboxCriterion < Criterion
   self.table_name = 'checkbox_criteria'
 

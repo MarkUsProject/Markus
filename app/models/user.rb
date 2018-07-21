@@ -1,8 +1,5 @@
-require 'encoding'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
-# required for repository actions
-require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository')
 
 # We always assume the following fields exists:
 # => :user_name, :last_name, :first_name
@@ -27,7 +24,7 @@ class User < ApplicationRecord
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
 
-  validates_format_of       :type,          with: /Student|Admin|Ta|TestServer/
+  validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'

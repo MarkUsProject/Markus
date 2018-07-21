@@ -1,5 +1,3 @@
-require 'repo/repository'
-
 namespace :markus do
   desc 'Generates the repo permission file'
   task generate_repo_permissions: :environment do

@@ -1,7 +1,7 @@
 <% @assignments.each do |assignment| %>
   <% if assignment.submission_rule.can_collect_all_now? %>
     $("#collected_submissions_<%= assignment.short_identifier %>").html(
-           " | <%= link_to(t('submissions_collected',
+           " | <%= link_to(t('submissions.collect.progress',
                               count: assignment.groupings
                                                .where(is_collected: true).size,
                               size: assignment.groupings.size),

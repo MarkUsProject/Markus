@@ -1,6 +1,3 @@
-require 'csv_invalid_line_error'
-require 'descriptive_statistics'
-require 'histogram/array'
 require 'csv'
 
 class Assignment < ApplicationRecord
@@ -291,24 +288,14 @@ class Assignment < ApplicationRecord
     self.results_zeros = marks.count(&:zero?)
 
     # Avoid division by 0.
-    self.results_average, self.results_median =
-      if max_mark.zero?
-        [0, 0]
-      else
-        # Calculates average and median in percentage.
-        [average(marks), median(marks)].map do |stat|
-          (stat * 100 / max_mark).round(2)
-        end
-      end
+    if max_mark.zero?
+      self.results_average = 0
+      self.results_median = 0
+    else
+      self.results_average = (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
+      self.results_median = (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
+    end
     self.save
-  end
-
-  def average(marks)
-    marks.empty? ? 0 : marks.mean
-  end
-
-  def median(marks)
-    marks.empty? ? 0 : marks.median
   end
 
   def self.get_current_assignment
@@ -883,6 +870,7 @@ class Assignment < ApplicationRecord
   # Returns grade distribution for a grade entry item for each student
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
+    data.extend(Histogram)
     histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
     distribution = histogram.fetch(1)
     distribution[0] = distribution.first + data.count{ |x| x < 1 }
@@ -1174,7 +1162,75 @@ class Assignment < ApplicationRecord
     test_scripts.where(condition).order(:seq_num)
   end
 
-  # Retrive data for submissions table.
+  # Retrieve current grader data.
+  def current_grader_data
+    ta_counts = self.criterion_ta_associations.group(:ta_id).count
+    grader_data = self.groupings
+                      .joins(:tas)
+                      .group('users.user_name')
+                      .count
+    graders = Ta.pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
+      {
+        user_name: user_name,
+        first_name: first_name,
+        last_name: last_name,
+        groups: grader_data[user_name] || 0,
+        _id: id,
+        criteria: ta_counts[id] || 0
+      }
+    end
+
+    group_data = self.groupings
+                     .left_outer_joins(:tas, :group)
+                     .pluck('groupings.id', 'groups.group_name', 'users.user_name',
+                            'groupings.criteria_coverage_count')
+    groups = Hash.new { |h, k| h[k] = [] }
+    group_data.each do |group_id, group_name, ta, count|
+      groups[[group_id, group_name, count]]
+      groups[[group_id, group_name, count]] << ta unless ta.nil?
+    end
+    groups = groups.map do |k, v|
+      {
+        _id: k[0],
+        group_name: k[1],
+        criteria_coverage_count: k[2],
+        graders: v
+      }
+    end
+
+    criterion_data =
+      self.rubric_criteria.left_outer_joins(:tas)
+          .pluck('rubric_criteria.name', 'rubric_criteria.position',
+                 'rubric_criteria.assigned_groups_count', 'users.user_name') +
+        self.flexible_criteria.left_outer_joins(:tas)
+            .pluck('flexible_criteria.name', 'flexible_criteria.position',
+                   'flexible_criteria.assigned_groups_count', 'users.user_name') +
+        self.checkbox_criteria.left_outer_joins(:tas)
+            .pluck('checkbox_criteria.name', 'checkbox_criteria.position',
+                   'checkbox_criteria.assigned_groups_count', 'users.user_name')
+    criteria = Hash.new { |h, k| h[k] = [] }
+    criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
+      criteria[[name, pos, count]]
+      criteria[[name, pos, count]] << ta unless ta.nil?
+    end
+    criteria = criteria.map do |k, v|
+      {
+        name: k[0],
+        _id: k[1], # Note: _id is the *position* of the criterion
+        coverage: k[2],
+        graders: v
+      }
+    end
+
+    {
+      groups: groups,
+      criteria: criteria,
+      graders: graders,
+      assign_graders_to_criteria: self.assign_graders_to_criteria
+    }
+  end
+
+  # Retrieve data for submissions table.
   # Uses joins and pluck rather than includes to improve query speed.
   def current_submission_data(current_user)
     if current_user.admin?
@@ -1254,7 +1310,7 @@ class Assignment < ApplicationRecord
           base[:marking_state] = result[2]
         end
       else
-        base[:marking_state] = I18n.t('marking_state.not_collected')
+        base[:marking_state] = I18n.t('results.state.not_collected')
       end
 
       base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]

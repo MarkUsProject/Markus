@@ -133,11 +133,11 @@
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇨</kbd></td>
-      <td><%=t('keybinding.next_submission')%></td>
+      <td><%=t('results.next_submission')%></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇦</kbd></td>
-      <td><%=t('keybinding.previous_submission')%></td>
+      <td><%=t('results.previous_submission')%></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇧</kbd></td>
@@ -215,7 +215,7 @@
 <% end %>
 
 <% content_for :title do %>
-  <%= t('results.title',
+  <%= t('results.edit.title',
         { assignment_name: @assignment.short_identifier,
           group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
 <% end %>
@@ -233,7 +233,7 @@
   <% end %>
 
   <% if @result.released_to_students %>
-    <p class='notice'><%= t(:marks_released_notice) %></p>
+    <p class='notice'><%= t('results.marks_released') %></p>
   <% end %>
 
   <% if @grouping.past_due_date? %>

@@ -1,43 +1,34 @@
-# encoding: utf-8
-# Settings specified here will take precedence over those in config/environment.rb
+# Settings specified here will take precedence over those in config/application.rb
 Markus::Application.configure do
 
   # In the development environment your application's code is reloaded on
-  # every request.  This slows down response time but is perfect for development
-  # since you don't have to restart the webserver when you make code changes.
+  # every request. This slows down response time but is perfect for development
+  # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
-  # Manually enable concurrency, but you'll need a concurrent web server too
-  # (in production, cache_classes=true enables it automatically)
-  config.allow_concurrency = true
 
+  # Do not eager load code on boot.
   config.eager_load = false
 
-  # Show full error reports and disable caching
+  # Show full error reports.
   config.consider_all_requests_local = true
 
-  # FIXME: The following lines can be commented
-  # out when jQuery is fully implemented
-  # config.action_controller.perform_caching             = false
-  # config.action_controller.allow_forgery_protection    = true
+  # Set high verbosity of logger.
+  config.log_level = :debug
 
-  # Load any local configuration that is kept out of source control
-  if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
-    instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
-  end
-
-  # Show Deprecated Warnings (to :log or to :stderr)
+  # Print deprecation notices to stderr.
   config.active_support.deprecation = :stderr
 
-  config.log_level = :debug
-  # set log-level (:debug, :info, :warn, :error, :fatal)
-
-  # Don't care if the mailer can't send
-  config.action_mailer.raise_delivery_errors = false
-
-  # Enable better_errors for 0.0.0.0 IP address
-  if defined?(BetterErrors) && ENV['SSH_CLIENT']
-    host = ENV['SSH_CLIENT'].match(/\A([^\s]*)/)[1]
-    BetterErrors::Middleware.allow_ip! host if host
+  # Enable/disable caching. By default caching is disabled.
+  # Run rails dev:cache to toggle caching.
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
+    config.cache_store = :null_store
   end
 
   ###################################################################
@@ -123,9 +114,9 @@ Markus::Application.configure do
   ###################################################################
   # File storage (Repository) settings
   ###################################################################
-  # Options for Repository_type are 'svn','git' and 'memory'
-  # 'memory' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = 'git' # use Subversion as storage backend
+  # Options for Repository_type are 'svn','git' and 'mem'
+  # 'mem' is by design not persistent and only used for testing MarkUs
+  REPOSITORY_TYPE = 'git'
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed

@@ -282,7 +282,7 @@ describe Grouping do
         criterion.add_tas(ta)
         another_criterion.add_tas(ta)
         # Update only `grouping` not `another_grouping`.
-        Grouping.update_criteria_coverage_counts(assignment, grouping.id)
+        Grouping.update_criteria_coverage_counts(assignment, [grouping.id])
       end
 
       it 'updates the count for the specified grouping' do

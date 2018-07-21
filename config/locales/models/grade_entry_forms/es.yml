@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    models:
+      grade_entry_form:
+        one: "Hoja de notas"
+        other: "Hojas de notas"
+    attributes:
+      grade_entry_form:
+        date: "Fecha"
+        description: "Descripción"
+        grades: "Evaluadores"
+        is_hidden: "Ocultar Hoja de Notas"
+        message: "Mensaje"
+        show_total: "Mostrar Total"
+        short_identifier: "Identificador Corto"
+        total: "Total"

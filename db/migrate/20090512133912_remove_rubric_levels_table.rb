@@ -1,4 +1,3 @@
-require 'migration_helpers'
 class RemoveRubricLevelsTable < ActiveRecord::Migration[4.2]
   extend MigrationHelpers
   def self.up

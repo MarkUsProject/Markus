@@ -22,26 +22,19 @@ class GradeEntryFormsController < ApplicationController
 
   layout 'assignment_content'
 
+  responders :flash
+
   # Create a new grade entry form
   def new
     @grade_entry_form = GradeEntryForm.new
   end
 
   def create
-    @grade_entry_form = GradeEntryForm.new
+    # Edit params before updating model
+    new_params = update_grade_entry_form_params(params)
 
-    # Process input properties
-    @grade_entry_form.transaction do
-      # Edit params before updating model
-      new_params = update_grade_entry_form_params(params)
-      if @grade_entry_form.update_attributes(new_params)
-        # Success message
-        flash_message(:success, I18n.t('grade_entry_forms.create.success'))
-        redirect_to action: 'edit', id: @grade_entry_form.id
-      else
-        render 'new'
-      end
-    end
+    @grade_entry_form = GradeEntryForm.create(new_params)
+    respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path(@grade_entry_form) })
   end
 
   # Edit the properties of a grade entry form
@@ -53,24 +46,14 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_form = GradeEntryForm.find(params[:id])
 
     # Process changes to input properties
-    @grade_entry_form.transaction do
+    new_params = update_grade_entry_form_params(params)
 
-      # Edit params before updating model
-
-      new_params = update_grade_entry_form_params(params)
-
-      if params[:date_check]
-        new_params.update(date: nil)
-      end
-
-      if @grade_entry_form.update_attributes(new_params)
-        # Success message
-        flash_message(:success, I18n.t('grade_entry_forms.edit.success'))
-        redirect_to action: 'edit', id: @grade_entry_form.id
-      else
-        render 'edit', id: @grade_entry_form.id
-      end
+    if params[:date_check]
+      new_params.update(date: nil)
     end
+
+    @grade_entry_form.update_attributes(new_params)
+    respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path @grade_entry_form })
   end
 
   # View/modify the grades for this grade entry form
@@ -95,7 +78,7 @@ class GradeEntryFormsController < ApplicationController
     grade.update(grade: params[:updated_grade])
     grade_entry_student.save # Refresh total grade
     grade_entry_student.reload
-    render text: grade_entry_student.total_grade
+    render plain: grade_entry_student.total_grade
   end
 
   # For students
@@ -129,7 +112,7 @@ class GradeEntryFormsController < ApplicationController
 
     # Get data for the total marks column
     if @grade_entry_form.show_total
-      @columns << "#{I18n.t('grade_entry_forms.grades.total')} (#{@grade_entry_form.out_of_total})"
+      @columns << "#{GradeEntryForm.human_attribute_name(:total)} (#{@grade_entry_form.out_of_total})"
       total = @grade_entry_student.total_grade
       if !total.nil?
         @data << total
@@ -205,7 +188,7 @@ class GradeEntryFormsController < ApplicationController
     grade_entry_students = []
 
     if params[:students].nil?
-      errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
+      errors.push(I18n.t('grade_entry_forms.grades.select_a_student'))
     else
       params[:students].each do |student_id|
         grade_entry_students.push(

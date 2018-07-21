@@ -14,7 +14,7 @@
 ] %>
 
 <% content_for :wrap_left_content do %>
-  <%= link_to t(:create_new_assignment),
+  <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
               { controller: 'assignments',
                 action: 'new' },
               class: 'button' %>
@@ -25,7 +25,7 @@
                       action: 'new' },
                     class: 'button' %>
   <% end %>
-  <%= link_to t(:create_new_grade_entry_form),
+  <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
               { controller: 'grade_entry_forms',
                 action: 'new' },
               class: 'button' %>

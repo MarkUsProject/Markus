@@ -786,14 +786,6 @@ describe 'An Assignment' do
     let(:grader_ctrl) { 'graders' }
 
     context 'collection' do
-      it 'routes GET add_grader_to_grouping properly' do
-        expect(get: grader_path + '/add_grader_to_grouping').to route_to(
-          controller: grader_ctrl,
-          action: 'add_grader_to_grouping',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes POST csv_upload_grader_groups_mapping properly' do
         expect(post: grader_path + '/csv_upload_grader_groups_mapping')
           .to route_to(
@@ -846,14 +838,6 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET grader_criteria_dialog properly' do
-        expect(get: grader_path + '/grader_criteria_dialog').to route_to(
-          controller: grader_ctrl,
-          action: 'grader_criteria_dialog',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes GET global_actions properly' do
         expect(get: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
@@ -862,26 +846,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET groups_coverage_dialog properly' do
-        expect(get: grader_path + '/groups_coverage_dialog').to route_to(
-          controller: grader_ctrl,
-          action: 'groups_coverage_dialog',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
       it 'routes POST set_assign_criteria properly' do
         expect(post: grader_path + '/set_assign_criteria').to route_to(
           controller: grader_ctrl,
           action: 'set_assign_criteria',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET random_assign properly' do
-        expect(get: grader_path + '/random_assign').to route_to(
-          controller: grader_ctrl,
-          action: 'random_assign',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

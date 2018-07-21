@@ -1,0 +1,16 @@
+fr:
+  activerecord:
+    models:
+      grade_entry_form:
+        one: "Feuille de notes"
+        other: "Feuilles de notes"
+    attributes:
+      grade_entry_form:
+        date: "Date"
+        description: "Description"
+        grades: "Notes"
+        is_hidden: "Masquer Spreadsheet"
+        message:  "Message"
+        show_total: "Show Total"
+        short_identifier: "Short Identifier"
+        total: "Total"

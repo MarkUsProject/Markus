@@ -1,4 +1,3 @@
-require 'zip'
 class ResultsController < ApplicationController
   include TagsHelper
   before_action :authorize_only_for_admin,
@@ -9,13 +8,15 @@ class ResultsController < ApplicationController
                          :toggle_marking_state,
                          :download, :download_zip,
                          :note_message,
-                         :update_remark_request, :cancel_remark_request]
+                         :update_remark_request, :cancel_remark_request,
+                         :get_test_runs_results
+                ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark,
                        :note_message]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests,
+                only: [:download, :download_zip, :run_tests, :stop_tests,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
@@ -179,6 +180,12 @@ class ResultsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
+  def stop_tests
+    test_id = params[:test_run_id].to_i
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    redirect_back(fallback_location: root_path)
+  end
+
   ##  Tag Methods  ##
 
   def add_tag
@@ -332,7 +339,7 @@ class ResultsController < ApplicationController
 
     submission = Submission.find(params[:submission_id])
     if submission.revision_identifier.nil?
-      render text: t('student.submission.no_files_available')
+      render plain: t('student.submission.no_files_available')
       return
     end
 
@@ -360,7 +367,7 @@ class ResultsController < ApplicationController
             file_content = file.retrieve_file
           end
         rescue Exception => e
-          render text: t('student.submission.missing_file',
+          render plain: t('student.submission.missing_file',
                             file_name: file.filename, message: e.message)
           return
         end
@@ -425,7 +432,7 @@ class ResultsController < ApplicationController
         num_marked = assignment.get_num_marked(@current_user.id)
         num_assigned = assignment.get_num_assigned(@current_user.id)
       end
-      render text: "#{result_mark.mark.to_f}," +
+      render plain: "#{result_mark.mark.to_f}," +
                    "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
                    "#{result_mark.result.total_mark}," +
                    "#{num_marked}," +
@@ -437,7 +444,7 @@ class ResultsController < ApplicationController
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
-      render text: result_mark.errors.full_messages.join, status: :bad_request
+      render plain: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 
@@ -646,6 +653,43 @@ class ResultsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
     grace_deduction.destroy
+  end
+
+  def get_test_runs_results
+    if current_user.admin? || current_user.ta?
+      test_script_results = TestScriptResult
+                            .joins(:test_run, :test_script, :test_results)
+                            .where(test_runs: { submission_id: params[:submission_id] })
+                            .pluck_to_hash(:created_at, :user_id, :name, :file_name,
+                                           :actual_output, :completion_status,
+                                           'test_results.marks_earned', 'test_results.marks_total')
+
+      test_script_results.each do |g|
+        # Create new entries that combine created_at and user_name together
+        g['created_at_user_name'] = "#{I18n.l(g['created_at'])} (#{User.find(g['user_id']).user_name})"
+        g['marks_earned'] = g['test_results.marks_earned']
+        g['marks_total'] = g['test_results.marks_total']
+      end
+      render json: test_script_results
+    else
+      result = Result.find(params[:id])
+      if result.released_to_students?
+        test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
+          .where(test_runs: { submission_id: params[:submission_id] })
+          .pluck_to_hash(:created_at, :name, :file_name,
+                  :completion_status,
+                  'test_results.marks_earned', 'test_results.marks_total')
+
+        test_script_results.each do |g|
+          g['created_at_user_name'] = I18n.l(g['created_at'])
+          g['marks_earned'] = g['test_results.marks_earned']
+          g['marks_total'] = g['test_results.marks_total']
+        end
+        render json: test_script_results
+      else
+        head :bad_request
+      end
+    end
   end
 
   private

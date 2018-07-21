@@ -8,7 +8,7 @@
           <tr>
             <th><%= t(:name) %></th>
             <th><%= t(:due_date) %></th>
-            <th><%= t('results.results_name') %></th>
+            <th><%= Result.model_name.human.pluralize %></th>
           </tr>
         </thead>
         <tbody>
@@ -58,13 +58,13 @@
                         <%= "(#{average}#{assignment.display_median_to_students ? ", #{median}" : ""})" %>
                       </p>
                     <% end %>
-                    <%= link_to t('results.results_name'),
+                    <%= link_to Result.model_name.human.pluralize,
                                 view_marks_assignment_submission_result_path(
                                   assignment_id: assignment.id,
                                   submission_id: @a_id_results[assignment.id].submission_id,
                                   id: @a_id_results[assignment.id].id) %>
                   <% elsif assignment.due_date < Time.zone.now %>
-                    <%= t(:no_result) %>
+                    <%= t('results.no_result') %>
                   <% end %>
                 </td>
               </tr>

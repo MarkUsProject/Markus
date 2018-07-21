@@ -7,16 +7,6 @@ describe GradersController do
       @student = create(:student)
     end
 
-    it 'GET on :groups_coverage_dialog' do
-      get_as @student, :groups_coverage_dialog, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'GET on :grader_criteria_dialog' do
-      get_as @student, :grader_criteria_dialog, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
     it 'GET on :set_assign_criteria' do
       get_as @student, :set_assign_criteria, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
@@ -32,23 +22,8 @@ describe GradersController do
       expect(response.status).to eq(404)
     end
 
-    it 'GET on :add_grader_to_grouping' do
-      get_as @student, :add_grader_to_grouping, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
     it 'GET on :global_actions' do
       get_as @student, :global_actions, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'POST on :groups_coverage_dialog' do
-      post_as @student, :groups_coverage_dialog, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'POST on :grader_criteria_dialog' do
-      post_as @student, :grader_criteria_dialog, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
     end
 
@@ -59,11 +34,6 @@ describe GradersController do
 
     it 'POST on :csv_upload_grader_groups_mapping' do
       post_as @student, :csv_upload_grader_groups_mapping, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'POST on :add_grader_to_grouping' do
-      post_as @student, :add_grader_to_grouping, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
     end
 
@@ -415,20 +385,6 @@ describe GradersController do
       end
     end
 
-    it 'doing a POST on :add_grader_to_grouping' do
-      @grouping = create(:grouping, assignment: @assignment)
-      @grouping2 = create(:grouping, assignment: @assignment)
-      @ta = create(:ta, user_name: 'g9younas')
-      @ta2 = create(:ta, user_name: 'c7benjam')
-      post_as @admin,
-              :add_grader_to_grouping,
-              params: { assignment_id: @assignment.id, grouping_id: @grouping.id, grader_id: @ta.id }
-      expect(response.status).to eq(200)
-      expect(@grouping.tas[0].id).to eq @ta.id
-      expect(@grouping.tas.count).to eq 1
-      expect(@ta.memberships.count).to eq 1
-    end
-
     context 'with groups table selected doing a' do
 
       context 'POST on :global_actions on random_assign' do
@@ -457,7 +413,7 @@ describe GradersController do
                   :global_actions,
                   params: { assignment_id: @assignment.id, global_actions: 'random_assign', graders: [@ta1],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response.status).to eq(400)
           @assignment.groupings do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -558,7 +514,7 @@ describe GradersController do
                   :global_actions,
                   params: { assignment_id: @assignment.id, global_actions: 'assign', graders: [@ta1],
                             current_table: 'groups_table' }
-          expect(response.status).to eq(200)
+          expect(response.status).to eq(400)
           @assignment.groupings do |grouping|
             expect(grouping.tas).to eq []
           end
@@ -685,16 +641,16 @@ describe GradersController do
         end
 
         it 'and all graders from one grouping are selected' do
-          ta_memberships = [
-            create(:ta_membership, user: @ta1, grouping: @grouping1),
-            create(:ta_membership, user: @ta2, grouping: @grouping1),
-            create(:ta_membership, user: @ta3, grouping: @grouping1),
-          ]
+          create(:ta_membership, user: @ta1, grouping: @grouping1)
+          create(:ta_membership, user: @ta2, grouping: @grouping1)
+          create(:ta_membership, user: @ta3, grouping: @grouping1)
           create(:ta_membership, user: @ta3, grouping: @grouping3)
           post_as @admin,
                   :global_actions,
-                  params: { assignment_id: @assignment.id, global_actions:'unassign', groupings: [@grouping1],
-                  grader_memberships: ta_memberships, current_table: 'groups_table' }
+                  params: { assignment_id: @assignment.id, global_actions: 'unassign',
+                            groupings: [@grouping1.id],
+                            graders: [@ta1.id, @ta2.id, @ta3.id],
+                            current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas).to eq []
           expect(@grouping2.tas).to eq []
@@ -712,7 +668,8 @@ describe GradersController do
           post_as @admin,
                   :global_actions,
                   params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                            groupings: [@grouping1, @grouping2, @grouping3], grader_memberships: ta_memberships,
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
+                            graders: [@ta3.id],
                             current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas).not_to include(@ta3)
@@ -723,7 +680,7 @@ describe GradersController do
         end
 
         it 'and one grader and one grouping is selected where the grader and grouping have other memberships' do
-          ta_membership = create(:ta_membership, user: @ta1, grouping: @grouping2)
+          create(:ta_membership, user: @ta1, grouping: @grouping2)
           create(:ta_membership, user: @ta1, grouping: @grouping1)
           create(:ta_membership, user: @ta2, grouping: @grouping1)
           create(:ta_membership, user: @ta3, grouping: @grouping1)
@@ -735,7 +692,9 @@ describe GradersController do
           post_as @admin,
                   :global_actions,
                   params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                            grader_memberships: [ta_membership], current_table: 'groups_table' }
+                            groupings: [@grouping2.id],
+                            graders: [@ta1.id],
+                            current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping2.tas).not_to include(@ta1)
           expect(@grouping1.tas).to include(@ta1)
@@ -749,21 +708,20 @@ describe GradersController do
         end
 
         it 'and multiple graders and multiple groupings are selected' do
-          ta_memberships = [
-            create(:ta_membership, user: @ta1, grouping: @grouping1),
-            create(:ta_membership, user: @ta2, grouping: @grouping1),
-            create(:ta_membership, user: @ta3, grouping: @grouping1),
-            create(:ta_membership, user: @ta1, grouping: @grouping2),
-            create(:ta_membership, user: @ta2, grouping: @grouping2),
-            create(:ta_membership, user: @ta3, grouping: @grouping2),
-            create(:ta_membership, user: @ta1, grouping: @grouping3),
-            create(:ta_membership, user: @ta2, grouping: @grouping3),
-            create(:ta_membership, user: @ta3, grouping: @grouping3)
-          ]
+          create(:ta_membership, user: @ta1, grouping: @grouping1)
+          create(:ta_membership, user: @ta2, grouping: @grouping1)
+          create(:ta_membership, user: @ta3, grouping: @grouping1)
+          create(:ta_membership, user: @ta1, grouping: @grouping2)
+          create(:ta_membership, user: @ta2, grouping: @grouping2)
+          create(:ta_membership, user: @ta3, grouping: @grouping2)
+          create(:ta_membership, user: @ta1, grouping: @grouping3)
+          create(:ta_membership, user: @ta2, grouping: @grouping3)
+          create(:ta_membership, user: @ta3, grouping: @grouping3)
           post_as @admin,
                   :global_actions,
                   params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                            groupings: [@grouping1, @grouping2, @grouping3], grader_memberships: ta_memberships,
+                            groupings: [@grouping1.id, @grouping2.id, @grouping3.id],
+                            graders: [@ta1.id, @ta2.id, @ta3.id],
                             current_table: 'groups_table' }
           expect(response.status).to eq(200)
           expect(@grouping1.tas).to eq []
@@ -811,7 +769,8 @@ describe GradersController do
           it 'and no graders are selected, at least one criterion' do
             post_as @admin,
                     :global_actions,
-                    params: { assignment_id: @assignment.id, global_actions: 'random_assign', criteria: [@criterion1],
+                    params: { assignment_id: @assignment.id, global_actions: 'random_assign',
+                              criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
             @assignment.get_criteria do |criterion|
@@ -823,7 +782,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -835,8 +795,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] },
+                              criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -848,7 +807,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] },
+                              criteria: [@criterion1.position],
                               graders: [@ta1.id, @ta2.id], current_table:  'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
@@ -860,8 +819,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] },
+                              criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
@@ -875,9 +833,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class],
-                                          '2' => [@criterion3.id, @criterion3.class] },
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.size).to eq(1)
@@ -921,7 +877,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] },
+                              criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
             @assignment.get_criteria do |criterion|
@@ -933,7 +889,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -945,8 +902,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -958,7 +915,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 2
@@ -972,8 +930,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 2
@@ -990,9 +948,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class],
-                                          '2' => [@criterion3.id, @criterion3.class] },
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 3
@@ -1011,8 +967,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
 
             expect(response.status).to eq(200)
@@ -1056,16 +1012,16 @@ describe GradersController do
           end
 
           it 'and all graders from one criterion are selected' do
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
-            ]
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id, @ta2.id, @ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             @criterion1.reload
             expect(@criterion1.tas).to eq []
@@ -1078,15 +1034,15 @@ describe GradersController do
           it 'and all criteria from one grader are selected' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            ]
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
+                              graders: [@ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             @criterion1.reload
             @criterion2.reload
@@ -1103,7 +1059,7 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
-            criterion_ta = CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
@@ -1112,7 +1068,9 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: [criterion_ta], current_table: 'criteria_table' }
+                              graders: [@ta1.id],
+                              criteria: [@criterion2.position],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion2.tas).not_to include(@ta1)
             @criterion1.reload
@@ -1129,21 +1087,21 @@ describe GradersController do
           end
 
           it 'and multiple graders and multiple criteria are selected' do
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            ]
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
+                              graders: [@ta1.id, @ta2.id, @ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas).to eq []
             expect(@criterion2.tas).to eq []
@@ -1194,7 +1152,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] },
+                              criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
             @assignment.get_criteria do |criterion|
@@ -1206,7 +1164,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position], graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -1218,8 +1176,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -1231,7 +1189,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
@@ -1243,8 +1202,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
@@ -1258,10 +1217,9 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class],
-                                          '2' => [@criterion3.id, @criterion3.class] },
-                              graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
+                              graders: [@ta1.id, @ta2.id, @ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.size).to eq 1
             expect(@criterion2.tas.size).to eq 1
@@ -1271,9 +1229,9 @@ describe GradersController do
 
         context 'POST on :global_actions on assign' do
           before :each do
-            @criterion1 = create(:flexible_criterion, assignment: @assignment)
-            @criterion2 = create(:flexible_criterion, assignment: @assignment)
-            @criterion3 = create(:flexible_criterion, assignment: @assignment)
+            @criterion1 = create(:flexible_criterion, assignment: @assignment, position: 1)
+            @criterion2 = create(:flexible_criterion, assignment: @assignment, position: 2)
+            @criterion3 = create(:flexible_criterion, assignment: @assignment, position: 3)
             @ta1 = create(:ta)
             @ta2 = create(:ta)
             @ta3 = create(:ta)
@@ -1315,7 +1273,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -1327,8 +1286,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas[0].id).to eq @ta1.id
@@ -1340,7 +1299,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 2
@@ -1354,8 +1314,8 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] }, graders: [@ta1.id, @ta2.id],
+                              criteria: [@criterion1.position, @criterion2.position],
+                              graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 2
@@ -1372,9 +1332,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class],
-                                          '2' => [@criterion3.id, @criterion3.class] },
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas.length).to eq 3
@@ -1393,8 +1351,7 @@ describe GradersController do
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign',
-                              criteria: { '0' => [@criterion1.id, @criterion1.class],
-                                          '1' => [@criterion2.id, @criterion2.class] },
+                              criteria: [@criterion1.position, @criterion2.position],
                               graders: [@ta1.id, @ta2.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             @criterion1.reload
@@ -1436,16 +1393,16 @@ describe GradersController do
           end
 
           it 'and all graders from one criterion are selected' do
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
-            ]
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position],
+                              graders: [@ta1.id, @ta2.id, @ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             @criterion1.reload
             expect(@criterion1.tas).to eq []
@@ -1458,15 +1415,15 @@ describe GradersController do
           it 'and all criteria from one grader are selected' do
             CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
             CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            ]
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
+                              graders: [@ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             @criterion1.reload
             @criterion2.reload
@@ -1491,8 +1448,10 @@ describe GradersController do
             CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
-                    params: { assignment_id: @assignment.id, global_actions: 'unassign', criteria: [@criterion2],
-                              criterion_associations: [criterion_ta], current_table: 'criteria_table' }
+                    params: { assignment_id: @assignment.id, global_actions: 'unassign',
+                              criteria: [@criterion2.position],
+                              graders: [@ta1.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion2.tas).not_to include(@ta1)
             @criterion1.reload
@@ -1509,21 +1468,21 @@ describe GradersController do
           end
 
           it 'and multiple graders and multiple criteria are selected' do
-            criterion_tas = [
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1),
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2),
-              CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3),
-              CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3),
-              CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
-            ]
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion1)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion2)
+            CriterionTaAssociation.create(ta: @ta1, criterion: @criterion3)
+            CriterionTaAssociation.create(ta: @ta2, criterion: @criterion3)
+            CriterionTaAssociation.create(ta: @ta3, criterion: @criterion3)
             post_as @admin,
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'unassign',
-                              criterion_associations: criterion_tas, current_table: 'criteria_table' }
+                              criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
+                              graders: [@ta1.id, @ta2.id, @ta3.id],
+                              current_table: 'criteria_table' }
             expect(response.status).to eq(200)
             expect(@criterion1.tas).to eq []
             expect(@criterion2.tas).to eq []

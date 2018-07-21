@@ -72,7 +72,7 @@ class AssignmentSummaryTable extends React.Component {
       },
     },
     {
-      Header: I18n.t('browse_submissions.marking_state'),
+      Header: I18n.t('activerecord.attributes.result.marking_state'),
       accessor: 'marking_state',
       filterMethod: (filter, row) => {
         if (filter.value === 'all') {
@@ -88,15 +88,15 @@ class AssignmentSummaryTable extends React.Component {
           value={filter ? filter.value : 'all'}
         >
           <option value='all'>{I18n.t('all')}</option>
-          <option value={I18n.t('marking_state.not_collected')}>{I18n.t('marking_state.not_collected')}</option>
-          <option value='partial'>{I18n.t('marking_state.in_progress')}</option>
-          <option value='completed'>{I18n.t('marking_state.completed')}</option>
-          <option value='released'>{I18n.t('marking_state.released')}</option>
-          <option value='remark'>{I18n.t('marking_state.remark_requested')}</option>
+          <option value={I18n.t('results.state.not_collected')}>{I18n.t('results.state.not_collected')}</option>
+          <option value='partial'>{I18n.t('results.state.in_progress')}</option>
+          <option value='completed'>{I18n.t('results.state.complete')}</option>
+          <option value='released'>{I18n.t('results.state.released')}</option>
+          <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
         </select>,
     },
     {
-      Header: I18n.t('browse_submissions.final_grade'),
+      Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
       filterable: false,
       defaultSortDesc: true,
@@ -116,7 +116,7 @@ class AssignmentSummaryTable extends React.Component {
            </input>
            <input type='submit'
                   name='download'
-                  value={'Old: ' + I18n.t('browse_submissions.detailed_csv_report')}>
+                  value={'Old: ' + I18n.t('submissions.detailed_csv_report')}>
            </input>
          </form>
         }

@@ -1,5 +1,3 @@
-require 'zip'
-
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
 
@@ -198,7 +196,7 @@ class SubmissionsController < ApplicationController
 
   def collect_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      flash_now(:error, t('results.must_select_a_group_to_collect'))
+      flash_now(:error, t('groups.select_a_group'))
       head 400
       return
     end
@@ -213,7 +211,7 @@ class SubmissionsController < ApplicationController
     if partition[0].count > 0
       current_job = SubmissionsJob.perform_later(partition[0])
       session[:job_id] = current_job.job_id
-      success = I18n.t('collect_submissions.collection_job_started_for_groups',
+      success = I18n.t('submissions.collect.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
     if partition[1].count > 0
@@ -228,7 +226,7 @@ class SubmissionsController < ApplicationController
 
   def run_tests
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      flash_now(:error, t('results.must_select_a_group'))
+      flash_now(:error, t('groups.select_a_group'))
       head 400
       return
     end
@@ -264,7 +262,7 @@ class SubmissionsController < ApplicationController
     end
 
     if @assignment.past_all_collection_dates?
-      flash_now(:success, t('browse_submissions.grading_can_begin'))
+      flash_now(:success, t('submissions.grading_can_begin'))
       return
     end
 
@@ -283,17 +281,17 @@ class SubmissionsController < ApplicationController
       section_due_dates.each do |collection_time, sections|
         sections = sections.join(', ')
         if collection_time == now
-          flash_now(:success, t('browse_submissions.grading_can_begin_for_sections',
+          flash_now(:success, t('submissions.grading_can_begin_for_sections',
                                 sections: sections))
         else
-          flash_now(:warning, t('browse_submissions.grading_can_begin_after_for_sections',
+          flash_now(:warning, t('submissions.grading_can_begin_after_for_sections',
                                 time: l(collection_time),
                                 sections: sections))
         end
       end
     else
       collection_time = @assignment.submission_rule.calculate_collection_time
-      flash_now(:warning, t('browse_submissions.grading_can_begin_after',
+      flash_now(:warning, t('submissions.grading_can_begin_after',
                             time: l(collection_time)))
     end
   end
@@ -331,10 +329,12 @@ class SubmissionsController < ApplicationController
       unless params[:new_files].nil?
         params[:new_files].each do |f|
           if f.size > MarkusConfigurator.markus_config_max_file_size
-            max_size_MB = (MarkusConfigurator.markus_config_max_file_size / 1000000.00).round(2)
-            error_message = "Error occurred while uplading file \"#{ f.original_filename }\"" \
-               ": The size of the uploaded file exceeds the maximum of #{ max_size_MB.to_s } MB."
-            flash_message(:error, error_message)
+            flash_message(
+              :error,
+              t('student.submission.file_too_large',
+                file_name: f.original_filename,
+                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))
+            )
             return
           elsif f.size == 0
             flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
@@ -481,14 +481,14 @@ class SubmissionsController < ApplicationController
                                                   path))[file.filename]
           file_contents = repo.download_as_string(raw_file)
         rescue Exception => e
-          render text: I18n.t('student.submission.missing_file',
+          render plain: I18n.t('student.submission.missing_file',
                               file_name: file.filename, message: e.message)
           next  # exit the block
         end
 
         if SubmissionFile.is_binary?(file_contents)
           # If the file appears to be binary, send it as a download
-          render text: 'not a plaintext file'
+          render plain: 'not a plaintext file'
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
@@ -515,7 +515,7 @@ class SubmissionsController < ApplicationController
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render text: I18n.t('student.submission.missing_file',
+        render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
         return
       end
@@ -528,7 +528,7 @@ class SubmissionsController < ApplicationController
       else
         # Otherwise, sanitize it for HTML and blast it out to the screen
         sanitized_contents = ERB::Util.html_escape(file_contents)
-        render text: sanitized_contents, layout: 'sanitized_html'
+        render plain: sanitized_contents, layout: 'sanitized_html'
       end
     end
   end
@@ -688,7 +688,7 @@ class SubmissionsController < ApplicationController
   # Release or unrelease submissions
   def update_submissions
     if !params.has_key?(:groupings) || params[:groupings].empty?
-      flash_now(:error, t('results.must_select_a_group'))
+      flash_now(:error, t('groups.select_a_group'))
       head 400
       return
     end
@@ -748,7 +748,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render text: l(Time.zone.now)
+    render plain: l(Time.zone.now)
   end
 
   private

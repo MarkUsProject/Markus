@@ -1,3 +1,5 @@
+# Configuration for the 'bullet' gem
+
 if Rails.env.development?
   Bullet.enable = true
   Bullet.alert = true
