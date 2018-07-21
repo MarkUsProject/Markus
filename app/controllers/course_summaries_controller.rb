@@ -17,33 +17,33 @@ class CourseSummariesController < ApplicationController
     assignment_marks = []
     gefms = []
 
-    assignment_names = Assignment.pluck(:id)
-    gefms_names = GradeEntryForm.pluck(:id)
+    assignment_names = Assignment.pluck(:id, :short_identifier)
+    gefms_names = GradeEntryForm.pluck(:id, :short_identifier)
 
     if current_user.admin?
       table = get_table_json_data
       mark_schemes = []
 
-      markscheme_names = MarkingScheme.pluck(:id)
+      markscheme_names = MarkingScheme.pluck(:id, :name)
 
-      assignment_marks.concat(assignment_names.map do |aname|
+      assignment_marks.concat(assignment_names.map do |id, sh_identifier|
         {
-          accessor: "assignment_marks.#{aname}",
-          Header: Assignment.find(aname).short_identifier
+          accessor: "assignment_marks.#{id}",
+          Header: sh_identifier
         }
       end)
 
-      gefms.concat(gefms_names.map do |sname|
+      gefms.concat(gefms_names.map do |id, sh_identifier|
         {
-          accessor: "grade_entry_form_marks.#{sname}",
-          Header: GradeEntryForm.find(sname).short_identifier
+          accessor: "grade_entry_form_marks.#{id}",
+          Header: sh_identifier
         }
       end)
 
-      mark_schemes.concat(markscheme_names.map do |mname|
+      mark_schemes.concat(markscheme_names.map do |id, name|
         {
-          accessor: "weighted_marks.#{mname}",
-          Header: MarkingScheme.find(mname).name
+          accessor: "weighted_marks.#{id}",
+          Header: name
         }
       end)
 
@@ -52,17 +52,17 @@ class CourseSummariesController < ApplicationController
     else
       table = get_student_row_information
 
-      assignment_marks.concat(assignment_names.map do |aname|
+      assignment_marks.concat(assignment_names.map do |id, sh_identifier|
         {
-          accessor: "assignment_marks.#{aname}",
-          Header: Assignment.find(aname).short_identifier
+          accessor: "assignment_marks.#{id}",
+          Header: sh_identifier
         }
       end)
 
-      gefms.concat(gefms_names.map do |sname|
+      gefms.concat(gefms_names.map do |id, sh_identifier|
         {
-          accessor: "grade_entry_form_marks.#{sname}",
-          Header: GradeEntryForm.find(sname).short_identifier
+          accessor: "grade_entry_form_marks.#{id}",
+          Header: sh_identifier
         }
       end)
 
