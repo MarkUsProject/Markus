@@ -16,21 +16,21 @@ class MarkingSchemesController < ApplicationController
     assignment_weights = []
     spreadsheet_weights = []
 
-    assignment_names = Assignment.pluck(:id)
+    assignment_names = Assignment.pluck(:id, :short_identifier)
 
-    spreadsheet_names = GradeEntryForm.pluck(:id)
+    spreadsheet_names = GradeEntryForm.pluck(:id, :short_identifier)
 
-    assignment_weights.concat(assignment_names.map do |aname|
+    assignment_weights.concat(assignment_names.map do |id, sh_identifier|
       {
-        accessor: "assignment_weights.#{aname}",
-        Header: Assignment.find(aname).short_identifier
+        accessor: "assignment_weights.#{id}",
+        Header: sh_identifier
       }
     end)
 
-    spreadsheet_weights.concat(spreadsheet_names.map do |sname|
+    spreadsheet_weights.concat(spreadsheet_names.map do |id, sh_identifier|
       {
-        accessor: "spreadsheet_weights.#{sname}",
-        Header: GradeEntryForm.find(sname).short_identifier
+        accessor: "spreadsheet_weights.#{id}",
+        Header: sh_identifier
       }
     end)
     render json: { data: table, marks: assignment_weights.concat(spreadsheet_weights) }
