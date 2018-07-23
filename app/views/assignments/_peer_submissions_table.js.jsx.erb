@@ -51,20 +51,20 @@
     renderMarkingState: function(state) {
       if (state === 'released') {
         return (<%= image_tag('icons/email_go.png',
-                              alt: t('marking_state.released'),
-                              title: t('marking_state.released')) %>);
-      } else if (state === I18n.t('marking_state.not_collected')) {
+                              alt: t('results.state.released'),
+                              title: t('results.state.released')) %>);
+      } else if (state === I18n.t('results.state.not_collected')) {
         return (<%= image_tag('icons/shape_square.png',
-                              alt: t('marking_state.not_collected'),
-                              title: t('marking_state.not_collected')) %>);
+                              alt: t('results.state.not_collected'),
+                              title: t('results.state.not_collected')) %>);
       } else if (state === 'partial') {
         return (<%= image_tag('icons/pencil.png',
-                              alt: t('marking_state.in_progress'),
-                              title: t('marking_state.in_progress')) %>);
+                              alt: t('results.state.in_progress'),
+                              title: t('results.state.in_progress')) %>);
       } else if (state === 'completed') {
         return (<%= image_tag('icons/accept.png',
-                              alt: t('marking_state.completed'),
-                              title: t('marking_state.completed')) %>);
+                              alt: t('results.state.complete'),
+                              title: t('results.state.complete')) %>);
       } else if (state === 'remark') {
         return (<%= image_tag('icons/double_exclamation.png',
                               alt: t('marking_state.remark_requested'),

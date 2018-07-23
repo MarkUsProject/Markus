@@ -1,0 +1,19 @@
+pt:
+  results:
+    edit:
+      title: "Projeto %{assignment_name}: %{group_name}"
+
+    marks_released_notice: "As notas foram liberadas. Você não pode alterá-las."
+    next_submission: "Próxima submissão"
+    no_result: "Nenhuma nota está disponível."
+    previous_submission: "Submissão anterior"
+    results_for: "Resultados para"
+    review_for: "Revisão para"
+    set_to_incomplete: "Reverter para incompleta"
+    set_to_complete: "Conjunto para completar"
+    state:
+      complete: "Completado"
+      in_progress: "Em progresso"
+      not_collected: "Não coletado"
+      released: "Liberado"
+      remark_requested: "Pedido de revisão"

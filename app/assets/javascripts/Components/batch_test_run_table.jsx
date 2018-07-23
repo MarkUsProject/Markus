@@ -42,6 +42,10 @@ class BatchTestRunTable extends React.Component {
           data={data}
           columns={[
             {
+              Header: "Batch Test ID",
+              accessor: "test_batch_id"
+            },
+            {
               Header: "User Name",
               accessor: "user_name"
             },
@@ -55,22 +59,11 @@ class BatchTestRunTable extends React.Component {
               accessor: 'name'
             },
             {
-              Header: I18n.t('automated_tests.test_results_table.output'),
-              accessor: 'actual_output'
-            },
-            {
               Header: I18n.t('automated_tests.test_results_table.status'),
               accessor: 'completion_status'
-            },
-            {
-              Header: I18n.t('automated_tests.test_results_table.marks_earned'),
-              accessor: 'marks_earned'
-            },
-            {
-              Header: I18n.t('automated_tests.test_results_table.marks_total'),
-              accessor: 'marks_total'
-            },
+            }
           ]}
+          pivotBy={["test_batch_id"]}
         />
       </div>
     );

@@ -36,7 +36,7 @@
           <a href='<%= root_url %>' id='results-logo-img'></a>
         </div>
         <h3 class='title_text flex_vertical_center'>
-        <%= t('results.title',
+        <%= t('results.edit.title',
               { assignment_name: @assignment.short_identifier,
                 group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
         </h3>

@@ -1,0 +1,6 @@
+fr:
+  activerecord:
+    models:
+      submission:
+        one: "Envoi"
+        other: "Envois"

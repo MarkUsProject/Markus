@@ -76,7 +76,7 @@ class RawSubmissionTable extends React.Component {
       },
     },
     {
-      Header: I18n.t('browse_submissions.repository'),
+      Header: I18n.t('submissions.repo_browser.repository'),
       filterable: false,
       sortable: false,
       Cell: row => {
@@ -119,20 +119,20 @@ class RawSubmissionTable extends React.Component {
         </select>,
     },
     {
-      Header: I18n.t('browse_submissions.commit_date'),
+      Header: I18n.t('submissions.commit_date'),
       accessor: 'submission_time',
       filterable: false,
       minWidth: 150,
     },
     {
-      Header: I18n.t('browse_submissions.grace_credits_used'),
+      Header: I18n.t('submissions.grace_credits_used'),
       accessor: 'grace_credits_used',
       show: this.props.show_grace_tokens,
       minWidth: 100,
       style: { textAlign: 'right' },
     },
     {
-      Header: I18n.t('browse_submissions.marking_state'),
+      Header: I18n.t('activerecord.attributes.result.marking_state'),
       accessor: 'marking_state',
       filterMethod: (filter, row) => {
         if (filter.value === 'all') {
@@ -148,16 +148,16 @@ class RawSubmissionTable extends React.Component {
           value={filter ? filter.value : 'all'}
         >
           <option value='all'>{I18n.t('all')}</option>
-          <option value={I18n.t('marking_state.not_collected')}>{I18n.t('marking_state.not_collected')}</option>
-          <option value='incomplete'>{I18n.t('marking_state.in_progress')}</option>
-          <option value='complete'>{I18n.t('marking_state.completed')}</option>
-          <option value='released'>{I18n.t('marking_state.released')}</option>
-          <option value='remark'>{I18n.t('marking_state.remark_requested')}</option>
+          <option value={I18n.t('results.state.not_collected')}>{I18n.t('results.state.not_collected')}</option>
+          <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
+          <option value='complete'>{I18n.t('results.state.complete')}</option>
+          <option value='released'>{I18n.t('results.state.released')}</option>
+          <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
         </select>,
       minWidth: 70
     },
     {
-      Header: I18n.t('browse_submissions.final_grade'),
+      Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
       style: {textAlign: 'right'},
       minWidth: 80,
@@ -185,7 +185,7 @@ class RawSubmissionTable extends React.Component {
   // Custom getTrProps function to highlight submissions that have been collected.
   getTrProps = (state, ri, ci, instance) => {
     if (ri.original.marking_state === undefined ||
-        ri.original.marking_state === I18n.t('marking_state.not_collected')) {
+        ri.original.marking_state === I18n.t('results.state.not_collected')) {
       return {ri};
     } else {
       return {ri, className: 'submission_collected'};
@@ -194,7 +194,7 @@ class RawSubmissionTable extends React.Component {
 
   // Submission table actions
   collectSubmissions = () => {
-    if (!window.confirm(I18n.t('collect_submissions.results_loss_warning'))) {
+    if (!window.confirm(I18n.t('submissions.collect.results_loss_warning'))) {
       return;
     }
 
@@ -205,7 +205,7 @@ class RawSubmissionTable extends React.Component {
   };
 
   uncollectAllSubmissions = () => {
-    if (!window.confirm(I18n.t('collect_submissions.undo_results_loss_warning'))) {
+    if (!window.confirm(I18n.t('submissions.collect.undo_results_loss_warning'))) {
       return;
     }
 
@@ -216,7 +216,7 @@ class RawSubmissionTable extends React.Component {
   };
 
   downloadGroupingFiles = (event) => {
-    if (!window.confirm(I18n.t('collect_submissions.marking_incomplete_warning'))) {
+    if (!window.confirm(I18n.t('submissions.marking_incomplete_warning'))) {
       event.preventDefault();
     }
   };
@@ -313,7 +313,7 @@ class SubmissionsActionBox extends React.Component {
           onClick={this.props.collectSubmissions}
           disabled={this.props.disabled}
         >
-          {I18n.t('collect_submissions.collect')}
+          {I18n.t('submissions.collect.submit')}
         </button>
       );
       // TODO: look into re-enabling undo collection
@@ -328,14 +328,14 @@ class SubmissionsActionBox extends React.Component {
         <button
           disabled={this.props.disabled}
           onClick={this.props.releaseMarks}>
-          {I18n.t('release_marks')}
+          {I18n.t('submissions.release_marks')}
         </button>
       );
       unreleaseMarksButton = (
         <button
           disabled={this.props.disabled}
           onClick={this.props.unreleaseMarks}>
-          {I18n.t('unrelease_marks')}
+          {I18n.t('submissions.unrelease_marks')}
         </button>
       );
     }
@@ -344,7 +344,7 @@ class SubmissionsActionBox extends React.Component {
         <button onClick={this.props.runTests}
                 disabled={this.props.disabled}
         >
-          {I18n.t('browse_submissions.run_tests')}
+          {I18n.t('submissions.run_tests')}
         </button>
       );
     }
@@ -356,7 +356,7 @@ class SubmissionsActionBox extends React.Component {
         download
         className="button"
       >
-        {I18n.t('download_the', {item: I18n.t('browse_submissions.all_submissions')})}
+        {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
       </a>
     );
 
