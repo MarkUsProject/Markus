@@ -377,7 +377,7 @@ class AssignmentsController < ApplicationController
     test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
                             .select(:created_at, :user_id, :name, :file_name,
                                     :actual_output, :completion_status,
-                                    'test_results.marks_earned', 'test_results.marks_total')
+                                    'test_results.marks_earned', 'test_results.marks_total', :test_batch_id)
     # Create new entries that combine created_at and user_name together
     test_script_results = test_script_results.as_json
     test_script_results.each do |g|

@@ -142,7 +142,7 @@
                           summary_assignment_path(@assignment) %>
             </li>
             <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
-              <%= link_to "Test Results",
+              <%= link_to "Test Runs Status",
                           batch_runs_assignment_path(@assignment) %>
             </li>
           <% end %>
