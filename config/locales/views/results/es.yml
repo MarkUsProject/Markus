@@ -1,0 +1,19 @@
+es:
+  results:
+    edit:
+      title: "Proyecto %{assignment_name}: %{group_name}"
+
+    marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
+    next_submission: "Siguiente Entrega"
+    no_result: "No existen notas disponibles."
+    previous_submission: "Entrega Anterior"
+    results_for: "Resultados para"
+    review_for: "Revisión para"
+    set_to_incomplete: "Marcar como Incompleto"
+    set_to_complete: "Marcar como Completo"
+    state:
+      completed: "Completado"
+      in_progress: "En progreso"
+      not_collected: "No ha sido recolectado"
+      released: "Publicado"
+      remark_requested: "Recalificación solicitada"

@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    models:
+      result:
+        one: "Result"
+    attributes:
+      result:
+        marking_state: "Marking State"
+        overall_comment: "Overall Comments"
+        total_mark: "Total Mark"

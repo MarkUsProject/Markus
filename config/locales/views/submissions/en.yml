@@ -1,0 +1,56 @@
+en:
+  submissions:
+    collect:
+      apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
+      collection_job_started_for_groups: "Submission collection for selected groupings for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
+      could_not_collect_some: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings."
+      manual_collection: "Manual Collection"
+      overwrite_warning: "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
+      progress: "%{count}/%{size} submissions collected"
+      results_loss_warning: "This operation:
+                             Identifies the file version for each submission that meets the due date and/or late penalty set for this assignment.
+                             Creates the views for annotating and grading each submission.
+                             Warning: If this operation is carried out after grading has begun, this grading work will be overwritten. This work can be recovered using the Undo Collection button."
+      submit: "Collect Submissions"
+      successfully_collected: "Successfully collected %{collected} submissions."
+      this_revision: "Collect and Grade This Revision"
+      uncollect_all: "Undo Previous Collection"
+      uncollection_started: "Starting uncollection of assignments"
+      undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
+                                  WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
+    errors:
+      no_submission: "%{group_name} has no submissions"
+      not_complete: "Cannot release result for %{group_name}: the marking is not complete."
+      not_complete_unrelease: "Cannot unrelease result for %{group_name}: the marking is not complete."
+    help:
+      browse:
+        admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
+        tas: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
+    repo_browser:
+      client_time: "commit:"
+      collected: "collected"
+      last_revised: "Last Revised"
+      repository: "Repository"
+      repository_name: "Repository: %{repository}"
+      revised_by: "Revised By"
+      viewing_revision: "Viewing Revision:"
+      server_time: "push:"
+    student:
+      no_submission: "You have not submitted any work yet."
+
+    # Miscellaneous
+    commit_date: "Submission Date"
+    detailed_csv_report: "Detailed CSV Report"
+    grace_credits_used: "Grace Credits Used"
+    grading_can_begin: "Grading can begin"
+    grading_can_begin_after: "Grading can begin after %{time}"
+    grading_can_begin_for_sections: "Grading can begin for sections: %{sections}"
+    grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
+    how_many_marked: "%{num_marked}/%{num_assigned} completed"
+    marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
+    release_marks: "Release Marks"
+    repo_list: "Repository List"
+    repo_checkout_file: "Repository Checkout File"
+    run_tests: "Run Tests"
+    status: "Status"
+    unrelease_marks: "Unrelease Marks"

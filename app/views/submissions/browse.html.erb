@@ -22,15 +22,14 @@
   <% if @assignment.is_peer_review? %>
     <%=t('peer_review.reviews')%>: <%= sanitize(@assignment.parent_assignment.short_identifier) %>
   <% else %>
-    <%= t('browse_submissions.submissions',
-          short_identifier: sanitize(@assignment.short_identifier)) %>
+    <%= "#{Submission.model_name.human.pluralize}: #{sanitize(@assignment.short_identifier)}" %>
   <% end %>
   <div class='title-help submissions_help'>
     <p class='help-message-title submissions_help'>
       <% if @current_user.ta? %>
-        <%= t('assignment.help.submissions_graders') %>
+        <%= t('submissions.help.browse.tas') %>
       <% else %>
-        <%= t('assignment.help.submissions_admins') %>
+        <%= t('submissions.help.browse.admins') %>
       <% end %>
     </p>
   </div>
@@ -42,11 +41,11 @@
 <% unless @assignment.is_peer_review? %>
   <% if @current_user.admin? %>
     <% @heading_buttons += [
-      { link_text: t('browse_submissions.detailed_csv_report'),
+      { link_text: t('submissions.detailed_csv_report'),
         link_path: summary_assignment_path(@assignment) },
-      { link_text: t('browse_submissions.repo_list'),
+      { link_text: t('submissions.repo_list'),
         link_path: download_repo_list_assignment_submissions_path(@assignment) },
-      { link_text: t('browse_submissions.repo_checkout_file'),
+      { link_text: t('submissions.repo_checkout_file'),
         link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment) }
     ] %>
   <% end %>
@@ -55,7 +54,7 @@
 <% content_for :additional_headings do %>
   <% if @current_user.ta? %>
     <span class='menu_bar'></span>
-    <%= t('browse_submissions.how_many_marked',
+    <%= t('submissions.how_many_marked',
           num_marked: @assignment.get_num_marked(@current_user.id),
           num_assigned: @assignment.get_num_assigned(@current_user.id)) %>
   <% end %>

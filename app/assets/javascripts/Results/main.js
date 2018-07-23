@@ -35,5 +35,4 @@
 //= require Results/context_menu
 //= require Results/file_selector
 //= require Results/tag_operations
-//= require testresults_config
 //= require Tags/text_updater

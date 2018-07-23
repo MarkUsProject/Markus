@@ -10,7 +10,7 @@
     <%= markdown(submission.remark_request) %>
   </div>
   <div id="overall_remark_comment">
-    <h3><%= I18n.t("marker.overall_comments") %></h3>
+    <h3><%= Result.human_attribute_name(:overall_comment) %></h3>
     <% if !result.released_to_students %>
       <%= render partial: 'results/marker/overall_remark_comment', locals: {result: result} %>
     <% else %>
