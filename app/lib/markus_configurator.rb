@@ -117,6 +117,22 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_validate_user_message
+    if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
+      return VALIDATE_USER_NOT_ALLOWED_DISPLAY
+    else
+      return nil
+    end
+  end
+
+  def markus_config_validate_login_message
+    if defined? VALIDATE_LOGIN_INCORRECT_DISPLAY
+      return VALIDATE_LOGIN_INCORRECT_DISPLAY
+    else
+      return nil
+    end
+  end
+
   ###########################################
   # Markus Session cookie configuration
   ###########################################
