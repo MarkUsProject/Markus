@@ -28,6 +28,7 @@ import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 import { makeGroupsManager } from 'javascripts/Components/groups_manager';
 import { makeGradersManager } from 'javascripts/Components/graders_manager';
+import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_table';
 import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
 
 import 'javascripts/react_config';
@@ -49,4 +50,5 @@ window.makeSubmissionTable = makeSubmissionTable;
 window.makeMarksGradersManager = makeMarksGradersManager;
 window.makeGroupsManager = makeGroupsManager;
 window.makeGradersManager = makeGradersManager;
+window.makeMarkingSchemeTable = makeMarkingSchemeTable;
 window.makeStarterCodeFileManager = makeStarterCodeFileManager;
