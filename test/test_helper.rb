@@ -9,6 +9,9 @@ require 'mocha/mini_test'
 require 'sham'
 include ActionView::Helpers::TranslationHelper
 
+# Make sure test db stays up to date with current schema
+ActiveRecord::Migration.maintain_test_schema!
+
 class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...

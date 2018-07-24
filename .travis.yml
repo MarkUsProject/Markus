@@ -6,12 +6,14 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -y cmake libssh2-1-dev ghostscript
   - sudo apt-get install imagemagick libmagickwand-dev
+  - gem install bundler
 
 install:
   - travis_wait bundle install --path=~/.bundle --jobs=3 --retry=3 --without development production console
   - yarn install
   #  - ./script/install-svn.sh  # uncomment this if we want to test interactions with svn in the future
   - cp config/database.yml.ci config/database.yml
+  - ./script/install-autotesting.sh
 
 before_script:
   - sudo rm -f /etc/localtime

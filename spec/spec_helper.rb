@@ -14,6 +14,9 @@ require 'time-warp'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
+# Make sure test db stays up to date with current schema
+ActiveRecord::Migration.maintain_test_schema!
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -43,13 +46,23 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
-  config.before :each do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean_with(:truncation)
-  end
-  config.after :each do
+
+  config.before :suite do
+    DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before :each do |example|
+    if example.metadata[:skip_db_clean].nil?
+      DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner.clean_with(:truncation)
+    end
+  end
+  config.after :each do |example|
+    if example.metadata[:skip_db_clean].nil?
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.clean_with(:truncation)
+    end
   end
 
   # If true, the base class of anonymous controllers will be inferred
