@@ -9,7 +9,7 @@ class CourseSummaryTable extends React.Component {
     super();
     this.state = {
       data: [],
-      marks: [],
+      columns: [],
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -23,10 +23,9 @@ class CourseSummaryTable extends React.Component {
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
-      console.log(res.marks)
       this.setState({
         data: res.data,
-        marks: res.marks,
+        columns: res.columns,
       });
     });
   }
@@ -54,7 +53,7 @@ class CourseSummaryTable extends React.Component {
     return (
       <ReactTable
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.marks)}
+        columns={this.nameColumns.concat(this.state.columns)}
         defaultSorted={[
           {
             id: 'user_name'

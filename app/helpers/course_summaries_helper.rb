@@ -185,7 +185,7 @@ module CourseSummariesHelper
       end
     end
 
-    (weighted_assignment_total + weighted_gef_total).round(2)
+    (weighted_assignment_total + weighted_gef_total).round(2).to_f
   end
 end
 

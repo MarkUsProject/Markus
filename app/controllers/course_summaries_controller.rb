@@ -14,60 +14,40 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    assignment_marks = []
-    gefms = []
+    assignment_columns = Assignment.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "assignment_marks.#{id}",
+        Header: short_identifier,
+        minWidth: 50
+      }
+    end
 
-    assignment_names = Assignment.pluck(:id, :short_identifier)
-    gefms_names = GradeEntryForm.pluck(:id, :short_identifier)
+    gef_columns = GradeEntryForm.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "grade_entry_form_marks.#{id}",
+        Header: short_identifier,
+        minWidth: 50
+      }
+    end
 
-    if current_user.admin?
-      table = get_table_json_data
-      mark_schemes = []
-
-      markscheme_names = MarkingScheme.pluck(:id, :name)
-
-      assignment_marks.concat(assignment_names.map do |id, sh_identifier|
-        {
-          accessor: "assignment_marks.#{id}",
-          Header: sh_identifier
-        }
-      end)
-
-      gefms.concat(gefms_names.map do |id, sh_identifier|
-        {
-          accessor: "grade_entry_form_marks.#{id}",
-          Header: sh_identifier
-        }
-      end)
-
-      mark_schemes.concat(markscheme_names.map do |id, name|
+    if current_user.admin? || current_user.ta?
+      marking_scheme_columns = MarkingScheme.pluck(:id, :name).map do |id, name|
         {
           accessor: "weighted_marks.#{id}",
-          Header: name
+          Header: name,
+          minWidth: 50
         }
-      end)
+      end
 
-      render json: { data: table, marks: assignment_marks.concat(gefms).concat(mark_schemes) }
-
+      render json: {
+        data: get_table_json_data,
+        columns: assignment_columns.concat(gef_columns).concat(marking_scheme_columns)
+      }
     else
-      table = get_student_row_information
-
-      assignment_marks.concat(assignment_names.map do |id, sh_identifier|
-        {
-          accessor: "assignment_marks.#{id}",
-          Header: sh_identifier
-        }
-      end)
-
-      gefms.concat(gefms_names.map do |id, sh_identifier|
-        {
-          accessor: "grade_entry_form_marks.#{id}",
-          Header: sh_identifier
-        }
-      end)
-
-      render json: { data: table, marks: assignment_marks.concat(gefms) }
-
+      render json: {
+        data: get_student_row_information,
+        columns: assignment_columns.concat(gef_columns)
+      }
     end
   end
 
