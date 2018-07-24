@@ -1,1 +1,2 @@
-window.alert("<%= t(:timeout_imminent) %>");
+document.getElementById('timeout_imminent_dialog').innerHTML = "<%= escape_javascript(render partial: 'main/timeout_imminent_content') %>";
+timeout_imminent_modal.open();

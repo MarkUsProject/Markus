@@ -18,6 +18,7 @@
 //= require Chart
 //= require chart_config
 //= require markus_colors
+//= require refresh_or_logout
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 

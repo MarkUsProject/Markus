@@ -160,14 +160,6 @@ module SessionHandler
     session[:has_warned] = false
   end
 
-  def set_warned
-    session[:has_warned] = true
-  end
-
-  def check_warned
-    session[:has_warned]
-  end
-
   # Check if this current user's session has not yet expired.
   def session_expired?
     return true if session[:timeout].nil?

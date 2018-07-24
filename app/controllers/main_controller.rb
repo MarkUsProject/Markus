@@ -308,12 +308,16 @@ class MainController < ApplicationController
   end
 
   def check_timeout
-    if !check_warned && check_imminent_expiry
+    if check_imminent_expiry
       render template: 'main/timeout_imminent'
-      set_warned
     else
       head :ok
     end
+  end
+
+  def refresh_session
+    refresh_timeout
+    head :ok
   end
 
 private
