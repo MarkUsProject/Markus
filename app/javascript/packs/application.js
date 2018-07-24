@@ -22,6 +22,7 @@ import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table
 import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
 import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
 import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
+import { makeCourseSummaryTable } from 'javascripts/Components/course_summaries_table';
 import { makeTestScriptResultTable } from 'javascripts/Components/test_script_result_table';
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
@@ -42,6 +43,7 @@ window.makeExamScanLogTable = makeExamScanLogTable;
 window.makeMarksSpreadsheet = makeMarksSpreadsheet;
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 window.makeRepoBrowser = makeRepoBrowser;
+window.makeCourseSummaryTable = makeCourseSummaryTable;
 window.makeTestScriptResultTable = makeTestScriptResultTable;
 window.makeSubmissionTable = makeSubmissionTable;
 window.makeMarksGradersManager = makeMarksGradersManager;

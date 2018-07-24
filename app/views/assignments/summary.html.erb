@@ -2,12 +2,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       makeAssignmentSummaryTable(
-        document.getElementById('assignment_summary_table'),
-        {
-          assignment_id: <%= @assignment.id %>,
-          is_admin: <%= @current_user.admin? %>
-        }
-      );
+        document.getElementById('assignment_summary_table'));
     });
   </script>
 <% end %>
