@@ -35,7 +35,7 @@ module MarkingSchemesHelper
   def get_marking_weights_for_all_gradable_item(weights_array)
     weights = {}
     weights_array.all.each do |w|
-      weights[w.gradable_item_id] = w.weight
+      weights[w.gradable_item_id] = w.weight.to_f
     end
     weights
   end

@@ -9,7 +9,7 @@ class MarkingSchemeTable extends React.Component {
     super();
     this.state = {
       data: [],
-      marks: [],
+      columns: [],
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -25,7 +25,7 @@ class MarkingSchemeTable extends React.Component {
     }).then(res => {
       this.setState({
         data: res.data,
-        marks: res.marks,
+        columns: res.columns,
       });
     });
   }
@@ -50,9 +50,7 @@ class MarkingSchemeTable extends React.Component {
           </a>
           &nbsp;|&nbsp;
           <a
-            onClick={this.fetchData}
             href={original.delete_link}
-            data-remote='true'
             data-method='delete'>
             {I18n.t('delete')}
           </a>
@@ -66,7 +64,7 @@ class MarkingSchemeTable extends React.Component {
     return (
       <ReactTable
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.marks).concat(this.modifyColumn)}
+        columns={this.nameColumns.concat(this.state.columns).concat(this.modifyColumn)}
         defaultSorted = {[
           {
             id: 'name'
