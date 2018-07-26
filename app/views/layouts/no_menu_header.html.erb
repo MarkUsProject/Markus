@@ -5,6 +5,9 @@
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= javascript_include_tag 'application' %>
   <%= javascript_include_tag 'menu' %>
+  <% unless MarkusConfigurator.markus_config_remote_user_auth %>
+    <%= javascript_include_tag 'check_timeout' %>
+  <% end %>
   <%= yield :head %>
 </head>
 <body>
