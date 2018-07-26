@@ -29,3 +29,7 @@
   background: asset_url('remove_arrow.png') no-repeat center left 5px,
               -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
 }
+
+.number {
+  text-align: right;
+}

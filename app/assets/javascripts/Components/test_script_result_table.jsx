@@ -82,12 +82,14 @@ class TestScriptResultTable extends React.Component {
             {
               Header: I18n.t('automated_tests.test_results_table.marks_earned'),
               accessor: 'marks_earned',
-              minWidth: 40
+              minWidth: 40,
+              className: 'number'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.marks_total'),
               accessor: 'marks_total',
-              minWidth: 40
+              minWidth: 40,
+              className: 'number'
             },
           ]}
           pivotBy={['created_at_user_name', 'file_name']}

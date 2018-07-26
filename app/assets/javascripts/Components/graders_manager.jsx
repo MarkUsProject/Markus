@@ -258,6 +258,7 @@ class RawGradersTable extends React.Component {
     {
       Header: I18n.t('activerecord.models.groups.other'),
       accessor: 'groups',
+      className: 'number',
       filterable: false
     },
     {
@@ -339,6 +340,7 @@ class RawGroupsTable extends React.Component {
         accessor: 'criteria_coverage_count',
         Cell: ({value}) => <span>{value || 0}/{this.props.numCriteria}</span>,
         minWidth: 70,
+        className: 'number',
         filterable: false
       },
     ];
@@ -402,6 +404,7 @@ class RawCriteriaTable extends React.Component {
         accessor: 'coverage',
         Cell: ({value}) => <span>{value}/{this.props.numGroups}</span>,
         minWidth: 70,
+        className: 'number',
         filterable: false
       }
     ];

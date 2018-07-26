@@ -16,7 +16,8 @@ class MarkingSchemesController < ApplicationController
       {
         accessor: "assignment_weights.#{id}",
         Header: short_identifier,
-        minWidth: 50
+        minWidth: 50,
+        className: 'number'
       }
     end
 
@@ -24,7 +25,8 @@ class MarkingSchemesController < ApplicationController
       {
         accessor: "grade_entry_form_weights.#{id}",
         Header: short_identifier,
-        minWidth: 50
+        minWidth: 50,
+        className: 'number'
       }
     end
 
