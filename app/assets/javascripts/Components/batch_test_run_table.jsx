@@ -2,9 +2,12 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
+import treeTableHOC from 'react-table/lib/hoc/treeTable';
 
+const TreeTable = treeTableHOC(ReactTable);
 const makeDefaultState = () => ({
   data: [],
+  sorted: [{id: 'test_batch_id', desc: true}],
 });
 
 class BatchTestRunTable extends React.Component {
@@ -46,24 +49,62 @@ class BatchTestRunTable extends React.Component {
               accessor: "test_batch_id"
             },
             {
-              Header: "User Name",
-              accessor: "user_name"
+              Header: "Date/Time",
+              accessor: "created_at",
+              // aggregate: vals => {
+              //   let earliestDate = null;
+              //   for (let i in vals){
+              //     console.log("type: " + typeof vals[i]);
+              //     let datetime = Date.parse(vals[i]);
+              //     if (earliestDate == null){
+              //       earliestDate = datetime;
+              //     }else{
+              //       if (earliestDate > datetime){
+              //         earliestDate = datetime;
+              //       }
+              //     }
+              //   }
+              //   console.log(typeof earliestDate);
+              //   return earliestDate
+              // },
+              Aggregated: <span></span>
             },
             {
-              Header: "File Name",
-              accessor: 'file_name'
-
+              Header: "Group Name",
+              accessor: "group_name",
+              Aggregated: <span></span>
             },
             {
-              Header: I18n.t('automated_tests.test_results_table.test_name'),
-              accessor: 'name'
+              Header: "Estimated Remaining Time",
+              accessor: 'time_to_service_estimate',
+              Aggregated: <span></span>
             },
             {
-              Header: I18n.t('automated_tests.test_results_table.status'),
-              accessor: 'completion_status'
+              Header: "Status",
+              accessor: 'status',
+              Aggregated: <span><a href={"www.google.com"}>Stop This batch</a></span>
             }
           ]}
           pivotBy={["test_batch_id"]}
+          // Controlled props
+          sorted={this.state.sorted}
+          // Callbacks
+          onSortedChange={sorted => this.setState({ sorted })}
+          // Custom Sort Method to sort by latest batch run
+          defaultSortMethod={ (a, b) => {
+            // sorting for created_at_user_name to ensure it's sorted by date
+            if (this.state.sorted[0].id === 'test_batch_id') {
+              if (a === 'Individual Tests'){
+                return -1;
+              }else if (b === 'Individual Tests'){
+                return 1;
+              }else{
+                return parseInt(a) > parseInt(b) ? 1: -1
+              }
+            } else {
+              return a > b ? 1 : -1;
+            }
+          }}
         />
       </div>
     );

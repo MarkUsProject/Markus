@@ -374,19 +374,30 @@ class AssignmentsController < ApplicationController
   def batch_runs
     puts "Did it get here"
     @assignment = Assignment.find(params[:id])
-    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
-                            .select(:created_at, :user_id, :name, :file_name,
-                                    :actual_output, :completion_status,
-                                    'test_results.marks_earned', 'test_results.marks_total', :test_batch_id)
+    test_runs = TestRun.joins(:grouping).includes(:test_script_results).select(:id, :time_to_service_estimate, :test_batch_id,
+                                                                     :grouping_id, :user_id, :submission_id,
+                                                                     'test_runs.created_at', :group_id,
+                                                                     :time_to_service)
+
     # Create new entries that combine created_at and user_name together
-    test_script_results = test_script_results.as_json
-    test_script_results.each do |g|
+    status_hash = Hash.new
+    test_runs.each do |g|
+      status_hash[g[:id]] = g.status
+    end
+    test_runs = test_runs.as_json
+    test_runs.each do |g|
       g['user_name'] = User.find(g['user_id']).user_name
+      g['created_at'] = I18n.l(g['created_at'])
+      g['group_name'] = Group.find(g['group_id']).group_name
+      g['status'] = status_hash[g['id']]
+      if g['test_batch_id'].nil?
+        g['test_batch_id'] = "Individual Tests"
+      end
     end
     respond_to do |format|
       format.html
       format.json {
-        render json: test_script_results
+        render json: test_runs
       }
     end
   end
