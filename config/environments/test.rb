@@ -37,7 +37,8 @@ Markus::Application.configure do
   # MarkUs relies on external user authentication: An external script
   # (ideally a small C program) is called with username and password
   # piped to stdin of that program (first line is username, second line
-  # is password).
+  # is password). If VALIDATE_IP is true, markus will also pass the
+  # remote ip address as a third line to stdin
   #
   # If and only if it exits with a return code of 0, the username/password
   # combination is considered valid and the user is authenticated. Moreover,
@@ -46,6 +47,8 @@ Markus::Application.configure do
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
   VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+
+  VALIDATE_IP = false
 
   # Normally exit status 0 means successful, 1 means no such user,
   # and 2 means wrong password.

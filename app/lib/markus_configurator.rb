@@ -196,6 +196,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_validate_ip?
+    if defined? VALIDATE_IP
+      return VALIDATE_IP
+    else
+      return false
+    end
+  end
+
   def markus_config_logging_rotate_by_interval
     if defined? MARKUS_LOGGING_ROTATE_BY_INTERVAL
       return MARKUS_LOGGING_ROTATE_BY_INTERVAL
