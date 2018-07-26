@@ -2,6 +2,7 @@ require 'base64'
 
 
 class AssignmentsController < ApplicationController
+  include ActionView::Helpers::UrlHelper
   before_action      :authorize_only_for_admin,
                      except: [:deletegroup,
                               :delete_rejected,
@@ -371,22 +372,41 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def stop_tests
+    test_id = params[:test_run_id].to_i
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    redirect_back(fallback_location: root_path)
+  end
+
   def batch_runs
-    puts "Did it get here"
     @assignment = Assignment.find(params[:id])
-    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
-                            .select(:created_at, :user_id, :name, :file_name,
-                                    :actual_output, :completion_status,
-                                    'test_results.marks_earned', 'test_results.marks_total', :test_batch_id)
+
+    test_runs = TestRun.joins(:grouping).includes(:test_script_results).select(:id, :time_to_service, :test_batch_id, :grouping_id, :user_id,
+                                                :submission_id, 'test_runs.created_at', :group_id)
     # Create new entries that combine created_at and user_name together
-    test_script_results = test_script_results.as_json
-    test_script_results.each do |g|
-      g['user_name'] = User.find(g['user_id']).user_name
+    status_hash = Hash.new
+    test_runs.each do |g|
+      status_hash[g[:id]] = g.status
+    end
+    test_runs = test_runs.as_json
+    test_runs.each do |test_run|
+      test_run['created_at'] = I18n.l(test_run['created_at'])
+      test_run['group_name'] = Group.find(test_run['group_id']).group_name
+      test_run['status'] = status_hash[test_run['id']]
+      result = Result.where(submission_id: test_run['submission_id'])[0].id
+      test_run['result_id'] = result
+      if test_run['status'] == "complete"
+          test_run['action'] =  link_to t('automated_tests.run_tests'),
+                                        stop_tests_assignment_path,
+                                        class: 'button stop_tests right'
+      else
+          test_run['action'] = 'NA'
+      end
     end
     respond_to do |format|
       format.html
       format.json {
-        render json: test_script_results
+        render json: test_runs
       }
     end
   end
