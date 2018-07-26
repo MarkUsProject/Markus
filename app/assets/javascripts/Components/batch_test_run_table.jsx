@@ -2,9 +2,11 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
+import {SubmissionFileManager} from "./submission_file_manager";
 
 const makeDefaultState = () => ({
   data: [],
+  newData: []
 });
 
 class BatchTestRunTable extends React.Component {
@@ -13,6 +15,7 @@ class BatchTestRunTable extends React.Component {
     super();
     this.state = makeDefaultState();
     this.fetchData = this.fetchData.bind(this);
+    this.addButtons = this.addButtons.bind(this);
   }
 
   componentDidMount() {
@@ -31,39 +34,55 @@ class BatchTestRunTable extends React.Component {
     console.log("fetch data end");
   }
 
+  addButtons(){
+    var newData = this.state.data;
+    console.log(newData[0]);
+    for(let i = 0; i < this.state.data.length; i++){
+      if(newData[i].status === "complete"){
+        const stop_tests_url = Routes.stop_tests_assignment_path(this.props.assignment_id);
+        newData[i].action = <a href={stop_tests_url}>Stop test {newData[i].id}</a>;
+        const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
+        newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
+      }
+    }
+    this.setState({newData: newData});
+  }
+
   render() {
     console.log("render");
-    const {data} = this.state;
+    var {data} = this.state;
     // Set the row map to expand the latest test run when the webpage is loaded
 
     return(
       <div>
         <ReactTable
-          data={data}
+          data={this.state.newData}
           columns={[
             {
               Header: "Batch Test ID",
-              accessor: "test_batch_id"
-            },
-            {
-              Header: "User Name",
-              accessor: "user_name"
-            },
-            {
-              Header: "File Name",
-              accessor: 'file_name'
-
-            },
-            {
-              Header: I18n.t('automated_tests.test_results_table.test_name'),
-              accessor: 'name'
-            },
-            {
-              Header: I18n.t('automated_tests.test_results_table.status'),
-              accessor: 'completion_status'
+            accessor: "test_batch_id"
+          },
+          {
+            Header: "Date/Time",
+            accessor: "created_at"
+          },
+          {
+            Header: "Group Name",
+            accessor: "group_name"
+          },
+          {
+            Header: "Estimated Remaining Time",
+            accessor: "time_to_service_estimate"
+          },
+          {
+            Header: "Status",
+            accessor: "status"
+          },{
+              Header: "Action",
+              accessor: "action"
             }
-          ]}
-          pivotBy={["test_batch_id"]}
+            ]}
+          onFetchData={this.addButtons}
         />
       </div>
     );
