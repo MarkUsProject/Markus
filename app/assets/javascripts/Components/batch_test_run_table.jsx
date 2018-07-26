@@ -3,11 +3,13 @@ import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import treeTableHOC from 'react-table/lib/hoc/treeTable';
+import {SubmissionFileManager} from "./submission_file_manager";
 
 const TreeTable = treeTableHOC(ReactTable);
 const makeDefaultState = () => ({
   data: [],
   sorted: [{id: 'test_batch_id', desc: true}],
+  newData: []
 });
 
 class BatchTestRunTable extends React.Component {
@@ -16,6 +18,7 @@ class BatchTestRunTable extends React.Component {
     super();
     this.state = makeDefaultState();
     this.fetchData = this.fetchData.bind(this);
+    this.addButtons = this.addButtons.bind(this);
   }
 
   componentDidMount() {
@@ -34,15 +37,29 @@ class BatchTestRunTable extends React.Component {
     console.log("fetch data end");
   }
 
+  addButtons(){
+    var newData = this.state.data;
+    console.log(newData[0]);
+    for(let i = 0; i < this.state.data.length; i++){
+      if(newData[i].status === "complete"){
+        const stop_tests_url = Routes.stop_tests_assignment_path(this.props.assignment_id);
+        newData[i].action = <a href={stop_tests_url}>Stop test {newData[i].id}</a>;
+        const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
+        newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
+      }
+    }
+    this.setState({newData: newData});
+  }
+
   render() {
     console.log("render");
-    const {data} = this.state;
+    var {data} = this.state;
     // Set the row map to expand the latest test run when the webpage is loaded
 
     return(
       <div>
         <ReactTable
-          data={data}
+          data={this.state.newData}
           columns={[
             {
               Header: "Batch Test ID",
@@ -51,22 +68,6 @@ class BatchTestRunTable extends React.Component {
             {
               Header: "Date/Time",
               accessor: "created_at",
-              // aggregate: vals => {
-              //   let earliestDate = null;
-              //   for (let i in vals){
-              //     console.log("type: " + typeof vals[i]);
-              //     let datetime = Date.parse(vals[i]);
-              //     if (earliestDate == null){
-              //       earliestDate = datetime;
-              //     }else{
-              //       if (earliestDate > datetime){
-              //         earliestDate = datetime;
-              //       }
-              //     }
-              //   }
-              //   console.log(typeof earliestDate);
-              //   return earliestDate
-              // },
               Aggregated: <span></span>
             },
             {
@@ -105,6 +106,7 @@ class BatchTestRunTable extends React.Component {
               return a > b ? 1 : -1;
             }
           }}
+          onFetchData={this.addButtons}
         />
       </div>
     );
