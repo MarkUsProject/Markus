@@ -33,9 +33,6 @@ class AutotestSetup
     create_students
     create_test_scripts
     collect_submissions
-
-    # run tests in correct order
-    run_tests
   end
 
   def clear_old_files
@@ -158,17 +155,16 @@ class AutotestSetup
     # get the criteria from the assignment
     criteria = @assignment.get_criteria
 
-    # get the test files stored in db/data/autotest_files
     test_file_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
     test_files = Dir.glob(File.join(test_file_dir, '*')).select { |f| File.file?(f) }
-
     test_files.zip(criteria) do |test_file, criterion|
+      instructor_run = !File.basename(test_file).include?('student_run_only')
       TestScript.create(
         assignment: @assignment,
         seq_num: 0,
         file_name: File.basename(test_file),
         description: "",
-        run_by_instructors: true,
+        run_by_instructors: instructor_run,
         run_by_students: true,
         halts_testing: false,
         display_description: "display_after_submission",
@@ -185,6 +181,7 @@ class AutotestSetup
     # autotester uses the names as part of a hash key
     AutotestScriptsJob.perform_now('http://localhost:3000', @assignment.id)
     AutotestScriptsJob.perform_now('http://127.0.0.1:3000', @assignment.id)
+    AutotestScriptsJob.perform_now('http://0.0.0.0:3000', @assignment.id)
   end
 
   def collect_submissions
@@ -197,9 +194,5 @@ class AutotestSetup
       grouping.is_collected = true
       grouping.save
     end
-  end
-
-  def run_tests
-
   end
 end
