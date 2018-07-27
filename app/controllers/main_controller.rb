@@ -371,8 +371,10 @@ private
 
     if login
       # Two stage user verification: authentication and authorization
+      ip = MarkusConfigurator.markus_config_validate_ip? ? request.remote_ip : nil
       authenticate_response = User.authenticate(real_user,
-                                                password)
+                                                password,
+                                                ip: ip)
       if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
         validation_result[:error] = I18n.t('external_authentication_not_supported')
         return validation_result
