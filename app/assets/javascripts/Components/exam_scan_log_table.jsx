@@ -36,7 +36,7 @@ class ExamScanLogTable extends React.Component {
         {
           Header: I18n.t('shortened_date'),
           accessor: 'date',
-          minWidth: 150,
+          minWidth: 150
         },
         {
           Header: I18n.t('activerecord.attributes.split_pdf_log.filename'),
