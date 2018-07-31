@@ -36,16 +36,18 @@ class BatchTestRunTable extends React.Component {
 
   addButtons(){
     var newData = this.state.data;
-    console.log(newData[0]);
     for(let i = 0; i < this.state.data.length; i++){
+      // Change this to in_progress
       if(newData[i].status === "complete"){
         const stop_tests_url = Routes.stop_tests_assignment_path(this.props.assignment_id);
         newData[i].action = <a href={stop_tests_url}>Stop test {newData[i].id}</a>;
         const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
         newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
+      } else {
+        newData[i].time_to_service_estimate = "";
       }
     }
-    this.setState({newData: newData});
+    return newData;
   }
 
   render() {
@@ -56,7 +58,7 @@ class BatchTestRunTable extends React.Component {
     return(
       <div>
         <ReactTable
-          data={this.state.newData}
+          data={this.addButtons()}
           columns={[
             {
               Header: "Batch Test ID",
@@ -82,7 +84,6 @@ class BatchTestRunTable extends React.Component {
               accessor: "action"
             }
             ]}
-          onFetchData={this.addButtons}
         />
       </div>
     );
