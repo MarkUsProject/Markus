@@ -380,9 +380,11 @@ class AssignmentsController < ApplicationController
 
   def batch_runs
     @assignment = Assignment.find(params[:id])
+    test_runs = TestRun.joins(:grouping).includes(:test_script_results).select(:id, :time_to_service_estimate, :test_batch_id,
+                                                                     :grouping_id, :user_id, :submission_id,
+                                                                     'test_runs.created_at', :group_id,
+                                                                     :time_to_service)
 
-    test_runs = TestRun.joins(:grouping).includes(:test_script_results).select(:id, :time_to_service, :test_batch_id, :grouping_id, :user_id,
-                                                :submission_id, 'test_runs.created_at', :group_id)
     # Create new entries that combine created_at and user_name together
     status_hash = Hash.new
     test_runs.each do |g|

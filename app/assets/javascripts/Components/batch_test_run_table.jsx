@@ -2,11 +2,14 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
+import treeTableHOC from 'react-table/lib/hoc/treeTable';
 import {SubmissionFileManager} from "./submission_file_manager";
 
+const TreeTable = treeTableHOC(ReactTable);
 const makeDefaultState = () => ({
   data: [],
-  newData: [],
+  sorted: [{id: 'test_batch_id', desc: true}],
+  newData: []
 });
 
 var statuses = {};
@@ -75,28 +78,51 @@ class BatchTestRunTable extends React.Component {
           columns={[
             {
               Header: "Batch Test ID",
-            accessor: "test_batch_id"
-          },
-          {
-            Header: "Date/Time",
-            accessor: "created_at"
-          },
-          {
-            Header: "Group Name",
-            accessor: "group_name"
-          },
-          {
-            Header: "Estimated Remaining Time",
-            accessor: "time_to_service_estimate"
-          },
-          {
-            Header: "Status",
-            accessor: "status"
-          },{
-              Header: "Action",
-              accessor: "action"
+              accessor: "test_batch_id"
+            },
+            {
+              Header: "Date/Time",
+              accessor: "created_at",
+              Aggregated: <span></span>
+            },
+            {
+              Header: "Group Name",
+              accessor: "group_name",
+              Aggregated: <span></span>
+            },
+            {
+              Header: "Estimated Remaining Time",
+              accessor: 'time_to_service_estimate',
+              Aggregated: <span></span>
+            },
+            {
+              Header: "Status",
+              accessor: 'status',
+              Aggregated: <span><a href={"www.google.com"}>Stop This batch</a></span>
+            }
+          ]}
+          pivotBy={["test_batch_id"]}
+          // Controlled props
+          sorted={this.state.sorted}
+          // Callbacks
+          onSortedChange={sorted => this.setState({ sorted })}
+          // Custom Sort Method to sort by latest batch run
+          defaultSortMethod={ (a, b) => {
+            // sorting for created_at_user_name to ensure it's sorted by date
+            if (this.state.sorted[0].id === 'test_batch_id') {
+              if (a === 'Individual Tests'){
+                return -1;
+              }else if (b === 'Individual Tests'){
+                return 1;
+              }else{
+                return parseInt(a) > parseInt(b) ? 1: -1
+              }
+            } else {
+              return a > b ? 1 : -1;
             }
             ]}
+          }}
+          onFetchData={this.addButtons}
         />
       </div>
     );
