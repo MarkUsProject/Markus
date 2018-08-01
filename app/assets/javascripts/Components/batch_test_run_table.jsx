@@ -81,13 +81,13 @@ class BatchTestRunTable extends React.Component {
               accessor: "test_batch_id"
             },
             {
-              Header: "Date/Time",
-              accessor: "created_at",
+              Header: "Group Name",
+              accessor: "group_name",
               Aggregated: <span></span>
             },
             {
-              Header: "Group Name",
-              accessor: "group_name",
+              Header: "Status",
+              accessor: 'status',
               Aggregated: <span></span>
             },
             {
@@ -96,8 +96,8 @@ class BatchTestRunTable extends React.Component {
               Aggregated: <span></span>
             },
             {
-              Header: "Status",
-              accessor: 'status',
+              Header: "Action",
+              accessor: "action",
               Aggregated: <span><a href={"some action"}>Stop This batch</a></span>
             }
           ]}
@@ -121,7 +121,6 @@ class BatchTestRunTable extends React.Component {
               return a > b ? 1 : -1;
             }
           }}
-          onFetchData={this.addButtons}
         />
       </div>
     );
