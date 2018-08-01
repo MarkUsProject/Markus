@@ -98,7 +98,7 @@ class BatchTestRunTable extends React.Component {
             {
               Header: "Status",
               accessor: 'status',
-              Aggregated: <span><a href={"www.google.com"}>Stop This batch</a></span>
+              Aggregated: <span><a href={"some action"}>Stop This batch</a></span>
             }
           ]}
           pivotBy={["test_batch_id"]}
@@ -120,7 +120,6 @@ class BatchTestRunTable extends React.Component {
             } else {
               return a > b ? 1 : -1;
             }
-            ]}
           }}
           onFetchData={this.addButtons}
         />
