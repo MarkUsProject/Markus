@@ -48,18 +48,19 @@ class BatchTestRunTable extends React.Component {
         // add key to dictionairy
         status[newData[i].test_batch_id] = {total: 0, in_progress: 0};
       }
+      const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
+      newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
       // Change this to in_progress
       if(newData[i].status === "complete"){
         const stop_tests_url = Routes.stop_tests_assignment_path(this.props.assignment_id);
-        newData[i].action = <a href={stop_tests_url}>Stop test {newData[i].id}</a>;
-        const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
-        newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
+        newData[i].action = <a href={stop_tests_url  + "?test_run_id=" + newData[i].id}>Stop test {newData[i].id}</a>;
         // increment in_progress number for this batch_id
         status[newData[i].test_batch_id].total += 1;
         status[newData[i].test_batch_id].in_progress += 1;
       } else {
         newData[i].time_to_service_estimate = "";
         status[newData[i].test_batch_id].total += 1;
+        newData[i].action = "Test run is complete";
       }
     }
     statuses = status;
@@ -112,7 +113,15 @@ class BatchTestRunTable extends React.Component {
             {
               Header: "Action",
               accessor: "action",
-              Aggregated: <span><a href={"some action"}>Stop This batch</a></span>
+              aggregate: (vals, pivots) => {return [pivots[0].test_batch_id, statuses[pivots[0].test_batch_id]];},
+              Aggregated: row => {
+                if(row.value[1].in_progress > 0) {
+                  const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
+                  return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
+                } else{
+                  return <span>All tests are complete</span>
+                }
+              }
             },
             {
               // Kept but hidden for now because status is using it
