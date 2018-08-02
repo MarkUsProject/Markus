@@ -113,6 +113,12 @@ class BatchTestRunTable extends React.Component {
               Header: "Action",
               accessor: "action",
               Aggregated: <span><a href={"some action"}>Stop This batch</a></span>
+            },
+            {
+              // Kept but hidden for now because status is using it
+              Header: "Test_batch_id",
+              accessor: 'test_batch_id',
+              show: false
             }
           ]}
           pivotBy={["created_at"]}
