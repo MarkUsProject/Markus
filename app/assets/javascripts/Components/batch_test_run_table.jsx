@@ -88,7 +88,21 @@ class BatchTestRunTable extends React.Component {
             {
               Header: "Status",
               accessor: 'status',
-              Aggregated: <span></span>
+              aggregate: (vals, pivots) => {
+                if(statuses[pivots[0].test_batch_id].in_progress == 0){
+                  return "complete";
+                } else{
+                  return "in progress: " + statuses[pivots[0].test_batch_id].in_progress;
+                }
+              },
+              Aggregated: row => {
+                return (
+                  <span>
+                       {row.value
+                         }
+                  </span>
+                );
+              }
             },
             {
               Header: "Estimated Remaining Time",
