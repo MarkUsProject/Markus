@@ -8,7 +8,7 @@ import {SubmissionFileManager} from "./submission_file_manager";
 const TreeTable = treeTableHOC(ReactTable);
 const makeDefaultState = () => ({
   data: [],
-  sorted: [{id: 'test_batch_id', desc: true}],
+  sorted: [{id: 'created_at', desc: true}],
   newData: []
 });
 
@@ -26,8 +26,6 @@ class BatchTestRunTable extends React.Component {
   componentDidMount() {
     this.fetchData();
   }
-
-
 
   fetchData() {
     console.log("fetch data start");
@@ -70,20 +68,22 @@ class BatchTestRunTable extends React.Component {
 
   render() {
     // Set the row map to expand the latest test run when the webpage is loaded
-
     return(
       <div>
         <ReactTable
           data={this.addButtons()}
           columns={[
             {
-              Header: "Batch Test ID",
-              accessor: "test_batch_id"
+              Header: "Created At",
+              accessor: "created_at"
             },
             {
               Header: "Group Name",
               accessor: "group_name",
-              Aggregated: <span></span>
+              // If more than one value, show 'multiple'
+              aggregate: vals => {
+                return typeof vals[1] === 'undefined' ? vals[0] : 'multiple groups (batch)'
+              }
             },
             {
               Header: "Status",
@@ -113,9 +113,15 @@ class BatchTestRunTable extends React.Component {
               Header: "Action",
               accessor: "action",
               Aggregated: <span><a href={"some action"}>Stop This batch</a></span>
+            },
+            {
+              // Kept but hidden for now because status is using it
+              Header: "Test_batch_id",
+              accessor: 'test_batch_id',
+              show: false
             }
           ]}
-          pivotBy={["test_batch_id"]}
+          pivotBy={["created_at"]}
           // Controlled props
           sorted={this.state.sorted}
           // Callbacks
@@ -123,13 +129,11 @@ class BatchTestRunTable extends React.Component {
           // Custom Sort Method to sort by latest batch run
           defaultSortMethod={ (a, b) => {
             // sorting for created_at_user_name to ensure it's sorted by date
-            if (this.state.sorted[0].id === 'test_batch_id') {
-              if (a === 'Individual Tests'){
-                return -1;
-              }else if (b === 'Individual Tests'){
-                return 1;
-              }else{
-                return parseInt(a) > parseInt(b) ? 1: -1
+            if (this.state.sorted[0].id === 'created_at') {
+              if (typeof a === 'string' && typeof b === 'string') {
+                let a_date = Date.parse(a);
+                let b_date = Date.parse(b);
+                return a_date > b_date ? 1 : -1;
               }
             } else {
               return a > b ? 1 : -1;
