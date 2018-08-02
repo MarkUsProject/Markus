@@ -41,6 +41,7 @@ Rails.application.routes.draw do
         post 'upload_assignment_list'
         get 'batch_runs'
         get 'stop_tests'
+        get 'stop_batch_tests'
       end
 
       member do
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
         get 'csv_summary'
         get 'batch_runs'
         get 'stop_tests'
+        get 'stop_batch_tests'
       end
 
       resources :tags do

@@ -378,6 +378,15 @@ class AssignmentsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
+  def stop_batch_tests
+    batch_id = params[:test_batch_id].to_i
+    test_runs = TestRun.where(test_batch_id: batch_id)
+    test_runs.each do |test_run_id|
+      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_run_id])
+    end
+    redirect_back(fallback_location: root_path)
+  end
+
   def batch_runs
     @assignment = Assignment.find(params[:id])
     test_runs = TestRun.left_outer_joins(:test_batch, :grouping)
@@ -403,16 +412,6 @@ class AssignmentsController < ApplicationController
       test_run['status'] = status_hash[test_run['id']]
       result = Result.where(submission_id: test_run['submission_id'])[0].id
       test_run['result_id'] = result
-      if test_run['status'] == "complete"
-          test_run['action'] =  link_to t('automated_tests.run_tests'),
-                                        stop_tests_assignment_path,
-                                        class: 'button stop_tests right'
-      else
-          test_run['action'] = 'NA'
-      end
-      if test_run['time_to_service_estimate'] == 0
-        test_run['time_to_service_estimate'] = nil
-      end
     end
 
     respond_to do |format|
