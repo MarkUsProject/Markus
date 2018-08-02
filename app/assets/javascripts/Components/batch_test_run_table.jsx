@@ -84,7 +84,8 @@ class BatchTestRunTable extends React.Component {
               // If more than one value, show 'multiple'
               aggregate: vals => {
                 return typeof vals[1] === 'undefined' ? vals[0] : 'multiple groups (batch)'
-              }
+              },
+              sortable: false,
             },
             {
               Header: "Status",
@@ -92,10 +93,11 @@ class BatchTestRunTable extends React.Component {
               aggregate: (vals, pivots) => {
                 if(statuses[pivots[0].test_batch_id].in_progress == 0){
                   return "complete";
-                } else{
+                } else {
                   return "in progress: " + statuses[pivots[0].test_batch_id].in_progress + "/" + statuses[pivots[0].test_batch_id].total;
                 }
               },
+              sortable: false,
               Aggregated: row => {
                 return (
                   <span>
@@ -108,11 +110,13 @@ class BatchTestRunTable extends React.Component {
             {
               Header: "Estimated Remaining Time",
               accessor: 'time_to_service_estimate',
-              Aggregated: <span></span>
+              Aggregated: <span></span>,
+              sortable: false,
             },
             {
               Header: "Action",
               accessor: "action",
+              sortable: false,
               aggregate: (vals, pivots) => {return [pivots[0].test_batch_id, statuses[pivots[0].test_batch_id]];},
               Aggregated: row => {
                 if(row.value[1].in_progress > 0) {
