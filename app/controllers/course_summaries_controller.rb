@@ -18,7 +18,8 @@ class CourseSummariesController < ApplicationController
       {
         accessor: "assignment_marks.#{id}",
         Header: short_identifier,
-        minWidth: 50
+        minWidth: 50,
+        className: 'number'
       }
     end
 
@@ -26,7 +27,8 @@ class CourseSummariesController < ApplicationController
       {
         accessor: "grade_entry_form_marks.#{id}",
         Header: short_identifier,
-        minWidth: 50
+        minWidth: 50,
+        className: 'number'
       }
     end
 
@@ -35,7 +37,8 @@ class CourseSummariesController < ApplicationController
         {
           accessor: "weighted_marks.#{id}",
           Header: name,
-          minWidth: 50
+          minWidth: 50,
+          className: 'number'
         }
       end
 

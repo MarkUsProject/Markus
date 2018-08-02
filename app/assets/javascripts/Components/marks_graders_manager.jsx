@@ -161,6 +161,7 @@ class RawGradersTable extends React.Component {
     {
       Header: I18n.t('activerecord.models.student.other'),
       accessor: 'students',
+      className: 'number',
       filterable: false
     }
   ];
