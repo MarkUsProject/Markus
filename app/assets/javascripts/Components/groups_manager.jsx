@@ -240,6 +240,21 @@ class RawGroupsTable extends React.Component {
           );
         }
       },
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          let flag = false;
+          row._original.members.map (member => {
+            if(member[0].includes(filter.value)){
+              flag = true;
+            }
+          });
+          
+          return flag;
+
+        } else {
+          return true;
+        }
+      },
       sortable: false,
     },
     {
