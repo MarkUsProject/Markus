@@ -6,6 +6,7 @@ require 'base64' # required for {set,reset}_api_token
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
   before_validation :strip_name
+  before_validation :nillify_empty_email
 
   # Group relationships
   has_many :memberships, dependent: :delete_all
@@ -308,6 +309,10 @@ class User < ApplicationRecord
     if self.email
       self.email = self.email.strip
     end
+  end
+
+  def nillify_empty_email
+    self.email.present? || self.email = nil
   end
 
 end
