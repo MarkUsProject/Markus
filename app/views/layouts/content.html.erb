@@ -3,8 +3,6 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
-  <%= javascript_include_tag 'react.min',
-                             'JSXTransformer' %>
   <%= javascript_include_tag 'application' %>
   <%= javascript_pack_tag 'application' %>
   <%= yield :head %>

@@ -72,11 +72,11 @@ nav {
 }
 
 #logo-img {
-  background: transparent url(markus_logo_small.png) no-repeat center center / 90px 30px;
+  background: transparent asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
   width: 90px;
 
   @include hidpi {
-    background-image: url(markus_logo_small@2x.png);
+    background-image: asset-url('markus_logo_small@2x.png');
   }
 }
 
@@ -181,7 +181,7 @@ footer {
 }
 
 #mobile_menu {
-  background: $lighter-blue url(markus_logo_small.png) no-repeat center center / 90px 30px;
+  background: $lighter-blue asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
   border-bottom: 1px solid $blue;
   display: none;
   height: 3.5em;
@@ -195,7 +195,7 @@ footer {
   }
 
   @include hidpi {
-    background-image: url(markus_logo_small@2x.png);
+    background-image: asset-url('markus_logo_small@2x.png');
   }
 
   #menu_icon {
