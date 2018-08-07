@@ -242,14 +242,8 @@ class RawGroupsTable extends React.Component {
       },
       filterMethod: (filter, row) => {
         if (filter.value) {
-          let flag = false;
-          row._original.members.map (member => {
-            if(member[0].includes(filter.value)){
-              flag = true;
-            }
-          });
-          
-          return flag;
+
+          return row._original.members.some(member => member[0].includes(filter.value));
 
         } else {
           return true;
