@@ -1,7 +1,4 @@
 <%= render partial: 'layouts/about' %>
-<%= render partial: 'layouts/timeout_imminent' %>
-<%= render partial: 'layouts/session_expired' %>
 <%= render partial: 'layouts/role_switch' %>
-<script>
-  document.getElementById('session_expired_dialog').innerHTML = "<%= escape_javascript(render partial: 'main/session_expired_content') %>";
-</script>
+<%= render partial: 'layouts/timeout_imminent_modal', layout: 'layouts/modal_dialog'  %>
+<%= render partial: 'layouts/session_expired_modal', layout: 'layouts/modal_dialog'  %>

@@ -309,7 +309,7 @@ class MainController < ApplicationController
 
   def check_timeout
     if check_imminent_expiry
-      render template: 'main/timeout_imminent'
+      render js: 'timeout_imminent_modal.open()'
     else
       head :ok
     end
