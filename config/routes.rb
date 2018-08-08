@@ -380,10 +380,10 @@ Rails.application.routes.draw do
         get 'about'
         post 'login_as'
         get 'role_switch'
-        get 'redirect'
         get 'clear_role_switch_session'
         post 'reset_api_key'
         get 'check_timeout'
+        post 'refresh_session'
       end
     end
   end

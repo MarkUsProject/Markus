@@ -13,6 +13,26 @@
   }
 }
 
+#timeout_imminent_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+#session_expired_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
 #role_switch_dialog {
   input[type='text'],
   input[type='password'] {

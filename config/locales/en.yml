@@ -11,6 +11,7 @@ en:
     search:             "Search:"
     issues:             "GitHub issues list"
     actions:            "Actions"
+    continue:           "Continue"
 
     # app/views/assignments/_form.html.erb
     required_file_warning: "Accept no other files besides the listed required files. This also restricts the file extensions."
@@ -52,7 +53,7 @@ en:
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Your session is about to expire: you will be logged out shortly and changes you make to this page will not be saved afterwards. Pressing ok will NOT prevent this, instead refresh this page or navigate to a different page."
+    timeout_imminent:   "Your session is about to expire: you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"

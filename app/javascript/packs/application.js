@@ -10,7 +10,6 @@
 import 'javascripts/help-system';
 import 'javascripts/layouts';
 import 'javascripts/menu';
-import 'javascripts/check_timeout';
 import 'javascripts/redirect';
 
 import { ModalMarkus } from 'javascripts/modals';
