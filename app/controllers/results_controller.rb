@@ -39,7 +39,6 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    puts "Did it get here??"
     @host = Rails.application.config.action_controller.relative_url_root
     @result = Result.find(params[:id])
     @pr = PeerReview.find_by(result_id: @result.id)
@@ -671,7 +670,7 @@ class ResultsController < ApplicationController
         g['marks_earned'] = g['test_results.marks_earned']
         g['marks_total'] = g['test_results.marks_total']
         if g['actual_output'] == 'NA' || g['actual_output'].nil?
-          g['actual_output'] = ""
+          g['actual_output'] = ''
         end
       end
       render json: test_script_results

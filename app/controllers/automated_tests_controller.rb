@@ -141,8 +141,9 @@ class AutomatedTestsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(params[:assignment_id])
     test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
-                            .where(test_runs: { grouping_id: @grouping.id }, test_runs: { user_id: current_user.id })
-                            .pluck_to_hash(:created_at, :name, :file_name,
+                                          .where(test_runs: { grouping_id: @grouping.id },
+                                                 test_runs: { user_id: current_user.id })
+                                          .pluck_to_hash(:created_at, :name, :file_name,
                                            :completion_status,
                                            'test_results.marks_earned', 'test_results.marks_total', :extra_info)
 
@@ -151,7 +152,7 @@ class AutomatedTestsController < ApplicationController
       g['marks_earned'] = g['test_results.marks_earned']
       g['marks_total'] = g['test_results.marks_total']
     end
-    # format extra info as :name?
+    # format extra info as :name? TODO
     render json: test_script_results
   end
 
