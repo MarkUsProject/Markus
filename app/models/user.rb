@@ -312,7 +312,6 @@ class User < ApplicationRecord
   end
 
   def nillify_empty_email
-    self.email.present? || self.email = nil
+    self.email = nil if self.email.blank?
   end
-
 end
