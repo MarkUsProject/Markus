@@ -40,8 +40,8 @@ Rails.application.routes.draw do
         get 'download_assignment_list'
         post 'upload_assignment_list'
         get 'batch_runs'
-        get 'stop_test'
-        get 'stop_batch_tests'
+        post 'stop_test'
+        post 'stop_batch_tests'
       end
 
       member do
@@ -62,8 +62,8 @@ Rails.application.routes.draw do
         get 'summary'
         get 'csv_summary'
         get 'batch_runs'
-        get 'stop_test'
-        get 'stop_batch_tests'
+        post 'stop_test'
+        post 'stop_batch_tests'
       end
 
       resources :tags do
