@@ -1,4 +1,7 @@
 <% content_for :head do %>
+    <%= javascript_include_tag 'react.min',
+                               'JSXTransformer' %>
+    <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
     <%= render partial: 'boot',
                formats: [:js],
                handlers: [:erb] %>

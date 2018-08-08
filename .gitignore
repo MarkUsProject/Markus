@@ -19,6 +19,7 @@
 /log/
 /doc/app/
 /.bundle/
+/vendor/bundle
 
 # Files created by sass
 .sass-cache
@@ -75,3 +76,5 @@ yarn-debug.log*
 # simplecov gem
 coverage/
 
+# byebug gem
+.byebug_history

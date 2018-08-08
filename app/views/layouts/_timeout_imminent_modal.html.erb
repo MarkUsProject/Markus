@@ -1,0 +1,10 @@
+<%= content_for :modal_id, 'timeout_imminent_dialog' %>
+
+<%= content_for :modal_content do %>
+  <div id='timeout_imminent_text'>
+    <%= t(:timeout_imminent) %>
+  </div>
+  <section class='dialog-actions'>
+    <%= button_tag t(:continue), onclick:'refreshOrLogout(); timeout_imminent_modal.close();' %>
+  </section>
+<% end %>

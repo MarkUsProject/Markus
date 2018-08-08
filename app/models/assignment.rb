@@ -673,7 +673,8 @@ class Assignment < ApplicationRecord
     criteria_columns = self.get_criteria(:ta).map do |crit|
       {
         Header: crit.name,
-        accessor: "criteria.criterion_#{crit.class.to_s}_#{crit.id}"
+        accessor: "criteria.criterion_#{crit.class.to_s}_#{crit.id}",
+        className: 'number'
       }
     end
 

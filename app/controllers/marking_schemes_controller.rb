@@ -12,7 +12,28 @@ class MarkingSchemesController < ApplicationController
   end
 
   def populate
-    render json: get_table_json_data
+    assignment_columns = Assignment.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "assignment_weights.#{id}",
+        Header: short_identifier,
+        minWidth: 50,
+        className: 'number'
+      }
+    end
+
+    gef_columns = GradeEntryForm.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "grade_entry_form_weights.#{id}",
+        Header: short_identifier,
+        minWidth: 50,
+        className: 'number'
+      }
+    end
+
+    render json: {
+      data: get_table_json_data,
+      columns: assignment_columns.concat(gef_columns)
+    }
   end
 
   def create

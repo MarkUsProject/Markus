@@ -91,7 +91,8 @@ class RawStudentTable extends React.Component {
             {
               Header: I18n.t('activerecord.attributes.user.id_number'),
               accessor: 'id_number',
-              minWidth: 90
+              minWidth: 90,
+              className: 'number'
             },
             {
               Header: I18n.t('activerecord.models.section', {count: 1}),
@@ -122,6 +123,7 @@ class RawStudentTable extends React.Component {
             {
               Header: I18n.t('activerecord.attributes.user.grace_credits'),
               id: 'grace_credits',
+              className: 'number',
               Cell: row => `${row.original.remaining_grace_credits} / ${row.original.grace_credits}`,
               minWidth: 90
             },

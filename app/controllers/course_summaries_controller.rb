@@ -14,10 +14,43 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    if current_user.admin?
-      render json: get_table_json_data
+    assignment_columns = Assignment.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "assignment_marks.#{id}",
+        Header: short_identifier,
+        minWidth: 50,
+        className: 'number'
+      }
+    end
+
+    gef_columns = GradeEntryForm.pluck(:id, :short_identifier).map do |id, short_identifier|
+      {
+        accessor: "grade_entry_form_marks.#{id}",
+        Header: short_identifier,
+        minWidth: 50,
+        className: 'number'
+      }
+    end
+
+    if current_user.admin? || current_user.ta?
+      marking_scheme_columns = MarkingScheme.pluck(:id, :name).map do |id, name|
+        {
+          accessor: "weighted_marks.#{id}",
+          Header: name,
+          minWidth: 50,
+          className: 'number'
+        }
+      end
+
+      render json: {
+        data: get_table_json_data,
+        columns: assignment_columns.concat(gef_columns).concat(marking_scheme_columns)
+      }
     else
-      render json: get_student_row_information
+      render json: {
+        data: get_student_row_information,
+        columns: assignment_columns.concat(gef_columns)
+      }
     end
   end
 
@@ -54,13 +87,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def insert_student_marks(csv)
-    JSON.parse(get_table_json_data).each do |student|
+    get_table_json_data.each do |student|
       row = []
-      row.push(student['user_name'])
-      row.push(student['id_number'])
-      row.concat(student['assignment_marks'].values)
-      row.concat(student['grade_entry_form_marks'].values)
-      row.concat(student['weighted_marks'].values)
+      row.push(student[:user_name])
+      row.push(student[:id_number])
+      row.concat(student[:assignment_marks].values)
+      row.concat(student[:grade_entry_form_marks].values)
+      row.concat(student[:weighted_marks].values)
       csv << row
     end
   end

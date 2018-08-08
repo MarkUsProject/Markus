@@ -9,12 +9,12 @@ module CourseSummariesHelper
     student_list = all_students.all.map do |student|
       get_student_information(student)
     end
-    student_list.to_json
+    student_list
   end
 
   def get_student_row_information
     course_information
-    [get_student_information(@current_user, false)].to_json
+    [get_student_information(@current_user, false)]
   end
 
   def course_information
@@ -185,7 +185,7 @@ module CourseSummariesHelper
       end
     end
 
-    (weighted_assignment_total + weighted_gef_total).round(2)
+    (weighted_assignment_total + weighted_gef_total).round(2).to_f
   end
 end
 

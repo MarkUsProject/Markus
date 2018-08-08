@@ -117,6 +117,22 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_validate_user_message
+    if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
+      return VALIDATE_USER_NOT_ALLOWED_DISPLAY
+    else
+      return nil
+    end
+  end
+
+  def markus_config_validate_login_message
+    if defined? VALIDATE_LOGIN_INCORRECT_DISPLAY
+      return VALIDATE_LOGIN_INCORRECT_DISPLAY
+    else
+      return nil
+    end
+  end
+
   ###########################################
   # Markus Session cookie configuration
   ###########################################
@@ -177,6 +193,14 @@ module MarkusConfigurator
       return VALIDATE_FILE
     else
       return "#{::Rails.root.to_s}./config/dummy_validate.sh"
+    end
+  end
+
+  def markus_config_validate_ip?
+    if defined? VALIDATE_IP
+      return VALIDATE_IP
+    else
+      return false
     end
   end
 
