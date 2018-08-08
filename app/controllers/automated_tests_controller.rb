@@ -141,11 +141,10 @@ class AutomatedTestsController < ApplicationController
     @student = current_user
     @grouping = @student.accepted_grouping_for(params[:assignment_id])
     test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
-                                          .where(test_runs: { grouping_id: @grouping.id },
-                                                 test_runs: { user_id: current_user.id })
-                                          .pluck_to_hash(:created_at, :name, :file_name,
-                                           :completion_status,
-                                           'test_results.marks_earned', 'test_results.marks_total', :extra_info)
+                                          .where(test_runs: { grouping_id: @grouping.id, user_id: current_user.id })
+                                          .pluck_to_hash(:created_at, :name, :file_name, :completion_status,
+                                                         'test_results.marks_earned', 'test_results.marks_total',
+                                                         :extra_info)
 
     test_script_results.each do |g|
       g['created_at_user_name'] = I18n.l(g['created_at'])
