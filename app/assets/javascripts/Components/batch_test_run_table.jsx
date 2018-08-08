@@ -94,7 +94,7 @@ class BatchTestRunTable extends React.Component {
                 if(statuses[pivots[0].test_batch_id].in_progress == 0){
                   return "complete";
                 } else {
-                  return "in progress: " + statuses[pivots[0].test_batch_id].in_progress + "/" + statuses[pivots[0].test_batch_id].total;
+                  return "complete: " + (statuses[pivots[0].test_batch_id].total - statuses[pivots[0].test_batch_id].in_progress) + "/" + statuses[pivots[0].test_batch_id].total;
                 }
               },
               sortable: false,
