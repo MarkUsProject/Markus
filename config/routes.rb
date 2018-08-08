@@ -91,6 +91,10 @@ Rails.application.routes.draw do
           post 'upload'
           get 'download'
         end
+
+        member do
+          get 'get_student_run_test_results'
+        end
       end
 
       resources :exam_templates do

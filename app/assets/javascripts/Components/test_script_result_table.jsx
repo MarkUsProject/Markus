@@ -22,23 +22,41 @@ class TestScriptResultTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.get_test_runs_results_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id),
-      dataType: 'json',
-    }).then(res => {
-      let sub_row_map = {};
-      for (let i = 0; i < res.length; i++) {
-        sub_row_map[i] = true;
-      }
-
-      this.setState({
-        data: res,
-        expanded: {0: sub_row_map},
+    if (this.props.detailed){
+      $.ajax({
+        url: Routes.get_test_runs_results_assignment_submission_result_path(
+          this.props.assignment_id,
+          this.props.submission_id,
+          this.props.result_id),
+        dataType: 'json',
+      }).then(res => {
+        let sub_row_map = {};
+        for (let i = 0; i < res.length; i++) {
+          sub_row_map[i] = true;
+        }
+        this.setState({
+          data: res,
+          expanded: {0: sub_row_map},
+        });
       });
-    });
+    }else{
+      // student-run automated tests
+      $.ajax({
+        url: Routes.get_student_run_test_results_assignment_automated_test_path(
+          this.props.assignment_id,
+          this.props.assignment_id),
+        dataType: 'json',
+      }).then(res => {
+        let sub_row_map = {};
+        for (let i = 0; i < res.length; i++) {
+          sub_row_map[i] = true;
+        }
+        this.setState({
+          data: res,
+          expanded: {0: sub_row_map},
+        });
+      });
+    }
   };
 
   // Custom getTdProps function to highlight submissions that have been collected.
