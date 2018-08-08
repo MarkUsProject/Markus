@@ -104,12 +104,12 @@
 #results-logo-img {
   display: block;
   margin: 0 auto;
-  background: transparent url(markus_logo_small.png) no-repeat center center / 90px 30px;
+  background: transparent asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
   height: 30px;
   width: 90px;
 
   @include hidpi {
-    background-image: url(markus_logo_small@2x.png);
+    background-image: asset-url('markus_logo_small@2x.png');
   }
 }
 
@@ -161,4 +161,8 @@ input:focus {
 
 .rt-td.hidden {
   display: block;
+}
+
+.actual_output {
+  white-space: normal !important;
 }

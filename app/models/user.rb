@@ -6,6 +6,7 @@ require 'base64' # required for {set,reset}_api_token
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
   before_validation :strip_name
+  before_validation :nillify_empty_email
 
   # Group relationships
   has_many :memberships, dependent: :delete_all
@@ -50,7 +51,7 @@ class User < ApplicationRecord
 
   # Authenticates login against its password
   # through a script specified by config VALIDATE_FILE
-  def self.authenticate(login, password)
+  def self.authenticate(login, password, ip: nil)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
@@ -76,7 +77,8 @@ class User < ApplicationRecord
       #  2 means bad password
       #  3 is used for other error exits
       pipe = IO.popen("'#{MarkusConfigurator.markus_config_validate_file}'", 'w+') # quotes to avoid choking on spaces
-      pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
+      to_stdin = [login, password, ip].reject(&:nil?).join("\n")
+      pipe.puts(to_stdin) # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance
       if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
@@ -309,4 +311,7 @@ class User < ApplicationRecord
     end
   end
 
+  def nillify_empty_email
+    self.email = nil if self.email.blank?
+  end
 end

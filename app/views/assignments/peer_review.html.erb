@@ -1,3 +1,9 @@
+<%= content_for :head do %>
+  <%= javascript_include_tag 'react.min',
+                             'JSXTransformer' %>
+  <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
+<% end %>
+
 <div class='title_bar'>
   <h1>
     <%= @assignment.is_peer_review? ?

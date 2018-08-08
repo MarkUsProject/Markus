@@ -4,7 +4,7 @@ class AutomatedTestsController < ApplicationController
   before_action      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
   before_action      :authorize_for_student,
-                     only: [:student_interface]
+                     only: [:student_interface, :get_student_run_test_results]
 
   # Update is called when files are added to the assignment
   def update
@@ -135,6 +135,23 @@ class AutomatedTestsController < ApplicationController
       flash_message(:error, I18n.t('automated_tests.download_not_in_db'))
       redirect_to action: 'manage'
     end
+  end
+
+  def get_student_run_test_results
+    @student = current_user
+    @grouping = @student.accepted_grouping_for(params[:assignment_id])
+    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
+                                          .where(test_runs: { grouping_id: @grouping.id, user_id: current_user.id })
+                                          .pluck_to_hash(:created_at, :name, :file_name, :completion_status,
+                                                         'test_results.marks_earned', 'test_results.marks_total',
+                                                         :extra_info)
+
+    test_script_results.each do |g|
+      g['created_at_user_name'] = I18n.l(g['created_at'])
+      g['marks_earned'] = g['test_results.marks_earned']
+      g['marks_total'] = g['test_results.marks_total']
+    end
+    render json: test_script_results
   end
 
   private

@@ -31,7 +31,7 @@ class MainController < ApplicationController
         render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
       else
-        login_success = login_without_authentication(@markus_auth_remote_user)
+        login_success, login_error = login_without_authentication(@markus_auth_remote_user)
         if login_success
           uri = session[:redirect_uri]
           session[:redirect_uri] = nil
@@ -41,8 +41,7 @@ class MainController < ApplicationController
           redirect_to( uri || { action: 'index' } )
           return
         else
-          @login_error = flash[:error][0]
-          render :remote_user_auth_login_fail
+          render :remote_user_auth_login_fail, locals: { login_error: login_error }
           return
         end
       end
@@ -194,13 +193,13 @@ class MainController < ApplicationController
   #   role_switch_content
   #   role_switch
   def login_as
-    validation_result = nil
     real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
         current_user
     if MarkusConfigurator.markus_config_remote_user_auth
-      validation_result = validate_user_without_login(
+      validation_result = validate_user(
                              params[:effective_user_login],
-                             real_user.user_name)
+                             real_user.user_name,
+                             login: false)
     else
       validation_result = validate_user(
                              params[:effective_user_login],
@@ -309,12 +308,16 @@ class MainController < ApplicationController
   end
 
   def check_timeout
-    if !check_warned && check_imminent_expiry
-      render template: 'main/timeout_imminent'
-      set_warned
+    if check_imminent_expiry
+      render js: 'timeout_imminent_modal.open()'
     else
       head :ok
     end
+  end
+
+  def refresh_session
+    refresh_timeout
+    head :ok
   end
 
 private
@@ -328,14 +331,13 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      flash_message(:error, I18n.t(:login_failed))
-      return false
+      error_message = MarkusConfigurator.markus_config_validate_user_message || I18n.t(:login_failed)
+      return false, error_message
     end
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash_message(:error, I18n.t('account_disabled'))
-      return false
+      return false, I18n.t('account_disabled')
     end
 
     # For admins we have a possibility of role switches,
@@ -350,44 +352,48 @@ private
     end
 
     if logged_in?
-      true
+      return true, nil
     else
-      flash_message(:error, I18n.t(:login_failed))
-      false
+      return false, I18n.t(:login_failed)
     end
   end
 
   # Returns the user with user name "effective_user" from the database given that the user
   # with user name "real_user" is authenticated. Effective and real users might be the
   # same for regular logins and are different on an assume role call.
+  # If the login keyword is true then this method also authenticates the real_user
   #
   # This function is called both by the login and login_as actions.
-  def validate_user(effective_user, real_user, password)
+  def validate_user(effective_user, real_user, password, login: true)
     validation_result = Hash.new
     validation_result[:user] = nil # Let's be explicit
     # check for blank username and password
     blank_login = effective_user.blank?
-    blank_pwd = password.blank?
+    blank_pwd = login ? password.blank? : false
     validation_result[:error] = get_blank_message(blank_login, blank_pwd)
     return validation_result if blank_login || blank_pwd
 
-    # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(real_user,
-                                              password)
-    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      validation_result[:error] = I18n.t('external_authentication_not_supported')
-      return validation_result
+    if login
+      # Two stage user verification: authentication and authorization
+      ip = MarkusConfigurator.markus_config_validate_ip? ? request.remote_ip : nil
+      authenticate_response = User.authenticate(real_user,
+                                                password,
+                                                ip: ip)
+      if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
+        validation_result[:error] = I18n.t('external_authentication_not_supported')
+        return validation_result
+      end
+
+      if (defined? VALIDATE_CUSTOM_STATUS_DISPLAY) &&
+        authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
+        validation_result[:error] = VALIDATE_CUSTOM_STATUS_DISPLAY
+        return validation_result
+      end
     end
 
-    if (defined? VALIDATE_CUSTOM_STATUS_DISPLAY) &&
-       authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
-      validation_result[:error] = VALIDATE_CUSTOM_STATUS_DISPLAY
-      return validation_result
-    end
-
-    if authenticate_response == User::AUTHENTICATE_SUCCESS
-      # Username/password combination is valid. Check if user is
-      # allowed to use MarkUs.
+    if !login || authenticate_response == User::AUTHENTICATE_SUCCESS
+      # Username/password combination is valid or we didn't need to
+      # authenticate. Check if user is allowed to use MarkUs.
       #
       # sets this user as logged in if effective_user is a user in MarkUs
       found_user = User.authorize(effective_user)
@@ -398,55 +404,11 @@ private
         # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
-        if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
-          validation_result[:error] = VALIDATE_USER_NOT_ALLOWED_DISPLAY
-        else
-          validation_result[:error] = I18n.t(:login_failed)
-        end
+        validation_result[:error] = MarkusConfigurator.markus_config_validate_user_message || I18n.t(:login_failed)
         return validation_result
       end
     else
-      if defined? VALIDATE_LOGIN_INCORRECT_DISPLAY
-        validation_result[:error] = VALIDATE_LOGIN_INCORRECT_DISPLAY
-      else
-        validation_result[:error] = I18n.t(:login_failed)
-      end
-      return validation_result
-    end
-
-    # All good, set error to nil. Let's be explicit.
-    # Also, set the user key to found_user
-    validation_result[:error] = nil
-    validation_result[:user] = found_user
-    validation_result
-  end
-
-  # Returns the user with user name "effective_user" from the database given that the user
-  # with user name "real_user" is authenticated. Effective and real users must be
-  # different.
-  def validate_user_without_login(effective_user, real_user)
-    validation_result = Hash.new
-    validation_result[:user] = nil # Let's be explicit
-    # check for blank username
-    blank_login = effective_user.blank?
-    validation_result[:error] = get_blank_message(blank_login, false)
-    return validation_result if blank_login
-
-    # Can't do user authentication, for a remote user setup, so
-    # only do authorization (i.e. valid user) checks.
-    found_user = User.authorize(effective_user)
-    # if not nil, user authorized to enter MarkUs
-    if found_user.nil?
-      # This message actually means "User not allowed to use MarkUs",
-      # but it's from a security-perspective
-      # not a good idea to report this to the outside world. It makes it
-      # easier for attempted break-ins
-      # if one can distinguish between existent and non-existent users.
-      if defined? VALIDATE_USER_NOT_ALLOWED_DISPLAY
-        validation_result[:error] = VALIDATE_USER_NOT_ALLOWED_DISPLAY
-      else
-        validation_result[:error] = I18n.t(:login_failed)
-      end
+      validation_result[:error] = MarkusConfigurator.markus_config_validate_login_message || I18n.t(:login_failed)
       return validation_result
     end
 

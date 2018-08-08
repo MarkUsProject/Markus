@@ -8,9 +8,6 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require jquery.easyModal
-// TODO: bundle ReactComponents with the actual React files.
-// (No need to load React on pages that do not use it.)
-//= require_tree ./ReactComponents
 //= require js-routes
 //= require job_poller
 //= require i18n
@@ -18,6 +15,7 @@
 //= require Chart
 //= require chart_config
 //= require markus_colors
+//= require refresh_or_logout
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 

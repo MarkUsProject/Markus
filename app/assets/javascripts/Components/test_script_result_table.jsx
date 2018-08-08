@@ -22,23 +22,40 @@ class TestScriptResultTable extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.get_test_runs_results_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id),
-      dataType: 'json',
-    }).then(res => {
-      let sub_row_map = {};
-      for (let i = 0; i < res.length; i++) {
-        sub_row_map[i] = true;
-      }
-
-      this.setState({
-        data: res,
-        expanded: {0: sub_row_map},
+    if (this.props.detailed) {
+      $.ajax({
+        url: Routes.get_test_runs_results_assignment_submission_result_path(
+          this.props.assignment_id,
+          this.props.submission_id,
+          this.props.result_id),
+        dataType: 'json',
+      }).then(res => {
+        let sub_row_map = {};
+        for (let i = 0; i < res.length; i++) {
+          sub_row_map[i] = true;
+        }
+        this.setState({
+          data: res,
+          expanded: {0: sub_row_map},
+        });
       });
-    });
+    } else {
+      // student-run automated tests
+      $.ajax({
+        url: Routes.get_student_run_test_results_assignment_automated_tests_path(
+          this.props.assignment_id),
+        dataType: 'json',
+      }).then(res => {
+        let sub_row_map = {};
+        for (let i = 0; i < res.length; i++) {
+          sub_row_map[i] = true;
+        }
+        this.setState({
+          data: res,
+          expanded: {0: sub_row_map},
+        });
+      });
+    }
   };
 
   // Custom getTdProps function to highlight submissions that have been collected.
@@ -72,6 +89,7 @@ class TestScriptResultTable extends React.Component {
             {
               Header: I18n.t('automated_tests.test_results_table.output'),
               accessor: 'actual_output',
+              className: 'actual_output',
               show: this.props.detailed
             },
             {
@@ -82,12 +100,14 @@ class TestScriptResultTable extends React.Component {
             {
               Header: I18n.t('automated_tests.test_results_table.marks_earned'),
               accessor: 'marks_earned',
-              minWidth: 40
+              minWidth: 40,
+              className: 'number'
             },
             {
               Header: I18n.t('automated_tests.test_results_table.marks_total'),
               accessor: 'marks_total',
-              minWidth: 40
+              minWidth: 40,
+              className: 'number'
             },
           ]}
           pivotBy={['created_at_user_name', 'file_name']}

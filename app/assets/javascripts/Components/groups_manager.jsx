@@ -240,6 +240,13 @@ class RawGroupsTable extends React.Component {
           );
         }
       },
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          return row._original.members.some(member => member[0].includes(filter.value));
+        } else {
+          return true;
+        }
+      },
       sortable: false,
     },
     {
@@ -262,8 +269,26 @@ class RawGroupsTable extends React.Component {
           );
         }
       },
+      filterMethod: (filter, row) => {
+        if (filter.value === 'all') {
+          return true;
+        } else { // Either 'true' or 'false'
+          const val = filter.value === 'true';
+          let isValid = row._original.admin_approved || row._original.members.length >= this.props.groupMin;
+          return isValid === val;
+        }
+      },
+      Filter: ({ filter, onChange }) =>
+        <select
+          onChange={event => onChange(event.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          <option value='all'>{I18n.t('all')}</option>
+          <option value='true'>{I18n.t('groups.is_valid')}</option>
+          <option value='false'>{I18n.t('groups.is_not_valid')}</option>
+        </select>,
       minWidth: 30,
-      filterable: false,
       sortable: false
     },
   ];

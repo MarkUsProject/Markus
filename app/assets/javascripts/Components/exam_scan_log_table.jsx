@@ -59,7 +59,8 @@ class ExamScanLogTable extends React.Component {
       columns: [
         {
           Header: I18n.t('activerecord.attributes.split_pdf_log.original_num_pages'),
-          accessor: 'original_num_pages'
+          accessor: 'original_num_pages',
+          className: 'number'
         },
         {
           Header: I18n.t('split_pdf_logs.pages_error'),
@@ -78,11 +79,13 @@ class ExamScanLogTable extends React.Component {
       columns: [
         {
           Header: I18n.t('results.state.complete'),
-          accessor: 'num_groups_in_complete'
+          accessor: 'num_groups_in_complete',
+          className: 'number'
         },
         {
           Header: I18n.t('results.state.incomplete'),
-          accessor: 'num_groups_in_incomplete'
+          accessor: 'num_groups_in_incomplete',
+          className: 'number'
         },
       ]
     }
@@ -118,6 +121,7 @@ class ExamScanErrorsTable extends React.Component {
       Header: 'Raw page number',
       accessor: 'raw_page_number',
       maxWidth: 120,
+      className: 'number'
     },
     {
       Header: 'Status',
@@ -150,6 +154,7 @@ class ExamScanErrorsTable extends React.Component {
       Header: 'Exam page number',
       accessor: 'exam_page_number',
       maxWidth: 120,
+      className: 'number'
     }
   ];
 
