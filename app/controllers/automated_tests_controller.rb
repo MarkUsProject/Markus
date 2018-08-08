@@ -4,7 +4,7 @@ class AutomatedTestsController < ApplicationController
   before_action      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
   before_action      :authorize_for_student,
-                     only: [:student_interface]
+                     only: [:student_interface, :get_student_run_test_results]
 
   # Update is called when files are added to the assignment
   def update
@@ -151,7 +151,6 @@ class AutomatedTestsController < ApplicationController
       g['marks_earned'] = g['test_results.marks_earned']
       g['marks_total'] = g['test_results.marks_total']
     end
-    # format extra info as :name? TODO
     render json: test_script_results
   end
 

@@ -22,7 +22,7 @@ class TestScriptResultTable extends React.Component {
   }
 
   fetchData = () => {
-    if (this.props.detailed){
+    if (this.props.detailed) {
       $.ajax({
         url: Routes.get_test_runs_results_assignment_submission_result_path(
           this.props.assignment_id,
@@ -39,11 +39,10 @@ class TestScriptResultTable extends React.Component {
           expanded: {0: sub_row_map},
         });
       });
-    }else{
+    } else {
       // student-run automated tests
       $.ajax({
-        url: Routes.get_student_run_test_results_assignment_automated_test_path(
-          this.props.assignment_id,
+        url: Routes.get_student_run_test_results_assignment_automated_tests_path(
           this.props.assignment_id),
         dataType: 'json',
       }).then(res => {
@@ -90,6 +89,7 @@ class TestScriptResultTable extends React.Component {
             {
               Header: I18n.t('automated_tests.test_results_table.output'),
               accessor: 'actual_output',
+              className: 'actual_output',
               show: this.props.detailed
             },
             {
