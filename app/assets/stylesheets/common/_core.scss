@@ -13,6 +13,26 @@
   }
 }
 
+#timeout_imminent_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
+#session_expired_dialog {
+  width: 50%;
+  max-height: 75%;
+
+  #about_text {
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
 #role_switch_dialog {
   input[type='text'],
   input[type='password'] {
@@ -134,7 +154,7 @@ label.required::after, th.required::after {
 /* Help messages */
 
 .help-icon {
-  background: url(icons/help_icon.png) no-repeat;
+  background: asset-url('icons/help_icon.png') no-repeat;
   cursor: help;
   display: inline-block;
   font-size: 0.8rem;
@@ -242,6 +262,9 @@ label.required::after, th.required::after {
   }
 }
 
+.number {
+  text-align: right;
+}
 
 // Styling patches for react-keyed-file-browser
 .fa-trash-o::before {

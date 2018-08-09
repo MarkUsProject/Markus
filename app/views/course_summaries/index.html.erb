@@ -1,5 +1,9 @@
 <%= content_for :head do %>
-  <%= render partial: 'course_summaries_table', formats: [:'js.jsx'], handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeCourseSummaryTable(document.getElementById('course_summaries_table'));
+    });
+  </script>
 <% end %>
 
 <%= content_for :title, t('course_summaries.title') %>

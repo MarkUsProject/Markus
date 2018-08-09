@@ -11,6 +11,7 @@ es:
     search:             "Búsqueda:"
     issues:             "GitHub Lista de problemas"
     actions:            "Acciones"
+    continue:           "Continuar"
 
     # app/views/assignments/_form.html.erb
     required_file_warning: "Sólo se aceptan los archivos requeridos en la lista. Esto también restringe la extensión de

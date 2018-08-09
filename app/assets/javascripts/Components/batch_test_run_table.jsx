@@ -52,7 +52,7 @@ class BatchTestRunTable extends React.Component {
       newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
       // Change this to in_progress
       if(newData[i].status === "complete"){
-        const stop_tests_url = Routes.stop_tests_assignment_path(this.props.assignment_id);
+        const stop_tests_url = Routes.stop_test_assignment_path(this.props.assignment_id);
         newData[i].action = <a href={stop_tests_url  + "?test_run_id=" + newData[i].id}>Stop test {newData[i].id}</a>;
         // increment in_progress number for this batch_id
         status[newData[i].test_batch_id].total += 1;
@@ -94,7 +94,7 @@ class BatchTestRunTable extends React.Component {
                 if(statuses[pivots[0].test_batch_id].in_progress == 0){
                   return "complete";
                 } else {
-                  return "in progress: " + statuses[pivots[0].test_batch_id].in_progress + "/" + statuses[pivots[0].test_batch_id].total;
+                  return "complete: " + (statuses[pivots[0].test_batch_id].total - statuses[pivots[0].test_batch_id].in_progress) + "/" + statuses[pivots[0].test_batch_id].total;
                 }
               },
               sortable: false,

@@ -98,6 +98,7 @@ class AssignmentSummaryTable extends React.Component {
     {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
+      className: 'number',
       filterable: false,
       defaultSortDesc: true,
     },
@@ -108,17 +109,19 @@ class AssignmentSummaryTable extends React.Component {
     return (
       <div>
         {this.props.is_admin &&
-         <form action={Routes.csv_summary_assignment_path(this.props.assignment_id)}
-               method='get'>
-           <input type='submit'
-                  name='download'
-                  value={I18n.t('download')}>
-           </input>
-           <input type='submit'
-                  name='download'
-                  value={'Old: ' + I18n.t('submissions.detailed_csv_report')}>
-           </input>
-         </form>
+        <form className='rt-action-box' action={Routes.csv_summary_assignment_path(this.props.assignment_id)}
+              method='get'>
+          <button
+            type='submit'
+            name='download'>
+            {I18n.t('download')}
+          </button>
+          <button
+            type='submit'
+            name='download'>
+            {'Old: ' + I18n.t('submissions.detailed_csv_report')}
+          </button>
+        </form>
         }
         <ReactTable
           data={data}

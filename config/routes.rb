@@ -40,8 +40,8 @@ Rails.application.routes.draw do
         get 'download_assignment_list'
         post 'upload_assignment_list'
         get 'batch_runs'
-        get 'stop_tests'
-        get 'stop_batch_tests'
+        post 'stop_test'
+        post 'stop_batch_tests'
       end
 
       member do
@@ -62,8 +62,8 @@ Rails.application.routes.draw do
         get 'summary'
         get 'csv_summary'
         get 'batch_runs'
-        get 'stop_tests'
-        get 'stop_batch_tests'
+        post 'stop_test'
+        post 'stop_batch_tests'
       end
 
       resources :tags do
@@ -96,6 +96,7 @@ Rails.application.routes.draw do
           get 'update_positions'
           post 'upload'
           get 'download'
+          get 'get_student_run_test_results'
         end
       end
 
@@ -209,7 +210,7 @@ Rails.application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
-            get 'stop_tests'
+            get 'stop_test'
             get 'get_test_runs_results'
           end
         end
@@ -386,10 +387,10 @@ Rails.application.routes.draw do
         get 'about'
         post 'login_as'
         get 'role_switch'
-        get 'redirect'
         get 'clear_role_switch_session'
         post 'reset_api_key'
         get 'check_timeout'
+        post 'refresh_session'
       end
     end
   end

@@ -89,7 +89,7 @@ strong a {
 
 .error {
   @extend .alert;
-  background: $light-red url('icons/exclamation.png') no-repeat 5px center;
+  background: $light-red asset-url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid $red;
 }
 
@@ -99,31 +99,31 @@ strong a {
 
 .warning {
   @extend .alert;
-  background: $light-yellow url(icons/error.png) no-repeat 5px center;
+  background: $light-yellow asset-url('icons/error.png') no-repeat 5px center;
   border: 1px solid $yellow;
 }
 
 .success {
   @extend .alert;
-  background: $light-green url(icons/accept.png) no-repeat 5px center;
+  background: $light-green asset-url('icons/accept.png') no-repeat 5px center;
   border: 1px solid $green;
 }
 
 .information {
   @extend .alert;
-  background: $light-grey url(icons/information.png) no-repeat 5px center;
+  background: $light-grey asset-url('icons/information.png') no-repeat 5px center;
   border: 1px solid $grey;
 }
 
 .notice {
   @extend .alert;
-  background: $light-grey url(icons/information.png) no-repeat 5px center;
+  background: $light-grey asset-url('icons/information.png') no-repeat 5px center;
   border: 1px solid $grey;
 }
 
 
 .hide-flash {
-  background: transparent url(icons/cross.png) no-repeat 5px center;
+  background: transparent asset-url('icons/cross.png') no-repeat 5px center;
   float: right;
   width: 2em;
 }

@@ -11,6 +11,7 @@ fr:
     search:             "Recherche:"
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
+    continue:           "Continuer"
 
     # app/views/assignments/_form.html.erb
     required_file_warning: "Accepter pas d'autres fichiers que les fichiers requis énumérés. Ce serait également restrics les extensions de fichier."

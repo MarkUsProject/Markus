@@ -372,7 +372,7 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  def stop_tests
+  def stop_test
     test_id = params[:test_run_id].to_i
     AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
     redirect_back(fallback_location: root_path)

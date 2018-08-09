@@ -15,7 +15,7 @@ module MarkingSchemesHelper
       }
     end
 
-    req_data.to_json
+    req_data
   end
 
   def get_edit_link_for_marking_scheme_id(id)
@@ -35,7 +35,7 @@ module MarkingSchemesHelper
   def get_marking_weights_for_all_gradable_item(weights_array)
     weights = {}
     weights_array.all.each do |w|
-      weights[w.gradable_item_id] = w.weight
+      weights[w.gradable_item_id] = w.weight.to_f
     end
     weights
   end
