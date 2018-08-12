@@ -52,7 +52,7 @@ class BatchTestRunTable extends React.Component {
       newData[i].group_name = <a href={result_url}>{newData[i].group_name}</a>;
       // Change this to in_progress
       if(newData[i].status === "in_progress"){
-        const stop_tests_url = Routes.stop_test_assignments_path(this.props.assignment_id);
+        const stop_tests_url = Routes.stop_test_assignment_path(this.props.assignment_id);
         newData[i].action = <a href={stop_tests_url  + "?test_run_id=" + newData[i].id}>Stop test</a>;
         // increment in_progress number for this batch_id
         status[newData[i].test_batch_id].total += 1;
@@ -121,7 +121,7 @@ class BatchTestRunTable extends React.Component {
               aggregate: (vals, pivots) => {return [pivots[0].test_batch_id, statuses[pivots[0].test_batch_id]];},
               Aggregated: row => {
                 if(row.value[1].in_progress > 0) {
-                  const stop_tests_url = Routes.stop_batch_tests_assignments_path(this.props.assignment_id);
+                  const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
                   return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
                 } else{
                   return <span>All tests are complete</span>
