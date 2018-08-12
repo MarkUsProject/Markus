@@ -62,8 +62,6 @@ Rails.application.routes.draw do
         get 'summary'
         get 'csv_summary'
         get 'batch_runs'
-        post 'stop_test'
-        post 'stop_batch_tests'
       end
 
       resources :tags do
