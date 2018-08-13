@@ -9,6 +9,8 @@ class TestRun < ApplicationRecord
   validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
   validates_numericality_of :time_to_service, greater_than_or_equal_to: -1, only_integer: true, allow_nil: true
 
+
+
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',

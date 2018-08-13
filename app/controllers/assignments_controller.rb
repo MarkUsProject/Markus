@@ -2,6 +2,7 @@ require 'base64'
 
 
 class AssignmentsController < ApplicationController
+  include ActionView::Helpers::UrlHelper
   before_action      :authorize_only_for_admin,
                      except: [:deletegroup,
                               :delete_rejected,
@@ -368,6 +369,56 @@ class AssignmentsController < ApplicationController
       format.json {
         render json: @assignment.summary_json(@current_user)
       }
+    end
+  end
+
+  def stop_test
+    test_id = params[:test_run_id].to_i
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    redirect_back(fallback_location: root_path)
+  end
+
+  def stop_batch_tests
+    batch_id = params[:test_batch_id].to_i
+    test_runs = TestRun.where(test_batch_id: batch_id)
+    test_runs.each do |test_run_id|
+      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_run_id])
+    end
+    redirect_back(fallback_location: root_path)
+  end
+
+  def batch_runs
+    @assignment = Assignment.find(params[:id])
+    test_runs = TestRun.left_outer_joins(:test_batch, :grouping)
+                       .includes(:test_script_results)
+                       .where(test_runs: { user_id: current_user.id })
+                       .select(:id, :time_to_service_estimate, :test_batch_id,
+                               :grouping_id, :user_id, :submission_id, 'test_batches.created_at',
+                               'test_runs.created_at AS individual_created_at', :group_id, :time_to_service)
+    status_hash = Hash.new
+    test_runs.each do |g|
+      status_hash[g[:id]] = g.status
+    end
+    test_runs = test_runs.as_json
+    test_runs.each do |test_run|
+      # individual tests
+      if test_run['created_at'].nil?
+        test_run['created_at'] = I18n.l(test_run['individual_created_at'])
+      # batch tests
+      else
+        test_run['created_at'] = I18n.l(test_run['created_at'])
+      end
+      test_run['group_name'] = Group.find(test_run['group_id']).group_name
+      test_run['status'] = status_hash[test_run['id']]
+      result = Result.where(submission_id: test_run['submission_id'])[0].id
+      test_run['result_id'] = result
+    end
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: test_runs
+      end
     end
   end
 

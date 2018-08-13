@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         post 'update_collected_submissions'
         get 'download_assignment_list'
         post 'upload_assignment_list'
+        get 'batch_runs'
       end
 
       member do
@@ -58,6 +59,9 @@ Rails.application.routes.draw do
         get 'peer_review'
         get 'summary'
         get 'csv_summary'
+        get 'batch_runs'
+        get 'stop_test'
+        get 'stop_batch_tests'
       end
 
       resources :tags do
@@ -204,8 +208,8 @@ Rails.application.routes.draw do
             post 'add_tag'
             post 'remove_tag'
             get 'run_tests'
+            get 'stop_test'
             get 'get_test_runs_results'
-            get 'stop_tests'
           end
         end
       end
