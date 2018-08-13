@@ -28,7 +28,6 @@ class BatchTestRunTable extends React.Component {
   }
 
   fetchData() {
-    console.log("fetch data start");
     $.ajax({
       url: Routes.batch_runs_assignment_path(
         this.props.assignment_id),
@@ -36,16 +35,15 @@ class BatchTestRunTable extends React.Component {
     }).then(res => {
       this.setState({data: res});
     });
-    console.log("fetch data end");
   }
 
   addButtons(){
-    var status = {}
+    var status = {};
     var newData = this.state.data;
     for(let i = 0; i < this.state.data.length; i++){
       // Check if key exists in dictionary
       if(!(newData[i].test_batch_id in status)){
-        // add key to dictionairy
+        // add key to dictionary
         status[newData[i].test_batch_id] = {total: 0, in_progress: 0};
       }
       const result_url = Routes.edit_assignment_submission_result_path(this.props.assignment_id,newData[i].result_id,newData[i].result_id);
@@ -57,11 +55,11 @@ class BatchTestRunTable extends React.Component {
         // increment in_progress number for this batch_id
         status[newData[i].test_batch_id].total += 1;
         status[newData[i].test_batch_id].in_progress += 1;
-        newData[i].status = I18n.t('batch_test_table.in_progress');
+        newData[i].status = I18n.t('assignment.batch_tests_status_table.in_progress');
       } else {
         newData[i].time_to_service_estimate = "";
         status[newData[i].test_batch_id].total += 1;
-        newData[i].action = I18n.t('batch_test_table.test_run_complete');
+        newData[i].action = I18n.t('assignment.batch_tests_status_table.test_run_complete');
       }
     }
     statuses = status;
@@ -76,23 +74,22 @@ class BatchTestRunTable extends React.Component {
           data={this.addButtons()}
           columns={[
             {
-              Header: "Created At",
+              Header: I18n.t('assignment.batch_tests_status_table.created_at'),
               accessor: "created_at",
               PivotValue: ({ value }) =>
                 <span>{value}</span>
             },
             {
-              Header: "Group Name",
+              Header: I18n.t('assignment.batch_tests_status_table.group_name'),
               accessor: "group_name",
               // If more than one value, show the total number of groups under this pivot
               aggregate: vals => {
-                console.log(typeof vals);
                 return typeof vals[1] === 'undefined' ? vals[0] : Object.keys(vals).length + ' groups'
               },
               sortable: false,
             },
             {
-              Header: "Status",
+              Header: I18n.t('assignment.batch_tests_status_table.status'),
               accessor: 'status',
               aggregate: (vals, pivots) => {
                 if(statuses[pivots[0].test_batch_id].in_progress == 0){
@@ -112,13 +109,13 @@ class BatchTestRunTable extends React.Component {
               }
             },
             {
-              Header: "Estimated Remaining Time",
+              Header: I18n.t('assignment.batch_tests_status_table.estimated_remaining_time'),
               accessor: 'time_to_service_estimate',
               Aggregated: <span></span>,
               sortable: false,
             },
             {
-              Header: "Action",
+              Header: I18n.t('assignment.batch_tests_status_table.action'),
               accessor: "action",
               sortable: false,
               aggregate: (vals, pivots) => {return [pivots[0].test_batch_id, statuses[pivots[0].test_batch_id]];},
@@ -132,7 +129,7 @@ class BatchTestRunTable extends React.Component {
               }
             },
             {
-              // Kept but hidden for now because status is using it
+              // Kept but hidden because status is using it
               Header: "Test_batch_id",
               accessor: 'test_batch_id',
               show: false
