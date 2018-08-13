@@ -77,14 +77,17 @@ class BatchTestRunTable extends React.Component {
           columns={[
             {
               Header: "Created At",
-              accessor: "created_at"
+              accessor: "created_at",
+              PivotValue: ({ value }) =>
+                <span>{value}</span>
             },
             {
               Header: "Group Name",
               accessor: "group_name",
-              // If more than one value, show 'multiple'
+              // If more than one value, show the total number of groups under this pivot
               aggregate: vals => {
-                return typeof vals[1] === 'undefined' ? vals[0] : 'multiple groups (batch)'
+                console.log(typeof vals);
+                return typeof vals[1] === 'undefined' ? vals[0] : Object.keys(vals).length + ' groups'
               },
               sortable: false,
             },
