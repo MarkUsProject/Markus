@@ -163,6 +163,14 @@ fr:
         peer_review_results: "Examen par les pairs Résultats"
         your_reviews: "Vos avis"
         review: "Avis"
+        batch_tests_status_table:
+            in_progress: "UPDATE ME"
+            test_run_complete: "UPDATE ME"
+            created_at: "UPDATE ME"
+            group_name: "UPDATE ME"
+            status: "UPDATE ME"
+            estimated_remaining_time: "UPDATE ME"
+            action: "UPDATE ME"
     peer_review:
         assign: "Attribuer examen par les pairs"
         review: "Avis "

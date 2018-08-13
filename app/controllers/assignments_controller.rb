@@ -391,6 +391,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     test_runs = TestRun.left_outer_joins(:test_batch, :grouping)
                        .includes(:test_script_results)
+                       .where(test_runs: { user_id: current_user.id })
                        .select(:id, :time_to_service_estimate, :test_batch_id,
                                :grouping_id, :user_id, :submission_id, 'test_batches.created_at',
                                'test_runs.created_at AS individual_created_at', :group_id, :time_to_service)

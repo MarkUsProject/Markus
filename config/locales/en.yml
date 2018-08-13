@@ -28,11 +28,6 @@ en:
     session_expired:     "Your session has expired. Please log in"
     please_log_in:       "Please log in"
 
-    #app/assets/javascripts/Components/batch_test_run_table.jsx
-    batch_test_table:
-      in_progress: "in progress"
-      test_run_complete: "Test run is complete"
-
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     clear_role_switch_session_link: "Cancel role switch"
@@ -181,6 +176,14 @@ en:
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
         review: "Peer Review"
+        batch_tests_status_table:
+            in_progress: "in progress"
+            test_run_complete: "Test run is complete"
+            created_at: "Created At"
+            group_name: "Group Name"
+            status: "Status"
+            estimated_remaining_time: "Estimated Remaining Time"
+            action: "Action"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
