@@ -57,11 +57,11 @@ class BatchTestRunTable extends React.Component {
         // increment in_progress number for this batch_id
         status[newData[i].test_batch_id].total += 1;
         status[newData[i].test_batch_id].in_progress += 1;
-        newData[i].status = "in progress";
+        newData[i].status = I18n.t('batch_test_table.in_progress');
       } else {
         newData[i].time_to_service_estimate = "";
         status[newData[i].test_batch_id].total += 1;
-        newData[i].action = "Test run is complete";
+        newData[i].action = I18n.t('batch_test_table.test_run_complete');
       }
     }
     statuses = status;
