@@ -16,7 +16,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message, :get_test_runs_results]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests, :stop_tests,
+                only: [:download, :download_zip, :run_tests, :stop_test,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
@@ -180,7 +180,7 @@ class ResultsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
-  def stop_tests
+  def stop_test
     test_id = params[:test_run_id].to_i
     AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
     redirect_back(fallback_location: root_path)

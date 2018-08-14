@@ -371,6 +371,58 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def stop_test
+    test_id = params[:test_run_id].to_i
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    redirect_back(fallback_location: root_path)
+  end
+
+  def stop_batch_tests
+    TestRun.where(test_batch_id: params[:test_batch_id]).each do |test_run_id|
+      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_run_id])
+    end
+    redirect_back(fallback_location: root_path)
+  end
+
+  def batch_runs
+    @assignment = Assignment.find(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.json do
+        test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
+          .includes(:test_script_results)
+          .where(test_runs: { user_id: current_user.id },
+                 'groupings.assignment_id': @assignment.id)
+          .select(
+            :id,
+            :time_to_service_estimate,
+            :time_to_service,
+            :test_batch_id,
+            :grouping_id, :user_id,
+            'test_batches.created_at',
+            Arel.sql('test_runs.created_at AS individual_created_at'),
+            'groups.group_name',
+            Arel.sql('results.id AS result_id')
+          )
+        status_hash = Hash.new
+        test_runs.each do |t|
+          status_hash[t[:id]] = t.status
+        end
+        test_runs = test_runs.as_json
+        test_runs.each do |test_run|
+          if test_run['created_at'].nil?  # individual test run
+            test_run['created_at'] = I18n.l(test_run['individual_created_at'])
+          else  # part of a batch
+            test_run['created_at'] = I18n.l(test_run['created_at'])
+          end
+          test_run['status'] = status_hash[test_run['id']]
+        end
+        render json: test_runs
+      end
+    end
+  end
+
   def csv_summary
     assignment = Assignment.find(params[:id])
     if params[:download] == 'Download'
