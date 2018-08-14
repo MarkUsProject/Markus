@@ -249,6 +249,12 @@ class SubmissionsController < ApplicationController
     rescue StandardError => e
       error = e.message
     end
+    unless success.blank?
+      flash_message(:success, success)
+    end
+    unless error.blank?
+      flash_message(:error, error)
+    end
     render json: { success: success, error: error }
   end
 
