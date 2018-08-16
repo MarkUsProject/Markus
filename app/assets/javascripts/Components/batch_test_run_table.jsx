@@ -55,7 +55,7 @@ class BatchTestRunTable extends React.Component {
         status[row.test_batch_id].in_progress += 1;
         row.status = I18n.t('assignment.batch_tests_status_table.in_progress');
       } else {
-        row.time_to_service_estimate = '';
+        row.time_to_completion = '';
         row.action = '';
       }
       status[row.test_batch_id].total += 1;
@@ -116,7 +116,7 @@ class BatchTestRunTable extends React.Component {
             },
             {
               Header: I18n.t('assignment.batch_tests_status_table.estimated_remaining_time'),
-              accessor: 'time_to_service_estimate',
+              accessor: 'time_to_completion',
               Aggregated: <span></span>,
               sortable: false,
             },

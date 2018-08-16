@@ -391,24 +391,26 @@ class AssignmentsController < ApplicationController
       format.html
       format.json do
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-          .includes(:test_script_results)
-          .where(test_runs: { user_id: current_user.id },
-                 'groupings.assignment_id': @assignment.id)
-          .select(
-            :id,
-            :time_to_service_estimate,
-            :time_to_service,
-            :test_batch_id,
-            :grouping_id, :user_id,
-            'test_batches.created_at',
-            Arel.sql('test_runs.created_at AS individual_created_at'),
-            'groups.group_name',
-            Arel.sql('results.id AS result_id')
-          )
+                           .includes(:test_script_results)
+                           .where(test_runs: { user_id: current_user.id }, 'groupings.assignment_id': @assignment.id)
+                           .select(
+                              :id,
+                              :test_batch_id,
+                              :time_to_service,
+                              :grouping_id,
+                              :user_id,
+                              'test_batches.created_at',
+                              Arel.sql('test_runs.created_at AS individual_created_at'),
+                              'groups.group_name',
+                              Arel.sql('results.id AS result_id')
+                           )
         status_hash = Hash.new
         test_runs.each do |t|
           status_hash[t[:id]] = t.status
         end
+        test_batches = TestBatch.where(id: test_runs.pluck(:test_batch_id).compact)
+        time_to_completion_hashes = test_batches.map(&:time_to_completion_hash)
+        time_estimates = time_to_completion_hashes.empty? ? Hash.new : time_to_completion_hashes.reduce(&:merge)
         test_runs = test_runs.as_json
         test_runs.each do |test_run|
           if test_run['created_at'].nil?  # individual test run
@@ -417,6 +419,7 @@ class AssignmentsController < ApplicationController
             test_run['created_at'] = I18n.l(test_run['created_at'])
           end
           test_run['status'] = status_hash[test_run['id']]
+          test_run['time_to_completion'] = time_estimates[test_run['id']] || 0
         end
         render json: test_runs
       end
