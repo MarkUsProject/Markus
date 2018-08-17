@@ -62,7 +62,6 @@ gem 'ya2yaml'
 
 # Rails miscellany
 gem 'activerecord-session_store'
-gem 'bootsnap', require: false
 gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders'
@@ -97,6 +96,7 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller' # supplement for better_errors
+  gem 'bootsnap', require: false
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'rails-erd'
