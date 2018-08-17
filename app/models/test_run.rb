@@ -27,6 +27,10 @@ class TestRun < ApplicationRecord
     end
   end
 
+  def run_time
+    test_script_results.pluck(:time)&.sum
+  end
+
   def create_test_script_result(test_script, time: 0, extra_info: nil)
     unless test_script.respond_to?(:file_name) # the ActiveRecord object can be passed directly
       test_script = TestScript.find_by(assignment: grouping.assignment, file_name: test_script)
@@ -124,6 +128,11 @@ class TestRun < ApplicationRecord
     # save statistics
     self.time_to_service = json_root['time_to_service']
     self.save
+    # update estimated time to service for other runs in batch
+    if test_batch && time_to_service_estimate && time_to_service
+      time_delta = time_to_service_estimate - time_to_service
+      test_batch.adjust_time_to_service_estimate(time_delta)
+    end
     # check for server errors
     server_error = json_root['error']
     unless server_error.blank?
