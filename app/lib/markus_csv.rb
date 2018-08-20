@@ -1,5 +1,4 @@
 require 'csv'
-include ActionView::Helpers::TranslationHelper
 
 class MarkusCSV
   MAX_INVALID_LINES = 10

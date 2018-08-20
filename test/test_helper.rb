@@ -7,7 +7,6 @@ require 'rails/test_help'
 require 'minitest/unit'
 require 'mocha/mini_test'
 require 'sham'
-include ActionView::Helpers::TranslationHelper
 
 class ActiveSupport::TestCase
 
