@@ -23,7 +23,7 @@ Markus::Application.configure do
   config.action_controller.perform_caching = true
 
   # Compress both stylesheets and JavaScripts
-  config.assets.js_compressor = :uglifier
+  config.assets.js_compressor = Uglifier.new(harmony: true)
   config.assets.css_compressor = :sass
 
   # Set this to change the location of precompiled assets (RAILS_ENV=production bin/rails assets:precompile)
