@@ -5,6 +5,9 @@
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= javascript_include_tag 'application' %>
   <%= javascript_include_tag 'menu' %>
+  <% unless MarkusConfigurator.markus_config_remote_user_auth %>
+    <%= javascript_include_tag 'check_timeout' %>
+  <% end %>
   <%= yield :head %>
 </head>
 <body>
@@ -13,14 +16,12 @@
     <%= render partial: 'layouts/header' unless controller.action_name == 'login' %>
     <%= render partial: 'layouts/menu' unless controller.action_name == 'login' %>
     <%= render partial: 'layouts/sub_menu', locals: { no_menu_header: 'true' } %>
-    <%= render partial: 'layouts/about' %>
-    <%= render partial: 'layouts/redirect' %>
+    <%= render partial: 'layouts/modals' %>
 
     <div id='content'>
       <%= yield :layout %>
     </div>
   </div>
 
-  <%= render partial: 'layouts/redirect', formats: [:js], handlers: [:erb] %>
 </body>
 </html>

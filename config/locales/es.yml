@@ -11,6 +11,7 @@ es:
     search:             "Búsqueda:"
     issues:             "GitHub Lista de problemas"
     actions:            "Acciones"
+    continue:           "Continuar"
 
     # app/views/assignments/_form.html.erb
     required_file_warning: "Sólo se aceptan los archivos requeridos en la lista. Esto también restringe la extensión de
@@ -243,6 +244,15 @@ es:
         peer_review_results:              "Resultados para la Revisión de Compañeros"
         your_reviews:                     "Sus Revisiones"
         review:                           "Revisión"
+        batch_tests_status_table:
+            test_runs_status: "UPDATE ME"
+            in_progress: "UPDATE ME"
+            test_run_complete: "UPDATE ME"
+            created_at: "UPDATE ME"
+            group_name: "UPDATE ME"
+            status: "UPDATE ME"
+            estimated_remaining_time: "UPDATE ME"
+            action: "UPDATE ME"
     peer_review:
         assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"

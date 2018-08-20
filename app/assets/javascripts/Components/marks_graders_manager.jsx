@@ -156,7 +156,16 @@ class RawGradersTable extends React.Component {
     {
       Header: I18n.t('activerecord.attributes.user.full_name'),
       Cell: row => `${row.original.first_name} ${row.original.last_name}`,
-      minWidth: 170
+      minWidth: 170,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          if (row._original.first_name.includes(filter.value) || row._original.last_name.includes(filter.value)){
+            return true;
+          }
+        } else {
+          return true;
+        }
+      },
     },
     {
       Header: I18n.t('activerecord.models.student.other'),
@@ -210,7 +219,16 @@ class RawMarksStudentsTable extends React.Component {
       {
         Header: I18n.t('activerecord.attributes.user.full_name'),
         Cell: row => `${row.original.first_name} ${row.original.last_name}`,
-        minWidth: 170
+        minWidth: 170,
+        filterMethod: (filter, row) => {
+          if (filter.value) {
+            if (row._original.first_name.includes(filter.value) || row._original.last_name.includes(filter.value)){
+              return true;
+            }
+          } else {
+            return true;
+          }
+        },
       },
       {
         Header: I18n.t('activerecord.models.ta.other'),

@@ -128,8 +128,8 @@ class Submission < ApplicationRecord
       all_marks_total = 0.0
       test_scripts.each do |test_script|
         res = test_run.test_script_results.find_by(test_script: test_script)
-        all_marks_earned += res.marks_earned
-        all_marks_total += res.marks_total
+        all_marks_earned += res&.marks_earned || 0.0
+        all_marks_total += res&.marks_total || 0.0
       end
       if all_marks_earned == 0 || all_marks_total == 0
         final_mark = 0.0

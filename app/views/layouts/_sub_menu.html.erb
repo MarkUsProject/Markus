@@ -94,7 +94,7 @@
                      'automated_tests',
                      'exam_templates'].include?(controller.controller_name) ||
                     (controller.controller_name == 'assignments' &&
-                     controller.action_name != 'summary') %>
+                     controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
                 class='active'
               <% end %>>
             <%= link_to t('settings'),
@@ -140,6 +140,10 @@
             <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'summary' %>'>
               <%= link_to t('marks.summary'),
                           summary_assignment_path(@assignment) %>
+            </li>
+            <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
+              <%= link_to t('assignment.batch_tests_status_table.test_runs_status'),
+                          batch_runs_assignment_path(@assignment) %>
             </li>
           <% end %>
         <% end %>

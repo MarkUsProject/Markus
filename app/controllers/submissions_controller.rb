@@ -215,7 +215,7 @@ class SubmissionsController < ApplicationController
                        assignment_identifier: assignment.short_identifier)
     end
     if partition[1].count > 0
-      error = I18n.t('collect_submissions.could_not_collect_some',
+      error = I18n.t('submissions.collect.could_not_collect_some',
                      assignment_identifier: assignment.short_identifier)
     end
     flash_now(:success, success) unless success.empty?
@@ -248,6 +248,12 @@ class SubmissionsController < ApplicationController
       end
     rescue StandardError => e
       error = e.message
+    end
+    unless success.blank?
+      flash_message(:success, success)
+    end
+    unless error.blank?
+      flash_message(:error, error)
     end
     render json: { success: success, error: error }
   end

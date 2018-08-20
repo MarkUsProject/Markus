@@ -1,0 +1,9 @@
+<script>
+  Routes.configure({
+    url_links: true,
+    <% if Rails.application.config.relative_url_root %>
+      prefix: '<%= Rails.application.config.relative_url_root %>'
+    <% end %>
+  });
+  Routes.config();
+</script>

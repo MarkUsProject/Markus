@@ -4,14 +4,14 @@
       makeTestScriptResultTable(document.getElementById('test_script_result_table'), {
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
-        assignment_id: <%= @result&.submission&.grouping&.assignment_id || 'null' %>,
+        assignment_id: <%= @assignment&.id || 'null' %>,
+        grouping_id: <%= @grouping&.id || 'null' %>,
         detailed: <%= @current_user.admin? || @current_user.ta? ||
                           @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       });
     })
   </script>
 <% end %>
-
 <h2><%= t('automated_tests.test_results') %></h2>
 <div class="block_content">
   <div class="sub_block test_points">
@@ -25,9 +25,10 @@
                   class: 'button run_tests right' %>
     <% end %>
   </div>
-  <div id='test_script_result_table'></div>
   <% if @current_user.admin? && !test_runs.empty? %>
     <%= render partial: 'automated_tests/test_run',
                collection: test_runs %>
   <% end %>
+  <br/>
+  <div id='test_script_result_table'></div>
 </div>

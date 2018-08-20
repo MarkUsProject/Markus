@@ -176,7 +176,7 @@ class AutotestSetup
         display_expected_output: "display_after_submission",
         display_actual_output: "display_after_submission",
         timeout: 10,
-        criterion: criterion
+        criterion: instructor_run ? criterion : nil
       )
     end
     # send scripts for both hostnames because the

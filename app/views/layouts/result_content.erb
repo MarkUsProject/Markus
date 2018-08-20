@@ -5,6 +5,9 @@
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%= javascript_include_tag 'application' %>
   <%= javascript_pack_tag 'application' %>
+  <% unless MarkusConfigurator.markus_config_remote_user_auth %>
+    <%= javascript_include_tag 'check_timeout' %>
+  <% end %>
   <%= yield :head %>
 </head>
 <body>
@@ -21,9 +24,7 @@
         <%= render partial: 'layouts/sub_sub_menu' %>
         <%= render partial: 'layouts/footer' %>
       </div>
-      <%= render partial: 'layouts/about' %>
-      <%= render partial: 'layouts/role_switch' %>
-      <%= render partial: 'layouts/redirect' %>
+      <%= render partial: 'layouts/modals' %>
     </nav>
 
     <div class='top_bar' style="display: none">
