@@ -60,9 +60,10 @@ class FileViewer extends React.Component {
             )
           });
         } else {
+          const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
           this.setState({
             submission_file_id: submission_file_id,
-            content: JSON.parse(body.content),
+            content: content,
             type: body.type,
             // TODO: use this by calling focus_source_code_line
             focus_line: focus_line
