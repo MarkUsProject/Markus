@@ -306,7 +306,11 @@ class GitRepository < Repository::AbstractRepository
   def stringify(file)
     revision = get_revision(file.from_revision)
     blob = revision.get_entry(File.join(file.path, file.name))
-    blob.content
+    if blob.binary?
+      blob.content
+    else
+      blob.text
+    end
   end
   alias download_as_string stringify # create alias
 
