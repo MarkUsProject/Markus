@@ -163,7 +163,7 @@ GEM
     prawn-qrcode (0.3.0)
       prawn (>= 1)
       rqrcode (>= 0.4.1)
-    pundit (1.1.0)
+    pundit (2.0.0)
       activesupport (>= 3.0.0)
     rack (2.0.5)
     rack-protection (2.0.3)
