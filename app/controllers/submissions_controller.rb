@@ -526,16 +526,9 @@ class SubmissionsController < ApplicationController
         return
       end
 
-      if SubmissionFile.is_binary?(file_contents)
-        # If the file appears to be binary, send it as a download
-        send_data file_contents,
-                  disposition: 'attachment',
-                  filename: params[:file_name]
-      else
-        # Otherwise, sanitize it for HTML and blast it out to the screen
-        sanitized_contents = ERB::Util.html_escape(file_contents)
-        render plain: sanitized_contents, layout: 'sanitized_html'
-      end
+      send_data file_contents,
+                disposition: 'attachment',
+                filename: params[:file_name]
     end
   end
 
