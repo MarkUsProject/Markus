@@ -7,7 +7,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-keyed-file-browser": "^1.2.9",
-    "react-table": "^6.7.6",
+    "react-table": "^6.8.6",
     "react-tabs": "^2.2.2"
   },
   "devDependencies": {
