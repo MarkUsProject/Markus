@@ -68,7 +68,7 @@ describe GradeEntryFormsController do
         grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
     end
 
-    it 'accepts files with additional columns' do
+    xit 'accepts files with additional columns' do
       post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_extra_column } }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
