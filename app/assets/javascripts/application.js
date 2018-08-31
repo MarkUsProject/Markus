@@ -6,7 +6,6 @@
 //
 //= require jquery
 //= require jquery-ui
-//= require jquery_ujs
 //= require jquery.easyModal
 //= require js-routes
 //= require job_poller
