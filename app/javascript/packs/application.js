@@ -7,6 +7,9 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
+// vendor libraries
+import 'javascripts/jquery.easyModal';
+
 import 'javascripts/help-system';
 import 'javascripts/layouts';
 import 'javascripts/menu';
