@@ -1237,7 +1237,9 @@ class Assignment < ApplicationRecord
     if current_user.admin?
       groupings = self.groupings
     elsif current_user.ta?
-      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id = ?', current_user.id)
+      groupings = self.groupings
+                      .joins('INNER JOIN memberships ta_memberships ON ta_memberships.grouping_id = groupings.id')
+                      .where('ta_memberships.user_id = ?', current_user.id)
     else
       return []
     end
