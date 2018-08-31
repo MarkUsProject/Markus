@@ -1,12 +1,44 @@
 /**
-* easyModal.js v1.3.1
+* easyModal.js v1.3.2
 * A minimal jQuery modal that works with your CSS.
 * Author: Flavius Matis - http://flaviusmatis.github.com/
 * URL: https://github.com/flaviusmatis/easyModal.js
+*
+* Copyright 2012, Flavius Matis
+* Released under the MIT license.
+* http://flaviusmatis.github.com/license.html
 */
 
 /*jslint browser: true*/
 /*global jQuery*/
+
+(function($,sr){
+
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  var debounce = function (func, threshold, execAsap) {
+      var timeout;
+
+      return function debounced () {
+          var obj = this, args = arguments;
+          function delayed () {
+              if (!execAsap)
+                  func.apply(obj, args);
+              timeout = null;
+          };
+
+          if (timeout)
+              clearTimeout(timeout);
+          else if (execAsap)
+              func.apply(obj, args);
+
+          timeout = setTimeout(delayed, threshold || 100);
+      };
+  }
+  // smartModalResize 
+  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
+
+})(jQuery,'smartModalResize');
 
 (function ($) {
     "use strict";
@@ -15,6 +47,7 @@
 
             var defaults = {
                 top: 'auto',
+                left: 'auto',
                 autoOpen: false,
                 overlayOpacity: 0.5,
                 overlayColor: '#000',
@@ -37,7 +70,8 @@
                         return parseInt(this, 10);
                     })))));
                 },
-                updateZIndexOnOpen: true
+                updateZIndexOnOpen: true,
+                hasVariableWidth: false
             };
 
             options = $.extend(defaults, options);
@@ -69,7 +103,7 @@
                     // When updateZIndexOnOpen is set to true, we avoid computing the z-index on initialization,
                     // because the value would be replaced when opening the modal.
                     'z-index': (o.updateZIndexOnOpen ? 0 : o.zIndex() + 1),
-                    'left' : 50 + '%',
+                    'left' : parseInt(o.left, 10) > -1 ? o.left + 'px' : 50 + '%',
                     'top' : parseInt(o.top, 10) > -1 ? o.top + 'px' : 50 + '%'
                 });
 
@@ -79,10 +113,10 @@
 
                     if(o.transitionIn !== '' && o.transitionOut !== ''){
                         $modal.removeClass(o.transitionOut).addClass(o.transitionIn);
-                    };
+                    }
                     $modal.css({
                         'display' : 'block',
-                        'margin-left' : -($modal.outerWidth() / 2) + 'px',
+                        'margin-left' : (parseInt(o.left, 10) > -1 ? 0 : -($modal.outerWidth() / 2)) + 'px',
                         'margin-top' : (parseInt(o.top, 10) > -1 ? 0 : -($modal.outerHeight() / 2)) + 'px',
                         'z-index': modalZ
                     });
@@ -124,6 +158,15 @@
                     // ESCAPE key pressed
                     if (o.closeOnEscape && e.keyCode === 27) {
                         $modal.trigger('closeModal');
+                    }
+                });
+
+                $(window).smartModalResize(function(){
+                    if (o.hasVariableWidth) {
+                        $modal.css({
+                            'margin-left' : (parseInt(o.left, 10) > -1 ? 0 : -($modal.outerWidth() / 2)) + 'px',
+                            'margin-top' : (parseInt(o.top, 10) > -1 ? 0 : -($modal.outerHeight() / 2)) + 'px'
+                        });
                     }
                 });
 
