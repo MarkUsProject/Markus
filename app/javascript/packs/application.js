@@ -10,6 +10,10 @@
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
+// rails-ujs initialization
+import Rails from 'rails-ujs';
+Rails.start();
+
 import 'javascripts/help-system';
 import 'javascripts/layouts';
 import 'javascripts/menu';

@@ -6,7 +6,6 @@
 //
 //= require jquery
 //= require jquery-ui
-//= require jquery_ujs
 //= require js-routes
 //= require job_poller
 //= require i18n
