@@ -5076,9 +5076,9 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-keyed-file-browser@^1.2.9:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.2.9.tgz#e83c2b2ddbb19ad70673d31c70f6d3c2ec9f5fe7"
+react-keyed-file-browser@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.3.0.tgz#a663db30a56cd20bb290bf085d1514dcce8c267b"
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"
