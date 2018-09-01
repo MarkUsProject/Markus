@@ -208,6 +208,7 @@ class GradersManager extends React.Component {
                   unassignSingle={this.unassignSingle}
                   showSections={this.props.showSections}
                   numCriteria={this.state.criteria.length}
+                  showCoverage={this.state.assign_graders_to_criteria}
                 />
               </TabPanel>
               <TabPanel>
@@ -341,7 +342,8 @@ class RawGroupsTable extends React.Component {
         Cell: ({value}) => <span>{value || 0}/{this.props.numCriteria}</span>,
         minWidth: 70,
         className: 'number',
-        filterable: false
+        filterable: false,
+        show: this.props.showCoverage,
       },
     ];
   };
