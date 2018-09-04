@@ -1,3 +1,6 @@
+# clean up existing repos first
+FileUtils.rm_rf(Dir.glob('data/dev/repos/*'))
+# run tasks
 Rake::Task['db:admin'].invoke
 Rake::Task['db:tas'].invoke
 Rake::Task['db:test_servers'].invoke

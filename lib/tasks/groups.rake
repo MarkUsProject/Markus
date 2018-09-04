@@ -4,9 +4,6 @@ namespace :db do
   task :groups => :environment do
     puts 'Assign Groups/Students for Assignments'
 
-    # remove previously existing group repos to create room for new ones
-    FileUtils.rm_rf(Dir.glob('data/dev/repos/*'))
-
     students = Student.all
     Assignment.all.each do |assignment|
       num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 15
