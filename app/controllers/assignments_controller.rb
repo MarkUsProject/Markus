@@ -960,7 +960,7 @@ class AssignmentsController < ApplicationController
       # issues with foreign keys in the future, but not with the current
       # schema
       assignment.submission_rule.delete
-      assignment.submission_rule = potential_rule.new
+      assignment.submission_rule = potential_rule.create!(assignment: assignment)
 
       # this part of the update is particularly hacky, because the incoming
       # data will include some mix of the old periods and new periods; in
@@ -968,6 +968,10 @@ class AssignmentsController < ApplicationController
       # the case of a mixture the input is a hash, and if there are no
       # periods at all then the periods_attributes will be nil
       periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
+      begin
+        periods = periods.to_h
+      rescue
+      end
       periods = case periods
                 when Hash
                   # in this case, we do not care about the keys, because
@@ -981,11 +985,34 @@ class AssignmentsController < ApplicationController
                 end
       # now that we know what periods we want to keep, we can create them
       periods.each do |p|
-        assignment.submission_rule.periods << Period.new(p)
+        new_period = assignment.submission_rule.periods.build(p)
+        new_period.submission_rule = assignment.submission_rule
+        new_period.save!
       end
-
-    elsif !submission_rule_params.blank? # in this case Rails does what we want, so we'll take the easy route
-      assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
+    elsif !submission_rule_params.blank? # TODO: do this in a more Rails way
+      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
+      begin
+        periods = periods.to_h
+      rescue
+      end
+      periods = case periods
+      when Hash
+        periods.map { |_, p| p }.reject { |p| !p.key?(:hours) }
+      when Array
+        periods
+      else
+        []
+      end
+      # periods.each do |p|
+      #   p[:submission_rule_id] = assignment.submission_rule.id
+      #   p[:submission_rule_type] = assignment.submission_rule.type
+      # end
+      assignment.submission_rule.periods_attributes = periods
+      assignment.submission_rule.periods.each do |period|
+        period.submission_rule = assignment.submission_rule
+        period.save
+      end
+      assignment.submission_rule.save
     end
 
     if params[:is_group_assignment] == 'true'
