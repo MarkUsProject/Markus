@@ -14,48 +14,54 @@ import 'javascripts/jquery.easyModal';
 import Rails from 'rails-ujs';
 Rails.start();
 
+// assets with side-effects only
 import 'javascripts/help-system';
 import 'javascripts/layouts';
 import 'javascripts/menu';
+import 'javascripts/react_config';
 import 'javascripts/redirect';
 
+// assets that export vars/functions/classes
+// TODO: We shouldn't need to make everything global.
+import { poll_job } from 'javascripts/job_poller';
+window.poll_job = poll_job;
+import { colours } from 'javascripts/markus_colors';
+window.colours = colours;
+import { refreshOrLogout } from 'javascripts/refresh_or_logout';
+window.refreshOrLogout = refreshOrLogout;
 import { ModalMarkus } from 'javascripts/modals';
-import { makeTATable } from 'javascripts/Components/ta_table';
-import { makeAdminTable } from 'javascripts/Components/admin_table';
-import { makeStudentTable } from 'javascripts/Components/student_table';
-import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
-import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
-import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
-import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
-import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
-import { makeCourseSummaryTable } from 'javascripts/Components/course_summaries_table';
-import { makeTestScriptResultTable } from 'javascripts/Components/test_script_result_table';
-import { makeSubmissionTable } from 'javascripts/Components/submission_table';
-import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
-import { makeGroupsManager } from 'javascripts/Components/groups_manager';
-import { makeGradersManager } from 'javascripts/Components/graders_manager';
-import { makeBatchTestRunTable } from 'javascripts/Components/batch_test_run_table';
-import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_table';
-import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
-import 'javascripts/react_config';
-
-
-// TODO: We shouldn't need to make this a global export.
 window.ModalMarkus = ModalMarkus;
-window.makeAdminTable = makeAdminTable;
-window.makeStudentTable = makeStudentTable;
+import { makeTATable } from 'javascripts/Components/ta_table';
 window.makeTATable = makeTATable;
+import { makeAdminTable } from 'javascripts/Components/admin_table';
+window.makeAdminTable = makeAdminTable;
+import { makeStudentTable } from 'javascripts/Components/student_table';
+window.makeStudentTable = makeStudentTable;
+import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
 window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;
+import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
 window.makeExamScanLogTable = makeExamScanLogTable;
+import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';
 window.makeMarksSpreadsheet = makeMarksSpreadsheet;
+import { makeSubmissionFileManager } from 'javascripts/Components/submission_file_manager';
 window.makeSubmissionFileManager = makeSubmissionFileManager;
+import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
 window.makeRepoBrowser = makeRepoBrowser;
+import { makeCourseSummaryTable } from 'javascripts/Components/course_summaries_table';
 window.makeCourseSummaryTable = makeCourseSummaryTable;
+import { makeTestScriptResultTable } from 'javascripts/Components/test_script_result_table';
 window.makeTestScriptResultTable = makeTestScriptResultTable;
+import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 window.makeSubmissionTable = makeSubmissionTable;
+import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 window.makeMarksGradersManager = makeMarksGradersManager;
+import { makeGroupsManager } from 'javascripts/Components/groups_manager';
 window.makeGroupsManager = makeGroupsManager;
+import { makeGradersManager } from 'javascripts/Components/graders_manager';
 window.makeGradersManager = makeGradersManager;
+import { makeBatchTestRunTable } from 'javascripts/Components/batch_test_run_table';
 window.makeBatchTestRunTable = makeBatchTestRunTable;
+import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_table';
 window.makeMarkingSchemeTable = makeMarkingSchemeTable;
+import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
 window.makeStarterCodeFileManager = makeStarterCodeFileManager;

@@ -6,7 +6,7 @@
  * to the user.
  */
 
-function poll_job(job_id, onSuccess, onComplete, interval) {
+export function poll_job(job_id, onSuccess, onComplete, interval) {
   interval = interval || 1000;
   $.ajax({
     url: Routes.get_job_message_path(job_id),
