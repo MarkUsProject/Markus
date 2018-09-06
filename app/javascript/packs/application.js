@@ -10,9 +10,13 @@
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
-// rails-ujs initialization
+// rails-ujs
 import Rails from 'rails-ujs';
 Rails.start();
+
+// chart.js
+import { Chart } from 'chart.js';
+import 'javascripts/chart_config';
 
 import 'javascripts/help-system';
 import 'javascripts/layouts';

@@ -11,7 +11,7 @@ Chart.defaults.bar.scales.xAxes = [{
 
   // grid line settings
   gridLines: {
-    offsetGridLines: false,
+    offsetGridLines: true,
   },
   ticks: {
     maxRotation: 0,
