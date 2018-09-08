@@ -9,8 +9,6 @@
 //= require js-routes
 //= require i18n
 //= require i18n/translations
-//= require Chart
-//= require chart_config
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
