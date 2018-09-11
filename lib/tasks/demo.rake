@@ -35,14 +35,12 @@ namespace :markus do
       grouping.invite(
         [students[0].user_name],
         StudentMembership::STATUSES[:inviter],
-        invoked_by_admin=true,
-        update_permissions=false)
+        invoked_by_admin=true)
       students[1..-1].each do |student|
         grouping.invite(
           [student.user_name],
           StudentMembership::STATUSES[:accepted],
-          invoked_by_admin=true,
-          update_permissions=false)
+          invoked_by_admin=true)
       end
       group
     end
