@@ -14,6 +14,11 @@ import 'javascripts/jquery.easyModal';
 import Rails from 'rails-ujs';
 Rails.start();
 
+// i18n-js
+import * as I18n from 'i18n-js';
+window.I18n = I18n;
+require('translations');
+
 // chart.js
 import { Chart } from 'chart.js';
 import 'javascripts/chart_config';
