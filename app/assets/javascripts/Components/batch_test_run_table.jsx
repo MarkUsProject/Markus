@@ -38,7 +38,7 @@ class BatchTestRunTable extends React.Component {
       }
       const result_url = Routes.edit_assignment_submission_result_path(
         this.props.assignment_id,
-        row.result_id,
+        row.submission_id,
         row.result_id
       );
       row.group_name = <a href={result_url}>{row.group_name}</a>;
