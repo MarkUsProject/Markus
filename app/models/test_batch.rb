@@ -12,6 +12,7 @@ class TestBatch < ApplicationRecord
 
   def time_to_completion_hash
     now = Time.now
+    test_run_ids = test_runs.pluck(:id)
     mean_run_time = DescriptiveStatistics.mean(test_runs.map(&:run_time).compact) || 0
     test_run_times = test_runs.map do |tr|
       elapsed_time = now - tr.created_at

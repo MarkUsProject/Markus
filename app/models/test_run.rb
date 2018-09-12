@@ -21,6 +21,23 @@ class TestRun < ApplicationRecord
     STATUSES[:in_progress]
   end
 
+  def self.statuses(test_run_ids)
+    status_hash = Hash.new
+    TestRun.left_outer_joins(:test_script_results)
+           .where(id: test_run_ids)
+           .pluck(:id, 'test_script_results.id', :time_to_service)
+           .map do |id, test_script_results_id, time_to_service|
+      if test_script_results_id
+        status_hash[id] = STATUSES[:complete]
+      elsif time_to_service&.negative?
+        status_hash[id] = STATUSES[:cancelled]
+      else
+        status_hash[id] = STATUSES[:in_progress]
+      end
+    end
+    status_hash
+  end
+
   STATUSES.each do |key, value|
     define_method key.to_s.concat('?').to_sym do
       return status == value
