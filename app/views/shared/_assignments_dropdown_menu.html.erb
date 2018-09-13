@@ -5,12 +5,14 @@
                 controller: 'assignments',
                 action: 'new' %>
   </li>
-  <li>
-    <%= link_to t(:create_new_scanned_assignment),
-                controller: 'assignments',
-                action: 'new',
-                scanned: true %>
-  </li>
+  <% if MarkusConfigurator.markus_experimental_scanned_exam_on? %>
+    <li>
+      <%= link_to t(:create_new_scanned_assignment),
+                  controller: 'assignments',
+                  action: 'new',
+                  scanned: true %>
+    </li>
+  <% end %>
   <li>
     <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
                 controller: 'grade_entry_forms',
