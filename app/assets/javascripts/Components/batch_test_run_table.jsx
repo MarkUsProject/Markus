@@ -133,7 +133,7 @@ class BatchTestRunTable extends React.Component {
                     return row.value[2];
                   } else {
                     const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
-                    return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
+                    return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>{I18n.t('automated_tests.stop_batch')}</a></span>;
                   }
                 } else {
                   return '';
