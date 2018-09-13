@@ -125,12 +125,16 @@ class BatchTestRunTable extends React.Component {
               minWidth: 70,
               sortable: false,
               aggregate: (vals, pivots) => {
-                return [pivots[0].test_batch_id, this.state.statuses[pivots[0].test_batch_id]];
+                return [pivots[0].test_batch_id, this.state.statuses[pivots[0].test_batch_id], pivots[0].action];
               },
               Aggregated: row => {
-                if (row.value[0] !== null && row.value[1].in_progress > 0) {
-                  const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
-                  return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
+                if (row.value[1].in_progress > 0) {
+                  if (row.value[0] === null) {
+                    return row.value[2];
+                  } else {
+                    const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
+                    return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
+                  }
                 } else {
                   return '';
                 }

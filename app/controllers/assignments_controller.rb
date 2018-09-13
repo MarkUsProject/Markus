@@ -378,9 +378,8 @@ class AssignmentsController < ApplicationController
   end
 
   def stop_batch_tests
-    TestRun.where(test_batch_id: params[:test_batch_id]).each do |test_run_id|
-      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_run_id])
-    end
+    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
     redirect_back(fallback_location: root_path)
   end
 
