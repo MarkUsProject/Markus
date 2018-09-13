@@ -390,19 +390,18 @@ class AssignmentsController < ApplicationController
       format.html
       format.json do
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                      .where(test_runs: {user_id: current_user.id },
-                             'groupings.assignment_id': @assignment.id)
-                      .pluck_to_hash(:id,
-                                     :test_batch_id,
-                                     :time_to_service,
-                                     :grouping_id,
-                                     :user_id,
-                                     :submission_id,
-                                     'test_batches.created_at',
-                                     'test_runs.created_at',
-                                     'groups.group_name',
-                                     'results.id'
-                      )
+                           .where(test_runs: {user_id: current_user.id },
+                                  'groupings.assignment_id': @assignment.id)
+                           .pluck_to_hash(:id,
+                                          :test_batch_id,
+                                          :time_to_service,
+                                          :grouping_id,
+                                          :user_id,
+                                          :submission_id,
+                                          'test_batches.created_at',
+                                          'test_runs.created_at',
+                                          'groups.group_name',
+                                          'results.id')
         status_hash = TestRun.statuses(test_runs.map { |tr| tr[:id] })
         test_batches = TestBatch.where(id: (test_runs.map { |tr| tr[:test_batch_id] }).compact.uniq)
         time_to_completion_hashes = test_batches.map(&:time_to_completion_hash)
