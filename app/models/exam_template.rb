@@ -120,6 +120,7 @@ class ExamTemplate < ApplicationRecord
     )
 
     raw_dir = File.join(self.base_path, 'raw')
+    FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
     SplitPDFJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
