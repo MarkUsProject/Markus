@@ -158,7 +158,7 @@ class SubmissionsController < ApplicationController
     end
     entries = []
     grouping.group.access_repo do |repo|
-      if current_user.student? || params[:revision_identifier].nil?
+      if current_user.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
         revision = repo.get_revision(params[:revision_identifier])

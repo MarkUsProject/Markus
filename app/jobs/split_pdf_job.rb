@@ -14,10 +14,10 @@ class SplitPDFJob < ApplicationJob
 
   before_enqueue do |job|
     status.update(job_class: self.class)
-    status.update(exam_name: job.arguments[0].name + ' (' + job.arguments[2] + ')')
+    status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, path, original_filename=nil, current_user=nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_user = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
@@ -28,23 +28,10 @@ class SplitPDFJob < ApplicationJob
       FileUtils.mkdir_p error_dir unless Dir.exists? error_dir
       FileUtils.mkdir_p raw_dir unless Dir.exists? raw_dir
 
-      basename = File.basename path, '.pdf'
-      filename = original_filename.nil? ? basename : File.basename(original_filename)
-      pdf = CombinePDF.load path
+      filename = split_pdf_log.filename
+
+      pdf = CombinePDF.load File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
       num_pages = pdf.pages.length
-
-      # creating an instance of split_pdf_log
-      split_pdf_log = SplitPdfLog.create(
-        exam_template: exam_template,
-        filename: filename,
-        original_num_pages: num_pages,
-        num_groups_in_complete: 0,
-        num_groups_in_incomplete: 0,
-        num_pages_qr_scan_error: 0,
-        user: current_user
-      )
-
-      FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
       progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
