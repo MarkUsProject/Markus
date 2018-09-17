@@ -769,6 +769,9 @@ pt:
       revision_used_for_test: "<span class=\"prop_label\">Revisão utilizada:</span> %{revision}"
       information: "Informação"
       run_tests: "Executar testes"
+      test_run_info: "UPDATE ME %{test_run_id} %{created_at}"
+      stop_test: "UPDATE ME"
+      stop_batch: "UPDATE ME"
       test_run: "Execução de Teste"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
