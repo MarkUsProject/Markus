@@ -53,5 +53,75 @@ describe FlexibleCriterion do
         to raise_error(CSVInvalidLineError)
     end
   end
+
+  context 'An assignment, of type flexible criteria' do
+    before :each do
+      @assignment = create(:assignment)
+    end
+
+    it 'overwrite criterion from a 2 element row with no description' do
+      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
+      expect(criterion).not_to be_nil
+      expect(criterion.name).to eq('name')
+      expect(criterion.max_mark).to eq(10.0)
+      expect(criterion.assignment).to eq(@assignment)
+    end
+
+    it 'overwrite criterion from a 3 elements row that includes a description' do
+      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
+      expect(criterion).not_to be_nil
+      expect(criterion.name).to eq('name')
+      expect(criterion.max_mark).to eq(10.0)
+      expect(criterion.description).to eq('description')
+      expect(criterion.assignment).to eq(@assignment)
+    end
+
+    context 'with three flexible criteria' do
+      before :each do
+        create(:flexible_criterion,
+               assignment: @assignment,
+               name: 'criterion1',
+               description: 'description1, for criterion 1',
+               max_mark: 10)
+        create(:flexible_criterion,
+               assignment: @assignment,
+               name: 'criterion2',
+               description: 'description2, "with quotes"',
+               max_mark: 10,
+               position: 2)
+        create(:flexible_criterion,
+               assignment: @assignment,
+               name: 'criterion3',
+               description: 'description3!',
+               max_mark: 1.6,
+               position: 3)
+        # FlexibleCriterion.make(assignment: @assignment,
+        #                        name: 'criterion1',
+        #                        description: 'description1, for criterion 1',
+        #                        max_mark: 10)
+        # FlexibleCriterion.make(assignment: @assignment,
+        #                        name: 'criterion2',
+        #                        description: 'description2, "with quotes"',
+        #                        max_mark: 10,
+        #                        position: 2)
+        # FlexibleCriterion.make(assignment: @assignment,
+        #                        name: 'criterion3',
+        #                        description: 'description3!',
+        #                        max_mark: 1.6,
+        #                        position: 3)
+        @csv_base_row = ['criterion2', '10', 'description2, "with quotes"']
+      end
+
+      it 'allow a criterion with the same name to overwrite' do
+        expect {
+          criterion = FlexibleCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+          expect(criterion.name).to eq('criterion2')
+          expect(criterion.max_mark).to eq(10)
+          expect(criterion.description).to eq('description2, "with quotes"')
+          expect(criterion.position).to eq(2)
+        }.not_to raise_error
+      end
+    end
+  end
 end
 
