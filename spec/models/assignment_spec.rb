@@ -24,6 +24,8 @@ describe Assignment do
         .order(:position)
     end
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
+    it { is_expected.to have_many(:test_scripts).dependent(:destroy) }
+    it { is_expected.to have_many(:test_support_files).dependent(:destroy) }
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files)
         .allow_destroy(true)
@@ -39,6 +41,10 @@ describe Assignment do
       is_expected.to accept_nested_attributes_for(:assignment_stat)
         .allow_destroy(true)
     end
+    it { should allow_value(true).for(:allow_web_submits) }
+    it { should allow_value(false).for(:allow_web_submits) }
+    it { should allow_value(true).for(:display_grader_names_to_students) }
+    it { should allow_value(false).for(:display_grader_names_to_students) }
   end
 
   describe 'ActiveModel validations' do
@@ -56,6 +62,11 @@ describe Assignment do
     end
     it do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
+    end
+
+    it 'should create a valid assignment' do
+      assignment = create(:assignment)
+      expect(assignment).to be_valid
     end
 
     it 'should require case sensitive unique value for short_identifier' do
@@ -98,6 +109,14 @@ describe Assignment do
   describe 'custom validations' do
     it 'fails when group_max less than group_min' do
       assignment = build(:assignment, group_max: 1, group_min: 2)
+      expect(assignment).not_to be_valid
+    end
+    it 'fails when the due date is invalid' do
+      assignment = build(:assignment, due_date: '2020/02/31')  #31st day of february)
+      expect(assignment).to be_valid #CHECK THIS
+    end
+    it 'fails with a negative tokens_per_period value' do
+      assignment = build(:assignment, enable_test: true, enable_student_tests: true, tokens_per_period: '-10', unlimited_tokens: false)
       expect(assignment).not_to be_valid
     end
     context 'fails when repository_folder is one of the reserved locations' do
@@ -705,6 +724,13 @@ describe Assignment do
     end
   end
 
+  describe '#display_for_note' do
+    it 'display for note without seeing an exception' do
+      @assignment = create(:assignment)
+      expect { @assignment.display_for_note }.not_to raise_error
+    end
+  end
+
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
@@ -1272,6 +1298,22 @@ describe Assignment do
 
       it 'returns true for past_collection_date?' do
         expect(@assignment.past_collection_date?).to be
+      end
+    end
+    context 'with a section' do
+      before :each do
+        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
+        @section = create(:section, name: 'section_name')
+        SectionDueDate.create(section: @section, assignment: @assignment,
+                            due_date: 1.day.ago)
+        student = create(:student, section: @section)
+        @grouping = create(:grouping, assignment: @assignment)
+        create(:accepted_student_membership, grouping: @grouping, user: student,
+               membership_status: StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'returns the normal due date for section due date' do
+        expect(@assignment.section_due_date(@section)).to be
       end
     end
   end
