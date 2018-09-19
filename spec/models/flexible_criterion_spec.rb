@@ -95,20 +95,6 @@ describe FlexibleCriterion do
                description: 'description3!',
                max_mark: 1.6,
                position: 3)
-        # FlexibleCriterion.make(assignment: @assignment,
-        #                        name: 'criterion1',
-        #                        description: 'description1, for criterion 1',
-        #                        max_mark: 10)
-        # FlexibleCriterion.make(assignment: @assignment,
-        #                        name: 'criterion2',
-        #                        description: 'description2, "with quotes"',
-        #                        max_mark: 10,
-        #                        position: 2)
-        # FlexibleCriterion.make(assignment: @assignment,
-        #                        name: 'criterion3',
-        #                        description: 'description3!',
-        #                        max_mark: 1.6,
-        #                        position: 3)
         @csv_base_row = ['criterion2', '10', 'description2, "with quotes"']
       end
 

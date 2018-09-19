@@ -240,13 +240,15 @@ describe GracePeriodSubmissionRule do
         end
       end
 
-      it "does not deduct grace credits because there aren't enough of them (1 grace credit left)" do
+      # FAILING: after applying the submission rule, student_membership.user.remaining_grace_credits = 3
+      # (previous deductions were removed?)
+      it "only deduct 1 grace credit (instead of 2) because there aren't enough of them (1 grace credit left)" do
         # Set it up so that a member of this Grouping has only 1 (3 grace credits - 2 deductions) grace credit left
         student = @grouping.accepted_student_memberships.first.user
         student.grace_credits = 3
         student.save
 
-        # There should now only be 1 grace credit available for this grouping CHECK THIS
+        # There should now only be 1 grace credit available for this grouping
         expect(@grouping.available_grace_credits).to eq(1)
 
         # The Student submits some files before the due date...
@@ -269,9 +271,9 @@ describe GracePeriodSubmissionRule do
           submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
           submission = @assignment.submission_rule.apply_submission_rule(submission)
 
-          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
+          # Assert that each accepted member of this grouping got a GracePeriodDeduction
           @grouping.accepted_student_memberships.each do |student_membership|
-            expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id])
+            expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id]-1)
           end
 
           # We should have all files except NotIncluded.java in the repository.
@@ -286,7 +288,7 @@ describe GracePeriodSubmissionRule do
 
       it "does not deduct grace credits because there aren't any of them (0 grace credit left)" do
 
-        # Set it up so that a member of this Grouping has no grace credits
+        # Set it up so that a member of this Grouping has no (2 grace credits - 2 deductions) grace credits left
         student = @grouping.accepted_student_memberships.first.user
         student.grace_credits = 2
         student.save
