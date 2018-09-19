@@ -432,12 +432,10 @@ describe Grouping do
       before :each do
         # should consist of inviter and another student
         @membership = create(:accepted_student_membership, user: create(:student, user_name: 'student1'),
-                                             grouping: @grouping,
-                                             membership_status: StudentMembership::STATUSES[:accepted])
+                             grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
 
         @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student2'),
-                                                     grouping: @grouping,
-                                                     membership_status: StudentMembership::STATUSES[:inviter])
+                                     grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
       end
 
@@ -814,8 +812,7 @@ describe Grouping do
           # grouping of only one student
           @grouping = create(:grouping, assignment: @assignment, group: @group)
           @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student1'),
-                                                       grouping: @grouping,
-                                                       membership_status: StudentMembership::STATUSES[:inviter])
+                                       grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
           @inviter = @inviter_membership.user
 
           # On July 15, the Student logs in, triggering repository folder creation
@@ -825,16 +822,15 @@ describe Grouping do
         end
 
         it 'does not deduct grace credits because submission is on time' do
-
           # Check the number of member in this grouping
           expect(@grouping.student_membership_number).to eq(1)
-
           submit_files_before_due_date
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
-            submission = @assignment.submission_rule.apply_submission_rule(submission)
+            submission = Submission.create_by_timestamp(@grouping,
+                                                        @assignment.submission_rule.calculate_collection_time)
+            @assignment.submission_rule.apply_submission_rule(submission)
 
             @grouping.reload
             # Should be no deduction because submitting on time
@@ -843,7 +839,6 @@ describe Grouping do
         end
 
         it 'deducts one grace credit' do
-
           # Check the number of member in this grouping
           expect(@grouping.student_membership_number).to eq(1)
           # Make sure the available grace credits are enough
@@ -853,8 +848,9 @@ describe Grouping do
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
-            submission = @assignment.submission_rule.apply_submission_rule(submission)
+            submission = Submission.create_by_timestamp(@grouping,
+                                                        @assignment.submission_rule.calculate_collection_time)
+            @assignment.submission_rule.apply_submission_rule(submission)
 
             @grouping.reload
             # Should display 1 credit deduction because of one-day late submission
@@ -873,8 +869,7 @@ describe Grouping do
                                                membership_status: StudentMembership::STATUSES[:accepted])
 
           @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student2'),
-                                                       grouping: @grouping,
-                                                       membership_status: StudentMembership::STATUSES[:inviter])
+                                       grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
           @inviter = @inviter_membership.user
 
           # On July 15, the Student logs in, triggering repository folder creation
@@ -884,7 +879,6 @@ describe Grouping do
         end
 
         it 'does not deduct grace credits because submission is on time' do
-
           # Check the number of member in this grouping
           expect(@grouping.student_membership_number).to eq(2)
 
@@ -892,8 +886,9 @@ describe Grouping do
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
-            submission = @assignment.submission_rule.apply_submission_rule(submission)
+            submission = Submission.create_by_timestamp(@grouping,
+                                                        @assignment.submission_rule.calculate_collection_time)
+            @assignment.submission_rule.apply_submission_rule(submission)
 
             @grouping.reload
             # Should be no deduction because submitting on time
@@ -902,18 +897,17 @@ describe Grouping do
         end
 
         it 'deducts one grace credit' do
-
           # Check the number of member in this grouping
           expect(@grouping.student_membership_number).to eq(2)
           # Make sure the available grace credits are enough
           expect(@grouping.available_grace_credits).to be >= 1
-
           submit_files_after_due_date('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
-            submission = @assignment.submission_rule.apply_submission_rule(submission)
+            submission = Submission.create_by_timestamp(@grouping,
+                                                        @assignment.submission_rule.calculate_collection_time)
+            @assignment.submission_rule.apply_submission_rule(submission)
 
             @grouping.reload
             # Should display 1 credit deduction because of one-day late submission
@@ -954,15 +948,13 @@ describe Grouping do
       end
 
       it 'detects before due_date and before section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment,
-                            due_date: Time.parse('July 24 2009 5:00PM'))
+        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 24 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         expect(@grouping.past_due_date?).to be false
       end
 
       it 'detects before due_date and after section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment,
-                            due_date: Time.parse('July 18 2009 5:00PM'))
+        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         expect(@grouping.past_due_date?).to be true
       end
@@ -993,15 +985,13 @@ describe Grouping do
       end
 
       it 'detects after due_date and before section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment,
-                            due_date: Time.parse('July 30 2009 5:00PM'))
+        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         expect(@grouping.past_due_date?).to be false
       end
 
       it 'detects after due_date and after section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment,
-                            due_date: Time.parse('July 20 2009 5:00PM'))
+        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         expect(@grouping.past_due_date?).to be true
       end
@@ -1048,5 +1038,3 @@ describe Grouping do
     txn
   end
 end
-
-
