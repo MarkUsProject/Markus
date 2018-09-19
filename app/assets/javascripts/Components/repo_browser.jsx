@@ -40,8 +40,8 @@ class RepoBrowser extends React.Component {
   revisionToOption = rev => {
     let text = `${rev.id_ui} `;
     if (rev.timestamp !== rev.server_timestamp) {
-      text += `(${I18n.t('submissions.repo_browser.client_time')} ${rev.timestamp},` +
-              `${I18n.t('submissions.repo_browser.server_time')} ${rev.server_timestamp}`;
+      text += `(${I18n.t('submissions.repo_browser.client_time')} ${rev.timestamp}, ` +
+              `${I18n.t('submissions.repo_browser.server_time')} ${rev.server_timestamp})`;
     } else {
       text += `(${rev.timestamp})`;
     }
