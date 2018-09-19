@@ -167,9 +167,9 @@ class SubversionRepository < Repository::AbstractRepository
       end
     }
     if (!expects_array)
-      return files.first
+      files.first.encode('UTF-8', invalid: :replace, undef: :replace)
     else
-      return files
+      files.map { |f| f.encode('UTF-8', invalid: :replace, undef: :replace) }
     end
   end
   alias download_as_string stringify_files # create alias
