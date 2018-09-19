@@ -100,7 +100,7 @@ class SubmissionsController < ApplicationController
     end
     revisions_history = assignment_revisions.map do |revision|
       {
-        id: revision.revision_identifier,
+        id: revision.revision_identifier.to_s,
         id_ui: revision.revision_identifier_ui,
         timestamp: l(revision.timestamp),
         server_timestamp: l(revision.server_timestamp)
