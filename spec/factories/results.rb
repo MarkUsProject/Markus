@@ -3,11 +3,11 @@ FactoryBot.define do
     association :submission
 
     factory :incomplete_result do
-      marking_state Result::MARKING_STATES[:incomplete]
+      marking_state { Result::MARKING_STATES[:incomplete] }
     end
 
     factory :complete_result do
-      marking_state Result::MARKING_STATES[:complete]
+      marking_state { Result::MARKING_STATES[:complete] }
     end
   end
 end
