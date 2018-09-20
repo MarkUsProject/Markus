@@ -1190,11 +1190,19 @@ class Assignment < ApplicationRecord
       groups[[group_id, group_name, count]]
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
+    # TODO: improve the group_sections calculation.
+    # In particular, this should be unified with Grouping#section.
+    group_sections = {}
+    self.groupings.includes(:accepted_students).find_each do |g|
+      s = g.accepted_students.first
+      group_sections[g.id] = s&.section_id
+    end
     groups = groups.map do |k, v|
       {
         _id: k[0],
         group_name: k[1],
         criteria_coverage_count: k[2],
+        section: group_sections[k[0]],
         graders: v
       }
     end
@@ -1227,7 +1235,8 @@ class Assignment < ApplicationRecord
       groups: groups,
       criteria: criteria,
       graders: graders,
-      assign_graders_to_criteria: self.assign_graders_to_criteria
+      assign_graders_to_criteria: self.assign_graders_to_criteria,
+      sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
 

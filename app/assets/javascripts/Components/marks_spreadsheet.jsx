@@ -10,6 +10,7 @@ class RawMarksSpreadsheet extends React.Component {
     this.state = {
       grade_columns: [],
       data: [],
+      sections: {},
       loading: true,
     };
   }
@@ -42,11 +43,12 @@ class RawMarksSpreadsheet extends React.Component {
       url: Routes.populate_grades_table_grade_entry_form_path(this.props.grade_entry_form_id),
       method: 'GET',
       dataType: 'json',
-    }).then(data => {
+    }).then(response => {
       this.props.resetSelection();
       this.setState({
-        data: data,
+        data: response.data,
         loading: false,
+        sections: response.sections
       });
     });
   };
@@ -70,12 +72,39 @@ class RawMarksSpreadsheet extends React.Component {
     }).then(this.fetchData);
   };
 
-  nameColumns = [
+  nameColumns = () => [
     {
       Header: I18n.t('activerecord.attributes.user.user_name'),
       accessor: 'user_name',
       id: 'user_name',
       minWidth: 120
+    },
+    {
+      Header: I18n.t('activerecord.models.section', {count: 1}),
+      accessor: 'section',
+      id: 'section',
+      show: this.props.show_sections || false,
+      minWidth: 70,
+      Cell: ({ value }) => {
+        return value === null ? '' : this.state.sections[value]
+      },
+      filterMethod: (filter, row) => {
+        if (filter.value === 'all') {
+          return true;
+        } else {
+          return this.state.sections[row[filter.id]] === filter.value;
+        }
+      },
+      Filter: ({ filter, onChange }) =>
+        <select
+          onChange={event => onChange(event.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          <option value='all'>{I18n.t('all')}</option>
+          {Object.entries(this.state.sections).map(
+            kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
+        </select>,
     },
     {
       Header: I18n.t('activerecord.attributes.user.first_name'),
@@ -138,7 +167,7 @@ class RawMarksSpreadsheet extends React.Component {
   };
 
   getColumns = () => {
-    let columns = this.nameColumns.concat(this.state.grade_columns);
+    let columns = this.nameColumns().concat(this.state.grade_columns);
     if (this.props.show_total) {
       columns = columns.concat([this.totalColumn()]);
     }

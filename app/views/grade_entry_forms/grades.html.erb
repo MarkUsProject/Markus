@@ -9,7 +9,8 @@
       {
         grade_entry_form_id: <%= @grade_entry_form.id %>,
         show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
-        out_of_total: <%= @grade_entry_form.out_of_total %>
+        out_of_total: <%= @grade_entry_form.out_of_total %>,
+        show_sections: <%= Section.exists? %>
       }
     );
   })
