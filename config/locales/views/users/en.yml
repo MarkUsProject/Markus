@@ -23,8 +23,8 @@ en:
     not_successfully_added_message_4: "Each field is separated by a comma (no spaces)."
     not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
     upload:
-      select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-      student_same_number: "If a student with the same username exists, then the student's information is updated."
+      select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name,section,id_number,email</code>.<br> The last three columns can be blank."
+      student_same_number: "If a student with the same username exists, then the student's information is updated. WARNING: when an update occurs, if you have a blank value in one of the last three columns (e.g., email), but the student already has a value for that column, then the existing value will be deleted!"
 
   tas:
     all: "All graders"

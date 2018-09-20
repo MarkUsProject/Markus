@@ -200,7 +200,9 @@ class User < ApplicationRecord
     begin
       imported = nil
       User.transaction do
-        imported = user_class.import user_columns, users
+        imported = user_class.import user_columns, users, on_duplicate_key_update: {
+          conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
+        }
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
