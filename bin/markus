@@ -8,16 +8,16 @@ cd "${MARKUS_ROOT}"
 
 # Check if redis-server is running
 if ! redis-cli ping ; then
-  echo "Starting redis-server"
+  echo "[MARKUS] Starting redis-server"
   redis-server &
 fi
 
 # Start new MarkUs server resque worker if non are running
 if ! pgrep -f resque > /dev/null ; then
-  echo "Starting MarkUs resque worker"
+  echo "[MARKUS] Starting MarkUs resque worker"
   QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work
 fi
 
-echo "Starting MarkUs"
-webpack-dev-server &
+echo "[MARKUS] Starting MarkUs"
+bin/webpack-dev-server &
 bundle exec rails s
