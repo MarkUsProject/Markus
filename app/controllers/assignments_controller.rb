@@ -393,9 +393,10 @@ class AssignmentsController < ApplicationController
       format.html
       format.json do
         user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
-        test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .where(test_runs: {user_id: user_ids},
-                                  'groupings.assignment_id': @assignment.id)
+        test_runs = TestRun.left_outer_joins(:test_batch, :submission, grouping: [:group, :current_result])
+                           .where(test_runs: { user_id: user_ids },
+                                  'groupings.assignment_id': @assignment.id,
+                                  'submissions.submission_version_used': true)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
