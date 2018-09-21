@@ -17,7 +17,7 @@ class TestRun < ApplicationRecord
   }.freeze
 
   def status
-    unless test_script_results.empty?
+    if test_script_results.exists?
       if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').count&.positive?
         return STATUSES[:complete_with_errors]
       end
@@ -36,9 +36,9 @@ class TestRun < ApplicationRecord
       if test_script_results_id
         if completion_status == 'error' || status_hash[id] == STATUSES[:complete_with_errors]
           status_hash[id] = STATUSES[:complete_with_errors]
-        else
-          status_hash[id] = STATUSES[:complete]
+          next
         end
+        status_hash[id] = STATUSES[:complete]
       elsif time_to_service&.negative?
         status_hash[id] = STATUSES[:cancelled]
       else
