@@ -1,0 +1,17 @@
+<script type="text/x-mathjax-config">
+  // Allow inline single dollar sign notation
+  MathJax.Hub.Config({
+  root: '<%= File.dirname (asset_path 'MathJax_lib/MathJax') %>',
+  messageStyle: 'none',
+  skipStartupTypeset: true,
+  ShowMathMenu: false,
+  tex2jax: {
+  inlineMath: [['$', '$'], ['\\(', '\\)']],
+  preview: 'none',
+  processEnvironments: false,
+  processRefs: false,
+},
+  jax: ["input/TeX", "input/MathML", "input/AsciiMath", "output/CommonHTML"],
+  extensions: ['tex2jax.js'],
+});
+</script>
