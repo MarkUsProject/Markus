@@ -6,12 +6,12 @@ MARKUS_ROOT=$(readlink -f "${THIS_SCRIPT_DIR}/..")
 AUTOTEST_ROOT=$(readlink -f "${MARKUS_ROOT}/../markus-autotesting")
 
 echo "[MARKUS] Shutting down existing MarkUs processes"
-pkill -f rails
-pkill -f resque
+pkill -TERM -f rails
+pkill -TERM -f resque
 pkill -KILL -f webpack-dev-server # shuts down only with a -KILL
 
 echo "[MARKUS] Shutting down existing autotest processes"
-pkill -f supervisord
+pkill -TERM -f supervisord # should not be a -KILL or the rq workers will stay alive
 
 echo "[MARKUS] Removing old MarkUs files"
 rm -rf "${MARKUS_ROOT}"/data/dev/autotest/*
@@ -27,9 +27,12 @@ rm -rf "${AUTOTEST_ROOT}"/server/workspace/scripts/*
 rm -rf "${AUTOTEST_ROOT}"/server/workspace/results/*
 
 echo "[MARKUS] Removing old redis entries"
-redis-cli --raw DUMP autotest:workers | head -c-1 >| /tmp/.redis.tmp # make the dump play nice with shell commands
+pushd "${AUTOTEST_ROOT}"/server > /dev/null
+REDIS_WORKERS=$(python3 -c "import config as c; print(f'{c.REDIS_PREFIX}:{c.REDIS_WORKERS_LIST}')")
+popd > /dev/null
+redis-cli --raw DUMP ${REDIS_WORKERS} | head -c-1 >| /tmp/.redis.tmp # make the dump play nice with shell commands
 redis-cli FLUSHDB
-cat /tmp/.redis.tmp | redis-cli -x RESTORE autotest:workers 0
+cat /tmp/.redis.tmp | redis-cli -x RESTORE ${REDIS_WORKERS} 0
 
 echo "[MARKUS] Resetting MarkUs database"
 pushd "${MARKUS_ROOT}" > /dev/null
