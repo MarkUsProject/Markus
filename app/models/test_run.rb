@@ -36,9 +36,9 @@ class TestRun < ApplicationRecord
       if test_script_results_id
         if completion_status == 'error' || status_hash[id] == STATUSES[:complete_with_errors]
           status_hash[id] = STATUSES[:complete_with_errors]
-          next
+        else
+          status_hash[id] = STATUSES[:complete]
         end
-        status_hash[id] = STATUSES[:complete]
       elsif time_to_service&.negative?
         status_hash[id] = STATUSES[:cancelled]
       else
