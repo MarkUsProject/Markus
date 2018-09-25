@@ -78,7 +78,7 @@ class TestScriptResultTable extends React.Component {
             }
           ]}
           subComponent={ row => {
-            let dataTable =
+            return (
               <ReactTable
                  data={row.original['test_data']}
                  columns={[{
@@ -108,29 +108,7 @@ class TestScriptResultTable extends React.Component {
                    minWidth: 40,
                    className: 'number'
                  }]}
-              />;
-            let extraTable =
-              <ReactTable
-                data={row.original['test_data']}
-                columns={[{
-                  Header: I18n.t('automated_tests.test_results_table.extra_info'),
-                  accessor: 'extra_info'
-                }]}
-              />;
-              if (row.original['test_data']['extra_info']) {
-                return (
-                  <div>
-                    {dataTable}
-                    {extraTable}
-                  </div>
-                )
-              } else {
-                return (
-                  <div>
-                    {dataTable}
-                  </div>
-                )
-              }
+              /> );
           }}
           pivotBy={['created_at_user_name', 'file_name']}
           getTdProps={this.getTdProps}
