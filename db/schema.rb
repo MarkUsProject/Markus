@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_08_134554) do
+ActiveRecord::Schema.define(version: 2018_09_24_215139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -540,7 +540,7 @@ ActiveRecord::Schema.define(version: 2018_06_08_134554) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
-    t.text "revision_identifier", null: false
+    t.text "revision_identifier"
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
