@@ -159,6 +159,17 @@ class Submission < ApplicationRecord
     end
   end
 
+  def test_script_results_hash
+    TestScriptResult
+      .joins(:test_run, :test_script, :test_results, :users)
+      .where(test_runs: { submission_id: id })
+      .pluck_to_hash(:created_at, :user_id, :name, :file_name, :user_name,
+                     :actual_output, :completion_status, :extra_info,
+                     'test_results.marks_earned', 'test_results.marks_total')
+      .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
+  end
+
+
   # For group submissions, actions here must only be accessible to members
   # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).

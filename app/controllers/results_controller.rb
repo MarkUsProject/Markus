@@ -656,23 +656,9 @@ class ResultsController < ApplicationController
   end
 
   def get_test_runs_results
-    test_script_results = TestScriptResult
-                          .joins(:test_run, :test_script, :test_results)
-                          .where(test_runs: { submission_id: params[:submission_id] })
-                          .pluck_to_hash(:created_at, :user_id, :name, :file_name,
-                                         :actual_output, :completion_status,
-                                         'test_results.marks_earned', 'test_results.marks_total')
-
-    test_script_results.each do |g|
-      # Create new entries that combine created_at and user_name together
-      g['created_at_user_name'] = "#{I18n.l(g['created_at'])} (#{User.find(g['user_id']).user_name})"
-      g['marks_earned'] = g['test_results.marks_earned']
-      g['marks_total'] = g['test_results.marks_total']
-      if g['actual_output'] == 'NA' || g['actual_output'].nil?
-        g['actual_output'] = ''
-      end
-    end
-    render json: test_script_results
+    test_script_results = Submission.find(params[:submission_id]).test_script_results_hash
+    grouped_results = group_hash_list(test_script_results, ['created_at_username', :file_name], 'test_data')
+    render json: grouped_results
   end
 
   private

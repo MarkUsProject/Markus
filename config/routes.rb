@@ -94,7 +94,7 @@ Rails.application.routes.draw do
           get 'update_positions'
           post 'upload'
           get 'download'
-          get 'get_student_run_test_results'
+          get 'get_student_test_runs_results'
         end
       end
 

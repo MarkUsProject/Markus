@@ -804,4 +804,18 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def test_script_results_hash(user_filter: nil)
+    filter_hash = { grouping_id: id }
+    unless user_filter.nil?
+      filter_hash.update({ user_id: user_filter })
+    end
+    TestScriptResult
+      .joins(:test_run, :test_script, :test_results, :users)
+      .where(test_runs: filter_hash)
+      .pluck_to_hash(:created_at, :name, :file_name, :completion_status, :user_name,
+                     'test_results.marks_earned', 'test_results.marks_total',
+                     :extra_info)
+      .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
+  end
+
 end # end class Grouping
