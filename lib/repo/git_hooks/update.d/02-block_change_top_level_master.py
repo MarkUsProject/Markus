@@ -16,12 +16,14 @@ if __name__ == '__main__':
     # check 2: allow MarkUs through
     if os.environ.get('REMOTE_USER') is None:
         sys.exit()
-    # check 3: forbid creating/deleting top-level files/directories
+    # check 3: forbid creating/deleting top-level files/directories (make an exception for .gitignore)
     old_ls = subprocess.run(['git', 'ls-tree', '--name-only', old_commit], stdout=subprocess.PIPE,
                             universal_newlines=True)
     new_ls = subprocess.run(['git', 'ls-tree', '--name-only', new_commit], stdout=subprocess.PIPE,
                             universal_newlines=True)
-    if old_ls.stdout != new_ls.stdout:
+    old_ls = [line for line in old_ls.stdout.splitlines() if line.strip() != '.gitignore']
+    new_ls = [line for line in new_ls.stdout.splitlines() if line.strip() != '.gitignore']
+    if old_ls != new_ls:
         print('[MARKUS] Error: creating/deleting top level files and directories is not allowed on master!')
         sys.exit(1)
     # check 4: forbid modifying top-level files
