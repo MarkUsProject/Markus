@@ -30,6 +30,6 @@ if __name__ == '__main__':
     # check 4: forbid modifying top-level files (make an exception for .gitignore)
     changes = subprocess.run(['git', 'diff', '--name-only', '--no-renames', old_commit, new_commit],
                              stdout=subprocess.PIPE, universal_newlines=True)
-    if any(os.sep not in change for change in changes.stdout.splitlines() if change not in exceptions):
+    if any('/' not in change for change in changes.stdout.splitlines() if change not in exceptions):
         print('[MARKUS] Error: modifying top level files is not allowed on master!')
         sys.exit(1)
