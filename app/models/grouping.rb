@@ -810,7 +810,7 @@ class Grouping < ApplicationRecord
       filter_hash.update({ user_id: user_filter })
     end
     TestScriptResult
-      .joins(:test_run, :test_script, :test_results, :users)
+      .joins(:test_script, :test_results, test_run: [:user])
       .where(test_runs: filter_hash)
       .pluck_to_hash(:created_at, :name, :file_name, :completion_status, :user_name,
                      'test_results.marks_earned', 'test_results.marks_total',

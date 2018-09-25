@@ -45,4 +45,30 @@ module ApplicationHelper
   def yield_content!(content_key)
     view_flow.content.delete(content_key)
   end
+
+  # Take a list of hashes (or an ActiveRecord Relation object)
+  # and group them by group_by_keys. This will return a list
+  # of hashes containing each key/value pair in group_by_keys
+  # and the original data from that group as the value of the
+  # sublist key:
+  #
+  # Ex:
+  #
+  # > data = [{:a=>1, :b=>2, :c=>4}, {:a=>1, :b=>2, :c=>4}, {:a=>2, :b=>4, :c=>4}, {:a=>2, :b=>3, :c=>4}]
+  # > group_hash_list(data, [:a, :b], 'other')
+  # [{:a=>1, :b=>2, "other"=>[{:a=>1, :b=>2, :c=>4}, {:a=>1, :b=>2, :c=>4}]},
+  #  {:a=>2, :b=>4, "other"=>[{:a=>2, :b=>4, :c=>4}]},
+  #  {:a=>2, :b=>3, "other"=>[{:a=>2, :b=>3, :c=>4}]}]
+  def group_hash_list(hash_list, group_by_keys, sublist_key)
+    new_hash_list = []
+    hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
+      h = Hash.new
+      group_by_keys.each do |key|
+        h[key] = val[0][key]
+      end
+      h[sublist_key] = val
+      new_hash_list << h
+    end
+    new_hash_list
+  end
 end
