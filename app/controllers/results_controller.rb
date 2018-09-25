@@ -657,7 +657,7 @@ class ResultsController < ApplicationController
 
   def get_test_runs_results
     test_script_results = Submission.find(params[:submission_id]).test_script_results_hash
-    grouped_results = group_hash_list(test_script_results, ['created_at_username', :file_name], 'test_data')
+    grouped_results = group_hash_list(test_script_results, ['created_at_user_name', :file_name], 'test_data')
     render json: grouped_results
   end
 

@@ -141,7 +141,7 @@ class AutomatedTestsController < ApplicationController
   def get_student_test_runs_results
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_script_results = @grouping.test_script_results_hash(user_filter: current_user)
-    grouped_results = group_hash_list(test_script_results, ['created_at_username', :file_name], 'test_data')
+    grouped_results = group_hash_list(test_script_results, ['created_at_user_name', :file_name], 'test_data')
     render json: grouped_results
   end
 
