@@ -27,7 +27,7 @@ if __name__ == '__main__':
     if old_ls != new_ls:
         print('[MARKUS] Error: creating/deleting top level files and directories is not allowed on master!')
         sys.exit(1)
-    # check 4: forbid modifying top-level files (make an exception for .gitignore)
+    # check 4: forbid modifying top-level files
     changes = subprocess.run(['git', 'diff', '--name-only', '--no-renames', old_commit, new_commit],
                              stdout=subprocess.PIPE, universal_newlines=True)
     if any('/' not in change for change in changes.stdout.splitlines() if change not in exceptions):
