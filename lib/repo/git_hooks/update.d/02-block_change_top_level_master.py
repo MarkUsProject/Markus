@@ -21,14 +21,14 @@ if __name__ == '__main__':
                             universal_newlines=True)
     new_ls = subprocess.run(['git', 'ls-tree', '--name-only', new_commit], stdout=subprocess.PIPE,
                             universal_newlines=True)
-    old_ls = [line for line in old_ls.stdout.splitlines() if line.strip() != '.gitignore']
-    new_ls = [line for line in new_ls.stdout.splitlines() if line.strip() != '.gitignore']
+    old_ls = [line for line in old_ls.stdout.splitlines() if line != '.gitignore']
+    new_ls = [line for line in new_ls.stdout.splitlines() if line != '.gitignore']
     if old_ls != new_ls:
         print('[MARKUS] Error: creating/deleting top level files and directories is not allowed on master!')
         sys.exit(1)
-    # check 4: forbid modifying top-level files
+    # check 4: forbid modifying top-level files (make and exception for .gitignore)
     changes = subprocess.run(['git', 'diff', '--name-only', '--no-renames', old_commit, new_commit],
                              stdout=subprocess.PIPE, universal_newlines=True)
-    if any(os.sep not in change for change in changes.stdout.splitlines()):
+    if any(os.sep not in change for change in changes.stdout.splitlines() if change != '.gitignore'):
         print('[MARKUS] Error: modifying top level files is not allowed on master!')
         sys.exit(1)
