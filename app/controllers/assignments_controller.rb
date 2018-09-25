@@ -392,14 +392,14 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
+        user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .where(test_runs: {user_id: current_user.id },
+                           .where(test_runs: {user_id: user_ids},
                                   'groupings.assignment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
                                           :grouping_id,
-                                          :user_id,
                                           :submission_id,
                                           'test_batches.created_at',
                                           'test_runs.created_at',
