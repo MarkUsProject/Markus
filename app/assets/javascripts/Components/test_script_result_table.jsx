@@ -41,9 +41,6 @@ class TestScriptResultTable extends React.Component {
       let sub_row_map = {};
       for (let i = 0; i < res.length; i++) {
         sub_row_map[i] = true;
-        if (!(res[i]['actual_output'])) {
-          res[i]['actual_output'] = '';
-        }
       }
       this.setState({
         data: res,
@@ -74,41 +71,42 @@ class TestScriptResultTable extends React.Component {
               accessor: 'created_at_user_name'
             },
             {
-              accessor: 'file_name'
+              accessor: 'file_name',
             }
           ]}
-          subComponent={ row => {
-            return (
-              <ReactTable
-                 data={row.original['test_data']}
-                 columns={[{
-                   Header: I18n.t('automated_tests.test_results_table.test_name'),
-                   accessor: 'name'
-                 },
-                 {
-                   Header: I18n.t('automated_tests.test_results_table.output'),
-                   accessor: 'actual_output',
-                   className: 'actual_output',
-                   show: this.props.detailed
-                 },
-                 {
-                   Header: I18n.t('automated_tests.test_results_table.status'),
-                   accessor: 'completion_status',
-                   minWidth: 50
-                 },
-                 {
-                   Header: I18n.t('automated_tests.test_results_table.marks_earned'),
-                   accessor: 'test_results.marks_earned',
-                   minWidth: 40,
-                   className: 'number'
-                 },
-                 {
-                   Header: I18n.t('automated_tests.test_results_table.marks_total'),
-                   accessor: 'test_results.marks_total',
-                   minWidth: 40,
-                   className: 'number'
-                 }]}
-              /> );
+          SubComponent={ row => {
+            const columns = [
+              {
+                Header: I18n.t('automated_tests.test_results_table.test_name'),
+                accessor: 'name'
+              },
+              {
+                Header: I18n.t('automated_tests.test_results_table.output'),
+                accessor: 'actual_output',
+                className: 'actual_output',
+                show: this.props.detailed,
+                Cell: props => props.value ? props.value : ''
+              },
+              {
+                Header: I18n.t('automated_tests.test_results_table.status'),
+                accessor: 'completion_status',
+                minWidth: 50
+              },
+              {
+                Header: I18n.t('automated_tests.test_results_table.marks_earned'),
+                accessor: 'test_results.marks_earned',
+                minWidth: 40,
+                className: 'number'
+              },
+              {
+                Header: I18n.t('automated_tests.test_results_table.marks_total'),
+                accessor: 'test_results.marks_total',
+                minWidth: 40,
+                className: 'number'
+              }
+            ];
+            const rowData = row.original['test_data'];
+            return ( <ReactTable data={rowData} columns={columns} /> );
           }}
           pivotBy={['created_at_user_name', 'file_name']}
           getTdProps={this.getTdProps}
