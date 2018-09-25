@@ -106,10 +106,15 @@ class TestScriptResultTable extends React.Component {
               }
             ];
             const rowData = row.original['test_data'];
-            return ( <ReactTable data={rowData} columns={columns} /> );
+            const extraInfo = row.original['test_data']['extra_info'] || '';
+            return (
+              <div>
+                <ReactTable data={rowData} columns={columns} getTdProps={this.getTdProps} />
+                {extraInfo}
+              </div>
+            );
           }}
-          pivotBy={['created_at_user_name', 'file_name']}
-          getTdProps={this.getTdProps}
+          pivotBy={['created_at_user_name']}
           // Controlled props
           expanded={this.state.expanded}
           resized={this.state.resized}
