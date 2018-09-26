@@ -160,9 +160,9 @@ class RawMarksSpreadsheet extends React.Component {
   };
 
   updateTotal = (index, newTotal) => {
+    // state should never be modified directly, we copy the relevant data using the spread syntax and modify the copy
     let newData = [...this.state.data];
-    newData[index] = Object.assign({}, newData[index]);
-    newData[index].total_marks = newTotal;
+    newData[index] = {...newData[index], total_marks: newTotal};
     this.setState({data: newData});
   };
 
@@ -280,9 +280,7 @@ class GradeEntryCell extends React.Component {
 
   render() {
     return (
-      <input type="number" size={4}
-             value={this.state.value}
-             min={0}
+      <input id={this.props.grade_id} type="number" size={4} value={this.state.value} min={0}
              onChange={this.handleChange} />
     );
   }
