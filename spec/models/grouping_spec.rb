@@ -421,14 +421,14 @@ describe Grouping do
           @student2 = FactoryBot.create(:student)
           @grouping.test_tokens = 0
           create(:inviter_student_membership,
-            user: @student1,
-            grouping: @grouping,
-            membership_status: StudentMembership::STATUSES[:inviter]
+                 user: @student1,
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:inviter]
           )
           create(:accepted_student_membership,
-            user: @student2,
-            grouping: @grouping,
-            membership_status: StudentMembership::STATUSES[:accepted]
+                 user: @student2,
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:accepted]
           )
         end
         it 'refreshes assignment tokens' do
@@ -570,7 +570,6 @@ describe Grouping do
           expect(@grouping.membership_status(reject_membership.user)).to be_nil
         end
       end
-
     end
   end
 
@@ -578,147 +577,6 @@ describe Grouping do
     before :each do
       @grouping = create(:grouping)
     end
-    # context 'with two student members' do
-    #   before :each do
-    #     # should consist of inviter and another student
-    #     @membership = create(:accepted_student_membership,
-    #                          user: create(:student, user_name: 'student1'),
-    #                          grouping: @grouping,
-    #                          membership_status: StudentMembership::STATUSES[:accepted])
-    #
-    #     @inviter_membership = create(:inviter_student_membership,
-    #                                  user: create(:student, user_name: 'student2'),
-    #                                  grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
-    #     @inviter = @inviter_membership.user
-    #   end
-    #
-    #   it 'displays for note without seeing an exception' do
-    #     expect { @grouping.display_for_note }.not_to raise_error
-    #   end
-    #
-    #   it "displays group name and students' usernames" do
-    #     expect { @grouping.group_name_with_student_user_names }.not_to raise_error
-    #   end
-    #
-    #   it "displays comma separated list of students' usernames" do
-    #     expect(@grouping.get_all_students_in_group).to eq('student1, student2')
-    #   end
-    #
-    #   it 'is valid' do
-    #     expect(@grouping.student_membership_number).to eq(2)
-    #     expect(@grouping.valid?).to be true
-    #   end
-    #
-    #   it 'returns membership status are part of the group' do
-    #     student = create(:student)
-    #     expect(@grouping.membership_status(student)).to be_nil
-    #     expect(@grouping.membership_status(@membership.user)).to eq('accepted')
-    #     expect(@grouping.membership_status(@inviter)).to eq('inviter')
-    #   end
-    #
-    #   it 'detects pending members' do
-    #     expect(@grouping.pending?(@inviter)).to be false
-    #   end
-    #
-    #   it 'detects the inviter' do
-    #     expect(@grouping.is_inviter?(@membership.user)).to be false
-    #     expect(@grouping.is_inviter?(@inviter)).to be true
-    #   end
-    #
-    #   it 'is able to remove a member' do
-    #     @grouping.remove_member(@membership.id)
-    #     expect(@grouping.membership_status(@membership.user)).to be_nil
-    #   end
-    #
-    #   it 'is able to remove the inviter' do
-    #     @grouping.remove_member(@inviter_membership.id)
-    #     expect(@grouping.membership_status(@inviter)).to be_nil
-    #     expect(@grouping.inviter).not_to be_nil
-    #   end
-    #
-    #   it 'is able to report if the grouping is deletable' do
-    #     non_inviter = @membership.user
-    #     # delete member to have it deletable
-    #     @grouping.remove_member(@membership.id)
-    #     @grouping.reload
-    #     expect(@grouping.accepted_students.size).to eq(1)
-    #     # inviter should not be able to delete grouping
-    #     expect(@grouping.deletable_by?(@inviter)).to be false
-    #     # non-inviter shouldn't be able to delete grouping
-    #     if non_inviter.nil?
-    #       raise 'No members in this grouping other than the inviter!'
-    #     end
-    #     expect(@grouping.deletable_by?(non_inviter)).to be false
-    #   end
-    # end
-    #
-    # context 'with a pending membership' do
-    #   before :each do
-    #     @student = create(:student_membership,
-    #       grouping: @grouping,
-    #       membership_status: StudentMembership::STATUSES[:pending]).user
-    #   end
-    #
-    #   it 'detect pending members' do
-    #     expect(@grouping.pending?(@student)).to be true
-    #   end
-    #
-    #   it 'return correct membership status' do
-    #     expect(@grouping.membership_status(@student)).to eq('pending')
-    #   end
-    #
-    #   it 'be able to decline invitation' do
-    #     @grouping.decline_invitation(@student)
-    #     expect(@grouping.pending?(@student)).to be false
-    #   end
-    # end
-    #
-    # context 'with a rejected membership' do
-    #   before :each do
-    #     @membership = create(:student_membership,
-    #       grouping: @grouping,
-    #       membership_status: StudentMembership::STATUSES[:rejected])
-    #     @student = @membership.user
-    #   end
-    #
-    #   it 'returns correct membership status' do
-    #     expect(@grouping.membership_status(@student)).to eq('rejected')
-    #   end
-    #
-    #   it 'is able to delete rejected memberships' do
-    #     @grouping.remove_rejected(@membership.id)
-    #     expect(@grouping.membership_status(@student)).to be_nil
-    #   end
-    # end
-    #
-    # context 'with TAs assigned' do
-    #   ta_count = 3
-    #   before :each do
-    #     @tas = Array.new(ta_count) { create(:ta) }
-    #     @grouping.add_tas(@tas)
-    #   end
-    #
-    #   it 'has a ta for marking' do
-    #     expect(@grouping.has_ta_for_marking?).to be true
-    #   end
-    #
-    #   it 'gets ta names' do
-    #     expect(@grouping.get_ta_names).to match_array(@tas.map(&:user_name))
-    #   end
-    #
-    #   it 'is not able to assign same TAs twice' do
-    #     @grouping.reload
-    #     expect(@grouping.ta_memberships.count).to eq(3)
-    #     @grouping.add_tas(@tas)
-    #     expect(@grouping.ta_memberships.count).to eq(3)
-    #   end
-    #
-    #   it 'is able to remove ta' do
-    #     @grouping.remove_tas(@tas)
-    #     expect(@grouping.ta_memberships.count).to eq(0)
-    #   end
-    # end
-
     context 'with some submitted files' do
       # submit files
       before :each do
@@ -745,11 +603,11 @@ describe Grouping do
 
       it 'reports that grouping is not deleteable' do
         create(:inviter_student_membership,
-          grouping: @grouping,
-          membership_status: StudentMembership::STATUSES[:inviter])
+               grouping: @grouping,
+               membership_status: StudentMembership::STATUSES[:inviter])
         create(:accepted_student_membership,
-          grouping: @grouping,
-          membership_status: StudentMembership::STATUSES[:accepted])
+               grouping: @grouping,
+               membership_status: StudentMembership::STATUSES[:accepted])
 
         expect(@grouping.deletable_by?(@grouping.inviter)).to be false
       end
@@ -825,15 +683,18 @@ describe Grouping do
 
       context 'with multiple submissions with submission_version_used == true' do
         before :each do
-          #Dont use machinist in order to bypass validation
+          # Dont use machinist in order to bypass validation
           @submission1 = @grouping.submissions.build(submission_version_used: false,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 1)
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     submission_version: 1)
           @submission1.save(validate: false)
           @submission2 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 2)
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     submission_version: 2)
           @submission2.save(validate: false)
           @submission3 = @grouping.submissions.build(submission_version_used: true,
-                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 3)
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago,
+                                                     submission_version: 3)
           @submission3.save(validate: false)
           @grouping.reload
         end

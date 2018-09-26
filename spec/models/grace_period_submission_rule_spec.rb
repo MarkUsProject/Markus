@@ -13,7 +13,8 @@ describe GracePeriodSubmissionRule do
     before :each do
       @group = create(:group)
       @grouping = create(:grouping, group: @group)
-      @membership = create(:student_membership, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+      @membership = create(:student_membership, grouping: @grouping,
+                           membership_status: StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
       @rule = GracePeriodSubmissionRule.new
       @assignment.replace_submission_rule(@rule)
@@ -71,7 +72,7 @@ describe GracePeriodSubmissionRule do
           @grouping.accepted_student_memberships.each do |student_membership|
             members[student_membership.user.id] = student_membership.user.remaining_grace_credits
           end
-          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
           @rule.apply_submission_rule(submission)
 
           @grouping.reload
@@ -94,7 +95,7 @@ describe GracePeriodSubmissionRule do
           @grouping.accepted_student_memberships.each do |student_membership|
             members[student_membership.user.id] = student_membership.user.remaining_grace_credits
           end
-          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
           @rule.apply_submission_rule(submission)
 
           # Assert that each accepted member of this grouping got a GracePeriodDeduction
@@ -121,7 +122,7 @@ describe GracePeriodSubmissionRule do
           @grouping.accepted_student_memberships.each do |student_membership|
             members[student_membership.user.id] = student_membership.user.remaining_grace_credits
           end
-          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
           @rule.apply_submission_rule(submission)
 
           # Assert that each accepted member of this grouping got 2 GracePeriodDeduction
@@ -148,7 +149,7 @@ describe GracePeriodSubmissionRule do
           @grouping.accepted_student_memberships.each do |student_membership|
             members[student_membership.user.id] = student_membership.user.remaining_grace_credits
           end
-          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
           @rule.apply_submission_rule(submission)
 
           # Assert that each accepted member of this grouping got 2 GracePeriodDeduction
@@ -191,7 +192,7 @@ describe GracePeriodSubmissionRule do
             @grouping.accepted_student_memberships.each do |student_membership|
               members[student_membership.user.id] = student_membership.user.remaining_grace_credits
             end
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+            submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
 
             # Assert that each accepted member of this grouping got a GracePeriodDeduction
@@ -219,7 +220,7 @@ describe GracePeriodSubmissionRule do
             @grouping.accepted_student_memberships.each do |student_membership|
               members[student_membership.user.id] = student_membership.user.remaining_grace_credits
             end
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+            submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
 
             # Assert that each accepted member of this grouping got a GracePeriodDeduction
@@ -259,7 +260,7 @@ describe GracePeriodSubmissionRule do
               @grouping.accepted_student_memberships.each do |student_membership|
                 members[student_membership.user.id] = student_membership.user.remaining_grace_credits
               end
-              submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+              submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
               @rule.apply_submission_rule(submission)
 
               # Assert that each accepted member of this grouping got a GracePeriodDeduction
@@ -296,7 +297,7 @@ describe GracePeriodSubmissionRule do
               @grouping.accepted_student_memberships.each do |student_membership|
                 members[student_membership.user.id] = student_membership.user.remaining_grace_credits
               end
-              submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+              submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
               @rule.apply_submission_rule(submission)
 
               # Assert that no grace period deductions got handed out needlessly
@@ -313,7 +314,8 @@ describe GracePeriodSubmissionRule do
     context 'submit assignment 1 on time and submit assignment 2 before assignment 1 collection time' do
       before :each do
         @grouping2 = create(:grouping, group: @group)
-        @membership2 = create(:student_membership, grouping: @grouping2, membership_status: StudentMembership::STATUSES[:inviter])
+        @membership2 = create(:student_membership, grouping: @grouping2,
+                              membership_status: StudentMembership::STATUSES[:inviter])
         @assignment2 = @grouping2.assignment
 
         @rule2 = GracePeriodSubmissionRule.new
@@ -355,7 +357,8 @@ describe GracePeriodSubmissionRule do
 
           # Now we're past the due date, but before the collection date, within the first
           # grace period.  Submit files for Assignment 2
-          submit_files_for_assignment_after_due_before_collection('July 23 2009 9:00PM', 'NotIncluded.java', 'Not Included in Asssignment 1')
+          submit_files_for_assignment_after_due_before_collection('July 23 2009 9:00PM', 'NotIncluded.java',
+                                                                  'Not Included in Asssignment 1')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
@@ -363,7 +366,7 @@ describe GracePeriodSubmissionRule do
             @grouping.accepted_student_memberships.each do |student_membership|
               members[student_membership.user.id] = student_membership.user.remaining_grace_credits
             end
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+            submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
 
             # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
@@ -378,7 +381,7 @@ describe GracePeriodSubmissionRule do
         # of the previous assignment is over.  When calculating grace days for the previous assignment, it
         # takes the newer assignment submission as the submission time.  Therefore, grace days are being
         # taken off when it shouldn't have.
-        it 'deducts 1 grace credits when submitting overtime before the grace period of the previous assignment is over' do
+        it 'deducts 1 grace credits when submitting overtime before the grace period of previous assignment is over' do
           # The Student submits some files before the due date...
           submit_files_before_due_date
 
@@ -386,7 +389,8 @@ describe GracePeriodSubmissionRule do
           # grace period.
           submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
           #Submit files for Assignment 2
-          submit_files_for_assignment_after_due_before_collection('July 24 2009 9:00PM', 'NotIncluded.java', 'Not Included in Asssignment 1')
+          submit_files_for_assignment_after_due_before_collection('July 24 2009 9:00PM', 'NotIncluded.java',
+                                                                  'Not Included in Asssignment 1')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
@@ -394,7 +398,7 @@ describe GracePeriodSubmissionRule do
             @grouping.accepted_student_memberships.each do |student_membership|
               members[student_membership.user.id] = student_membership.user.remaining_grace_credits
             end
-            submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+            submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
 
             # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
