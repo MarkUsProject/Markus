@@ -38,45 +38,82 @@ describe FlexibleCriterion do
       @assignment = create(:assignment)
     end
 
-    it 'raise en error message on an empty row' do
+    it 'raises en error message on an empty row' do
       expect { FlexibleCriterion.create_or_update_from_csv_row([], @assignment) }.
         to raise_error(CSVInvalidLineError, 'Invalid Row Format')
     end
 
-    it 'raise an error message on a 1 element row' do
+    it 'raises an error message on a 1 element row' do
       expect { FlexibleCriterion.create_or_update_from_csv_row(%w(name), @assignment) }.
         to raise_error(CSVInvalidLineError, 'Invalid Row Format')
     end
 
-    it 'raise an error message on an invalid maximum value' do
+    it 'raises an error message on an invalid maximum value' do
       expect { FlexibleCriterion.create_or_update_from_csv_row(%w(name max_value), @assignment) }.
         to raise_error(CSVInvalidLineError)
     end
   end
 
-  context 'An assignment, of type flexible criteria' do
+  context 'for an assignment' do
     before :each do
       @assignment = create(:assignment)
     end
 
-    it 'overwrite criterion from a 2 element row with no description' do
-      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
-      expect(criterion).not_to be_nil
-      expect(criterion.name).to eq('name')
-      expect(criterion.max_mark).to eq(10.0)
-      expect(criterion.assignment).to eq(@assignment)
+    context 'with criterion from a 2 element row with no description overwritten' do
+      before :each do
+        @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
+      end
+
+      describe '.name' do
+        it 'is equal to name' do
+          expect(@criterion.name).to eq('name')
+        end
+      end
+
+      describe '.max_mark' do
+        it 'is equal to 10.0' do
+          expect(@criterion.max_mark).to eq(10.0)
+        end
+      end
+
+      describe '.assignment' do
+        it 'is equal to current assignment' do
+          expect(@criterion.assignment).to eq(@assignment)
+        end
+      end
     end
 
-    it 'overwrite criterion from a 3 elements row that includes a description' do
-      criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
-      expect(criterion).not_to be_nil
-      expect(criterion.name).to eq('name')
-      expect(criterion.max_mark).to eq(10.0)
-      expect(criterion.description).to eq('description')
-      expect(criterion.assignment).to eq(@assignment)
+    context 'with criterion from a 3 elements row that includes a description overwritten' do
+      before :each do
+        @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0, 'description'], @assignment)
+      end
+
+      describe '.name' do
+        it 'is equal to name' do
+          expect(@criterion.name).to eq('name')
+        end
+      end
+
+      describe '.max_mark' do
+        it 'is equal to 10.0' do
+          expect(@criterion.max_mark).to eq(10.0)
+        end
+      end
+
+      describe '.assignment' do
+        it 'is equal to current assignment' do
+          expect(@criterion.assignment).to eq(@assignment)
+        end
+      end
+
+      describe '.description' do
+        it 'is equal to description' do
+          expect(@criterion.description).to eq('description')
+        end
+      end
     end
 
-    context 'with three flexible criteria' do
+    context 'with three flexible criteria allows criterion with same name to overwrite' do
       before :each do
         create(:flexible_criterion,
                assignment: @assignment,
@@ -96,16 +133,32 @@ describe FlexibleCriterion do
                max_mark: 1.6,
                position: 3)
         @csv_base_row = ['criterion2', '10', 'description2, "with quotes"']
+
+        @criterion = FlexibleCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
       end
 
-      it 'allow a criterion with the same name to overwrite' do
-        expect {
-          criterion = FlexibleCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-          expect(criterion.name).to eq('criterion2')
-          expect(criterion.max_mark).to eq(10)
-          expect(criterion.description).to eq('description2, "with quotes"')
-          expect(criterion.position).to eq(2)
-        }.not_to raise_error
+      describe '.name' do
+        it 'equals criterion 2' do
+          expect(@criterion.name).to eq('criterion2')
+        end
+      end
+
+      describe '.max_mark' do
+        it 'equals 10' do
+          expect(@criterion.max_mark).to eq(10)
+        end
+      end
+
+      describe '.description' do
+        it 'equals description2, "with quotes"' do
+          expect(@criterion.description).to eq('description2, "with quotes"')
+        end
+      end
+
+      describe '.position' do
+        it 'equals 2' do
+          expect(@criterion.position).to eq(2)
+        end
       end
     end
   end

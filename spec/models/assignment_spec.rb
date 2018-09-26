@@ -1280,40 +1280,43 @@ describe Assignment do
     end
   end
 
-  context 'when before due with no submission rule' do
-    before :each do
-      @assignment = create(:assignment, due_date: 2.days.from_now)
-    end
-
-    it 'returns false for #past_collection_date?' do
-      expect(@assignment.past_collection_date?).not_to be
-    end
-  end
-
-  context 'when past due with no late submission rule' do
-    context 'without sections' do
+  describe '#pass_collection_date?' do
+    context 'when before due with no submission rule' do
       before :each do
-        @assignment = create(:assignment, due_date: 2.days.ago)
+        @assignment = create(:assignment, due_date: 2.days.from_now)
       end
 
-      it 'returns true for past_collection_date?' do
-        expect(@assignment.past_collection_date?).to be
+      it 'returns false' do
+        expect(@assignment.past_collection_date?).not_to be
       end
     end
-    context 'with a section' do
-      before :each do
-        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
-        @section = create(:section, name: 'section_name')
-        SectionDueDate.create(section: @section, assignment: @assignment,
-                            due_date: 1.day.ago)
-        student = create(:student, section: @section)
-        @grouping = create(:grouping, assignment: @assignment)
-        create(:accepted_student_membership, grouping: @grouping, user: student,
-               membership_status: StudentMembership::STATUSES[:inviter])
+
+    context 'when past due with no late submission rule' do
+      context 'without sections' do
+        before :each do
+          @assignment = create(:assignment, due_date: 2.days.ago)
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_collection_date?).to be
+        end
       end
 
-      it 'returns the normal due date for section due date' do
-        expect(@assignment.section_due_date(@section)).to be
+      context 'with a section' do
+        before :each do
+          @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
+          @section = create(:section, name: 'section_name')
+          SectionDueDate.create(section: @section, assignment: @assignment,
+                              due_date: 1.day.ago)
+          student = create(:student, section: @section)
+          @grouping = create(:grouping, assignment: @assignment)
+          create(:accepted_student_membership, grouping: @grouping, user: student,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_collection_date?).to be
+        end
       end
     end
   end

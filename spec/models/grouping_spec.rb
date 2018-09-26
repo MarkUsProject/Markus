@@ -10,7 +10,7 @@ describe Grouping do
     it { is_expected.to have_many(:notes) }
   end
 
-  describe 'validations' do
+  describe 'a default grouping' do
     before :each do
       @grouping = create(:grouping)
     end
@@ -23,13 +23,20 @@ describe Grouping do
       expect(@grouping.has_submission?).to be false
     end
 
-    it "can't invite nor add hidden students" do
-      hidden = Student.create(hidden: true)
-      @grouping.invite(hidden.user_name)
-      expect(@grouping.memberships.count).to eq(0)
+    context 'hidden students' do
+      before :each do
+        @hidden = create(:student, hidden:true)
+      end
 
-      @grouping.add_member(hidden)
-      expect(@grouping.memberships.count).to eq(0)
+      it 'cannot be invited' do
+        @grouping.invite(@hidden.user_name)
+        expect(@grouping.memberships.count).to eq(0)
+      end
+
+      it 'cannot be added' do
+        @grouping.add_member(@hidden)
+        expect(@grouping.memberships.count).to eq(0)
+      end
     end
 
     it 'displays Empty Group since no students in the group' do
@@ -39,6 +46,7 @@ describe Grouping do
 
   describe 'assigning and unassigning TAs' do
     let(:assignment) { create(:assignment) }
+    let(:grouping) { create(:grouping) }
     let(:groupings) do
       Array.new(2) { create(:grouping, assignment: assignment) }
     end
@@ -204,6 +212,41 @@ describe Grouping do
         Grouping.unassign_tas([], grouping_ids, assignment)
       end
     end
+
+    describe '#add_tas' do
+      it 'is able to assign tas' do
+        grouping.add_tas(tas)
+        expect(grouping.ta_memberships.count).to eq(2)
+      end
+
+      it 'is not able to assign same TAs twice' do
+        grouping.add_tas(tas)
+        expect(grouping.ta_memberships.count).to eq(2)
+        grouping.add_tas(tas)
+        expect(grouping.ta_memberships.count).to eq(2)
+      end
+    end
+
+    describe '#has_ta_for_marking?' do
+      it 'has a ta for marking' do
+        grouping.add_tas(tas)
+        expect(grouping.has_ta_for_marking?).to be true
+      end
+    end
+
+    describe '#get_ta_names' do
+      it 'gets ta names' do
+        grouping.add_tas(tas)
+        expect(grouping.get_ta_names).to match_array(tas.map(&:user_name))
+      end
+    end
+
+    describe '#remove_tas' do
+      it 'is able to remove tas' do
+        grouping.remove_tas(tas)
+        expect(grouping.ta_memberships.count).to eq(0)
+      end
+    end
   end
 
   describe '.update_criteria_coverage_counts' do
@@ -338,233 +381,343 @@ describe Grouping do
     let(:grouping) { create(:grouping) }
 
     context 'set to 5' do
-      it 'be valid' do
+      it 'is valid' do
         grouping.test_tokens = 5
         expect(grouping).to be_valid
       end
     end
 
     context 'set to 0' do
-      it 'be valid' do
+      it 'is valid' do
         grouping.test_tokens = 0
         expect(grouping).to be_valid
       end
     end
 
-    context 'methods' do
-      describe '.decrease_test_tokens!' do
-        context 'when number of tokens is greater than 0' do
-          it 'decrease number of tokens' do
-            grouping.test_tokens = 5
-            grouping.decrease_test_tokens!
-            expect(grouping.test_tokens).to eq(4)
-          end
-        end
-
-        context 'when number of tokens is equal to 0' do
-          it 'raise an error' do
-            grouping.test_tokens = 0
-            expect { grouping.decrease_test_tokens! }.to raise_error(RuntimeError)
-          end
+    describe '.decrease_test_tokens!' do
+      context 'when number of tokens is greater than 0' do
+        it 'decreases number of tokens' do
+          grouping.test_tokens = 5
+          grouping.decrease_test_tokens!
+          expect(grouping.test_tokens).to eq(4)
         end
       end
 
-      describe '#refresh_test_tokens!' do
-        context 'if assignment.tokens is not nil' do
-          before do
-            @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
-            @group = FactoryBot.create(:group)
-            @grouping = Grouping.create(group: @group, assignment: @assignment)
-            @student1 = FactoryBot.create(:student)
-            @student2 = FactoryBot.create(:student)
-            @grouping.test_tokens = 0
-            StudentMembership.create(
-              user: @student1,
-              grouping: @grouping,
-              membership_status: StudentMembership::STATUSES[:inviter]
-            )
-            StudentMembership.create(
-              user: @student2,
-              grouping: @grouping,
-              membership_status: StudentMembership::STATUSES[:accepted]
-            )
-            @grouping.refresh_test_tokens!
-          end
-          it 'refreshes assignment tokens' do
-            expect(@grouping.test_tokens).to eq(10)
-          end
-        end
-      end
-
-      describe '#update_assigned_tokens' do
-        before :each do
-          @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
-          @group = FactoryBot.create(:group)
-          @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
-          @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
-        end
-
-        it 'update token count properly when it is being increased' do
-          @assignment.tokens_per_period = 9
-          @assignment.save
-          expect(@grouping.test_tokens).to eq(8)
-        end
-
-        it 'update token count properly when it is being decreased' do
-          @assignment.tokens_per_period = 3
-          @assignment.save
-          expect(@grouping.test_tokens).to eq(2)
-        end
-
-        it 'not allow token count to go below 0' do
-          @assignment.tokens_per_period = 0
-          @assignment.save
-          expect(@grouping.test_tokens).to eq(0)
+      context 'when number of tokens is equal to 0' do
+        it 'raise san error' do
+          grouping.test_tokens = 0
+          expect { grouping.decrease_test_tokens! }.to raise_error(RuntimeError)
         end
       end
     end
+
+    describe '#refresh_test_tokens!' do
+      context 'if assignment.tokens is not nil' do
+        before do
+          @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
+          @group = FactoryBot.create(:group)
+          @grouping = Grouping.create(group: @group, assignment: @assignment)
+          @student1 = FactoryBot.create(:student)
+          @student2 = FactoryBot.create(:student)
+          @grouping.test_tokens = 0
+          create(:inviter_student_membership,
+            user: @student1,
+            grouping: @grouping,
+            membership_status: StudentMembership::STATUSES[:inviter]
+          )
+          create(:accepted_student_membership,
+            user: @student2,
+            grouping: @grouping,
+            membership_status: StudentMembership::STATUSES[:accepted]
+          )
+        end
+        it 'refreshes assignment tokens' do
+          @grouping.refresh_test_tokens!
+          expect(@grouping.test_tokens).to eq(10)
+        end
+      end
+    end
+
+    describe '#update_assigned_tokens' do
+      before :each do
+        @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
+        @group = FactoryBot.create(:group)
+        @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
+        @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
+      end
+
+      it 'updates token count properly when it is being increased' do
+        @assignment.tokens_per_period = 9
+        @assignment.save
+        expect(@grouping.test_tokens).to eq(8)
+      end
+
+      it 'updates token count properly when it is being decreased' do
+        @assignment.tokens_per_period = 3
+        @assignment.save
+        expect(@grouping.test_tokens).to eq(2)
+      end
+
+      it 'does not allow token count to go below 0' do
+        @assignment.tokens_per_period = 0
+        @assignment.save
+        expect(@grouping.test_tokens).to eq(0)
+      end
+    end
   end
+
+  describe 'Student memberships' do
+    before :each do
+      @grouping = create(:grouping)
+    end
+
+    context 'of four members' do
+      let(:membership) { create(:accepted_student_membership, grouping: @grouping) }
+      let(:inviter_membership) { create(:inviter_student_membership, grouping: @grouping) }
+      let(:pending_membership) { create(:student_membership,
+                                        grouping: @grouping,
+                                        membership_status: StudentMembership::STATUSES[:pending]) }
+      let(:reject_membership) { create(:student_membership,
+                                       grouping: @grouping,
+                                       membership_status: StudentMembership::STATUSES[:rejected]) }
+      let(:inviter) { inviter_membership.user }
+
+      describe '#membership_status'
+        let(:student) { create(:student) }
+        it 'detects student not part of membership' do
+          expect(@grouping.membership_status(student)).to be_nil
+        end
+
+        it 'shows correct status for student who accepted membership' do
+          expect(@grouping.membership_status(membership.user)).to eq('accepted')
+        end
+
+        it 'shows correct status for student who has a pending membership' do
+          expect(@grouping.membership_status(pending_membership.user)).to eq('pending')
+        end
+
+        it 'shows correct status for student who has rejected the membership' do
+          expect(@grouping.membership_status(reject_membership.user)).to eq('rejected')
+        end
+
+        it 'shows correct status for the inviter' do
+          expect(@grouping.membership_status(inviter)).to eq('inviter')
+        end
+
+      describe '#display_for_note' do
+        it 'displays for note without seeing an exception' do
+          expect { @grouping.display_for_note }.not_to raise_error
+        end
+      end
+
+      describe '#group_name_with_student_user_names' do
+        it "displays group name and students' usernames" do
+          expect { @grouping.group_name_with_student_user_names }.not_to raise_error
+        end
+      end
+
+      describe '#pending?' do
+        it 'detects non-pending members' do
+          expect(@grouping.pending?(inviter)).to be false
+        end
+
+        it 'detects pending members' do
+          expect(@grouping.pending?(pending_membership.user)).to be true
+        end
+      end
+
+      describe '#is_inviter?' do
+        it 'detects a non-inviter' do
+          expect(@grouping.is_inviter?(membership.user)).to be false
+        end
+        it 'detects the inviter' do
+          expect(@grouping.is_inviter?(inviter)).to be true
+        end
+      end
+
+      describe '#remove_member' do
+        it 'is able to remove a member' do
+          @grouping.remove_member(membership.id)
+          expect(@grouping.membership_status(membership.user)).to be_nil
+        end
+
+        it 'is able to remove the inviter' do
+          @grouping.remove_member(inviter_membership.id)
+          expect(@grouping.membership_status(inviter)).to be_nil
+        end
+      end
+
+      describe '#deletable_by?' do
+        it 'does not allow inviter to delete grouping' do
+          expect(@grouping.deletable_by?(inviter)).to be false
+        end
+
+        it 'does not allow allow non-inviter to delete grouping' do
+          expect(@grouping.deletable_by?(membership.user)).to be false
+        end
+      end
+
+      describe '#decline_invitation' do
+        it 'is able to decline invitation' do
+          @grouping.decline_invitation(pending_membership.user)
+          expect(@grouping.pending?(pending_membership.user)).to be false
+        end
+      end
+
+      describe '#remove_rejected' do
+        it 'is able to delete rejected memberships' do
+          @grouping.remove_rejected(reject_membership.id)
+          expect(@grouping.membership_status(reject_membership.user)).to be_nil
+        end
+      end
+
+    end
+  end
+
   describe 'A group' do
     before :each do
       @grouping = create(:grouping)
     end
-    context 'with two student members' do
-      before :each do
-        # should consist of inviter and another student
-        @membership = create(:accepted_student_membership, user: create(:student, user_name: 'student1'),
-                             grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
-
-        @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student2'),
-                                     grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
-        @inviter = @inviter_membership.user
-      end
-
-      it 'displays for note without seeing an exception' do
-        expect { @grouping.display_for_note }.not_to raise_error
-      end
-
-      it "displays group name and students' usernames" do
-        expect { @grouping.group_name_with_student_user_names }.not_to raise_error
-      end
-
-      it "displays comma separated list of students' usernames" do
-        expect(@grouping.get_all_students_in_group).to eq('student1, student2')
-      end
-
-      it 'is valid' do
-        expect(@grouping.student_membership_number).to eq(2)
-        expect(@grouping.valid?).to be true
-      end
-
-      it 'returns membership status are part of the group' do
-        student = create(:student)
-        expect(@grouping.membership_status(student)).to be_nil
-        expect(@grouping.membership_status(@membership.user)).to eq('accepted')
-        expect(@grouping.membership_status(@inviter)).to eq('inviter')
-      end
-
-      it 'detects pending members' do
-        expect(@grouping.pending?(@inviter)).to be false
-      end
-
-      it 'detects the inviter' do
-        expect(@grouping.is_inviter?(@membership.user)).to be false
-        expect(@grouping.is_inviter?(@inviter)).to be true
-      end
-
-      it 'is able to remove a member' do
-        @grouping.remove_member(@membership.id)
-        expect(@grouping.membership_status(@membership.user)).to be_nil
-      end
-
-      it 'is able to remove the inviter' do
-        @grouping.remove_member(@inviter_membership.id)
-        expect(@grouping.membership_status(@inviter)).to be_nil
-        expect(@grouping.inviter).not_to be_nil
-      end
-
-      it 'is able to report if the grouping is deletable' do
-        non_inviter = @membership.user
-        # delete member to have it deletable
-        @grouping.remove_member(@membership.id)
-        @grouping.reload
-        expect(@grouping.accepted_students.size).to eq(1)
-        # inviter should not be able to delete grouping
-        expect(@grouping.deletable_by?(@inviter)).to be false
-        # non-inviter shouldn't be able to delete grouping
-        if non_inviter.nil?
-          raise 'No members in this grouping other than the inviter!'
-        end
-        expect(@grouping.deletable_by?(non_inviter)).to be false
-      end
-    end
-
-    context 'with a pending membership' do
-      before :each do
-        @student = create(:student_membership,
-          grouping: @grouping,
-          membership_status: StudentMembership::STATUSES[:pending]).user
-      end
-
-      it 'detect pending members' do
-        expect(@grouping.pending?(@student)).to be true
-      end
-
-      it 'return correct membership status' do
-        expect(@grouping.membership_status(@student)).to eq('pending')
-      end
-
-      it 'be able to decline invitation' do
-        @grouping.decline_invitation(@student)
-        expect(@grouping.pending?(@student)).to be false
-      end
-    end
-
-    context 'with a rejected membership' do
-      before :each do
-        @membership = create(:student_membership,
-          grouping: @grouping,
-          membership_status: StudentMembership::STATUSES[:rejected])
-        @student = @membership.user
-      end
-
-      it 'returns correct membership status' do
-        expect(@grouping.membership_status(@student)).to eq('rejected')
-      end
-
-      it 'is able to delete rejected memberships' do
-        @grouping.remove_rejected(@membership.id)
-        expect(@grouping.membership_status(@student)).to be_nil
-      end
-    end
-
-    context 'with TAs assigned' do
-      ta_count = 3
-      before :each do
-        @tas = Array.new(ta_count) { create(:ta) }
-        @grouping.add_tas(@tas)
-      end
-
-      it 'has a ta for marking' do
-        expect(@grouping.has_ta_for_marking?).to be true
-      end
-
-      it 'gets ta names' do
-        expect(@grouping.get_ta_names).to match_array(@tas.map(&:user_name))
-      end
-
-      it 'is not be able to assign same TAs twice' do
-        @grouping.reload
-        expect(@grouping.ta_memberships.count).to eq(3)
-        @grouping.add_tas(@tas)
-        expect(@grouping.ta_memberships.count).to eq(3)
-      end
-
-      it 'is able to remove ta' do
-        @grouping.remove_tas(@tas)
-        expect(@grouping.ta_memberships.count).to eq(0)
-      end
-    end
+    # context 'with two student members' do
+    #   before :each do
+    #     # should consist of inviter and another student
+    #     @membership = create(:accepted_student_membership,
+    #                          user: create(:student, user_name: 'student1'),
+    #                          grouping: @grouping,
+    #                          membership_status: StudentMembership::STATUSES[:accepted])
+    #
+    #     @inviter_membership = create(:inviter_student_membership,
+    #                                  user: create(:student, user_name: 'student2'),
+    #                                  grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+    #     @inviter = @inviter_membership.user
+    #   end
+    #
+    #   it 'displays for note without seeing an exception' do
+    #     expect { @grouping.display_for_note }.not_to raise_error
+    #   end
+    #
+    #   it "displays group name and students' usernames" do
+    #     expect { @grouping.group_name_with_student_user_names }.not_to raise_error
+    #   end
+    #
+    #   it "displays comma separated list of students' usernames" do
+    #     expect(@grouping.get_all_students_in_group).to eq('student1, student2')
+    #   end
+    #
+    #   it 'is valid' do
+    #     expect(@grouping.student_membership_number).to eq(2)
+    #     expect(@grouping.valid?).to be true
+    #   end
+    #
+    #   it 'returns membership status are part of the group' do
+    #     student = create(:student)
+    #     expect(@grouping.membership_status(student)).to be_nil
+    #     expect(@grouping.membership_status(@membership.user)).to eq('accepted')
+    #     expect(@grouping.membership_status(@inviter)).to eq('inviter')
+    #   end
+    #
+    #   it 'detects pending members' do
+    #     expect(@grouping.pending?(@inviter)).to be false
+    #   end
+    #
+    #   it 'detects the inviter' do
+    #     expect(@grouping.is_inviter?(@membership.user)).to be false
+    #     expect(@grouping.is_inviter?(@inviter)).to be true
+    #   end
+    #
+    #   it 'is able to remove a member' do
+    #     @grouping.remove_member(@membership.id)
+    #     expect(@grouping.membership_status(@membership.user)).to be_nil
+    #   end
+    #
+    #   it 'is able to remove the inviter' do
+    #     @grouping.remove_member(@inviter_membership.id)
+    #     expect(@grouping.membership_status(@inviter)).to be_nil
+    #     expect(@grouping.inviter).not_to be_nil
+    #   end
+    #
+    #   it 'is able to report if the grouping is deletable' do
+    #     non_inviter = @membership.user
+    #     # delete member to have it deletable
+    #     @grouping.remove_member(@membership.id)
+    #     @grouping.reload
+    #     expect(@grouping.accepted_students.size).to eq(1)
+    #     # inviter should not be able to delete grouping
+    #     expect(@grouping.deletable_by?(@inviter)).to be false
+    #     # non-inviter shouldn't be able to delete grouping
+    #     if non_inviter.nil?
+    #       raise 'No members in this grouping other than the inviter!'
+    #     end
+    #     expect(@grouping.deletable_by?(non_inviter)).to be false
+    #   end
+    # end
+    #
+    # context 'with a pending membership' do
+    #   before :each do
+    #     @student = create(:student_membership,
+    #       grouping: @grouping,
+    #       membership_status: StudentMembership::STATUSES[:pending]).user
+    #   end
+    #
+    #   it 'detect pending members' do
+    #     expect(@grouping.pending?(@student)).to be true
+    #   end
+    #
+    #   it 'return correct membership status' do
+    #     expect(@grouping.membership_status(@student)).to eq('pending')
+    #   end
+    #
+    #   it 'be able to decline invitation' do
+    #     @grouping.decline_invitation(@student)
+    #     expect(@grouping.pending?(@student)).to be false
+    #   end
+    # end
+    #
+    # context 'with a rejected membership' do
+    #   before :each do
+    #     @membership = create(:student_membership,
+    #       grouping: @grouping,
+    #       membership_status: StudentMembership::STATUSES[:rejected])
+    #     @student = @membership.user
+    #   end
+    #
+    #   it 'returns correct membership status' do
+    #     expect(@grouping.membership_status(@student)).to eq('rejected')
+    #   end
+    #
+    #   it 'is able to delete rejected memberships' do
+    #     @grouping.remove_rejected(@membership.id)
+    #     expect(@grouping.membership_status(@student)).to be_nil
+    #   end
+    # end
+    #
+    # context 'with TAs assigned' do
+    #   ta_count = 3
+    #   before :each do
+    #     @tas = Array.new(ta_count) { create(:ta) }
+    #     @grouping.add_tas(@tas)
+    #   end
+    #
+    #   it 'has a ta for marking' do
+    #     expect(@grouping.has_ta_for_marking?).to be true
+    #   end
+    #
+    #   it 'gets ta names' do
+    #     expect(@grouping.get_ta_names).to match_array(@tas.map(&:user_name))
+    #   end
+    #
+    #   it 'is not able to assign same TAs twice' do
+    #     @grouping.reload
+    #     expect(@grouping.ta_memberships.count).to eq(3)
+    #     @grouping.add_tas(@tas)
+    #     expect(@grouping.ta_memberships.count).to eq(3)
+    #   end
+    #
+    #   it 'is able to remove ta' do
+    #     @grouping.remove_tas(@tas)
+    #     expect(@grouping.ta_memberships.count).to eq(0)
+    #   end
+    # end
 
     context 'with some submitted files' do
       # submit files
@@ -576,10 +729,7 @@ describe Grouping do
           txn = repo.get_transaction('markus')
           assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
           begin
-            txn.add(File.join(assignment_folder,
-                              'Shapes.java'),
-                    'shapes content',
-                    'text/plain')
+            txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
             unless repo.commit(txn)
               raise 'Unable to setup test!'
             end
@@ -609,14 +759,14 @@ describe Grouping do
         missing_files = @grouping.missing_assignment_files
         expect(missing_files.length).to eq(1)
         expect(missing_files).to eq([@file])
+      end
+
+      it 'can submit missing file' do
         # submit another file so that we have all required files submitted
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           begin
-            txn.add(File.join(@assignment.repository_folder,
-                              @file.filename),
-                    'ShapesTest content',
-                    'text/plain')
+            txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
             unless repo.commit(txn)
               raise 'Commit failed!'
             end
@@ -630,133 +780,124 @@ describe Grouping do
       end
     end
 
-    context 'calling has_submission? with many submissions, all with submission_version_used == false' do
-      before :each do
-        @submission1 = create(:submission, submission_version_used: false,
-                                       grouping: @grouping)
-        @submission2 = create(:submission, submission_version_used: false,
-                                       grouping: @grouping)
-        @submission3 = create(:submission, submission_version_used: false,
-                                       grouping: @grouping)
-        @grouping.reload
+    describe '#has_submission?' do
+      context 'all with submission_version_used == false' do
+        before :each do
+          @submission1 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @submission2 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @submission3 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @grouping.reload
+        end
+
+        it 'returns false' do
+          expect(@grouping.current_submission_used).to be_nil
+          expect(@grouping.has_submission?).to be false
+        end
       end
 
-      it 'behaves like theres no submission and return false' do
-        #sort only to ensure same order of arrays
-        expect(@grouping.submissions.sort{|a,b| a.id <=> b.id}).to match([@submission1, @submission2, @submission3]
-                                                                           .sort{|a,b| a.id <=> b.id})
-        expect(@grouping.current_submission_used).to be_nil
-        expect(@grouping.has_submission?).to be false
-      end
-    end
-
-    #The order in which submissions are added to the grouping matters because
-    #after a submission is created, it ensures that all other submissions have
-    #submission_version_used set to false.
-    context 'calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == false' do
-      before :each do
-        @submission1 = create(:submission, submission_version_used: true, grouping: @grouping)
-        @submission2 = create(:submission, submission_version_used: false, grouping: @grouping)
-        @submission3 = create(:submission, submission_version_used: true, grouping: @grouping)
-        @submission4 = create(:submission, submission_version_used: false, grouping: @grouping)
-        @grouping.reload
-      end
-      it 'behaves like there is no submission' do
-        #sort only to ensure same order of arrays
-        expect(@grouping.submissions.sort{|a,b| a.id <=> b.id})
-          .to match_array([@submission1, @submission2, @submission3, @submission4].sort{|a,b| a.id <=> b.id})
-        expect(@grouping.current_submission_used).to be_nil
-        expect(@grouping.has_submission?).to be false
-      end
-    end
-
-    context 'calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == true' do
-      before :each do
-        @submission1 = create(:submission, submission_version_used: false, grouping: @grouping)
-        @submission2 = create(:submission, submission_version_used: true, grouping: @grouping)
-        @submission3 = create(:submission, submission_version_used: true, grouping: @grouping)
-        @grouping.reload
+      context 'with the last submission added to the grouping having submission_version_used == false' do
+        before :each do
+          @submission1 = create(:submission, submission_version_used: true, grouping: @grouping)
+          @submission2 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @submission3 = create(:submission, submission_version_used: true, grouping: @grouping)
+          @submission4 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @grouping.reload
+        end
+        it 'returns false' do
+          expect(@grouping.current_submission_used).to be_nil
+          expect(@grouping.has_submission?).to be false
+        end
       end
 
-      it 'behaves like there is a submission' do
-        #sort only to ensure same order of arrays
-        expect(@grouping.submissions.sort{|a,b| a.id <=> b.id}).
-          to match_array([@submission1, @submission2, @submission3].sort{|a,b| a.id <=> b.id})
-        expect(@submission2.reload.submission_version_used).to be false
-        expect(@grouping.current_submission_used).to eq(@submission3)
-        expect(@grouping.has_submission?).to be true
-      end
-    end
+      context 'with the last submission added to the grouping having submission_version_used == true' do
+        before :each do
+          @submission1 = create(:submission, submission_version_used: false, grouping: @grouping)
+          @submission2 = create(:submission, submission_version_used: true, grouping: @grouping)
+          @submission3 = create(:submission, submission_version_used: true, grouping: @grouping)
+          @grouping.reload
+        end
 
-    context 'containing multiple submissions with submission_version_used == true' do
-      before :each do
-        #Dont use machinist in order to bypass validation
-        @submission1 = @grouping.submissions.build(submission_version_used: false,
-                                                   revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 1)
-        @submission1.save(validate: false)
-        @submission2 = @grouping.submissions.build(submission_version_used: true,
-                                                   revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 2)
-        @submission2.save(validate: false)
-        @submission3 = @grouping.submissions.build(submission_version_used: true,
-                                                   revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 3)
-        @submission3.save(validate: false)
-        @grouping.reload
+        it 'returns true' do
+          expect(@grouping.current_submission_used).to eq(@submission3)
+          expect(@grouping.has_submission?).to be true
+        end
       end
 
-      it "sets all the submissions' submission_version_used columns to false upon creation of a new submission" do
-        #sort only to ensure same order of arrays
-        expect(@grouping.submissions.sort{|a,b| a.id <=> b.id}).
-          to eq([@submission1, @submission2, @submission3].sort{|a,b| a.id <=> b.id})
+      context 'with multiple submissions with submission_version_used == true' do
+        before :each do
+          #Dont use machinist in order to bypass validation
+          @submission1 = @grouping.submissions.build(submission_version_used: false,
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 1)
+          @submission1.save(validate: false)
+          @submission2 = @grouping.submissions.build(submission_version_used: true,
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 2)
+          @submission2.save(validate: false)
+          @submission3 = @grouping.submissions.build(submission_version_used: true,
+                                                     revision_identifier: 1, revision_timestamp: 1.days.ago, submission_version: 3)
+          @submission3.save(validate: false)
+          @grouping.reload
+        end
 
-        expect(@grouping.has_submission?).to be true
-        #Make sure current_submission_used returns a single Submission, not an array
-        expect(@grouping.current_submission_used.is_a?(Submission)).to be true
-        @submission4 = create(:submission, submission_version_used: false, grouping: @grouping)
-        @grouping.reload
-        expect(@grouping.has_submission?).to be false
-        expect(@submission4.submission_version).to eq(4)
-        @submission5 = create(:submission, submission_version_used: true, grouping: @grouping)
-        @grouping.reload
-        expect(@grouping.has_submission?).to be true
-        expect(@grouping.current_submission_used).to eq(@submission5)
+        it 'returns true' do
+          expect(@grouping.has_submission?).to be true
+        end
+
+        context 'with a new unused submission creation' do
+          it 'returns false' do
+            @submission4 = create(:submission, submission_version_used: false, grouping: @grouping)
+            @grouping.reload
+            expect(@grouping.has_submission?).to be false
+            expect(@submission4.submission_version).to eq(4)
+          end
+        end
+
+        context 'with a new used submission creation' do
+          it 'returns true' do
+            @submission5 = create(:submission, submission_version_used: true, grouping: @grouping)
+            @grouping.reload
+            expect(@grouping.has_submission?).to be true
+            expect(@grouping.current_submission_used).to eq(@submission5)
+          end
+        end
       end
     end
 
-    context 'A grouping without students (ie created by an admin)' do
+
+    context 'without students (ie created by an admin)' do
       before :each do
-        @student_01 = create(:student)
-        @student_02 = create(:student)
+        @student01 = create(:student)
+        @student02 = create(:student)
       end
 
-      it 'accepts to add students in any scenario possible when invoked by admin' do
-        members = [@student_01.user_name, @student_02.user_name]
-        @grouping.invite(members,
-                         StudentMembership::STATUSES[:accepted],
-                         true)
-        expect(@grouping.accepted_student_memberships.count).to eq(2)
+      describe '#invite' do
+        it 'adds students in any scenario possible when invoked by admin' do
+          members = [@student01.user_name, @student02.user_name]
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          expect(@grouping.accepted_student_memberships.count).to eq(2)
+        end
       end
     end
 
-    context 'A grouping without students (ie created by an admin) for a assignment with section restriction' do
+    context 'without students (ie created by an admin) for a assignment with section restriction' do
       before :each do
         @assignment = create(:assignment, section_due_dates_type: true)
         @grouping = create(:grouping, assignment: @assignment)
-        section_01 = create(:section)
-        section_02 = create(:section)
-        @student_01 = create(:student, section: section_01)
-        @student_02 = create(:student, section: section_02)
+        section01 = create(:section)
+        section02 = create(:section)
+        @student01 = create(:student, section: section01)
+        @student02 = create(:student, section: section02)
       end
 
-      it 'accepts to add students to groups without checking their sections' do
-        members = [@student_01.user_name, @student_02.user_name]
-        @grouping.invite(members,
-                         StudentMembership::STATUSES[:accepted],
-                         true)
-        expect(@grouping.accepted_student_memberships.count).to eq(2)
+      describe '#invite' do
+        it 'adds students to groups without checking their sections' do
+          members = [@student01.user_name, @student02.user_name]
+          @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
+          expect(@grouping.accepted_student_memberships.count).to eq(2)
+        end
       end
     end
 
-    context 'A grouping with students in section' do
+    context 'with students in sections' do
       before :each do
         @section = create(:section)
         student  = create(:student, section: @section)
@@ -769,17 +910,19 @@ describe Grouping do
                membership_status: StudentMembership::STATUSES[:inviter])
       end
 
-      # FAILING: @grouping.can_invite?(@student_can_invite) returns false
-      it 'returns true to can invite for students of same section' do
-        expect(@grouping.can_invite?(@student_can_invite)).to be true
-      end
+      describe '#can_invite?' do
+        # FAILING: @grouping.can_invite?(@student_can_invite) returns false
+        it 'returns true for students of same section' do
+          expect(@grouping.can_invite?(@student_can_invite)).to be true
+        end
 
-      it 'returns false to can invite for students of different section' do
-        expect(@grouping.can_invite?(@student_cannot_invite)).to be false
+        it 'returns false for students of different section' do
+          expect(@grouping.can_invite?(@student_cannot_invite)).to be false
+        end
       end
     end
 
-    context 'Assignment has a grace period of 24 hours after due date' do
+    context 'with an assignment that has a grace period of 24 hours after due date' do
       before :each do
         @assignment = create(:assignment)
         @group = create(:group)
@@ -807,12 +950,14 @@ describe Grouping do
         destroy_repos
       end
 
-      context 'A grouping of one student submitting an assignment' do
+      context 'with one student submitting an assignment' do
         before :each do
           # grouping of only one student
           @grouping = create(:grouping, assignment: @assignment, group: @group)
-          @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student1'),
-                                       grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+          @inviter_membership = create(:inviter_student_membership,
+                                       user: create(:student, user_name: 'student1'),
+                                       grouping: @grouping,
+                                       membership_status: StudentMembership::STATUSES[:inviter])
           @inviter = @inviter_membership.user
 
           # On July 15, the Student logs in, triggering repository folder creation
@@ -821,55 +966,65 @@ describe Grouping do
           end
         end
 
-        it 'does not deduct grace credits because submission is on time' do
-          # Check the number of member in this grouping
-          expect(@grouping.student_membership_number).to eq(1)
-          submit_files_before_due_date
-
-          # An Instructor or Grader decides to begin grading
-          pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping,
-                                                        @assignment.submission_rule.calculate_collection_time)
-            @assignment.submission_rule.apply_submission_rule(submission)
-
-            @grouping.reload
-            # Should be no deduction because submitting on time
-            expect(@grouping.grace_period_deduction_single).to eq(0)
+        describe '#student_membership_number' do
+          it 'returns 1' do
+            expect(@grouping.student_membership_number).to eq(1)
           end
         end
 
-        it 'deducts one grace credit' do
-          # Check the number of member in this grouping
-          expect(@grouping.student_membership_number).to eq(1)
-          # Make sure the available grace credits are enough
-          expect(@grouping.available_grace_credits).to be >= 1
-
-          submit_files_after_due_date('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
-
-          # An Instructor or Grader decides to begin grading
-          pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping,
-                                                        @assignment.submission_rule.calculate_collection_time)
-            @assignment.submission_rule.apply_submission_rule(submission)
-
-            @grouping.reload
-            # Should display 1 credit deduction because of one-day late submission
-            expect(@grouping.grace_period_deduction_single).to eq(1)
+        describe '#available_grace_credits' do
+          it 'returns more than 1 grace credit remaining' do
+            expect(@grouping.available_grace_credits).to be >= 1
           end
         end
-      end # end of context "A grouping of one student submitting an assignment"
 
-      context 'A grouping of two students submitting an assignment' do
+        describe '#grace_period_deduction_single' do
+          it 'shows no grace credit deduction because submission is on time' do
+            submit_files_before_due_date
+
+            # An Instructor or Grader decides to begin grading
+            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
+              submission = Submission.create_by_timestamp(@grouping,
+                                                          @assignment.submission_rule.calculate_collection_time)
+              @assignment.submission_rule.apply_submission_rule(submission)
+
+              @grouping.reload
+              # Should be no deduction because submitting on time
+              expect(@grouping.grace_period_deduction_single).to eq(0)
+            end
+          end
+
+          it 'shows one grace credition deduction because submission was late' do
+            submit_file_at_time('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
+
+            # An Instructor or Grader decides to begin grading
+            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
+              submission = Submission.create_by_timestamp(@grouping,
+                                                          @assignment.submission_rule.calculate_collection_time)
+              @assignment.submission_rule.apply_submission_rule(submission)
+
+              @grouping.reload
+              # Should display 1 credit deduction because of one-day late submission
+              expect(@grouping.grace_period_deduction_single).to eq(1)
+            end
+          end
+        end
+      end
+
+      context 'with two students submitting an assignment' do
         before :each do
           # grouping of two students
           @grouping = create(:grouping, assignment: @assignment, group: @group)
           # should consist of inviter and another student
-          @membership = create(:accepted_student_membership, user: create(:student, user_name: 'student1'),
-                                               grouping: @grouping,
-                                               membership_status: StudentMembership::STATUSES[:accepted])
+          @membership = create(:accepted_student_membership,
+                               user: create(:student, user_name: 'student1'),
+                               grouping: @grouping,
+                               membership_status: StudentMembership::STATUSES[:accepted])
 
-          @inviter_membership = create(:inviter_student_membership, user: create(:student, user_name: 'student2'),
-                                       grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+          @inviter_membership = create(:inviter_student_membership,
+                                       user: create(:student, user_name: 'student2'),
+                                       grouping: @grouping,
+                                       membership_status: StudentMembership::STATUSES[:inviter])
           @inviter = @inviter_membership.user
 
           # On July 15, the Student logs in, triggering repository folder creation
@@ -878,163 +1033,136 @@ describe Grouping do
           end
         end
 
-        it 'does not deduct grace credits because submission is on time' do
-          # Check the number of member in this grouping
-          expect(@grouping.student_membership_number).to eq(2)
-
-          submit_files_before_due_date
-
-          # An Instructor or Grader decides to begin grading
-          pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping,
-                                                        @assignment.submission_rule.calculate_collection_time)
-            @assignment.submission_rule.apply_submission_rule(submission)
-
-            @grouping.reload
-            # Should be no deduction because submitting on time
-            expect(@grouping.grace_period_deduction_single).to eq(0)
+        describe '#student_membership_number' do
+          it 'returns 2' do
+            expect(@grouping.student_membership_number).to eq(2)
           end
         end
 
-        it 'deducts one grace credit' do
-          # Check the number of member in this grouping
-          expect(@grouping.student_membership_number).to eq(2)
-          # Make sure the available grace credits are enough
-          expect(@grouping.available_grace_credits).to be >= 1
-          submit_files_after_due_date('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
+        describe '#available_grace_credits' do
+          it 'returns more than 1 grace credit remaining' do
+            expect(@grouping.available_grace_credits).to be >= 1
+          end
+        end
 
-          # An Instructor or Grader decides to begin grading
-          pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-            submission = Submission.create_by_timestamp(@grouping,
-                                                        @assignment.submission_rule.calculate_collection_time)
-            @assignment.submission_rule.apply_submission_rule(submission)
+        describe '#grace_period_deduction_single' do
+          it 'shows no grace credit deductions because submission is on time' do
+            submit_files_before_due_date
 
-            @grouping.reload
-            # Should display 1 credit deduction because of one-day late submission
-            expect(@grouping.grace_period_deduction_single).to eq(1)
+            # An Instructor or Grader decides to begin grading
+            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
+              submission = Submission.create_by_timestamp(@grouping,
+                                                          @assignment.submission_rule.calculate_collection_time)
+              @assignment.submission_rule.apply_submission_rule(submission)
+
+              @grouping.reload
+              # Should be no deduction because submitting on time
+              expect(@grouping.grace_period_deduction_single).to eq(0)
+            end
+          end
+
+          it 'shows one grace credit deduction because submission is late' do
+            submit_file_at_time('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
+
+            # An Instructor or Grader decides to begin grading
+            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
+              submission = Submission.create_by_timestamp(@grouping,
+                                                          @assignment.submission_rule.calculate_collection_time)
+              @assignment.submission_rule.apply_submission_rule(submission)
+
+              @grouping.reload
+              # Should display 1 credit deduction because of one-day late submission
+              expect(@grouping.grace_period_deduction_single).to eq(1)
+            end
           end
         end
       end
     end
   end
 
-  context 'submit file with testing past_due_date?' do
-    before :each do
-      @assignment = create(:assignment, due_date: Time.parse('July 22 2009 5:00PM'))
-      @group = create(:group)
-      pretend_now_is(Time.parse('July 21 2009 5:00PM')) do
-        @grouping = create(:grouping, assignment: @assignment, group: @group)
-      end
-    end
-
-    teardown do
-      destroy_repos
-    end
-
-    context 'without sections before due date' do
-      it 'detects before due_date' do
-        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
-        expect(@grouping.past_due_date?).to be false
-      end
-    end
-
-    context 'with sections before due date' do
-      before :each do
-        @assignment.section_due_dates_type = true
-        @assignment.save
-        @section = create(:section)
-        create(:inviter_student_membership, user: create(:student, section: @section), grouping: @grouping,
-               membership_status: StudentMembership::STATUSES[:inviter])
-      end
-
-      it 'detects before due_date and before section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 24 2009 5:00PM'))
-        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-        expect(@grouping.past_due_date?).to be false
-      end
-
-      it 'detects before due_date and after section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
-        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-        expect(@grouping.past_due_date?).to be true
-      end
-    end
-
-    context 'without sections after due date' do
+  describe '#past_due_date?' do
+    context 'with an assignment' do
       before :each do
         @assignment = create(:assignment, due_date: Time.parse('July 22 2009 5:00PM'))
         @group = create(:group)
-        pretend_now_is(Time.parse('July 28 2009 5:00PM')) do
+        pretend_now_is(Time.parse('July 21 2009 5:00PM')) do
           @grouping = create(:grouping, assignment: @assignment, group: @group)
         end
       end
 
-      it 'detects after due_date' do
-        submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
-        expect(@grouping.past_due_date?).to be true
+      teardown do
+        destroy_repos
+      end
+
+      context 'without sections before due date' do
+        it 'returns false' do
+          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
+          expect(@grouping.past_due_date?).to be false
+        end
+      end
+
+      context 'with sections before due date' do
+        before :each do
+          @assignment.section_due_dates_type = true
+          @assignment.save
+          @section = create(:section)
+          create(:inviter_student_membership,
+                 user: create(:student, section: @section),
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+
+        it 'returns false when before section due date' do
+          SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 24 2009 5:00PM'))
+          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.past_due_date?).to be false
+        end
+
+        it 'returns false when after section duedate' do
+          SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
+          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.past_due_date?).to be true
+        end
+      end
+
+      context 'without sections after due date' do
+        before :each do
+          @assignment = create(:assignment, due_date: Time.parse('July 22 2009 5:00PM'))
+          @group = create(:group)
+          pretend_now_is(Time.parse('July 28 2009 5:00PM')) do
+            @grouping = create(:grouping, assignment: @assignment, group: @group)
+          end
+        end
+
+        it 'returns true after due date' do
+          submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.past_due_date?).to be true
+        end
+      end
+
+      context 'with sections after due date' do
+        before :each do
+          @assignment.section_due_dates_type = true
+          @assignment.save
+          @section = create(:section)
+          create(:inviter_student_membership,
+                 user: create(:student, section: @section),
+                 grouping: @grouping,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+
+        it 'returns false when before section due_date' do
+          SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
+          submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.past_due_date?).to be false
+        end
+
+        it 'returns true when after section due_date' do
+          SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
+          submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.past_due_date?).to be true
+        end
       end
     end
-
-    context 'with sections after due date' do
-      before :each do
-        @assignment.section_due_dates_type = true
-        @assignment.save
-        @section = create(:section)
-        create(:inviter_student_membership, user: create(:student, section: @section), grouping: @grouping,
-               membership_status: StudentMembership::STATUSES[:inviter])
-      end
-
-      it 'detects after due_date and before section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
-        submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-        expect(@grouping.past_due_date?).to be false
-      end
-
-      it 'detects after due_date and after section due_date' do
-        SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
-        submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-        expect(@grouping.past_due_date?).to be true
-      end
-    end
-  end
-
-  def submit_file_at_time(time, filename, text)
-    pretend_now_is(Time.parse(time)) do
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        txn = add_file_helper(txn, filename, text)
-        repo.commit(txn)
-      end
-    end
-  end
-
-  def submit_files_before_due_date
-    pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
-      assert Time.now < @assignment.due_date
-      assert Time.now < @assignment.submission_rule.calculate_collection_time
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
-        repo.commit(txn)
-      end
-    end
-  end
-
-  def submit_files_after_due_date(time, filename, text)
-    pretend_now_is(Time.parse(time)) do
-      assert Time.now > @assignment.due_date
-      assert Time.now < @assignment.submission_rule.calculate_collection_time
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        txn = add_file_helper(txn, filename, text)
-        repo.commit(txn)
-      end
-    end
-  end
-
-  def add_file_helper(txn, file_name, file_contents)
-    path = File.join(@assignment.repository_folder, file_name)
-    txn.add(path, file_contents, '')
-    txn
   end
 end
