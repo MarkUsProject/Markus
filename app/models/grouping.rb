@@ -807,7 +807,7 @@ class Grouping < ApplicationRecord
   def test_script_results_hash(user_filter: nil)
     filter_hash = { grouping_id: id }
     unless user_filter.nil?
-      filter_hash.update({ user_id: user_filter })
+      filter_hash.update(user_id: user_filter)
     end
     TestScriptResult
       .joins(:test_script, :test_results, test_run: [:user])
@@ -817,5 +817,4 @@ class Grouping < ApplicationRecord
                      :extra_info)
       .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
   end
-
 end # end class Grouping

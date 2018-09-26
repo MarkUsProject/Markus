@@ -169,7 +169,6 @@ class Submission < ApplicationRecord
       .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
   end
 
-
   # For group submissions, actions here must only be accessible to members
   # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).
