@@ -106,11 +106,11 @@ class TestScriptResultTable extends React.Component {
               }
             ];
             const rowData = row.original['test_data'];
-            const extraInfo = row.original['test_data']['extra_info'] || '';
+            const extraInfo = row.original['test_data'][0]['extra_info'] || '';
             return (
               <div>
                 <ReactTable data={rowData} columns={columns} getTdProps={this.getTdProps} />
-                {extraInfo}
+                <span>{extraInfo}</span>
               </div>
             );
           }}
