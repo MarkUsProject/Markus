@@ -64,7 +64,7 @@ class GradersManager extends React.Component {
       data: {
         global_actions: 'assign',
         current_table: this.state.tableName,
-        skip_empty_submissions: true,
+        skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
         graders: graders
@@ -92,7 +92,7 @@ class GradersManager extends React.Component {
       data: {
         global_actions: 'random_assign',
         current_table: this.state.tableName,
-        skip_empty_submissions: true,
+        skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
         graders: graders
