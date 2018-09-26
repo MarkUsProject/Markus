@@ -85,7 +85,7 @@ class TestScriptResultTable extends React.Component {
                 accessor: 'actual_output',
                 className: 'actual_output',
                 show: this.props.detailed,
-                Cell: props => props.value ? <pre>{props.value}</pre> : ''
+                Cell: props => props.value ? props.value : ''
               },
               {
                 Header: I18n.t('automated_tests.test_results_table.status'),
