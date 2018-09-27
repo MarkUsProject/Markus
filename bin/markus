@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
 
 # Go to the Markus root.
-markus_path=$( cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd -P )
-cd "$markus_path"
+THIS_SCRIPT=$(readlink -f "${BASH_SOURCE}")
+THIS_SCRIPT_DIR=$(dirname "${THIS_SCRIPT}")
+MARKUS_ROOT=$(readlink -f "${THIS_SCRIPT_DIR}/..")
+cd "${MARKUS_ROOT}"
 
 # Check if redis-server is running
 if ! redis-cli ping ; then
-  echo "Starting redis-server"
+  echo "[MARKUS] Starting redis-server"
   redis-server &
 fi
 
 # Start new MarkUs server resque worker if non are running
 if ! pgrep -f resque > /dev/null ; then
-  echo "Starting MarkUs resque worker"
+  echo "[MARKUS] Starting MarkUs resque worker"
   QUEUE=* TERM_CHILD=1 BACKGROUND=yes bundle exec rake environment resque:work
 fi
 
-webpack-dev-server &
+echo "[MARKUS] Starting MarkUs"
+bin/webpack-dev-server &
 bundle exec rails s
