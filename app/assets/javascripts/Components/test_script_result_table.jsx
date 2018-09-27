@@ -80,12 +80,15 @@ class TestScriptResultTable extends React.Component {
           columns={[
             {
               id: 'created_at_user_name',
-              accessor: row => `${row['test_runs.created_at']} (${row['users.user_name']})`,
+              accessor: row => `${I18n.l('time.formats.default', row['test_runs.created_at'])}
+                                (${row['users.user_name']})`,
               maxWidth: 0
             },
             {
               id: 'file_name_description',
-              accessor: row => `${row['test_scripts.file_name']} - ${row['test_scripts.description']}`
+              accessor: row => row['test_scripts.description'] ?
+                                 `${row['test_scripts.file_name']} - ${row['test_scripts.description']}` :
+                                 row['test_scripts.file_name']
             }
           ]}
           SubComponent={ row => {
