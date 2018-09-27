@@ -33,7 +33,9 @@ if __name__ == '__main__':
     # M non-required is warned
     for change in changes.stdout.splitlines():
         status, path = change.split(maxsplit=1)
-        assignment, file = path.split('/', maxsplit=1)  # it can never be a top level file/dir
+        if '/' not in path:  # ignore top-level changes
+            continue
+        assignment, file = path.split('/', maxsplit=1)
         assignment_req = requirements.get(assignment)
         if assignment_req is None:
             # this can happen only if an assignment becomes hidden after being visible for a while
