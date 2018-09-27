@@ -1304,7 +1304,8 @@ class Assignment < ApplicationRecord
       base = {
         _id: g[0], # Needed for checkbox version of react-table
         group_name: g[1],
-        submission_time: g[2].nil? ? '' : I18n.l(g[2]),
+        # TODO: for some reason, this is not automatically converted to our timezone by the query
+        submission_time: g[2].nil? ? '' : I18n.l(g[2].in_time_zone),
         tags: (tag_data[g[0]].nil? ? [] : tag_data[g[0]].map { |_, tag| tag }),
         no_files: empty_submissions.key?(g[0])
       }
