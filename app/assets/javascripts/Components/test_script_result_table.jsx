@@ -83,7 +83,8 @@ class TestScriptResultTable extends React.Component {
               accessor: row => `${row['test_runs.created_at']} (${row['users.user_name']})`
             },
             {
-              accessor: 'test_scripts.file_name',
+              id: 'file_name_description',
+              accessor: row => `${row['test_scripts.file_name']} - ${row['test_scripts.description']}`,
             }
           ]}
           SubComponent={ row => {

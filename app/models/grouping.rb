@@ -817,12 +817,12 @@ class Grouping < ApplicationRecord
               'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
               'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
-    assoc.pluck_to_hash(fields)
+    assoc.pluck_to_hash(*fields)
   end
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.created_at', 'test_scripts.file_name']
+    group_by_keys = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -837,7 +837,7 @@ class Grouping < ApplicationRecord
   def test_runs_instructors(submission)
     filtered = filter_test_runs({ 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
-    group_hash_list(plucked)
+    Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
@@ -850,7 +850,7 @@ class Grouping < ApplicationRecord
       end
       data
     end
-    group_hash_list(plucked)
+    Grouping.group_hash_list(plucked)
   end
 
   def test_runs_students
@@ -862,20 +862,6 @@ class Grouping < ApplicationRecord
       end
       data
     end
-    group_hash_list(plucked)
-  end
-
-  def test_script_results_hash(user_filter: nil)
-    filter_hash = { grouping_id: id }
-    unless user_filter.nil?
-      filter_hash.update(user_id: user_filter)
-    end
-    TestScriptResult
-      .joins(:test_script, :test_results, test_run: [:user])
-      .where(test_runs: filter_hash)
-      .pluck_to_hash(:created_at, :name, :file_name, :completion_status, :user_name,
-                     'test_results.marks_earned', 'test_results.marks_total',
-                     :extra_info)
-      .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
+    Grouping.group_hash_list(plucked)
   end
 end # end class Grouping
