@@ -64,7 +64,7 @@ class TestScriptResultTable extends React.Component {
   getTdProps = (state, rowInfo, colInfo) => {
     if (rowInfo) {
       return {
-        className: 'test-result-' + rowInfo.row.completion_status
+        className: 'test-result-' + rowInfo.row['test_results.completion_status']
       }
     }
     return {};
@@ -80,40 +80,45 @@ class TestScriptResultTable extends React.Component {
           columns={[
             {
               id: 'created_at_user_name',
-              accessor: row => `${row['test_runs.created_at']} (${row['users.user_name']})`
+              accessor: row => `${row['test_runs.created_at']} (${row['users.user_name']})`,
+              maxWidth: 0
             },
             {
               id: 'file_name_description',
-              accessor: row => `${row['test_scripts.file_name']} - ${row['test_scripts.description']}`,
+              accessor: row => `${row['test_scripts.file_name']} - ${row['test_scripts.description']}`
             }
           ]}
           SubComponent={ row => {
             let columns = [
               {
                 Header: I18n.t('automated_tests.test_results_table.test_name'),
-                accessor: 'test_scripts.name'
+                id: 'test_scripts.name',
+                accessor: row => row['test_results.name']
               },
               {
                 Header: I18n.t('automated_tests.test_results_table.status'),
-                accessor: 'test_results.completion_status',
+                id: 'test_results.completion_status',
+                accessor: row => row['test_results.completion_status'],
                 minWidth: 50
               },
               {
                 Header: I18n.t('automated_tests.test_results_table.marks_earned'),
-                accessor: 'test_results.marks_earned',
+                id: 'test_results.marks_earned',
+                accessor: row => row['test_results.marks_earned'],
                 minWidth: 40,
                 className: 'number'
               },
               {
                 Header: I18n.t('automated_tests.test_results_table.marks_total'),
-                accessor: 'test_results.marks_total',
+                id: 'test_results.marks_total',
+                accessor: row => row['test_results.marks_total'],
                 minWidth: 40,
                 className: 'number'
               }
             ];
             const rowData = row.original['test_data'];
             const extraInfo = row.original['test_data'][0]['extra_info'] || '';
-            if ('actual_output' in rowData[0]) {
+            if ('test_results.actual_output' in rowData[0]) {
               columns.splice(1, 0, {
                 id: 'actual_output',
                 Header: I18n.t('automated_tests.test_results_table.output'),
