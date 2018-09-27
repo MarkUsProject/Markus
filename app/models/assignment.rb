@@ -524,15 +524,14 @@ class Assignment < ApplicationRecord
         # groupings error set if a member is already in different group
         membership_error = I18n.t('csv.memberships_not_unique',
                                   group_name: row[0],
-                                  student_user_name: errors.get(:groupings)
-                                                         .first)
+                                  student_user_name: errors[:groupings].first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
         membership_error = I18n.t(
           'csv.member_does_not_exist',
           group_name: row[0],
-          student_user_name: errors.get(:student_memberships).first)
+          student_user_name: errors[:student_memberships].first)
         errors.delete(:student_memberships)
       end
       return membership_error
@@ -553,7 +552,7 @@ class Assignment < ApplicationRecord
       if repository_already_exists?(repo_name)
         repository_error = I18n.t('csv.repository_already_exists',
                                   group_name: row[0],
-                                  repo_path: errors.get(:repo_name).last)
+                                  repo_path: errors[:repo_name].last)
         errors.delete(:repo_name)
         return repository_error
       end
