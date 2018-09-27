@@ -13,7 +13,7 @@ class TestScriptResultTable extends React.Component {
       data: [],
       expanded: {},
       resized: [],
-      sorted: [{id: 'created_at_user_name', desc: true}],
+      sorted: [],
     };
   }
 
@@ -22,19 +22,30 @@ class TestScriptResultTable extends React.Component {
   }
 
   fetchData = () => {
-    if (this.props.detailed) {
-      var ajaxDetails = {
-        url: Routes.get_test_runs_results_assignment_submission_result_path(
-          this.props.assignment_id,
-          this.props.submission_id,
-          this.props.result_id),
-        dataType: 'json',
+    let ajaxDetails = {};
+    if (this.props.instructor_run) {
+      if (this.props.instructor_view) {
+        ajaxDetails = {
+          url: Routes.get_test_runs_instructors_assignment_submission_result_path(
+            this.props.assignment_id,
+            this.props.submission_id,
+            this.props.result_id),
+          dataType: 'json',
+        }
+      } else {
+        ajaxDetails = {
+          url: Routes.get_test_runs_instructors_released_assignment_submission_result_path(
+            this.props.assignment_id,
+            this.props.submission_id,
+            this.props.result_id),
+          dataType: 'json',
+        }
       }
     } else {
-      var ajaxDetails = {
-        url: Routes.get_student_test_runs_results_assignment_automated_tests_path(
+      ajaxDetails = {
+        url: Routes.get_test_runs_students_assignment_automated_tests_path(
           this.props.assignment_id),
-          dataType: 'json',
+        dataType: 'json',
       }
     }
     $.ajax(ajaxDetails).then(res => {
@@ -68,28 +79,22 @@ class TestScriptResultTable extends React.Component {
           data={data}
           columns={[
             {
-              accessor: 'created_at_user_name'
+              id: 'created_at_user_name',
+              accessor: row => `${row['test_runs.created_at']} (${row['users.user_name']})`
             },
             {
-              accessor: 'file_name',
+              accessor: 'test_scripts.file_name',
             }
           ]}
           SubComponent={ row => {
-            const columns = [
+            let columns = [
               {
                 Header: I18n.t('automated_tests.test_results_table.test_name'),
-                accessor: 'name'
-              },
-              {
-                Header: I18n.t('automated_tests.test_results_table.output'),
-                accessor: 'actual_output',
-                className: 'actual_output',
-                show: this.props.detailed,
-                Cell: props => props.value ? props.value : ''
+                accessor: 'test_scripts.name'
               },
               {
                 Header: I18n.t('automated_tests.test_results_table.status'),
-                accessor: 'completion_status',
+                accessor: 'test_results.completion_status',
                 minWidth: 50
               },
               {
@@ -107,14 +112,23 @@ class TestScriptResultTable extends React.Component {
             ];
             const rowData = row.original['test_data'];
             const extraInfo = row.original['test_data'][0]['extra_info'] || '';
+            if ('actual_output' in rowData[0]) {
+              columns.splice(1, 0, {
+                id: 'actual_output',
+                Header: I18n.t('automated_tests.test_results_table.output'),
+                accessor: row => row['test_results.actual_output'] ? row['test_results.actual_output'] : '',
+                className: 'actual_output'
+              })
+            }
             return (
               <div>
                 <ReactTable data={rowData} columns={columns} getTdProps={this.getTdProps} />
-                <span>{extraInfo}</span>
+                {extraInfo && <span>{I18n.t('automated_tests.test_results_table.extra_info')} {extraInfo}</span>}
               </div>
             );
           }}
           pivotBy={['created_at_user_name']}
+          noDataText={I18n.t('automated_tests.no_results')}
           // Controlled props
           expanded={this.state.expanded}
           resized={this.state.resized}

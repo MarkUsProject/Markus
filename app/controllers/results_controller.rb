@@ -9,12 +9,12 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_results
+                         :get_test_runs_instructors, :get_test_runs_instructors_released
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark,
-                       :note_message, :get_test_runs_results]
+                       :note_message, :get_test_runs_instructors, :get_test_runs_instructors_released]
   before_action :authorize_for_user,
                 only: [:download, :download_zip, :run_tests, :stop_test,
                        :view_marks, :get_annotations]
@@ -655,10 +655,16 @@ class ResultsController < ApplicationController
     grace_deduction.destroy
   end
 
-  def get_test_runs_results
-    test_script_results = Submission.find(params[:submission_id]).test_script_results_hash
-    grouped_results = group_hash_list(test_script_results, ['created_at_user_name', :file_name], 'test_data')
-    render json: grouped_results
+  def get_test_runs_instructors
+    submission = Submission.find(params[:submission_id])
+    test_runs = submission.grouping.test_runs_instructors(submission)
+    render json: test_runs
+  end
+
+  def get_test_runs_instructors_released
+    submission = Submission.find(params[:submission_id])
+    test_runs = submission.grouping.test_runs_instructors_released(submission)
+    render json: test_runs
   end
 
   private

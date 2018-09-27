@@ -5,7 +5,7 @@ class AutomatedTestsController < ApplicationController
                      only: [:manage, :update, :download]
   before_action      :authorize_for_student,
                      only: [:student_interface,
-                            :get_student_test_runs_results]
+                            :get_test_runs_students]
 
   # Update is called when files are added to the assignment
   def update
@@ -138,11 +138,10 @@ class AutomatedTestsController < ApplicationController
     end
   end
 
-  def get_student_test_runs_results
+  def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
-    test_script_results = @grouping.test_script_results_hash(user_filter: current_user)
-    grouped_results = group_hash_list(test_script_results, ['created_at_user_name', :file_name], 'test_data')
-    render json: grouped_results
+    test_runs = @grouping.test_runs_students
+    render json: test_runs
   end
 
   private
