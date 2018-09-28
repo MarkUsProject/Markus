@@ -137,6 +137,11 @@ class TestScriptResultTable extends React.Component {
           }}
           pivotBy={['created_at_user_name']}
           noDataText={I18n.t('automated_tests.no_results')}
+          getTheadThProps={ (state, rowInfo, colInfo) => {
+            return {
+              style: {display: 'none'}
+            }
+          }}
           // Controlled props
           expanded={this.state.expanded}
           resized={this.state.resized}
