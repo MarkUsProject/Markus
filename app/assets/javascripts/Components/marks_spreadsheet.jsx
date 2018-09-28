@@ -125,7 +125,8 @@ class RawMarksSpreadsheet extends React.Component {
       grade_entry_column={row.column.id}
       student_id={row.original.id}
       default_value={row.value}
-      updateTotal={newTotal => this.updateTotal(row.index, newTotal)}
+      updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
+                    this.updateTotal(row.index, gradeEntryItemId, newGrade, newTotal)}
     />;
   };
 
@@ -159,10 +160,12 @@ class RawMarksSpreadsheet extends React.Component {
     minWidth: 50,
   };
 
-  updateTotal = (index, newTotal) => {
+  updateTotal = (index, gradeEntryItemId, newGrade, newTotal) => {
+    // state should never be modified directly, we copy the relevant data using the spread syntax and modify the copy
     let newData = [...this.state.data];
-    newData[index] = Object.assign({}, newData[index]);
-    newData[index].total_marks = newTotal;
+    newData[index] = {...newData[index]};
+    newData[index]['total_marks'] = newTotal;
+    newData[index][gradeEntryItemId] = newGrade;
     this.setState({data: newData});
   };
 
@@ -270,19 +273,18 @@ class GradeEntryCell extends React.Component {
           });
 
         if (total === '') {
-          this.props.updateTotal(I18n.t('grade_entry_forms.grades.no_mark'));
+          total = I18n.t('grade_entry_forms.grades.no_mark');
         } else {
-          this.props.updateTotal(parseFloat(total));
+          total = parseFloat(total);
         }
+        this.props.updateTotal(this.props.grade_entry_column, updated_grade, total);
       });
     }, 300);
   };
 
   render() {
     return (
-      <input type="number" size={4}
-             value={this.state.value}
-             min={0}
+      <input id={this.props.grade_id} type="number" size={4} value={this.state.value} min={0}
              onChange={this.handleChange} />
     );
   }
