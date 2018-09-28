@@ -60,16 +60,6 @@ class TestScriptResultTable extends React.Component {
     });
   };
 
-  // Custom getTdProps function to highlight submissions that have been collected.
-  getTdProps = (state, rowInfo, colInfo) => {
-    if (rowInfo) {
-      return {
-        className: 'test-result-' + rowInfo.row['test_results.completion_status']
-      }
-    }
-    return {};
-  };
-
   render() {
     const {data} = this.state;
 
@@ -131,7 +121,16 @@ class TestScriptResultTable extends React.Component {
             }
             return (
               <div>
-                <ReactTable data={rowData} columns={columns} getTdProps={this.getTdProps} />
+                <ReactTable
+                  data={rowData}
+                  columns={columns}
+                  getTdProps={ (state, rowInfo, colInfo) => {
+                    if (rowInfo) { // highlight submissions that have been collected
+                      return {className: `test-result-${rowInfo.row['test_results.completion_status']}`}
+                    }
+                    return {};
+                  }}
+                />
                 {extraInfo && <span>{I18n.t('automated_tests.test_results_table.extra_info')} {extraInfo}</span>}
               </div>
             );
@@ -143,8 +142,7 @@ class TestScriptResultTable extends React.Component {
           resized={this.state.resized}
           sorted={this.state.sorted}
           // Callbacks
-          onExpandedChange={expanded =>
-            this.setState({ expanded })}
+          onExpandedChange={expanded => this.setState({ expanded })}
           onResizedChange={resized => this.setState({ resized })}
           onSortedChange={sorted => this.setState({ sorted })}
           // Custom Sort Method to sort by latest date first
