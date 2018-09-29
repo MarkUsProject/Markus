@@ -499,7 +499,7 @@ en:
         no_marks_available: "No marks are available."
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
-        missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
+        missing_file: "Could not download %{file_name}.  File may be missing."
         no_files_available: "No files available"
         no_groupings_available: "No group available"
         no_revision_available: "No revision available"

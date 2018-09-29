@@ -459,7 +459,7 @@ pt:
         no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
-        missing_file: "Não foi possível baixar %{file_name}: %{message}.  O arquivo pode estar faltando."
+        missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         no_files_available: "Nenhum arquivo disponível"
         no_groupings_available: "Nenhum grupo disponível"
         no_revision_available: "Nenhuma revisão disponível"

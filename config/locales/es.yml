@@ -608,7 +608,7 @@ es:
         no_marks_available:               "No existen notas disponibles."
         external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
         invalid_file_name:                "El nombre del archivo enviado no es válido"
-        missing_file:                     "No se pudo descargar %{file_name}: %{message}. Puede que el archivo no haya
+        missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
         no_files_available:               "No existen archivos disponibles"
         no_groupings_available:           "No existe ningún grupo disponible"
