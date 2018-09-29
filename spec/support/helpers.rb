@@ -23,44 +23,11 @@ module Helpers
     Nokogiri::HTML(string).text.strip.gsub(/\s+/, ' ')
   end
 
-  def submit_files_before_due_date
-    pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
-      # expect(Time.now).to be < @assignment.due_date
-      # expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-      # expect(Time.now).to be < @assignment.submission_rule.calculate_grouping_collection_time(@membership.grouping)
-
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        txn = add_file_helper(@assignment, txn, 'TestFile.java', 'Some contents for TestFile.java')
-        txn = add_file_helper(@assignment, txn, 'Test.java', 'Some contents for Test.java')
-        txn = add_file_helper(@assignment, txn, 'Driver.java', 'Some contents for Driver.java')
-        repo.commit(txn)
-      end
-    end
-  end
-
-  def submit_file_at_time(time, filename, text)
+  def submit_file_at_time(assignment, group, txnname, time, filename, text)
     pretend_now_is(Time.parse(time)) do
-      # expect(Time.now).to be > @assignment.due_date
-      # expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        txn = add_file_helper(@assignment, txn, filename, text)
-        repo.commit(txn)
-      end
-    end
-  end
-
-  # Submit files after the due date of the past assignment but before its collection time
-  def submit_files_for_assignment_after_due_before_collection(time, filename, text)
-    pretend_now_is(Time.parse(time)) do
-      # expect(Time.now).to be > @assignment.due_date
-      # expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-
-      @group.access_repo do |repo|
-        txn = repo.get_transaction('test1')
-        txn = add_file_helper(@assignment2, txn, filename, text)
+      group.access_repo do |repo|
+        txn = repo.get_transaction(txnname)
+        txn = add_file_helper(assignment, txn, filename, text)
         repo.commit(txn)
       end
     end

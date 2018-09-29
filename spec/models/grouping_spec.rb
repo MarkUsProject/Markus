@@ -25,7 +25,7 @@ describe Grouping do
 
     context 'hidden students' do
       before :each do
-        @hidden = create(:student, hidden:true)
+        @hidden = create(:student, hidden: true)
       end
 
       it 'cannot be invited' do
@@ -328,8 +328,7 @@ describe Grouping do
               expect_updated_criteria_coverage_count_eq tas.size
             end
 
-            context 'when TAs are also assigned to groups of another ' +
-                    'assignment' do
+            context 'when TAs are also assigned to groups of another assignment' do
               before :each do
                 # Creating a new grouping also creates a new assignment.
                 grouping = create(:grouping)
@@ -423,13 +422,11 @@ describe Grouping do
           create(:inviter_student_membership,
                  user: @student1,
                  grouping: @grouping,
-                 membership_status: StudentMembership::STATUSES[:inviter]
-          )
+                 membership_status: StudentMembership::STATUSES[:inviter])
           create(:accepted_student_membership,
                  user: @student2,
                  grouping: @grouping,
-                 membership_status: StudentMembership::STATUSES[:accepted]
-          )
+                 membership_status: StudentMembership::STATUSES[:accepted])
         end
         it 'refreshes assignment tokens' do
           @grouping.refresh_test_tokens!
@@ -476,13 +473,15 @@ describe Grouping do
       let(:inviter_membership) { create(:inviter_student_membership, grouping: @grouping) }
       let(:pending_membership) { create(:student_membership,
                                         grouping: @grouping,
-                                        membership_status: StudentMembership::STATUSES[:pending]) }
+                                        membership_status: StudentMembership::STATUSES[:pending])
+      }
       let(:reject_membership) { create(:student_membership,
                                        grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:rejected]) }
+                                       membership_status: StudentMembership::STATUSES[:rejected])
+      }
       let(:inviter) { inviter_membership.user }
 
-      describe '#membership_status'
+      describe '#membership_status' do
         let(:student) { create(:student) }
         it 'detects student not part of membership' do
           expect(@grouping.membership_status(student)).to be_nil
@@ -503,6 +502,7 @@ describe Grouping do
         it 'shows correct status for the inviter' do
           expect(@grouping.membership_status(inviter)).to eq('inviter')
         end
+      end
 
       describe '#display_for_note' do
         it 'displays for note without seeing an exception' do
@@ -591,8 +591,6 @@ describe Grouping do
             unless repo.commit(txn)
               raise 'Unable to setup test!'
             end
-          rescue Exception => e
-            raise 'Test setup failed: ' + e.message
           end
         end
       end
@@ -723,7 +721,6 @@ describe Grouping do
       end
     end
 
-
     context 'without students (ie created by an admin)' do
       before :each do
         @student01 = create(:student)
@@ -767,7 +764,9 @@ describe Grouping do
 
         assignment = create(:assignment, section_groups_only: true)
         @grouping = create(:grouping, assignment: assignment)
-        create(:inviter_student_membership, user: student, grouping: @grouping,
+        create(:inviter_student_membership,
+               user: student,
+               grouping: @grouping,
                membership_status: StudentMembership::STATUSES[:inviter])
       end
 
@@ -841,7 +840,12 @@ describe Grouping do
 
         describe '#grace_period_deduction_single' do
           it 'shows no grace credit deduction because submission is on time' do
-            submit_files_before_due_date
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                                'Some contents for TestFile.java')
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                                'Some contents for Test.java')
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                                'Some contents for Driver.java')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -856,7 +860,8 @@ describe Grouping do
           end
 
           it 'shows one grace credition deduction because submission was late' do
-            submit_file_at_time('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
+            submit_file_at_time(@assignment, @group, 'test','July 24 2009 9:00AM', 'LateSubmission.java',
+                                'Some overtime contents')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -908,7 +913,12 @@ describe Grouping do
 
         describe '#grace_period_deduction_single' do
           it 'shows no grace credit deductions because submission is on time' do
-            submit_files_before_due_date
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                                'Some contents for TestFile.java')
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                                'Some contents for Test.java')
+            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                                'Some contents for Driver.java')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -923,7 +933,8 @@ describe Grouping do
           end
 
           it 'shows one grace credit deduction because submission is late' do
-            submit_file_at_time('July 24 2009 9:00AM', 'LateSubmission.java', 'Some overtime contents')
+            submit_file_at_time(@assignment, @group, 'test','July 24 2009 9:00AM', 'LateSubmission.java',
+                                'Some overtime contents')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -957,7 +968,7 @@ describe Grouping do
 
       context 'without sections before due date' do
         it 'returns false' do
-          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
+          submit_file_at_time(@assignment, @group, 'test','July 20 2009 5:00PM', 'my_file', 'Hello, world!')
           expect(@grouping.past_due_date?).to be false
         end
       end
@@ -975,13 +986,13 @@ describe Grouping do
 
         it 'returns false when before section due date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 24 2009 5:00PM'))
-          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+          submit_file_at_time(@assignment, @group, 'test','July 20 2009 5:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be false
         end
 
         it 'returns false when after section duedate' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
-          submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+          submit_file_at_time(@assignment, @group, 'test','July 20 2009 5:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be true
         end
       end
@@ -996,7 +1007,7 @@ describe Grouping do
         end
 
         it 'returns true after due date' do
-          submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
+          submit_file_at_time(@assignment, @group, 'test','July 28 2009 5:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be true
         end
       end
@@ -1014,13 +1025,13 @@ describe Grouping do
 
         it 'returns false when before section due_date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
-          submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+          submit_file_at_time(@assignment, @group, 'test','July 28 2009 1:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be false
         end
 
         it 'returns true when after section due_date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
-          submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+          submit_file_at_time(@assignment, @group, 'test','July 28 2009 1:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be true
         end
       end

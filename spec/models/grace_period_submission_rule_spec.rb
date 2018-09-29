@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe GracePeriodSubmissionRule do
-
   it 'be able to create GracePeriodSubmissionRule' do
     rule = GracePeriodSubmissionRule.new
     rule.assignment = create(:assignment)
@@ -9,11 +8,11 @@ describe GracePeriodSubmissionRule do
   end
 
   context 'When an assignment has two grace periods of 24 hours each after due date' do
-
     before :each do
       @group = create(:group)
       @grouping = create(:grouping, group: @group)
-      @membership = create(:student_membership, grouping: @grouping,
+      @membership = create(:student_membership,
+                           grouping: @grouping,
                            membership_status: StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
       @rule = GracePeriodSubmissionRule.new
@@ -58,7 +57,12 @@ describe GracePeriodSubmissionRule do
     describe '#apply_submission_rule' do
       before :each do
         # The Student submits their files before the due date
-        submit_files_before_due_date
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                            'Some contents for TestFile.java')
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                            'Some contents for Test.java')
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                            'Some contents for Driver.java')
       end
 
       teardown do
@@ -84,10 +88,12 @@ describe GracePeriodSubmissionRule do
 
       it 'deducts a single grace period credit for late submission within first grace period' do
         # Now we're past the due date, but before the collection date.
-        submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile.java', 'Some overtime contents')
+        submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile.java',
+                            'Some overtime contents')
 
         # Now we're past the collection date.
-        submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+        submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                            'Should not be included in grading')
 
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -108,13 +114,16 @@ describe GracePeriodSubmissionRule do
 
       it 'deducts 2 grace credits for late submission within 2 grace credits' do
         # Now we're past the due date, but before the collection date, within the first grace period
-        submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
+        submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile1.java',
+                            'Some overtime contents')
 
         # Now we're past the due date, but before the collection date, within the second grace period
-        submit_file_at_time('July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
+        submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java',
+                            'Some overtime contents')
 
         # Now we're past the collection date.
-        submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+        submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                            'Should not be included in grading')
 
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -135,13 +144,16 @@ describe GracePeriodSubmissionRule do
 
       it 'deducts 2 grace credits when files are submitted after collection date' do
         # Now we're past the due date, but before the collection date, within the first grace period
-        submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
+        submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile1.java',
+                            'Some overtime contents')
 
         # Now we're past the due date, but before the collection date, within the second grace period
-        submit_file_at_time('July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
+        submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java',
+                            'Some overtime contents')
 
         # Now we're past the collection date.
-        submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+        submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                            'Should not be included in grading')
 
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -171,7 +183,12 @@ describe GracePeriodSubmissionRule do
         end
 
         # The Student submits some files before the due date...
-        submit_files_before_due_date
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                            'Some contents for TestFile.java')
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                            'Some contents for Test.java')
+        submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                            'Some contents for Driver.java')
       end
 
       teardown do
@@ -181,10 +198,12 @@ describe GracePeriodSubmissionRule do
       describe '#apply_submission_rule' do
         it 'deducts 1 grace credits when files are submitted within first grace period' do
           # Now we're past the due date, but before the collection date, within the first grace period
-          submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
+          submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile1.java',
+                              'Some overtime contents')
 
           # Now we're past the collection date.
-          submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+          submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                              'Should not be included in grading')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -206,13 +225,16 @@ describe GracePeriodSubmissionRule do
 
         it 'deducts 2 grace credits when files are submitted past the collection date' do
           # Now we're past the due date, but before the collection date, within the first grace period
-          submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
+          submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile1.java',
+                              'Some overtime contents')
 
           # Now we're past the due date, but before the collection date, within the second grace period
-          submit_file_at_time('July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
+          submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java',
+                              'Some overtime contents')
 
           # Now we're past the collection date.
-          submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+          submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                              'Should not be included in grading')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -249,10 +271,12 @@ describe GracePeriodSubmissionRule do
             # Now we're past the due date, but before the collection date, within the second grace period.
             # Because one of the students in the Grouping only has one grace credit,
             # OvertimeFile2.java shouldn't be accepted into grading.
-            submit_file_at_time('July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
+            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java',
+                                'Some overtime contents')
 
             # Now we're past the collection date.
-            submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+            submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java',
+                                'Should not be included in grading')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -265,7 +289,7 @@ describe GracePeriodSubmissionRule do
 
               # Assert that each accepted member of this grouping got a GracePeriodDeduction
               @grouping.accepted_student_memberships.each do |student_membership|
-                expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id]-1)
+                expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id] - 1)
               end
             end
           end
@@ -286,10 +310,10 @@ describe GracePeriodSubmissionRule do
             # Now we're past the due date, but before the collection date, within the second
             # grace period.  Because one of the students in the Grouping doesn't have any
             # grace credits, OvertimeFile2.java shouldn't be accepted into grading.
-            submit_file_at_time('July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
+            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java', 'Some overtime contents')
 
             # Now we're past the collection date.
-            submit_file_at_time('July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
+            submit_file_at_time(@assignment, @group, 'test', 'July 25 2009 10:00PM', 'NotIncluded.java', 'Should not be included in grading')
 
             # An Instructor or Grader decides to begin grading
             pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
@@ -314,7 +338,8 @@ describe GracePeriodSubmissionRule do
     context 'submit assignment 1 on time and submit assignment 2 before assignment 1 collection time' do
       before :each do
         @grouping2 = create(:grouping, group: @group)
-        @membership2 = create(:student_membership, grouping: @grouping2,
+        @membership2 = create(:student_membership,
+                              grouping: @grouping2,
                               membership_status: StudentMembership::STATUSES[:inviter])
         @assignment2 = @grouping2.assignment
 
@@ -353,12 +378,17 @@ describe GracePeriodSubmissionRule do
         # taken off when it shouldn't have.
         it 'deducts 0 grace credits when submitting on time before grace period of previous assignment is over' do
           # The Student submits some files before the due date...
-          submit_files_before_due_date
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                              'Some contents for TestFile.java')
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                              'Some contents for Test.java')
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                              'Some contents for Driver.java')
 
           # Now we're past the due date, but before the collection date, within the first
           # grace period.  Submit files for Assignment 2
-          submit_files_for_assignment_after_due_before_collection('July 23 2009 9:00PM', 'NotIncluded.java',
-                                                                  'Not Included in Asssignment 1')
+          submit_file_at_time(@assignment2, @group, 'test1', 'July 23 2009 9:00PM', 'NotIncluded.java',
+                              'Not Included in Asssignment 1')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
@@ -383,14 +413,20 @@ describe GracePeriodSubmissionRule do
         # taken off when it shouldn't have.
         it 'deducts 1 grace credits when submitting overtime before the grace period of previous assignment is over' do
           # The Student submits some files before the due date...
-          submit_files_before_due_date
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
+                              'Some contents for TestFile.java')
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
+                              'Some contents for Test.java')
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
+                              'Some contents for Driver.java')
 
           # Now we're past the due date, but before the collection date, within the first
           # grace period.
-          submit_file_at_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
-          #Submit files for Assignment 2
-          submit_files_for_assignment_after_due_before_collection('July 24 2009 9:00PM', 'NotIncluded.java',
-                                                                  'Not Included in Asssignment 1')
+          submit_file_at_time(@assignment, @group, 'test', 'July 23 2009 9:00PM', 'OvertimeFile1.java',
+                              'Some overtime contents')
+          # Submit files for Assignment 2
+          submit_file_at_time(@assignment2, @group, 'test1', 'July 24 2009 9:00PM', 'NotIncluded.java',
+                              'Not Included in Asssignment 1')
 
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
@@ -404,7 +440,7 @@ describe GracePeriodSubmissionRule do
             # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
             @grouping.reload
             @grouping.accepted_student_memberships.each do |student_membership|
-              expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id]-1)
+              expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id] - 1)
             end
           end
         end
