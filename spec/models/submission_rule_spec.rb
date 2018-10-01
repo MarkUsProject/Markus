@@ -2,6 +2,35 @@ require 'spec_helper'
 
 describe SubmissionRule do
   it { is_expected.to belong_to(:assignment) }
+
+  context 'A newly initialized submission rule' do
+    before :each do
+      rule = SubmissionRule.new
+      rule.assignment = create(:assignment)
+    end
+
+    it 'will raise NotImplemented error' do
+      expect(rule.commit_after_collection_message).to raise_error(NotImplementedError)
+    end
+
+    it 'will raise NotImplemented error' do
+      expect(rule.overtime_message).to raise_error(NotImplementedError)
+    end
+
+    it 'will raise NotImplemented error' do
+      expect(rule.assignment_valid?).to raise_error(NotImplementedError)
+    end
+
+    it 'will raise NotImplemented error' do
+      expect(rule.apply_submission_rule(nil)).to raise_error(NotImplementedError)
+    end
+
+    it 'will raise NotImplemented error' do
+      expect(rule.description_of_rule).to raise_error(NotImplementedError)
+    end
+
+  end
+
   context '#calculate_collection_time' do
     let(:assignment) { create(:assignment) }
 
@@ -600,6 +629,107 @@ describe SubmissionRule do
           expect(time_difference).to be < 600
         end
       end
+    end
+  end
+
+  # context 'Grace period ids' do
+  #   # Create SubmissionRule with default type 'GracePeriodSubmissionRule'
+  #   @submission_rule = GracePeriodSubmissionRule.new
+  #   sub_rule_id = @submission_rule.id
+  #
+  #   # Randomly create five periods for this SubmissionRule (ids unsorted):
+  #   @period = Period.new(submission_rule_id: @sub_rule_id)
+  #   first_period_id = @period.id
+  #
+  #   # Create four other periods
+  #   @period = Period.new(id: first_period_id + 2, submission_rule_id: sub_rule_id)
+  #   @period = Period.new(id: first_period_id + 4, submission_rule_id: sub_rule_id)
+  #
+  #   @period = Period.new(id: first_period_id + 1, submission_rule_id: sub_rule_id)
+  #   @period = Period.new(id: first_period_id + 3, submission_rule_id: sub_rule_id)
+  #
+  #   it 'sort in ascending order' do
+  #     # Loop through periods for this SubmissionRule and verify the ids are
+  #     # sorted in ascending order
+  #     previous_id = @submission_rule.periods[0][:id]
+  #     for i in (1..4) do
+  #       expect(@submission_rule.periods[i][:id]).to be > previous_id
+  #       previous_id = @submission_rule.periods[i][:id]
+  #     end
+  #   end
+  # end
+  #
+  # context 'Penalty period ids' do
+  #   # Create SubmissionRule with default type 'PenaltyPeriodSubmissionRule'
+  #   @submission_rule = PenaltyPeriodSubmissionRule.new
+  #   sub_rule_id = @submission_rule.id
+  #
+  #   # Randomly create five periods for this SubmissionRule (ids unsorted):
+  #   # Create the first period
+  #   @period = Period.new(submission_rule_id: sub_rule_id)
+  #   first_period_id = @period.id
+  #   # Create two other periods
+  #   @period = Period.new(id: first_period_id + 2, submission_rule_id: sub_rule_id)
+  #   @period = Period.new(id: first_period_id + 4, submission_rule_id: sub_rule_id)
+  #
+  #   # Create two other periods
+  #   @period = Period.new(id: first_period_id + 1, submission_rule_id: sub_rule_id)
+  #   @period = Period.new(id: first_period_id + 3, submission_rule_id: sub_rule_id)
+  #
+  #   it 'should sort in ascending order' do
+  #     # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
+  #     previous_id = @submission_rule.periods[0][:id]
+  #     for i in (1..4) do
+  #       expect(@submission_rule.periods[i][:id]).to be > previous_id
+  #       previous_id = @submission_rule.periods[i][:id]
+  #     end
+  #   end
+  # end
+
+  context 'Assignment with a due date in 2 days' do
+    @assignment = Assignment.new
+
+    it 'will not be able to collect submissions' do
+      expect(@assignment.submission_rule.can_collect_all_now?).to be false
+    end
+
+    it 'will be able to get due date' do
+      expect(@assignment.due_date.eql?(@assignment.submission_rule.get_collection_time)).to be true
+    end
+  end
+
+  context 'Assignment with a coming due date and with a past section due date' do
+
+      # the assignment due date is to come...
+      @assignment = Assignment.new(section_due_dates_type: true,
+                                    due_date: 2.days.from_now, group_min: 1)
+
+      # ... but the section due date is in the past
+      @section = Section.new(name: 'section1')
+      @sectionDueDate = SectionDueDate.new(section:    @section,
+                                            assignment: @assignment, due_date: 2.days.ago)
+
+      # create a group of one student from this section, for this assignment
+      @student = Student.new(section: @section)
+      @grouping = Grouping.new(assignment: @assignment)
+      @studentMembership = StudentMembership.new(user: @student, grouping: @grouping,
+                                                  membership_status:  StudentMembership::STATUSES[:inviter])
+
+    it 'will be able to collect the submissions from groups of this section' do
+      expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping)).to be true
+      #Could not collect submission of the group whereas due date for the group's section is past
+    end
+  end
+
+  context 'Assignment with a past due date' do
+
+    @assignment = Assignment.new(due_date: 2.days.ago)
+
+    it 'can collect submission files' do
+      expect(@assignment.due_date.eql?(@assignment.submission_rule.get_collection_time))
+
+      # due date is two days ago, so it can be collected
+      expect(@assignment.submission_rule.can_collect_all_now?).to be true
     end
   end
 end
