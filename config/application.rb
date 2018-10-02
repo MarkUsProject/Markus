@@ -25,6 +25,9 @@ module Markus
     # Add all config/locales subdirs
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
 
+    # Explicitly whitelist available locales for i18n-js
+    config.i18n.available_locales = [:en, :fr, :es, :pt]
+
     # Use Resque for background jobs
     config.active_job.queue_adapter = :resque
 

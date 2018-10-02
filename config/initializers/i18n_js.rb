@@ -1,4 +1,4 @@
 # Configuration for the 'i18n-js' gem
 
-# Explicit activation for use with webpacker
+# Generate public/javascripts/{i18n.js,translations.js}
 Rails.application.config.middleware.use I18n::JS::Middleware
