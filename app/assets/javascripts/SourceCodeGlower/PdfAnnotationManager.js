@@ -116,9 +116,11 @@
       this.selectionBox.$control.remove(); // Remove old control
     }
 
-    var $control = $("<div />").attr("id", "sel_box");
+    let $control = $("<div />").attr("id", "sel_box");
 
-    $page.append($control);
+    // append $control before the first annotation_holder but after the annotationLayer
+    // or else you will be prevented from deleting/editing old annotations
+    $control.insertBefore($page.find('.annotation_holder:first'))
 
     this.selectionBox = {
       page: pageNumber,
