@@ -9,7 +9,7 @@
         {
           assignment_id: <%= @assignment.id %>,
           grouping_id: <%= @grouping.id %>,
-          readOnly: <%= !@assignment.allow_web_submits.to_s %>
+          readOnly: <%= !@assignment.allow_web_submits %>
         });
 
       window.setInterval(() => {
