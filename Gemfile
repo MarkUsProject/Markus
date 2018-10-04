@@ -20,7 +20,6 @@ gem 'upsert'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
-gem 'jquery-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
