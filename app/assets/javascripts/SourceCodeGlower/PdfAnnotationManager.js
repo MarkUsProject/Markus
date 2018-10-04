@@ -120,7 +120,13 @@
 
     // append $control before the first annotation_holder but after the annotationLayer
     // or else you will be prevented from deleting/editing old annotations
-    $control.insertBefore($page.find('.annotation_holder:first'))
+    let $first_anno = $page.find('.annotation_holder:first');
+
+    if ($first_anno.length) {
+      $control.insertBefore($first_anno)
+    } else {
+      $page.append($control)
+    }
 
     this.selectionBox = {
       page: pageNumber,
