@@ -32,7 +32,7 @@
                       <%=
                         # assignment name
                         link_to t('results.review_for') + assignment.short_identifier,
-                                {controller: controller,
+                                {controller: 'assignment',
                                 action: 'peer_review',
                                 id: peer_review_aid},
                                 class: 'pr_assignment_list' %>

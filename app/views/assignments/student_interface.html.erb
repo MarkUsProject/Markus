@@ -103,14 +103,18 @@
                 <% end -%>
 
                 <%= link_to t(:join),
-                            { action: 'join_group',
-                              id: @assignment.id,
-                              grouping_id: grouping.id },
+                            join_group_assignment_group_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            # { controller: 'groups',
+                            #   action: 'join_group',
+                            #   id: @assignment.id,
+                            #   grouping_id: grouping.id },
                             { class: 'button' } %>
                 <%= link_to t(:refuse),
-                            { action: 'decline_invitation',
-                              id: @assignment.id,
-                              grouping_id: grouping.id },
+                            decline_invitation_assignment_group_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            # { controller: 'groups',
+                            #   action: 'decline_invitation',
+                            #   id: @assignment.id,
+                            #   grouping_id: grouping.id },
                             { class: 'button',
                               data: { confirm: t('student.decline_invitation') } } %>
                 </div>
@@ -131,20 +135,21 @@
             <% if @assignment.group_min == 1 %>
               <p>
                 <%= link_to t('student.work_alone'),
-                            { action: 'creategroup', id: @assignment.id, workalone: 'true' },
+                            creategroup_assignment_group_path(assignment_id: @assignment.id, workalone: true),
+                            # { controller: 'groups', action: 'creategroup', id: @assignment.id, workalone: 'true' },
                             { class: 'button', data: { confirm: t('student.confirm_work_alone'),
                                                        disable_with: t('student.please_wait') } } %>
               </p>
             <% end %>
             <p>
               <% if @student.has_pending_groupings_for?(@assignment.id)%>
-                <%= link_to t(:create),
-                            { action: 'creategroup', id: @assignment.id },
+                <%= link_to t(:create), creategroup_assignment_group_path(@assignment.id),
+                            # { controller: 'groups', action: 'creategroup', id: @assignment.id },
                             { class: 'button', data: { confirm: t('student.decline_invitation2'),
                                                        disable_with: t('student.please_wait') } } %>
               <% else %>
-                <%= link_to t(:create),
-                            { action: 'creategroup', id: @assignment.id },
+                <%= link_to t(:create), creategroup_assignment_group_path(@assignment.id),
+                            # { controller: 'groups', action: 'creategroup', id: @assignment.id },
                             { class: 'button', data: { disable_with: t('student.please_wait') } } %>
               <% end %>
             </p>
@@ -242,9 +247,10 @@
               <% if @grouping.inviter == @current_user &&
                     @grouping.accepted_students.size == 1 %>
                 <div class='group-button'>
-                  <%= button_to t('student.delete_group'),
-                                { action: 'deletegroup',
-                                  id: @assignment.id },
+                  <%= button_to t('student.delete_group'), deletegroup_assignment_group_path(@assignment.id),
+                                # { controller: 'groups',
+                                #   action: 'deletegroup',
+                                #   id: @assignment.id },
                                 method: :get,
                                 data: { confirm: t('student.confirm_delete_group') }
                                 %>
@@ -285,8 +291,7 @@
 <% # HTML for the invite dialog
    if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.invalid_override %>
   <aside class='dialog' id='invite_dialog'>
-    <%= form_tag({ action: 'invite_member',
-                   id: @assignment.id },
+    <%= form_tag(invite_member_assignment_group_path(@assignment.id),
                  { onsubmit: "document.getElementById('working').style.display = '';" }) do %>
       <h2><%= t('student.invite') %></h2>
       <p class='information'><%= t(:seperate_multiple_with_commas) %></p>
