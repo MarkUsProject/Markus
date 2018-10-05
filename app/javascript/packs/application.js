@@ -14,6 +14,10 @@ window.$ = window.jQuery = $;
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
+// marked (markdown support)
+import marked from 'marked';
+window.marked = marked;
+
 // rails-ujs
 import Rails from 'rails-ujs';
 Rails.start();
