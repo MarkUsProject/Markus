@@ -14,6 +14,9 @@ window.$ = window.jQuery = $;
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
+// mousetrap (keybindings)
+import 'mousetrap';
+
 // rails-ujs
 import Rails from 'rails-ujs';
 Rails.start();
