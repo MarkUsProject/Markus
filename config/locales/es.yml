@@ -598,7 +598,7 @@ es:
         no_marks_available:               "No existen notas disponibles."
         external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
         invalid_file_name:                "El nombre del archivo enviado no es válido"
-        missing_file:                     "No se pudo descargar %{file_name}: %{message}. Puede que el archivo no haya
+        missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
         no_files_available:               "No existen archivos disponibles"
         no_groupings_available:           "No existe ningún grupo disponible"
@@ -954,6 +954,9 @@ es:
       revision_used_for_test:             "<span class='prop_label'>Revisión usada:</span> %{revision}"
       information:                        "Información"
       run_tests:                          "Lanzar pruebas"
+      test_run_info:                      "UPDATE ME %{test_run_id} %{created_at}"
+      stop_test:                          "UPDATE ME"
+      stop_batch:                         "UPDATE ME"
       test_run:                           "Lanzar prueba"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las

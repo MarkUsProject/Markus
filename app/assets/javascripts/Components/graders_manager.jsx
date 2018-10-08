@@ -15,7 +15,8 @@ class GradersManager extends React.Component {
       assign_graders_to_criteria: false,
       loading: true,
       tableName: 'groups_table', // The first tab
-      skip_empty_submissions: false
+      skip_empty_submissions: false,
+      sections: {}
     }
   }
 
@@ -38,6 +39,7 @@ class GradersManager extends React.Component {
         criteria: res.criteria,
         assign_graders_to_criteria: res.assign_graders_to_criteria,
         loading: false,
+        sections: res.sections,
       });
     });
   };
@@ -62,7 +64,7 @@ class GradersManager extends React.Component {
       data: {
         global_actions: 'assign',
         current_table: this.state.tableName,
-        skip_empty_submissions: true,
+        skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
         graders: graders
@@ -90,7 +92,7 @@ class GradersManager extends React.Component {
       data: {
         global_actions: 'random_assign',
         current_table: this.state.tableName,
-        skip_empty_submissions: true,
+        skip_empty_submissions: this.state.skip_empty_submissions,
         groupings: groups,
         criteria: criteria,
         graders: graders
@@ -207,7 +209,9 @@ class GradersManager extends React.Component {
                   groups={this.state.groups} loading={this.state.loading}
                   unassignSingle={this.unassignSingle}
                   showSections={this.props.showSections}
+                  sections={this.state.sections}
                   numCriteria={this.state.criteria.length}
+                  showCoverage={this.state.assign_graders_to_criteria}
                 />
               </TabPanel>
               <TabPanel>
@@ -306,10 +310,31 @@ class RawGroupsTable extends React.Component {
         id: '_id'
       },
       {
-        show: this.props.showSections,
-        Header: I18n.t('activerecord.models.section.one'),
+        Header: I18n.t('activerecord.models.section', {count: 1}),
         accessor: 'section',
-        minWidth: 70
+        id: 'section',
+        show: this.props.showSections || false,
+        minWidth: 70,
+        Cell: ({ value }) => {
+          return value === null ? '' : this.props.sections[value]
+        },
+        filterMethod: (filter, row) => {
+          if (filter.value === 'all') {
+            return true;
+          } else {
+            return this.props.sections[row[filter.id]] === filter.value;
+          }
+        },
+        Filter: ({ filter, onChange }) =>
+          <select
+            onChange={event => onChange(event.target.value)}
+            style={{ width: '100%' }}
+            value={filter ? filter.value : 'all'}
+          >
+            <option value='all'>{I18n.t('all')}</option>
+            {Object.entries(this.props.sections).map(
+              kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
+          </select>,
       },
       {
         Header: I18n.t('activerecord.models.groups.one'),
@@ -341,7 +366,8 @@ class RawGroupsTable extends React.Component {
         Cell: ({value}) => <span>{value || 0}/{this.props.numCriteria}</span>,
         minWidth: 70,
         className: 'number',
-        filterable: false
+        filterable: false,
+        show: this.props.showCoverage,
       },
     ];
   };

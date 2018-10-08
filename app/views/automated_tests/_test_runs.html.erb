@@ -6,7 +6,8 @@
         submission_id: <%= @result&.submission_id || 'null' %>,
         assignment_id: <%= @assignment&.id || 'null' %>,
         grouping_id: <%= @grouping&.id || 'null' %>,
-        detailed: <%= @current_user.admin? || @current_user.ta? ||
+        instructor_run: <%= ran_by == 'instructor' %>,
+        instructor_view: <%= @current_user.admin? || @current_user.ta? ||
                           @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       });
     })
@@ -15,9 +16,6 @@
 <h2><%= t('automated_tests.test_results') %></h2>
 <div class="block_content">
   <div class="sub_block test_points">
-    <% if test_runs.empty? %>
-      <%= t('automated_tests.no_results') %>
-    <% end %>
     <%# This run tests button is only for instructors before releasing the marks %>
     <% if @current_user.admin? && local_assigns[:submission] && !submission.current_result.released_to_students %>
       <%= link_to t('automated_tests.run_tests'),
@@ -25,10 +23,10 @@
                   class: 'button run_tests right' %>
     <% end %>
   </div>
-  <% if @current_user.admin? && !test_runs.empty? %>
-    <%= render partial: 'automated_tests/test_run',
+  <%# if @current_user.admin? && !test_runs.empty? %>
+    <%#= render partial: 'automated_tests/test_run',
                collection: test_runs %>
-  <% end %>
+  <%# end %>
   <br/>
   <div id='test_script_result_table'></div>
 </div>

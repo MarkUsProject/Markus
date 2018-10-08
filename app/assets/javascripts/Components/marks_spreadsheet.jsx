@@ -10,6 +10,7 @@ class RawMarksSpreadsheet extends React.Component {
     this.state = {
       grade_columns: [],
       data: [],
+      sections: {},
       loading: true,
     };
   }
@@ -42,11 +43,12 @@ class RawMarksSpreadsheet extends React.Component {
       url: Routes.populate_grades_table_grade_entry_form_path(this.props.grade_entry_form_id),
       method: 'GET',
       dataType: 'json',
-    }).then(data => {
+    }).then(response => {
       this.props.resetSelection();
       this.setState({
-        data: data,
+        data: response.data,
         loading: false,
+        sections: response.sections
       });
     });
   };
@@ -70,12 +72,39 @@ class RawMarksSpreadsheet extends React.Component {
     }).then(this.fetchData);
   };
 
-  nameColumns = [
+  nameColumns = () => [
     {
       Header: I18n.t('activerecord.attributes.user.user_name'),
       accessor: 'user_name',
       id: 'user_name',
       minWidth: 120
+    },
+    {
+      Header: I18n.t('activerecord.models.section', {count: 1}),
+      accessor: 'section',
+      id: 'section',
+      show: this.props.show_sections || false,
+      minWidth: 70,
+      Cell: ({ value }) => {
+        return value === null ? '' : this.state.sections[value]
+      },
+      filterMethod: (filter, row) => {
+        if (filter.value === 'all') {
+          return true;
+        } else {
+          return this.state.sections[row[filter.id]] === filter.value;
+        }
+      },
+      Filter: ({ filter, onChange }) =>
+        <select
+          onChange={event => onChange(event.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          <option value='all'>{I18n.t('all')}</option>
+          {Object.entries(this.state.sections).map(
+            kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
+        </select>,
     },
     {
       Header: I18n.t('activerecord.attributes.user.first_name'),
@@ -96,7 +125,8 @@ class RawMarksSpreadsheet extends React.Component {
       grade_entry_column={row.column.id}
       student_id={row.original.id}
       default_value={row.value}
-      updateTotal={newTotal => this.updateTotal(row.index, newTotal)}
+      updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
+                    this.updateTotal(row.index, gradeEntryItemId, newGrade, newTotal)}
     />;
   };
 
@@ -130,15 +160,17 @@ class RawMarksSpreadsheet extends React.Component {
     minWidth: 50,
   };
 
-  updateTotal = (index, newTotal) => {
+  updateTotal = (index, gradeEntryItemId, newGrade, newTotal) => {
+    // state should never be modified directly, we copy the relevant data using the spread syntax and modify the copy
     let newData = [...this.state.data];
-    newData[index] = Object.assign({}, newData[index]);
-    newData[index].total_marks = newTotal;
+    newData[index] = {...newData[index]};
+    newData[index]['total_marks'] = newTotal;
+    newData[index][gradeEntryItemId] = newGrade;
     this.setState({data: newData});
   };
 
   getColumns = () => {
-    let columns = this.nameColumns.concat(this.state.grade_columns);
+    let columns = this.nameColumns().concat(this.state.grade_columns);
     if (this.props.show_total) {
       columns = columns.concat([this.totalColumn()]);
     }
@@ -241,19 +273,18 @@ class GradeEntryCell extends React.Component {
           });
 
         if (total === '') {
-          this.props.updateTotal(I18n.t('grade_entry_forms.grades.no_mark'));
+          total = I18n.t('grade_entry_forms.grades.no_mark');
         } else {
-          this.props.updateTotal(parseFloat(total));
+          total = parseFloat(total);
         }
+        this.props.updateTotal(this.props.grade_entry_column, updated_grade, total);
       });
     }, 300);
   };
 
   render() {
     return (
-      <input type="number" size={4}
-             value={this.state.value}
-             min={0}
+      <input id={this.props.grade_id} type="number" size={4} value={this.state.value} min={0}
              onChange={this.handleChange} />
     );
   }

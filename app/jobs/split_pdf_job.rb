@@ -14,10 +14,10 @@ class SplitPDFJob < ApplicationJob
 
   before_enqueue do |job|
     status.update(job_class: self.class)
-    status.update(exam_name: job.arguments[0].name + ' (' + job.arguments[2] + ')')
+    status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, path, original_filename=nil, current_user=nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_user = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed
@@ -28,23 +28,10 @@ class SplitPDFJob < ApplicationJob
       FileUtils.mkdir_p error_dir unless Dir.exists? error_dir
       FileUtils.mkdir_p raw_dir unless Dir.exists? raw_dir
 
-      basename = File.basename path, '.pdf'
-      filename = original_filename.nil? ? basename : File.basename(original_filename)
-      pdf = CombinePDF.load path
+      filename = split_pdf_log.filename
+
+      pdf = CombinePDF.load File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
       num_pages = pdf.pages.length
-
-      # creating an instance of split_pdf_log
-      split_pdf_log = SplitPdfLog.create(
-        exam_template: exam_template,
-        filename: filename,
-        original_num_pages: num_pages,
-        num_groups_in_complete: 0,
-        num_groups_in_incomplete: 0,
-        num_pages_qr_scan_error: 0,
-        user: current_user
-      )
-
-      FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
       progress.total = num_pages
       partial_exams = Hash.new do |hash, key|
         hash[key] = []
@@ -71,8 +58,7 @@ class SplitPDFJob < ApplicationJob
           top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
         end
         qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
-        blob = File.open(File.join(raw_dir, "#{split_page.id}.jpg"), 'rb').read
-        left_qr_code_string = ZXing.decode blob
+        left_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
         left_m = qrcode_regex.match left_qr_code_string
         unless left_m.nil?
           m = left_m
@@ -81,7 +67,7 @@ class SplitPDFJob < ApplicationJob
             # Snip out the top right corner of PDF that contains the QR code
             top_right_qr_img = img.crop 500, 30, img.columns / 3.8, img.rows / 5.0
             top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
-            right_qr_code_string = ZXing.decode top_right_qr_img.to_blob
+            right_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
             right_m = qrcode_regex.match right_qr_code_string
             m = right_m
           end
@@ -252,12 +238,6 @@ class SplitPDFJob < ApplicationJob
         repo.commit(txn)
       end
     end
-    groupings.each do |grouping|
-      grouping.group.access_repo do |repo|
-        SubmissionsJob.perform_later([grouping], revision_identifier: repo.get_latest_revision.revision_identifier)
-      end
-    end
-
     num_complete
   end
 

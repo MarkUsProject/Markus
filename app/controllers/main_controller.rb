@@ -196,15 +196,10 @@ class MainController < ApplicationController
     real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
         current_user
     if MarkusConfigurator.markus_config_remote_user_auth
-      validation_result = validate_user(
-                             params[:effective_user_login],
-                             real_user.user_name,
-                             login: false)
+      validation_result = validate_user(params[:effective_user_login], real_user.user_name, nil, login: false)
     else
-      validation_result = validate_user(
-                             params[:effective_user_login],
-                             real_user.user_name,
-                             params[:admin_password])
+      validation_result = validate_user(params[:effective_user_login], real_user.user_name, params[:admin_password],
+                                        login: true)
     end
 
     unless validation_result[:error].nil?

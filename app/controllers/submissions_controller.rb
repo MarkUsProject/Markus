@@ -100,7 +100,7 @@ class SubmissionsController < ApplicationController
     end
     revisions_history = assignment_revisions.map do |revision|
       {
-        id: revision.revision_identifier,
+        id: revision.revision_identifier.to_s,
         id_ui: revision.revision_identifier_ui,
         timestamp: l(revision.timestamp),
         server_timestamp: l(revision.server_timestamp)
@@ -159,7 +159,7 @@ class SubmissionsController < ApplicationController
     end
     entries = []
     grouping.group.access_repo do |repo|
-      if current_user.student? || params[:revision_identifier].nil?
+      if current_user.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
         revision = repo.get_revision(params[:revision_identifier])
@@ -480,18 +480,15 @@ class SubmissionsController < ApplicationController
     elsif file.is_pdf?
       render json: { type: 'pdf' }
     else
-      path = params[:path] || '/'
       grouping.group.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
-
-        begin
-          raw_file = revision.files_at_path(File.join(assignment.repository_folder,
-                                                  path))[file.filename]
+        raw_file = revision.files_at_path(file.path)[file.filename]
+        if raw_file.nil?
+          file_contents = I18n.t('student.submission.missing_file',
+                                 file_name: file.filename)
+        else
           file_contents = repo.download_as_string(raw_file)
-        rescue Exception => e
-          render plain: I18n.t('student.submission.missing_file',
-                              file_name: file.filename, message: e.message)
-          next  # exit the block
+          file_contents.force_encoding('UTF-8')
         end
 
         if SubmissionFile.is_binary?(file_contents)

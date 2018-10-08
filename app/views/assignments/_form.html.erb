@@ -308,7 +308,7 @@
           </tr>
           </thead>
           <tbody>
-            <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' %>
+            <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' && !rule.object.periods.empty? %>
                 <%= rule.fields_for :periods do |period_form| %>
                     <%
                       # The below conditional is meant to filter out periods that do not match

@@ -85,7 +85,10 @@ class AnnotationTable extends React.Component {
         this.props.result_id),
       dataType: 'json',
     }).then(res => {
-      this.setState({data: res});
+      this.setState(
+        {data: res},
+        () => MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table'])
+      );
     });
   }
 

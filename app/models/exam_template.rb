@@ -103,7 +103,27 @@ class ExamTemplate < ApplicationRecord
 
   # Split up PDF file based on this exam template.
   def split_pdf(path, original_filename=nil, current_user=nil)
-    SplitPDFJob.perform_later(self, path, original_filename, current_user)
+    basename = File.basename path, '.pdf'
+    filename = original_filename.nil? ? basename : File.basename(original_filename)
+    pdf = CombinePDF.load path
+    num_pages = pdf.pages.length
+
+    # creating an instance of split_pdf_log
+    split_pdf_log = SplitPdfLog.create(
+      exam_template: self,
+      filename: filename,
+      original_num_pages: num_pages,
+      num_groups_in_complete: 0,
+      num_groups_in_incomplete: 0,
+      num_pages_qr_scan_error: 0,
+      user: current_user
+    )
+
+    raw_dir = File.join(self.base_path, 'raw')
+    FileUtils.mkdir_p raw_dir
+    FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
+
+    SplitPDFJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
@@ -170,8 +190,13 @@ class ExamTemplate < ApplicationRecord
                 submission_file << pdf.pages[0]
               end
             end
-            txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
-                           'application/pdf', revision.revision_identifier)
+            target_path = File.join(assignment_folder, "#{template_division.label}.pdf")
+            if revision.path_exists? target_path
+              txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+                          'application/pdf', revision.revision_identifier)
+            else
+              txn.add(target_path, submission_file.to_pdf)
+            end
           end
         end
 
@@ -182,8 +207,13 @@ class ExamTemplate < ApplicationRecord
             cover_pdf = CombinePDF.new
             pdf = CombinePDF.load path
             cover_pdf << pdf.pages[0]
-            txn.replace(File.join(assignment_folder, "COVER.pdf"), cover_pdf.to_pdf,
-                        'application/pdf', revision.revision_identifier)
+            target_path = File.join(assignment_folder, 'COVER.pdf')
+            if revision.path_exists? target_path
+              txn.replace(target_path, cover_pdf.to_pdf,
+                          'application/pdf', revision.revision_identifier)
+            else
+              txn.add(target_path, cover_pdf.to_pdf)
+            end
           end
         end
 
@@ -201,8 +231,13 @@ class ExamTemplate < ApplicationRecord
               extra_pdf << pdf.pages[0]
             end
           end
-          txn.replace(File.join(assignment_folder, "EXTRA.pdf"), extra_pdf.to_pdf,
-                      'application/pdf', revision.revision_identifier)
+          target_path = File.join(assignment_folder, 'EXTRA.pdf')
+          if revision.path_exists? target_path
+            txn.replace(target_path, extra_pdf.to_pdf,
+                        'application/pdf', revision.revision_identifier)
+          else
+            txn.add(target_path, extra_pdf.to_pdf)
+          end
         end
 
         repo.commit(txn)

@@ -5,20 +5,46 @@ class TestRun < ApplicationRecord
   belongs_to :grouping
   belongs_to :user
 
-  validates_presence_of :revision_identifier
   validates_numericality_of :time_to_service_estimate, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true
   validates_numericality_of :time_to_service, greater_than_or_equal_to: -1, only_integer: true, allow_nil: true
 
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
-    cancelled: 'cancelled'
+    cancelled: 'cancelled',
+    complete_with_errors: 'complete_with_errors'
   }.freeze
 
   def status
-    return STATUSES[:complete] unless test_script_results.empty?
+    if test_script_results.exists?
+      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').count&.positive?
+        return STATUSES[:complete_with_errors]
+      end
+      return STATUSES[:complete]
+    end
     return STATUSES[:cancelled] if time_to_service&.negative?
     STATUSES[:in_progress]
+  end
+
+  def self.statuses(test_run_ids)
+    status_hash = Hash.new
+    TestRun.left_outer_joins(test_script_results: :test_results)
+           .where(id: test_run_ids)
+           .pluck(:id, 'test_script_results.id', :time_to_service, 'test_results.completion_status')
+           .map do |id, test_script_results_id, time_to_service, completion_status|
+      if test_script_results_id
+        if completion_status == 'error' || status_hash[id] == STATUSES[:complete_with_errors]
+          status_hash[id] = STATUSES[:complete_with_errors]
+        else
+          status_hash[id] = STATUSES[:complete]
+        end
+      elsif time_to_service&.negative?
+        status_hash[id] = STATUSES[:cancelled]
+      else
+        status_hash[id] = STATUSES[:in_progress]
+      end
+    end
+    status_hash
   end
 
   STATUSES.each do |key, value|

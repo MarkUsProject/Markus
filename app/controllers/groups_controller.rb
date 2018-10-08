@@ -178,7 +178,7 @@ class GroupsController < ApplicationController
                                  params[:names].downcase, params[:names].downcase).first
       end
       StudentMembership
-        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:accepted])
+        .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
     end
     next_grouping
   end

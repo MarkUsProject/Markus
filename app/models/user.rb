@@ -6,7 +6,7 @@ require 'base64' # required for {set,reset}_api_token
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
   before_validation :strip_name
-  before_validation :nillify_empty_email
+  before_validation :nillify_empty_email_and_id_number
 
   # Group relationships
   has_many :memberships, dependent: :delete_all
@@ -200,7 +200,9 @@ class User < ApplicationRecord
     begin
       imported = nil
       User.transaction do
-        imported = user_class.import user_columns, users
+        imported = user_class.import user_columns, users, on_duplicate_key_update: {
+          conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
+        }
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
@@ -309,9 +311,13 @@ class User < ApplicationRecord
     if self.email
       self.email = self.email.strip
     end
+    if self.id_number
+      self.id_number = self.id_number.strip
+    end
   end
 
-  def nillify_empty_email
+  def nillify_empty_email_and_id_number
     self.email = nil if self.email.blank?
+    self.id_number = nil if self.id_number.blank?
   end
 end

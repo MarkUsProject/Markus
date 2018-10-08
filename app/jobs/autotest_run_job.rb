@@ -7,9 +7,11 @@ class AutotestRunJob < ApplicationJob
   def export_group_repo(test_run)
     grouping = test_run.grouping
     group = grouping.group
+    assignment = grouping.assignment
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    assignment_dir = File.join(repo_dir, assignment.repository_folder)
     if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
-      if File.exist?(repo_dir) # can exist from other assignments, we don't want to store it per-assignment
+      if File.exist?(assignment_dir) # can exist from other assignments
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
         if !prev_test_run.nil? &&
@@ -18,7 +20,7 @@ class AutotestRunJob < ApplicationJob
           return
         end
         # ..otherwise delete grouping's previous files
-        FileUtils.rm_rf(repo_dir)
+        FileUtils.rm_rf(assignment_dir)
       end
     else
       # create the automated test repository
@@ -28,10 +30,10 @@ class AutotestRunJob < ApplicationJob
     submission = test_run.submission
     group.access_repo do |repo|
       if submission.nil?
+        # TODO: Review this with the assignment_dir change
+        FileUtils.rm_rf(repo_dir)
         repo.export(repo_dir)
       else
-        FileUtils.mkdir(repo_dir)
-        assignment = grouping.assignment
         unless assignment.only_required_files.blank?
           required_files = assignment.assignment_files.map(&:filename).to_set
         end

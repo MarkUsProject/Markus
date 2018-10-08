@@ -1,6 +1,6 @@
 <div class='test-run'>
   <% if test_run.in_progress? %>
-    <%= t('automated_tests.test_run_info', test_run_id: test_run.id.to_s, created_at: test_run.created_at.to_s) %>
+    <%= t('automated_tests.test_run_info', test_run_id: test_run.id.to_s, created_at: I18n.l(test_run.created_at).to_s) %>
 
     <%= link_to t('automated_tests.stop_test'),
                 stop_test_assignment_submission_result_path + "?test_run_id=#{test_run.id}",

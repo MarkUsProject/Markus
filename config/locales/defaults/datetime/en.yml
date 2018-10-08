@@ -8,7 +8,7 @@ en:
 
   time:
     formats:
-      default: "%A, %B %d, %Y, %l:%M:%S %p"
+      default: "%A, %B %d, %Y, %I:%M:%S %p"
 
     format_string:
       js:          "YYYY-MM-DD h:mm A"
