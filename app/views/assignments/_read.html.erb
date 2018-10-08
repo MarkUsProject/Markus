@@ -24,7 +24,9 @@
     <div class ='sub_block'>
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
-        <span class='prop_label'><%= raw(t('deadline_grace_tokens')) %></span>
+        <span class='prop_label'>
+          <%= t('grace_period_submission_rules.deadline_html') %>
+        </span>
         <%# Relative remaining grace credits for the grouping %>
         <% if !@grouping.nil? %>
           <% remaining_credits = @grouping.available_grace_credits %>
@@ -36,21 +38,17 @@
           <% end %>
         <% end %>
       <% else %>
-        <span class='prop_label'><%= raw(t('deadline_max_penalty')) %></span>
+        <span class='prop_label'>
+          <%= t('penalty_period_submission_rules.deadline_html') %>
+        </span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
       <% end %>
       <%= I18n.l(@assignment.due_date + acc.hours) %>
     </div>
 
     <div class='sub_block'>
-      <span class='prop_label'><%= t('lateness_penalty') %></span>
-      <% if @penalty.type == "GracePeriodSubmissionRule" %>
-        <%= t('grace_period') %>
-      <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
-        <%= t('penalty_decay') %>
-      <% elsif @penalty.type == "PenaltyPeriodSubmissionRule" %>
-        <%= t('penalty_period') %>
-      <% end %>
+      <span class='prop_label'><%= SubmissionRule.model_name.human.capitalize %></span>
+      <%= @penalty.class.human_attribute_name(:description) %>
     </div>
 
     <%#Cannot assign Grace Period without first assigning a group.%>
@@ -58,22 +56,19 @@
       <div class='sub_block'>
         <span class='prop_label'><%= t('additional_information') %></span>
         <% if @penalty.type == "GracePeriodSubmissionRule" %>
-          <% if !@grouping.nil? %>
-              <%= raw(t('student.group_credits',
-                          available_grace_credits:
-                          @grouping.available_grace_credits)) %>
+          <% unless @grouping.nil? %>
+            <%= t('grace_period_submission_rules.group_credits_html',
+                  available_grace_credits: @grouping.available_grace_credits) %>
           <% end %>
         <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
           <br><ul>
           <% @enum_penalty.each do |p| %>
             <% if p == @enum_penalty.first %>
-              <li><%= t('penalty_decay_message_first',
-              deduction: p.deduction, interval: p.interval,
-              hours: p.hours) %> </li>
+              <li><%= t('penalty_decay_period_submission_rules.details_message_first',
+                        deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% else %>
-              <li><%= t('penalty_decay_message_other',
-              deduction: p.deduction, interval: p.interval,
-              hours: p.hours) %> </li>
+              <li><%= t('penalty_decay_period_submission_rules.details_message_first',
+                        deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% end %>
           <% end %>
           </ul>
@@ -83,8 +78,8 @@
           <% @enum_penalty.each do |p| %>
             <% deduction += p.deduction %>
             <% hours += p.hours %>
-            <li><%= t('penalty_period_message', hours: hours,
-            deduction: deduction) %> </li>
+            <li><%= t('penalty_period_submission_rules.details_message',
+                      hours: hours, deduction: deduction) %> </li>
           <% end %>
           </ul>
         <% end %>

@@ -130,7 +130,8 @@ class SubmissionsController < ApplicationController
 
     # generate flash messages
     if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
-      flash_message(:warning, @assignment.submission_rule.after_collection_message)
+      flash_message(:warning,
+                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end
@@ -439,7 +440,8 @@ class SubmissionsController < ApplicationController
           end
           # Are we past collection time?
           if current_user.student? && @assignment.submission_rule.can_collect_now?(current_user.section)
-            flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
+            flash_message(:warning,
+                          @assignment.submission_rule.class.human_attribute_name(:commit_after_collection_message))
           end
           # can't use redirect_to here. See comment of this action for details.
           set_filebrowser_vars(@grouping)

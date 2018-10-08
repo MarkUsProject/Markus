@@ -699,7 +699,7 @@ class Grouping < ApplicationRecord
       if result.get_total_extra_percentage_as_points == 0
         total_extra
       else
-        "#{total_extra} (#{I18n.t('lateness_penalty')} : #{result.get_total_extra_percentage}%)"
+        "#{total_extra} (#{SubmissionRule.model_name.human.capitalize} : #{result.get_total_extra_percentage}%)"
       end
     else
       '-'

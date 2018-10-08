@@ -1,0 +1,36 @@
+en:
+  submission_rules:
+    add_period: "Add late period"
+    after: "after"
+    deduct: "deduct"
+    every: "every"
+    for: "for"
+    from: "from"
+    hours: "hour(s)"
+    to: "to"
+
+    errors:
+      not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
+
+  grace_period_submission_rules:
+    confirm_remove_deduction: "Are you sure you want to delete this grace credit deduction?"
+    credit:
+      one: "%{count} credit"
+      other: "%{count} credits"
+    deadline_html: "Deadline using all <br> remaining grace <br> credits"
+    group_credits_html: "Your group has <strong>%{available_grace_credits}</strong> available grace credit(s)."
+    overtime_message_with_credits_left: "The due date for this assignment has passed. However, you have %{grace_credits_remaining} grace credit(s) left. If you submit files during this period, you will be spending %{grace_credits_to_use} of those credits."
+    overtime_message_without_credits_left: "The due date for this assignment has passed, and you do not have enough grace credits to submit new work."
+
+  penalty_decay_period_submission_rules:
+    deadline_html: "Deadline including <br> maximum late <br> penalty"
+    details_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
+    details_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
+    extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction."
+    overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
+
+  penalty_period_submission_rules:
+    deadline_html: "Deadline including <br> maximum late <br> penalty"
+    details_message: "Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
+    extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction."
+    overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."

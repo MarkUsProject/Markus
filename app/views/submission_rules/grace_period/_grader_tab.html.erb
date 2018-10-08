@@ -1,7 +1,7 @@
 <%
   user_deductions = grouping.grace_period_deductions.includes(membership: :user).group_by {|d| d.membership.user}
 %>
-<h3><%=I18n.t('submission_rules.grace_period_submission_rule.deductions')%></h3>
+<h3><%= GracePeriodDeduction.model_name.human.pluralize %></h3>
 <% user_deductions.each do |u| %>
 <table>
   <thead>
@@ -11,15 +11,15 @@
   </thead>
   <tr>
     <td>
-      <%= u[1].first.deduction %> credits
+      <%= t('grace_period_submission_rules.credit', count: u[1].first.deduction) %>
     </td>
     <td>
       <% unless @current_user.student? %>
       <%= button_to(
-            t('submission_rules.grace_period_submission_rule.remove_deduction'),
+            t('remove'),
             delete_grace_period_deduction_assignment_submission_result_path(
                 id: grouping.id, deduction_id: u[1].first.id),
-            confirm: t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
+            confirm: t('grace_period_submission_rules.confirm_remove_deduction'),
             class: "button_to_delete_deduction",
             remote: true) %>
       <% end %>

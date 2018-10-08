@@ -14,10 +14,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     rule.assignment = Assignment.make
 
     assert_raise NotImplementedError do
-      rule.commit_after_collection_message
-    end
-
-    assert_raise NotImplementedError do
       rule.overtime_message
     end
 
@@ -27,10 +23,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
     assert_raise NotImplementedError do
       rule.apply_submission_rule(nil)
-    end
-
-    assert_raise NotImplementedError do
-      rule.description_of_rule
     end
   end
 

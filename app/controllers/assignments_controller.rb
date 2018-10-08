@@ -287,8 +287,8 @@ class AssignmentsController < ApplicationController
       flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
     rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, t('assignment.error', message: e.message))
-      flash_message(:error, t('assignment.error', message: e.message))
+      @assignment.errors.add(:base, e.message)
+      flash_message(:error, e.message)
       render :edit, id: @assignment.id
     rescue
       render :edit, id: @assignment.id
