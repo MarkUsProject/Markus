@@ -6,6 +6,8 @@
 //= require syntaxhighlighter
 // Markdown support with marked.js
 //= require marked
+// Keybindings
+//= require mousetrap.min
 
 // Source code highlighting
 //= require SourceCodeGlower/AnnotationText
