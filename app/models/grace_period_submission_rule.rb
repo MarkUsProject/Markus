@@ -1,16 +1,5 @@
 class GracePeriodSubmissionRule < SubmissionRule
 
-  # When Students commit code after the collection time, MarkUs should warn
-  # the Students with a message saying that the due date has passed, and the
-  # work they're submitting will probably not be graded
-  def commit_after_collection_message
-    I18n.t 'submission_rules.grace_period_submission_rule.commit_after_collection_message'
-  end
-
-  def after_collection_message
-    I18n.t 'submission_rules.grace_period_submission_rule.after_collection_message'
-  end
-
   # This message will be displayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
@@ -23,11 +12,12 @@ class GracePeriodSubmissionRule < SubmissionRule
     overtime_hours = calculate_overtime_hours_from(Time.zone.now, section)
     grace_credits_to_use = calculate_deduction_amount(overtime_hours)
     if grace_credits_remaining < grace_credits_to_use
-      # This grouping is out of grace credits.
-      I18n.t 'submission_rules.grace_period_submission_rule.overtime_message_without_days_left'
+      # This grouping doesn't have enough grace credits.
+      I18n.t 'grace_period_submission_rules.overtime_message_without_credits_left'
     else
-      # This grouping still has some grace credits to spend.
-      I18n.t 'submission_rules.grace_period_submission_rule.overtime_message_with_days_left', grace_credits_remaining: grace_credits_remaining, grace_credits_to_use: grace_credits_to_use
+      # This grouping has enough grace credits to spend.
+      I18n.t 'grace_period_submission_rules.overtime_message_with_credits_left',
+             grace_credits_remaining: grace_credits_remaining, grace_credits_to_use: grace_credits_to_use
     end
   end
 
@@ -88,10 +78,6 @@ class GracePeriodSubmissionRule < SubmissionRule
     end
 
     submission
-  end
-
-  def description_of_rule
-    I18n.t 'submission_rules.grace_period_submission_rule.description'
   end
 
   def grader_tab_partial
