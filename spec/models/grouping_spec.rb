@@ -471,14 +471,12 @@ describe Grouping do
     context 'of four members' do
       let(:membership) { create(:accepted_student_membership, grouping: @grouping) }
       let(:inviter_membership) { create(:inviter_student_membership, grouping: @grouping) }
-      let(:pending_membership) { create(:student_membership,
-                                        grouping: @grouping,
-                                        membership_status: StudentMembership::STATUSES[:pending])
-      }
-      let(:reject_membership) { create(:student_membership,
-                                       grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:rejected])
-      }
+      let(:pending_membership) do
+        create(:student_membership, grouping: @grouping, membership_status: StudentMembership::STATUSES[:pending])
+      end
+      let(:reject_membership) do
+        create(:student_membership, grouping: @grouping, membership_status: StudentMembership::STATUSES[:rejected])
+      end
       let(:inviter) { inviter_membership.user }
 
       describe '#membership_status' do
