@@ -262,13 +262,11 @@ describe GracePeriodSubmissionRule do
             student.save
           end
 
-          # FAILING: after applying the submission rule, student_membership.user.remaining_grace_credits = 3
-          # (previous deductions were removed?)
-          it "deducts 1 grace credit (instead of 2) because there aren't enough of them" do
+          it 'deducts 0 grace credits instead of 2 because there is only 1 remaining' do
             # There should now only be 1 grace credit available for this grouping
             expect(@grouping.available_grace_credits).to eq(1)
 
-            # Now we're past the due date, but before the collection date, within the second grace period.
+            # Now we're past the due date, but before the collection date, within the first grace period.
             # Because one of the students in the Grouping only has one grace credit,
             # OvertimeFile2.java shouldn't be accepted into grading.
             submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00PM', 'OvertimeFile2.java',
@@ -287,9 +285,10 @@ describe GracePeriodSubmissionRule do
               submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
               @rule.apply_submission_rule(submission)
 
-              # Assert that each accepted member of this grouping got a GracePeriodDeduction
+              # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
               @grouping.accepted_student_memberships.each do |student_membership|
-                expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id] - 1)
+                student_membership.user.grace_period_deductions.reload
+                expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id])
               end
             end
           end
