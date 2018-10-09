@@ -3,21 +3,21 @@
 class GroupsController < ApplicationController
   # Administrator
   before_action      :authorize_only_for_admin,
-                     except: [:deletegroup,
+                     except: [:create,
+                              :destroy,
                               :delete_rejected,
                               :disinvite_member,
                               :invite_member,
-                              :creategroup,
                               :join_group,
                               :decline_invitation,
                               ]
 
   before_action      :authorize_for_student,
-                     only: [:deletegroup,
+                     only: [:create,
+                            :destroy,
                             :delete_rejected,
                             :disinvite_member,
                             :invite_member,
-                            :creategroup,
                             :join_group,
                             :decline_invitation]
 
@@ -349,8 +349,8 @@ class GroupsController < ApplicationController
     redirect_to student_interface_assignment_path(params[:id])
   end
 
-  def creategroup
-    @assignment = Assignment.find(params[:id])
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
     @student = @current_user
     m_logger = MarkusLogger.instance
     begin
@@ -385,8 +385,8 @@ class GroupsController < ApplicationController
     redirect_to student_interface_assignment_path(@assignment.id)
   end
 
-  def deletegroup
-    @assignment = Assignment.find(params[:id])
+  def destroy
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = @current_user.accepted_grouping_for(@assignment.id)
     m_logger = MarkusLogger.instance
     begin

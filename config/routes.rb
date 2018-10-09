@@ -114,11 +114,8 @@ Rails.application.routes.draw do
 
         member do
           post 'rename_group'
-          # get 'student_interface'
           post 'invite_member'
-          get 'creategroup'
           get 'join_group'
-          get 'deletegroup'
           get 'decline_invitation'
           post 'disinvite_member'
         end
