@@ -110,7 +110,7 @@ class TestScriptResultTable extends React.Component {
               }
             ];
             const rowData = row.original['test_data'];
-            const extraInfo = row.original['test_data'][0]['extra_info'] || '';
+            const extraInfo = row.original['test_data'][0]['test_script_results.extra_info'] || '';
             if ('test_results.actual_output' in rowData[0]) {
               columns.splice(1, 0, {
                 id: 'actual_output',
