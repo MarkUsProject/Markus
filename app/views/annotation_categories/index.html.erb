@@ -2,6 +2,7 @@
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
+  <%= render partial: 'layouts/mathjax_config', formats: [:js] %>
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 <% end %>

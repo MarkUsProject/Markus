@@ -104,8 +104,6 @@ es:
     shortened_date:            "Fecha"
     due_date:                  "Último plazo de entrega"
     remove_date:               "Remover Fecha"
-    deadline_grace_tokens:     "Fecha límite utilizando todos los <br> aplazamientos de gracia restantes <br>"
-    deadline_max_penalty:      "Fecha límite incluyendo la <br> máxima penalidad por demora <br>"
     create_new_scanned_assignment:  "Añadir proyecto escaneado"
     manage_course_work:        "Administrar trabajos del curso"
     repository_folder:         "Carpeta del repositorio"
@@ -119,12 +117,9 @@ es:
         short_identifier:          "Identificador corto"
         update_success:            "El proyecto ha sido actualizado exitosamente"
         create_success:            "El proyecto ha sido creado exitosamente"
-        error:                     "No se pudo asignar la Regla de Entrega: %{message}"
-        not_valid_submission_rule: "%{type} no es una Regla de Entrega válida"
         rules:                     "Reglas del Proyecto"
         edit:                      "Editar Proyecto: "
         required_files:            "Archivos requeridos"
-        submission_rules:          "Reglas de Entrega"
         required_files_read:       "Archivos requeridos"
         no_required_files_read:    "No hay archivos requeridos para este proyecto."
         required_files_by_student: "Añadir nombre(s) de (el/los) archivo(s) que los estudiantes deberán presentar:"
@@ -155,9 +150,6 @@ es:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
                 other:              "UPDATE ME '%{group}': %{error}"
-        submission:
-            rules:         "Reglas de Entrega"
-            penalty_rules: "Escoga las reglas de penalidad, a ser aplicadas para entregas tardías:"
         remark:
             rules:    "Reglas para solicitudes de recalificación"
             allow:    "Permitir solicitudes de recalificación"
@@ -372,7 +364,6 @@ es:
         delete_tag:                "Elimnar Etiquetas..."
         create_new_tag:            "Crear una Nueva Etiqueta:"
         delete_tags:               "Eliminar Etiquetas:"
-        submission_rule:           "Regla de la Entrega"
         expand_all:                "Expandir todos"
         collapse_all:              "Reducir todos"
         expand_unmarked:           "Expandir no calificados"
@@ -577,7 +568,6 @@ es:
       students_can_form_groups:           " Los estudiantes pueden formar grupos. "
       invalid_override:                   "El instructor forma los grupos."
       student_work_alone:                 "Los estudiantes trabajan solos"
-      group_credits:                      "Su grupo tiene <strong>%{available_grace_credits}</strong> créditos de gracia disponibles"
       invite:                             "Invitar"
       please_wait:                        " Por favor espere..."
       work_alone:                         "Trabajar solo"
@@ -608,7 +598,7 @@ es:
         no_marks_available:               "No existen notas disponibles."
         external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
         invalid_file_name:                "El nombre del archivo enviado no es válido"
-        missing_file:                     "No se pudo descargar %{file_name}: %{message}. Puede que el archivo no haya
+        missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
         no_files_available:               "No existen archivos disponibles"
         no_groupings_available:           "No existe ningún grupo disponible"
@@ -777,107 +767,6 @@ es:
         in_use:      "Etiquetas en uso"
         not_in_use:  "Etiquetas no usadas"
 
-
-    submission_rules:
-      hours:                             "hora(s)"
-      from:                              "desde"
-      to:                                "a"
-
-      submission_rule:
-        description:                     "Esta es la descripción de la clase SubmissionRule. Ya que sólo subclases
-                                          de esta clase deberían estar vinculadas con un proyecto, este mensaje no
-                                          debería aparecer nunca."
-        commit_after_collection_message: "Este mensaje se muestra cuando estudiantes entregan código después de la fecha
-                                          de recolección. Ya que SubmissionRule se dividirá en subclases, y no es
-                                          referenciada directamente por un proyecto, este mensaje en particular nunca
-                                          debería ser mostrado a los estudiantes."
-        overtime_message:                "Este mensaje es mostrado a los estudiantes cuando estos ven su administrador
-                                          de archivos después de que el último plazo para este proyecto ha pasado."
-
-      no_late_submission_rule:
-        name:                      "No existe Regla por Entrega Tardía"
-        description:               "No se aplicaran penalidades a proyectos entregados tardíamente"
-        commit_after_late_message: "El último plazo para este proyecto ha pasado. Sus cambios han sido guardados, pero
-                                    no serán incluídos en el proceso de calificación"
-        no_late_message:           "El último plazo para este proyecto ha pasado. Sólo lo que se encontraba en su
-                                    carpeta antes de la fecha límite será calificado."
-        form_description:          "No se aceptan entregas tardías"
-
-      grace_period_submission_rule:
-        name:                               "Regla de Entrega para el Período de Aplazamiento de Gracia"
-        short_name:                         "Período de Aplazamiento de Gracia"
-        deductions:                         "Deducciones del Período de Aplazamiento de Gracia"
-        remove_deduction:                   "Remover Deducción"
-        credits:                            "Créditos"
-        confirm_remove_deduction:           "¿Está seguro/a de querer eliminar esta deducción del período de
-                                              aplazamiento de gracia?"
-        description:                        "Usted puede realizar su entrega sólo hasta %{grace_day_limit} día(s)
-                                             después del último plazo, y este mismo número será substraído de los
-                                             días de gracia que se le han otorgado"
-        after_collection_message:           "El número máximo de períodos de aplazamiento de gracia ha pasado para este
-                                             proyecto. Cualquier cambio realizado será guardado pero no calificado."
-        commit_after_collection_message:    "El último plazo de entrega para este proyecto, más el número máximo de
-                                             días de gracia permitidos ha pasado. Sus cambios han sido guardados, pero
-                                             no serán incluídos en el proceso de calificación."
-        overtime_message_with_days_left:    "El último plazo para este proyecto ha pasado. Sin embargo, usted tiene
-                                             %{grace_credits_remaining} crédito(s) de aplazamiento de gracia restantes.
-                                             Si usted envia más archivos o realiza cualquier cambio durante este período,
-                                             usted utilizará %{grace_credits_to_use} de estos créditos."
-        overtime_message_without_days_left: "El último plazo para este proyecto ha pasado, y usted no podrá usar más
-                                             días de aplazamiento de gracia."
-        form_description:                   "Deducir automáticamente los créditos de aplazamiento de gracia"
-        add_grace_period:                   "Añadir un Período de Aplazamiento de Gracia"
-        after:                              "Después"
-        alert:                              "Usted debe seleccionar la Regla de Entrega para el Período de Aplazamiento
-                                             de Gracia para poder añadir el mismo."
-
-      penalty_decay_period_submission_rule:
-        name:                            "Regla de Entrega para el período de penalidad"
-        short_name:                      "Penalidad"
-        description:                     "Usted puede enviar hasta %{penalty_decay_period_limit} hora(s) después del
-                                          último plazo, pero el porcentaje respectivo será deducido de su resultado final"
-        after_collection_message:        "El número máximo de horas de penalidad han pasado para este proyecto.
-                                          Cualquier cambio realizado será guardado, pero no calificado."
-        commit_after_collection_message: "El último plazo para este proyecto, más el número máximo de horas de penalidad
-                                          permitidas han pasado. Sus cambios han sido guardados, pero no serán incluídos
-                                          en el proceso de calificación."
-        overtime_message:                "El último plazo para este proyecto ha pasado y usted está en un período de
-                                          penalidad. Usted puede realizar cambios a su entrega, pero
-                                          %{potential_penalty}% será deducido de la nota final para este proyecto."
-        extramark_description:           "Entrega tardía (%{overtime_hours} hora(s)) resultó en una deducción automática
-                                          de %{penalty_amount}%"
-        form_description:                "Usar la Fórmula de Decaimiento de la Penalidad"
-        add_penalty_decay:               "Añadir un Período de Penalidad"
-        alert:                           "Usted debe seleccionar la Regla de Entrega para el período de penalidad para
-                                          poder añadir un período de penalidad."
-        after:                           "Después"
-        every:                           "todos/todas"
-        deduct:                          "Deducir"
-        for:                             "para"
-
-      penalty_period_submission_rule:
-        name:                            "Regla de Entrega para el período de penalidad"
-        short_name:                      "Período de Penalidad"
-        description:                     "Usted puede enviar archivos hasta %{penalty_period_limit} hora(s) después del
-                                          último plazo, pero el porcentaje respectivo será deducido de su resultado
-                                          final"
-        after_collection_message:        "El número máximo de períodos de penalidad ha pasado para este proyecto.
-                                          Cualquier cambio realizado será guardado, pero no calificado."
-        commit_after_collection_message: "El último plazo para este proyecto, más el número máximo de períodos
-                                          de penalidad permitidos han pasado. Sus cambios han sido guardados, pero no
-                                          serán incluídos en el proceso de calificación."
-        overtime_message:                "El último plazo para este proyecto ha pasado y usted está en un período de
-                                          penalidad. Usted puede realizar cambios a su entrega, pero
-                                          %{potential_penalty}% será deducido de la nota final para este proyecto."
-        extramark_description:           "Entrega tardía (%{overtime_hours} hora(s)) resultó en una deducción automática
-                                          de %{penalty_amount}%"
-        form_description:                "Usar la Fórmula de Penalidad"
-        add_penalty_period:              "Añadir un Período de Penalidad"
-        after:                           "Después"
-        deduction:                       "Deducción Período de Penalidad"
-        alert:                           "Usted debe seleccionar la Regla de Entrega para el Período de Penalidad para
-                                          poder añadir el mismo."
-
     submission_file:
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
@@ -1029,17 +918,7 @@ es:
     locale_not_available:                  "La traducción %{locale} no esta disponible!"
     external_authentication_not_supported: "La autenticación externa no es soportada en su plataforma!"
     account_disabled:                      "Esta cuenta ha sido desabilitada"
-    lateness_penalty:                      "Penalidad por Demora"
-    grace_period:                          "Período de Aplazamiento de Gracia"
-    penalty_decay:                         "Penalidad"
-    penalty_period:                        "Período de Penalidad"
     additional_information:                "Información Adicional"
-    penalty_decay_message_first:           "Una deducción de %{deduction}% será aplicada cada %{interval} horas hasta
-                                            %{hours} horas después del último plazo de entrega del proyecto."
-    penalty_decay_message_other:           "De ahí en adelante, una dedución de %{deduction}% será aplicada cada
-                                            %{interval} horas hasta un máximo de %{hours} horas."
-    penalty_period_message:                "Hasta %{hours} horas  después del último plazo de entrega del proyecto, su
-                                            nota será reducida por %{deduction}%"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
@@ -1075,6 +954,9 @@ es:
       revision_used_for_test:             "<span class='prop_label'>Revisión usada:</span> %{revision}"
       information:                        "Información"
       run_tests:                          "Lanzar pruebas"
+      test_run_info:                      "UPDATE ME %{test_run_id} %{created_at}"
+      stop_test:                          "UPDATE ME"
+      stop_batch:                         "UPDATE ME"
       test_run:                           "Lanzar prueba"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las

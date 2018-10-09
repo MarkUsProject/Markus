@@ -97,8 +97,6 @@ fr:
     shortened_date:     "Date<span class='required_field'>*</span>"
     due_date:           "Date de retour "
     remove_date:        "Enlever date"
-    deadline_grace_tokens: "Date limite en <br> utilisant tous les <br> jetons de grâce <br> restants"
-    deadline_max_penalty: "Date limite y <br> compris peine <br> maximale fin"
     create_new_scanned_assignment:  "Créer un nouveau projet scanné"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet"
@@ -112,12 +110,9 @@ fr:
         due_date:           "Date de retour"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
-        error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
-        not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Édition du projet: "
         required_files:  "Fichiers requis"
-        submission_rules:  "Règles d'envoi"
         required_files_read:  "Fichiers requis pour le projet."
         no_required_files_read:  "Aucun fichier n'est requis pour ce projet."
         required_files_by_student:  "Ajouter le(s) fichier(s) que les étudiants devront envoyer :"
@@ -142,9 +137,6 @@ fr:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
                 other: "UPDATE ME '%{group}': %{error}"
-        submission:
-            rules:  "Règles d'envoi"
-            penalty_rules:  "Choisissez les pénalités à appliquer en cas de retard :"
         remark:
             rules:  "Règles de révisions"
             allow:  "Autoriser les révisions"
@@ -296,7 +288,6 @@ fr:
         mark: "Note"
         marks: "Notes"
         summary: "Récapitulatif"
-        submission_rule: "Règle d'envoi"
         expand_all: "Montrer toutes"
         collapse_all: "Cacher toutes"
         expand_unmarked: "Montrer non évaluées"
@@ -460,7 +451,6 @@ fr:
       students_can_form_groups: "Les étudiants peuvent former des groupes."
       invalid_override: "Les correcteurs/administrateurs forment les groupes."
       student_work_alone: "Les étudiants travaillent seuls"
-      group_credits: "Votre groupe a <strong>%{available_grace_credits}</strong> crédit(s) de grâce disponible(s)"
       invite: "Inviter"
       please_wait: "Merci de patienter…"
       work_alone: "Travailleur seul"
@@ -486,7 +476,7 @@ fr:
         no_marks_available: "Pas de note disponible."
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
-        missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
+        missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         no_files_available: "Aucun fichier disponible"
         no_groupings_available: "Aucun groupe disponible"
         no_revision_available: "Aucune révision disponible"
@@ -558,70 +548,6 @@ fr:
         error: "Erreur. Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
-
-    submission_rules:
-      hours:  "heure(s)"
-      from:  "du"
-      to:  "au"
-
-      submission_rule:
-        description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen." #TODO
-        commit_after_collection_message: "Ce message est affiché aux étudiants quand ils envoient leur code après la date de récupération des projets par le correcteur. Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students." #TODO
-        overtime_message:  "Ce message est affiché aux étudiants quand ils sont dans le gestionnaire de fichiers après que la date de retour du projet est passée."
-
-      no_late_submission_rule:
-        name: "Pas De Règle Pour Les Travaux En Retards"
-        description: "Aucune pénalité ne sera appliquée aux projets en retard."
-        commit_after_late_message: "La date de retour pour ce projet est passée. Vos changements ont été enregistrés, mais ils ne seront pas inclus pour l'évaluation."
-        no_late_message: "La date de retour pour ce projet est passée. Seront évalués les fichiers qui étaient dans votre répertoire à la date de retour."
-        form_description:  "N'accepter aucun retard"
-
-      grace_period_submission_rule:
-        name: "Règle d'envoi lors des périodes de grâce"
-        short_name:  "Période de grâce"
-        deductions: "Déduction des périodes de grâce"
-        remove_deduction: "Enlever la déduction"
-        credits: "Crédits"
-        confirm_remove_deduction: "Êtes-vous sûr de vouloir supprimer cette déduction de période de grâce ?"
-        description: "Vous pouvez envoyer votre travail jusqu'à %{grace_day_limit} jours(s) après la date de retour, et vous aurez le nombre de jours dépassés soustrait de votre crédit de jours de grâce."
-        after_collection_message: "Le nombre maximum de périodes de grâce sont passées pour ce projet. Tout changement sera enregistré mais non évalué."
-        commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de jour de grâce autorisés sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
-        overtime_message_with_days_left: "La date de retour pour ce projet est passée. Cependant, il vous reste %{grace_credits_remaining} crédit(s) de grâce.  Si vous envoyez un (des) fichier(s) ou faites des changements durant cette période, vous utiliserez %{grace_credits_to_use} de ces crédits."
-        overtime_message_without_days_left: "La date de retour pour ce projet est passée et vous ne pouvez plus utiliser de jours de grâce."
-        form_description:  "Déduire automatiquement les crédits de grâce"
-        add_grace_period: "Ajouter une période de grâce"
-        after:  "Après"
-        alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
-
-      penalty_decay_period_submission_rule:
-        name: "Période De Pénalité"
-        short_name: "Pénalité dépendant du retard"
-        description: "Vous pouvez envoyer votre travail jusqu'à %{penalty_period_limit} heure(s) après la date de retour, mais vous aurez une pénalité sur votre note finale."
-        after_collection_message: "Le nombre maximal d'heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
-        commit_after_collection_message : "La date de retour pour ce projet et le nombre maximum d'heures de retard sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
-        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
-        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
-        form_description: "Utiliser une pénalité dépendant du retard"
-        add_penalty_decay: "Ajouter une période pénalité"
-        alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
-        after: "Après"
-        every: "chaque"
-        deduct: "déduction"
-        for: "pour"
-
-      penalty_period_submission_rule:
-        name: "Règle d'envoi lors des périodes de pénalité"
-        short_name:  "Période de pénalité"
-        description: "Vous pouvez envoyer votre travail jusqu'à %{penalty_period_limit} heure(s) après la date de retour et vous aurez le pourcentage adéquat déduit de votre note finale."
-        after_collection_message: "Le nombre maximal de périodes de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
-        commit_after_collection_message: "La date de retour et la période de pénalité maximale sont dépassées pour ce projet. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
-        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{potential_penalty} % déduit de votre note finale sur ce projet."
-        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
-        form_description: "Activer les pénalités"
-        add_penalty_period: "Ajouter une période de pénalité"
-        after:  "Après"
-        deduction: "Déduction après la période de pénalité"
-        alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité."
 
     submission_file:
       error:
@@ -742,14 +668,7 @@ fr:
     locale_not_available: "La traduction %{locale} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
-    lateness_penalty: "Pénalité Retard"
-    grace_period: "Délai de Grâce"
-    penalty_decay: "Pénalité Pourriture"
-    penalty_period: "Période de Pénalitéd"
     additional_information: "Informations Complémentaires"
-    penalty_decay_message_first: "Une déduction de %{deduction}% sera appliqué toutes les %{interval} heures jusqu'à %{hours} heures après la cession est due"
-    penalty_decay_message_other: "Par la suite, une retenue de %{deduction}% sera appliquée toutes les %{interval} heures jusqu'à un maximum de %{hours} heures"
-    penalty_period_message: "Après %{hours} heures après la date d'échéance, votre note sera réduit de %{deduction}%"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
@@ -785,6 +704,9 @@ fr:
       revision_used_for_test: "<span class=\"prop_label\">Révision utilisée:</span> %{revision}"
       information: "Information"
       run_tests: "Exécuter les tests."
+      test_run_info: "Le test %{test_run_id} est en cours ... (créé à: %{created_at})"
+      stop_test: "Arrêter le test"
+      stop_batch: "Arrêter le lot de tests"
       test_run: "L'exécution du test"
       tests_running: "Tests en cours. S'il vous plaît rafraîchir la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."

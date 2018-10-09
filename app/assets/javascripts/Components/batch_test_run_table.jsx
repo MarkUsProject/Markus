@@ -38,7 +38,7 @@ class BatchTestRunTable extends React.Component {
       }
       const result_url = Routes.edit_assignment_submission_result_path(
         this.props.assignment_id,
-        row.result_id,
+        row.submission_id,
         row.result_id
       );
       row.group_name = <a href={result_url}>{row.group_name}</a>;
@@ -51,7 +51,6 @@ class BatchTestRunTable extends React.Component {
           </a>
         );
         // increment in_progress number for this batch_id
-        status[row.test_batch_id].total += 1;
         status[row.test_batch_id].in_progress += 1;
         row.status = I18n.t('assignment.batch_tests_status_table.in_progress');
       } else {
@@ -98,12 +97,12 @@ class BatchTestRunTable extends React.Component {
               accessor: 'status',
               minWidth: 70,
               aggregate: (vals, pivots) => {
-                const status = this.state.statuses[pivots[0].test_batch_id];
-                if (status === undefined) {
-                  return '';
+                const batch = this.state.statuses[pivots[0].test_batch_id];
+                if (pivots[0].test_batch_id === null) {
+                  return `${pivots[0].status}`;
                 } else {
-                  const total = this.state.statuses[pivots[0].test_batch_id].total;
-                  const complete = total - this.state.statuses[pivots[0].test_batch_id].in_progress;
+                  const total = batch.total;
+                  const complete = total - batch.in_progress;
                   return `${complete} / ${total} ${I18n.t('poll_job.completed')}`;
                 }
               },
@@ -126,12 +125,16 @@ class BatchTestRunTable extends React.Component {
               minWidth: 70,
               sortable: false,
               aggregate: (vals, pivots) => {
-                return [pivots[0].test_batch_id, this.state.statuses[pivots[0].test_batch_id]];
+                return [pivots[0].test_batch_id, this.state.statuses[pivots[0].test_batch_id], pivots[0].action];
               },
               Aggregated: row => {
                 if (row.value[1].in_progress > 0) {
-                  const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
-                  return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>Stop batch</a></span>;
+                  if (row.value[0] === null) {
+                    return row.value[2];
+                  } else {
+                    const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
+                    return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>{I18n.t('automated_tests.stop_batch')}</a></span>;
+                  }
                 } else {
                   return '';
                 }

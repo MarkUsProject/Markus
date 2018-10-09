@@ -43,7 +43,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           -> { joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -699,7 +699,7 @@ class Grouping < ApplicationRecord
       if result.get_total_extra_percentage_as_points == 0
         total_extra
       else
-        "#{total_extra} (#{I18n.t('lateness_penalty')} : #{result.get_total_extra_percentage}%)"
+        "#{total_extra} (#{SubmissionRule.model_name.human.capitalize} : #{result.get_total_extra_percentage}%)"
       end
     else
       '-'
@@ -804,4 +804,64 @@ class Grouping < ApplicationRecord
     end
   end
 
+  # TODO: Refactor into more flexible code from here to the end:
+  # - ability to chain filters instead of exploding all cases
+  # - pluck_test_runs and group_hash_list could be done in a single loop probably
+  # - be able to return test_runs currently in progress and add them to the react table
+  def filter_test_runs(filters)
+    self.test_runs_all_data.where(filters)
+  end
+
+  def self.pluck_test_runs(assoc)
+    fields = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
+              'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
+              'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
+              'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
+    assoc.pluck_to_hash(*fields)
+  end
+
+  def self.group_hash_list(hash_list)
+    new_hash_list = []
+    group_by_keys = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
+    hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
+      h = Hash.new
+      group_by_keys.each do |key|
+        h[key] = val[0][key]
+      end
+      h['test_data'] = val
+      new_hash_list << h
+    end
+    new_hash_list
+  end
+
+  def test_runs_instructors(submission)
+    filtered = filter_test_runs({ 'users.type': 'Admin', 'test_runs.submission': submission })
+    plucked = Grouping.pluck_test_runs(filtered)
+    Grouping.group_hash_list(plucked)
+  end
+
+  def test_runs_instructors_released(submission)
+    filtered = filter_test_runs('users.type': 'Admin', 'test_runs.submission': submission)
+    plucked = Grouping.pluck_test_runs(filtered)
+    plucked.map! do |data|
+      if data['test_scripts.display_actual_output'] == 'display_after_collection' ||
+         data['test_scripts.display_actual_output'] == 'do_not_display'
+        data.delete('test_results.actual_output')
+      end
+      data
+    end
+    Grouping.group_hash_list(plucked)
+  end
+
+  def test_runs_students
+    filtered = filter_test_runs('test_runs.user': self.accepted_students)
+    plucked = Grouping.pluck_test_runs(filtered)
+    plucked.map! do |data|
+      if data['test_scripts.display_actual_output'] == 'do_not_display'
+        data.delete('test_results.actual_output')
+      end
+      data
+    end
+    Grouping.group_hash_list(plucked)
+  end
 end # end class Grouping

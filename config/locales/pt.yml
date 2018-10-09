@@ -97,8 +97,6 @@ pt:
     shortened_date:     "Data<span class='required_field'>*</span>"
     due_date:           "Prazo de entrega"
     remove_date:        "Remover data"
-    deadline_grace_tokens: "Prazo usando todos <br> os restantes fichas <br> de carência"
-    deadline_max_penalty: "Prazo incluindo pena <br> máxima tarde"
     create_new_scanned_assignment:  "Inserir novo projeto digitalizado"
     manage_course_work: "Gerenciar trabalho do curso"
     repository_folder:  "Pasta do repositório"
@@ -112,12 +110,9 @@ pt:
         short_identifier:   "Identificador abreviado"
         update_success:        "Projeto atualizado com sucesso"
         create_success:        "Projeto criado com sucesso"
-        error: "Não foi possível atribuir a regra de submissão: #%{message}"
-        not_valid_submission_rule: "%{type} não é uma regra de submissão válida"
         rules:           "Regras do projeto"
         edit:           "Editar projeto: "
         required_files:  "Arquivos exigidos"
-        submission_rules:  "Regras de envio"
         required_files_read:  "Arquivos exigidos para esse projeto"
         no_required_files_read:  "Não há arquivos exigidos para esse projeto."
         required_files_by_student:  "Inserir nome dos arquivos(s) exigidos para submissão:"
@@ -142,9 +137,6 @@ pt:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
                 other: "UPDATE ME '%{group}': %{error}"
-        submission:
-            rules:  "Regras de submissão"
-            penalty_rules:  "Escolha uma regra de penalidade para aplicar para submissões atrasadas:"
         remark:
             rules:  "Regras de revisão"
             allow:  "Permitir revisão"
@@ -274,7 +266,6 @@ pt:
         mark: "Nota"
         marks: "Notas"
         summary: "Resumo"
-        submission_rule: "Regra de submissão"
         expand_all: "Expandir todos"
         collapse_all: "Agrupar todos"
         expand_unmarked: "Expandir não-selecionados"
@@ -433,7 +424,6 @@ pt:
       students_can_form_groups: " Alunos podem formar grupos. "
       invalid_override: "Instrutor forma os grupos. "
       student_work_alone: "Alunos trabalham sozinhos."
-      group_credits: "O seu grupo tem disponível <strong>%{available_grace_credits}</strong>  créditos de tolerância"
       invite: "Convidar"
       please_wait: " Aguarde por favor..."
       work_alone: "Trabalhe sozinho"
@@ -459,7 +449,7 @@ pt:
         no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
-        missing_file: "Não foi possível baixar %{file_name}: %{message}.  O arquivo pode estar faltando."
+        missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         no_files_available: "Nenhum arquivo disponível"
         no_groupings_available: "Nenhum grupo disponível"
         no_revision_available: "Nenhuma revisão disponível"
@@ -532,70 +522,6 @@ pt:
         error: "Não foi possível convidar estudante %{user_name}."
     update_files:
       success:  "As alterações foram feitas."
-
-    submission_rules:
-      hours:  "hora(s)"
-      from:  "de"
-      to:  "para"
-
-      submission_rule:
-        description: "Esta é a descrição da classe SubmissionRule. Uma vez que apenas subclasses de SubmissionRule deven ser anexadas a um projeto, esta mensagem nunca deve ser vista."
-        commit_after_collection_message: "Esta mensagem é apresentada quando os estudantes submeterem código após a data de coleta. Como SubmissionRule será uma subclasse, e não referenciados diretamente por um Assignment, esta mensagem particular nunca deve ser exibido para os alunos."
-        overtime_message:  "Esta mensagem é apresentada para os alunos quando eles vêem o seu gerenciador de arquivos após a data de entrega do projeto já ter passado..."
-
-      no_late_submission_rule:
-        name: "Nenhuma regra para submissão atrasada"
-        description: "Nenhuma penalidade será aplicada aos trabalhos atrasados"
-        commit_after_late_message: "A data de entrega para este projeto já passou. Suas alterações foram registradas, mas não serão incluídas na classificação"
-        no_late_message: "A data de entrega para este projeto já passou. Só o que estava em sua pasta na data de entrega será avaliado"
-        form_description:  "Não aceitar nenhuma entrega atrasada"
-
-      grace_period_submission_rule:
-        name: "Regra de submissão no período de tolerância"
-        short_name:  "Período de tolerância"
-        deductions: "Dedução de Período de tolerância"
-        remove_deduction: "Remover Dedução"
-        credits: "Créditos"
-        confirm_remove_deduction: "Tem certeza de que deseja excluir este dedução de tolerância?"
-        description: "Você pode enviar até %{grace_day_limit} dia (s) após a data de entrega, e vai ter esse número de dias subtraídos os seus dias de tolerância atribuídos"
-        after_collection_message: "O número máximo de períodos de tolerância já passou para esse projeto. Quaisquer alterações serão gravadas, mas não classificados."
-        commit_after_collection_message: "A data de entrega para este projeto, além do número máximo de dias de tolerância, já passou. Suas alterações foram registrados, mas não vai ser incluído na classificação."
-        overtime_message_with_days_left: "A data de entrega para este projeto já passou. No entanto, você tem %{grace_credits_remaining} crédito (s) créditos de tolerância. Se você enviar arquivos, ou fazer alterações durante este período, vai ser gasto %{grace_credits_to_use} desses créditos."
-        overtime_message_without_days_left: "A data de entrega para este projeto já passou, e você já não são capazes de usar os dias de tolerância."
-        form_description:  "Deduzir automaticamente créditos de período de tolerância"
-        add_grace_period: "Adicionar um período de tolerância"
-        after:  "Depois"
-        alert: "Você deve selecionar a regra de envio Prazo de tolerância para adicionar um período de tolerância."
-
-      penalty_decay_period_submission_rule:
-        name: "Regra de submissão no período de decaimento"
-        short_name: "Decaimento de penalidade"
-        description: "Você pode enviar até %{penalty_decay_period_limit} hora(s) após a data de entrega, mas terá a percentagem adequada deduzida do seu resultado final"
-        after_collection_message: "O número máximo de horas de penalização passou para este projeto. Quaisquer alterações serão gravadas, mas não classificados."
-        commit_after_collection_message: "A data de entrega para este projeto, além do número máximo de horas de penalização permitidos, já passou. Suas alterações foram registrados, mas não vai ser incluído na classificação."
-        overtime_message: "A data de entrega para este projeto já passou e agora você está em um período de grande penalidade. Você pode fazer alterações na sua submissão, mas terá% %{potential_penalty} deduzido a partir da marca final sobre esta atribuição."
-        extramark_description: "Submissão atrasada (%{overtime_hours} hora(s)) resultou em dedução automatica de %{penalty_amount}% "
-        form_description: "Usar fórmula de decaimento de penalidade"
-        add_penalty_decay: "Adicionar período de decaimento"
-        alert: "Você deve selecionar uma regra de penalidade para adicionar um período de decaimento."
-        after: "Depois"
-        every: "todo"
-        deduct: "Deduzir"
-        for: "para"
-
-      penalty_period_submission_rule:
-        name: "Regra de submissão no período de penalidade"
-        short_name:  "Período de penalidade"
-        description: "Você pode submeter até %{penalty_period_limit} hora(s) depois do prazo, mas tera uma porcentagem deduzida do resultado final"
-        after_collection_message: "O número maximo de penalidades foi atingido nesse projeto. Qualquer alteração sera salva, mas não avaliada."
-        commit_after_collection_message: "A data de entrega para esse projeto, mais o número maximo de penalidades no período, foram atingidos. Suas alterações foram salvas, mas não sera incluido na sua nota."
-        overtime_message: "O prazo para entrega já passou e você esta em um periode de multa. Você pode alterar a submissão, mas tera %{potential_penalty}% deduzido da ua nota final nesse projeto."
-        extramark_description: "Submissão atrasada (%{overtime_hours} hora(s)) resultou em dedução automatica de  %{penalty_amount}%"
-        form_description: "Usar fórmula de penalidade"
-        add_penalty_period: "Adicionar um período de penalidade"
-        after:  "Depois"
-        deduction: "Período de dedução de penalidade"
-        alert: "Você deve selecionar uma regra de submissão de período de penalidade para adicionar um período de multa."
 
     submission_file:
       error:
@@ -738,14 +664,7 @@ pt:
     locale_not_available: "%{locale} tradução não disponível!"
     external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
     account_disabled: "Essa conta foi desativada"
-    lateness_penalty: "Pena de Atraso"
-    grace_period: "Prazo de Carência"
-    penalty_decay: "Pena Decadência"
-    penalty_period: "Período Penalty"
     additional_information: "Informações Adicionais"
-    penalty_decay_message_first: "A dedução de %{deduction}% será aplicado a cada %{interval} horas, até %{hours} horas após a atribuição é devido."
-    penalty_decay_message_other: "A partir daí, uma dedução de %{deduction}% será aplicado a cada %{interval} horas, até um máximo de %{hours} horas."
-    penalty_period_message: "Depois de %{hours} horas após a data de vencimento, a sua nota será reduzida em %{deduction}%"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh não! Falta pasta Assignment."
@@ -769,6 +688,9 @@ pt:
       revision_used_for_test: "<span class=\"prop_label\">Revisão utilizada:</span> %{revision}"
       information: "Informação"
       run_tests: "Executar testes"
+      test_run_info: "UPDATE ME %{test_run_id} %{created_at}"
+      stop_test: "UPDATE ME"
+      stop_batch: "UPDATE ME"
       test_run: "Execução de Teste"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>

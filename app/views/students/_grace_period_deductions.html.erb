@@ -1,16 +1,15 @@
 <table>
   <thead>
-    <th>
-      <%= t('submission_rules.grace_period_submission_rule.credits') %>
-    </th>
-    <th colspan='2'>
-      <%= t('short_identifier').html_safe %>
-    </th>
+    <tr>
+      <th><%= GracePeriodDeduction.model_name.human %></th>
+      <th><%= t('assignment.short_identifier') %></th>
+      <th></th>
+    </tr>
   </thead>
   <% grace_period_deductions.each do |grace_period_deduction| %>
     <tr>
       <td>
-        <%= grace_period_deduction.deduction %> credits
+        <%= t('grace_period_submission_rules.credit', count: grace_period_deduction.deduction) %>
       </td>
       <td>
         <% grouping = grace_period_deduction.membership.grouping %>
@@ -23,9 +22,9 @@
         <% end %>
       </td>
       <td>
-        <%= button_to(t('submission_rules.grace_period_submission_rule.remove_deduction'),
+        <%= button_to(t('remove'),
                       delete_grace_period_deduction_student_path(deduction_id: grace_period_deduction.id),
-                      confirm: t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
+                      confirm: t('grace_period_submission_rules.confirm_remove_deduction'),
                       class: 'button_to_delete_deduction',
                       remote: true) %>
       </td>

@@ -1,14 +1,8 @@
-<% content_for :head do %>
-    <script>
-        <%= render partial: 'boot.js',
-                   locals: { exam_template: exam_template } %>
-    </script>
-<% end %>
-
 <%= form_for [@assignment, exam_template],
              html: { multipart: true,
                      class: exam_template.id.to_s} do |f| %>
-  <%= f.error_messages%>
+  <%# TODO: show this through flash messages properly. %>
+  <%= exam_template.errors.full_messages.empty? ? '' : exam_template.errors.full_messages.empty? %>
 
   <div class='exam-template-section'>
     <p class='alignright'>

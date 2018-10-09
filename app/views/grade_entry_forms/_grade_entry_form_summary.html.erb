@@ -1,7 +1,8 @@
 <% unless @grade_entry_form.nil? %>
     <div class='assignment_summary'>
       <h2 class='title'>
-        <%= link_to "#{@grade_entry_form.short_identifier}: #{@grade_entry_form.description}" %>
+        <%= link_to "#{@grade_entry_form.short_identifier}: #{@grade_entry_form.description}",
+                    edit_grade_entry_form_path(@grade_entry_form.id) %>
       </h2>
 
       <div id='grade_entry_form_<%= @grade_entry_form.id %>_graph' class='left'></div>

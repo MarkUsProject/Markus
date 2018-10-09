@@ -1,5 +1,11 @@
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
+<% content_for :head do %>
+  <script>
+    <%= render partial: 'boot.js' %>
+  </script>
+<% end %>
+
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',

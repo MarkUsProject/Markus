@@ -524,15 +524,14 @@ class Assignment < ApplicationRecord
         # groupings error set if a member is already in different group
         membership_error = I18n.t('csv.memberships_not_unique',
                                   group_name: row[0],
-                                  student_user_name: errors.get(:groupings)
-                                                         .first)
+                                  student_user_name: errors[:groupings].first)
         errors.delete(:groupings)
       else
         # student_membership error set if a member does not exist
         membership_error = I18n.t(
           'csv.member_does_not_exist',
           group_name: row[0],
-          student_user_name: errors.get(:student_memberships).first)
+          student_user_name: errors[:student_memberships].first)
         errors.delete(:student_memberships)
       end
       return membership_error
@@ -553,7 +552,7 @@ class Assignment < ApplicationRecord
       if repository_already_exists?(repo_name)
         repository_error = I18n.t('csv.repository_already_exists',
                                   group_name: row[0],
-                                  repo_path: errors.get(:repo_name).last)
+                                  repo_path: errors[:repo_name].last)
         errors.delete(:repo_name)
         return repository_error
       end
@@ -1190,11 +1189,19 @@ class Assignment < ApplicationRecord
       groups[[group_id, group_name, count]]
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
+    # TODO: improve the group_sections calculation.
+    # In particular, this should be unified with Grouping#section.
+    group_sections = {}
+    self.groupings.includes(:accepted_students).find_each do |g|
+      s = g.accepted_students.first
+      group_sections[g.id] = s&.section_id
+    end
     groups = groups.map do |k, v|
       {
         _id: k[0],
         group_name: k[1],
         criteria_coverage_count: k[2],
+        section: group_sections[k[0]],
         graders: v
       }
     end
@@ -1227,7 +1234,8 @@ class Assignment < ApplicationRecord
       groups: groups,
       criteria: criteria,
       graders: graders,
-      assign_graders_to_criteria: self.assign_graders_to_criteria
+      assign_graders_to_criteria: self.assign_graders_to_criteria,
+      sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
 
@@ -1237,7 +1245,9 @@ class Assignment < ApplicationRecord
     if current_user.admin?
       groupings = self.groupings
     elsif current_user.ta?
-      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id = ?', current_user.id)
+      groupings = self.groupings
+                      .joins('INNER JOIN memberships ta_memberships ON ta_memberships.grouping_id = groupings.id')
+                      .where('ta_memberships.user_id = ?', current_user.id)
     else
       return []
     end
@@ -1294,7 +1304,8 @@ class Assignment < ApplicationRecord
       base = {
         _id: g[0], # Needed for checkbox version of react-table
         group_name: g[1],
-        submission_time: g[2].nil? ? '' : I18n.l(g[2]),
+        # TODO: for some reason, this is not automatically converted to our timezone by the query
+        submission_time: g[2].nil? ? '' : I18n.l(g[2].in_time_zone),
         tags: (tag_data[g[0]].nil? ? [] : tag_data[g[0]].map { |_, tag| tag }),
         no_files: empty_submissions.key?(g[0])
       }

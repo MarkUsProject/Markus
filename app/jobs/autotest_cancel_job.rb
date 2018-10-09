@@ -29,9 +29,10 @@ class AutotestCancelJob < ApplicationJob
           # TODO: use out for something?
         end
       end
-      TestRun.find(test_run_ids).each { |test_run| test_run.update_attributes!(time_to_service: -1) }
     rescue StandardError => e
       # TODO: where to show failure?
+    ensure
+      TestRun.find(test_run_ids).each { |test_run| test_run.update_attributes!(time_to_service: -1) }
     end
   end
 end
