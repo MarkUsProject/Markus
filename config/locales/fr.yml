@@ -878,6 +878,7 @@ fr:
         partial: "UPDATE ME"
         fail: "Échoué"
         error: "UPDATE ME"
+        extra_info: "Info Supplémentaires:"
       error:
         not_enabled: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"

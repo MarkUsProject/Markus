@@ -1165,6 +1165,7 @@ es:
         partial:      "UPDATE ME"
         fail:         "Falló"
         error:        "UPDATE ME"
+        extra_info: "UPDATE ME"
       error:
         not_enabled:          "UPDATE ME"
         ta_not_allowed:       "UPDATE ME"

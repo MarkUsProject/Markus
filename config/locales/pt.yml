@@ -851,6 +851,7 @@ pt:
         partial: "UPDATE ME"
         fail: "Fracassado"
         error: "UPDATE ME"
+        extra_info: "UPDATE ME"
       error:
         not_enabled: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
