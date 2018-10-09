@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GitRepository do
   context 'writes to repository permissions file' do
 

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Grouping do
   describe 'associations' do
     it { is_expected.to belong_to(:grouping_queue) }

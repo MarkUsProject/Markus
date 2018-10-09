@@ -1,7 +1,3 @@
-# referensed from bug664-1.patch
-# https://gist.github.com/benjaminvialle/4055208
-require 'spec_helper'
-
 describe 'Routing to main page', type: :routing do
   context 'Locale-less root' do
     it 'routes / to login' do

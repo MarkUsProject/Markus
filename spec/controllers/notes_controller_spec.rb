@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe NotesController do
 
   # Security test - these it all fail

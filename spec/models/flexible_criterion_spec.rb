@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe FlexibleCriterion do
   let(:criterion_factory_name) { :flexible_criterion }
 

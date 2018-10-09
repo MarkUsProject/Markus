@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SubmissionsController do
   after(:each) do
     destroy_repos

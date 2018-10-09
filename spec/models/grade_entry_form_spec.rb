@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GradeEntryForm do
 
   # Basic validation tests
@@ -15,8 +13,9 @@ describe GradeEntryForm do
   it { is_expected.not_to allow_value('2009-').for(:date) }
   it { is_expected.not_to allow_value('abcd').for(:date) }
 
-  it do
-    is_expected.to validate_uniqueness_of(:short_identifier)
+  describe 'uniqueness validation' do
+    subject { create :grade_entry_form }
+    it { is_expected.to validate_uniqueness_of(:short_identifier) }
   end
 
   # Tests for out_of_total

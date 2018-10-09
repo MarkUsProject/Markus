@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GracePeriodSubmissionRule do
   it 'be able to create GracePeriodSubmissionRule' do
     rule = GracePeriodSubmissionRule.new

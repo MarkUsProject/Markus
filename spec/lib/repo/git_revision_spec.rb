@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GitRevision do
   context 'with a git repo' do
     before(:context) do

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Result do
   it { is_expected.to belong_to(:submission) }
   it { is_expected.to have_many(:marks) }
