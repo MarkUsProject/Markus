@@ -424,7 +424,7 @@ class AssignmentsController < ApplicationController
 
   def csv_summary
     assignment = Assignment.find(params[:id])
-    if params[:download] == 'Download'
+    if params[:download] == 'download'
       data = assignment.summary_csv(@current_user)
       filename = "#{assignment.short_identifier}_summary.csv"
     else
