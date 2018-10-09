@@ -131,7 +131,7 @@ class TestScriptResultTable extends React.Component {
                     return {};
                   }}
                 />
-                {extraInfo && <span>{I18n.t('automated_tests.test_results_table.extra_info')} {extraInfo}</span>}
+                {extraInfo && <span dangerouslySetInnerHTML={{__html: I18n.t('automated_tests.test_results_table.extra_info') + "<br/>" + extraInfo}}/>}
               </div>
             );
           }}
