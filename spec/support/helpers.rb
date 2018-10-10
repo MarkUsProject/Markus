@@ -22,4 +22,27 @@ module Helpers
   def extract_text(string)
     Nokogiri::HTML(string).text.strip.gsub(/\s+/, ' ')
   end
+
+  def submit_file_at_time(assignment, group, txnname, time, filename, text)
+    pretend_now_is(Time.parse(time)) do
+      group.access_repo do |repo|
+        txn = repo.get_transaction(txnname)
+        txn = add_file_helper(assignment, txn, filename, text)
+        repo.commit(txn)
+      end
+    end
+  end
+
+  def add_file_helper(assignment, txn, file_name, file_contents)
+    path = File.join(assignment.repository_folder, file_name)
+    txn.add(path, file_contents, '')
+    txn
+  end
+
+  def add_period_helper(submission_rule, hours)
+    period = Period.new
+    period.submission_rule = submission_rule
+    period.hours = hours
+    period.save
+  end
 end
