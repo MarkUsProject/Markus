@@ -52,12 +52,6 @@ class Ta < User
                         .count
   end
 
-  def self.get_all_grouping_ids_by_grader
-    h = Hash.new { |h,k| h[k]=[] }
-    TaMembership.joins(:user).pluck(:grouping_id, :user_name).each { |k,v| h[k] << v }
-    h
-  end
-
   # Determine the total mark for a particular student, as a percentage
   def calculate_total_percent(result, out_of)
     total = result.total_mark
