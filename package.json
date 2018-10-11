@@ -6,7 +6,7 @@
     "i18n-js": "^3.0.11",
     "jquery": "1.12.4",
     "marked": "^0.5.1",
-    "moment": "2.7.0",
+    "moment": "^2.22.2",
     "mousetrap": "^1.6.2",
     "prop-types": "^15.6.2",
     "rails-ujs": "^5.2.1",
