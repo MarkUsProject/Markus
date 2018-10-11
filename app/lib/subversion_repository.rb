@@ -776,7 +776,8 @@ class SubversionRevision < Repository::AbstractRevision
       path = "#{File::SEPARATOR}#{path}"
     end
     paths = @repo.__get_file_paths(@revision_identifier)
-    paths.select { |p| p.start_with?(path) }
+    paths.select { |p| p == path || p.start_with?("#{path}#{File::SEPARATOR}") }
+    # p.start_with?(path) only would be wrong, there can be two assignments named like 'aX' and 'aXsuffix'
   end
 
   private
