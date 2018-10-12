@@ -245,19 +245,19 @@ module Repository
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
-      permissions = {}
-      grader_hash = Ta.get_all_grouping_ids_by_grader
-      assignments = Assignment.get_repo_auth_records
-      assignments.each do |assignment|
+      permissions = Hash.new { |h,k| h[k]=[] }
+      Assignment.get_repo_auth_records.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
           repo_name = valid_grouping.group.repo_name
-          if permissions.key?(repo_name)
-            next
-          end
           accepted_students = valid_grouping.accepted_students.map(&:user_name)
-          graders = grader_hash[valid_grouping.id] || []
-          permissions[repo_name] = accepted_students + graders
+          permissions[repo_name] = accepted_students
         end
+      end
+      # NOTE: this will allow graders to access the files in the entire repository
+      # even if they are the grader for only a single assignment
+      graders_info = TaMembership.joins(:user, grouping: :group).pluck(:repo_name, :user_name)
+      graders_info.each do |repo_name, user_name|
+        permissions[repo_name] << user_name
       end
       permissions
     end

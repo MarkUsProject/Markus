@@ -4,6 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
 
   before_create :create_grouping_repository_folder
+  after_save :update_repo_permissions_after_save
 
   belongs_to :grouping_queue, optional: true
 
@@ -388,6 +389,12 @@ class Grouping < ApplicationRecord
   def invalidate_grouping
     self.admin_approved = false
     self.save
+  end
+
+  def update_repo_permissions_after_save
+    return unless assignment.read_attribute(:vcs_submit)
+    return unless saved_change_to_attribute? :admin_approved
+    Repository.get_class.update_permissions
   end
 
   # Grace Credit Query
