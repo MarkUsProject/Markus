@@ -80,15 +80,6 @@ class CheckboxCriterion < Criterion
     add_tas(result)
   end
 
-  def set_mark_by_criterion(mark_to_change, mark_value)
-    if mark_value == 'nil'
-      mark_to_change.mark = nil
-    else
-      mark_to_change.mark = mark_value.to_f
-    end
-    mark_to_change.save
-  end
-
   # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following

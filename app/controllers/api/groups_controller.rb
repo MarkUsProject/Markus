@@ -120,16 +120,18 @@ module Api
       end
 
       matched_criteria.each do |crit|
-        mark_to_change = result.marks.find_or_create_by(
-          markable_id: crit.id,
-          markable_type: crit.class.name)
-        unless crit.set_mark_by_criterion(mark_to_change, params[crit.name])
+        mark_to_change = result.marks.find_or_initialize_by(markable_id: crit.id, markable_type: crit.class.name)
+        mark_to_change.mark = params[crit.name] == 'nil' ? nil : params[crit.name].to_f
+        unless mark_to_change.save
           # Some error occurred (including invalid mark)
           render 'shared/http_status', locals: { code: '500', message:
             mark_to_change.errors.full_messages.first }, status: 500
           return
         end
       end
+      result.reload
+      result.update_total_mark
+      result.save
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
