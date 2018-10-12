@@ -878,6 +878,7 @@ fr:
         partial: "UPDATE ME"
         fail: "Échoué"
         error: "UPDATE ME"
+        extra_info: "Info Supplémentaires:"
       error:
         not_enabled: "UPDATE ME"
         ta_not_allowed: "UPDATE ME"
@@ -899,9 +900,9 @@ fr:
         bad_marks_earned: "UPDATE ME"
         bad_marks_total: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"
-        extra_raw_output_html: "UPDATE ME<br />%{extra}<br />"
-        extra_stderr_html: "UPDATE ME<br />%{extra}<br />"
-        extra_malformed_html: "UPDATE ME<br />%{extra}<br />"
+        extra_raw_output_html: "UPDATE ME \n%{extra}\n"
+        extra_stderr_html: "UPDATE ME \n%{extra}\n"
+        extra_malformed_html: "UPDATE ME \n%{extra}\n"
 
 #Missing Activerecord Translations for french
     datetime:
