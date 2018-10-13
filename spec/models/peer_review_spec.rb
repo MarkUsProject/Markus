@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe PeerReview do
   it { is_expected.to belong_to(:result) }
   it { is_expected.to belong_to(:reviewer) }

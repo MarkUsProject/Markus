@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TestSupportFile do
   it { is_expected.to belong_to(:assignment) }
 

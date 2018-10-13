@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Submission do
   describe 'validations' do
     it { is_expected.to have_many(:submission_files) }

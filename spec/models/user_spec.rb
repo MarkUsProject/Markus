@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe User do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
@@ -8,11 +6,15 @@ describe User do
   it { is_expected.to validate_presence_of :user_name }
   it { is_expected.to validate_presence_of :last_name }
   it { is_expected.to validate_presence_of :first_name }
-  it { is_expected.to validate_uniqueness_of :user_name }
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
+
+  describe 'uniqueness validation' do
+    subject { create :admin }
+    it { is_expected.to validate_uniqueness_of :user_name }
+  end
 
   context 'A good User model' do
     it 'should be able to create a student' do

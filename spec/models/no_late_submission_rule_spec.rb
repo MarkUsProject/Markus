@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe NoLateSubmissionRule do
   it 'be able to create NoLateSubmissionRule' do
     rule = NoLateSubmissionRule.new

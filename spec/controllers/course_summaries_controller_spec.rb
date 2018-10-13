@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe CourseSummariesController do
 
   context 'An admin' do

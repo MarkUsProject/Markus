@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe ImageAnnotation do
 
   it { is_expected.to validate_presence_of(:x1) }

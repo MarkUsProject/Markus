@@ -1,7 +1,7 @@
 describe Membership do
 
-  it { should belong_to :user }
-  it { should belong_to :grouping }
-  it { should have_many :grace_period_deductions }
+  it { is_expected.to belong_to :user }
+  it { is_expected.to belong_to :grouping }
+  it { is_expected.to have_many :grace_period_deductions }
 
 end

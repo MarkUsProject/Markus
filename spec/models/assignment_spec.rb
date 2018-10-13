@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Assignment do
   describe 'ActiveRecord associations' do
     it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
@@ -54,8 +52,8 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:group_min) }
     it { is_expected.to validate_presence_of(:group_max) }
     it { is_expected.to validate_presence_of(:notes_count) }
-    it { should belong_to(:parent_assignment).class_name('Assignment') }
-    it { should have_one(:pr_assignment).class_name('Assignment') }
+    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment') }
+    it { is_expected.to have_one(:pr_assignment).class_name('Assignment') }
     it do
       is_expected.to validate_numericality_of(:group_min).is_greater_than(0)
     end
