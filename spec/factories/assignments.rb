@@ -5,14 +5,11 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    group_min { 1 }
-    group_max { 1 }
     repository_folder { Faker::Lorem.word }
     due_date { 1.minute.from_now }
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
     token_period { 1 }
-    tokens_per_period { 0 }
   end
 
   factory :assignment_with_peer_review, parent: :assignment do
