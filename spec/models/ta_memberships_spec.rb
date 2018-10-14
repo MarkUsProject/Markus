@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TaMembership do
   it 'should belong to a ta' do
     expect(create(:ta_membership, user: create(:ta))).to be_valid

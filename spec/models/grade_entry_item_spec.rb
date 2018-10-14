@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GradeEntryItem do
 
   context 'checks relationships' do
@@ -8,7 +6,11 @@ describe GradeEntryItem do
     it { is_expected.to have_many(:grade_entry_students).through(:grades) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:grade_entry_form_id) }
+
+    describe 'uniqueness validation' do
+      subject { create :grade_entry_item }
+      it { is_expected.to validate_uniqueness_of(:name).scoped_to(:grade_entry_form_id) }
+    end
 
     it { is_expected.to validate_presence_of(:out_of) }
     it { is_expected.to validate_numericality_of(:out_of) }
@@ -19,7 +21,6 @@ describe GradeEntryItem do
     it { is_expected.to allow_value(100).for(:out_of) }
     it { is_expected.not_to allow_value(-1).for(:out_of) }
     it { is_expected.not_to allow_value(-100).for(:out_of) }
-
 
     it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position) }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SubmissionRule do
   it { is_expected.to belong_to(:assignment) }
   context '#calculate_collection_time' do

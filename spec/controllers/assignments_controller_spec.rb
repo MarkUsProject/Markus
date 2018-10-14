@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe AssignmentsController do
   before :each do
     # Authenticate user is not timed out, and has administrator rights.

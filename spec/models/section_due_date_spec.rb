@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SectionDueDate do
   describe 'ActiveRecord associations' do
     it { is_expected.to belong_to(:section) }

@@ -1,16 +1,14 @@
-require 'spec_helper'
-
 describe Mark do
 
   it { is_expected.to validate_presence_of(:markable_type) }
 
-  it { should belong_to(:markable) }
-  it { should belong_to(:result) }
+  it { is_expected.to belong_to(:markable) }
+  it { is_expected.to belong_to(:result) }
 
-  it { should allow_value('RubricCriterion').for(:markable_type) }
-  it { should allow_value('FlexibleCriterion').for(:markable_type) }
-  it { should_not allow_value('').for(:markable_type) }
-  it { should_not allow_value(nil).for(:markable_type) }
+  it { is_expected.to allow_value('RubricCriterion').for(:markable_type) }
+  it { is_expected.to allow_value('FlexibleCriterion').for(:markable_type) }
+  it { is_expected.to_not allow_value('').for(:markable_type) }
+  it { is_expected.to_not allow_value(nil).for(:markable_type) }
 
   describe '#valid_mark' do
 

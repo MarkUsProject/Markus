@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SubmissionFile do
   # Ensure that the the following relationship exists
   it { is_expected.to belong_to(:submission) }

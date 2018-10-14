@@ -184,6 +184,7 @@ class AssignmentTest < ActiveSupport::TestCase
       end
     end # end noteable context
 
+    # The following tests have not been converted to rspec yet
     context 'with a student in a group with a marked submission' do
       setup do
         @membership = StudentMembership.make(grouping: Grouping.make(assignment: @assignment),membership_status: StudentMembership::STATUSES[:accepted])

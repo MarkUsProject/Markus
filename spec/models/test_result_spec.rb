@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TestResult do
 
   it { is_expected.to belong_to(:test_script_result) }
