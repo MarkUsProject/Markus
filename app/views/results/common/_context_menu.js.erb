@@ -19,7 +19,7 @@
         children: [
         <% if annotation_category.annotation_texts.empty? %>
           {
-            title: '<%= t('annotation_categories.no_annotations') %>',
+            title: I18n.t('annotation_categories.no_annotations'),
             action: function(event, ui){ return false; },
             disabled: true
           }
