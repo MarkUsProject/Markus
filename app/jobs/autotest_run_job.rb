@@ -96,6 +96,7 @@ class AutotestRunJob < ApplicationJob
   end
 
   def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
+    params_file = nil
     export_group_repo(test_run)
     unless repo_files_available?(test_run)
       # create empty test results for no submission files
@@ -107,7 +108,6 @@ class AutotestRunJob < ApplicationJob
 
     grouping = test_run.grouping
     submission = test_run.submission
-    user = test_run.user
     assignment = grouping.assignment
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
@@ -120,17 +120,17 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
-    server_params = { user_type: user.type, markus_address: markus_address, user_api_key: user.api_key,
-                      server_api_key: server_api_key, test_scripts: test_scripts, files_path: 'files_path_placeholder',
-                      assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
-                      group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
+    server_params = { markus_address: markus_address, server_api_key: server_api_key, test_scripts: test_scripts,
+                      privileged_scripts: nil, assignment_id: assignment.id, group_id: group.id,
+                      submission_id: submission&.id, group_repo_name: group.repo_name, run_id: test_run.id }
+    params_file = Tempfile.new('', submission_path)
+    params_file.write(JSON.generate(server_params))
 
     if ssh.nil?
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
-      server_params[:files_path] = server_path
-      output, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+      output, status = Open3.capture2e("#{server_command} run '#{server_path}/#{params_file.basename}'")
       if status.exitstatus != 0
         raise output
       end
@@ -143,14 +143,18 @@ class AutotestRunJob < ApplicationJob
       scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
                     "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
       Open3.capture3(scp_command)
-      server_params[:files_path] = server_path
-      output = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      output = ssh.exec!("#{server_command} run '#{server_path}/#{params_file.basename}'")
       if output.exitstatus != 0
         raise output
       end
     end
     test_run.time_to_service_estimate = output.to_i
     test_run.save
+  ensure
+    unless params_file.nil?
+      params_file.close
+      params_file.unlink
+    end
   end
 
   def perform(host_with_port, user_id, test_scripts, test_runs)
