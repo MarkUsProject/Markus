@@ -3,21 +3,19 @@ require 'shoulda'
 
 include MarkusConfigurator
 
-describe "TATest" do
+describe 'TATest' do
   context 'A TA with a membership' do
-    before :each do
-      @assignment = Assignment.new
-      @ta = Ta.new
-      @grouping = Grouping.new(assignment: @assignment)
-      TaMembership.new(grouping: @grouping, user: @ta)
-    end
+    let(:assignment) { create(:assignment) }
+    let(:ta)         { create(:ta) }
+    let(:grouping)   { create(:grouping, assignment: @assignment) }
+    create(:ta_membership, grouping: @grouping, user: @ta)
 
     it 'gets membership for one assignment' do
       expect(@ta.memberships_for_assignment(@assignment)).not_to be_nil
     end
 
     it 'is already assigned to a grouping' do
-      expect(@ta.is_assigned_to_grouping?(grouping_id =@grouping.id)).not_to be_nil
+      expect(@ta.is_assigned_to_grouping?(@grouping.id)).not_to be_nil
     end
   end
 end
