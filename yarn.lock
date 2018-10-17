@@ -4007,6 +4007,11 @@ lodash.clonedeep@^4.3.2:
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
   integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
 
+lodash.defaults@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
+  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -5759,6 +5764,14 @@ querystringify@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-1.0.0.tgz#6286242112c5b712fa654e526652bf6a13ff05cb"
   integrity sha1-YoYkIRLFtxL6ZU5SZlK/ahP/Bcs=
+
+rails-erb-loader@^5.5.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/rails-erb-loader/-/rails-erb-loader-5.5.0.tgz#fcf698f693e6a3b9b86d0d657040c2bfd8b88e28"
+  integrity sha512-WUHdQdTo+Z9jkLGuG1py4y2fTSXCgPhqz5KY2OZXSRR2vJwpZ1LTRxkzitum0mfZz6vhwDZVBGxSWZ+zS+MKAw==
+  dependencies:
+    loader-utils "^1.1.0"
+    lodash.defaults "^4.2.0"
 
 rails-ujs@^5.2.1:
   version "5.2.1"
