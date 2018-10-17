@@ -127,7 +127,7 @@
             <% if @assignment.group_min == 1 %>
               <p>
                 <%= link_to t('student.work_alone'),
-                            assignment_groups_path(assignment_id: @assignment.id, workalone: true),
+                            assignment_groups_path(assignment_id: @assignment.id, workalone: 'true'),
                             { class: 'button', method: :post, data: { confirm: t('student.confirm_work_alone'),
                                                                       disable_with: t('student.please_wait') } } %>
               </p>
