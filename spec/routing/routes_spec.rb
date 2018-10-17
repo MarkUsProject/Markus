@@ -247,7 +247,7 @@ describe 'An Assignment' do
           controller: group_ctrl,
           action: 'create',
           assignment_id: assignment.id.to_s,
-          ocale: 'en'
+          locale: 'en'
         )
       end
 
