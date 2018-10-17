@@ -4,9 +4,15 @@
 
 <% if assignment.outstanding_remark_request_count && assignment.outstanding_remark_request_count > 0%>
   <p>
-    <%= link_to t(:outstanding_remark_request,
+    <% if assignment.outstanding_remark_request_count > 1
+          remark_string = 'outstanding_remark_request.one'
+       else
+          remark_string = 'outstanding_remark_request.other'
+       end
+    %>
+    <%= link_to t(remark_string,
                   count: assignment.outstanding_remark_request_count),
-        browse_assignment_submissions_path(assignment, sort_by: 'marking_state') %>
+      browse_assignment_submissions_path(assignment, sort_by: 'marking_state') %>
   </p>
 <% end %>
 
