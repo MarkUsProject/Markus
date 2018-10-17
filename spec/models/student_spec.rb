@@ -16,6 +16,7 @@ require 'spec_helper'
 require 'shoulda'
 
 describe Student do
+
   context 'A good Student model' do
 
     it 'will have many accepted groupings' do

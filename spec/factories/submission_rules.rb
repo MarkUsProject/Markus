@@ -1,4 +1,5 @@
 FactoryBot.define do
+
   factory :SubmissionRule, class: SubmissionRule, parent: :assignment do
     assignment
     id
@@ -11,5 +12,6 @@ FactoryBot.define do
   factory :GracePeriodSubmissionRule, class: GracePeriodSubmissionRule, parent: :SubmissionRule do
     association :SubmissionRule, factory: :SubmissionRule
   end
+
 end
 
