@@ -123,57 +123,6 @@ describe 'An Assignment' do
           id: assignment.id.to_s,
           locale: 'en')
     end
-
-    it 'routes POST invite_member properly' do
-      expect(post: path + '/' + assignment.id.to_s + '/invite_member')
-        .to route_to(
-          controller: ctrl,
-          action: 'invite_member',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes GET creategroup properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/creategroup').to route_to(
-        controller: ctrl,
-        action: 'creategroup',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET join_group properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/join_group').to route_to(
-        controller: ctrl,
-        action: 'join_group',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET deletegroup properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/deletegroup').to route_to(
-        controller: ctrl,
-        action: 'deletegroup',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET decline_invitation properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/decline_invitation')
-        .to route_to(
-          controller: ctrl,
-          action: 'decline_invitation',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes POST disinvite_member properly' do
-      expect(post: path + '/' + assignment.id.to_s + '/disinvite_member')
-        .to route_to(
-          controller: ctrl,
-          action: 'disinvite_member',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
   end
   # end Assignment member route tests
 
@@ -283,6 +232,64 @@ describe 'An Assignment' do
     let(:group_ctrl) { 'groups' }
 
     context 'resource members' do
+      it 'routes POST invite_member properly' do
+        expect(post: group_path + '/' + group.id.to_s + '/invite_member')
+          .to route_to(
+                controller: group_ctrl,
+                action: 'invite_member',
+                id: group.id.to_s,
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
+
+      it 'routes POST create properly' do
+        expect(post: group_path)
+          .to route_to(
+                controller: group_ctrl,
+                action: 'create',
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
+
+      it 'routes GET join_group properly' do
+        expect(get: group_path + '/' + group.id.to_s + '/join_group')
+          .to route_to(
+                controller: group_ctrl,
+                action: 'join_group',
+                id: group.id.to_s,
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
+
+      it 'routes DELETE destroy properly' do
+        expect(delete: group_path + '/' + group.id.to_s)
+          .to route_to(
+                controller: group_ctrl,
+                action: 'destroy',
+                id: group.id.to_s,
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
+
+      it 'routes GET decline_invitation properly' do
+        expect(get: group_path + '/' + group.id.to_s + '/decline_invitation')
+          .to route_to(
+                controller: group_ctrl,
+                action: 'decline_invitation',
+                id: group.id.to_s,
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
+
+      it 'routes POST disinvite_member properly' do
+        expect(post: group_path + '/' + group.id.to_s + '/disinvite_member')
+          .to route_to(
+                controller: group_ctrl,
+                action: 'disinvite_member',
+                id: group.id.to_s,
+                assignment_id: assignment.id.to_s,
+                locale: 'en')
+      end
       it 'routes POST rename_group properly' do
         expect(post: group_path + '/' + group.id.to_s + '/rename_group')
           .to route_to(

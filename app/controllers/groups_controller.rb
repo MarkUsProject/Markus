@@ -9,8 +9,7 @@ class GroupsController < ApplicationController
                               :disinvite_member,
                               :invite_member,
                               :join_group,
-                              :decline_invitation,
-                              ]
+                              :decline_invitation]
 
   before_action      :authorize_for_student,
                      only: [:create,
@@ -168,7 +167,7 @@ class GroupsController < ApplicationController
     unless next_file.nil?
       @data[:filelink] = download_assignment_groups_path(
         select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
-        show_in_browser: true )
+        show_in_browser: true)
     end
   end
 
@@ -333,8 +332,7 @@ class GroupsController < ApplicationController
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
     m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'" +
-                   '(accepted invitation).')
+    m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'(accepted invitation).")
     redirect_to student_interface_assignment_path(params[:id])
   end
 
@@ -344,8 +342,7 @@ class GroupsController < ApplicationController
     @user = Student.find(session[:uid])
     @grouping.decline_invitation(@user)
     m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' declined invitation for group '" +
-                   "#{@grouping.group.group_name}'.")
+    m_logger.log("Student '#{@user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
     redirect_to student_interface_assignment_path(params[:id])
   end
 
@@ -379,8 +376,7 @@ class GroupsController < ApplicationController
                    MarkusLogger::INFO)
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
-      m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '" +
-                     "#{e.message}'.", MarkusLogger::ERROR)
+      m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
     redirect_to student_interface_assignment_path(@assignment.id)
   end
@@ -411,14 +407,12 @@ class GroupsController < ApplicationController
 
       @grouping.destroy
       flash_message(:success, I18n.t('flash.actions.destroy.success', resource_name: Group.model_name.human))
-      m_logger.log("Student '#{current_user.user_name}' deleted group '" +
-                     "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
-
+      m_logger.log("Student '#{current_user.user_name}' deleted group '"\
+                   "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
       if @grouping.nil?
-        m_logger.log(
-          'Failed to delete group, since no accepted group for this user existed.' +
+        m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
             "User: '#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       else
         m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '" +
@@ -460,8 +454,7 @@ class GroupsController < ApplicationController
     membership.delete
     membership.save
     m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
-                   "'#{disinvited_student.user_name}'.")
+    m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
     flash_message(:success, I18n.t('student.member_disinvited'))
     redirect_to student_interface_assignment_path(assignment.id)
   end
@@ -611,8 +604,7 @@ class GroupsController < ApplicationController
       raise I18n.t('add_student.fail.hidden', user_name: student.user_name)
     end
     if student.has_accepted_grouping_for?(assignment.id)
-      raise I18n.t('add_student.fail.already_grouped',
-        user_name: student.user_name)
+      raise I18n.t('add_student.fail.already_grouped', user_name: student.user_name)
     end
     membership_count = grouping.student_memberships.length
     grouping.invite(student.user_name, set_membership_status, true)
@@ -620,11 +612,9 @@ class GroupsController < ApplicationController
 
     # Report success only if # of memberships increased
     if membership_count < grouping.student_memberships.length
-      @messages.push(I18n.t('add_student.success',
-          user_name: student.user_name))
+      @messages.push(I18n.t('add_student.success', user_name: student.user_name))
     else # something clearly went wrong
-      raise I18n.t('add_student.fail.general',
-        user_name: student.user_name)
+      raise I18n.t('add_student.fail.general', user_name: student.user_name)
     end
 
     # Only the first student should be the "inviter"
@@ -634,8 +624,7 @@ class GroupsController < ApplicationController
     # Generate a warning if a member is added to a group and they
     # have fewer grace days credits than already used by that group
     if student.remaining_grace_credits < grouping.grace_period_deduction_single
-      @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
-        group: grouping.group.group_name)
+      @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit', group: grouping.group.group_name)
     end
 
     grouping.reload
