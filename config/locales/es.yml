@@ -1188,9 +1188,10 @@ es:
         bad_marks_earned: "UPDATE ME"
         bad_marks_total: "UPDATE ME"
         bad_status: "UPDATE ME '%{status}'"
-        extra_raw_output_html: "UPDATE ME \n%{extra}\n"
-        extra_stderr_html: "UPDATE ME \n%{extra}\n"
-        extra_malformed_html: "UPDATE ME \n%{extra}\n"
+        extra_raw_output: "UPDATE ME \n%{extra}\n"
+        extra_stderr: "UPDATE ME \n%{extra}\n"
+        extra_malformed: "UPDATE ME \n%{extra}\n"
+        extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
 
 #Missing Activerecord Translations for english
     datetime:

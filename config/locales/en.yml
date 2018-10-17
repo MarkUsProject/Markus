@@ -1016,9 +1016,10 @@ en:
         bad_marks_earned: "Earned marks are missing"
         bad_marks_total: "Total marks are missing"
         bad_status: "Unrecognized test status '%{status}'"
-        extra_raw_output_html: "Raw test run output: \n%{extra} \n"
-        extra_stderr_html: "Messages on stderr: \n%{extra}\n"
-        extra_malformed_html: "Malformed results discarded by server: \n%{extra}\n"
+        extra_raw_output: "Raw test run output: \n%{extra}\n"
+        extra_stderr: "Messages on stderr: \n%{extra}\n"
+        extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
+        extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
 
 #Missing Activerecord Translations for english
     datetime:

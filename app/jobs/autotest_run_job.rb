@@ -95,7 +95,7 @@ class AutotestRunJob < ApplicationJob
     retry
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
+  def enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh = nil)
     params_file = nil
     export_group_repo(test_run)
     unless repo_files_available?(test_run)
@@ -120,8 +120,9 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
+    #TODO 1) get hook scripts 2) check other autotest_*_job
     server_params = { markus_address: markus_address, server_api_key: server_api_key, test_scripts: test_scripts,
-                      privileged_scripts: nil, assignment_id: assignment.id, group_id: group.id,
+                      hooks_script: hooks_script, assignment_id: assignment.id, group_id: group.id,
                       submission_id: submission&.id, group_repo_name: group.repo_name, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
     params_file.write(JSON.generate(server_params))
@@ -130,20 +131,23 @@ class AutotestRunJob < ApplicationJob
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
-      output, status = Open3.capture2e("#{server_command} run '#{server_path}/#{params_file.basename}'")
+      run_command = [server_command, 'run', '-f', "#{server_path}/#{params_file.basename}"]
+      output, status = Open3.capture2e(run_command)
       if status.exitstatus != 0
         raise output
       end
     else
       # tests executed locally or remotely with authentication
+      mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
+      server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
+      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
       server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
-      server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
-      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-      scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
-                    "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
+      scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
+                     "#{submission_path}/." , "#{server_username}@#{server_host}:#{server_path}"]
       Open3.capture3(scp_command)
-      output = ssh.exec!("#{server_command} run '#{server_path}/#{params_file.basename}'")
+      run_command = "#{server_command} run -f '#{server_path}/#{params_file.basename}'"
+      output = ssh.exec!(run_command)
       if output.exitstatus != 0
         raise output
       end
@@ -151,13 +155,13 @@ class AutotestRunJob < ApplicationJob
     test_run.time_to_service_estimate = output.to_i
     test_run.save
   ensure
-    unless params_file.nil?
-      params_file.close
-      params_file.unlink
-    end
+    params_file&.close
+    params_file&.unlink
   end
 
-  def perform(host_with_port, user_id, test_scripts, test_runs)
+  def perform(host_with_port, user_id, test_scripts, hooks_script, test_runs)
+    ssh = nil
+    ssh_auth_failure = nil
     # create batch if needed
     test_batch = nil
     if test_runs.size > 1
@@ -166,8 +170,6 @@ class AutotestRunJob < ApplicationJob
     # set up SSH channel if needed
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
-    ssh = nil
-    ssh_auth_failure = nil
     unless server_username.nil?
       begin
         ssh = Net::SSH.start(server_host, server_username, auth_methods: ['publickey'], keepalive: true,
@@ -200,7 +202,7 @@ class AutotestRunJob < ApplicationJob
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
-        enqueue_test_run(test_run, host_with_port, test_scripts, ssh)
+        enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh)
       rescue StandardError => e
         error = { name: I18n.t('automated_tests.results.all_tests'),
                   message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }

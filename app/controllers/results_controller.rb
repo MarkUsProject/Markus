@@ -172,9 +172,10 @@ class ResultsController < ApplicationController
   def run_tests
     submission = Result.find(params[:id]).submission
     begin
-      test_scripts = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
+      test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
-                                   [{ grouping_id: submission.grouping_id, submission_id: submission.id }])
+                                   hooks_script, [{ grouping_id: submission.grouping_id,
+                                                    submission_id: submission.id }])
     rescue => e
       flash_message(:error, e.message)
     end

@@ -92,7 +92,7 @@ class TestScriptResult < ApplicationRecord
       raise 'Test script reported a critical failure'
     end
 
-    return marks_earned, marks_total
+    [marks_earned, marks_total]
   end
 
 end
