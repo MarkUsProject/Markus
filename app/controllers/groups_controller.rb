@@ -167,7 +167,8 @@ class GroupsController < ApplicationController
     unless next_file.nil?
       @data[:filelink] = download_assignment_groups_path(
         select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
-        show_in_browser: true)
+        show_in_browser: true
+      )
     end
   end
 
@@ -415,7 +416,7 @@ class GroupsController < ApplicationController
         m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
             "User: '#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       else
-        m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '" +
+        m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '"\
                        "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
