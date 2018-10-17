@@ -1,16 +1,15 @@
 require 'spec_helper'
 
 describe GroupsController do
-  describe 'administrator access' do
-    let(:grouping) { create(:grouping) }
-    let(:assignment) { grouping.assignment }
+  let(:grouping) { create(:grouping) }
+  let(:assignment) { grouping.assignment }
 
+  describe 'administrator access' do
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
       allow(controller).to receive(:session_expired?).and_return(false)
       allow(controller).to receive(:logged_in?).and_return(true)
       allow(controller).to receive(:current_user).and_return(build(:admin))
-
     end
 
     describe '#note_message'
@@ -333,5 +332,37 @@ describe GroupsController do
     describe '#add_member'
     describe '#remove_members'
     describe '#remove_member'
+  end
+
+  describe 'student access' do
+    before :each do
+      # Authenticate user is not timed out, and has administrator rights.
+      allow(controller).to receive(:session_expired?).and_return(false)
+      allow(controller).to receive(:logged_in?).and_return(true)
+      allow(controller).to receive(:current_user).and_return(build(:student))
+
+      @student = create(:student, user_name: 'c9test1')
+      @assignment = create(:assignment, student_form_groups: true)
+    end
+
+    describe 'POST #create' do
+      before :each do
+        post_as @student, :create, params: { assignment_id: assignment }
+      end
+
+      it 'should respond with redirect' do
+        is_expected.to respond_with(:redirect)
+      end
+    end
+
+    describe 'DELETE #destroy' do
+      before :each do
+        delete_as @student, :destroy, params: { assignment_id: assignment, id: 1 }
+      end
+
+      it 'should respond with success' do
+        is_expected.to respond_with(:redirect)
+      end
+    end
   end
 end
