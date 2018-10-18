@@ -5855,10 +5855,10 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-keyed-file-browser@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.3.2.tgz#a7fae2e280eb4060ac1e333c4f713a696cccf60c"
-  integrity sha512-OCAD9Yjt5vKeV6nN3tUrANKuqbC3n1Xfrv+B+5LeCy5XO+9pycaRiE5ZqvKktzPaechQ9FXc8VJFi26vqODd/w==
+react-keyed-file-browser@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.0.tgz#7325ef085805b07d11058abd70346d2df6fcfd52"
+  integrity sha512-lEJZWOG+1iTQgF7jgRHzCzBcxjBmlrk9XxzzQwRY9tafCN4LBtnhOlFS7WbjJ22NTYt+/bBpYBoXrFm9CaeqPQ==
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"
