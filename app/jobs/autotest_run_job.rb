@@ -107,7 +107,6 @@ class AutotestRunJob < ApplicationJob
     end
 
     grouping = test_run.grouping
-    submission = test_run.submission
     assignment = grouping.assignment
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
@@ -120,18 +119,20 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
-    server_params = { markus_address: markus_address, server_api_key: server_api_key, test_scripts: test_scripts,
-                      hooks_script: hooks_script, assignment_id: assignment.id, group_id: group.id,
-                      submission_id: submission&.id, group_repo_name: group.repo_name, run_id: test_run.id }
+    server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
+                      test_scripts: test_scripts, hooks_script: hooks_script, assignment_id: assignment.id,
+                      group_id: group.id, submission_id: test_run.submission&.id, group_repo_name: group.repo_name,
+                      batch_id: test_run.test_batch&.id, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
     params_file.write(JSON.generate(server_params))
+    params_file.close
 
     if ssh.nil?
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
-      run_command = [server_command, 'run', '-f', "#{server_path}/#{params_file.basename}"]
-      output, status = Open3.capture2e(run_command)
+      run_command = [server_command, 'run', '-f', "#{server_path}/#{File.basename(params_file.path)}"]
+      output, status = Open3.capture2e(*run_command)
       if status.exitstatus != 0
         raise output
       end
@@ -144,8 +145,8 @@ class AutotestRunJob < ApplicationJob
       server_username = MarkusConfigurator.autotest_server_username
       scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
                      "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
-      Open3.capture3(scp_command)
-      run_command = "#{server_command} run -f '#{server_path}/#{params_file.basename}'"
+      Open3.capture3(*scp_command)
+      run_command = "#{server_command} run -f '#{server_path}/#{File.basename(params_file.path)}'"
       output = ssh.exec!(run_command)
       if output.exitstatus != 0
         raise output

@@ -21,7 +21,7 @@ class AutotestScriptsJob < ApplicationJob
         FileUtils.cp_r("#{assignment_tests_path}/.", server_path) # includes hidden files
         server_params[:files_path] = server_path
         scripts_command = [server_command, 'scripts', '-j', JSON.generate(server_params)]
-        output, status = Open3.capture2e(scripts_command)
+        output, status = Open3.capture2e(*scripts_command)
         if status.exitstatus != 0
           raise output
         end
@@ -34,7 +34,7 @@ class AutotestScriptsJob < ApplicationJob
           # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
           scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
                          "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
-          Open3.capture3(scp_command)
+          Open3.capture3(*scp_command)
           server_params[:files_path] = server_path
           scripts_command = "#{server_command} scripts -j '#{JSON.generate(server_params)}'"
           output = ssh.exec!(scripts_command)

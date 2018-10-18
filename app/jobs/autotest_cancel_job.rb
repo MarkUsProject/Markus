@@ -15,7 +15,7 @@ class AutotestCancelJob < ApplicationJob
       if server_username.nil?
         # local cancellation with no authentication
         cancel_command = [server_command, 'cancel', '-j', JSON.generate(server_params)]
-        output, status = Open3.capture2e(cancel_command)
+        output, status = Open3.capture2e(*cancel_command)
         if status.exitstatus != 0
           raise output
         end
