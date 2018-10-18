@@ -120,7 +120,6 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
-    #TODO 1) get hook scripts 2) check other autotest_*_job
     server_params = { markus_address: markus_address, server_api_key: server_api_key, test_scripts: test_scripts,
                       hooks_script: hooks_script, assignment_id: assignment.id, group_id: group.id,
                       submission_id: submission&.id, group_repo_name: group.repo_name, run_id: test_run.id }
@@ -144,7 +143,7 @@ class AutotestRunJob < ApplicationJob
       server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
       scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
-                     "#{submission_path}/." , "#{server_username}@#{server_host}:#{server_path}"]
+                     "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
       Open3.capture3(scp_command)
       run_command = "#{server_command} run -f '#{server_path}/#{params_file.basename}'"
       output = ssh.exec!(run_command)

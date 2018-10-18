@@ -2,7 +2,7 @@ module AutomatedTestsClientHelper
 
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments')
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students')
-  HOOKS_FILE = 'hooks.py'
+  HOOKS_FILE = 'hooks.py'.freeze
 
   def create_test_repo(assignment)
     test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
