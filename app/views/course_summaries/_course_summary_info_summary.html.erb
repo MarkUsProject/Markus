@@ -7,14 +7,14 @@
     <tr>
       <td><%= t(:average) %></td>
       <td>
-        <%= number_to_percentage(grades.mean || 0, precision: 1) %>
+        <%= number_to_percentage(DescriptiveStatistics.mean(grades) || 0, precision: 1) %>
       </td>
     </tr>
 
     <tr>
       <td><%= t(:median) %></td>
       <td>
-        <%= number_to_percentage(grades.median || 0, precision: 1) %>
+        <%= number_to_percentage(DescriptiveStatistics.median(grades) || 0, precision: 1) %>
       </td>
     </tr>
   </table>
