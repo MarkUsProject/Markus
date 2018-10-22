@@ -16,7 +16,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message, :get_test_runs_instructors]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests, :stop_test,
+                only: [:download, :download_zip,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
