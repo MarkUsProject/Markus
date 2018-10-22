@@ -765,7 +765,7 @@ class SubmissionsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     entries = revision.tree_at_path(full_path)
-                .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
+                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
       data = get_file_info(file_name, file_obj, grouping.assignment.id, revision.revision_identifier, path, grouping.id)
       next if data.nil?
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])

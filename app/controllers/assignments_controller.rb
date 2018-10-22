@@ -855,7 +855,7 @@ class AssignmentsController < ApplicationController
 
     entries = revision.tree_at_path(full_path)
                       .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
-      data = get_file_info(file_name, file_obj, assignment.id, revision.revision_identifier, path)
+      data = get_file_info(file_name, file_obj, assignment.id, path)
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
@@ -864,7 +864,7 @@ class AssignmentsController < ApplicationController
     entries
   end
 
-  def get_file_info(file_name, file, assignment_id, revision_identifier, path)
+  def get_file_info(file_name, file, assignment_id, path)
     {
       id: file.object_id,
       url: download_starter_code_assignment_url(

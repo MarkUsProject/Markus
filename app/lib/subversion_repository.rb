@@ -790,9 +790,9 @@ class SubversionRevision < Repository::AbstractRevision
   def tree_at_path(path)
     result = files_at_path(path).to_a
     dirs = directories_at_path(path)
-    result.push *dirs.to_a
+    result.push(*dirs.to_a)
     dirs.each do |dir_path, _|
-      result.push *(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] })
+      result.push(*(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] }))
     end
     result
   end

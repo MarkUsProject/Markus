@@ -648,7 +648,7 @@ class GitRevision < Repository::AbstractRevision
   def tree_at_path(path)
     result = entries_at_path(path).to_a
     result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
-      result.push *(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] })
+      result.push(*(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] }))
     end
     result
   end
