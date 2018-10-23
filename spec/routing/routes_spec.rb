@@ -299,8 +299,8 @@ describe 'An Assignment' do
         )
       end
 
-      it 'routes PATCH delete_rejected properly' do
-        expect(patch: group_path + '/delete_rejected').to route_to(
+      it 'routes DELETE delete_rejected properly' do
+        expect(delete: group_path + '/delete_rejected').to route_to(
           controller: group_ctrl,
           action: 'delete_rejected',
           assignment_id: assignment.id.to_s,

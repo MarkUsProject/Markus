@@ -133,7 +133,7 @@ Rails.application.routes.draw do
           post 'global_actions'
           patch 'accept_invitation'
           patch 'decline_invitation'
-          patch 'delete_rejected'
+          delete 'delete_rejected'
           post 'invite_member'
           patch 'disinvite_member'
         end
