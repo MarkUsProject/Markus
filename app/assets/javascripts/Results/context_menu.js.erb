@@ -167,9 +167,9 @@ var annotation_context_menu = {
         var annotation_selected = (function() {
           var clicked_element = $(ui.target);
           if (annotation_type === ANNOTATION_TYPES.CODE) {
-            return clicked_element.hasClass('source-code-glowing-1');
+            return clicked_element.closest('.source-code-glowing-1');
           } else {
-            return clicked_element.hasClass('annotation_holder');
+            return clicked_element.closest('.annotation_holder');
           }
         })();
         $(document).contextmenu('enableEntry', 'edit_annotation',
