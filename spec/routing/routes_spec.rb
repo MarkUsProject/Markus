@@ -283,7 +283,7 @@ describe 'An Assignment' do
           action: 'invite_member',
           assignment_id: assignment.id.to_s,
           locale: 'en'
-         )
+        )
       end
 
       it 'routes PATCH disinvite_member properly' do
