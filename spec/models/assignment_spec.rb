@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Assignment do
-
   describe 'ActiveRecord associations' do
     it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
     it { is_expected.to validate_presence_of(:submission_rule) }
@@ -24,6 +21,8 @@ describe Assignment do
         .order(:position)
     end
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
+    it { is_expected.to have_many(:test_scripts).dependent(:destroy) }
+    it { is_expected.to have_many(:test_support_files).dependent(:destroy) }
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files)
         .allow_destroy(true)
@@ -39,6 +38,10 @@ describe Assignment do
       is_expected.to accept_nested_attributes_for(:assignment_stat)
         .allow_destroy(true)
     end
+    it { should allow_value(true).for(:allow_web_submits) }
+    it { should allow_value(false).for(:allow_web_submits) }
+    it { should allow_value(true).for(:display_grader_names_to_students) }
+    it { should allow_value(false).for(:display_grader_names_to_students) }
   end
 
   describe 'ActiveModel validations' do
@@ -49,8 +52,8 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:group_min) }
     it { is_expected.to validate_presence_of(:group_max) }
     it { is_expected.to validate_presence_of(:notes_count) }
-    it { should belong_to(:parent_assignment).class_name('Assignment') }
-    it { should have_one(:pr_assignment).class_name('Assignment') }
+    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment') }
+    it { is_expected.to have_one(:pr_assignment).class_name('Assignment') }
     it do
       is_expected.to validate_numericality_of(:group_min).is_greater_than(0)
     end
@@ -58,10 +61,15 @@ describe Assignment do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
 
+    it 'should create a valid assignment' do
+      assignment = create(:assignment)
+      expect(assignment).to be_valid
+    end
+
     it 'should require case sensitive unique value for short_identifier' do
       assignment = create(:assignment)
       expect(assignment).to validate_uniqueness_of(:short_identifier)
-      end
+    end
     it 'should have a nil parent_assignment by default' do
       assignment = create(:assignment)
       expect(assignment.parent_assignment).to be_nil
@@ -100,9 +108,13 @@ describe Assignment do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
     end
+    it 'fails with a negative tokens_per_period value' do
+      assignment = build(:assignment, enable_test: true, enable_student_tests: true, tokens_per_period: '-10', unlimited_tokens: false)
+      expect(assignment).not_to be_valid
+    end
     context 'fails when repository_folder is one of the reserved locations' do
       Repository.get_class.reserved_locations.each do |loc|
-        it "#{loc}" do
+        it loc.to_s do
           assignment = build(:assignment, repository_folder: loc)
           expect(assignment).not_to be_valid
         end
@@ -189,11 +201,13 @@ describe Assignment do
             @peer_criteria = Array.new(2) { create(:rubric_criterion,
                                                    assignment: @assignment,
                                                    ta_visible: false,
-                                                   peer_visible: true) }
+                                                   peer_visible: true)
+            }
             @ta_and_peer_criteria = Array.new(2) { create(:rubric_criterion,
                                                           assignment: @assignment,
-                                                          peer_visible: true) }
-            end
+                                                          peer_visible: true)
+            }
+          end
 
           it 'shows the criteria visible to tas only' do
             expect(@assignment.get_criteria(:ta).select(&:id)).to match_array(@ta_criteria.select(&:id) +
@@ -705,6 +719,13 @@ describe Assignment do
     end
   end
 
+  describe '#display_for_note' do
+    it 'display for note without seeing an exception' do
+      @assignment = create(:assignment)
+      expect { @assignment.display_for_note }.not_to raise_error
+    end
+  end
+
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
@@ -816,9 +837,9 @@ describe Assignment do
         end
 
         it 'returns the due date of that SectionDueDate' do
-          due_date_1 = @assignment.latest_due_date
-          due_date_2 = @section_due_date.due_date
-          expect(due_date_1).to same_time_within_ms due_date_2
+          due_date1 = @assignment.latest_due_date
+          due_date2 = @section_due_date.due_date
+          expect(due_date1).to same_time_within_ms due_date2
         end
       end
 
@@ -856,8 +877,8 @@ describe Assignment do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
           @section_due_date = SectionDueDate.create(section: create(:section),
-                                assignment: @assignment,
-                                due_date: 1.days.ago)
+                                                    assignment: @assignment,
+                                                    due_date: 1.days.ago)
           puts @section_due_date.inspect
         end
 
@@ -1084,7 +1105,7 @@ describe Assignment do
     context 'when there are no submitted marks' do
       it 'returns the correct distribution' do
         expect(@assignment.grade_distribution_array)
-          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
+          .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         expect(@assignment.grade_distribution_array(10))
           .to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       end
@@ -1125,8 +1146,7 @@ describe Assignment do
         end
 
         it 'returns the correct distribution' do
-          expect(@assignment.grade_distribution_array(10))
-            .to eq [1, 0, 0, 0, 3, 0, 0, 0, 0, 2]
+          expect(@assignment.grade_distribution_array(10)).to eq [1, 0, 0, 0, 3, 0, 0, 0, 0, 2]
         end
       end
     end
@@ -1138,8 +1158,7 @@ describe Assignment do
         @assignment = create(:assignment)
         create(:assignment_file, filename: 'test1', assignment: @assignment)
         create(:assignment_file, filename: 'test2', assignment: @assignment)
-        criteria =
-          Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
+        Array.new(4) { create(:rubric_criterion, assignment: @assignment) }
 
         4.times do
           grouping = create(:grouping, assignment: @assignment)
@@ -1198,8 +1217,7 @@ describe Assignment do
         @assignment = create(:assignment)
         create(:assignment_file, filename: 'test3', assignment: @assignment)
         create(:assignment_file, filename: 'test4', assignment: @assignment)
-        criteria =
-          Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
+        Array.new(4) { create(:flexible_criterion, assignment: @assignment) }
 
         4.times do
           grouping = create(:grouping, assignment: @assignment)
@@ -1254,24 +1272,46 @@ describe Assignment do
     end
   end
 
-  context 'when before due with no submission rule' do
-    before :each do
-      @assignment = create(:assignment, due_date: 2.days.from_now)
-    end
-
-    it 'returns false for #past_collection_date?' do
-      expect(@assignment.past_collection_date?).not_to be
-    end
-  end
-
-  context 'when past due with no late submission rule' do
-    context 'without sections' do
+  describe '#pass_collection_date?' do
+    context 'when before due with no submission rule' do
       before :each do
-        @assignment = create(:assignment, due_date: 2.days.ago)
+        @assignment = create(:assignment, due_date: 2.days.from_now)
       end
 
-      it 'returns true for past_collection_date?' do
-        expect(@assignment.past_collection_date?).to be
+      it 'returns false' do
+        expect(@assignment.past_collection_date?).not_to be
+      end
+    end
+
+    context 'when past due with no late submission rule' do
+      context 'without sections' do
+        before :each do
+          @assignment = create(:assignment, due_date: 2.days.ago)
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_collection_date?).to be
+        end
+      end
+
+      context 'with a section' do
+        before :each do
+          @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
+          @section = create(:section, name: 'section_name')
+          SectionDueDate.create(section: @section,
+                                assignment: @assignment,
+                                due_date: 1.day.ago)
+          student = create(:student, section: @section)
+          @grouping = create(:grouping, assignment: @assignment)
+          create(:accepted_student_membership,
+                 grouping: @grouping,
+                 user: student,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_collection_date?).to be
+        end
       end
     end
   end
@@ -1293,8 +1333,7 @@ describe Assignment do
 
     context 'when even number of marks are found' do
       before :each do
-        allow(Result).to receive(:student_marks_by_assignment).and_return(
-          [0, 1, 4, 7])
+        allow(Result).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7])
         assignment.update_results_stats
       end
 
@@ -1332,8 +1371,7 @@ describe Assignment do
 
     context 'when odd number of marks are found' do
       before :each do
-        allow(Result).to receive(:student_marks_by_assignment).and_return(
-          [0, 1, 4, 7, 9])
+        allow(Result).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7, 9])
         assignment.update_results_stats
       end
 

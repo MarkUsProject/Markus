@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GroupsController do
   let(:grouping) { create(:grouping) }
   let(:assignment) { grouping.assignment }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'Subversion Repository' do
   context 'writes to repository permissions file' do
     it 'is currently skipped because it requires loading SVN on travis'

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-THIS_SCRIPT=$(readlink -f "${BASH_SOURCE}")
-THIS_SCRIPT_DIR=$(dirname "${THIS_SCRIPT}")
-AUTOTEST_ROOT=$(readlink -f "${THIS_SCRIPT_DIR}/../../markus-autotesting")
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 markus-autotesting-root-dir"
+else
+  AUTOTEST_ROOT="$1"
+fi
 
 echo "[MARKUS] Starting autotest workers using supervisord"
 source "${AUTOTEST_ROOT}"/server/venv/bin/activate

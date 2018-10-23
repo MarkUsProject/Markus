@@ -19,7 +19,7 @@ function add_template_division(id) {
       </span>
       <span class="delete">
         <a onClick="this.closest('li').remove(); return false;" class="haha">
-          <%= t(:remove) %>
+          ${I18n.t('remove')}
         </a>
       </span>
     </li>

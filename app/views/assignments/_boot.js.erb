@@ -60,11 +60,11 @@
     var input_id = 'assignment_assignment_files_attributes_' + new_id +
                    '_filename';
     var assignment_file = '<p id="' + input_id + '_holder">' +
-      '<label class="required" for="' + input_id + '"><%= t(:filename) %></label>' +
+      '<label class="required" for="' + input_id + '">' + I18n.t('filename') + '</label>' +
       '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
-      '<%= t(:remove) %></a></p>';
+      I18n.t('remove') + '</a></p>';
     $('#assignment_files').append($(assignment_file));
 
     $('#only_required_files_option').removeClass('disable');
@@ -110,15 +110,14 @@
   }
 
   function check_due_date(new_due_date) {
-    if (moment(new_due_date, '<%= t('time.format_string.js') %>').isBefore(
-         moment())) {
-      alert('<%= t(:past_due_date_edit_warning) %>');
+    if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
+      alert(I18n.t('past_due_date_edit_warning'));
     }
   }
 
   $(document).ready(function() {
     // Set locale for language localisation with Moment.js
-    moment.lang(document.getElementById('locale').value);
+    moment.locale(document.getElementById('locale').value);
 
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {

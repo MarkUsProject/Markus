@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe UserPolicy do
   let(:admin) { Admin.new(user_name: 'admin', type: User::ADMIN) }
   let(:ta) { Ta.new(user_name: 'ta', type: User::TA) }
