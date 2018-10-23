@@ -8,7 +8,7 @@ class GroupsController < ApplicationController
                               :delete_rejected,
                               :disinvite_member,
                               :invite_member,
-                              :join_group,
+                              :accept_invitation,
                               :decline_invitation]
 
   before_action      :authorize_for_student,
@@ -17,7 +17,7 @@ class GroupsController < ApplicationController
                             :delete_rejected,
                             :disinvite_member,
                             :invite_member,
-                            :join_group,
+                            :accept_invitation,
                             :decline_invitation]
 
   layout 'assignment_content'
@@ -327,24 +327,24 @@ class GroupsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
-  def join_group
-    @assignment = Assignment.find(params[:id])
+  def accept_invitation
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'(accepted invitation).")
-    redirect_to student_interface_assignment_path(params[:id])
+    redirect_to student_interface_assignment_path(params[:assignment_id])
   end
 
   def decline_invitation
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @grouping.decline_invitation(@user)
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{@user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
-    redirect_to student_interface_assignment_path(params[:id])
+    redirect_to student_interface_assignment_path(params[:assignment_id])
   end
 
   def create
@@ -420,12 +420,12 @@ class GroupsController < ApplicationController
                        "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
-    redirect_to student_interface_assignment_path(params[:id])
+    redirect_to student_interface_assignment_path(params[:assignment_id])
   end
 
   def invite_member
     return unless request.post?
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     # if instructor formed group return
     return if @assignment.invalid_override
 
@@ -449,7 +449,7 @@ class GroupsController < ApplicationController
   # Called by clicking the cancel link in the student's interface
   # i.e. cancels invitations
   def disinvite_member
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     membership = StudentMembership.find(params[:membership])
     disinvited_student = membership.user
     membership.delete
@@ -462,7 +462,7 @@ class GroupsController < ApplicationController
 
   # Deletes memberships which have been declined by students
   def delete_rejected
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     membership = StudentMembership.find(params[:membership])
     grouping = membership.grouping
     if current_user != grouping.inviter
@@ -470,7 +470,7 @@ class GroupsController < ApplicationController
     end
     membership.delete
     membership.save
-    redirect_to student_interface_assignment_path(params[:id])
+    redirect_to student_interface_assignment_path(params[:assignment_id])
   end
 
   # These actions act on all currently selected students & groups

@@ -111,15 +111,6 @@ Rails.application.routes.draw do
       end
 
       resources :groups do
-
-        member do
-          post 'rename_group'
-          post 'invite_member'
-          get 'join_group'
-          get 'decline_invitation'
-          post 'disinvite_member'
-        end
-
         collection do
           get 'add_group'
           post 'use_another_assignment_groups'
@@ -140,6 +131,15 @@ Rails.application.routes.draw do
           delete 'remove_group'
           post 'add_group'
           post 'global_actions'
+          patch 'accept_invitation'
+          patch 'decline_invitation'
+          patch 'delete_rejected'
+          post 'invite_member'
+          patch 'disinvite_member'
+        end
+
+        member do
+          post 'rename_group'
         end
       end
 

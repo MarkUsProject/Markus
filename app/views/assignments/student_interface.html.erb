@@ -103,12 +103,12 @@
                 <% end -%>
 
                 <%= link_to t(:join),
-                            join_group_assignment_group_path(assignment_id: @assignment.id, grouping_id: grouping.id),
-                            { class: 'button' } %>
+                            accept_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            { method: :patch, class: 'button' } %>
                 <%= link_to t(:refuse),
-                            decline_invitation_assignment_group_path(assignment_id: @assignment.id, grouping_id: grouping.id),
+                            decline_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
                             { class: 'button',
-                              data: { confirm: t('student.decline_invitation') } } %>
+                              method: :patch, data: { confirm: t('student.decline_invitation') } } %>
                 </div>
             <% end %>
           <% end %>
@@ -280,7 +280,7 @@
 <% # HTML for the invite dialog
    if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.invalid_override %>
   <aside class='dialog' id='invite_dialog'>
-    <%= form_tag(invite_member_assignment_group_path(@assignment.id),
+    <%= form_tag(invite_member_assignment_groups_path(assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { onsubmit: "document.getElementById('working').style.display = '';" }) do %>
       <h2><%= t('student.invite') %></h2>
       <p class='information'><%= t(:seperate_multiple_with_commas) %></p>
