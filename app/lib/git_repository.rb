@@ -638,6 +638,21 @@ class GitRevision < Repository::AbstractRevision
     entries_at_path(path, :tree)
   end
 
+  # Walks all files and subdirectories starting at +path+ and
+  # returns an array of tuples containing [path, revision_object]
+  # for every file and directory discovered in this way
+  #
+  # It returns an array to ensure ordering, so that a directory
+  # will always appear before any of the files or subdirectories
+  # contained within it
+  def tree_at_path(path)
+    result = entries_at_path(path).to_a
+    result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
+      result.push(*(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] }))
+    end
+    result
+  end
+
   def last_modified_date
     self.timestamp
   end

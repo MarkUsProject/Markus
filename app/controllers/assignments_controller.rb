@@ -853,46 +853,36 @@ class AssignmentsController < ApplicationController
     full_path = File.join(assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    files = revision.files_at_path(full_path)
-    entries = get_files_info(files, assignment.id, revision.revision_identifier, path)
-
-    entries.each do |data|
+    entries = revision.tree_at_path(full_path)
+                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
+      data = get_file_info(file_name, file_obj, assignment.id, path)
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
+      data
     end
-
-    revision.directories_at_path(full_path).each do |directory_name, _|
-      entries.concat(get_all_file_data(
-                       revision,
-                       path.blank? ? directory_name : File.join(path, directory_name)
-                     ))
-    end
-
     entries
   end
 
-  def get_files_info(files, assignment_id, revision_identifier, path)
-    files.map do |file_name, file|
-      {
-        id: file.object_id,
-        url: download_starter_code_assignment_url(
-          id: assignment_id,
-          file_name: file_name,
-          path: path,
-        ),
-        filename: view_context.image_tag('icons/page_white_text.png') +
-          view_context.link_to(file_name,
-                               action: 'download_starter_code',
-                               id: assignment_id,
-                               file_name: file_name,
-                               path: path),
-        raw_name: file_name,
-        last_revised_date: l(file.last_modified_date),
-        last_modified_revision: file.last_modified_revision,
-        revision_by: file.user_id
-      }
-    end
+  def get_file_info(file_name, file, assignment_id, path)
+    {
+      id: file.object_id,
+      url: download_starter_code_assignment_url(
+        id: assignment_id,
+        file_name: file_name,
+        path: path,
+      ),
+      filename: view_context.image_tag('icons/page_white_text.png') +
+        view_context.link_to(file_name,
+                             action: 'download_starter_code',
+                             id: assignment_id,
+                             file_name: file_name,
+                             path: path),
+      raw_name: file_name,
+      last_revised_date: l(file.last_modified_date),
+      last_modified_revision: file.last_modified_revision,
+      revision_by: file.user_id
+    }
   end
 
     def update_assignment!(map)
