@@ -2,6 +2,7 @@ module AutomatedTestsClientHelper
 
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments')
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students')
+  HOOKS_FILE = 'hooks.py'.freeze
 
   def create_test_repo(assignment)
     test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
@@ -152,9 +153,11 @@ module AutomatedTestsClientHelper
     if test_scripts.empty?
       raise I18n.t('automated_tests.error.no_test_files')
     end
+    # TODO: Adjust the hooks mechanism when we create a new user interface
+    hooks_script = assignment.select_hooks_script.exists? ? HOOKS_FILE : nil
     check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
 
-    test_scripts
+    [test_scripts, hooks_script]
   end
 
 end

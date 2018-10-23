@@ -1162,6 +1162,11 @@ class Assignment < ApplicationRecord
     test_scripts.where(condition).order(:seq_num)
   end
 
+  # Selects the hooks script from the test support files.
+  def select_hooks_script
+    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE)
+  end
+
   # Retrieve current grader data.
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
