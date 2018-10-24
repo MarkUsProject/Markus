@@ -534,8 +534,10 @@ class Grouping < ApplicationRecord
               starter_file_path = File.join(assignment_folder, starter_file_name)
               if starter_obj.is_a? Repository::RevisionDirectory
                 txn.add_path(starter_file_path)
+              elsif revision.path_exists? starter_file_path
+                txn.replace(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type, revision.revision_identifier)
               else
-                txn.add(starter_file_path, starter_repo.download_as_string(starter_obj))
+                txn.add(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type)
               end
             end
             result = repo.commit(txn)

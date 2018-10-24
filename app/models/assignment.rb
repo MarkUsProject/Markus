@@ -1095,6 +1095,11 @@ class Assignment < ApplicationRecord
                      "Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
     end
+    access_repo do |repo|
+      txn = repo.get_transaction('Markus')
+      txn.add_path(repository_folder)
+      repo.commit(txn)
+    end
     true
   end
 
