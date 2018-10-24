@@ -615,6 +615,60 @@ class AssignmentsController < ApplicationController
     @tas = @assignment.tas unless @assignment.nil?
   end
 
+  def download_assignment_list
+    @output = Assignment.get_assignment_list(params[:file_format], DEFAULT_FIELDS)
+    case params[:file_format]
+    when 'yml'
+      send_data(@output,
+                filename: "assignments_#{Time.
+                  now.strftime('%Y%m%dT%H%M%S')}.yml}",
+                type: 'text/yml', disposition: 'inline')
+    when 'csv'
+      send_data(@output,
+                type: 'text/csv', disposition: 'attachment',
+                filename: 'assignment_list.csv')
+    # else should never be reached under normal use
+    else
+      flash_message(:error, t(:incorrect_format))
+      redirect_to action: 'index'
+      return
+    end
+  end
+
+  def upload_assignment_list
+    assignment_list = params[:assignment_list]
+    file_format = params[:file_format]
+
+    if assignment_list.blank?
+      flash_message(:error, I18n.t('csv.invalid_csv'))
+      redirect_to action: 'index'
+      return
+    end
+
+    encoding = params[:encoding]
+    assignment_list = assignment_list.utf8_encode(encoding)
+    case file_format
+
+    when 'csv'
+      @result = Assignment.upload_assignment_list('csv', assignment_list, DEFAULT_FIELDS)
+      unless @result[:invalid_lines].empty?
+        flash_message(:error, @result[:invalid_lines])
+      end
+      unless @result[:valid_lines].empty?
+        flash_message(:success, @result[:valid_lines])
+      end
+
+    when 'yml'
+        @result = Assignment.upload_assignment_list('yml', assignment_list, DEFAULT_FIELDS)
+        if @result.is_a?(error)
+          flash_message(:error, @result.message)
+        end
+    else
+      return
+    end
+    redirect_to action: 'index'
+  end
+
   def populate_file_manager
     assignment = Assignment.find(params[:id])
     entries = []

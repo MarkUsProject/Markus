@@ -1464,99 +1464,68 @@ class Assignment < ApplicationRecord
     end
   end
 
-  def download_assignment_list
-    assignments = Assignment.all
+  # Reformatted logic for download_assignment_list controller method
+  # Returns an output file for controller to handle.
+  def self.get_assignment_list(file_format, default_fields)
+    assignments = self.all
 
-    case params[:file_format]
+    case file_format
     when 'yml'
       map = {}
       map[:assignments] = []
       assignments.map do |assignment|
         m = {}
-        DEFAULT_FIELDS.length.times do |i|
-          m[DEFAULT_FIELDS[i]] = assignment.send(DEFAULT_FIELDS[i])
+        default_fields.length.times do |i|
+          m[default_fields[i]] = assignment.send(default_fields[i])
         end
         map[:assignments] << m
       end
       output = map.to_yaml
-      format = 'text/yml'
     when 'csv'
-      file_out = MarkusCSV.generate(assignments) do |assignment|
-        DEFAULT_FIELDS.map do |f|
+      output = MarkusCSV.generate(assignments) do |assignment|
+        default_fields.map do |f|
           assignment.send(f.to_s)
         end
       end
-      send_data(file_out,
-                type: 'text/csv', disposition: 'attachment',
-                filename: 'assignment_list.csv')
-      return
-    else
-      flash_message(:error, t(:incorrect_format))
-      redirect_to action: 'index'
-      return
     end
-
-    send_data(output,
-              filename: "assignments_#{Time.
-                now.strftime('%Y%m%dT%H%M%S')}.#{params[:file_format]}",
-              type: format, disposition: 'inline')
+    return output
   end
 
-  def upload_assignment_list
-    assignment_list = params[:assignment_list]
+  def self.upload_assignment_list(file_format, assignment_list, default_fields)
 
-    if assignment_list.blank?
-      flash_message(:error, I18n.t('csv.invalid_csv'))
-      redirect_to action: 'index'
-      return
+  case file_format
+  when 'csv'
+    result = MarkusCSV.parse(assignment_list) do |row|
+    assignment = self.find_or_create_by(short_identifier: row[0])
+    attrs = Hash[default_fields.zip(row)]
+    attrs.delete_if { |_, v| v.nil? }
+      if assignment.new_record?
+         assignment.submission_rule = NoLateSubmissionRule.new
+         assignment.assignment_stat = AssignmentStat.new
+         assignment.token_period = 1
+         assignment.non_regenerating_tokens = false
+         assignment.unlimited_tokens = false
+      end
+      assignment.update(attrs)
+      raise CSVInvalidLineError unless assignment.valid?
     end
+    return result
 
-    encoding = params[:encoding]
-    assignment_list = assignment_list.utf8_encode(encoding)
-
-    case params[:file_format]
-    when 'csv'
-      result = MarkusCSV.parse(assignment_list) do |row|
-        assignment = Assignment.find_or_create_by(short_identifier: row[0])
-        attrs = Hash[DEFAULT_FIELDS.zip(row)]
-        attrs.delete_if { |_, v| v.nil? }
-        if assignment.new_record?
-          assignment.submission_rule = NoLateSubmissionRule.new
-          assignment.assignment_stat = AssignmentStat.new
-          assignment.token_period = 1
-          assignment.non_regenerating_tokens = false
-          assignment.unlimited_tokens = false
-        end
-        assignment.update(attrs)
-        raise CSVInvalidLineError unless assignment.valid?
+  when 'yml'
+    begin
+      map = YAML::load(assignment_list)
+      map[:assignments].map do |row|
+        row[:submission_rule] = NoLateSubmissionRule.new
+        row[:assignment_stat] = AssignmentStat.new
+        row[:token_period] = 1
+        row[:non_regenerating_tokens] = false
+        row[:unlimited_tokens] = false
+        update_assignment!(row)
       end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
-    when 'yml'
-      begin
-        map = YAML::load(assignment_list)
-        map[:assignments].map do |row|
-          row[:submission_rule] = NoLateSubmissionRule.new
-          row[:assignment_stat] = AssignmentStat.new
-          row[:token_period] = 1
-          row[:non_regenerating_tokens] = false
-          row[:unlimited_tokens] = false
-          update_assignment!(row)
-        end
-      rescue ActiveRecord::ActiveRecordError, ArgumentError => e
-        flash_message(:error, e.message)
-        redirect_to action: 'index'
-        return
-      end
-    else
-      return
+    rescue ActiveRecord::ActiveRecordError, ArgumentError => e
+      result = e
+      return result
     end
-
-    redirect_to action: 'index'
   end
-
+  end
 end
