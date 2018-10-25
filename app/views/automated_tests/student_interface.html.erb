@@ -4,55 +4,39 @@
   <div class='block'>
     <div class='block_content'>
       <h3><%= t('automated_tests.information') %></h3>
-      <div class='sub_block'>
+
         <div class='sub_block'>
-          <%= raw t('automated_tests.token.token_start_date',
-                    date: l(@assignment.token_start_date)) %>
+          <span class="prop_label"><%= t('automated_tests.token.start_date') %></span>
+          <%= l(@assignment.token_start_date) %>
         </div>
-        <% if @assignment.unlimited_tokens %>
+
+        <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
           <div class='sub_block'>
-            <%= raw t('automated_tests.token.unlimited_tokens') %>
-          </div>
-        <% else %>
-          <% unless @assignment.non_regenerating_tokens %>
-          <div class='sub_block'>
-            <%= raw t('automated_tests.token.tokens_per_period', tokens: @assignment.tokens_per_period,
-                      regeneration_period: @assignment.token_period) %>
-          </div>
-          <% end %>
-          <div class='sub_block'>
-            <% if DateTime.now < @assignment.token_start_date %>
-              <%= raw t('automated_tests.token.tokens_not_given_yet') %>
-            <% elsif @grouping.test_tokens <= 0 %>
-              <%= raw t('automated_tests.token.tokens_no_more_available') %>
-            <% else %>
-              <%= raw t('automated_tests.token.tokens_available', tokens: @grouping.test_tokens) %>
-            <% end %>
+            <span class="prop_label">
+              <%= t('automated_tests.token.per_period', period: @assignment.token_period) %>
+            </span>
+            <% @assignment.tokens_per_period %>
           </div>
         <% end %>
 
-        <% if @assignment.unlimited_tokens || @grouping.test_tokens > 0 %>
-          <h3><%= t('automated_tests.run_tests') %></h3>
-          <% if @grouping.assignment.submission_rule.can_collect_now? %>
-            <p><%= t('automated_tests.error.after_due_date') %></p>
+        <div class='sub_block'>
+          <span class="prop_label"><%= t('automated_tests.token.available') %></span>
+          <% if @assignment.unlimited_tokens %>
+            <%= t('automated_tests.token.unlimited') %>
           <% else %>
-            <p><%= raw t('automated_tests.need_one_file') %></p>
-
-            <%= link_to t('automated_tests.run_tests'),
-                        execute_test_run_automated_test_path(
-                          id: @assignment.id,
-                          grouping_id: @grouping.id),
-                        method: :post,
-                        class: 'button' %>
+            <% @grouping.test_tokens %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+
+        <div class='sub_block'>
+          <%= raw t('automated_tests.need_one_file') %>
+        </div>
+
     </div>
   </div>
 
   <div class='block'>
-    <%= render partial: 'automated_tests/test_runs',
-               locals: { test_runs: @test_runs, ran_by: 'student' } %>
+    <%= render partial: 'automated_tests/test_runs', locals: { ran_by: 'student' } %>
   </div>
 
 <% elsif @grouping.nil? %>
