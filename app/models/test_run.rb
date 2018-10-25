@@ -85,15 +85,19 @@ class TestRun < ApplicationRecord
     time = json_test_script.fetch('time', 0)
     stderr = json_test_script['stderr']
     malformed = json_test_script['malformed']
-    if stderr.nil? && malformed.nil?
+    hooks_stderr = json_test_script['hooks_stderr']
+    if stderr.blank? && malformed.blank? && hooks_stderr.blank?
       extra = nil
     else
       extra = ''
-      unless stderr.nil?
-        extra += I18n.t('automated_tests.results.extra_stderr_html', extra: stderr)
+      unless stderr.blank?
+        extra += I18n.t('automated_tests.results.extra_stderr', extra: stderr)
       end
-      unless malformed.nil?
-        extra += I18n.t('automated_tests.results.extra_malformed_html', extra: malformed)
+      unless malformed.blank?
+        extra += I18n.t('automated_tests.results.extra_malformed', extra: malformed)
+      end
+      unless hooks_stderr.blank?
+        extra += I18n.t('automated_tests.results.extra_hooks_stderr', extra: hooks_stderr)
       end
     end
     new_test_script_result = create_test_script_result(file_name, time: time, extra_info: extra)
@@ -147,7 +151,7 @@ class TestRun < ApplicationRecord
     rescue StandardError => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_results', error: e.message) }
-      extra = I18n.t('automated_tests.results.extra_raw_output_html', extra: test_output)
+      extra = I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
       create_error_for_all_test_scripts(test_scripts, error, extra_info: extra)
       return
     end
@@ -159,13 +163,15 @@ class TestRun < ApplicationRecord
       time_delta = time_to_service_estimate - time_to_service
       test_batch.adjust_time_to_service_estimate(time_delta)
     end
+    # TODO: Create a better interface to display global errors (server + hooks)
     # check for server errors
     server_error = json_root['error']
-    unless server_error.blank?
+    hooks_error = json_root['hooks_error']
+    unless server_error.blank? && hooks_error.blank?
       error = { name: I18n.t('automated_tests.results.all_tests'),
-                message: I18n.t('automated_tests.results.bad_server',
-                                hostname: MarkusConfigurator.autotest_server_host, error: server_error) }
-      extra = I18n.t('automated_tests.results.extra_raw_output_html', extra: test_output)
+                message: I18n.t('automated_tests.results.bad_server', hostname: MarkusConfigurator.autotest_server_host,
+                                                                      error: "#{server_error} #{hooks_error}") }
+      extra = I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
       create_error_for_all_test_scripts(test_scripts, error, extra_info: extra)
       return
     end

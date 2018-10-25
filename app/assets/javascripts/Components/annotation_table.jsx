@@ -9,6 +9,10 @@ class AnnotationTable extends React.Component {
     super();
     this.state = {
       data: [],
+      // TODO: remove these two when this component and the FileViewer are
+      // put under the same parent component.
+      initialized: false,
+      queued_id: null
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -86,8 +90,13 @@ class AnnotationTable extends React.Component {
       dataType: 'json',
     }).then(res => {
       this.setState(
-        {data: res},
-        () => MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table'])
+        {data: res, initialized: true},
+        () => {
+          MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
+          if (this.state.queued_id !== null) {
+            this.display_annotations(this.state.queued_id);
+          }
+        }
       );
     });
   }
@@ -135,10 +144,14 @@ class AnnotationTable extends React.Component {
    * submission file (through the global submissionFileViewer object).
    */
   display_annotations = (submission_file_id) => {
-    for (let row of this.state.data) {
-      if (row.submission_file_id === submission_file_id) {
-        this.display_annotation(row);
+    if (this.state.initialized) {
+      for (let row of this.state.data) {
+        if (row.submission_file_id === submission_file_id) {
+          this.display_annotation(row);
+        }
       }
+    } else {
+      this.setState({queued_id: submission_file_id});
     }
   };
 

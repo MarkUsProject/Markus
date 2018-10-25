@@ -240,9 +240,9 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !test_runs.empty?
-        test_scripts = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
+        test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
         AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
-                                     test_runs)
+                                     hooks_script, test_runs)
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')
@@ -766,23 +766,15 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    files = revision.files_at_path(full_path)
-    entries = get_files_info(files, grouping.assignment.id, revision.revision_identifier, path,
-                             grouping.id)
-
-    entries.each do |data|
+    entries = revision.tree_at_path(full_path)
+                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
+      data = get_file_info(file_name, file_obj, grouping.assignment.id, revision.revision_identifier, path, grouping.id)
+      next if data.nil?
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
-    end
-
-    revision.directories_at_path(full_path).each do |directory_name, _|
-      entries.concat(get_all_file_data(
-        revision, grouping,
-        path.blank? ? directory_name : File.join(path, directory_name)
-      ))
-    end
-
+      data
+    end.compact
     entries
   end
 end

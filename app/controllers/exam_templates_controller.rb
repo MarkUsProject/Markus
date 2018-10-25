@@ -147,7 +147,8 @@ class ExamTemplatesController < ApplicationController
 
         data = split_pdf_logs.map do |log|
           pages = log.split_pages.select do |p|
-            p.status == 'FIXED' || p.status.start_with?('ERROR')
+            # TODO: make status non-nil.
+            p.status == 'FIXED' || p.status&.start_with?('ERROR')
           end
 
           page_data = pages.map do |page|

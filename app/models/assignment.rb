@@ -135,7 +135,7 @@ class Assignment < ApplicationRecord
   after_create :build_repository
 
   before_save :reset_collection_time
-  before_save :update_permissions_if_vcs_changed
+  after_save :update_permissions_if_vcs_changed
 
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
@@ -1106,6 +1106,11 @@ class Assignment < ApplicationRecord
                      "Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
     end
+    access_repo do |repo|
+      txn = repo.get_transaction('Markus')
+      txn.add_path(repository_folder)
+      repo.commit(txn)
+    end
     true
   end
 
@@ -1171,6 +1176,11 @@ class Assignment < ApplicationRecord
     end
 
     test_scripts.where(condition).order(:seq_num)
+  end
+
+  # Selects the hooks script from the test support files.
+  def select_hooks_script
+    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE)
   end
 
   # Retrieve current grader data.
@@ -1347,7 +1357,7 @@ class Assignment < ApplicationRecord
   private
 
   def update_permissions_if_vcs_changed
-    if vcs_submit_changed?
+    if saved_change_to_vcs_submit?
       Repository.get_class.update_permissions
     end
   end

@@ -4,6 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
 
   before_create :create_grouping_repository_folder
+  after_save :update_repo_permissions_after_save
 
   belongs_to :grouping_queue, optional: true
 
@@ -390,6 +391,12 @@ class Grouping < ApplicationRecord
     self.save
   end
 
+  def update_repo_permissions_after_save
+    return unless assignment.read_attribute(:vcs_submit)
+    return unless saved_change_to_attribute? :admin_approved
+    Repository.get_class.update_permissions
+  end
+
   # Grace Credit Query
   def available_grace_credits
     total = []
@@ -523,9 +530,15 @@ class Grouping < ApplicationRecord
           starter_revision = starter_repo.get_latest_revision
           if starter_revision.path_exists?(assignment_folder)
             txn = repo.get_transaction('Markus')
-            starter_revision.files_at_path(assignment_folder).each do |starter_file_name, starter_file|
+            starter_revision.tree_at_path(assignment_folder).each do |starter_file_name, starter_obj|
               starter_file_path = File.join(assignment_folder, starter_file_name)
-              txn.add(starter_file_path, starter_repo.download_as_string(starter_file))
+              if starter_obj.is_a? Repository::RevisionDirectory
+                txn.add_path(starter_file_path)
+              elsif revision.path_exists? starter_file_path
+                txn.replace(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type, revision.revision_identifier)
+              else
+                txn.add(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type)
+              end
             end
             result = repo.commit(txn)
             revision = repo.get_latest_revision
