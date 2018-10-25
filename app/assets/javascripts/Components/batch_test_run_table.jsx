@@ -94,7 +94,8 @@ class BatchTestRunTable extends React.Component {
             },
             {
               Header: I18n.t('assignment.batch_tests_status_table.status'),
-              accessor: 'status',
+              id: 'status',
+              accessor: row => I18n.t('assignment.test_runs_statuses.' + row['status']),
               minWidth: 70,
               aggregate: (vals, pivots) => {
                 const batch = this.state.statuses[pivots[0].test_batch_id];

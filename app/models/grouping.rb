@@ -44,7 +44,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           -> { left_outer_joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -826,31 +826,64 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
-    fields = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
-              'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
-              'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
-              'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
+    fields = %w'test_runs.created_at
+                test_runs.id
+                users.user_name
+                test_scripts.file_name
+                test_scripts.description
+                test_scripts.display_actual_output
+                test_script_results.extra_info
+                test_script_results.time
+                test_results.name
+                test_results.completion_status
+                test_results.marks_earned
+                test_results.marks_total
+                test_results.actual_output
+                test_results.time'
     assoc.pluck_to_hash(*fields)
   end
 
-  def self.group_hash_list(hash_list)
+  def self.organize_test_run_data(hash_list)
+    inner_key = 'test_script_data'
+    group_by_keys = %w'test_runs.created_at users.user_name test_runs.status'
+    data = self.group_hash_list(hash_list, group_by_keys, inner_key)
+    data.map do |inner_hash|
+      inner_hash.map do |key, val|
+        if key == inner_key
+          group_by_keys = %w'test_scripts.file_name test_scripts.description test_runs.status test_script_results.time'
+          [key, self.group_hash_list(val, group_by_keys, 'test_result_data')]
+        else
+          [key, val]
+        end
+      end.to_h
+    end
+  end
+
+  def self.group_hash_list(hash_list, group_by_keys, inner_key)
     new_hash_list = []
-    group_by_keys = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
         h[key] = val[0][key]
       end
-      h['test_data'] = val
+      h[inner_key] = val
       new_hash_list << h
     end
     new_hash_list
   end
 
+  def self.add_status_to_hash(hash_list)
+    status_hash = TestRun.statuses(hash_list.map { |h| h['test_runs.id'] })
+    hash_list.each do |h|
+      h['test_runs.status'] = status_hash[h['test_runs.id']]
+    end
+  end
+
   def test_runs_instructors(submission)
     filtered = filter_test_runs({ 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
-    Grouping.group_hash_list(plucked)
+    Grouping.add_status_to_hash(plucked)
+    Grouping.organize_test_run_data(plucked)
   end
 
   def test_runs_instructors_released(submission)
@@ -863,7 +896,8 @@ class Grouping < ApplicationRecord
       end
       data
     end
-    Grouping.group_hash_list(plucked)
+    Grouping.add_status_to_hash(plucked)
+    Grouping.organize_test_run_data(plucked)
   end
 
   def test_runs_students
@@ -875,6 +909,7 @@ class Grouping < ApplicationRecord
       end
       data
     end
-    Grouping.group_hash_list(plucked)
+    Grouping.add_status_to_hash(plucked)
+    Grouping.organize_test_run_data(plucked)
   end
 end # end class Grouping

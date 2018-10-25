@@ -245,6 +245,11 @@ es:
             status: "UPDATE ME"
             estimated_remaining_time: "UPDATE ME"
             action: "UPDATE ME"
+        test_runs_statuses:
+            complete: "UPDATE ME"
+            in_progress: "UPDATE ME"
+            cancelled: "UPDATE ME"
+            complete_with_errors: "UPDATE ME"
     peer_review:
         assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"
@@ -1044,7 +1049,9 @@ es:
         partial:      "UPDATE ME"
         fail:         "Falló"
         error:        "UPDATE ME"
-        extra_info: "UPDATE ME"
+        extra_info:   "UPDATE ME"
+        run_by:       "UPDATE ME"
+        estimated_run_time: "UPDATE ME: %{time_in_seconds}"
       error:
         not_enabled:          "UPDATE ME"
         ta_not_allowed:       "UPDATE ME"
