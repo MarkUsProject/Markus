@@ -179,30 +179,28 @@ module SubmissionsHelper
     end
   end
 
-  def get_files_info(files, assignment_id, revision_identifier, path, grouping_id)
-    files.map do |file_name, file|
-      next if Repository.get_class.internal_file_names.include? file_name
-      f = {}
-      f[:id] = file.object_id
-      f[:url] = download_assignment_submissions_url(
-        id: assignment_id,
-        revision_identifier: revision_identifier,
-        file_name: file_name,
-        path: path,
-        grouping_id: grouping_id
-      )
-      f[:filename] = view_context.image_tag('icons/page_white_text.png') +
-          view_context.link_to(" #{file_name}", action: 'download',
-                               id: assignment_id,
-                               revision_identifier: revision_identifier,
-                               file_name: file_name,
-                               path: path, grouping_id: grouping_id)
-      f[:raw_name] = file_name
-      f[:last_revised_date] = I18n.l(file.last_modified_date)
-      f[:last_modified_revision] = revision_identifier
-      f[:revision_by] = file.user_id
-      f
-    end.compact
+  def get_file_info(file_name, file, assignment_id, revision_identifier, path, grouping_id)
+    return if Repository.get_class.internal_file_names.include? file_name
+    f = {}
+    f[:id] = file.object_id
+    f[:url] = download_assignment_submissions_url(
+      id: assignment_id,
+      revision_identifier: revision_identifier,
+      file_name: file_name,
+      path: path,
+      grouping_id: grouping_id
+    )
+    f[:filename] = view_context.image_tag('icons/page_white_text.png') +
+                   view_context.link_to(" #{file_name}", action: 'download',
+                                                         id: assignment_id,
+                                                         revision_identifier: revision_identifier,
+                                                         file_name: file_name,
+                                                         path: path, grouping_id: grouping_id)
+    f[:raw_name] = file_name
+    f[:last_revised_date] = I18n.l(file.last_modified_date)
+    f[:last_modified_revision] = revision_identifier
+    f[:revision_by] = file.user_id
+    f
   end
 
   def sanitize_file_name(file_name)
