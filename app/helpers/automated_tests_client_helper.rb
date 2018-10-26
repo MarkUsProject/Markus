@@ -136,7 +136,7 @@ module AutomatedTestsClientHelper
       raise I18n.t('automated_tests.error.after_due_date')
     end
     # no other enqueued tests
-    if grouping.student_test_enqueued?
+    if grouping.student_test_run_in_progress?
       raise I18n.t('automated_tests.error.already_enqueued')
     end
     grouping.refresh_test_tokens!

@@ -759,33 +759,24 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def student_test_runs(all_data: false)
-    if all_data
-      runs = test_runs_all_data
-    else
-      runs = test_runs
-    end
-    runs.where(user: accepted_students)
-  end
-
   def refresh_test_tokens!
-    if Time.current < assignment.token_start_date || !is_valid?
+    if Time.current < self.assignment.token_start_date || !is_valid?
       self.test_tokens = 0
-    elsif assignment.unlimited_tokens
+    elsif self.assignment.unlimited_tokens
       # grouping has always 1 token
       self.test_tokens = 1
     else
-      last_student_run = student_test_runs.first
+      last_student_run = test_runs_students_simple.first
       if last_student_run.nil?
-        self.test_tokens = assignment.tokens_per_period
+        self.test_tokens = self.assignment.tokens_per_period
       else
         # divide time into chunks of token_period hours
         # recharge tokens only the first time they are used during the current chunk
-        hours_from_start = (Time.current - assignment.token_start_date) / 3600
-        periods_from_start = (hours_from_start / assignment.token_period).floor
-        last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+        hours_from_start = (Time.current - self.assignment.token_start_date) / 3600
+        periods_from_start = (hours_from_start / self.assignment.token_period).floor
+        last_period_begin = self.assignment.token_start_date + (periods_from_start * self.assignment.token_period).hours
         if last_student_run.created_at < last_period_begin
-          self.test_tokens = assignment.tokens_per_period
+          self.test_tokens = self.assignment.tokens_per_period
         end
       end
     end
@@ -802,28 +793,17 @@ class Grouping < ApplicationRecord
     end
   end
 
-  # Checks whether a student test using tokens is currently being enqueued for execution
-  # (with buffer time in case of unhandled errors that prevented test results to be stored)
-  def student_test_enqueued?
-    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
-    last_student_run = student_test_runs.first
-    if last_student_run.nil? || (last_student_run.created_at + buffer_time) < Time.current
-      # first test or buffer time expired (in case some unhandled problem happened)
-      false
-    elsif last_student_run.test_script_results.empty?
-      # test results not back yet
-      true
-    else
-      false
-    end
-  end
-
-  # TODO Refactor into flexibler code from here to the end:
+  # TODO: Refactor into more flexible code from here to the end:
   # - ability to chain filters instead of exploding all cases
   # - pluck_test_runs and group_hash_list could be done in a single loop probably
   # - be able to return test_runs currently in progress and add them to the react table
-  def filter_test_runs(filters)
-    self.test_runs_all_data.where(filters)
+  def filter_test_runs(filters: {}, all_data: true)
+    if all_data
+      runs = self.test_runs_all_data
+    else
+      runs = self.test_runs
+    end
+    runs.where(filters)
   end
 
   def self.pluck_test_runs(assoc)
@@ -849,13 +829,13 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs({ 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs({ 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
       if data['test_scripts.display_actual_output'] == 'display_after_collection' ||
@@ -869,7 +849,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_students
-    filtered = filter_test_runs({ 'test_runs.user': self.accepted_students })
+    filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
       if data['test_scripts.display_actual_output'] == 'do_not_display'
@@ -879,5 +859,23 @@ class Grouping < ApplicationRecord
       data
     end
     Grouping.group_hash_list(plucked)
+  end
+
+  def test_runs_students_simple
+    filter_test_runs(filters: { 'test_runs.user': self.accepted_students }, all_data: false)
+  end
+
+  # Checks whether a student test using tokens is currently being enqueued for execution
+  # (with buffer time in case of unhandled errors that prevented test results to be stored)
+  def student_test_run_in_progress?
+    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    last_student_run = test_runs_students_simple.first
+    if last_student_run.nil? || # first test
+      (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)
+      !last_student_run.in_progress? # test results not back yet
+      false
+    else
+      true
+    end
   end
 end # end class Grouping

@@ -17,7 +17,7 @@ class TestRun < ApplicationRecord
 
   def status
     if test_script_results.exists?
-      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').count&.positive?
+      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').size&.positive?
         return STATUSES[:complete_with_errors]
       end
       return STATUSES[:complete]

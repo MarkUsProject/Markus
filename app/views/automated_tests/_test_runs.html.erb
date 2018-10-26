@@ -22,7 +22,7 @@
       <%= t('automated_tests.test_results') %>
     <% end %>
   <% elsif @current_user.student? %>
-    <% if DateTime.now < @assignment.token_start_date %>
+    <% if Time.current < @assignment.token_start_date %>
       <%= t('automated_tests.error.no_tokens_yet') %>
     <% elsif @assignment.submission_rule.can_collect_now? %>
       <%= t('automated_tests.error.after_due_date') %>
