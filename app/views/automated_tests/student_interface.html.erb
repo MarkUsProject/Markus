@@ -15,7 +15,7 @@
             <span class="prop_label">
               <%= t('automated_tests.token.per_period', period: @assignment.token_period) %>
             </span>
-            <% @assignment.tokens_per_period %>
+            <%= @assignment.tokens_per_period %>
           </div>
         <% end %>
 
@@ -24,12 +24,12 @@
           <% if @assignment.unlimited_tokens %>
             <%= t('automated_tests.token.unlimited') %>
           <% else %>
-            <% @grouping.test_tokens %>
+            <%= @grouping.test_tokens %>
           <% end %>
         </div>
 
         <div class='sub_block'>
-          <%= raw t('automated_tests.need_one_file') %>
+          <%= t('automated_tests.need_one_file') %>
         </div>
 
     </div>

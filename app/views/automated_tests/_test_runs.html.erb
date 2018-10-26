@@ -26,7 +26,7 @@
       <%= t('automated_tests.error.no_tokens_yet') %>
     <% elsif @assignment.submission_rule.can_collect_now? %>
       <%= t('automated_tests.error.after_due_date') %>
-    <% elsif !@assignment.unlimited_tokens || @grouping.test_tokens <= 0 %>
+    <% elsif !@assignment.unlimited_tokens && @grouping.test_tokens <= 0 %>
       <%= t('automated_tests.error.no_tokens') %>
     <% else %>
       <%= link_to t('automated_tests.run_tests'),
