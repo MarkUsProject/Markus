@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TextAnnotation do
   context 'A valid TextAnnotation model' do
     it { is_expected.to validate_presence_of(:line_start) }

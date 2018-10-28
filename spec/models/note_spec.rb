@@ -1,9 +1,7 @@
-require 'spec_helper'
-
 describe Note do
-  it { is_expected.to validate_presence_of(:notes_message) }
-  it { is_expected.to belong_to(:noteable) }
-  it { is_expected.to belong_to(:user) }
+  it { should validate_presence_of(:notes_message) }
+  it { should belong_to(:noteable) }
+  it { should belong_to(:user) }
 
   context 'noteables_exist?'  do
     it 'return false when no noteables exist' do

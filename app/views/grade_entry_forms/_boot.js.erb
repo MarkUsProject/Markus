@@ -37,7 +37,7 @@
 
   $(document).ready(function() {
     // Set locale for language localisation with Moment.js
-    moment.lang('<%= t('date.format_string.short') %>');
+    moment.locale(I18n.t('date.format_string.short'));
 
     $('.datepicker').datepicker({
       numberOfMonths:   2,

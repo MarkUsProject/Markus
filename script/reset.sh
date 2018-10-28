@@ -36,9 +36,10 @@ cat /tmp/.redis.tmp | redis-cli -x RESTORE ${REDIS_WORKERS} 0
 
 echo "[MARKUS] Resetting MarkUs database"
 pushd "${MARKUS_ROOT}" > /dev/null
+bundle exec rake i18n:js:export
 bundle exec rake db:reset
 popd > /dev/null
 
 echo "[MARKUS] Restarting MarkUs"
-"${MARKUS_ROOT}"/script/start-autotest-workers.sh
+"${MARKUS_ROOT}"/script/start-autotest-workers.sh "${AUTOTEST_ROOT}"
 "${MARKUS_ROOT}"/bin/markus

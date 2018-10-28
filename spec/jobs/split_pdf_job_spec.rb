@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # TODO: Fix these tests
 xdescribe SplitPDFJob do
   context 'split PDF job' do

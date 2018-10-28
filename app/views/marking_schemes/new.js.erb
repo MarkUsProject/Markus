@@ -6,7 +6,7 @@ $('.edit-ms').hide();
 // scheme is being edited
 $('.new-ms').html('');
 
-$('.new-ms').append("<h2><%= t('marking_schemes.add_new') %></h2>");
+$('.new-ms').append(`<h2>${I18n.t('marking_schemes.add_new')}</h2>`);
 $('.new-ms').append("<%= j (render 'form') %>");
 
 // Show add div if hidden

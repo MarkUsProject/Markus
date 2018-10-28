@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 shared_examples 'vcs_submit=false' do |class_type|
   context 'when vcs_submit is false' do
     let!(:assignment) { create :assignment, vcs_submit: false }

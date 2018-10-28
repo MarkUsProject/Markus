@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Period do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:hours) }

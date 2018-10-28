@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe AnnotationCategory do
   let(:assignment) { create(:assignment) }
   let(:admin) { create(:admin) }

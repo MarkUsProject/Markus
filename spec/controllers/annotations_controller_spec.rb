@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe AnnotationsController do
 
   context 'An unauthenticated and unauthorized user doing a GET' do

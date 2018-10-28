@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 markus-root-dir"
+else
+  MARKUS_ROOT="$1"
+fi
+
 # Update package manager
 echo "- - - Updating Package Manager, Step 1 - - -"
 sudo apt-get update
@@ -47,7 +54,6 @@ echo "- - - Changing Time Zone, Step 2 - - -"
 sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
 
 # MarkUs installation
-MARKUS_ROOT=~/Markus
 
 # Clone the Markus repository.
 echo "- - - Cloning Markus - - -"

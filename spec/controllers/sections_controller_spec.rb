@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SectionsController do
 
   context 'A logged in Student' do

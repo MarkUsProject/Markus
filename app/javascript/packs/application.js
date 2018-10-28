@@ -18,6 +18,10 @@ import 'javascripts/jquery.easyModal';
 import marked from 'marked';
 window.marked = marked;
 
+// moment (date/times manipulation)
+import moment from 'moment';
+window.moment = moment;
+
 // mousetrap (keybindings)
 import 'mousetrap';
 

@@ -127,6 +127,15 @@ class RawSubmissionTable extends React.Component {
       accessor: 'submission_time',
       filterable: false,
       minWidth: 150,
+      sortMethod: (a,b) => {
+        if (typeof a === 'string' && typeof b === 'string') {
+          let a_date = Date.parse(a);
+          let b_date = Date.parse(b);
+          return a_date > b_date ? 1 : -1;
+        } else {
+        return a > b ? 1 : -1;
+        }
+      }
     },
     {
       Header: I18n.t('submissions.grace_credits_used'),

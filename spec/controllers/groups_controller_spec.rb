@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GroupsController do
   describe 'administrator access' do
     let(:grouping) { create(:grouping) }

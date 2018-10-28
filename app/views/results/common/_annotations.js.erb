@@ -111,7 +111,7 @@
     var mouseSelection = window.getSelection();
 
     if (mouseSelection.anchorNode === null || mouseSelection.focusNode === null) {
-      alert("<%= I18n.t('marker.annotation.select_some_text') %>");
+      alert(I18n.t('marker.annotation.select_some_text'));
       return false;
     }
 
@@ -138,7 +138,7 @@
 
     // If no source code lines were selected, bail out
     if (line_start == 0 && line_end == 0) {
-      alert("<%= I18n.t('marker.annotation.select_some_text') %>");
+      alert(I18n.t('marker.annotation.select_some_text'));
       return false;
     }
 
@@ -211,7 +211,7 @@
     }
 
     if (line_start == line_end && column_start == column_end) {
-      alert("<%= I18n.t('marker.annotation.select_some_text') %>");
+      alert(I18n.t('marker.annotation.select_some_text'));
       return false;
     }
 
@@ -240,7 +240,7 @@
   function get_selection_box() {
     var coordinates = get_selection_box_coordinates();
     if (!coordinates) {
-      alert("<%= I18n.t('marker.annotation.select_an_area') %>");
+      alert(I18n.t('marker.annotation.select_an_area'));
       return false;
     } else {
       return coordinates;
@@ -271,7 +271,7 @@
   function get_pdf_annotation_data() {
     var box_attrs = get_pdf_box_attrs();
     if (!box_attrs) {
-      alert("<%= I18n.t('marker.annotation.select_an_area_pdf') %>");
+      alert(I18n.t('marker.annotation.select_an_area_pdf'));
       return false;
     }
     var box = box_attrs.box;

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe CriteriaController, type: :controller do
 
   describe 'Using Flexible Criteria' do

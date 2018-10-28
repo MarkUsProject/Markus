@@ -1,11 +1,10 @@
 function check_start_of_availability_date(new_start_date) {
-  if (moment(new_start_date, '<%= t('time.format_string.js') %>').isBefore(
-      moment())) {
-    alert('<%= t(:past_start_date_edit_warning) %>');
+  if (moment(new_start_date, I18n.t('time.format_string.js')).isBefore(moment())) {
+    alert(I18n.t('past_start_date_edit_warning'));
   }
 }
 
-$(window).load(function() {
+$(window).on('load', function() {
   <% if @assignment %>
     toggle_token_regeneration(<%= @assignment.non_regenerating_tokens %>);
     toggle_tests_tokens(<%= @assignment.unlimited_tokens %>);

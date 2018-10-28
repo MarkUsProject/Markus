@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GradersController do
   context 'An authenticated and authorized student doing a ' do
 

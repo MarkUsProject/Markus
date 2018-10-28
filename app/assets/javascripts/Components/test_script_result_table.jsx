@@ -110,7 +110,17 @@ class TestScriptResultTable extends React.Component {
               }
             ];
             const rowData = row.original['test_data'];
-            const extraInfo = row.original['test_data'][0]['extra_info'] || '';
+            const extraInfo = row.original['test_data'][0]['test_script_results.extra_info'] || '';
+            let extraInfoDisplay;
+            if (extraInfo) {
+              extraInfoDisplay = (
+                <div>
+                  <h4>{I18n.t('automated_tests.test_results_table.extra_info')}</h4>
+                  <pre>{extraInfo}</pre>
+                </div>);
+            } else {
+              extraInfoDisplay = '';
+            }
             if ('test_results.actual_output' in rowData[0]) {
               columns.splice(1, 0, {
                 id: 'actual_output',
@@ -131,7 +141,7 @@ class TestScriptResultTable extends React.Component {
                     return {};
                   }}
                 />
-                {extraInfo && <span>{I18n.t('automated_tests.test_results_table.extra_info')} {extraInfo}</span>}
+                {extraInfoDisplay}
               </div>
             );
           }}
