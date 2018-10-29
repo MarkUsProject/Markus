@@ -861,6 +861,7 @@ class Grouping < ApplicationRecord
          data['test_scripts.display_actual_output'] == 'do_not_display'
         data.delete('test_results.actual_output')
       end
+      data.delete('test_script_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)
@@ -873,6 +874,7 @@ class Grouping < ApplicationRecord
       if data['test_scripts.display_actual_output'] == 'do_not_display'
         data.delete('test_results.actual_output')
       end
+      data.delete('test_script_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)
