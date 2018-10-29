@@ -112,7 +112,7 @@ class TestScriptResultTable extends React.Component {
             const rowData = row.original['test_data'];
             const extraInfo = row.original['test_data'][0]['test_script_results.extra_info'] || '';
             let extraInfoDisplay;
-            if (extraInfo) {
+            if (extraInfo && this.props.instructor_view) {
               extraInfoDisplay = (
                 <div>
                   <h4>{I18n.t('automated_tests.test_results_table.extra_info')}</h4>
