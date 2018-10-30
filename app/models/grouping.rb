@@ -524,6 +524,7 @@ class Grouping < ApplicationRecord
         txn = repo.get_transaction('Markus')
         txn.add_path(assignment_folder)
         result = repo.commit(txn)
+        revision = repo.get_latest_revision
       end
       begin
         self.assignment.access_repo do |starter_repo|
