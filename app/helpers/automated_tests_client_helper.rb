@@ -145,7 +145,7 @@ module AutomatedTestsClientHelper
 
   def self.authorize_test_run(user, assignment, grouping = nil)
 
-    # TODO: extract in policies
+    # TODO: extract in policies + use in the views too where there are similar checks
     if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
       raise I18n.t('automated_tests.error.not_enabled')
     end

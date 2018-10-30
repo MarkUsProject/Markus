@@ -87,8 +87,9 @@ class AutomatedTestsController < ApplicationController
     grouping = current_user.accepted_grouping_for(@assignment.id)
     begin
       test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, @assignment, grouping)
+      test_run = grouping.create_test_run!(user: @current_user)
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
-                                   hooks_script, [{ grouping_id: grouping.id, submission_id: nil }])
+                                   hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)

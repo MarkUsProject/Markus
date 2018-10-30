@@ -121,8 +121,8 @@ class AutotestRunJob < ApplicationJob
     server_api_key = get_server_api_key
     server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
                       test_scripts: test_scripts, hooks_script: hooks_script, assignment_id: assignment.id,
-                      group_id: group.id, submission_id: test_run.submission&.id, group_repo_name: group.repo_name,
-                      batch_id: test_run.test_batch&.id, run_id: test_run.id }
+                      group_id: group.id, submission_id: test_run.submission_id, group_repo_name: group.repo_name,
+                      batch_id: test_run.test_batch_id, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
     params_file.write(JSON.generate(server_params))
     params_file.close
@@ -162,11 +162,6 @@ class AutotestRunJob < ApplicationJob
   def perform(host_with_port, user_id, test_scripts, hooks_script, test_runs)
     ssh = nil
     ssh_auth_failure = nil
-    # create batch if needed
-    test_batch = nil
-    if test_runs.size > 1
-      test_batch = TestBatch.create
-    end
     # set up SSH channel if needed
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
@@ -179,34 +174,31 @@ class AutotestRunJob < ApplicationJob
       end
     end
     # create and enqueue test runs
+    # TestRun objects can either be created outside of this job (by passing their ids), or here
+    test_batch = nil
     test_runs.each do |test_run|
-      # if user is an instructor, then a submission exists and we use that repo revision
-      # if user is a student, then we use the latest repo revision
-      grouping_id = test_run[:grouping_id]
-      submission_id = test_run[:submission_id]
-      if submission_id.nil?
-        grouping = Grouping.find(grouping_id)
-        revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      else
-        submission = Submission.find(submission_id)
-        revision_identifier = submission.revision_identifier
-      end
-      test_run = TestRun.create(
-        test_batch: test_batch,
-        user_id: user_id,
-        grouping_id: grouping_id,
-        submission_id: submission_id,
-        revision_identifier: revision_identifier
-      )
       begin
+        if test_run[:id].nil?
+          if test_runs.size > 1 && test_batch.nil? # create 1 batch object if needed
+            test_batch = TestBatch.create
+          end
+          submission_id = test_run[:submission_id]
+          grouping_id = test_run[:grouping_id]
+          obj = submission_id.nil? ? Grouping.find(grouping_id) : Submission.find(submission_id)
+          test_run = obj.create_test_run!(user_id: user_id, test_batch: test_batch)
+        else
+          test_run = TestRun.find(test_run[:id])
+        end
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
         enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh)
       rescue StandardError => e
-        error = { name: I18n.t('automated_tests.results.all_tests'),
-                  message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-        test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        unless test_run.nil?
+          error = { name: I18n.t('automated_tests.results.all_tests'),
+                    message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
+          test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        end
       end
     end
   ensure

@@ -2,6 +2,7 @@ require 'set'
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ApplicationRecord
+  include ActiveRecordCreator
 
   before_create :create_grouping_repository_folder
   after_save :update_repo_permissions_after_save
@@ -863,6 +864,15 @@ class Grouping < ApplicationRecord
 
   def test_runs_students_simple
     filter_test_runs(filters: { 'test_runs.user': self.accepted_students }, all_data: false)
+  end
+
+  # Create a test run for this grouping, using the latest repo revision.
+  def create_test_run!(**attrs)
+    self.test_runs.create!(
+      user_id: get_id_attr!(:user, attrs),
+      revision_identifier: self.group.access_repo { |repo| repo.get_latest_revision.revision_identifier },
+      test_batch_id: get_id_attr(:test_batch, attrs)
+    )
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution

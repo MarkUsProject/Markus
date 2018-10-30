@@ -53,10 +53,6 @@ class TestRun < ApplicationRecord
     end
   end
 
-  def run_time
-    test_script_results.pluck(:time)&.sum
-  end
-
   def create_test_script_result(test_script, time: 0, extra_info: nil)
     unless test_script.respond_to?(:file_name) # the ActiveRecord object can be passed directly
       test_script = TestScript.find_by(assignment: grouping.assignment, file_name: test_script)
