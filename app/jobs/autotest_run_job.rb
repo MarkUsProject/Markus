@@ -11,7 +11,7 @@ class AutotestRunJob < ApplicationJob
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
     if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
-      if File.exist?(assignment_dir) # can exist from other assignments
+      if File.exist?(assignment_dir) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
         if !prev_test_run.nil? &&
@@ -20,24 +20,24 @@ class AutotestRunJob < ApplicationJob
           return
         end
         # ..otherwise delete grouping's previous files
-        FileUtils.rm_rf(assignment_dir)
+        if test_run.submission_id.nil?
+          FileUtils.rm_rf(repo_dir)
+        else
+          FileUtils.rm_rf(assignment_dir)
+        end
       end
     else
-      # create the automated test repository
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
     # export the repo files
-    submission = test_run.submission
     group.access_repo do |repo|
-      if submission.nil?
-        # TODO Review this with the assignment_dir change
-        FileUtils.rm_rf(repo_dir)
+      if test_run.submission_id.nil?
         repo.export(repo_dir)
       else
         unless assignment.only_required_files.blank?
           required_files = assignment.assignment_files.map(&:filename).to_set
         end
-        submission.submission_files.each do |file|
+        test_run.submission.submission_files.each do |file|
           dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
           file_path = dir == '' ? file.filename : File.join(dir, file.filename)
           unless required_files.nil? || required_files.include?(file_path)
@@ -46,8 +46,9 @@ class AutotestRunJob < ApplicationJob
             next
           end
           file_content = file.retrieve_file(false, repo)
-          FileUtils.mkdir_p(File.join(repo_dir, file.path))
-          File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+          file_dir = File.join(repo_dir, file.path)
+          FileUtils.mkdir_p(file_dir)
+          File.open(File.join(file_dir, file.filename), 'wb') do |f| # binary write to avoid encoding issues
             f.write(file_content)
           end
         end
