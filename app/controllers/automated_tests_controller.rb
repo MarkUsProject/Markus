@@ -77,15 +77,18 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @grouping.refresh_test_tokens!
+      @grouping.refresh_test_tokens
     end
     render layout: 'assignment_content'
   end
 
   def execute_test_run
-    @assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(@assignment.id)
     begin
+      @assignment = Assignment.find(params[:id])
+      grouping = current_user.accepted_grouping_for(@assignment.id)
+      # grouping.refresh_test_tokens
+      # AutomatedTestsClientHelper.authorize!(@current_user, grouping)
+      # grouping.decrease_test_tokens
       test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, @assignment, grouping)
       test_run = grouping.create_test_run!(user: @current_user)
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,

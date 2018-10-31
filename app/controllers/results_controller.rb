@@ -170,12 +170,14 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    submission = Result.find(params[:id]).submission
     begin
+      submission = Result.find(params[:id]).submission
+      # AutomatedTestsClientHelper.authorize!(@current_user, submission.grouping, submission)
       test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
       test_run = submission.create_test_run!(user: @current_user)
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
                                    hooks_script, [{ id: test_run.id }])
+      flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
     end

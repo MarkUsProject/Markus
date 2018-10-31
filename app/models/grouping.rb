@@ -760,7 +760,7 @@ class Grouping < ApplicationRecord
     reviewee_group.peer_reviews.find_by(reviewer_id: id)
   end
 
-  def refresh_test_tokens!
+  def refresh_test_tokens
     if Time.current < self.assignment.token_start_date || !is_valid?
       self.test_tokens = 0
     elsif self.assignment.unlimited_tokens
@@ -784,13 +784,10 @@ class Grouping < ApplicationRecord
     save
   end
 
-  # Decreases the number of tokens by one, or raises an exception if there are no remaining tokens.
-  def decrease_test_tokens!
-    if self.test_tokens > 0
+  def decrease_test_tokens
+    if !self.assignment.unlimited_tokens && self.test_tokens > 0
       self.test_tokens -= 1
       save
-    else
-      raise I18n.t('automated_tests.error.no_tokens')
     end
   end
 

@@ -123,7 +123,7 @@ module AutomatedTestsClientHelper
     end
     # no tas
     if user.ta?
-      raise I18n.t('automated_tests.error.ta_not_allowed')
+      raise I18n.t('automated_tests.error.no_tas')
     end
     # student checks from now on
 
@@ -139,16 +139,16 @@ module AutomatedTestsClientHelper
     if grouping.student_test_run_in_progress?
       raise I18n.t('automated_tests.error.already_enqueued')
     end
-    grouping.refresh_test_tokens!
-    grouping.decrease_test_tokens! # raises exception with no tokens available
+    grouping.refresh_test_tokens
+    grouping.decrease_test_tokens # raises exception with no tokens available
   end
 
   def self.authorize_test_run(user, assignment, grouping = nil)
 
-    # TODO: extract in policies + use in the views too where there are similar checks
     if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
       raise I18n.t('automated_tests.error.not_enabled')
     end
+    # TODO: Migrate the test scripts fetching + investigate !grouping.is_valid? in refresh_test_tokens
     test_scripts = assignment.select_test_scripts(user).pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
     if test_scripts.empty?
       raise I18n.t('automated_tests.error.no_test_files')
@@ -158,6 +158,47 @@ module AutomatedTestsClientHelper
     check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
 
     [test_scripts, hooks_script]
+  end
+
+  # TODO: Move the following to model-based policies (i.e. one each for user, assignment, grouping and submission)
+  def self.allowed_to?(user, grouping, submission=nil)
+    assignment = grouping.assignment
+    if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
+      return false, I18n.t('automated_tests.error.not_enabled')
+    end
+    if user.admin?
+      if submission&.current_result.released_to_students
+        return false, I18n.t('automated_tests.error.after_release')
+      end
+      return true, ''
+    end
+    if user.ta?
+      return false, I18n.t('automated_tests.error.no_tas')
+    end
+    # from here on, user is a student
+    unless grouping.accepted_students.include?(user)
+      return false, I18n.t('automated_tests.error.bad_group')
+    end
+    if Time.current < assignment.token_start_date
+      return false, I18n.t('automated_tests.error.no_tokens_yet')
+    end
+    if assignment.submission_rule.can_collect_now?
+      return false, I18n.t('automated_tests.error.after_due_date')
+    end
+    if grouping.student_test_run_in_progress?
+      return false, I18n.t('automated_tests.error.already_enqueued')
+    end
+    if !assignment.unlimited_tokens && grouping.test_tokens <= 0
+      return false, I18n.t('automated_tests.error.no_tokens')
+    end
+    return true, ''
+  end
+
+  def self.authorize!(user, grouping, submission=nil)
+    authorized, reason = AutomatedTestsClientHelper.allowed_to?(user, grouping, submission)
+    unless authorized
+      raise reason
+    end
   end
 
 end

@@ -4,8 +4,8 @@
       makeTestScriptResultTable(document.getElementById('test_script_result_table'), {
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
-        assignment_id: <%= @assignment&.id || 'null' %>,
-        grouping_id: <%= @grouping&.id || 'null' %>,
+        assignment_id: <%= @assignment.id %>,
+        grouping_id: <%= @grouping.id %>,
         instructor_run: <%= ran_by == 'instructor' %>,
         instructor_view: <%= !@current_user.student? %>
       });
@@ -14,26 +14,12 @@
 <% end %>
 
 <h2>
-  <% if @current_user.admin? %>
-    <% if @result&.released_to_students %>
-      <%= t('automated_tests.error.after_release') %>
-    <% else %>
-      <%= link_to t('automated_tests.run_tests'), run_tests_assignment_submission_result_path, class: 'button' %>
-      <%= t('automated_tests.test_results') %>
-    <% end %>
-  <% elsif @current_user.student? %>
-    <% if Time.current < @assignment.token_start_date %>
-      <%= t('automated_tests.error.no_tokens_yet') %>
-    <% elsif @assignment.submission_rule.can_collect_now? %>
-      <%= t('automated_tests.error.after_due_date') %>
-    <% elsif !@assignment.unlimited_tokens && @grouping.test_tokens <= 0 %>
-      <%= t('automated_tests.error.no_tokens') %>
-    <% else %>
-      <%= link_to t('automated_tests.run_tests'),
-                  execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id),
-                  method: :post, class: 'button' %>
-    <% end %>
-  <% end %>
+  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, @grouping, @result&.submission) %>
+  <% route = @current_user.admin? ?
+               run_tests_assignment_submission_result_path :
+               execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
+  <%= t('automated_tests.test_results') %>
+  <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized, form: { style: 'display: inline;' } %>
 </h2>
 <div class="block_content">
   <div id='test_script_result_table'></div>
