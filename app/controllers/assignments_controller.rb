@@ -210,7 +210,7 @@ class AssignmentsController < ApplicationController
       @a_id_results = Hash.new()
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, :current_submission_used)
       accepted_groupings.each do |grouping|
-        if !grouping.assignment.id_hidden && grouping.has_submission?
+        if !grouping.assignment.is_hidden && grouping.has_submission?
           submission = grouping.current_submission_used
           if submission.has_remark? && submission.remark_result.released_to_students
             @a_id_results[grouping.assignment.id] = submission.remark_result
