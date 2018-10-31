@@ -45,12 +45,6 @@ Rails.application.routes.draw do
       member do
         get 'refresh_graph'
         get 'student_interface'
-        post 'invite_member'
-        get 'creategroup'
-        get 'join_group'
-        get 'deletegroup'
-        get 'decline_invitation'
-        post 'disinvite_member'
         get 'render_feedback_file'
         get 'view_summary'
         get 'populate_file_manager'
@@ -117,11 +111,6 @@ Rails.application.routes.draw do
       end
 
       resources :groups do
-
-        member do
-          post 'rename_group'
-        end
-
         collection do
           get 'add_group'
           post 'use_another_assignment_groups'
@@ -142,6 +131,15 @@ Rails.application.routes.draw do
           delete 'remove_group'
           post 'add_group'
           post 'global_actions'
+          patch 'accept_invitation'
+          patch 'decline_invitation'
+          delete 'delete_rejected'
+          post 'invite_member'
+          patch 'disinvite_member'
+        end
+
+        member do
+          post 'rename_group'
         end
       end
 
