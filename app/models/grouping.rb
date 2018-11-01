@@ -761,23 +761,25 @@ class Grouping < ApplicationRecord
   end
 
   def refresh_test_tokens
-    if Time.current < self.assignment.token_start_date || !is_valid?
+    assignment = self.assignment
+    if assignment.unlimited_tokens || Time.current < assignment.token_start_date
       self.test_tokens = 0
-    elsif self.assignment.unlimited_tokens
-      # grouping has always 1 token
-      self.test_tokens = 1
     else
       last_student_run = test_runs_students_simple.first
       if last_student_run.nil?
-        self.test_tokens = self.assignment.tokens_per_period
+        self.test_tokens = assignment.tokens_per_period
       else
         # divide time into chunks of token_period hours
         # recharge tokens only the first time they are used during the current chunk
-        hours_from_start = (Time.current - self.assignment.token_start_date) / 3600
-        periods_from_start = (hours_from_start / self.assignment.token_period).floor
-        last_period_begin = self.assignment.token_start_date + (periods_from_start * self.assignment.token_period).hours
+        hours_from_start = (Time.current - assignment.token_start_date) / 3600
+        if assignment.non_regenerating_tokens
+          last_period_begin = assignment.token_start_date
+        else
+          periods_from_start = (hours_from_start / assignment.token_period).floor
+          last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
+        end
         if last_student_run.created_at < last_period_begin
-          self.test_tokens = self.assignment.tokens_per_period
+          self.test_tokens = assignment.tokens_per_period
         end
       end
     end
