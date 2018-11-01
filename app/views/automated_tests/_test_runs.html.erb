@@ -14,19 +14,23 @@
 <% end %>
 
 <h2 class="test_runs_header">
-  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, assignment: @assignment,
-                                                                 submission: @result&.submission,
-                                                                 grouping: @grouping) %>
-  <% route = @current_user.admin? ?
-               run_tests_assignment_submission_result_path :
-               execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
-  <% unless authorized %>
-    <% flash_now(:notice, reason) %>
-  <% end %>
-  <% if @current_user.student? %>
+  <%# student tests page needs text in header %>
+  <% unless ran_by == 'instructor' %>
     <%= t('automated_tests.test_results') %>
   <% end %>
-  <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized %>
+  <%# student results page (with instructor tests released) does not need flash messages or button %>
+  <% unless @current_user.student? && ran_by == 'instructor' %>
+    <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, assignment: @assignment,
+                                                                   submission: @result&.submission,
+                                                                   grouping: @grouping) %>
+    <% unless authorized %>
+      <% flash_now(:notice, reason) %>
+    <% end %>
+    <% route = @current_user.admin? ?
+                 run_tests_assignment_submission_result_path :
+                 execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
+    <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized %>
+  <% end %>
 </h2>
 <div class="block_content">
   <div id='test_script_result_table'></div>
