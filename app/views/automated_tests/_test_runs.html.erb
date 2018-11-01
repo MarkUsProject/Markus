@@ -21,7 +21,7 @@
                run_tests_assignment_submission_result_path :
                execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
   <% unless authorized %>
-    <% flash_now(:error, reason) %>
+    <% flash_now(:notice, reason) %>
   <% end %>
   <% if @current_user.student? %>
     <%= t('automated_tests.test_results') %>
