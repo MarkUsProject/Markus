@@ -993,16 +993,15 @@ en:
         error: "Error"
         extra_info: "Extra Info:"
       error:
-        not_enabled: "You cannot run tests because they are not enabled for this assignment"
-        after_release: "You cannot run tests because the marks have been released"
-        no_tas: "You cannot run tests because graders are not allowed to"
-        bad_group: "You cannot run tests because you do not have a group yet, or your group is not valid"
-        no_tokens_yet: "You cannot run tests because tokens are not available yet"
         after_due_date: "You cannot run tests because the due date for this assignment has passed"
+        after_release: "You cannot run tests because the marks have been released"
         already_enqueued: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results"
+        bad_group: "You cannot run tests because you do not have a group yet, or your group is not valid"
+        not_enabled: "You cannot run tests because they are not enabled for this assignment"
+        no_tas: "You cannot run tests because graders are not allowed to"
         no_tokens: "You cannot run tests because you or your group do not have tokens available"
-
         no_test_files: "You cannot run tests because there are no test scripts configured"
+        no_tokens_yet: "You cannot run tests because tokens are not available yet"
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"

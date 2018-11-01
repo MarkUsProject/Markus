@@ -14,7 +14,8 @@
 <% end %>
 
 <h2>
-  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, @grouping, @result&.submission) %>
+  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, submission: @result&.submission,
+                                                                 grouping: @grouping) %>
   <% route = @current_user.admin? ?
                run_tests_assignment_submission_result_path :
                execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>

@@ -207,7 +207,7 @@ Rails.application.routes.draw do
             get 'view_marks'
             post 'add_tag'
             post 'remove_tag'
-            get 'run_tests'
+            post 'run_tests'
             get 'stop_test'
             get 'get_test_runs_instructors'
             get 'get_test_runs_instructors_released'

@@ -329,7 +329,7 @@ describe Grouping do
           it 'does not decrease number of tokens' do
             grouping.test_tokens = 0
             grouping.decrease_test_tokens
-            expect { grouping.test_tokens }.to eq(0)
+            expect(grouping.test_tokens).to eq(0)
           end
         end
       end

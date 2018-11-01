@@ -84,14 +84,16 @@ class AutomatedTestsController < ApplicationController
 
   def execute_test_run
     begin
-      @assignment = Assignment.find(params[:id])
-      grouping = current_user.accepted_grouping_for(@assignment.id)
-      # grouping.refresh_test_tokens
-      # AutomatedTestsClientHelper.authorize!(@current_user, grouping)
-      # grouping.decrease_test_tokens
-      test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, @assignment, grouping)
-      test_run = grouping.create_test_run!(user: @current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
+      assignment = Assignment.find(params[:id])
+      grouping = current_user.accepted_grouping_for(assignment.id)
+      grouping.refresh_test_tokens
+      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, grouping: grouping)
+      grouping.decrease_test_tokens
+      test_scripts = assignment.select_test_scripts(current_user)
+                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_run = grouping.create_test_run!(user: current_user)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e

@@ -1169,7 +1169,8 @@ class Assignment < ApplicationRecord
 
   # Selects the hooks script from the test support files.
   def select_hooks_script
-    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE)
+    # TODO: Adjust the hooks mechanism when we create a new user interface
+    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE).limit(1)
   end
 
   # Retrieve current grader data.

@@ -172,10 +172,13 @@ class ResultsController < ApplicationController
   def run_tests
     begin
       submission = Result.find(params[:id]).submission
-      # AutomatedTestsClientHelper.authorize!(@current_user, submission.grouping, submission)
-      test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
-      test_run = submission.create_test_run!(user: @current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
+      assignment = submission.assignment
+      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, submission: submission)
+      test_scripts = assignment.select_test_scripts(current_user)
+                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_run = submission.create_test_run!(user: current_user)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
