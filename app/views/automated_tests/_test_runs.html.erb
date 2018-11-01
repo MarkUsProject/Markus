@@ -13,14 +13,20 @@
   </script>
 <% end %>
 
-<h2>
-  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, submission: @result&.submission,
+<h2 class="test_runs_header">
+  <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, assignment: @assignment,
+                                                                 submission: @result&.submission,
                                                                  grouping: @grouping) %>
   <% route = @current_user.admin? ?
                run_tests_assignment_submission_result_path :
                execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
-  <%= t('automated_tests.test_results') %>
-  <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized, form: { style: 'display: inline;' } %>
+  <% unless authorized %>
+    <% flash_now(:error, reason) %>
+  <% end %>
+  <% if @current_user.student? %>
+    <%= t('automated_tests.test_results') %>
+  <% end %>
+  <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized %>
 </h2>
 <div class="block_content">
   <div id='test_script_result_table'></div>

@@ -150,7 +150,6 @@ module AutomatedTestsClientHelper
     grouping = checks[:grouping]
     unless grouping.nil?
       # GroupingPolicy < AutotestPolicy
-      # TODO: Investigate !grouping.is_valid? in refresh_test_tokens
       if user.student?
         unless grouping.accepted_students.include?(user)
           return false, I18n.t('automated_tests.error.bad_group')
