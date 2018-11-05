@@ -203,7 +203,7 @@ class FileManagerHeader extends Headers.TableHeader {
         })}
       >
         <th>{I18n.t('filename')}</th>
-        <th className="modified">{I18n.t('submissions.repo_browser.last_revised')}</th>
+        <th className="modified">{I18n.t('submissions.repo_browser.submitted_at')}</th>
         <th className="modified">{I18n.t('submissions.repo_browser.revised_by')}</th>
       </tr>
     );
@@ -312,7 +312,7 @@ class FileManagerFile extends FileRenderers.RawTableFile {
           </div>
         </td>
         <td className="modified">
-          {typeof this.props.modified === 'undefined' ? '-' : this.props.modified}
+          {typeof this.props.submitted_date === 'undefined' ? '-' : this.props.submitted_date}
         </td>
         <td className="modified">
           {this.props.revision_by}
