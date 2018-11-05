@@ -868,9 +868,9 @@ class Grouping < ApplicationRecord
   # Create a test run for this grouping, using the latest repo revision.
   def create_test_run!(**attrs)
     self.test_runs.create!(
-      user_id: get_id_attr!(:user, attrs),
+      user_id: get_id_for!(:user, attrs),
       revision_identifier: self.group.access_repo { |repo| repo.get_latest_revision.revision_identifier },
-      test_batch_id: get_id_attr(:test_batch, attrs)
+      test_batch_id: get_id_for(:test_batch, attrs)
     )
   end
 

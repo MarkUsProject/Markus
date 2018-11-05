@@ -312,10 +312,10 @@ class Submission < ApplicationRecord
   # Create a test run for this submission, using the submission revision.
   def create_test_run!(**attrs)
     self.test_runs.create!(
-      user_id: get_id_attr!(:user, attrs),
+      user_id: get_id_for!(:user, attrs),
       grouping_id: self.grouping_id,
       revision_identifier: self.revision_identifier,
-      test_batch_id: get_id_attr(:test_batch, attrs)
+      test_batch_id: get_id_for(:test_batch, attrs)
     )
   end
 
