@@ -14,10 +14,7 @@
 <% end %>
 
 <h2 class="test_runs_header">
-  <%# student tests page needs text in header %>
-  <% unless ran_by == 'instructor' %>
-    <%= t('automated_tests.test_results') %>
-  <% end %>
+  <%= t('automated_tests.test_results') %>
   <%# student results page (with instructor tests released) does not need flash messages or button %>
   <% unless @current_user.student? && ran_by == 'instructor' %>
     <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, assignment: @assignment,
