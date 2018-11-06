@@ -38,8 +38,13 @@ class PeerReviewsController < ApplicationController
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
     num_reviews_map = PeerReview.group(:reviewer_id).having(reviewer_id: reviewer_groups.map { |g| g['id'] }).count
 
-    render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
-                  id_to_group_names_map, num_reviews_map]
+    render json: {
+      reviewer_groups: reviewer_groups,
+      reviewee_groups: reviewee_groups,
+      reviewee_to_reviewers_map: reviewee_to_reviewers_map,
+      id_to_group_names_map: id_to_group_names_map,
+      num_reviews_map: num_reviews_map
+    }
   end
 
   def show_reviews
