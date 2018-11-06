@@ -161,7 +161,7 @@ GEM
       rqrcode (>= 0.4.1)
     pundit (2.0.0)
       activesupport (>= 3.0.0)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-protection (2.0.3)
       rack
     rack-proxy (0.6.4)
