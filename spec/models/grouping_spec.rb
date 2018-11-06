@@ -316,24 +316,25 @@ describe Grouping do
     end
 
     context 'methods' do
-      describe '.decrease_test_tokens!' do
+      describe '.decrease_test_tokens' do
         context 'when number of tokens is greater than 0' do
           it 'decrease number of tokens' do
             grouping.test_tokens = 5
-            grouping.decrease_test_tokens!
+            grouping.decrease_test_tokens
             expect(grouping.test_tokens).to eq(4)
           end
         end
 
         context 'when number of tokens is equal to 0' do
-          it 'raise an error' do
+          it 'does not decrease number of tokens' do
             grouping.test_tokens = 0
-            expect { grouping.decrease_test_tokens! }.to raise_error(RuntimeError)
+            grouping.decrease_test_tokens
+            expect(grouping.test_tokens).to eq(0)
           end
         end
       end
 
-      describe '#refresh_test_tokens!' do
+      describe '#refresh_test_tokens' do
         context 'if assignment.tokens is not nil' do
           before do
             @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
@@ -352,7 +353,7 @@ describe Grouping do
               grouping: @grouping,
               membership_status: StudentMembership::STATUSES[:accepted]
             )
-            @grouping.refresh_test_tokens!
+            @grouping.refresh_test_tokens
           end
           it 'refreshes assignment tokens' do
             expect(@grouping.test_tokens).to eq(10)
