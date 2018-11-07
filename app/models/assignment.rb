@@ -1477,7 +1477,6 @@ class Assignment < ApplicationRecord
 
   # Reformatted logic for download_assignment_list controller method
   # Returns an output file for controller to handle.
-  # TODO: Make DEFAULT_FIELDS.map loop over elements not indicies
   def self.get_assignment_list(file_format)
     assignments = self.all
     case file_format

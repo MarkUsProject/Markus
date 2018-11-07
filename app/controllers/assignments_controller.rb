@@ -629,13 +629,11 @@ class AssignmentsController < ApplicationController
   def upload_assignment_list
     assignment_list = params[:assignment_list]
     file_format = params[:file_format]
-
     if assignment_list.blank?
       flash_message(:error, I18n.t('csv.invalid_csv'))
       redirect_to action: 'index'
       return
     end
-
     encoding = params[:encoding]
     assignment_list = assignment_list.utf8_encode(encoding)
     case file_format
