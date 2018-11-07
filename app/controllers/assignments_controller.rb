@@ -654,6 +654,8 @@ class AssignmentsController < ApplicationController
         if result.is_a?(error)
           flash_message(:error, result.message)
         end
+    else
+      flash_message(:error, t(:incorrect_format))
     end
     redirect_to action: 'index'
   end

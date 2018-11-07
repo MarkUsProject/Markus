@@ -1477,9 +1477,9 @@ class Assignment < ApplicationRecord
 
   # Reformatted logic for download_assignment_list controller method
   # Returns an output file for controller to handle.
+  # TODO: Make DEFAULT_FIELDS.map loop over elements not indicies
   def self.get_assignment_list(file_format)
     assignments = self.all
-
     case file_format
     when 'yml'
       map = {}
@@ -1491,45 +1491,41 @@ class Assignment < ApplicationRecord
         end
         map[:assignments] << m
       end
-      output = map.to_yaml
+      map.to_yaml
     when 'csv'
-      output = MarkusCSV.generate(assignments) do |assignment|
+      MarkusCSV.generate(assignments) do |assignment|
         DEFAULT_FIELDS.map do |f|
           assignment.send(f.to_s)
         end
       end
     end
-    return output
   end
 
-  def self.upload_assignment_list(file_format, assignment_list, default_fields)
-
-  case file_format
-  when 'csv'
-    result = MarkusCSV.parse(assignment_list) do |row|
-    assignment = self.find_or_create_by(short_identifier: row[0])
-    attrs = Hash[default_fields.zip(row)]
-    attrs.delete_if { |_, v| v.nil? }
+  def self.upload_assignment_list(file_format, assignment_data)
+    case file_format
+    when 'csv'
+      result = MarkusCSV.parse(assignment_data) do |row|
+      assignment = self.find_or_create_by(short_identifier: row[0])
+      attrs = Hash[DEFAULT_FIELDS.zip(row)]
+      attrs.delete_if { |_, v| v.nil? }
       if assignment.new_record?
-         assignment.submission_rule = NoLateSubmissionRule.new
-         assignment.assignment_stat = AssignmentStat.new
-         assignment.token_period = 1
-         assignment.non_regenerating_tokens = false
-         assignment.unlimited_tokens = false
+        assignment.submission_rule = NoLateSubmissionRule.new
+        assignment.assignment_stat = AssignmentStat.new
+        assignment.token_period = 1
+        assignment.unlimited_tokens = false
       end
       assignment.update(attrs)
       raise CSVInvalidLineError unless assignment.valid?
-    end
-    return result
+      end
+      return result
 
-  when 'yml'
+    when 'yml'
     begin
       map = YAML::load(assignment_list)
       map[:assignments].map do |row|
         row[:submission_rule] = NoLateSubmissionRule.new
         row[:assignment_stat] = AssignmentStat.new
         row[:token_period] = 1
-        row[:non_regenerating_tokens] = false
         row[:unlimited_tokens] = false
         update_assignment!(row)
       end
@@ -1537,6 +1533,6 @@ class Assignment < ApplicationRecord
       result = e
       return result
     end
-  end
+    end
   end
 end
