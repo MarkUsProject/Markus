@@ -615,19 +615,14 @@ class AssignmentsController < ApplicationController
 
   def download_assignment_list
     output = Assignment.get_assignment_list(params[:file_format])
-    case params[:file_format]
-    when 'yml'
+    file_format = params[:file_format]
+    if ['csv', 'yml'].include? file_format
       send_data(output, filename: "assignments_list_#{Time.
-                now.strftime('%Y%m%dT%H%M%S')}.yml",
-                type: 'text/yml')
-    when 'csv'
-      send_data(output, filename: "assignments_list_#{Time.
-                now.strftime('%Y%m%dT%H%M%S')}.csv",
-                type: 'text/csv')
+                now.strftime('%Y%m%dT%H%M%S')}.#{file_format}",
+                type: "text/#{file_format}")
     else
       flash_message(:error, t(:incorrect_format))
       redirect_to action: 'index'
-      return
     end
   end
 
@@ -646,21 +641,19 @@ class AssignmentsController < ApplicationController
     case file_format
 
     when 'csv'
-      @result = Assignment.upload_assignment_list('csv', assignment_list)
-      unless @result[:invalid_lines].empty?
-        flash_message(:error, @result[:invalid_lines])
+      result = Assignment.upload_assignment_list('csv', assignment_list)
+      unless result[:invalid_lines].empty?
+        flash_message(:error, result[:invalid_lines])
       end
-      unless @result[:valid_lines].empty?
-        flash_message(:success, @result[:valid_lines])
+      unless result[:valid_lines].empty?
+        flash_message(:success, result[:valid_lines])
       end
 
     when 'yml'
-        @result = Assignment.upload_assignment_list('yml', assignment_list)
-        if @result.is_a?(error)
-          flash_message(:error, @result.message)
+        result = Assignment.upload_assignment_list('yml', assignment_list)
+        if result.is_a?(error)
+          flash_message(:error, result.message)
         end
-    else
-      return
     end
     redirect_to action: 'index'
   end
