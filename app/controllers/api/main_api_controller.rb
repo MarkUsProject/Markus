@@ -6,7 +6,7 @@ module Api
   class MainApiController < ActionController::Base
     include ActionPolicy::Controller
 
-    authorize :current_user, as: :user
+    authorize :user, through: :current_user
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
     before_action :check_format, :authenticate

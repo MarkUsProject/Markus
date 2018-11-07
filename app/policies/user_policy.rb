@@ -1,4 +1,4 @@
-class UserPolicy < ActionPolicy::Base
+class UserPolicy < ApplicationPolicy
   # Default rule: only admins can manage users.
   def manage?
     user.admin?

@@ -3,6 +3,8 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
 
+  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+
   # responder set up
   self.responder = ApplicationResponder
   respond_to :html

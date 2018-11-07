@@ -1,5 +1,7 @@
 class TasController < ApplicationController
-  before_action :authorize!, with: UserPolicy
+  before_action do |_|
+    authorize! with: UserPolicy
+  end
 
   layout 'assignment_content'
 
