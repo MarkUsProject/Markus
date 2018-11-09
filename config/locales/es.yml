@@ -954,15 +954,12 @@ es:
       revision_used_for_test:             "<span class='prop_label'>Revisión usada:</span> %{revision}"
       information:                        "Información"
       run_tests:                          "Lanzar pruebas"
-      test_run_info:                      "UPDATE ME %{test_run_id} %{created_at}"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
       test_run:                           "Lanzar prueba"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
-                                           pruebas.<br><br>Si usted ya ha entregado el archivo y desea ejecutar las
-                                           pruebas en el mismo, use el botón \"Lanzar pruebas\" localizado en la parte
-                                           inferior."
+                                           pruebas."
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
       collect_and_test:                   "Recolectar y Preparar Prueba"
@@ -1018,17 +1015,14 @@ es:
            display_after_submission: "Mostrar después de realizar la entrega"
            display_after_collection: "Mostrar después de realizar la recolección"
       token:
-        tokens_form:              "Las fichas están disponibles por grupo"
-        tokens_regenerate:        "Y regenera todo/a"
-        token_start_date:         "<span class=\"prop_label\">Las fichas disponibles empiezan en:</span> %{date}"
-        tokens_per_period:        "<span class=\"prop_label\">Fichas por %{regeneration_period} hora(s):</span> %{tokens}"
-        tokens_not_given_yet:     "<span class=\"prop_label\">Fichas disponibles:</span> No se han dado fichas todavía"
-        tokens_no_more_available: "<span class=\"prop_label\">Fichas disponibles:</span >No existen más fichas
-                                   disponibles "
-        tokens_available:         "<span class=\"prop_label\">Fichas disponibles:</span> %{tokens}"
-        unlimited_tokens:         "<span class=\"prop_label\">Fichas disponibles:</span> Ilimitado"
-        unlimited:                "Ilimitado"
-        hours:                    "horas"
+        start_date: "Las fichas disponibles empiezan en:"
+        available: "Fichas disponibles:"
+        unlimited: "Ilimitado"
+        per_period: "Fichas por %{period} hora(s):"
+        tokens_form: "Las fichas están disponibles por grupo"
+        tokens_regenerate: "Y regenera todo/a"
+        hours: "horas"
+        no_regeneration: "UPDATE ME"
       test_results_table:
         time: "UPDATE ME"
         file_name: "UPDATE ME"
@@ -1046,14 +1040,15 @@ es:
         error:        "UPDATE ME"
         extra_info: "UPDATE ME"
       error:
-        not_enabled:          "UPDATE ME"
-        ta_not_allowed:       "UPDATE ME"
-        bad_group:            "UPDATE ME"
-        no_tokens:            "No se encontraron fichas para este estudiante y para este proyecto"
-        no_test_files:        "No hay un script para lanzar la prueba"
-        already_enqueued:     "UPDATE ME"
-        after_due_date:       "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este
-                               proyecto ha pasado"
+        after_due_date: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado"
+        after_release: "UPDATE ME"
+        already_enqueued: "UPDATE ME"
+        bad_group: "UPDATE ME"
+        not_enabled: "UPDATE ME"
+        no_tas: "UPDATE ME"
+        no_tokens: "No se encontraron fichas para este estudiante y para este proyecto"
+        no_test_files: "No hay un script para lanzar la prueba"
+        no_tokens_yet: "No se han dado fichas todavía"
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

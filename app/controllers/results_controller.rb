@@ -16,7 +16,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark,
                        :note_message, :get_test_runs_instructors]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests, :stop_test,
+                only: [:download, :download_zip,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
@@ -170,12 +170,17 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    submission = Result.find(params[:id]).submission
     begin
-      test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
-                                   hooks_script, [{ grouping_id: submission.grouping_id,
-                                                    submission_id: submission.id }])
+      submission = Result.find(params[:id]).submission
+      assignment = submission.assignment
+      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, submission: submission)
+      test_scripts = assignment.select_test_scripts(current_user)
+                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_run = submission.create_test_run!(user: current_user)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
+                                   hooks_script, [{ id: test_run.id }])
+      flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
     end

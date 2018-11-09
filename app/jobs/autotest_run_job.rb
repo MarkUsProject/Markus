@@ -11,7 +11,7 @@ class AutotestRunJob < ApplicationJob
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
     if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
-      if File.exist?(assignment_dir) # can exist from other assignments
+      if File.exist?(assignment_dir) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
         if !prev_test_run.nil? &&
@@ -20,24 +20,24 @@ class AutotestRunJob < ApplicationJob
           return
         end
         # ..otherwise delete grouping's previous files
-        FileUtils.rm_rf(assignment_dir)
+        if test_run.submission_id.nil?
+          FileUtils.rm_rf(repo_dir)
+        else
+          FileUtils.rm_rf(assignment_dir)
+        end
       end
     else
-      # create the automated test repository
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
     # export the repo files
-    submission = test_run.submission
     group.access_repo do |repo|
-      if submission.nil?
-        # TODO: Review this with the assignment_dir change
-        FileUtils.rm_rf(repo_dir)
+      if test_run.submission_id.nil?
         repo.export(repo_dir)
       else
         unless assignment.only_required_files.blank?
           required_files = assignment.assignment_files.map(&:filename).to_set
         end
-        submission.submission_files.each do |file|
+        test_run.submission.submission_files.each do |file|
           dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
           file_path = dir == '' ? file.filename : File.join(dir, file.filename)
           unless required_files.nil? || required_files.include?(file_path)
@@ -46,8 +46,9 @@ class AutotestRunJob < ApplicationJob
             next
           end
           file_content = file.retrieve_file(false, repo)
-          FileUtils.mkdir_p(File.join(repo_dir, file.path))
-          File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+          file_dir = File.join(repo_dir, file.path)
+          FileUtils.mkdir_p(file_dir)
+          File.open(File.join(file_dir, file.filename), 'wb') do |f| # binary write to avoid encoding issues
             f.write(file_content)
           end
         end
@@ -121,8 +122,8 @@ class AutotestRunJob < ApplicationJob
     server_api_key = get_server_api_key
     server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
                       test_scripts: test_scripts, hooks_script: hooks_script, assignment_id: assignment.id,
-                      group_id: group.id, submission_id: test_run.submission&.id, group_repo_name: group.repo_name,
-                      batch_id: test_run.test_batch&.id, run_id: test_run.id }
+                      group_id: group.id, submission_id: test_run.submission_id, group_repo_name: group.repo_name,
+                      batch_id: test_run.test_batch_id, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
     params_file.write(JSON.generate(server_params))
     params_file.close
@@ -162,11 +163,6 @@ class AutotestRunJob < ApplicationJob
   def perform(host_with_port, user_id, test_scripts, hooks_script, test_runs)
     ssh = nil
     ssh_auth_failure = nil
-    # create batch if needed
-    test_batch = nil
-    if test_runs.size > 1
-      test_batch = TestBatch.create
-    end
     # set up SSH channel if needed
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
@@ -179,34 +175,31 @@ class AutotestRunJob < ApplicationJob
       end
     end
     # create and enqueue test runs
+    # TestRun objects can either be created outside of this job (by passing their ids), or here
+    test_batch = nil
     test_runs.each do |test_run|
-      # if user is an instructor, then a submission exists and we use that repo revision
-      # if user is a student, then we use the latest repo revision
-      grouping_id = test_run[:grouping_id]
-      submission_id = test_run[:submission_id]
-      if submission_id.nil?
-        grouping = Grouping.find(grouping_id)
-        revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      else
-        submission = Submission.find(submission_id)
-        revision_identifier = submission.revision_identifier
-      end
-      test_run = TestRun.create(
-        test_batch: test_batch,
-        user_id: user_id,
-        grouping_id: grouping_id,
-        submission_id: submission_id,
-        revision_identifier: revision_identifier
-      )
       begin
+        if test_run[:id].nil?
+          if test_runs.size > 1 && test_batch.nil? # create 1 batch object if needed
+            test_batch = TestBatch.create
+          end
+          submission_id = test_run[:submission_id]
+          grouping_id = test_run[:grouping_id]
+          obj = submission_id.nil? ? Grouping.find(grouping_id) : Submission.find(submission_id)
+          test_run = obj.create_test_run!(user_id: user_id, test_batch: test_batch)
+        else
+          test_run = TestRun.find(test_run[:id])
+        end
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
         enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh)
       rescue StandardError => e
-        error = { name: I18n.t('automated_tests.results.all_tests'),
-                  message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-        test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        unless test_run.nil?
+          error = { name: I18n.t('automated_tests.results.all_tests'),
+                    message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
+          test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        end
       end
     end
   ensure

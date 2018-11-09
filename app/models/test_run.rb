@@ -17,7 +17,7 @@ class TestRun < ApplicationRecord
 
   def status
     if test_script_results.exists?
-      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').count&.positive?
+      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').size&.positive?
         return STATUSES[:complete_with_errors]
       end
       return STATUSES[:complete]
@@ -51,10 +51,6 @@ class TestRun < ApplicationRecord
     define_method key.to_s.concat('?').to_sym do
       return status == value
     end
-  end
-
-  def run_time
-    test_script_results.pluck(:time)&.sum
   end
 
   def create_test_script_result(test_script, time: 0, extra_info: nil)
