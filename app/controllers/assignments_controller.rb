@@ -194,16 +194,14 @@ class AssignmentsController < ApplicationController
       @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
-      @assignments.each do |a|
-        if current_user.has_accepted_grouping_for?(a)
-          grouping = current_user.accepted_grouping_for(a)
-          if grouping.has_submission?
-            submission = grouping.current_submission_used
-            if submission.has_remark? && submission.remark_result.released_to_students
-              @a_id_results[a.id] = submission.remark_result
-            elsif submission.has_result? && submission.get_original_result.released_to_students
-              @a_id_results[a.id] = submission.get_original_result
-            end
+      accepted_groupings = current_user.accepted_groupings.includes(:assignment, :current_submission_used)
+      accepted_groupings.each do |grouping|
+        if !grouping.assignment.is_hidden && grouping.has_submission?
+          submission = grouping.current_submission_used
+          if submission.has_remark? && submission.remark_result.released_to_students
+            @a_id_results[grouping.assignment.id] = submission.remark_result
+          elsif submission.has_result? && submission.get_original_result.released_to_students
+            @a_id_results[grouping.assignment.id] = submission.get_original_result
           end
         end
       end
