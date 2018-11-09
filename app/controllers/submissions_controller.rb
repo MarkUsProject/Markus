@@ -495,8 +495,8 @@ class SubmissionsController < ApplicationController
         end
 
         if SubmissionFile.is_binary?(file_contents)
-          # If the file appears to be binary, send it as a download
-          render plain: 'not a plaintext file'
+          # If the file appears to be binary, display a warning
+          render json: { content: I18n.t('submission_file.error.binary_file_message').to_json, type: 'error' }
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
