@@ -5,7 +5,7 @@ SimpleCov.start
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
-require 'pundit/rspec'
+require 'action_policy/rspec'
 # Loads lib repo stuff.
 require 'database_cleaner'
 require 'time-warp'
