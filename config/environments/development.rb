@@ -31,6 +31,9 @@ Markus::Application.configure do
     config.cache_store = :null_store
   end
 
+  # Show where SQL queries were generated from.
+  config.active_record.verbose_query_logs = true
+
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running
