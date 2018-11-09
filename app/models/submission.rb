@@ -3,6 +3,8 @@ require 'fileutils' # FileUtils used here
 # Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
 class Submission < ApplicationRecord
+  include ActiveRecordCreator
+
   after_create :create_result
   before_validation :bump_old_submissions, on: :create
 
@@ -305,6 +307,16 @@ class Submission < ApplicationRecord
     end
 
     remark.save
+  end
+
+  # Create a test run for this submission, using the submission revision.
+  def create_test_run!(**attrs)
+    self.test_runs.create!(
+      user_id: get_id_for!(:user, attrs),
+      grouping_id: self.grouping_id,
+      revision_identifier: self.revision_identifier,
+      test_batch_id: get_id_for(:test_batch, attrs)
+    )
   end
 
   private
