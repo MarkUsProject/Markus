@@ -194,7 +194,7 @@ class AssignmentsController < ApplicationController
       @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
-      accepted_groupings = current_user.accepted_groupings.includes(:assignment, :current_submission_used)
+      accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
         if !grouping.assignment.is_hidden && grouping.has_submission?
           submission = grouping.current_submission_used
