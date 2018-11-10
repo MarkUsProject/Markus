@@ -87,7 +87,8 @@ class AutomatedTestsController < ApplicationController
       assignment = Assignment.find(params[:id])
       grouping = current_user.accepted_grouping_for(assignment.id)
       grouping.refresh_test_tokens
-      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, grouping: grouping)
+      authorize! assignment, to: :run_tests?
+      authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
       test_scripts = assignment.select_test_scripts(current_user)
                                .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
@@ -96,8 +97,9 @@ class AutomatedTestsController < ApplicationController
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue => e
-      flash_message(:error, e.message)
+    rescue StandardError => e
+      message = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
+      flash_message(:error, message)
     end
     redirect_to action: :student_interface, id: params[:id]
   end

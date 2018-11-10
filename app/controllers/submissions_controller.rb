@@ -240,7 +240,7 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !test_runs.empty?
-        AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment)
+        authorize! assignment, to: :run_tests?
         test_scripts = assignment.select_test_scripts(current_user)
                                  .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
         hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
@@ -251,7 +251,7 @@ class SubmissionsController < ApplicationController
         error = I18n.t('automated_tests.need_submission')
       end
     rescue StandardError => e
-      error = e.message
+      error = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
     end
     unless success.blank?
       flash_message(:success, success)

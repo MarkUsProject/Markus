@@ -173,7 +173,8 @@ class ResultsController < ApplicationController
     begin
       submission = Result.find(params[:id]).submission
       assignment = submission.assignment
-      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, submission: submission)
+      authorize! assignment, to: :run_tests?
+      authorize! submission, to: :run_tests?
       test_scripts = assignment.select_test_scripts(current_user)
                                .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
       hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
@@ -181,8 +182,9 @@ class ResultsController < ApplicationController
       AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue => e
-      flash_message(:error, e.message)
+    rescue StandardError => e
+      message = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
+      flash_message(:error, message)
     end
     redirect_back(fallback_location: root_path)
   end
