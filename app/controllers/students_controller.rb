@@ -157,6 +157,7 @@ class StudentsController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @user.user_name }
+    { resource_name: @user.user_name,
+      errors: @user.errors.full_messages.join('; ')}
   end
 end
