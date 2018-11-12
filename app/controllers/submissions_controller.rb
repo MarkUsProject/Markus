@@ -496,7 +496,7 @@ class SubmissionsController < ApplicationController
 
         if SubmissionFile.is_binary?(file_contents)
           # If the file appears to be binary, display a warning
-          render json: { content: I18n.t('submission_file.error.binary_file_message').to_json, type: 'error' }
+          render json: { content: I18n.t('submission_file.error.binary_file_message').to_json, type: 'unknown' }
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
