@@ -756,6 +756,7 @@ class SubversionRevision < Repository::AbstractRevision
           path: path,
           last_modified_revision: last_modified_revision,
           last_modified_date: last_modified_date,
+          submitted_date: last_modified_date,
           changed: (last_modified_revision == @revision_identifier),
           user_id: @repo.__get_property(Svn::Core::PROP_REVISION_AUTHOR, @revision_identifier)
         })
@@ -819,7 +820,8 @@ class SubversionRevision < Repository::AbstractRevision
             user_id: @repo.__get_property(Svn::Core::PROP_REVISION_AUTHOR, last_modified_revision),
             mime_type: @repo.__get_file_property(Svn::Core::PROP_MIME_TYPE, File.join(path, file_name),
                                                  last_modified_revision),
-            last_modified_date: last_modified_date
+            last_modified_date: last_modified_date,
+            submitted_date: last_modified_date
           })
           result[file_name] = new_file
         end

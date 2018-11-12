@@ -713,7 +713,7 @@ class AssignmentsController < ApplicationController
       last_revised_date: l(file.last_modified_date),
       last_modified_revision: file.last_modified_revision,
       revision_by: file.user_id,
-      submitted_date: file.submitted_date ?  I18n.l(file.submitted_date) : I18n.l(file.last_modified_date)
+      submitted_date: I18n.l(file.submitted_date)
     }
   end
 

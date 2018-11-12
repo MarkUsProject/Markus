@@ -641,7 +641,7 @@ class GitRevision < Repository::AbstractRevision
     reflog = bare_repo.ref('refs/heads/master').log.reverse
 
     reflog_times = []
-    reflog.map do |reflog_entry|
+    reflog.each do |reflog_entry|
       push_time = reflog_entry[:committer][:time].in_time_zone
       break if push_time < entries_by_time[0].last_modified_date
       reflog_times << push_time
@@ -671,15 +671,19 @@ class GitRevision < Repository::AbstractRevision
   # It returns an array to ensure ordering, so that a directory
   # will always appear before any of the files or subdirectories
   # contained within it
+  #
+  # The +_finalize+ argument should never be passed explicitly. It is
+  # used internally by this method to indicate when all entries have
+  # been collected so that the push time attribute is only added once
+  # per entry
   def tree_at_path(path, _finalize=true)
     result = entries_at_path(path).to_a
     result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
-      result.push(*(tree_at_path(File.join(path, dir_path), false).map do |sub_pth, obj|
-        [File.join(dir_path, sub_pth), obj]
+      result.push(*(tree_at_path(File.join(path, dir_path), false).map do |sub_path, obj|
+        [File.join(dir_path, sub_path), obj]
       end))
     end
-    return _add_push_time(result) if _finalize
-    result
+    _finalize ? _add_push_time(result) : result
   end
 
   def last_modified_date
