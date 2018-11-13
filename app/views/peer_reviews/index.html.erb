@@ -4,13 +4,20 @@
   <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makePeerReviewsManager(document.getElementById('marks-graders-manager'),
+      makePeerReviewsManager(document.getElementById('peer_reviews_manager'),
         {
           assignment_id: <%= @assignment.id %>,
           grade_entry_form_id: 1,
           showSections: false,
         }
       );
+<!--      makeMarksGradersManager(document.getElementById('marks-graders-manager'),-->
+<!--        {-->
+<!--          assignment_id: <%#= @assignment.id %>,-->
+<!--          grade_entry_form_id: 1,-->
+<!--          showSections: false,-->
+<!--        }-->
+<!--      );-->
     });
   </script>
   <%#= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
