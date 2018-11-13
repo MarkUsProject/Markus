@@ -78,7 +78,16 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
+      # authorization
+      begin
+        authorize! @grouping, to: :run_tests?
+        @authorized = true
+      rescue ActionPolicy::Unauthorized => e
+        @authorized = false
+        @reason = e.result.reasons.full_messages.join(',')
+      end
     end
+
     render layout: 'assignment_content'
   end
 
@@ -87,7 +96,6 @@ class AutomatedTestsController < ApplicationController
       assignment = Assignment.find(params[:id])
       grouping = current_user.accepted_grouping_for(assignment.id)
       grouping.refresh_test_tokens
-      authorize! assignment, to: :run_tests?
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
       test_scripts = assignment.select_test_scripts(current_user)
@@ -98,7 +106,7 @@ class AutomatedTestsController < ApplicationController
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
-      message = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
+      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(',') : e.message
       flash_message(:error, message)
     end
     redirect_to action: :student_interface, id: params[:id]

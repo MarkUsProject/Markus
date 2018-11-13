@@ -1,0 +1,15 @@
+pt:
+  action_policy:
+    policy:
+      assignment:
+        before_due_date?: "Você não pode executar o teste pois a sua entrega está fora do prazo"
+        enabled?: "UPDATE ME"
+        not_a_ta?: "UPDATE ME"
+        test_scripts_uploaded?: "UPDATE ME"
+        tokens_released?: "Nenhum tokens dado"
+      grouping:
+        member?: "UPDATE ME"
+        not_in_progress?: "UPDATE ME"
+        tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto"
+      submission:
+        before_release?: "UPDATE ME"

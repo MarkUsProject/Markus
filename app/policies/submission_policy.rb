@@ -1,6 +1,7 @@
-class SubmissionPolicy < AutotestPolicy
+class SubmissionPolicy < ApplicationPolicy
+
   def run_tests?
-    check?(:not_a_ta?) && check?(:before_release?)
+    check?(:run_tests?, record.assignment) && check?(:before_release?)
   end
 
   def before_release?

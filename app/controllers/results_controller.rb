@@ -125,6 +125,15 @@ class ResultsController < ApplicationController
       @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
     end
 
+    # authorization
+    begin
+      authorize! @submission, to: :run_tests?
+      @authorized = true
+    rescue ActionPolicy::Unauthorized => e
+      @authorized = false
+      @reason = e.result.reasons.full_messages.join(',')
+    end
+
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
@@ -172,9 +181,8 @@ class ResultsController < ApplicationController
   def run_tests
     begin
       submission = Result.find(params[:id]).submission
-      assignment = submission.assignment
-      authorize! assignment, to: :run_tests?
       authorize! submission, to: :run_tests?
+      assignment = submission.assignment
       test_scripts = assignment.select_test_scripts(current_user)
                                .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
       hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
@@ -183,7 +191,7 @@ class ResultsController < ApplicationController
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
-      message = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
+      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(',') : e.message
       flash_message(:error, message)
     end
     redirect_back(fallback_location: root_path)

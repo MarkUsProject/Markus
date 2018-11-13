@@ -771,16 +771,6 @@ pt:
         fail: "Fracassado"
         error: "UPDATE ME"
         extra_info: "UPDATE ME"
-      error:
-        after_due_date: "Você não pode executar o teste pois a sua entrega está fora do prazo"
-        after_release: "UPDATE ME"
-        already_enqueued: "UPDATE ME"
-        bad_group: "UPDATE ME"
-        not_enabled: "UPDATE ME"
-        no_tas: "UPDATE ME"
-        no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
-        no_test_files: "UPDATE ME"
-        no_tokens_yet: "Nenhum tokens dado"
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

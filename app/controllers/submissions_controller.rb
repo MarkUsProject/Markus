@@ -251,7 +251,7 @@ class SubmissionsController < ApplicationController
         error = I18n.t('automated_tests.need_submission')
       end
     rescue StandardError => e
-      error = e.is_a? ActionPolicy::Unauthorized ? e.result.message : e.message
+      error = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(',') : e.message
     end
     unless success.blank?
       flash_message(:success, success)

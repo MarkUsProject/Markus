@@ -1,0 +1,15 @@
+es:
+  action_policy:
+    policy:
+      assignment:
+        before_due_date?: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado"
+        enabled?: "UPDATE ME"
+        not_a_ta?: "UPDATE ME"
+        test_scripts_uploaded?: "No hay un script para lanzar la prueba"
+        tokens_released?: "No se han dado fichas todavía"
+      grouping:
+        member?: "UPDATE ME"
+        not_in_progress?: "UPDATE ME"
+        tokens_available?: "No se encontraron fichas para este estudiante y para este proyecto"
+      submission:
+        before_release?: "UPDATE ME"

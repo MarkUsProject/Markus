@@ -1,6 +1,7 @@
-class GroupingPolicy < AutotestPolicy
+class GroupingPolicy < ApplicationPolicy
+
   def run_tests?
-    check?(:not_a_ta?) && (!user.student? ||
+    check?(:run_tests?, record.assignment) && (!user.student? ||
       (check?(:member?) && check?(:not_in_progress?) && check?(:tokens_available?))
     )
   end

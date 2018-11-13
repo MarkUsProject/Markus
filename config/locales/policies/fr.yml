@@ -1,0 +1,15 @@
+fr:
+  action_policy:
+    policy:
+      assignment:
+        before_due_date?: "La date d'échéance est déjà pasée"
+        enabled?: "Les tests ne sont pas activés pour ce projet"
+        not_a_ta?: "Les correcteurs ne sont pas autorisés à éxecuter des tests"
+        test_scripts_uploaded?: "Aucun scripts de test trouvés"
+        tokens_released?: "Aucun jetons disponible"
+      grouping:
+        member?: "Votre groupe n'éxiste pas, où il n'est pas valide"
+        not_in_progress?: "Il y a déjà un test mis en file d'attente, attendez les résultats s'il vous plait"
+        tokens_available?: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet"
+      submission:
+        before_release?: "Les notes pour ce test sont déjà montré aux étudiants"
