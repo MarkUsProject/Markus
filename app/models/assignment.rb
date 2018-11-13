@@ -1518,7 +1518,7 @@ class Assignment < ApplicationRecord
       map[:assignments] = DEFAULT_FIELDS.map
       assignments.map do |assignment|
         m = {}
-        DEFAULT_FIELD.map do |category|
+        DEFAULT_FIELDS.map do |category|
           m[DEFAULT_FIELDS[category]] = assignment.send(DEFAULT_FIELDS[category])
         end
         map[:assignments]
