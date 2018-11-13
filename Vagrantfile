@@ -26,16 +26,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "install-markus-autotesting", type: "shell" do |s|
     s.path = "script/install-markus-autotesting.sh"
     s.privileged = false
+    s.args = "~/markus-autotesting"
   end
 
   config.vm.provision "install-markus", type: "shell" do |s|
     s.path = "script/install-markus.sh"
     s.privileged = false
+    s.args = "~/Markus"
   end
 
   config.vm.provision "start-autotest-workers", type: "shell", run: "always" do |s|
     s.path = "script/start-autotest-workers.sh"
     s.privileged = false
+    s.args = "~/markus-autotesting"
   end
 
   config.vm.provision "install-svn", type: "shell", run: "never" do |s|

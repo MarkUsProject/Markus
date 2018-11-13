@@ -9,18 +9,19 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :note_message,
                          :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_results
+                         :get_test_runs_instructors, :get_test_runs_instructors_released
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark,
-                       :note_message, :get_test_runs_results]
+                       :note_message, :get_test_runs_instructors]
   before_action :authorize_for_user,
-                only: [:download, :download_zip, :run_tests, :stop_test,
+                only: [:download, :download_zip,
                        :view_marks, :get_annotations]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
-                       :cancel_remark_request]
+                       :cancel_remark_request,
+                       :get_test_runs_instructors_released]
   before_action only: [:edit, :update_mark, :toggle_marking_state,
                        :update_overall_comment, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
@@ -169,11 +170,17 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    submission = Result.find(params[:id]).submission
     begin
-      test_scripts = AutomatedTestsClientHelper.authorize_test_run(@current_user, submission.assignment)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
-                                   [{ grouping_id: submission.grouping_id, submission_id: submission.id }])
+      submission = Result.find(params[:id]).submission
+      assignment = submission.assignment
+      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, submission: submission)
+      test_scripts = assignment.select_test_scripts(current_user)
+                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_run = submission.create_test_run!(user: current_user)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
+                                   hooks_script, [{ id: test_run.id }])
+      flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
     end
@@ -655,24 +662,16 @@ class ResultsController < ApplicationController
     grace_deduction.destroy
   end
 
-  def get_test_runs_results
-    test_script_results = TestScriptResult
-                          .joins(:test_run, :test_script, :test_results)
-                          .where(test_runs: { submission_id: params[:submission_id] })
-                          .pluck_to_hash(:created_at, :user_id, :name, :file_name,
-                                         :actual_output, :completion_status,
-                                         'test_results.marks_earned', 'test_results.marks_total')
+  def get_test_runs_instructors
+    submission = Submission.find(params[:submission_id])
+    test_runs = submission.grouping.test_runs_instructors(submission)
+    render json: test_runs
+  end
 
-    test_script_results.each do |g|
-      # Create new entries that combine created_at and user_name together
-      g['created_at_user_name'] = "#{I18n.l(g['created_at'])} (#{User.find(g['user_id']).user_name})"
-      g['marks_earned'] = g['test_results.marks_earned']
-      g['marks_total'] = g['test_results.marks_total']
-      if g['actual_output'] == 'NA' || g['actual_output'].nil?
-        g['actual_output'] = ''
-      end
-    end
-    render json: test_script_results
+  def get_test_runs_instructors_released
+    submission = Submission.find(params[:submission_id])
+    test_runs = submission.grouping.test_runs_instructors_released(submission)
+    render json: test_runs
   end
 
   private

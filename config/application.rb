@@ -22,9 +22,6 @@ module Markus
     # Set the timezone
     config.time_zone = 'Eastern Time (US & Canada)'
 
-    # Add all config/locales subdirs
-    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
-
     # Use Resque for background jobs
     config.active_job.queue_adapter = :resque
 

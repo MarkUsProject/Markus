@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Repository::AbstractRepository do
   context 'repository permissions should be updated' do
     context 'exactly once' do

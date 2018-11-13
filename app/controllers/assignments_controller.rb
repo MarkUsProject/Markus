@@ -3,14 +3,7 @@ require 'base64'
 
 class AssignmentsController < ApplicationController
   before_action      :authorize_only_for_admin,
-                     except: [:deletegroup,
-                              :delete_rejected,
-                              :disinvite_member,
-                              :invite_member,
-                              :creategroup,
-                              :join_group,
-                              :decline_invitation,
-                              :index,
+                     except: [:index,
                               :student_interface,
                               :update_collected_submissions,
                               :render_feedback_file,
@@ -22,13 +15,6 @@ class AssignmentsController < ApplicationController
 
   before_action      :authorize_for_student,
                      only: [:student_interface,
-                            :deletegroup,
-                            :delete_rejected,
-                            :disinvite_member,
-                            :invite_member,
-                            :creategroup,
-                            :join_group,
-                            :decline_invitation,
                             :peer_review]
 
   before_action      :authorize_for_user,
@@ -206,16 +192,14 @@ class AssignmentsController < ApplicationController
       @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
-      @assignments.each do |a|
-        if current_user.has_accepted_grouping_for?(a)
-          grouping = current_user.accepted_grouping_for(a)
-          if grouping.has_submission?
-            submission = grouping.current_submission_used
-            if submission.has_remark? && submission.remark_result.released_to_students
-              @a_id_results[a.id] = submission.remark_result
-            elsif submission.has_result? && submission.get_original_result.released_to_students
-              @a_id_results[a.id] = submission.get_original_result
-            end
+      accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
+      accepted_groupings.each do |grouping|
+        if !grouping.assignment.is_hidden && grouping.has_submission?
+          submission = grouping.current_submission_used
+          if submission.has_remark? && submission.remark_result.released_to_students
+            @a_id_results[grouping.assignment.id] = submission.remark_result
+          elsif submission.has_result? && submission.get_original_result.released_to_students
+            @a_id_results[grouping.assignment.id] = submission.get_original_result
           end
         end
       end
@@ -285,8 +269,8 @@ class AssignmentsController < ApplicationController
       flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
     rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, t('assignment.error', message: e.message))
-      flash_message(:error, t('assignment.error', message: e.message))
+      @assignment.errors.add(:base, e.message)
+      flash_message(:error, e.message)
       render :edit, id: @assignment.id
     rescue
       render :edit, id: @assignment.id
@@ -376,9 +360,8 @@ class AssignmentsController < ApplicationController
   end
 
   def stop_batch_tests
-    TestRun.where(test_batch_id: params[:test_batch_id]).each do |test_run_id|
-      AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_run_id])
-    end
+    test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
+    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
     redirect_back(fallback_location: root_path)
   end
 
@@ -388,36 +371,30 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
+        user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .includes(:test_script_results)
-                           .where(test_runs: { user_id: current_user.id }, 'groupings.assignment_id': @assignment.id)
-                           .select(
-                             :id,
-                             :test_batch_id,
-                             :time_to_service,
-                             :grouping_id,
-                             :user_id,
-                             'test_batches.created_at',
-                             Arel.sql('test_runs.created_at AS individual_created_at'),
-                             'groups.group_name',
-                             Arel.sql('results.id AS result_id')
-                           )
-        status_hash = Hash.new
-        test_runs.each do |t|
-          status_hash[t[:id]] = t.status
-        end
-        test_batches = TestBatch.where(id: test_runs.pluck(:test_batch_id).compact)
+                           .where(test_runs: {user_id: user_ids},
+                                  'groupings.assignment_id': @assignment.id)
+                           .pluck_to_hash(:id,
+                                          :test_batch_id,
+                                          :time_to_service,
+                                          :grouping_id,
+                                          :submission_id,
+                                          'test_batches.created_at',
+                                          'test_runs.created_at',
+                                          'groups.group_name',
+                                          'results.id')
+        status_hash = TestRun.statuses(test_runs.map { |tr| tr[:id] })
+        test_batches = TestBatch.where(id: (test_runs.map { |tr| tr[:test_batch_id] }).compact.uniq)
         time_to_completion_hashes = test_batches.map(&:time_to_completion_hash)
         time_estimates = time_to_completion_hashes.empty? ? Hash.new : time_to_completion_hashes.inject(&:merge)
-        test_runs = test_runs.as_json
         test_runs.each do |test_run|
-          if test_run['created_at'].nil?  # individual test run
-            test_run['created_at'] = I18n.l(test_run['individual_created_at'])
-          else  # part of a batch
-            test_run['created_at'] = I18n.l(test_run['created_at'])
-          end
+          created_at_raw = test_run.delete('test_batches.created_at') || test_run.delete('test_runs.created_at')
+          test_run['created_at'] = I18n.l(created_at_raw)
           test_run['status'] = status_hash[test_run['id']]
-          test_run['time_to_completion'] = time_estimates[test_run['id']] || 0
+          test_run['time_to_completion'] = time_estimates[test_run['id']] || ''
+          test_run['group_name'] = test_run.delete('groups.group_name')
+          test_run['result_id'] = test_run.delete('results.id')
         end
         render json: test_runs
       end
@@ -426,7 +403,7 @@ class AssignmentsController < ApplicationController
 
   def csv_summary
     assignment = Assignment.find(params[:id])
-    if params[:download] == 'Download'
+    if params[:download] == 'download'
       data = assignment.summary_csv(@current_user)
       filename = "#{assignment.short_identifier}_summary.csv"
     else
@@ -441,158 +418,6 @@ class AssignmentsController < ApplicationController
   end
 
   # Methods for the student interface
-
-  def join_group
-    @assignment = Assignment.find(params[:id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @user.join(@grouping.id)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'" +
-                 '(accepted invitation).')
-    redirect_to action: 'student_interface', id: params[:id]
-  end
-
-  def decline_invitation
-    @assignment = Assignment.find(params[:id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @grouping.decline_invitation(@user)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' declined invitation for group '" +
-                 "#{@grouping.group.group_name}'.")
-    redirect_to action: 'student_interface', id: params[:id]
-  end
-
-  def creategroup
-    @assignment = Assignment.find(params[:id])
-    @student = @current_user
-    m_logger = MarkusLogger.instance
-    begin
-      # We do not allow group creations by students after the due date
-      # and the grace period for an assignment
-      if @assignment.past_collection_date?(@student.section)
-        raise I18n.t('create_group.fail.due_date_passed')
-      end
-      if !@assignment.student_form_groups ||
-           @assignment.invalid_override
-        raise I18n.t('create_group.fail.not_allow_to_form_groups')
-      end
-      if @student.has_accepted_grouping_for?(@assignment.id)
-        raise I18n.t('create_group.fail.already_have_a_group')
-      end
-      if params[:workalone]
-        if @assignment.group_min != 1
-          raise I18n.t('create_group.fail.can_not_work_alone',
-                        group_min: @assignment.group_min)
-        end
-        @student.create_group_for_working_alone_student(@assignment.id)
-      else
-        @student.create_autogenerated_name_group(@assignment.id)
-      end
-      m_logger.log("Student '#{@student.user_name}' created group.",
-                   MarkusLogger::INFO)
-    rescue RuntimeError => e
-      flash[:fail_notice] = e.message
-      m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '" +
-                   "#{e.message}'.", MarkusLogger::ERROR)
-    end
-    redirect_to action: 'student_interface', id: @assignment.id
-  end
-
-  def deletegroup
-    @assignment = Assignment.find(params[:id])
-    @grouping = @current_user.accepted_grouping_for(@assignment.id)
-    m_logger = MarkusLogger.instance
-    begin
-      if @grouping.nil?
-        raise I18n.t('create_group.fail.do_not_have_a_group')
-      end
-      # If grouping is not deletable for @current_user for whatever reason, fail.
-      unless @grouping.deletable_by?(@current_user)
-        raise I18n.t('groups.cant_delete')
-      end
-      # Note: This error shouldn't be raised normally, as the student shouldn't
-      # be able to try to delete the group in this case.
-      if @grouping.has_submission?
-        raise I18n.t('groups.cant_delete_already_submitted')
-      end
-
-      Repository.get_class.update_permissions_after(only_on_request: true) do
-        @grouping.student_memberships.each do |member|
-          @grouping.remove_member(member.id)
-        end
-      end
-
-      @grouping.destroy
-      flash_message(:success, I18n.t('flash.actions.destroy.success', resource_name: Group.model_name.human))
-      m_logger.log("Student '#{current_user.user_name}' deleted group '" +
-                   "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
-
-    rescue RuntimeError => e
-      flash[:fail_notice] = e.message
-      if @grouping.nil?
-        m_logger.log(
-           'Failed to delete group, since no accepted group for this user existed.' +
-           "User: '#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
-      else
-        m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '" +
-                     "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
-      end
-    end
-    redirect_to action: 'student_interface', id: params[:id]
-  end
-
-  def invite_member
-    return unless request.post?
-    @assignment = Assignment.find(params[:id])
-    # if instructor formed group return
-    return if @assignment.invalid_override
-
-    @student = @current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
-    if @grouping.nil?
-      raise I18n.t('invite_student.fail.need_to_create_group')
-    end
-
-    to_invite = params[:invite_member].split(',')
-    flash[:fail_notice] = []
-    MarkusLogger.instance
-    @grouping.invite(to_invite)
-    flash[:fail_notice] = @grouping.errors['base']
-    if flash[:fail_notice].blank?
-      flash_message(:success, I18n.t('invite_student.success'))
-    end
-    redirect_to action: 'student_interface', id: @assignment.id
-  end
-
-  # Called by clicking the cancel link in the student's interface
-  # i.e. cancels invitations
-  def disinvite_member
-    assignment = Assignment.find(params[:id])
-    membership = StudentMembership.find(params[:membership])
-    disinvited_student = membership.user
-    membership.delete
-    membership.save
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' cancelled invitation for " +
-                 "'#{disinvited_student.user_name}'.")
-    flash_message(:success, I18n.t('student.member_disinvited'))
-    redirect_to action: :student_interface, id: assignment.id
-  end
-
-  # Deletes memberships which have been declined by students
-  def delete_rejected
-    @assignment = Assignment.find(params[:id])
-    membership = StudentMembership.find(params[:membership])
-    grouping = membership.grouping
-    if current_user != grouping.inviter
-      raise I18n.t('invite_student.fail.only_inviter')
-    end
-    membership.delete
-    membership.save
-    redirect_to action: 'student_interface', id: params[:id]
-  end
 
   def update_collected_submissions
     @assignments = Assignment.all
@@ -802,46 +627,36 @@ class AssignmentsController < ApplicationController
     full_path = File.join(assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    files = revision.files_at_path(full_path)
-    entries = get_files_info(files, assignment.id, revision.revision_identifier, path)
-
-    entries.each do |data|
+    entries = revision.tree_at_path(full_path)
+                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
+      data = get_file_info(file_name, file_obj, assignment.id, path)
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
+      data
     end
-
-    revision.directories_at_path(full_path).each do |directory_name, _|
-      entries.concat(get_all_file_data(
-                       revision,
-                       path.blank? ? directory_name : File.join(path, directory_name)
-                     ))
-    end
-
     entries
   end
 
-  def get_files_info(files, assignment_id, revision_identifier, path)
-    files.map do |file_name, file|
-      {
-        id: file.object_id,
-        url: download_starter_code_assignment_url(
-          id: assignment_id,
-          file_name: file_name,
-          path: path,
-        ),
-        filename: view_context.image_tag('icons/page_white_text.png') +
-          view_context.link_to(file_name,
-                               action: 'download_starter_code',
-                               id: assignment_id,
-                               file_name: file_name,
-                               path: path),
-        raw_name: file_name,
-        last_revised_date: l(file.last_modified_date),
-        last_modified_revision: file.last_modified_revision,
-        revision_by: file.user_id
-      }
-    end
+  def get_file_info(file_name, file, assignment_id, path)
+    {
+      id: file.object_id,
+      url: download_starter_code_assignment_url(
+        id: assignment_id,
+        file_name: file_name,
+        path: path,
+      ),
+      filename: view_context.image_tag('icons/page_white_text.png') +
+        view_context.link_to(file_name,
+                             action: 'download_starter_code',
+                             id: assignment_id,
+                             file_name: file_name,
+                             path: path),
+      raw_name: file_name,
+      last_revised_date: l(file.last_modified_date),
+      last_modified_revision: file.last_modified_revision,
+      revision_by: file.user_id
+    }
   end
 
     def update_assignment!(map)
@@ -868,14 +683,32 @@ class AssignmentsController < ApplicationController
                          num_files_before != assignment.assignment_files.length
 
     # if there are no section due dates, destroy the objects that were created
-    if params[:assignment][:section_due_dates_type].nil? ||
-        params[:assignment][:section_due_dates_type] == '0'
+    if params[:assignment][:section_due_dates_type] == '0'
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
     else
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
+    end
+
+    if params[:is_group_assignment] == 'true'
+      # Is the instructor forming groups?
+      if assignment_params[:student_form_groups] == '0'
+        assignment.invalid_override = true
+        # Increase group_max so that create_all_groups button is not displayed
+        # in the groups view.
+        assignment.group_max = 2
+      else
+        assignment.student_form_groups = true
+        assignment.invalid_override = false
+        assignment.group_name_autogenerated = true
+      end
+    else
+      assignment.student_form_groups = false
+      assignment.invalid_override = false
+      assignment.group_min = 1
+      assignment.group_max = 1
     end
 
     # Due to some funkiness, we need to handle submission rules separately
@@ -905,7 +738,7 @@ class AssignmentsController < ApplicationController
       # issues with foreign keys in the future, but not with the current
       # schema
       assignment.submission_rule.delete
-      assignment.submission_rule = potential_rule.new
+      assignment.submission_rule = potential_rule.create!(assignment: assignment)
 
       # this part of the update is particularly hacky, because the incoming
       # data will include some mix of the old periods and new periods; in
@@ -913,6 +746,10 @@ class AssignmentsController < ApplicationController
       # the case of a mixture the input is a hash, and if there are no
       # periods at all then the periods_attributes will be nil
       periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
+      begin
+        periods = periods.to_h
+      rescue
+      end
       periods = case periods
                 when Hash
                   # in this case, we do not care about the keys, because
@@ -926,30 +763,30 @@ class AssignmentsController < ApplicationController
                 end
       # now that we know what periods we want to keep, we can create them
       periods.each do |p|
-        assignment.submission_rule.periods << Period.new(p)
+        new_period = assignment.submission_rule.periods.build(p)
+        new_period.submission_rule = assignment.submission_rule
+        new_period.save!
       end
-
-    elsif !submission_rule_params.blank? # in this case Rails does what we want, so we'll take the easy route
-      assignment.submission_rule.update_attributes(submission_rule_params[:submission_rule_attributes])
-    end
-
-    if params[:is_group_assignment] == 'true'
-      # Is the instructor forming groups?
-      if assignment_params[:student_form_groups] == '0'
-        assignment.invalid_override = true
-        # Increase group_max so that create_all_groups button is not displayed
-        # in the groups view.
-        assignment.group_max = 2
-      else
-        assignment.student_form_groups = true
-        assignment.invalid_override = false
-        assignment.group_name_autogenerated = true
+    elsif !submission_rule_params.blank? # TODO: do this in a more Rails way
+      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
+      begin
+        periods = periods.to_h
+      rescue
       end
-    else
-      assignment.student_form_groups = false
-      assignment.invalid_override = false
-      assignment.group_min = 1
-      assignment.group_max = 1
+      periods = case periods
+                when Hash
+                  periods.map { |_, p| p }.select { |p| p.key?(:hours) }
+                when Array
+                  periods
+                else
+                  []
+                end
+      assignment.submission_rule.periods_attributes = periods
+      assignment.submission_rule.periods.each do |period|
+        period.submission_rule = assignment.submission_rule
+        period.save
+      end
+      assignment.submission_rule.save
     end
 
     return assignment, new_required_files

@@ -2,6 +2,7 @@ module AutomatedTestsClientHelper
 
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments')
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students')
+  HOOKS_FILE = 'hooks.py'.freeze
 
   def create_test_repo(assignment)
     test_dir = File.join(ASSIGNMENTS_DIR, assignment.short_identifier)
@@ -112,49 +113,63 @@ module AutomatedTestsClientHelper
     files
   end
 
-  def self.check_user_permission(user, grouping = nil)
-
-    # the user may not have an api key yet
-    user.set_api_key
-    # admins are always ok
-    if user.admin?
-      return
-    end
-    # no tas
+  # TODO: Move the following to model-based policies
+  def self.allowed_to?(user, **checks)
+    # AutotestPolicy
     if user.ta?
-      raise I18n.t('automated_tests.error.ta_not_allowed')
+      return false, I18n.t('automated_tests.error.no_tas')
     end
-    # student checks from now on
-
-    # student belongs to the grouping
-    if grouping.nil? || !user.accepted_groupings.include?(grouping)
-      raise I18n.t('automated_tests.error.bad_group')
+    assignment = checks[:assignment]
+    unless assignment.nil?
+      # AssignmentPolicy < AutotestPolicy
+      unless assignment.enable_test
+        return false, I18n.t('automated_tests.error.not_enabled')
+      end
+      if user.student?
+        unless assignment.enable_student_tests
+          return false, I18n.t('automated_tests.error.not_enabled')
+        end
+        if Time.current < assignment.token_start_date
+          return false, I18n.t('automated_tests.error.no_tokens_yet')
+        end
+        if assignment.submission_rule.can_collect_now?
+          return false, I18n.t('automated_tests.error.after_due_date')
+        end
+      end
+      unless assignment.select_test_scripts(user).exists?
+        return false, I18n.t('automated_tests.error.no_test_files')
+      end
     end
-    # deadline has not passed
-    if grouping.assignment.submission_rule.can_collect_now?
-      raise I18n.t('automated_tests.error.after_due_date')
+    submission = checks[:submission]
+    unless submission.nil?
+      # SubmissionPolicy < AutotestPolicy
+      if submission.current_result.released_to_students
+        return false, I18n.t('automated_tests.error.after_release')
+      end
     end
-    # no other enqueued tests
-    if grouping.student_test_enqueued?
-      raise I18n.t('automated_tests.error.already_enqueued')
+    grouping = checks[:grouping]
+    unless grouping.nil?
+      # GroupingPolicy < AutotestPolicy
+      if user.student?
+        unless grouping.accepted_students.include?(user)
+          return false, I18n.t('automated_tests.error.bad_group')
+        end
+        if grouping.student_test_run_in_progress?
+          return false, I18n.t('automated_tests.error.already_enqueued')
+        end
+        if grouping.test_tokens <= 0 && !grouping.assignment.unlimited_tokens
+          return false, I18n.t('automated_tests.error.no_tokens')
+        end
+      end
     end
-    grouping.refresh_test_tokens!
-    grouping.decrease_test_tokens! # raises exception with no tokens available
+    return true, ''
   end
 
-  def self.authorize_test_run(user, assignment, grouping = nil)
-
-    # TODO: extract in policies
-    if !assignment.enable_test || (user.student? && !assignment.enable_student_tests)
-      raise I18n.t('automated_tests.error.not_enabled')
+  def self.authorize!(user, **checks)
+    authorized, reason = AutomatedTestsClientHelper.allowed_to?(user, **checks)
+    unless authorized
+      raise reason
     end
-    test_scripts = assignment.select_test_scripts(user).pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
-    if test_scripts.empty?
-      raise I18n.t('automated_tests.error.no_test_files')
-    end
-    check_user_permission(user, grouping) # has to run last, it potentially decreases tokens
-
-    test_scripts
   end
 
 end

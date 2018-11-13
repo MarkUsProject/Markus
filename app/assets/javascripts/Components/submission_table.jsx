@@ -45,7 +45,11 @@ class RawSubmissionTable extends React.Component {
       Cell: row => {
         let members = '';
         if (this.props.show_members) {
-          members = ` (${row.original.members.join(', ')})`;
+          if (row.original.members) {
+            members = ` (${row.original.members.join(', ')})`;
+          } else {
+            members = '';
+          }
         }
         if (row.original.result_id) {
           const result_url = Routes.edit_assignment_submission_result_path(
@@ -123,6 +127,15 @@ class RawSubmissionTable extends React.Component {
       accessor: 'submission_time',
       filterable: false,
       minWidth: 150,
+      sortMethod: (a,b) => {
+        if (typeof a === 'string' && typeof b === 'string') {
+          let a_date = Date.parse(a);
+          let b_date = Date.parse(b);
+          return a_date > b_date ? 1 : -1;
+        } else {
+        return a > b ? 1 : -1;
+        }
+      }
     },
     {
       Header: I18n.t('submissions.grace_credits_used'),
@@ -159,7 +172,7 @@ class RawSubmissionTable extends React.Component {
     {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
-      Cell: ({value}) => value ? value + ' / ' + this.props.max_mark : '',
+      Cell: ({value}) => (value === undefined ? '-' : value) + ' / ' + this.props.max_mark,
       className: 'number',
       minWidth: 80,
       filterable: false,

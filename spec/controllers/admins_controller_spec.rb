@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe AdminsController do
 
   before :each do

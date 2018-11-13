@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe GradeEntryStudent do
   describe 'assigning and unassigning TAs' do
     let(:form) { create(:grade_entry_form) }

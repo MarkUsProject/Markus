@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe MemoryRepository do
   context 'writes to repository permissions file' do
 

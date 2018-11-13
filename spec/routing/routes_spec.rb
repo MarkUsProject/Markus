@@ -1,7 +1,3 @@
-# referensed from bug664-1.patch
-# https://gist.github.com/benjaminvialle/4055208
-require 'spec_helper'
-
 describe 'Routing to main page', type: :routing do
   context 'Locale-less root' do
     it 'routes / to login' do
@@ -123,57 +119,6 @@ describe 'An Assignment' do
           id: assignment.id.to_s,
           locale: 'en')
     end
-
-    it 'routes POST invite_member properly' do
-      expect(post: path + '/' + assignment.id.to_s + '/invite_member')
-        .to route_to(
-          controller: ctrl,
-          action: 'invite_member',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes GET creategroup properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/creategroup').to route_to(
-        controller: ctrl,
-        action: 'creategroup',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET join_group properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/join_group').to route_to(
-        controller: ctrl,
-        action: 'join_group',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET deletegroup properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/deletegroup').to route_to(
-        controller: ctrl,
-        action: 'deletegroup',
-        id: assignment.id.to_s,
-        locale: 'en')
-    end
-
-    it 'routes GET decline_invitation properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/decline_invitation')
-        .to route_to(
-          controller: ctrl,
-          action: 'decline_invitation',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
-
-    it 'routes POST disinvite_member properly' do
-      expect(post: path + '/' + assignment.id.to_s + '/disinvite_member')
-        .to route_to(
-          controller: ctrl,
-          action: 'disinvite_member',
-          id: assignment.id.to_s,
-          locale: 'en')
-    end
   end
   # end Assignment member route tests
 
@@ -283,6 +228,16 @@ describe 'An Assignment' do
     let(:group_ctrl) { 'groups' }
 
     context 'resource members' do
+      it 'routes DELETE destroy properly' do
+        expect(delete: group_path + '/' + group.id.to_s).to route_to(
+          controller: group_ctrl,
+          action: 'destroy',
+          id: group.id.to_s,
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
       it 'routes POST rename_group properly' do
         expect(post: group_path + '/' + group.id.to_s + '/rename_group')
           .to route_to(
@@ -295,6 +250,60 @@ describe 'An Assignment' do
     end
 
     context 'collection' do
+      it 'routes POST create properly' do
+        expect(post: group_path).to route_to(
+          controller: group_ctrl,
+          action: 'create',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
+      it 'routes PATCH accept_invitation properly' do
+        expect(patch: group_path + '/accept_invitation').to route_to(
+          controller: group_ctrl,
+          action: 'accept_invitation',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
+      it 'routes PATCH decline_invitation properly' do
+        expect(patch: group_path + '/decline_invitation').to route_to(
+          controller: group_ctrl,
+          action: 'decline_invitation',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
+      it 'routes POST invite_member properly' do
+        expect(post: group_path + '/invite_member').to route_to(
+          controller: group_ctrl,
+          action: 'invite_member',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
+      it 'routes PATCH disinvite_member properly' do
+        expect(patch: group_path + '/disinvite_member').to route_to(
+          controller: group_ctrl,
+          action: 'disinvite_member',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
+      it 'routes DELETE delete_rejected properly' do
+        expect(delete: group_path + '/delete_rejected').to route_to(
+          controller: group_ctrl,
+          action: 'delete_rejected',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
       it 'routes GET index properly' do
         expect(get: group_path).to route_to(
           controller: group_ctrl,

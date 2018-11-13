@@ -23,7 +23,7 @@
   <% unless @result.is_a_review? %>
     <div class='submission_rule_pane'>
       <div class='submission_rule_label'>
-        <strong><%= t('marker.marks.submission_rule') %>:</strong>
+        <strong><%= SubmissionRule.model_name.human.capitalize %></strong>
       </div>
       <div id="submission_rule_viewer">
         <%= render partial: assignment.submission_rule.grader_tab_partial,
@@ -82,7 +82,7 @@
     <% unless @result.is_a_review? %>
       <div class='submission_rule_pane'>
         <div class='submission_rule_label'>
-          <strong><%= t('marker.marks.submission_rule') %>:</strong>
+          <strong><%= SubmissionRule.model_name.human.capitalize %></strong>
         </div>
         <div id="submission_rule_viewer">
         <%= render partial: assignment.submission_rule.grader_tab_partial,

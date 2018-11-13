@@ -3,7 +3,6 @@
     <%= javascript_include_tag 'create_assignment',
                                'jquery-ui-timepicker-addon',
                                'PeriodDeltaChain/PeriodDeltaChain',
-                               'moment-with-langs.min',
                                'localize_date' %>
     <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
     <%= render partial: 'shared/navigation_warning',
@@ -188,7 +187,7 @@
     <%# Submission rules %>
     <fieldset id='submission_rule_fields'>
       <legend>
-        <span><%= t('assignment.submission_rules') %></span>
+        <span><%= SubmissionRule.model_name.human %></span>
       </legend>
 
       <div class='help assignment_submission_rules_help'>
@@ -198,16 +197,13 @@
       </div>
 
       <%= f.fields_for :submission_rule do |rule| %>
-        <h5><%= t('assignment.submission.penalty_rules') %></h5>
-
         <p>
           <%= rule.radio_button :type,
                                 'NoLateSubmissionRule',
                                 checked: true,
                                 id: 'no_late_submission_rule' %>
           <%= label_tag 'no_late_submission_rule',
-                        t('submission_rules.no_late_submission_rule' +
-                              '.form_description') %>
+                        NoLateSubmissionRule.human_attribute_name(:form_description) %>
         </p>
       <% end %>
     </fieldset>

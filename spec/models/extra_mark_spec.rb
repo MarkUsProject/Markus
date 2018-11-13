@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe ExtraMark do
 
   context 'checks relationships' do

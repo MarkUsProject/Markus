@@ -16,6 +16,7 @@ install:
 before_script:
   - sudo rm -f /etc/localtime
   - sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+  - bundle exec rake i18n:js:export
   - chmod u+x bin/webpack
   - RAILS_ENV=test bundle exec rake webpacker:compile
   - psql -c 'create database markus_test;' -U postgres

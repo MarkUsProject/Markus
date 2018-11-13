@@ -4,16 +4,8 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require jquery
 //= require jquery-ui
 //= require js-routes
-//= require job_poller
-//= require i18n
-//= require i18n/translations
-//= require Chart
-//= require chart_config
-//= require markus_colors
-//= require refresh_or_logout
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 

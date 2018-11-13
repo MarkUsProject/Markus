@@ -1,6 +1,6 @@
 class TemplateDivision < ApplicationRecord
   belongs_to :exam_template
-  belongs_to :assignment_file
+  belongs_to :assignment_file, optional: true
 
   accepts_nested_attributes_for :assignment_file, allow_destroy: true
 

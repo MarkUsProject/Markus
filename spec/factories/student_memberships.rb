@@ -5,15 +5,15 @@ FactoryBot.define do
     membership_status {StudentMembership::STATUSES[:pending]}
 
     factory :inviter_student_membership do
-      membership_status StudentMembership::STATUSES[:inviter]
+      membership_status { StudentMembership::STATUSES[:inviter] }
     end
 
     factory :accepted_student_membership do
-      membership_status StudentMembership::STATUSES[:accepted]
+      membership_status { StudentMembership::STATUSES[:accepted] }
     end
 
     factory :rejected_student_membership do
-      membership_status StudentMembership::STATUSES[:rejected]
+      membership_status { StudentMembership::STATUSES[:rejected] }
     end
   end
 end

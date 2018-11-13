@@ -194,7 +194,7 @@
                 controller.controller_name == 'results' %>
             class='active'
           <% end %>>
-        <%= link_to t(:submissions),
+        <%= link_to Submission.model_name.human.pluralize,
                     browse_assignment_submissions_path(@assignment || @grouping.assignment) %>
       </li>
       <li <% if controller.action_name == 'summary' %>

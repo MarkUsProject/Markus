@@ -14,7 +14,15 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    assignment_columns = Assignment.pluck(:id, :short_identifier).map do |id, short_identifier|
+    if current_user.admin? || current_user.ta?
+      assignment_columns = Assignment.pluck(:id, :short_identifier)
+      gef_columns = GradeEntryForm.pluck(:id, :short_identifier)
+    else
+      assignment_columns = Assignment.where(is_hidden: false).pluck(:id, :short_identifier)
+      gef_columns = GradeEntryForm.where(is_hidden: false).pluck(:id, :short_identifier)
+    end
+
+    assignment_columns = assignment_columns.map do |id, short_identifier|
       {
         accessor: "assignment_marks.#{id}",
         Header: short_identifier,
@@ -23,7 +31,7 @@ class CourseSummariesController < ApplicationController
       }
     end
 
-    gef_columns = GradeEntryForm.pluck(:id, :short_identifier).map do |id, short_identifier|
+    gef_columns = gef_columns.map do |id, short_identifier|
       {
         accessor: "grade_entry_form_marks.#{id}",
         Header: short_identifier,

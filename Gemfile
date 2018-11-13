@@ -20,7 +20,6 @@ gem 'upsert'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
-gem 'jquery-rails'
 gem 'js-routes'
 gem 'libv8'
 gem 'sass-rails'
@@ -33,7 +32,7 @@ gem 'resque'
 gem 'redis-rails'
 
 # Authorization
-gem 'pundit'
+gem 'action_policy'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'

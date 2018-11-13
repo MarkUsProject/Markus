@@ -22,7 +22,7 @@
          old_result.submission.grouping.grace_period_deductions.any? %>
         <div class='submission_rule_pane'>
           <div class='submission_rule_label'>
-            <strong><%= t('marker.marks.submission_rule') %>:</strong>
+            <strong><%= SubmissionRule.model_name.human.capitalize %></strong>
           </div>
           <div id='submission_rule_viewer'>
             <%= render partial: assignment.submission_rule.grader_tab_partial,
@@ -96,7 +96,7 @@
           result.submission.grouping.grace_period_deductions.any? %>
       <div class='submission_rule_pane'>
         <div class='submission_rule_label'>
-          <strong><%= t('marker.marks.submission_rule') %>:</strong>
+          <strong><%= SubmissionRule.model_name.human.capitalize %></strong>
         </div>
         <div id='submission_rule_viewer'>
           <%= render partial: assignment.submission_rule.grader_tab_partial,

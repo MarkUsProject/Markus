@@ -100,7 +100,7 @@ class SubmissionsController < ApplicationController
     end
     revisions_history = assignment_revisions.map do |revision|
       {
-        id: revision.revision_identifier,
+        id: revision.revision_identifier.to_s,
         id_ui: revision.revision_identifier_ui,
         timestamp: l(revision.timestamp),
         server_timestamp: l(revision.server_timestamp)
@@ -130,7 +130,8 @@ class SubmissionsController < ApplicationController
 
     # generate flash messages
     if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
-      flash_message(:warning, @assignment.submission_rule.after_collection_message)
+      flash_message(:warning,
+                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end
@@ -158,7 +159,7 @@ class SubmissionsController < ApplicationController
     end
     entries = []
     grouping.group.access_repo do |repo|
-      if current_user.student? || params[:revision_identifier].nil?
+      if current_user.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
         revision = repo.get_revision(params[:revision_identifier])
@@ -239,9 +240,12 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !test_runs.empty?
-        test_scripts = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
+        AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment)
+        test_scripts = assignment.select_test_scripts(current_user)
+                                 .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+        hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
         AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
-                                     test_runs)
+                                     hooks_script, test_runs)
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')
@@ -439,7 +443,8 @@ class SubmissionsController < ApplicationController
           end
           # Are we past collection time?
           if current_user.student? && @assignment.submission_rule.can_collect_now?(current_user.section)
-            flash_message(:warning, @assignment.submission_rule.commit_after_collection_message)
+            flash_message(:warning,
+                          @assignment.submission_rule.class.human_attribute_name(:commit_after_collection_message))
           end
           # can't use redirect_to here. See comment of this action for details.
           set_filebrowser_vars(@grouping)
@@ -478,18 +483,15 @@ class SubmissionsController < ApplicationController
     elsif file.is_pdf?
       render json: { type: 'pdf' }
     else
-      path = params[:path] || '/'
       grouping.group.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
-
-        begin
-          raw_file = revision.files_at_path(File.join(assignment.repository_folder,
-                                                  path))[file.filename]
+        raw_file = revision.files_at_path(file.path)[file.filename]
+        if raw_file.nil?
+          file_contents = I18n.t('student.submission.missing_file',
+                                 file_name: file.filename)
+        else
           file_contents = repo.download_as_string(raw_file)
-        rescue Exception => e
-          render plain: I18n.t('student.submission.missing_file',
-                              file_name: file.filename, message: e.message)
-          next  # exit the block
+          file_contents.force_encoding('UTF-8')
         end
 
         if SubmissionFile.is_binary?(file_contents)
@@ -767,23 +769,15 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    files = revision.files_at_path(full_path)
-    entries = get_files_info(files, grouping.assignment.id, revision.revision_identifier, path,
-                             grouping.id)
-
-    entries.each do |data|
+    entries = revision.tree_at_path(full_path)
+                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
+      data = get_file_info(file_name, file_obj, grouping.assignment.id, revision.revision_identifier, path, grouping.id)
+      next if data.nil?
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
-    end
-
-    revision.directories_at_path(full_path).each do |directory_name, _|
-      entries.concat(get_all_file_data(
-        revision, grouping,
-        path.blank? ? directory_name : File.join(path, directory_name)
-      ))
-    end
-
+      data
+    end.compact
     entries
   end
 end

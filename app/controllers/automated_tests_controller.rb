@@ -4,7 +4,8 @@ class AutomatedTestsController < ApplicationController
   before_action      :authorize_only_for_admin,
                      only: [:manage, :update, :download]
   before_action      :authorize_for_student,
-                     only: [:student_interface, :get_student_run_test_results]
+                     only: [:student_interface,
+                            :get_test_runs_students]
 
   # Update is called when files are added to the assignment
   def update
@@ -76,19 +77,24 @@ class AutomatedTestsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
-      @test_runs = @grouping.student_test_runs(all_data: true)
-      @grouping.refresh_test_tokens!
+      @grouping.refresh_test_tokens
     end
     render layout: 'assignment_content'
   end
 
   def execute_test_run
-    @assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(@assignment.id)
     begin
-      test_scripts = AutomatedTestsClientHelper.authorize_test_run(@current_user, @assignment, grouping)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, @current_user.id, test_scripts,
-                                   [{ grouping_id: grouping.id, submission_id: nil }])
+      assignment = Assignment.find(params[:id])
+      grouping = current_user.accepted_grouping_for(assignment.id)
+      grouping.refresh_test_tokens
+      AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment, grouping: grouping)
+      grouping.decrease_test_tokens
+      test_scripts = assignment.select_test_scripts(current_user)
+                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_run = grouping.create_test_run!(user: current_user)
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
+                                   hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue => e
       flash_message(:error, e.message)
@@ -137,21 +143,10 @@ class AutomatedTestsController < ApplicationController
     end
   end
 
-  def get_student_run_test_results
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(params[:assignment_id])
-    test_script_results = TestScriptResult.joins(:test_run, :test_script, :test_results)
-                                          .where(test_runs: { grouping_id: @grouping.id, user_id: current_user.id })
-                                          .pluck_to_hash(:created_at, :name, :file_name, :completion_status,
-                                                         'test_results.marks_earned', 'test_results.marks_total',
-                                                         :extra_info)
-
-    test_script_results.each do |g|
-      g['created_at_user_name'] = I18n.l(g['created_at'])
-      g['marks_earned'] = g['test_results.marks_earned']
-      g['marks_total'] = g['test_results.marks_total']
-    end
-    render json: test_script_results
+  def get_test_runs_students
+    @grouping = current_user.accepted_grouping_for(params[:assignment_id])
+    test_runs = @grouping.test_runs_students
+    render json: test_runs
   end
 
   private

@@ -1,33 +1,37 @@
-require 'spec_helper'
-
 describe UserPolicy do
-  let(:admin) { Admin.new(user_name: 'admin', type: User::ADMIN) }
-  let(:ta) { Ta.new(user_name: 'ta', type: User::TA) }
-  let(:student) { Student.new(user_name: 'student', type: User::STUDENT) }
+  let(:policy) { described_class.new(user: user) }
 
-  subject { described_class }
+  describe '#manage?' do
+    subject { policy.apply(:manage?) }
 
-  permissions :create? do
-    it 'allows admins to create users' do
-      expect(subject).to permit(admin, User)
+    context 'when the user is admin' do
+      let(:user) { Admin.new(user_name: 'admin', type: User::ADMIN) }
+      it { is_expected.to eq true }
     end
-    it 'forbids tas to create users' do
-      expect(subject).not_to permit(ta, User)
+    context 'when the user is ta' do
+      let(:user) { Ta.new(user_name: 'ta', type: User::TA) }
+      it { is_expected.to eq false }
     end
-    it 'forbids students to create users' do
-      expect(subject).not_to permit(student, User)
+    context 'when the user is student' do
+      let(:user) { Student.new(user_name: 'student', type: User::STUDENT) }
+      it { is_expected.to eq false }
     end
   end
 
-  permissions :update? do
-    it 'allows admins to update users' do
-      expect(subject).to permit(admin, User)
+  describe '#destroy?' do
+    subject { policy.apply(:destroy?) }
+
+    context 'when the user is admin' do
+      let(:user) { Admin.new(user_name: 'admin', type: User::ADMIN) }
+      it { is_expected.to eq false }
     end
-    it 'forbids tas to update users' do
-      expect(subject).not_to permit(ta, User)
+    context 'when the user is ta' do
+      let(:user) { Ta.new(user_name: 'ta', type: User::TA) }
+      it { is_expected.to eq false }
     end
-    it 'forbids students to update users' do
-      expect(subject).not_to permit(student, User)
+    context 'when the user is student' do
+      let(:user) { Student.new(user_name: 'student', type: User::STUDENT) }
+      it { is_expected.to eq false }
     end
   end
 end

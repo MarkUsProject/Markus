@@ -7,9 +7,11 @@ class AutotestRunJob < ApplicationJob
   def export_group_repo(test_run)
     grouping = test_run.grouping
     group = grouping.group
+    assignment = grouping.assignment
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    assignment_dir = File.join(repo_dir, assignment.repository_folder)
     if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
-      if File.exist?(repo_dir) # can exist from other assignments, we don't want to store it per-assignment
+      if File.exist?(assignment_dir) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
         if !prev_test_run.nil? &&
@@ -18,24 +20,24 @@ class AutotestRunJob < ApplicationJob
           return
         end
         # ..otherwise delete grouping's previous files
-        FileUtils.rm_rf(repo_dir)
+        if test_run.submission_id.nil?
+          FileUtils.rm_rf(repo_dir)
+        else
+          FileUtils.rm_rf(assignment_dir)
+        end
       end
     else
-      # create the automated test repository
       FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
     end
     # export the repo files
-    submission = test_run.submission
     group.access_repo do |repo|
-      if submission.nil?
+      if test_run.submission_id.nil?
         repo.export(repo_dir)
       else
-        FileUtils.mkdir(repo_dir)
-        assignment = grouping.assignment
         unless assignment.only_required_files.blank?
           required_files = assignment.assignment_files.map(&:filename).to_set
         end
-        submission.submission_files.each do |file|
+        test_run.submission.submission_files.each do |file|
           dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
           file_path = dir == '' ? file.filename : File.join(dir, file.filename)
           unless required_files.nil? || required_files.include?(file_path)
@@ -44,8 +46,9 @@ class AutotestRunJob < ApplicationJob
             next
           end
           file_content = file.retrieve_file(false, repo)
-          FileUtils.mkdir_p(File.join(repo_dir, file.path))
-          File.open(File.join(repo_dir, file.path, file.filename), 'wb') do |f| # binary write to avoid encoding issues
+          file_dir = File.join(repo_dir, file.path)
+          FileUtils.mkdir_p(file_dir)
+          File.open(File.join(file_dir, file.filename), 'wb') do |f| # binary write to avoid encoding issues
             f.write(file_content)
           end
         end
@@ -93,7 +96,8 @@ class AutotestRunJob < ApplicationJob
     retry
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_scripts, ssh = nil)
+  def enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh = nil)
+    params_file = nil
     export_group_repo(test_run)
     unless repo_files_available?(test_run)
       # create empty test results for no submission files
@@ -104,8 +108,6 @@ class AutotestRunJob < ApplicationJob
     end
 
     grouping = test_run.grouping
-    submission = test_run.submission
-    user = test_run.user
     assignment = grouping.assignment
     group = grouping.group
     repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
@@ -118,50 +120,52 @@ class AutotestRunJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
-    server_params = { user_type: user.type, markus_address: markus_address, user_api_key: user.api_key,
-                      server_api_key: server_api_key, test_scripts: test_scripts, files_path: 'files_path_placeholder',
-                      assignment_id: assignment.id, group_id: group.id, submission_id: submission&.id,
-                      group_repo_name: group.repo_name, batch_id: test_run.test_batch&.id, run_id: test_run.id }
+    server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
+                      test_scripts: test_scripts, hooks_script: hooks_script, assignment_id: assignment.id,
+                      group_id: group.id, submission_id: test_run.submission_id, group_repo_name: group.repo_name,
+                      batch_id: test_run.test_batch_id, run_id: test_run.id }
+    params_file = Tempfile.new('', submission_path)
+    params_file.write(JSON.generate(server_params))
+    params_file.close
 
     if ssh.nil?
       # tests executed locally with no authentication
       server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
       FileUtils.cp_r("#{submission_path}/.", server_path) # includes hidden files
-      server_params[:files_path] = server_path
-      output, status = Open3.capture2e("#{server_command} run '#{JSON.generate(server_params)}'")
+      run_command = [server_command, 'run', '-f', "#{server_path}/#{File.basename(params_file.path)}"]
+      output, status = Open3.capture2e(*run_command)
       if status.exitstatus != 0
         raise output
       end
     else
       # tests executed locally or remotely with authentication
+      mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
+      server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
+      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
       server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
-      server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
-      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-      scp_command = "scp -o PasswordAuthentication=no -o ChallengeResponseAuthentication=no -rq "\
-                    "'#{submission_path}'/. #{server_username}@#{server_host}:'#{server_path}'"
-      Open3.capture3(scp_command)
-      server_params[:files_path] = server_path
-      output = ssh.exec!("#{server_command} run '#{JSON.generate(server_params)}'")
+      scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
+                     "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
+      Open3.capture3(*scp_command)
+      run_command = "#{server_command} run -f '#{server_path}/#{File.basename(params_file.path)}'"
+      output = ssh.exec!(run_command)
       if output.exitstatus != 0
         raise output
       end
     end
     test_run.time_to_service_estimate = output.to_i
     test_run.save
+  ensure
+    params_file&.close
+    params_file&.unlink
   end
 
-  def perform(host_with_port, user_id, test_scripts, test_runs)
-    # create batch if needed
-    test_batch = nil
-    if test_runs.size > 1
-      test_batch = TestBatch.create
-    end
+  def perform(host_with_port, user_id, test_scripts, hooks_script, test_runs)
+    ssh = nil
+    ssh_auth_failure = nil
     # set up SSH channel if needed
     server_host = MarkusConfigurator.autotest_server_host
     server_username = MarkusConfigurator.autotest_server_username
-    ssh = nil
-    ssh_auth_failure = nil
     unless server_username.nil?
       begin
         ssh = Net::SSH.start(server_host, server_username, auth_methods: ['publickey'], keepalive: true,
@@ -171,34 +175,31 @@ class AutotestRunJob < ApplicationJob
       end
     end
     # create and enqueue test runs
+    # TestRun objects can either be created outside of this job (by passing their ids), or here
+    test_batch = nil
     test_runs.each do |test_run|
-      # if user is an instructor, then a submission exists and we use that repo revision
-      # if user is a student, then we use the latest repo revision
-      grouping_id = test_run[:grouping_id]
-      submission_id = test_run[:submission_id]
-      if submission_id.nil?
-        grouping = Grouping.find(grouping_id)
-        revision_identifier = grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      else
-        submission = Submission.find(submission_id)
-        revision_identifier = submission.revision_identifier
-      end
-      test_run = TestRun.create(
-        test_batch: test_batch,
-        user_id: user_id,
-        grouping_id: grouping_id,
-        submission_id: submission_id,
-        revision_identifier: revision_identifier
-      )
       begin
+        if test_run[:id].nil?
+          if test_runs.size > 1 && test_batch.nil? # create 1 batch object if needed
+            test_batch = TestBatch.create
+          end
+          submission_id = test_run[:submission_id]
+          grouping_id = test_run[:grouping_id]
+          obj = submission_id.nil? ? Grouping.find(grouping_id) : Submission.find(submission_id)
+          test_run = obj.create_test_run!(user_id: user_id, test_batch: test_batch)
+        else
+          test_run = TestRun.find(test_run[:id])
+        end
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
-        enqueue_test_run(test_run, host_with_port, test_scripts, ssh)
+        enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh)
       rescue StandardError => e
-        error = { name: I18n.t('automated_tests.results.all_tests'),
-                  message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-        test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        unless test_run.nil?
+          error = { name: I18n.t('automated_tests.results.all_tests'),
+                    message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
+          test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+        end
       end
     end
   ensure

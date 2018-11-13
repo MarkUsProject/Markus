@@ -34,6 +34,7 @@
 <%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
 
 <!-- DISPLAYING MATHML -->
+<%= render partial: 'layouts/mathjax_config', formats: [:js] %>
 <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
 <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
 

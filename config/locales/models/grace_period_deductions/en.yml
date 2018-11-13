@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      grace_period_deduction:
+        one: "Grace Credit Deduction"

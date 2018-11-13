@@ -1,13 +1,13 @@
 <%# Hide error message (if any) %>
 document.getElementById('criterion_incomplete_error').addClass('hidden');
 <% if @result.marking_state == Result::MARKING_STATES[:complete] %>
-  var revert = "<%= t('results.set_to_incomplete') %>";
+  var revert = I18n.t('results.set_to_incomplete');
   document.getElementById('toggle_marking_state').firstChild.value = revert;
   if (document.getElementById('toggle_released')) {
     document.getElementById('toggle_released').firstChild.disabled = false;
   }
 <% else %>
-  var set = "<%= t('results.set_to_complete') %>";
+  var set = I18n.t('results.set_to_complete');
   document.getElementById('toggle_marking_state').firstChild.value = set;
   if (document.getElementById('toggle_released')) {
     document.getElementById('toggle_released').firstChild.disabled = true;

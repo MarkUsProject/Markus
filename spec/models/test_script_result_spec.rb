@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TestScriptResult do
 
   it { is_expected.to have_many(:test_results) }

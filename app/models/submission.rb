@@ -3,6 +3,8 @@ require 'fileutils' # FileUtils used here
 # Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
 class Submission < ApplicationRecord
+  include ActiveRecordCreator
+
   after_create :create_result
   before_validation :bump_old_submissions, on: :create
 
@@ -25,9 +27,6 @@ class Submission < ApplicationRecord
   has_many   :submission_files, dependent: :destroy
   has_many   :annotations, through: :submission_files
   has_many   :test_runs, -> { order 'created_at DESC' }, dependent: :nullify
-  has_many   :test_runs_all_data,
-             -> { includes(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
-             class_name: 'TestRun'
   has_many   :feedback_files, dependent: :destroy
 
 
@@ -157,6 +156,16 @@ class Submission < ApplicationRecord
       result.submission.assignment.assignment_stat.refresh_grade_distribution
       result.submission.assignment.update_results_stats
     end
+  end
+
+  def test_script_results_hash
+    TestScriptResult
+      .joins(:test_script, :test_results, test_run: [:user])
+      .where(test_runs: { submission_id: id })
+      .pluck_to_hash(:created_at, :user_id, :name, :file_name, :user_name,
+                     :actual_output, :completion_status, :extra_info,
+                     'test_results.marks_earned', 'test_results.marks_total')
+      .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
   end
 
   # For group submissions, actions here must only be accessible to members
@@ -298,6 +307,16 @@ class Submission < ApplicationRecord
     end
 
     remark.save
+  end
+
+  # Create a test run for this submission, using the submission revision.
+  def create_test_run!(**attrs)
+    self.test_runs.create!(
+      user_id: get_id_for!(:user, attrs),
+      grouping_id: self.grouping_id,
+      revision_identifier: self.revision_identifier,
+      test_batch_id: get_id_for(:test_batch, attrs)
+    )
   end
 
   private

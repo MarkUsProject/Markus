@@ -154,7 +154,7 @@ class GradeEntryFormsController < ApplicationController
       student = student_grade_entry.user
       s = student.attributes
       s[:_id] = student.id
-      s[:section] = student.section.try(:name) || '-'
+      s[:section] = student.section_id
       unless student_grade_entry.nil?
         student_grade_entry.grades.each do |grade|
           s[grade.grade_entry_item_id] = grade.grade
@@ -176,7 +176,8 @@ class GradeEntryFormsController < ApplicationController
       end
       s
     end
-    render json: student_grades
+    render json: { data: student_grades,
+                   sections: Hash[Section.all.pluck(:id, :name)] }
   end
 
   # Release/unrelease the marks for all the students or for a subset of students

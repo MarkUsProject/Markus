@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe TestScript do
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to have_many(:test_script_results) }

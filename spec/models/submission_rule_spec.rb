@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe SubmissionRule do
   # FAILING, SubmissionRule factory not properly initialized
   context 'A newly initialized submission rule' do

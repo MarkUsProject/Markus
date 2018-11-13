@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe PenaltyPeriodSubmissionRule do
   # Replace this with your real tests.
   context 'Assignment has a single grace period of 24 hours after due date' do

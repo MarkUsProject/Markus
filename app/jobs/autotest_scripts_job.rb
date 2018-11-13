@@ -9,12 +9,10 @@ class AutotestScriptsJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
-    server_host = MarkusConfigurator.autotest_server_host
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    server_params = { markus_address: markus_address, files_path: 'files_path_placeholder',
-                      assignment_id: assignment_id }
+    server_params = { markus_address: markus_address, assignment_id: assignment_id }
 
     begin
       if server_username.nil?
@@ -22,26 +20,32 @@ class AutotestScriptsJob < ApplicationJob
         server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
         FileUtils.cp_r("#{assignment_tests_path}/.", server_path) # includes hidden files
         server_params[:files_path] = server_path
-        out, status = Open3.capture2e("#{server_command} scripts '#{JSON.generate(server_params)}'")
+        scripts_command = [server_command, 'scripts', '-j', JSON.generate(server_params)]
+        output, status = Open3.capture2e(*scripts_command)
         if status.exitstatus != 0
-          raise out
-        else
-          # TODO: use out for something?
+          raise output
         end
       else
         # tests executed locally or remotely with authentication
+        server_host = MarkusConfigurator.autotest_server_host
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-          server_path = ssh.exec!("mktemp -d --tmpdir='#{server_path}'").strip # create temp subfolder
+          mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
+          server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
           # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-          Open3.capture3('scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
-                         "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:'#{server_path}'")
+          scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
+                         "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
+          Open3.capture3(*scp_command)
           server_params[:files_path] = server_path
-          out = ssh.exec!("#{server_command} scripts '#{JSON.generate(server_params)}'")
-          # TODO: use out for something?
+          scripts_command = "#{server_command} scripts -j '#{JSON.generate(server_params)}'"
+          output = ssh.exec!(scripts_command)
+          if output.exitstatus != 0
+            raise output
+          end
         end
       end
+      # TODO: Use output for something?
     rescue StandardError => e
-      # TODO: where to show failure?
+      # TODO: Where to show failure?
     end
   end
 end

@@ -1,15 +1,5 @@
 class PenaltyPeriodSubmissionRule < SubmissionRule
 
-  # the Students with a message saying that the due date has passed, and the
-  # work they're submitting will probably not be graded
-  def commit_after_collection_message
-    I18n.t 'submission_rules.penalty_period_submission_rule.commit_after_collection_message'
-  end
-
-  def after_collection_message
-    I18n.t 'submission_rules.penalty_period_submission_rule.after_collection_message'
-  end
-
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
@@ -20,7 +10,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 
-    I18n.t 'submission_rules.penalty_period_submission_rule.overtime_message', potential_penalty: potential_penalty
+    I18n.t 'penalty_period_submission_rules.overtime_message', potential_penalty: potential_penalty
   end
 
 
@@ -43,15 +33,12 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
       penalty.extra_mark = -penalty_amount
       penalty.unit = ExtraMark::PERCENTAGE
 
-      penalty.description = I18n.t 'submission_rules.penalty_period_submission_rule.extramark_description', overtime_hours: overtime_hours, penalty_amount: penalty_amount
+      penalty.description = I18n.t 'penalty_period_submission_rules.extramark_description',
+                                   overtime_hours: overtime_hours, penalty_amount: penalty_amount
       penalty.save
     end
 
     submission
-  end
-
-  def description_of_rule
-    I18n.t 'submission_rules.penalty_period_submission_rule.description'
   end
 
   def grader_tab_partial

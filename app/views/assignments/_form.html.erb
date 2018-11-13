@@ -3,7 +3,6 @@
   <%= javascript_include_tag 'create_assignment',
                              'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
-                             'moment-with-langs.min',
                              'localize_date' %>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
   <%= render partial: 'shared/navigation_warning',
@@ -275,7 +274,7 @@
   <%# Submission rules %>
   <fieldset id='submission_rule_fields'>
     <legend>
-      <span><%= t('assignment.submission_rules') %></span>
+      <span><%= SubmissionRule.model_name.human %></span>
     </legend>
 
     <div class='help assignment_submission_rules_help'>
@@ -285,34 +284,30 @@
     </div>
 
     <%= f.fields_for :submission_rule do |rule| %>
-      <h4><%= t('assignment.submission.penalty_rules') %></h4>
-
       <%= rule.radio_button :type,
                             'NoLateSubmissionRule',
                             checked: true,
                             id: 'no_late_submission_rule' %>
       <%= label_tag 'no_late_submission_rule',
-                    t('submission_rules.no_late_submission_rule' +
-                      '.form_description') %>
+                    NoLateSubmissionRule.human_attribute_name(:form_description) %>
       <br>
       <%= rule.radio_button :type,
                             'GracePeriodSubmissionRule',
                             id: 'grace_period_submission_rule' %>
       <%= label_tag 'grace_period_submission_rule',
-                    t('submission_rules.grace_period_submission_rule' +
-                      '.form_description') %>
+                    GracePeriodSubmissionRule.human_attribute_name(:form_description) %>
       <div id='grace_periods'>
         <table id='grace_periods_table'>
           <thead>
           <tr>
-            <th><%= t('submission_rules.grace_period_submission_rule.after') %></th>
+            <th><%= t('submission_rules.after').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
             <th><%= t(:remove) %></th>
           </tr>
           </thead>
           <tbody>
-            <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' %>
+            <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' && !rule.object.periods.empty? %>
                 <%= rule.fields_for :periods do |period_form| %>
                     <%
                       # The below conditional is meant to filter out periods that do not match
@@ -330,8 +325,7 @@
             <% end %>
           </tbody>
         </table>
-        <%= link_to t('submission_rules.grace_period_submission_rule' +
-                          '.add_grace_period'),
+        <%= link_to t('submission_rules.add_period'),
                     '#',
                     onclick: 'add_period("grace_periods", grace_periods);' +
                         'return false;' %>
@@ -342,16 +336,15 @@
                             'PenaltyDecayPeriodSubmissionRule',
                             id: 'penalty_decay_period_submission_rule' %>
       <%= label_tag 'penalty_decay_period_submission_rule',
-                    t('submission_rules.penalty_decay_period_submission_rule' +
-                      '.form_description') %>
+                    PenaltyDecayPeriodSubmissionRule.human_attribute_name(:form_description) %>
       <br>
       <div id='penalty_decay_periods'>
         <table id='penalty_decay_periods_table'>
           <thead>
           <tr>
-            <th><%= t('submission_rules.penalty_decay_period_submission_rule.deduct') %></th>
-            <th><%= t('submission_rules.penalty_decay_period_submission_rule.every') %></th>
-            <th><%= t('submission_rules.penalty_decay_period_submission_rule.for') %></th>
+            <th><%= t('submission_rules.deduct').capitalize %></th>
+            <th><%= t('submission_rules.every').capitalize %></th>
+            <th><%= t('submission_rules.for').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
             <th><%= t(:remove) %></th>
@@ -376,8 +369,7 @@
             <% end %>
           </tbody>
         </table>
-        <%= link_to t('submission_rules.penalty_decay_period_submission_rule' +
-                      '.add_penalty_decay_period'),
+        <%= link_to t('submission_rules.add_period'),
                     '#',
                     onclick: 'add_period("penalty_decay_periods", ' +
                              'penalty_decay_periods); return false;' %>
@@ -387,14 +379,13 @@
                             'PenaltyPeriodSubmissionRule',
                             id: 'penalty_period_submission_rule' %>
       <%= label_tag 'penalty_period_submission_rule',
-                    t('submission_rules.penalty_period_submission_rule' +
-                      '.form_description') %>
+                    PenaltyPeriodSubmissionRule.human_attribute_name(:form_description) %>
       <div id='penalty_periods'>
         <table id='penalty_periods_table'>
           <thead>
           <tr>
-            <th class='required'><%= t('submission_rules.penalty_period_submission_rule.after') %></th>
-            <th class='required'><%= t('submission_rules.penalty_period_submission_rule.deduction') %></th>
+            <th><%= t('submission_rules.after').capitalize %></th>
+            <th><%= t('submission_rules.deduct').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
             <th><%= t(:remove) %></th>
@@ -419,8 +410,7 @@
             <% end %>
           </tbody>
         </table>
-        <%= link_to t('submission_rules.penalty_period_submission_rule' +
-                          '.add_penalty_period'),
+        <%= link_to t('submission_rules.add_period'),
                     '#',
                     onclick: 'add_period("penalty_periods",penalty_periods);' +
                         ' return false;' %>

@@ -10,51 +10,59 @@ if __name__ == '__main__':
     ref_name = sys.argv[1]
     old_commit = sys.argv[2]
     new_commit = sys.argv[3]
-    # no need to check if old_commit or new_commit are 0, master can't be deleted or created
-    if ref_name == 'refs/heads/master' and os.environ.get('REMOTE_USER') is not None:  # push not coming from MarkUs
-        requirements = subprocess.run(['git', 'show', '{}:{}'.format(old_commit, '.required.json')],
-                                      stdout=subprocess.PIPE, universal_newlines=True)
-        required_files = json.loads(requirements.stdout)
-        changes = subprocess.run(['git', 'diff', '--name-status', '--no-renames', old_commit, new_commit],
-                                 stdout=subprocess.PIPE, universal_newlines=True)
-        # check if the assignment forbids adding non-required files; everything else is allowed, which is safe against
-        # changes to the assignment after students already pushed some work:
-        # A required is ok
-        # A non-required is rejected
-        # D required is warned
-        # D non-required is ok
-        # M required is ok
-        # M non-required is warned
-        for change in changes.stdout.splitlines():
-            status, path = change.split(maxsplit=1)
-            assignment, file_path = path.split('/', maxsplit=1)  # it can never be a top level file/dir
-            req = required_files.get(assignment)
-            if req is None:
-                # this can happen only if an assignment becomes hidden after being visible for a while
-                # (the top level hook prevents the creation of an arbitrary assignment directory)
-                print("[MARKUS] Warning: assignment '{}' is currently hidden".format(assignment))
-                continue
-            if status == 'A':
-                if file_path not in req['required']:
-                    msg = "you are adding '{}' to assignment '{}', but it only requires '{}'".format(
-                          file_path, assignment, ', '.join(req['required']))
-                    if req['required_only']:
-                        print('[MARKUS] Error: {}!'.format(msg))
-                        exit(1)
-                    else:
-                        print('[MARKUS] Warning: {}.'.format(msg))
-            elif status == 'D' and file_path in req['required']:
-                print("[MARKUS] Warning: you are deleting '{}' from assignment '{}', but it requires it.".format(
-                      file_path, assignment))
-            elif status == 'M' and file_path not in req['required']:
-                print("[MARKUS] Warning: you are modifying '{}' in assignment '{}', but it only requires '{}'.".format(
-                      file_path, assignment, ', '.join(req['required'])))
-        # warn about missing files
-        new_ls = subprocess.run(['git', 'ls-tree', '-r', '--name-only', new_commit], stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        files = {tuple(path.split('/', maxsplit=1)) for path in new_ls.stdout.splitlines()}
-        for assignment in required_files.keys():
-            for file_path in required_files[assignment]['required']:
-                if (assignment, file_path) not in files:
-                    print("[MARKUS] Warning: required file '{}' is missing in assignment '{}'.".format(
-                          file_path, assignment))
+    # check 1: allow branches other than master
+    if ref_name != 'refs/heads/master':
+        sys.exit()
+    # no need to check at this point if old_commit or new_commit are 0, master can't be deleted or created
+    # check 2: allow MarkUs through
+    if os.environ.get('REMOTE_USER') is None:
+        sys.exit()
+    req = subprocess.run(['git', 'show', '{}:{}'.format(old_commit, '.required.json')], stdout=subprocess.PIPE,
+                         universal_newlines=True)
+    requirements = json.loads(req.stdout)
+    changes = subprocess.run(['git', 'diff', '--name-status', '--no-renames', old_commit, new_commit],
+                             stdout=subprocess.PIPE, universal_newlines=True)
+    # check 3: honor required files
+    # check if the assignment forbids adding non-required files; everything else is allowed, which is safe against
+    # changes to the assignment after students already pushed some work:
+    # A required is ok
+    # A non-required is rejected or warned, depending on required_only flag
+    # D required is warned
+    # D non-required is ok
+    # M required is ok
+    # M non-required is warned
+    for change in changes.stdout.splitlines():
+        status, path = change.split(maxsplit=1)
+        if '/' not in path:  # ignore top-level changes
+            continue
+        assignment, file = path.split('/', maxsplit=1)
+        assignment_req = requirements.get(assignment)
+        if assignment_req is None:
+            # this can happen only if an assignment becomes hidden after being visible for a while
+            # (the top level hook prevents the creation of an arbitrary assignment directory)
+            continue
+        req_files = assignment_req['required']
+        if not req_files:
+            continue
+        if status == 'A':
+            if file not in req_files:
+                msg = f"you are adding non-required '{file}' to assignment '{assignment}', which only requires " \
+                      f"'{', '.join(req_files)}'"
+                if assignment_req['required_only']:
+                    print(f'[MARKUS] Error: {msg}!')
+                    sys.exit(1)
+                else:
+                    print(f'[MARKUS] Warning: {msg}.')
+        elif status == 'D' and file in req_files:
+            print(f"[MARKUS] Warning: you are deleting required '{file}' from assignment '{assignment}'.")
+        elif status == 'M' and file not in req_files:
+            print(f"[MARKUS] Warning: you are modifying non-required '{file}' in assignment '{assignment}', which only "
+                  f"requires '{', '.join(req_files)}'.")
+    # check 4: warn about missing files
+    new_ls = subprocess.run(['git', 'ls-tree', '-r', '--name-only', new_commit], stdout=subprocess.PIPE,
+                            universal_newlines=True)
+    files = {tuple(path.split('/', maxsplit=1)) for path in new_ls.stdout.splitlines()}
+    for assignment in requirements.keys():
+        for req_file in requirements[assignment]['required']:
+            if (assignment, req_file) not in files:
+                print(f"[MARKUS] Warning: required '{req_file}' is missing in assignment '{assignment}'.")

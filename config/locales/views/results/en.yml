@@ -13,6 +13,7 @@ en:
     set_to_complete: "Set to Complete"
     state:
       complete: "Complete"
+      incomplete: "Incomplete"
       released: "released"
       not_collected: "Not Collected"
       in_progress: "In Progress"
