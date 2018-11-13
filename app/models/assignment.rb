@@ -1515,13 +1515,12 @@ class Assignment < ApplicationRecord
     case file_format
     when 'yml'
       map = {}
-      map[:assignments] = []
-      assignments.map do |assignment|
+      map[:assignments] = assignments.map do |assignment|
         m = {}
-        DEFAULT_FIELDS.map do |x|
-          m[x] = assignment.send(x)
+        DEFAULT_FIELDS.map do |category|
+          m[category] = assignment.send(category)
         end
-        map[:assignments] << m
+        m
       end
       map.to_yaml
     when 'csv'
