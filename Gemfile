@@ -32,7 +32,7 @@ gem 'resque'
 gem 'redis-rails'
 
 # Authorization
-gem 'action_policy'
+gem 'action_policy', git: 'https://github.com/palkan/action_policy.git'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
