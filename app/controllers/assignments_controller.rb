@@ -632,12 +632,10 @@ class AssignmentsController < ApplicationController
     if assignment_list.blank?
       flash_message(:error, I18n.t('csv.invalid_csv'))
       redirect_to action: 'index'
-      return
     end
     encoding = params[:encoding]
     assignment_list = assignment_list.utf8_encode(encoding)
     case file_format
-
     when 'csv'
       result = Assignment.upload_assignment_list('csv', assignment_list)
       unless result[:invalid_lines].empty?
@@ -646,7 +644,6 @@ class AssignmentsController < ApplicationController
       unless result[:valid_lines].empty?
         flash_message(:success, result[:valid_lines])
       end
-
     when 'yml'
         result = Assignment.upload_assignment_list('yml', assignment_list)
         if result.is_a?(error)

@@ -1517,10 +1517,9 @@ class Assignment < ApplicationRecord
       raise CSVInvalidLineError unless assignment.valid?
       end
       return result
-
     when 'yml'
     begin
-      map = YAML::load(assignment_list)
+      map = YAML::load(assignment_data)
       map[:assignments].map do |row|
         row[:submission_rule] = NoLateSubmissionRule.new
         row[:assignment_stat] = AssignmentStat.new
