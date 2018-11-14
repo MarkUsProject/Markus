@@ -101,8 +101,7 @@ describe AssignmentsController do
     let(:csv_options) do
       {
         type: 'text/csv',
-        filename: 'assignment_list.csv',
-        disposition: 'attachment'
+        filename: "assignment_list_#{Time.now.strftime('%Y%m%d')}.csv",
       }
     end
 
@@ -112,7 +111,7 @@ describe AssignmentsController do
       Assignment.all.each do |asn|
         asn.delete
       end
-      @assignment = FactoryBot.create(:assignment)
+      @assignment = create(:assignment)
     end
 
     it 'responds with appropriate status' do
@@ -162,7 +161,7 @@ describe AssignmentsController do
       get :download_assignment_list, params: { file_format: 'csv' }
       filename = response.header['Content-Disposition']
         .split.last.split('"').second
-      expect(filename).to eq 'assignment_list.csv'
+      expect(filename).to eq "assignment_list_#{Time.now.strftime('%Y%m%d')}.csv"
     end
   end
 end
