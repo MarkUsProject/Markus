@@ -21,6 +21,7 @@ fr:
       repository: "Répertoire"
       repository_name: "Répertoire : %{repository}"
       revised_by: "Révision par"
+      submitted_at: "Date soumis"
       viewing_revision: "Révision:"
       server_time: "push:"
     student:

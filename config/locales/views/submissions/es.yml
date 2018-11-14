@@ -74,6 +74,7 @@ es:
       repository: "Repository"
       repository_name: "Repository: %{repository}"
       revised_by: "Revisado Por"
+      submitted_at: "UPDATE ME"
       viewing_revision: "Mirando Revisión:"
       server_time: "push:"
     student:

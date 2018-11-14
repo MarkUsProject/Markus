@@ -227,11 +227,13 @@ class MemoryRepository < Repository::AbstractRepository
     if rev.path_exists?(full_path)
       raise FileExistsConflict # raise conflict if path exists
     end
+    creation_time = Time.now
     dir = Repository::RevisionDirectory.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),
       last_modified_revision: rev.revision_identifier,
-      last_modified_date: Time.now,
+      last_modified_date: creation_time,
+      submitted_date: creation_time,
       changed: true,
       user_id: rev.user_id
     })
@@ -245,13 +247,15 @@ class MemoryRepository < Repository::AbstractRepository
       raise FileExistsConflict.new(full_path)
     end
     # file does not exist, so add it
+    creation_time = Time.now
     file = Repository::RevisionFile.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),
       last_modified_revision: rev.revision_identifier,
       changed: true,
       user_id: rev.user_id,
-      last_modified_date: Time.now
+      last_modified_date: creation_time,
+      submitted_date: creation_time
     })
     rev.__add_file(file, content)
     return rev
@@ -307,7 +311,8 @@ class MemoryRepository < Repository::AbstractRepository
           last_modified_revision: object.last_modified_revision,
           changed: false, # for copies, set this to false
           user_id: object.user_id,
-          last_modified_date: object.last_modified_date
+          last_modified_date: object.last_modified_date,
+          submitted_date: object.last_modified_date
         })
         new_revision.files_content[new_object.to_s] = original.files_content[object.to_s]
       else
@@ -316,6 +321,7 @@ class MemoryRepository < Repository::AbstractRepository
           path: object.path,
           last_modified_revision: object.last_modified_revision,
           last_modified_date: object.last_modified_date,
+          submitted_date: object.last_modified_date,
           changed: false, # for copies, set this to false
           user_id: object.user_id
         })

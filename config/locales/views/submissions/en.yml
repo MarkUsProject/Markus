@@ -33,6 +33,7 @@ en:
       repository: "Repository"
       repository_name: "Repository: %{repository}"
       revised_by: "Revised By"
+      submitted_at:  "Submitted At"
       viewing_revision: "Viewing Revision:"
       server_time: "push:"
     student:
