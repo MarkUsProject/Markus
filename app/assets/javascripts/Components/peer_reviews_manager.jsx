@@ -295,14 +295,13 @@ const RevieweesTable = withSelection(RawRevieweesTable);
 class GradersActionBox extends React.Component {
   render = () => {
     const { performAction } = this.props;
-    const { updateNumReviewers } = this.props;
 
     return (
       <div style={{ display: 'flex' }}>
         <div className="peer-review-amount-spinner" style={{ width: '100%' }}>
-          <span>Number of reviewers per group: </span>
+          <span>Number of reviews per group: </span>
           <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
-                 onChange={evt => updateNumReviewers.bind(this, evt.target.value)} />
+                 onChange={evt => this.props.updateNumReviewers(evt.target.value)} />
         </div>
         <div className='rt-action-box icon'>
           <button

@@ -11,16 +11,8 @@
           showSections: false,
         }
       );
-<!--      makeMarksGradersManager(document.getElementById('marks-graders-manager'),-->
-<!--        {-->
-<!--          assignment_id: <%#= @assignment.id %>,-->
-<!--          grade_entry_form_id: 1,-->
-<!--          showSections: false,-->
-<!--        }-->
-<!--      );-->
     });
   </script>
-  <%#= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
 <% end %>
 
 <% content_for :title, t('peer_reviews') %>
