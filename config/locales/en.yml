@@ -338,7 +338,7 @@ en:
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
       criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
 
-    seperate_multiple_with_commas:  "Seperate multiple user names with commas"
+    seperate_multiple_with_commas:  "Separate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
@@ -349,6 +349,7 @@ en:
     confirm_remark_submit: "Are you sure you want to submit your remark request?  You will not be able to see your results until remarking is finished."
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
+    file_invalid: "There was a problem parsing the file you uploaded. Please ensure that it's a valid CSV or YML format only. No changes were made."
 
     csv:
       repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
