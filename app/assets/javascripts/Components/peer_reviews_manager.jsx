@@ -4,7 +4,6 @@ import {render} from 'react-dom';
 import * as I18n from 'i18n-js';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 
 class PeerReviewsManager extends React.Component {
@@ -16,10 +15,8 @@ class PeerReviewsManager extends React.Component {
       revieweeToReviewers: {},
       groupIdToName: {},
       reviewerToNumReviews: {},
-      selectedReviewerGroups: [],
-      selectedRevieweeGroups: [],
       selectedReviewerInRevieweeGroups: {},  // Dict of [reviewee][reviewer]
-      numReviewers: 3,
+      numReviewers: 1,
       loading: true
     }
   }
@@ -34,7 +31,7 @@ class PeerReviewsManager extends React.Component {
       dataType: 'json',
     }).then(res => {
       this.studentsTable.resetSelection();
-      this.gradersTable.resetSelection();
+      this.ReviewersTable.resetSelection();
       this.setState({
         reviewerGroups: res.reviewer_groups,
         revieweeGroups: res.reviewee_groups || [],
@@ -44,6 +41,10 @@ class PeerReviewsManager extends React.Component {
         loading: false,
       });
     });
+  };
+
+  updateNumReviewers = (num) => {
+    this.setState({numReviewers: num});
   };
 
   updatedSelectedReviewersInRevieweesTable = (reviewerGroupId, revieweeGroupId, isChecked) => {
@@ -70,23 +71,21 @@ class PeerReviewsManager extends React.Component {
     this.setState({selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups});
   };
 
-  clearSelectedFields = () => {
-    this.setState({
-      selectedReviewerGroups: [],
-      selectedRevieweeGroups: [],
-      selectedReviewerInRevieweeGroups: {}
-    });
-  };
-
   performButtonAction = (action) => {
     let reviewees = this.studentsTable ? this.studentsTable.state.selection : [];
-    let reviewers = this.gradersTable ? this.gradersTable.state.selection : [];
+    let reviewers = this.ReviewersTable ? this.ReviewersTable.state.selection : [];
 
-    if (reviewers.length === 0) {
-      alert(I18n.t('assignment.group.select_a_grader'));
+    if ((action == 'assign' || action == 'random_assign') && reviewers.length === 0) {
+      alert('No reviewers selected.');
       return;
     }
 
+    if ((action == 'assign' || action == 'random_assign') && reviewees.length === 0) {
+      alert('No reviewees selected.');
+      return;
+    }
+
+    this.setState({loading: true});
     $.post({
       url: Routes.assign_groups_assignment_peer_reviews_path(this.props.assignment_id),
       data: {
@@ -102,39 +101,27 @@ class PeerReviewsManager extends React.Component {
   render(){
     return (
       <div>
-        <div className="peer-review-amount-spinner" style={{ display: 'flex' }}>
-          <div className="reviewers-input-box" style={{ width: '100%' }}>
-            <span>Number of reviewers per group: </span>
-            <input type="number" id="peer-review-spinner" min="0"
-                   onChange={evt => this.setState({numReviewers: evt.target.value})} />
-          </div>
-          <GradersActionBox
-            performAction={this.performButtonAction}
-          />
-        </div>
+        <GradersActionBox
+          performAction={this.performButtonAction}
+          updateNumReviewers={this.updateNumReviewers}
+        />
         <div className='mapping-tables'>
           <div className='mapping-table'>
-            <GradersTable
-              ref={(r) => this.gradersTable = r}
+            <ReviewersTable
+              ref={(r) => this.ReviewersTable = r}
               groups={this.state.reviewerGroups}
               reviewerToNumReviews={this.state.reviewerToNumReviews}
-              onSelectedGroupsChange={this.updateSelectedReviewerGroups}
-              refresh={this.fetchData}
               loading={this.state.loading} />
           </div>
           <div className='mapping-table'>
-            <MarksStudentsTable
+            <RevieweesTable
               ref={(r) => this.studentsTable = r}
               groups={this.state.revieweeGroups}
               revieweeToReviewers={this.state.revieweeToReviewers}
               groupIdToName={this.state.groupIdToName}
               onReviewerChangeInRevieweeTable={this.updatedSelectedReviewersInRevieweesTable}
               selectedReviewerInRevieweeGroups={this.state.selectedReviewerInRevieweeGroups}
-              onSelectedGroupsChange={this.updateSelectedRevieweeGroups}
-              clearReviewerToRevieweeCheckboxData={this.clearReviewerToRevieweeCheckboxData}
-              refresh={this.refresh}
               loading={this.state.loading}
-              unassignSingle={this.unassignSingle}
               showSections={this.props.showSections}
             />
           </div>
@@ -145,7 +132,7 @@ class PeerReviewsManager extends React.Component {
 }
 
 
-class RawGradersTable extends React.Component {
+class RawReviewersTable extends React.Component {
   static columns = [
     {
       show: false,
@@ -195,7 +182,7 @@ class RawGradersTable extends React.Component {
         ref={(r) => this.checkboxTable = r}
 
         data={groups_data}
-        columns={RawGradersTable.columns}
+        columns={RawReviewersTable.columns}
         defaultSorted={[
           {
             id: 'name'
@@ -211,7 +198,7 @@ class RawGradersTable extends React.Component {
 }
 
 
-class RawMarksStudentsTable extends React.Component {
+class RawRevieweesTable extends React.Component {
   getColumns = () => {
     return [
       {
@@ -239,11 +226,11 @@ class RawMarksStudentsTable extends React.Component {
   };
 
   reviewerInRevieweeChange = (event) => {
+    const { onReviewerChangeInRevieweeTable } = this.props;
     const isChecked = event.currentTarget.checked;
-    const id = parseInt(event.currentTarget.getAttribute('id'), 10);
     const reviewerGroupId = parseInt(event.currentTarget.getAttribute('data-reviewer-group-id'), 10);
     const revieweeGroupId = parseInt(event.currentTarget.getAttribute('data-reviewee-group-id'), 10);
-    this.props.onReviewerChangeInRevieweeTable.bind(this, reviewerGroupId, revieweeGroupId, isChecked);
+    onReviewerChangeInRevieweeTable(reviewerGroupId, revieweeGroupId, isChecked);
   };
 
   checkboxShouldBeChecked = (reviewee_group_id, reviewer_group_id) => {
@@ -267,7 +254,7 @@ class RawMarksStudentsTable extends React.Component {
                  data-reviewer-group-id={reviewer_group_id}
                  data-reviewee-group-id={reviewee_group_id}
                  checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
-                 // onChange={this.reviewerInRevieweeChange}
+                 onChange={evt => this.reviewerInRevieweeChange(evt)}
           /> {reviewer_group_name}</div>);
       }.bind(this));
 
@@ -301,32 +288,42 @@ class RawMarksStudentsTable extends React.Component {
 }
 
 
-const GradersTable = withSelection(RawGradersTable);
-const MarksStudentsTable = withSelection(RawMarksStudentsTable);
+const ReviewersTable = withSelection(RawReviewersTable);
+const RevieweesTable = withSelection(RawRevieweesTable);
 
 
 class GradersActionBox extends React.Component {
   render = () => {
+    const { performAction } = this.props;
+    const { updateNumReviewers } = this.props;
+
     return (
-      <div className='rt-action-box icon'>
-        <button
-          className='assign-all-button'
-          onClick={this.props.performAction.bind(this, 'assign')}
-        >
-          {'Assign Reviewer(s)'}
-        </button>
-        <button
-          className='assign-randomly-button'
-          onClick={this.props.performAction.bind(this, 'random_assign')}
-        >
-          {'Randomly Assign Reviewers'}
-        </button>
-        <button
-          className='unassign-all-button'
-          onClick={this.props.performAction.bind(this, 'unassign')}
-        >
-          {'Unassign Reviewer(s)'}
-        </button>
+      <div style={{ display: 'flex' }}>
+        <div className="peer-review-amount-spinner" style={{ width: '100%' }}>
+          <span>Number of reviewers per group: </span>
+          <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
+                 onChange={evt => updateNumReviewers.bind(this, evt.target.value)} />
+        </div>
+        <div className='rt-action-box icon'>
+          <button
+            className='assign-all-button'
+            onClick={performAction.bind(this, 'assign')}
+          >
+            {'Assign Reviewer(s)'}
+          </button>
+          <button
+            className='assign-randomly-button'
+            onClick={performAction.bind(this, 'random_assign')}
+          >
+            {'Randomly Assign Reviewers'}
+          </button>
+          <button
+            className='unassign-all-button'
+            onClick={performAction.bind(this, 'unassign')}
+          >
+            {'Unassign Reviewer(s)'}
+          </button>
+        </div>
       </div>
     )
   };

@@ -142,7 +142,9 @@ class PeerReviewsController < ApplicationController
         reviewee_group = Grouping.find_by_id(reviewee_id)
         reviewer_group = Grouping.find_by_id(reviewer_id)
         peer_review = reviewer_group.review_for(reviewee_group)
-        peer_review.destroy
+        unless peer_review.nil?
+          peer_review.destroy
+        end
       end
     end
 
