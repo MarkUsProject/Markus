@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if [ $# -ne 1 ]; then
+if [[ $# -ne 1 ]]; then
   echo "Usage: $0 markus-autotesting-root-dir"
 else
-  AUTOTEST_ROOT="$1"
+  AUTOTEST_ROOT=$(readlink -f "$1")
 fi
 
 echo "[MARKUS] Starting autotest workers using supervisord"
