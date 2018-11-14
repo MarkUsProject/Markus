@@ -284,7 +284,7 @@ class GradeEntryCell extends React.Component {
 
   render() {
     return (
-      <input id={this.props.grade_id} type="number" size={4} value={this.state.value} min={0}
+      <input id={this.props.grade_id} type="number" step="any" size={4} value={this.state.value} min={0}
              onChange={this.handleChange} />
     );
   }

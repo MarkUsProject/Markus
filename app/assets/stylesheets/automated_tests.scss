@@ -38,3 +38,12 @@ span.file_name {
 .rt-td.hidden {
   display: block;
 }
+
+h2.test_runs_header {
+  overflow: hidden;
+}
+
+h2.test_runs_header > form {
+  display: inline;
+  float: right;
+}

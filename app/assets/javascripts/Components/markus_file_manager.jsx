@@ -337,7 +337,17 @@ let FileManager = DragDropContext(HTML5Backend)(RawFileManager);
 
 FileManager.defaultProps = {
   headerRenderer: FileManagerHeader,
-  fileRenderer: FileManagerFile
+  fileRenderer: FileManagerFile,
+  icons: {
+    File: <i className="fa fa-file-o" aria-hidden="true" />,
+    Image: <i className="fa fa-file-image-o" aria-hidden="true" />,
+    PDF: <i className="fa fa-file-pdf-o" aria-hidden="true" />,
+    Rename: <i className="fa fa-i-cursor" aria-hidden="true" />,
+    Folder: <i className="fa fa-folder-o" aria-hidden="true" />,
+    FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,
+    Delete: <i className="fa fa-trash-o" aria-hidden="true" />,
+    Loading: <i className="fa fa-circle-o-notch fa-spin" aria-hidden="true" />,
+  }
 };
 
 

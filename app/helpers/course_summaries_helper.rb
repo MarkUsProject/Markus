@@ -83,7 +83,7 @@ module CourseSummariesHelper
   def get_mark_for_all_assignments_for_student(student, assignments)
     marks = Hash[assignments.map {|a| [a.id, 0]}]
 
-    student.accepted_groupings.each do |g|
+    student.accepted_groupings.includes(:current_submission_used).each do |g|
       sub = g.current_submission_used
       # TODO: remove this defined? call. This is currently used because
       # this method is used in the MarkingScheme model, which does not define

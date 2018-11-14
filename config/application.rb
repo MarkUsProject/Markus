@@ -43,6 +43,10 @@ module Markus
     # Precompile additional assets.
     config.assets.precompile = %w(manifest.js)
 
+    # Configure responders gem flash keys.
+    # NOTE: This didn't work when put in config/initializers/responders.rb.
+    config.responders.flash_keys = [:success, :error]
+
     # TODO review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib

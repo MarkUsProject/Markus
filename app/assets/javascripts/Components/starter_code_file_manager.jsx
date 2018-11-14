@@ -88,6 +88,7 @@ class StarterCodeFileManager extends React.Component {
 
         <FileManager
           files={this.state.files}
+          noFilesMessage={I18n.t('student.submission.no_files_available')}
 
           readOnly={this.props.readOnly}
           onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}

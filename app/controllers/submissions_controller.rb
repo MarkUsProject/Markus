@@ -240,7 +240,10 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !test_runs.empty?
-        test_scripts, hooks_script = AutomatedTestsClientHelper.authorize_test_run(current_user, assignment)
+        AutomatedTestsClientHelper.authorize!(current_user, assignment: assignment)
+        test_scripts = assignment.select_test_scripts(current_user)
+                                 .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+        hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
         AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
                                      hooks_script, test_runs)
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
@@ -492,8 +495,8 @@ class SubmissionsController < ApplicationController
         end
 
         if SubmissionFile.is_binary?(file_contents)
-          # If the file appears to be binary, send it as a download
-          render plain: 'not a plaintext file'
+          # If the file appears to be binary, display a warning
+          render json: { content: I18n.t('submission_file.error.binary_file_message').to_json, type: 'unknown' }
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
