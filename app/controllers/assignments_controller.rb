@@ -266,7 +266,7 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
       end
       flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
@@ -337,7 +337,7 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
       end
     end
     redirect_to action: 'edit', id: @assignment.id

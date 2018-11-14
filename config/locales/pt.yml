@@ -824,3 +824,8 @@ pt:
       create_individual_groups_job: "%{progress}/%{total} grupos criados"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
+    repo:
+      commits:
+        initial: "UPDATE ME"
+        default: "UPDATE ME"
+        required_files: "UPDATE ME %{assignment}"
