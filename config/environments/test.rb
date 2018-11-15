@@ -242,15 +242,15 @@ Markus::Application.configure do
   ###################################################################
 
   # The name of the queue where jobs to create individal groups for all students wait to be executed.
-  JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108_job_groups'
+  JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108'
   # The name of the queue where jobs to collect submissions wait to be executed.
-  JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_collect'
+  JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
-  JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108_job_uncollect'
+  JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108'
   # The name of the queue where jobs to update repos with the list of required files wait to be executed.
-  JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108_job_req_files'
-  JOB_GENERATE_QUEUE_NAME = 'CSC108_job_generate'
-  JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108_job_split_pdf'
+  JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108'
+  JOB_GENERATE_QUEUE_NAME = 'CSC108'
+  JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings
@@ -265,9 +265,9 @@ Markus::Application.configure do
   AUTOTEST_SERVER_USERNAME = nil
   AUTOTEST_SERVER_DIR = "#{::Rails.root}/../markus-autotesting/server/workspace"
   AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer'
-  AUTOTEST_RUN_QUEUE = 'CSC108_autotest_run'
-  AUTOTEST_CANCEL_QUEUE = 'CSC108_autotest_cancel'
-  AUTOTEST_SCRIPTS_QUEUE = 'CSC108_autotest_scripts'
+  AUTOTEST_RUN_QUEUE = 'CSC108'
+  AUTOTEST_CANCEL_QUEUE = 'CSC108'
+  AUTOTEST_SCRIPTS_QUEUE = 'CSC108'
 
   ###################################################################
   # Exam Plugin settings
