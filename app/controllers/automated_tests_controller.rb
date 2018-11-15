@@ -84,7 +84,7 @@ class AutomatedTestsController < ApplicationController
         @authorized = true
       rescue ActionPolicy::Unauthorized => e
         @authorized = false
-        @reason = e.result.reasons.full_messages.join(',')
+        @reason = e.result.reasons.full_messages.join(' ')
       end
     end
 
@@ -106,7 +106,7 @@ class AutomatedTestsController < ApplicationController
                                    hooks_script, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
-      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(',') : e.message
+      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
       flash_message(:error, message)
     end
     redirect_to action: :student_interface, id: params[:id]
