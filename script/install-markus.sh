@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if [ $# -ne 1 ]; then
+if [[ $# -ne 1 ]]; then
   echo "Usage: $0 markus-root-dir"
 else
-  MARKUS_ROOT="$1"
+  MARKUS_ROOT=$(readlink -f "$1")
 fi
 
 # Update package manager
