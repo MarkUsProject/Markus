@@ -961,3 +961,8 @@ fr:
       create_individual_groups_job: "%{progress}/%{total} groupes créés"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+    repo:
+      commits:
+        initial: "UPDATE ME"
+        default: "UPDATE ME"
+        required_files: "UPDATE ME %{assignment}"

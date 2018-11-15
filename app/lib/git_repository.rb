@@ -96,7 +96,7 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add_all('markus-hooks')
     end
 
-    GitRepository.do_commit_and_push(repo, 'Markus', 'Initial commit.')
+    GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
 
     # Set up hooks
     MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
@@ -345,7 +345,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Returns a Repository::TransAction object, to work with. Do operations,
   # like 'add', 'remove', etc. on the transaction instead of the repository
-  def get_transaction(user_id, comment = '')
+  def get_transaction(user_id, comment=I18n.t('repo.commits.default'))
     if user_id.nil?
       raise 'Expected a user_id (Repository.get_transaction(user_id))'
     end
@@ -389,7 +389,7 @@ class GitRepository < Repository::AbstractRepository
       @repos.reset('master', :hard)
       false
     else
-      GitRepository.do_commit_and_push(@repos, transaction.user_id, 'Update files')
+      GitRepository.do_commit_and_push(@repos, transaction.user_id, transaction.comment)
       true
     end
   end
