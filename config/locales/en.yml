@@ -965,3 +965,8 @@ en:
       create_individual_groups_job: "%{progress}/%{total} groups created"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
+    repo:
+      commits:
+        initial: "Initial commit"
+        default: "Update files"
+        required_files: "Update the list of required files for assignment %{assignment}"

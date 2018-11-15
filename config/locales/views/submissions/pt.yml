@@ -27,6 +27,7 @@ pt:
       repository: "Repositório"
       repository_name: "Repositório: %{repository}"
       revised_by: "Revisado por"
+      submitted_at: "UPDATE ME"
       viewing_revision: "Vendo revisão:"
       server_time: "push:"
     student:

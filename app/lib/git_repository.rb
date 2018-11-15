@@ -96,7 +96,7 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add_all('markus-hooks')
     end
 
-    GitRepository.do_commit_and_push(repo, 'Markus', 'Initial commit.')
+    GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
 
     # Set up hooks
     MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
@@ -345,7 +345,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Returns a Repository::TransAction object, to work with. Do operations,
   # like 'add', 'remove', etc. on the transaction instead of the repository
-  def get_transaction(user_id, comment = '')
+  def get_transaction(user_id, comment=I18n.t('repo.commits.default'))
     if user_id.nil?
       raise 'Expected a user_id (Repository.get_transaction(user_id))'
     end
@@ -389,7 +389,7 @@ class GitRepository < Repository::AbstractRepository
       @repos.reset('master', :hard)
       false
     else
-      GitRepository.do_commit_and_push(@repos, transaction.user_id, 'Update files')
+      GitRepository.do_commit_and_push(@repos, transaction.user_id, transaction.comment)
       true
     end
   end
@@ -630,12 +630,38 @@ class GitRevision < Repository::AbstractRevision
     entries
   end
 
+  # Return entries with the submitted date attribute updated to equal the
+  # time the change was pushed to the server
+  def _add_push_time(entries)
+    return entries if entries.empty?
+    entries_by_time = entries.sort_by { |_, e| e.last_modified_date }.map { |_, e| e }
+    repo_path, _sep, repo_name = File.dirname(@repo.path).rpartition(File::SEPARATOR)
+    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+    bare_repo = Rugged::Repository.new(bare_path)
+    reflog = bare_repo.ref('refs/heads/master').log.reverse
+
+    reflog_times = []
+    reflog.each do |reflog_entry|
+      push_time = reflog_entry[:committer][:time].in_time_zone
+      break if push_time < entries_by_time[0].last_modified_date
+      reflog_times << push_time
+    end
+    reflog_times = reflog_times.compact.reverse
+    entries_by_time.each do |entry|
+      while entry.last_modified_date > reflog_times[0]
+        reflog_times.shift
+      end
+      entry.submitted_date = reflog_times[0]
+    end
+    entries
+  end
+
   def files_at_path(path)
-    entries_at_path(path, :blob)
+    _add_push_time(entries_at_path(path, :blob))
   end
 
   def directories_at_path(path)
-    entries_at_path(path, :tree)
+    _add_push_time(entries_at_path(path, :tree))
   end
 
   # Walks all files and subdirectories starting at +path+ and
@@ -645,12 +671,19 @@ class GitRevision < Repository::AbstractRevision
   # It returns an array to ensure ordering, so that a directory
   # will always appear before any of the files or subdirectories
   # contained within it
-  def tree_at_path(path)
+  #
+  # The +_finalize+ argument should never be passed explicitly. It is
+  # used internally by this method to indicate when all entries have
+  # been collected so that the push time attribute is only added once
+  # per entry
+  def tree_at_path(path, _finalize=true)
     result = entries_at_path(path).to_a
     result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
-      result.push(*(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] }))
+      result.push(*(tree_at_path(File.join(path, dir_path), false).map do |sub_path, obj|
+        [File.join(dir_path, sub_path), obj]
+      end))
     end
-    result
+    _finalize ? _add_push_time(result) : result
   end
 
   def last_modified_date
