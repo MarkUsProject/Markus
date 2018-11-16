@@ -1,14 +1,10 @@
 describe AssignmentPolicy do
   let(:policy) { described_class.new(assignment, user: user) }
 
+  # test_script must be created with let! because it is not directly referenced and lazily loaded otherwise
+  # it is only accessed by the policy through assignment.test_scripts
   describe '#run_tests?' do
     subject { policy.apply(:run_tests?) }
-
-    context 'when the user is a TA' do
-      let(:user) { build(:ta) }
-      let(:assignment) { build(:assignment) }
-      it { is_expected.to eq false }
-    end
 
     context 'when the user is an admin' do
       let(:user) { build(:admin) }
@@ -21,11 +17,6 @@ describe AssignmentPolicy do
       context 'if enable_test is true' do
         let(:assignment) { create(:assignment, enable_test: true) }
 
-        context 'if a test script is uploaded' do
-          let!(:test_script) { create(:test_script, assignment: assignment, run_by_instructors: true) }
-          it { is_expected.to eq true }
-        end
-
         context 'if a test script is not uploaded' do
           it { is_expected.to eq false }
         end
@@ -34,7 +25,18 @@ describe AssignmentPolicy do
           let!(:test_script) { create(:test_script, assignment: assignment, run_by_students: true) }
           it { is_expected.to eq false }
         end
+
+        context 'if a test script is uploaded' do
+          let!(:test_script) { create(:test_script, assignment: assignment, run_by_instructors: true) }
+          it { is_expected.to eq true }
+        end
       end
+    end
+
+    context 'when the user is a TA' do
+      let(:user) { build(:ta) }
+      let(:assignment) { build(:assignment) }
+      it { is_expected.to eq false }
     end
 
     context 'when the user is a student' do
@@ -46,6 +48,7 @@ describe AssignmentPolicy do
       end
 
       context 'if enable_test is true' do
+
         context 'if enable_student_tests is false' do
           let(:assignment) { build(:assignment, enable_test: true, enable_student_tests: false) }
           it { is_expected.to eq false }
@@ -71,16 +74,17 @@ describe AssignmentPolicy do
             context 'if tokens are not released yet' do
               let(:assignment) do
                 create(:assignment, enable_test: true, enable_student_tests: true,
-                                    token_start_date: Time.current + 1.minute)
+                       token_start_date: Time.current + 1.minute)
               end
               it { is_expected.to eq false }
             end
 
             context 'if tokens are released' do
+
               context 'if the due date has passed' do
                 let(:assignment) do
                   create(:assignment, enable_test: true, enable_student_tests: true, token_start_date: Time.current,
-                                      due_date: Time.current - 1.minute)
+                         due_date: Time.current - 1.minute)
                 end
                 it { is_expected.to eq false }
               end
