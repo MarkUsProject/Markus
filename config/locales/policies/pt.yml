@@ -13,3 +13,4 @@ pt:
         tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."
       submission:
         before_release?: "UPDATE ME."
+        not_a_student?: "UPDATE ME."

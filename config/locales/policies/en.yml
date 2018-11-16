@@ -13,3 +13,4 @@ en:
         tokens_available?: "You cannot run tests because you or your group do not have tokens available."
       submission:
         before_release?: "You cannot run tests because the marks have been released."
+        not_a_student?: "You cannot run tests because students are not allowed to."

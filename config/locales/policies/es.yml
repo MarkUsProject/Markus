@@ -13,3 +13,4 @@ es:
         tokens_available?: "No se encontraron fichas para este estudiante y para este proyecto."
       submission:
         before_release?: "UPDATE ME."
+        not_a_student?: "UPDATE ME."

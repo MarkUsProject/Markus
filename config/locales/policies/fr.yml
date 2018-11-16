@@ -13,3 +13,4 @@ fr:
         tokens_available?: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet."
       submission:
         before_release?: "Les notes pour ce test sont déjà montré aux étudiants."
+        not_a_student?: "UPDATE ME."
