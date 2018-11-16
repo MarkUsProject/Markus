@@ -1,7 +1,7 @@
 describe SubmissionPolicy do
   let(:policy) { described_class.new(submission, user: user) }
 
-  # stub a passing AssociationPolicy (the order of allow calls matters)
+  # stub a passing AssociationPolicy
   def stub_assignment_policy_true(policy, assignment)
     allow(policy).to receive(:check?).and_call_original
     allow(policy).to receive(:check?).with(:run_tests?, assignment).and_return(true)
