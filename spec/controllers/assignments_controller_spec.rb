@@ -41,7 +41,7 @@ describe AssignmentsController do
       @test_asn2 = 'ATest2'
     end
 
-    it 'accepts a valid file' do
+   it 'accepts a valid file' do
       post :upload_assignment_list, params: { assignment_list: @file_good, file_format: 'csv' }
 
       expect(response.status).to eq(302)
@@ -99,19 +99,15 @@ describe AssignmentsController do
 
   context 'CSV_Downloads' do
     let(:csv_options) do
-      {
-        type: 'text/csv',
-        filename: "assignment_list_#{Time.now.strftime('%Y%m%d')}.csv",
-      }
+      { type: 'text/csv', filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv" }
     end
-
-    before :each do
+    let(:assignment) {create(:assignment)}
+    #before :each do
       # for some reason, assignments aren't always cleared from the db
       # before these tests
-      Assignment.all.each do |asn|
-        asn.delete
-      end
-      @assignment = create(:assignment)
+    #  Assignment.all.each do |asn|
+    #    asn.delete
+    #  end
     end
 
     it 'responds with appropriate status' do
@@ -140,10 +136,10 @@ describe AssignmentsController do
       # generate the expected csv string
       csv_data = []
       DEFAULT_FIELDS.map do |f|
-        csv_data << @assignment.send(f.to_s)
+        csv_data << assignment.send(f.to_s)
       end
       expect(@controller).to receive(:send_data)
-                               .with(csv_data.join(',') + "\n", csv_options) {
+                               .with(csv_data.join(',') + "\n", :csv_options) {
         # to prevent a 'missing template' error
         @controller.head :ok
       }
@@ -161,7 +157,7 @@ describe AssignmentsController do
       get :download_assignment_list, params: { file_format: 'csv' }
       filename = response.header['Content-Disposition']
         .split.last.split('"').second
-      expect(filename).to eq "assignment_list_#{Time.now.strftime('%Y%m%d')}.csv"
+      expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv"
     end
   end
-end
+#end

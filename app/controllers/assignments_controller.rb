@@ -442,8 +442,8 @@ class AssignmentsController < ApplicationController
     output = Assignment.get_assignment_list(params[:file_format])
     file_format = params[:file_format]
     if ['csv', 'yml'].include? file_format
-      send_data(output, filename: "assignments_list_#{Time.
-                now.strftime('%Y%m%d')}.#{file_format}",
+      send_data(output,
+                filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.#{file_format}",
                 type: "text/#{file_format}")
     else
       flash_message(:error, t(:incorrect_format))

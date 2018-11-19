@@ -135,7 +135,7 @@ class Assignment < ApplicationRecord
   after_create :build_repository
 
   before_save :reset_collection_time
-  after_save :update_permissions_if_vcs_changed
+  before_save :update_permissions_if_vcs_changed
 
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
