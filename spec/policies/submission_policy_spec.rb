@@ -1,62 +1,52 @@
 describe SubmissionPolicy do
-  let(:policy) { described_class.new(submission, user: user) }
-
-  # stub a passing AssociationPolicy
-  def stub_assignment_policy_true(policy, assignment)
-    allow(policy).to receive(:check?).and_call_original
-    allow(policy).to receive(:check?).with(:run_tests?, assignment).and_return(true)
-  end
-
-  # stub a failing AssociationPolicy
-  def stub_assignment_policy_false(policy, assignment)
-    allow(policy).to receive(:check?).and_call_original
-    allow(policy).to receive(:check?).with(:run_tests?, assignment).and_return(false)
-  end
+  include PolicyHelper
 
   describe '#run_tests?' do
-    subject { policy.apply(:run_tests?) }
 
     context 'when the user is an admin' do
-      let(:user) { build(:admin) }
-
       context 'if AssignmentPolicy#run_tests? returns false' do
-        let(:submission) { build_stubbed(:submission) }
-        before(:each) { stub_assignment_policy_false(policy, submission.grouping.assignment) }
-        it { is_expected.to eq false }
+        it do
+          user = build(:admin)
+          submission = build_stubbed(:submission)
+          expect(apply_policy(submission, user, :run_tests?)).to be false
+        end
       end
-
       context 'if AssignmentPolicy#run_tests? returns true' do
-        let(:submission) { create(:submission) }
-        before(:each) { stub_assignment_policy_true(policy, submission.grouping.assignment) }
-
         context 'if marks are released' do
-          let(:result) { submission.current_result }
-          before(:each) do
-            # a submission after_create callback created the result, which has to be modified here
+          it do
+            user = build(:admin)
+            submission = create(:submission)
+            result = submission.current_result # a submission after_create callback created the result
             result.marking_state = Result::MARKING_STATES[:complete]
             result.released_to_students = true
             result.save!
+            expect(apply_policy(submission, user, :run_tests?)).to be false
           end
-          it { is_expected.to eq false }
         end
-
         context 'if marks are not released' do
-          it { is_expected.to eq true }
+          it do
+            user = build(:admin)
+            submission = create(:submission)
+            expect(apply_policy(submission, user, :run_tests?)).to be true
+          end
         end
       end
-
     end
 
     context 'when the user is a TA' do
-      let(:user) { build(:ta) }
-      let(:submission) { build_stubbed(:submission) }
-      it { is_expected.to eq false }
+      it do
+        user = build(:ta)
+        submission = build_stubbed(:submission)
+        expect(apply_policy(submission, user, :run_tests?)).to be false
+      end
     end
 
     context 'when the user is a student' do
-      let(:user) { build(:student) }
-      let(:submission) { build_stubbed(:submission) }
-      it { is_expected.to eq false }
+      it do
+        user = build(:student)
+        submission = build_stubbed(:submission)
+        expect(apply_policy(submission, user, :run_tests?)).to be false
+      end
     end
   end
 end

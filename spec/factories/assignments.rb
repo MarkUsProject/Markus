@@ -30,4 +30,13 @@ FactoryBot.define do
         3.times.each { |i| create(:result, submission: submissions[i], marking_state: Result::MARKING_STATES[:complete]) }
     end
   end
+
+  factory :assignment_to_run_tests, parent: :assignment do
+    enable_test { true }
+    enable_student_tests { true }
+    token_start_date { Time.current }
+    after(:create) do |assign|
+      create(:test_script, assignment: assignment, run_by_instructors: true, run_by_students: true)
+    end
+  end
 end
