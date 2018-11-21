@@ -162,10 +162,10 @@ class RawSubmissionTable extends React.Component {
         >
           <option value='all'>{I18n.t('all')}</option>
           <option value={I18n.t('results.state.not_collected')}>{I18n.t('results.state.not_collected')}</option>
-          <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
-          <option value='complete'>{I18n.t('results.state.complete')}</option>
-          <option value='released'>{I18n.t('results.state.released')}</option>
-          <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
+          <option value={I18n.t('results.state.in_progress')}>{I18n.t('results.state.in_progress')}</option>
+          <option value={I18n.t('results.state.complete')}>{I18n.t('results.state.complete')}</option>
+          <option value={I18n.t('results.state.released')}>{I18n.t('results.state.released')}</option>
+          <option value={I18n.t('results.state.remark_requested')}>{I18n.t('results.state.remark_requested')}</option>
         </select>,
       minWidth: 70
     },
