@@ -4,30 +4,34 @@ describe SubmissionPolicy do
   describe '#run_tests?' do
 
     context 'when the user is an admin' do
-      context 'if AssignmentPolicy#run_tests? returns false' do
+      context 'if the assignment policy fails' do
         it do
-          user = build(:admin)
+          user = build_stubbed(:admin)
           submission = build_stubbed(:submission)
-          expect(apply_policy(submission, user, :run_tests?)).to be false
+          expect(policy(submission, user)).not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? }
         end
       end
-      context 'if AssignmentPolicy#run_tests? returns true' do
+      context 'if the assignment policy passes' do
         context 'if marks are released' do
           it do
-            user = build(:admin)
-            submission = create(:submission)
+            user = build_stubbed(:admin)
+            assignment = create(:assignment_for_instructor_tests)
+            grouping = create(:grouping, assignment: assignment)
+            submission = create(:submission, grouping: grouping)
             result = submission.current_result # a submission after_create callback created the result
             result.marking_state = Result::MARKING_STATES[:complete]
             result.released_to_students = true
             result.save!
-            expect(apply_policy(submission, user, :run_tests?)).to be false
+            expect(policy(submission, user)).not_to pass :run_tests?, because_of: :before_release?
           end
         end
         context 'if marks are not released' do
           it do
-            user = build(:admin)
-            submission = create(:submission)
-            expect(apply_policy(submission, user, :run_tests?)).to be true
+            user = build_stubbed(:admin)
+            assignment = create(:assignment_for_instructor_tests)
+            grouping = create(:grouping, assignment: assignment)
+            submission = create(:submission, grouping: grouping)
+            expect(policy(submission, user)).to pass :run_tests?
           end
         end
       end
@@ -35,17 +39,17 @@ describe SubmissionPolicy do
 
     context 'when the user is a TA' do
       it do
-        user = build(:ta)
+        user = build_stubbed(:ta)
         submission = build_stubbed(:submission)
-        expect(apply_policy(submission, user, :run_tests?)).to be false
+        expect(policy(submission, user)).not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? }
       end
     end
 
     context 'when the user is a student' do
       it do
-        user = build(:student)
+        user = build_stubbed(:student)
         submission = build_stubbed(:submission)
-        expect(apply_policy(submission, user, :run_tests?)).to be false
+        expect(policy(submission, user)).not_to pass :run_tests?, because_of: :not_a_student?
       end
     end
   end
