@@ -552,7 +552,7 @@ ul.tags {
   box-shadow: 0 0 10px $grey;
   max-width: 100%;
   padding: 2.5em 1.5em;
-  z-index: 10000;
+  z-index: 10000 !important;
 
   .dialog-actions {
     text-align: center;
