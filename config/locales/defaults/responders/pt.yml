@@ -10,3 +10,21 @@ pt:
       destroy:
         success: "%{resource_name} suprimido com sucesso."
         error: "Falha ao atualizar suprimido %{resource_name}."
+    criteria:
+      destroy:
+        success: "Criterion suprimido com sucesso."
+    students:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+    admins:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+    tas:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
