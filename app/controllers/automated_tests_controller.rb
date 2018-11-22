@@ -84,7 +84,7 @@ class AutomatedTestsController < ApplicationController
         @authorized = true
       rescue ActionPolicy::Unauthorized => e
         @authorized = false
-        @reason = e.result.reasons.full_messages.join(' ')
+        flash_now(:notice, e.result.reasons.full_messages.join(' '))
       end
     end
 
