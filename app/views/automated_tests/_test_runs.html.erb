@@ -15,18 +15,12 @@
 
 <h2 class="test_runs_header">
   <%= t('automated_tests.test_results') %>
-  <%# student results page (with instructor tests released) does not need flash messages or button %>
+  <%# student results page (with instructor tests released) does not need the button %>
   <% unless @current_user.student? && ran_by == 'instructor' %>
-    <% authorized, reason = AutomatedTestsClientHelper.allowed_to?(@current_user, assignment: @assignment,
-                                                                   submission: @result&.submission,
-                                                                   grouping: @grouping) %>
-    <% unless authorized %>
-      <% flash_now(:notice, reason) %>
-    <% end %>
     <% route = @current_user.admin? ?
                  run_tests_assignment_submission_result_path :
                  execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
-    <%= button_to t('automated_tests.run_tests'), route, disabled: !authorized %>
+    <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized %>
   <% end %>
 </h2>
 <div class="block_content">
