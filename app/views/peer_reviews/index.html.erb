@@ -1,14 +1,11 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'react.min',
-                             'JSXTransformer' %>
-  <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       makePeerReviewsManager(document.getElementById('peer_reviews_manager'),
         {
           assignment_id: <%= @assignment.id %>,
-          grade_entry_form_id: 1,
-          showSections: false,
+          showSections: <%= Section.exists? %>
         }
       );
     });

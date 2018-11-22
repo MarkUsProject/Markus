@@ -197,6 +197,10 @@ en:
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
         peer_review: "Peer Review"
+        action:
+            assign: "Assign Peer Reviewer(s)"
+            unassign: "Unassign Peer Reviewer(s)"
+            random_assign: "Randomly Assign Reviewers"
         download:
             assigned_reviewers_header: "Download Peer Review Assignments"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"

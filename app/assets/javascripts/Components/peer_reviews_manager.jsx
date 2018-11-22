@@ -1,6 +1,5 @@
 import React from 'react';
 import {render} from 'react-dom';
-// This seems to be the only file that explicitly requires this import.
 import * as I18n from 'i18n-js';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
@@ -31,7 +30,7 @@ class PeerReviewsManager extends React.Component {
       dataType: 'json',
     }).then(res => {
       this.studentsTable.resetSelection();
-      this.ReviewersTable.resetSelection();
+      this.reviewersTable.resetSelection();
       this.setState({
         reviewerGroups: res.reviewer_groups,
         revieweeGroups: res.reviewee_groups || [],
@@ -73,7 +72,7 @@ class PeerReviewsManager extends React.Component {
 
   performButtonAction = (action) => {
     let reviewees = this.studentsTable ? this.studentsTable.state.selection : [];
-    let reviewers = this.ReviewersTable ? this.ReviewersTable.state.selection : [];
+    let reviewers = this.reviewersTable ? this.reviewersTable.state.selection : [];
 
     if ((action == 'assign' || action == 'random_assign') && reviewers.length === 0) {
       alert('No reviewers selected.');
@@ -108,7 +107,7 @@ class PeerReviewsManager extends React.Component {
         <div className='mapping-tables'>
           <div className='mapping-table'>
             <ReviewersTable
-              ref={(r) => this.ReviewersTable = r}
+              ref={(r) => this.reviewersTable = r}
               groups={this.state.reviewerGroups}
               reviewerToNumReviews={this.state.reviewerToNumReviews}
               loading={this.state.loading} />
@@ -140,12 +139,12 @@ class RawReviewersTable extends React.Component {
       id: '_id'
     },
     {
-      Header: 'Reviewer Groups',
+      Header: I18n.t('peer_review.reviewer_group'),
       accessor: 'name',
       id: 'name'
     },
     {
-      Header: 'Num Reviews',
+      Header: I18n.t('peer_review.number_of_reviews_header'),
       accessor: 'groups',
       className: 'groups',
       filterable: false
@@ -164,7 +163,7 @@ class RawReviewersTable extends React.Component {
 
   render() {
     const hashmap = this.props.reviewerToNumReviews;
-    const groups_data = this.props.groups.map(function(group) {
+    const groups_data = this.props.groups.map( (group) => {
       let numReviews = 0;
       if (hashmap.hasOwnProperty(group.id)) {
         numReviews = hashmap[group.id];
@@ -174,8 +173,8 @@ class RawReviewersTable extends React.Component {
         name: group.name,
         groups: numReviews,
         section: group.section
-      };
-    }.bind(this));
+      }
+    });
 
     return (
       <CheckboxTable
@@ -199,31 +198,30 @@ class RawReviewersTable extends React.Component {
 
 
 class RawRevieweesTable extends React.Component {
-  getColumns = () => {
-    return [
+  static columns =
+    [
       {
         show: false,
         accessor: '_id',
         id: '_id'
       },
       {
-        Header: 'Reviewee Groups',
+        Header: I18n.t('peer_review.assign'),
         accessor: 'name',
         id: 'name',
         filterable: true
       },
       {
-        Header: 'Assigned Reviewers',
+        Header: I18n.t('peer_review.assigned_reviewers_header'),
         accessor: 'members',
         id: 'members'
       },
       {
-        Header: 'Num Assigned Reviewers',
+        Header: I18n.t('peer_review.number_assigned_reviewers'),
         accessor: 'count',
         id: 'count'
       },
     ];
-  };
 
   reviewerInRevieweeChange = (event) => {
     const { onReviewerChangeInRevieweeTable } = this.props;
@@ -234,19 +232,19 @@ class RawRevieweesTable extends React.Component {
   };
 
   checkboxShouldBeChecked = (reviewee_group_id, reviewer_group_id) => {
-    let returnVal = false;
     if (reviewee_group_id in this.props.selectedReviewerInRevieweeGroups) {
-      returnVal = reviewer_group_id in this.props.selectedReviewerInRevieweeGroups[reviewee_group_id];
+      return reviewer_group_id in this.props.selectedReviewerInRevieweeGroups[reviewee_group_id];
+    } else {
+      return false;
     }
-    return returnVal;
   };
 
   render() {
-    const groups_data = this.props.groups.map(function(group) {
+    const groups_data = this.props.groups.map( (group) => {
       let reviewerGroups = [];
       const reviewee_group_id = group.id;
       const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
-      reviewer_ids.forEach(function(reviewer_group_id) {
+      reviewer_ids.forEach( (reviewer_group_id) => {
         const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
         reviewerGroups.push(<div key={reviewer_group_id}>
           <input id={reviewer_group_id}
@@ -254,10 +252,9 @@ class RawRevieweesTable extends React.Component {
                  data-reviewer-group-id={reviewer_group_id}
                  data-reviewee-group-id={reviewee_group_id}
                  checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
-                 onChange={evt => this.reviewerInRevieweeChange(evt)}
+                 onChange={this.reviewerInRevieweeChange}
           /> {reviewer_group_name}</div>);
-      }.bind(this));
-
+      });
       return {
         _id: group.id,
         name: group.name,
@@ -265,14 +262,14 @@ class RawRevieweesTable extends React.Component {
         section: group.section,
         count: reviewer_ids.length
       };
-    }.bind(this));
+    });
 
     return (
       <CheckboxTable
         ref={(r) => this.checkboxTable = r}
 
         data={groups_data}
-        columns={this.getColumns()}
+        columns={RawRevieweesTable.columns}
         defaultSorted={[
           {
             id: 'name'
@@ -299,28 +296,31 @@ class GradersActionBox extends React.Component {
     return (
       <div style={{ display: 'flex' }}>
         <div className="peer-review-amount-spinner" style={{ width: '100%' }}>
-          <span>Number of reviews per group: </span>
+          <span>{I18n.t('peer_review.number_per_group')}</span>
           <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
                  onChange={evt => this.props.updateNumReviewers(evt.target.value)} />
         </div>
         <div className='rt-action-box icon'>
           <button
+            id='assign'
             className='assign-all-button'
-            onClick={performAction.bind(this, 'assign')}
+            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {'Assign Reviewer(s)'}
+            {I18n.t('peer_review.action.assign')}
           </button>
           <button
+            id='random_assign'
             className='assign-randomly-button'
-            onClick={performAction.bind(this, 'random_assign')}
+            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {'Randomly Assign Reviewers'}
+            {I18n.t('peer_review.action.random_assign')}
           </button>
           <button
+            id='unassign'
             className='unassign-all-button'
-            onClick={performAction.bind(this, 'unassign')}
+            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {'Unassign Reviewer(s)'}
+            {I18n.t('peer_review.action.unassign')}
           </button>
         </div>
       </div>
