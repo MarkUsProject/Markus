@@ -5,7 +5,7 @@
     "chart.js": "^2.7.3",
     "i18n-js": "^3.1.0",
     "jquery": "^3.3.1",
-    "marked": "^0.5.1",
+    "marked": "^0.5.2",
     "moment": "^2.22.2",
     "mousetrap": "^1.6.2",
     "prop-types": "^15.6.2",
