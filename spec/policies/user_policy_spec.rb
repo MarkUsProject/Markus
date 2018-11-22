@@ -2,7 +2,7 @@ describe UserPolicy do
   include PolicyHelper
 
   describe '#manage?' do
-    subject { policy(nil, user) }
+    subject { described_class.new(user: user) }
 
     context 'when the user is admin' do
       let(:user) { build(:admin) }
@@ -19,7 +19,7 @@ describe UserPolicy do
   end
 
   describe '#destroy?' do
-    subject { policy(nil, user) }
+    subject { described_class.new(user: user) }
 
     context 'when the user is admin' do
       let(:user) { build(:admin) }

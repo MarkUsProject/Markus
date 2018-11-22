@@ -48,8 +48,4 @@ module PolicyHelper
   def pass(function, because_of: nil)
     PolicyMatcher.new(function, because_of: because_of)
   end
-
-  def policy(record, user)
-    described_class.new(record, user: user)
-  end
 end
