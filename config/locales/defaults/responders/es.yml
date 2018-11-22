@@ -10,3 +10,21 @@ es:
       destroy:
         success: "%{resource_name} ha sido eliminado exitosamente."
         error: "No se pudo eliminar %{resource_name}."
+    criteria:
+      destroy:
+        success: "Criterion ha sido eliminado exitosamente."
+    students:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+    admins:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+    tas:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
