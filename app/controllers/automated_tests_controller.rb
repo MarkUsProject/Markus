@@ -80,6 +80,7 @@ class AutomatedTestsController < ApplicationController
       @grouping.refresh_test_tokens
       # authorization
       begin
+        authorize! @assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
         authorize! @grouping, to: :run_tests?
         @authorized = true
       rescue ActionPolicy::Unauthorized => e
@@ -96,6 +97,7 @@ class AutomatedTestsController < ApplicationController
       assignment = Assignment.find(params[:id])
       grouping = current_user.accepted_grouping_for(assignment.id)
       grouping.refresh_test_tokens
+      authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
       test_scripts = assignment.select_test_scripts(current_user)

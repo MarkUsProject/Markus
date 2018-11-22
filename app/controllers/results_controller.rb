@@ -127,11 +127,12 @@ class ResultsController < ApplicationController
 
     # authorization
     begin
+      authorize! @assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! @submission, to: :run_tests?
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
       @authorized = false
-      @reason = e.result.reasons.full_messages.join(' ')
+      flash_now(:notice, e.result.reasons.full_messages.join(' '))
     end
 
     m_logger = MarkusLogger.instance
@@ -181,8 +182,9 @@ class ResultsController < ApplicationController
   def run_tests
     begin
       submission = Result.find(params[:id]).submission
-      authorize! submission, to: :run_tests?
       assignment = submission.assignment
+      authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+      authorize! submission, to: :run_tests?
       test_scripts = assignment.select_test_scripts(current_user)
                                .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
       hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
