@@ -415,7 +415,7 @@ es:
                                    sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                    ellos tenga su nota correspondiente."
 
-    seperate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
+    separate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
     csv_valid_format:                    "Un problema ha ocurrido con el análisis sintáctico del archivo en formato CSV
                                           que ha sido subido. Por favor asegúrese que el archivo tenga un formato CSV
                                           válido y que cada línea termine en un carriage-return o un line-feed.
