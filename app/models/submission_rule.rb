@@ -62,7 +62,7 @@ class SubmissionRule < ApplicationRecord
 
   # When we're past the due date, the File Manager for the students will display
   # a message to tell them that they're currently past the due date.
-  def overtime_message
+  def overtime_message(grouping)
     raise NotImplementedError.new('SubmissionRule: overtime_message not implemented')
   end
 
