@@ -1336,19 +1336,15 @@ class Assignment < ApplicationRecord
       if result
         base[:result_id], base[:final_grade] = result[1], result[3]
         # Fixup for marking_state, based on Grouping#marking_state
-        if result[2] == 'incomplete'
-          if result_data[g[0]].size > 1
-            base[:marking_state] = I18n.t('results.state.remark_requested')
-          else
-            base[:marking_state] = I18n.t('results.state.in_progress')
-          end
+        if result[2] == 'incomplete' && result_data[g[0]].size > 1
+          base[:marking_state] = 'remark'
         elsif result[4]
-          base[:marking_state] = I18n.t('results.state.released')
+          base[:marking_state] = 'released'
         else
-          base[:marking_state] = I18n.t('results.state.complete')
+          base[:marking_state] = result[2]
         end
       else
-        base[:marking_state] = I18n.t('results.state.not_collected')
+        base[:marking_state] = 'not_collected'
       end
 
       base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]
