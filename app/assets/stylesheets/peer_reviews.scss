@@ -15,10 +15,15 @@
 }
 
 .peer-review-amount-spinner {
-  padding-bottom: 8px;
+  min-width: 540px;
+  border: solid 1px #000000;
+  padding: 5px;
+  background-color: #d3d3d3;
+  margin-bottom: 8px;
 }
 
 .peer-review-amount-spinner input {
+  margin-left: 5px;
   width: 75px;
 }
 
@@ -34,6 +39,8 @@
 .assign-randomly-button {
   background: asset_url('random_arrow.png') no-repeat center left 5px,
   -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+  padding-left: 45px;
+  margin-left: 5px;
 }
 
 .unassign-all-button {

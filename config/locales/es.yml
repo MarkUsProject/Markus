@@ -266,7 +266,10 @@ es:
         number_per_group:                     "Número de Revisiones de Compañeros por grupo"
         number_assigned_reviewers:            "Número de Revisores Asignados"
         peer_review:                          "Revisión de pares"
-
+        action:
+            assign:                           "Asignar Revisor (es) Peer"
+            unassign:                         "Desasignar Revisor (es) Peer"
+            random_assign:                    "Asignar Revisores al Azar"
         download:
             assigned_reviewers_header: "Descargar proyectos de Revisión de Compañeros"
             assigned_reviewers_csv:    "CSV que vincula el grupo del revisor y el revisado."
