@@ -342,7 +342,7 @@ en:
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
       criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
 
-    seperate_multiple_with_commas:  "Seperate multiple user names with commas"
+    separate_multiple_with_commas:  "Separate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
@@ -916,16 +916,6 @@ en:
         fail: "Failed"
         error: "Error"
         extra_info: "Extra Info:"
-      error:
-        after_due_date: "You cannot run tests because the due date for this assignment has passed"
-        after_release: "You cannot run tests because the marks have been released"
-        already_enqueued: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results"
-        bad_group: "You cannot run tests because you do not have a group yet, or your group is not valid"
-        not_enabled: "You cannot run tests because they are not enabled for this assignment"
-        no_tas: "You cannot run tests because graders are not allowed to"
-        no_tokens: "You cannot run tests because you or your group do not have tokens available"
-        no_test_files: "You cannot run tests because there are no test scripts configured"
-        no_tokens_yet: "You cannot run tests because tokens are not available yet"
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"

@@ -1,37 +1,37 @@
 describe UserPolicy do
-  let(:policy) { described_class.new(user: user) }
+  include PolicyHelper
 
   describe '#manage?' do
-    subject { policy.apply(:manage?) }
+    subject { described_class.new(user: user) }
 
     context 'when the user is admin' do
-      let(:user) { Admin.new(user_name: 'admin', type: User::ADMIN) }
-      it { is_expected.to eq true }
+      let(:user) { build(:admin) }
+      it { is_expected.to pass :manage? }
     end
     context 'when the user is ta' do
-      let(:user) { Ta.new(user_name: 'ta', type: User::TA) }
-      it { is_expected.to eq false }
+      let(:user) { build(:ta) }
+      it { is_expected.not_to pass :manage? }
     end
     context 'when the user is student' do
-      let(:user) { Student.new(user_name: 'student', type: User::STUDENT) }
-      it { is_expected.to eq false }
+      let(:user) { build(:student) }
+      it { is_expected.not_to pass :manage? }
     end
   end
 
   describe '#destroy?' do
-    subject { policy.apply(:destroy?) }
+    subject { described_class.new(user: user) }
 
     context 'when the user is admin' do
-      let(:user) { Admin.new(user_name: 'admin', type: User::ADMIN) }
-      it { is_expected.to eq false }
+      let(:user) { build(:admin) }
+      it { is_expected.not_to pass :destroy? }
     end
     context 'when the user is ta' do
-      let(:user) { Ta.new(user_name: 'ta', type: User::TA) }
-      it { is_expected.to eq false }
+      let(:user) { build(:ta) }
+      it { is_expected.not_to pass :destroy? }
     end
     context 'when the user is student' do
-      let(:user) { Student.new(user_name: 'student', type: User::STUDENT) }
-      it { is_expected.to eq false }
+      let(:user) { build(:student) }
+      it { is_expected.not_to pass :destroy? }
     end
   end
 end

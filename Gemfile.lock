@@ -6,10 +6,15 @@ GIT
       activejob (>= 4.2)
       activesupport (>= 4.2)
 
+GIT
+  remote: https://github.com/palkan/action_policy.git
+  revision: 8695ae10f02f151e9de477a2006a4302dd5ee35a
+  specs:
+    action_policy (0.2.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.2.4)
     actioncable (5.2.1)
       actionpack (= 5.2.1)
       nio4r (~> 2.0)
@@ -38,6 +43,10 @@ GEM
       globalid (>= 0.3.6)
     activemodel (5.2.1)
       activesupport (= 5.2.1)
+    activemodel-serializers-xml (1.0.2)
+      activemodel (> 5.x)
+      activesupport (> 5.x)
+      builder (~> 3.1)
     activerecord (5.2.1)
       activemodel (= 5.2.1)
       activesupport (= 5.2.1)
@@ -109,8 +118,8 @@ GEM
     histogram (0.2.4.1)
     i18n (1.1.1)
       concurrent-ruby (~> 1.0)
-    i18n-js (3.1.0)
-      i18n (>= 0.6.6, < 2)
+    i18n-js (3.2.0)
+      i18n (>= 0.8.0, < 2)
     jaro_winkler (1.5.1)
     js-routes (1.4.4)
       railties (>= 3.2)
@@ -323,7 +332,7 @@ GEM
     ttfunk (1.5.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    uglifier (4.1.19)
+    uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.0)
     unicorn (5.4.1)
@@ -349,8 +358,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  action_policy
+  action_policy!
   activejob-status!
+  activemodel-serializers-xml
   activerecord-import
   activerecord-session_store
   autoprefixer-rails
