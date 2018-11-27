@@ -145,7 +145,7 @@ class Assignment < ApplicationRecord
   after_save :create_peer_review_assignment_if_not_exist
 
   BLANK_MARK = ''
-  STARTER_CODE_REPO_FORMAT = "%s_starter_code"
+  STARTER_CODE_REPO_NAME = "starter-code"
 
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
@@ -1094,39 +1094,28 @@ class Assignment < ApplicationRecord
 
   ### REPO ###
 
-  def self.repository_names
-    pluck(:short_identifier).map { |sid| STARTER_CODE_REPO_FORMAT % sid }
-  end
-
-  def repository_name
-    STARTER_CODE_REPO_FORMAT % short_identifier
-  end
-
   def build_repository
-    # create repositories if and only if we are admin
-    return true unless MarkusConfigurator.markus_config_repository_admin?
-    # only create if we can add starter code
-    return true unless can_upload_starter_code?
-    begin
-      Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
-    rescue Repository::RepositoryCollision => e
-      # log the collision
-      errors.add(:base, self.repository_name)
-      m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{repository_name}' caused repository collision. " +
-                     "Error message: '#{e.message}'",
-                   MarkusLogger::ERROR)
+    return unless MarkusConfigurator.markus_config_repository_admin?
+    return unless can_upload_starter_code?
+    repo_dir = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
+    unless Repository.get_class.repository_exists?(repo_dir)
+      begin
+        Repository.get_class.create(repo_dir) # TODO: avoid creating hooks
+        access_repo do |repo|
+          txn = repo.get_transaction('Markus', "Add directory for assignment #{self.short_identifier}")
+          txn.add_path(self.repository_folder)
+          repo.commit(txn)
+        end
+      rescue StandardError => e
+        errors.add(:base, repo_dir)
+        m_logger = MarkusLogger.instance
+        m_logger.log("Creating repository '#{repo_dir}' failed with '#{e.message}'", MarkusLogger::ERROR)
+      end
     end
-    access_repo do |repo|
-      txn = repo.get_transaction('Markus')
-      txn.add_path(repository_folder)
-      repo.commit(txn)
-    end
-    true
   end
 
   def repo_loc
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
+    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
     unless Repository.get_class.repository_exists?(repo_loc)
       raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
     end

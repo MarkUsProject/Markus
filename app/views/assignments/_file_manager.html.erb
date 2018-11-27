@@ -5,7 +5,7 @@
         {
           assignment_id: <%= @assignment.id %>,
           repo_url: '<%= MarkusConfigurator.markus_config_repository_external_base_url +
-                         '/' + @assignment.repository_name %>',
+                         '/' + @assignment.STARTER_CODE_REPO_NAME %>',
           readOnly: <%= @assignment.can_upload_starter_code? ? 'false' : 'true' %>
         }
       );
