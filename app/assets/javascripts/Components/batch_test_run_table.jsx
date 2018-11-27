@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
+import {dateSort} from './table_helpers';
 
 const makeDefaultState = () => ({
   data: [],
@@ -76,6 +77,7 @@ class BatchTestRunTable extends React.Component {
               Header: I18n.t('assignment.batch_tests_status_table.created_at'),
               accessor: 'created_at',
               minWidth: 120,
+              sortMethod: dateSort,
               PivotValue: ({value}) => value
             },
             {
