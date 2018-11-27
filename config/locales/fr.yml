@@ -334,7 +334,7 @@ fr:
       cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
       criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé"
 
-    seperate_multiple_with_commas:  "Séparer les noms d'utilisateur par des virgules."
+    separate_multiple_with_commas:  "Séparer les noms d'utilisateur par des virgules."
     csv_valid_format:   "Erreur durant la lecture du fichier CSV que vous venez d'envoyer. Assurez-vous que le fichier soit bien un fichier CSV valide et que chaque ligne finisse par un retour chariot. Aucun changement effectué."
     csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
     csv_valid_lines: "Avec succès téléchargé %{valid_line_count} entrées"
@@ -794,16 +794,6 @@ fr:
         fail: "Échoué"
         error: "Erreur"
         extra_info: "Info Supplémentaires:"
-      error:
-        after_due_date: "La date d'échéance est déjà pasée"
-        after_release: "Les notes pour ce test sont déjà montré aux étudiants"
-        already_enqueued: "Il y a déjà un test mis en file d'attente, attendez les résultats s'il vous plait"
-        bad_group: "Votre groupe n'éxiste pas, où il n'est pas valide"
-        not_enabled: "Les tests ne sont pas activés pour ce projet"
-        no_tas: "Les correcteurs ne sont pas autorisés à éxecuter des tests"
-        no_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet"
-        no_test_files: "Aucun scripts de test trouvés"
-        no_tokens_yet: "Aucun jetons disponible"
       results:
         all_tests: "Tous les tests"
         unknown_test: "Test inconnu"

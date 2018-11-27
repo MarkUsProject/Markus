@@ -32,7 +32,7 @@ gem 'resque'
 gem 'redis-rails'
 
 # Authorization
-gem 'action_policy'
+gem 'action_policy', git: 'https://github.com/palkan/action_policy.git'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
@@ -64,6 +64,7 @@ gem 'activerecord-session_store'
 gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders'
+gem 'activemodel-serializers-xml'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).

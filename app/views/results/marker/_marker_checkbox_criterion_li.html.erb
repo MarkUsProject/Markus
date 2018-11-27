@@ -33,7 +33,7 @@
           <div id="<%="criterion_info_#{mark_criterion.id}_#{mark_criterion.class.to_s}"%>"
                class='criterion_info mark-checkbox'
                data-id="<%=mark_criterion.id%>" >
-            <%= mark_criterion.description %>
+            <%= sanitize(mark_criterion.description) %>
           </div>
       <% end %>
 

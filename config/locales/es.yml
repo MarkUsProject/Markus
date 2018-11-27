@@ -415,7 +415,7 @@ es:
                                    sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                    ellos tenga su nota correspondiente."
 
-    seperate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
+    separate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
     csv_valid_format:                    "Un problema ha ocurrido con el análisis sintáctico del archivo en formato CSV
                                           que ha sido subido. Por favor asegúrese que el archivo tenga un formato CSV
                                           válido y que cada línea termine en un carriage-return o un line-feed.
@@ -1039,16 +1039,6 @@ es:
         fail:         "Falló"
         error:        "UPDATE ME"
         extra_info: "UPDATE ME"
-      error:
-        after_due_date: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado"
-        after_release: "UPDATE ME"
-        already_enqueued: "UPDATE ME"
-        bad_group: "UPDATE ME"
-        not_enabled: "UPDATE ME"
-        no_tas: "UPDATE ME"
-        no_tokens: "No se encontraron fichas para este estudiante y para este proyecto"
-        no_test_files: "No hay un script para lanzar la prueba"
-        no_tokens_yet: "No se han dado fichas todavía"
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"

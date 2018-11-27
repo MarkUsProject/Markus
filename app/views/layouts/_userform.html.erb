@@ -1,9 +1,5 @@
 <div class='section'>
   <%= form_for @user, as: :user do |f| %>
-
-    <%= render partial: 'shared/error_explanation',
-               locals: { model: @user } %>
-
     <table>
       <tr>
         <td><%= raw(f.label(:user_name, User.human_attribute_name(:user_name))) %>:</td>

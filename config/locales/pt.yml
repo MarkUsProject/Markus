@@ -312,7 +312,7 @@ pt:
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
 
-    seperate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
+    separate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
     csv_valid_format:   "Houve um problema ao interpretar o arquivo CSV enviado. Verifique se é um formato CSV válido, e que cada linha termina com os caracteres carriage-return. Nenhuma alteração realizada. "
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
     csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
@@ -771,16 +771,6 @@ pt:
         fail: "Fracassado"
         error: "UPDATE ME"
         extra_info: "UPDATE ME"
-      error:
-        after_due_date: "Você não pode executar o teste pois a sua entrega está fora do prazo"
-        after_release: "UPDATE ME"
-        already_enqueued: "UPDATE ME"
-        bad_group: "UPDATE ME"
-        not_enabled: "UPDATE ME"
-        no_tas: "UPDATE ME"
-        no_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
-        no_test_files: "UPDATE ME"
-        no_tokens_yet: "Nenhum tokens dado"
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
