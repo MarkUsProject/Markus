@@ -45,4 +45,18 @@ class PeerReview < ApplicationRecord
       return peer_review
     end
   end
+
+  # Deletes a peer review between the reviewer and reviewee groupings,
+  # otherwise if none exists returns nil
+  def self.delete_peer_review_between(reviewer, reviewee)
+    if review_exists_between?(reviewer, reviewee)
+      peer_review = reviewer.review_for(reviewee)
+      peer_review.destroy
+    end
+  end
+
+  # Deletes all peer reviewers for the reviewee groupings
+  def self.delete_all_peer_reviews_for(reviewee_id)
+    PeerReview.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).delete_all
+  end
 end

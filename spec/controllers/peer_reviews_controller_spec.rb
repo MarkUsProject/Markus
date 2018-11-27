@@ -190,8 +190,8 @@ describe PeerReviewsController do
 
     context 'selected reviewer for selected reviewees' do
       before :each do
-        @reviewer = Grouping.where(id: @selected_reviewer_group_ids[0]).first
-        @reviewee = Grouping.where(id: @selected_reviewee_group_ids[1]).first
+        @reviewer = Grouping.find_by_id(@selected_reviewer_group_ids[0])
+        @reviewee = Grouping.find_by_id(@selected_reviewee_group_ids[1])
         selected_group = {}
         selected_group[@reviewer.id] = true
         selected = {}
