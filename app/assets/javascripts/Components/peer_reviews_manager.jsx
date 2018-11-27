@@ -136,6 +136,9 @@ class PeerReviewsManager extends React.Component {
   }
 }
 
+PeerReviewsManager.defaultProps = {
+  showSections: false
+};
 
 class RawReviewersTable extends React.Component {
   getColumns = () => {
@@ -149,7 +152,7 @@ class RawReviewersTable extends React.Component {
         Header: I18n.t('activerecord.models.section', {count: 1}),
         accessor: 'section',
         id: 'section',
-        show: this.props.showSections || false,
+        show: this.props.showSections,
         minWidth: 70,
         Cell: ({value}) => {
           return value === '-' ? '' : value;
@@ -198,7 +201,7 @@ class RawReviewersTable extends React.Component {
 
   render() {
     const hashmap = this.props.reviewerToNumReviews;
-    const groups_data = this.props.groups.map( (group) => {
+    const groups_data = this.props.groups.map((group) => {
       let numReviews = 0;
       if (hashmap.hasOwnProperty(group.id)) {
         numReviews = hashmap[group.id];
@@ -244,7 +247,7 @@ class RawRevieweesTable extends React.Component {
         Header: I18n.t('activerecord.models.section', {count: 1}),
         accessor: 'section',
         id: 'section',
-        show: this.props.showSections || false,
+        show: this.props.showSections,
         minWidth: 70,
         Cell: ({value}) => {
           return value === '-' ? '' : value;
