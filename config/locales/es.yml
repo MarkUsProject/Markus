@@ -1087,6 +1087,7 @@ es:
       submissions_job: "%{progress}/%{total} Envíos recibidos"
     repo:
       commits:
+        assignment_folder: "UPDATE ME %{assignment}"
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"

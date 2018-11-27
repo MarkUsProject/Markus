@@ -961,6 +961,7 @@ en:
       submissions_job: "%{progress}/%{total} Submissions collected"
     repo:
       commits:
+        assignment_folder: "Create assignment folder for %{assignment}"
         initial: "Initial commit"
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
