@@ -528,16 +528,18 @@ class Grouping < ApplicationRecord
         revision = repo.get_latest_revision
       end
       begin
-        self.assignment.access_repo do |starter_repo|
+        self.assignment.access_starter_code_repo do |starter_repo|
           starter_revision = starter_repo.get_latest_revision
           if starter_revision.path_exists?(assignment_folder)
-            txn = repo.get_transaction('Markus')
+            txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+                                                        assignment: self.assignment.short_identifier))
             starter_revision.tree_at_path(assignment_folder).each do |starter_file_name, starter_obj|
               starter_file_path = File.join(assignment_folder, starter_file_name)
               if starter_obj.is_a? Repository::RevisionDirectory
                 txn.add_path(starter_file_path)
               elsif revision.path_exists? starter_file_path
-                txn.replace(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type, revision.revision_identifier)
+                txn.replace(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type,
+                            revision.revision_identifier)
               else
                 txn.add(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type)
               end

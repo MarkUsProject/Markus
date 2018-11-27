@@ -960,3 +960,4 @@ fr:
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
+        starter_code: "UPDATE ME %{assignment}"

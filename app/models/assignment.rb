@@ -132,7 +132,7 @@ class Assignment < ApplicationRecord
 
   validate :minimum_number_of_groups
 
-  after_create :build_repository
+  after_create :build_starter_code_repo
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
@@ -1094,42 +1094,42 @@ class Assignment < ApplicationRecord
 
   ### REPO ###
 
-  def build_repository
+  def build_starter_code_repo
     return unless MarkusConfigurator.markus_config_repository_admin?
     return unless can_upload_starter_code?
     repo_dir = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
-    unless Repository.get_class.repository_exists?(repo_dir)
-      begin
-        Repository.get_class.create(repo_dir) # TODO: avoid creating hooks
-        access_repo do |repo|
-          txn = repo.get_transaction('Markus', "Add directory for assignment #{self.short_identifier}")
-          txn.add_path(self.repository_folder)
-          repo.commit(txn)
-        end
-      rescue StandardError => e
-        errors.add(:base, repo_dir)
-        m_logger = MarkusLogger.instance
-        m_logger.log("Creating repository '#{repo_dir}' failed with '#{e.message}'", MarkusLogger::ERROR)
+    begin
+      unless Repository.get_class.repository_exists?(repo_dir)
+        Repository.get_class.create(repo_dir, with_hooks: false)
       end
+      access_starter_code_repo do |repo|
+        txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
+        txn.add_path(self.repository_folder)
+        repo.commit(txn)
+      end
+    rescue StandardError => e
+      errors.add(:base, repo_dir)
+      m_logger = MarkusLogger.instance
+      m_logger.log("Creating repository '#{repo_dir}' failed with '#{e.message}'", MarkusLogger::ERROR)
     end
   end
 
-  def repo_loc
+  def starter_code_repo_path
     repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
     unless Repository.get_class.repository_exists?(repo_loc)
-      raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
+      raise 'Repository not found'
     end
     repo_loc
   end
 
   # Return a repository object, if possible
-  def repo
-    Repository.get_class.open(repo_loc)
+  def starter_code_repo
+    Repository.get_class.open(starter_code_repo_path)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
-  def access_repo(&block)
-    Repository.get_class.access(repo_loc, &block)
+  def access_starter_code_repo(&block)
+    Repository.get_class.access(starter_code_repo_path, &block)
   end
 
   # Repository authentication subtleties:
