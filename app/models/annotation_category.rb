@@ -10,6 +10,7 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :assignment
   validates_associated :assignment,
+                       on: :create,
                        message: 'not strongly associated with assignment'
 
   # Takes an array of comma separated values, and tries to assemble an

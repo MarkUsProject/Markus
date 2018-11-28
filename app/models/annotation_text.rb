@@ -8,6 +8,7 @@ class AnnotationText < ApplicationRecord
 
   belongs_to :annotation_category, optional: true, counter_cache: true
   validates_associated :annotation_category,
+                       on: :create,
                        message: 'annotation_category associations failed'
 
   #Find creator, return nil if not found
