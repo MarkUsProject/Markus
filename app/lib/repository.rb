@@ -341,13 +341,14 @@ module Repository
       @path = args[:path]
       @last_modified_revision = args[:last_modified_revision]
       @last_modified_date = args[:last_modified_date]
+      @submitted_date = args[:submitted_date]
       @changed = args[:changed]
       @user_id = args[:user_id]
       @mime_type = args[:mime_type]
       @from_revision = from_revision
     end
 
-    attr_accessor :name, :path, :last_modified_revision, :changed
+    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date
     attr_accessor :from_revision, :user_id, :mime_type, :last_modified_date
 
   end # end class File
@@ -359,12 +360,13 @@ module Repository
       @path = args[:path]
       @last_modified_revision = args[:last_modified_revision]
       @last_modified_date = args[:last_modified_date]
+      @submitted_date = args[:submitted_date]
       @changed = args[:changed]
       @user_id = args[:user_id]
       @from_revision = from_revision
     end
 
-    attr_accessor :name, :path, :last_modified_revision, :changed
+    attr_accessor :name, :path, :last_modified_revision, :changed, :submitted_date
     attr_accessor :from_revision, :user_id, :last_modified_date
 
   end # end class File

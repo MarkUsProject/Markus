@@ -1,5 +1,7 @@
 class TasController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action do |_|
+    authorize! with: UserPolicy
+  end
 
   layout 'assignment_content'
 
@@ -90,6 +92,7 @@ class TasController < ApplicationController
   end
 
   def flash_interpolation_options
-    { resource_name: @user.user_name }
+    { resource_name: @user.user_name.blank? ? @user.model_name.human : @user.user_name,
+      errors: @user.errors.full_messages.join('; ')}
   end
 end

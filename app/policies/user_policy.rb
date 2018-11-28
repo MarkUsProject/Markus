@@ -1,9 +1,11 @@
 class UserPolicy < ApplicationPolicy
-  def create?
+  # Default rule: only admins can manage users.
+  def manage?
     user.admin?
   end
 
-  def update?
-    user.admin?
+  # No one can delete users.
+  def destroy?
+    false
   end
 end

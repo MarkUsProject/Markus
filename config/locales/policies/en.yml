@@ -1,0 +1,16 @@
+en:
+  action_policy:
+    policy:
+      assignment:
+        before_due_date?: "You cannot run tests because the due date for this assignment has passed."
+        enabled?: "You cannot run tests because they are not enabled for this assignment."
+        not_a_ta?: "You cannot run tests because graders are not allowed to."
+        test_scripts_uploaded?: "You cannot run tests because there are no test scripts configured."
+        tokens_released?: "You cannot run tests because tokens are not available yet."
+      grouping:
+        member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
+        not_in_progress?: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results."
+        tokens_available?: "You cannot run tests because you or your group do not have tokens available."
+      submission:
+        before_release?: "You cannot run tests because the marks have been released."
+        not_a_student?: "You cannot run tests because students are not allowed to."

@@ -1,31 +1,37 @@
 describe UserPolicy do
-  let(:admin) { Admin.new(user_name: 'admin', type: User::ADMIN) }
-  let(:ta) { Ta.new(user_name: 'ta', type: User::TA) }
-  let(:student) { Student.new(user_name: 'student', type: User::STUDENT) }
+  include PolicyHelper
 
-  subject { described_class }
+  describe '#manage?' do
+    subject { described_class.new(user: user) }
 
-  permissions :create? do
-    it 'allows admins to create users' do
-      expect(subject).to permit(admin, User)
+    context 'when the user is admin' do
+      let(:user) { build(:admin) }
+      it { is_expected.to pass :manage? }
     end
-    it 'forbids tas to create users' do
-      expect(subject).not_to permit(ta, User)
+    context 'when the user is ta' do
+      let(:user) { build(:ta) }
+      it { is_expected.not_to pass :manage? }
     end
-    it 'forbids students to create users' do
-      expect(subject).not_to permit(student, User)
+    context 'when the user is student' do
+      let(:user) { build(:student) }
+      it { is_expected.not_to pass :manage? }
     end
   end
 
-  permissions :update? do
-    it 'allows admins to update users' do
-      expect(subject).to permit(admin, User)
+  describe '#destroy?' do
+    subject { described_class.new(user: user) }
+
+    context 'when the user is admin' do
+      let(:user) { build(:admin) }
+      it { is_expected.not_to pass :destroy? }
     end
-    it 'forbids tas to update users' do
-      expect(subject).not_to permit(ta, User)
+    context 'when the user is ta' do
+      let(:user) { build(:ta) }
+      it { is_expected.not_to pass :destroy? }
     end
-    it 'forbids students to update users' do
-      expect(subject).not_to permit(student, User)
+    context 'when the user is student' do
+      let(:user) { build(:student) }
+      it { is_expected.not_to pass :destroy? }
     end
   end
 end

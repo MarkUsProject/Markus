@@ -13,3 +13,18 @@ en:
     criteria:
       destroy:
         success: "Criterion and all associated marks were successfully deleted."
+    students:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
+    admins:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
+    tas:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."

@@ -271,7 +271,10 @@ es:
         number_per_group:                     "Número de Revisiones de Compañeros por grupo"
         number_assigned_reviewers:            "Número de Revisores Asignados"
         peer_review:                          "Revisión de pares"
-
+        action:
+            assign:                           "Asignar Revisor (es) Peer"
+            unassign:                         "Desasignar Revisor (es) Peer"
+            random_assign:                    "Asignar Revisores al Azar"
         download:
             assigned_reviewers_header: "Descargar proyectos de Revisión de Compañeros"
             assigned_reviewers_csv:    "CSV que vincula el grupo del revisor y el revisado."
@@ -420,7 +423,7 @@ es:
                                    sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                    ellos tenga su nota correspondiente."
 
-    seperate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
+    separate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
     csv_valid_format:                    "Un problema ha ocurrido con el análisis sintáctico del archivo en formato CSV
                                           que ha sido subido. Por favor asegúrese que el archivo tenga un formato CSV
                                           válido y que cada línea termine en un carriage-return o un line-feed.
@@ -959,15 +962,12 @@ es:
       revision_used_for_test:             "<span class='prop_label'>Revisión usada:</span> %{revision}"
       information:                        "Información"
       run_tests:                          "Lanzar pruebas"
-      test_run_info:                      "UPDATE ME %{test_run_id} %{created_at}"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
       test_run:                           "Lanzar prueba"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
-                                           pruebas.<br><br>Si usted ya ha entregado el archivo y desea ejecutar las
-                                           pruebas en el mismo, use el botón \"Lanzar pruebas\" localizado en la parte
-                                           inferior."
+                                           pruebas."
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
       collect_and_test:                   "Recolectar y Preparar Prueba"
@@ -1023,17 +1023,14 @@ es:
            display_after_submission: "Mostrar después de realizar la entrega"
            display_after_collection: "Mostrar después de realizar la recolección"
       token:
-        tokens_form:              "Las fichas están disponibles por grupo"
-        tokens_regenerate:        "Y regenera todo/a"
-        token_start_date:         "<span class=\"prop_label\">Las fichas disponibles empiezan en:</span> %{date}"
-        tokens_per_period:        "<span class=\"prop_label\">Fichas por %{regeneration_period} hora(s):</span> %{tokens}"
-        tokens_not_given_yet:     "<span class=\"prop_label\">Fichas disponibles:</span> No se han dado fichas todavía"
-        tokens_no_more_available: "<span class=\"prop_label\">Fichas disponibles:</span >No existen más fichas
-                                   disponibles "
-        tokens_available:         "<span class=\"prop_label\">Fichas disponibles:</span> %{tokens}"
-        unlimited_tokens:         "<span class=\"prop_label\">Fichas disponibles:</span> Ilimitado"
-        unlimited:                "Ilimitado"
-        hours:                    "horas"
+        start_date: "Las fichas disponibles empiezan en:"
+        available: "Fichas disponibles:"
+        unlimited: "Ilimitado"
+        per_period: "Fichas por %{period} hora(s):"
+        tokens_form: "Las fichas están disponibles por grupo"
+        tokens_regenerate: "Y regenera todo/a"
+        hours: "horas"
+        no_regeneration: "UPDATE ME"
       test_results_table:
         time: "UPDATE ME"
         file_name: "UPDATE ME"
@@ -1104,3 +1101,8 @@ es:
       create_individual_groups_job: "%{progress}/%{total} grupos creados"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
+    repo:
+      commits:
+        initial: "UPDATE ME"
+        default: "UPDATE ME"
+        required_files: "UPDATE ME %{assignment}"

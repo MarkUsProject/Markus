@@ -188,6 +188,10 @@ pt:
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
         number_per_group: "Número de avaliações pelos pares por grupo"
         number_assigned_reviewers: "Número atribuído revisores"
+        action:
+            assign: "Atribuir revisores de pares"
+            unassign: "Cancelar a atribuição de revisores"
+            random_assign: "Atribuir aleatoriamente revisores"
         download:
             assigned_reviewers_header: "Download de Avaliação pelos Pares Atribuições"
             assigned_reviewers_csv: "Revisor grupo reviewee ao grupo CSV"
@@ -317,7 +321,7 @@ pt:
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
 
-    seperate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
+    separate_multiple_with_commas:  "Sepere nomes de usuários com vírgulas"
     csv_valid_format:   "Houve um problema ao interpretar o arquivo CSV enviado. Verifique se é um formato CSV válido, e que cada linha termina com os caracteres carriage-return. Nenhuma alteração realizada. "
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
     csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
@@ -693,13 +697,11 @@ pt:
       revision_used_for_test: "<span class=\"prop_label\">Revisão utilizada:</span> %{revision}"
       information: "Informação"
       run_tests: "Executar testes"
-      test_run_info: "UPDATE ME %{test_run_id} %{created_at}"
       stop_test: "UPDATE ME"
       stop_batch: "UPDATE ME"
       test_run: "Execução de Teste"
       tests_running: "UPDATE ME"
-      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes.<br>
-                      Se você já enviou um arquivo e que executar os testes nele, use o botao \"Coletar e preparar testes\" abaixo."
+      need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
       collect_and_test: "Colete e prepare os testes"
       new_test_script_file: "UPDATE ME"
@@ -754,12 +756,14 @@ pt:
            display_after_submission: "UPDATE ME"
            display_after_collection: "UPDATE ME"
       token:
+        start_date: "UPDATE ME:"
+        available: "Tokens disponíveis:"
+        unlimited: "UPDATE ME"
+        per_period: "Tokens por %{period} hora(s):"
         tokens_form: "Tokens disponíveis por grupo por dia"
-        tokens_per_day: "<span class=\"prop_label\">Tokens por dia:</span> %{tokens}"
-        tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
+        tokens_regenerate: "UPDATE ME"
+        hours: "horas"
         no_regeneration: "Sem regeneração"
-        tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
-        tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
       test_results_table:
         time: "UPDATE ME"
         file_name: "UPDATE ME"
@@ -829,3 +833,8 @@ pt:
       create_individual_groups_job: "%{progress}/%{total} grupos criados"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
+    repo:
+      commits:
+        initial: "UPDATE ME"
+        default: "UPDATE ME"
+        required_files: "UPDATE ME %{assignment}"

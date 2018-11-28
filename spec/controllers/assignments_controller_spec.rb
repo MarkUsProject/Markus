@@ -99,21 +99,9 @@ describe AssignmentsController do
 
   context 'CSV_Downloads' do
     let(:csv_options) do
-      {
-        type: 'text/csv',
-        filename: 'assignment_list.csv',
-        disposition: 'attachment'
-      }
+      { type: 'text/csv', filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv" }
     end
-
-    before :each do
-      # for some reason, assignments aren't always cleared from the db
-      # before these tests
-      Assignment.all.each do |asn|
-        asn.delete
-      end
-      @assignment = FactoryBot.create(:assignment)
-    end
+    let!(:assignment) { create(:assignment) }
 
     it 'responds with appropriate status' do
       get :download_assignment_list, params: { file_format: 'csv' }
@@ -141,7 +129,7 @@ describe AssignmentsController do
       # generate the expected csv string
       csv_data = []
       DEFAULT_FIELDS.map do |f|
-        csv_data << @assignment.send(f.to_s)
+        csv_data << assignment.send(f.to_s)
       end
       expect(@controller).to receive(:send_data)
                                .with(csv_data.join(',') + "\n", csv_options) {
@@ -162,7 +150,7 @@ describe AssignmentsController do
       get :download_assignment_list, params: { file_format: 'csv' }
       filename = response.header['Content-Disposition']
         .split.last.split('"').second
-      expect(filename).to eq 'assignment_list.csv'
+      expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv"
     end
   end
 end

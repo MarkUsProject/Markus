@@ -79,6 +79,8 @@ import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 window.makeSubmissionTable = makeSubmissionTable;
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 window.makeMarksGradersManager = makeMarksGradersManager;
+import { makePeerReviewsManager } from 'javascripts/Components/peer_reviews_manager';
+window.makePeerReviewsManager = makePeerReviewsManager;
 import { makeGroupsManager } from 'javascripts/Components/groups_manager';
 window.makeGroupsManager = makeGroupsManager;
 import { makeGradersManager } from 'javascripts/Components/graders_manager';

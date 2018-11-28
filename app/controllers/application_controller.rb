@@ -3,6 +3,8 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
 
+  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+
   # responder set up
   self.responder = ApplicationResponder
   respond_to :html
@@ -96,5 +98,11 @@ class ApplicationController < ActionController::Base
       end
     end
     flash.discard
+  end
+
+  def user_not_authorized
+    render 'shared/http_status',
+           formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
+           status: 403, layout: false
   end
 end
