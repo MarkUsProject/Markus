@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-import {stringFilter} from './table_helpers';
+import {stringFilter} from './Helpers/table_helpers';
 
 
 class RawStudentTable extends React.Component {

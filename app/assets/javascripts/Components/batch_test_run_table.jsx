@@ -1,7 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
-import {dateSort} from './table_helpers';
+import {dateSort} from './Helpers/table_helpers';
 
 const makeDefaultState = () => ({
   data: [],

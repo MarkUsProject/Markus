@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {stringFilter} from './table_helpers';
+import {stringFilter} from './Helpers/table_helpers';
 
 class CourseSummaryTable extends React.Component {
   constructor() {
