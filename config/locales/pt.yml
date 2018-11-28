@@ -183,6 +183,10 @@ pt:
         cannot_allow_reviewer_to_be_reviewee: "Um estudante não pode ser um revisor e reviewee"
         number_per_group: "Número de avaliações pelos pares por grupo"
         number_assigned_reviewers: "Número atribuído revisores"
+        action:
+            assign: "Atribuir revisores de pares"
+            unassign: "Cancelar a atribuição de revisores"
+            random_assign: "Atribuir aleatoriamente revisores"
         download:
             assigned_reviewers_header: "Download de Avaliação pelos Pares Atribuições"
             assigned_reviewers_csv: "Revisor grupo reviewee ao grupo CSV"

@@ -31,15 +31,21 @@ class PeerReviewsController < ApplicationController
   def populate
     @assignment = Assignment.find(params[:assignment_id])
 
-    reviewer_groups = get_groupings_table_info()
+    reviewer_groups = get_groupings_table_info
     reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
 
     reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
     num_reviews_map = PeerReview.group(:reviewer_id).having(reviewer_id: reviewer_groups.map { |g| g['id'] }).count
 
-    render json: [reviewer_groups, reviewee_groups, reviewee_to_reviewers_map,
-                  id_to_group_names_map, num_reviews_map]
+    render json: {
+      reviewer_groups: reviewer_groups,
+      reviewee_groups: reviewee_groups,
+      reviewee_to_reviewers_map: reviewee_to_reviewers_map,
+      id_to_group_names_map: id_to_group_names_map,
+      num_reviews_map: num_reviews_map,
+      sections: Hash[Section.all.pluck(:id, :name)]
+    }
   end
 
   def show_reviews
@@ -50,10 +56,10 @@ class PeerReviewsController < ApplicationController
     if !pr.nil?
       redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)
     else
-      render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                       message: HttpStatusHelper::ERROR_CODE[
-                           'message']['404'] }, status: 404,
+      render 'shared/http_status',
+             formats: [:html],
+             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404,
              layout: false
     end
   end
@@ -133,17 +139,17 @@ class PeerReviewsController < ApplicationController
   def unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
     # First do specific unassigning.
     reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
-      reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+      reviewer_id_to_bool.each do |reviewer_id, _|
         reviewee_group = Grouping.find_by_id(reviewee_id)
         reviewer_group = Grouping.find_by_id(reviewer_id)
         peer_review = reviewer_group.review_for(reviewee_group)
-        peer_review.destroy
+        peer_review&.destroy
       end
     end
 
     PeerReview.joins(result: :submission)
-      .where(submissions: { grouping_id: selected_reviewee_group_ids })
-      .delete_all
+              .where(submissions: { grouping_id: selected_reviewee_group_ids })
+              .delete_all
   end
 
   # Create a mapping of reviewer grouping -> set(reviewee groupings)
@@ -164,8 +170,7 @@ class PeerReviewsController < ApplicationController
       data.unshift(reviewer.group.group_name)
     end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline',
-              filename: 'peer_review_group_to_group_mapping.csv')
+    send_data(file_out, type: 'text/csv', disposition: 'inline', filename: 'peer_review_group_to_group_mapping.csv')
   end
 
   def csv_upload_handler
@@ -180,7 +185,7 @@ class PeerReviewsController < ApplicationController
       result = MarkusCSV.parse(pr_mapping.read, encoding: encoding) do |row|
         raise CSVInvalidLineError if row.size < 2
         reviewer = Group.find_by(group_name: row.first).grouping_for_assignment(assignment_id)
-        row.shift  # Drop the reviewer, the rest are reviewees and makes iteration easier.
+        row.shift # Drop the reviewer, the rest are reviewees and makes iteration easier.
         row.each do |reviewee_group_name|
           reviewee = Group.find_by(group_name: reviewee_group_name).grouping_for_assignment(parent_assignment_id)
           PeerReview.create_peer_review_between(reviewer, reviewee)
@@ -198,6 +203,7 @@ class PeerReviewsController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_peer_review
     @peer_review = PeerReview.find(params[:id])
