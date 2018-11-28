@@ -1355,7 +1355,7 @@ class Assignment < ApplicationRecord
           base[:marking_state] = result[2]
         end
       else
-        base[:marking_state] = I18n.t('results.state.not_collected')
+        base[:marking_state] = 'not_collected'
       end
 
       base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]
