@@ -8,9 +8,9 @@ class Annotation < ApplicationRecord
   validates_presence_of     :annotation_number
   validates_inclusion_of    :is_remark, in: [true, false]
 
-  validates_associated      :submission_file
-  validates_associated      :annotation_text
-  validates_associated      :result
+  validates_associated      :submission_file, on: :create
+  validates_associated      :annotation_text, on: :create
+  validates_associated      :result, on: :create
 
   validates_numericality_of :annotation_number,
                             only_integer: true,
