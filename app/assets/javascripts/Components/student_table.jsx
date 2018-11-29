@@ -243,6 +243,9 @@ class StudentsActionBox extends React.Component {
                disabled={this.props.disabled}
                value={I18n.t('apply')}>
         </input>
+        <input type="hidden"
+               name="authenticity_token"
+               value={AUTH_TOKEN} />
       </form>
     );
   };
