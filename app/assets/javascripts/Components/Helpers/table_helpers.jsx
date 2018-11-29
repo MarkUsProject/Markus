@@ -6,8 +6,8 @@
 
 export function stringFilter(filter, row) {
   /** Case insensitive, locale aware, string filter function */
-  return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase())
-}
+  return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
+};
 
 export function dateSort(a, b) {
   /** Sort values as dates */
@@ -18,5 +18,4 @@ export function dateSort(a, b) {
   } else {
     return a > b ? 1 : -1;
   }
-}
-
+};
