@@ -90,14 +90,14 @@ class Result < ApplicationRecord
 
   # The sum of the bonuses deductions and late penalties
   #
-  # If the +max_mark+ value is nil, its value will be determined dynamically.
+  # If the +max_mark+ value is nil, its value will be determined dynamically
   # based on the max_mark value of the associated assignment.
   # However, passing the +max_mark+ value explicitly is more efficient if we are
   # repeatedly calling this method where the max_mark doesn't change, such as when
   # all the results are associated with the same assignment.
   #
-  # +user_visibility+ is passed to the Assignment.max_mark method to determin the
-  # max_mark value only if the +max_mark+ argument is nil
+  # +user_visibility+ is passed to the Assignment.max_mark method to determine the
+  # max_mark value only if the +max_mark+ argument is nil.
   def get_total_extra_marks(max_mark: nil, user_visibility: :ta)
     extras = extra_marks.pluck_to_hash(:extra_mark, :unit).group_by { |d| d['unit'] }
     extras&.transform_values! { |a| a.map { |h| h['extra_mark'] } }

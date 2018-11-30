@@ -677,7 +677,7 @@ class Assignment < ApplicationRecord
                     .where('memberships.user_id': user.id)
     end
 
-    maximum_mark = max_mark(user.admin? ? :all : :ta)
+    maximum_mark = max_mark
     grouping_data = groupings.map do |g|
       result = g.current_result
       {
