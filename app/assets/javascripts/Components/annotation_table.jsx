@@ -69,12 +69,12 @@ class AnnotationTable extends React.Component {
       Header: I18n.t('annotations.text'),
       accessor: 'content',
       Cell: data => {
-        let edit_button = ""
+        let edit_button = "";
         if (!this.props.released_to_students) {
           edit_button = <a
             href="#"
             className="edit-icon"
-            title={I18n.t('remove')}
+            title={I18n.t('edit')}
             onClick={() => this.editAnnotation(data.original.id)}
           />
         }
@@ -88,7 +88,7 @@ class AnnotationTable extends React.Component {
     },
   ];
 
-   detailedColumns = [
+  detailedColumns = [
     {
       Header: I18n.t('activerecord.attributes.annotation.creator'),
       accessor: 'creator',
@@ -110,7 +110,7 @@ class AnnotationTable extends React.Component {
 
   editAnnotation = (annot_id) => {
     $.ajax({
-      url:  Routes.edit_annotation_path(annot_id, {locale: I18n.locale}),
+      url: Routes.edit_annotation_path(annot_id, {locale: I18n.locale}),
       method: 'GET',
       data: {
         id: annot_id,
@@ -130,14 +130,6 @@ class AnnotationTable extends React.Component {
       dataType: 'script'
     }).then(this.fetchData())
   };
-
-  static editColumns = [
-    {
-      // Header: I18n.t('actions'),
-      accessor: 'action',
-      maxWidth: 100
-    }
-  ];
 
   componentDidMount() {
     this.fetchData();
