@@ -47,6 +47,9 @@ module Markus
     # NOTE: This didn't work when put in config/initializers/responders.rb.
     config.responders.flash_keys = [:success, :error]
 
+    # Use per form CSRF tokens for all controllers
+    Rails.configuration.action_controller.per_form_csrf_tokens = true
+
     # TODO review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib
