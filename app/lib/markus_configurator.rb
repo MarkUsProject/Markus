@@ -441,4 +441,12 @@ module MarkusConfigurator
     end
   end
 
+  def markus_job_update_starter_code_queue_name
+    if defined? JOB_UPDATE_STARTER_CODE
+      JOB_UPDATE_STARTER_CODE
+    else
+      'jobs'
+    end
+  end
+
 end

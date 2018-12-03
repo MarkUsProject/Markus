@@ -1139,6 +1139,32 @@ class Assignment < ApplicationRecord
     Repository.get_class.access(starter_code_repo_path, &block)
   end
 
+  # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
+  # try to mitigate concurrent accesses to those repos.
+  def each_group_repo
+    failed_groups = []
+    self.groupings.each do |grouping|
+      begin
+        group = grouping.group
+        group.access_repo do |repo|
+          yield(repo)
+        end
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groups << group
+      end
+    end
+    failed_groups.each do |group|
+      begin
+        group.access_repo do |repo|
+          yield(repo)
+        end
+      rescue StandardError
+        # give up
+      end
+    end
+  end
+
   # Repository authentication subtleties:
   # 1) a repository is associated with a Group, but..
   # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
