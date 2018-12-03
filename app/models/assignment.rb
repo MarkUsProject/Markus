@@ -1097,10 +1097,9 @@ class Assignment < ApplicationRecord
   def build_starter_code_repo
     return unless MarkusConfigurator.markus_config_repository_admin?
     return unless can_upload_starter_code?
-    repo_dir = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
     begin
-      unless Repository.get_class.repository_exists?(repo_dir)
-        Repository.get_class.create(repo_dir, with_hooks: false)
+      unless Repository.get_class.repository_exists?(starter_code_repo_path)
+        Repository.get_class.create(starter_code_repo_path, with_hooks: false)
       end
       access_starter_code_repo do |repo|
         txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
@@ -1108,27 +1107,29 @@ class Assignment < ApplicationRecord
         repo.commit(txn)
       end
     rescue StandardError => e
-      errors.add(:base, repo_dir)
+      errors.add(:base, starter_code_repo_path)
       m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{repo_dir}' failed with '#{e.message}'", MarkusLogger::ERROR)
+      m_logger.log("Creating repository '#{starter_code_repo_path}' failed with '#{e.message}'", MarkusLogger::ERROR)
     end
   end
 
   def starter_code_repo_path
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
-    unless Repository.get_class.repository_exists?(repo_loc)
-      raise 'Repository not found'
-    end
-    repo_loc
+    File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
   end
 
   # Return a repository object, if possible
   def starter_code_repo
+    unless Repository.get_class.repository_exists?(starter_code_repo_path)
+      raise 'Repository not found'
+    end
     Repository.get_class.open(starter_code_repo_path)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_starter_code_repo(&block)
+    unless Repository.get_class.repository_exists?(starter_code_repo_path)
+      raise 'Repository not found'
+    end
     Repository.get_class.access(starter_code_repo_path, &block)
   end
 
