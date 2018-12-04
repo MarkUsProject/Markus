@@ -353,6 +353,56 @@ private
     end
   end
 
+  # Check whether the time to wait after an incorrect login attempt has
+  # passed. This is checked based on the +user_name+ as well as the
+  # remote ip address the login attempt is coming from
+  def wait_for_login?(user_name)
+    login_info_dir = MarkusConfigurator.markus_login_info_dir
+    return false unless login_info_dir
+    check_files = [File.join(login_info_dir, user_name), File.join(login_info_dir, request.remote_ip)]
+    check_files.each do |file_path|
+      if File.file? file_path
+        time_stamp_info, time_offset = File.read(file_path).lines
+        begin
+          time_stamp = Time.parse(time_stamp_info, Time.current)
+        rescue ArgumentError
+          next
+        end
+        if (time_stamp + time_offset.to_i) > Time.current
+          return true
+        end
+      end
+    end
+    false
+  end
+
+  # Write files containing information about the amount of time required
+  # to wait until another login attempt can be made. This is based both on
+  # the +user_name+ as well as the remote ip address the login attempt is
+  # coming from
+  def write_wait_for_login(user_name)
+    login_info_dir = MarkusConfigurator.markus_login_info_dir
+    return unless login_info_dir
+    FileUtils.mkdir_p login_info_dir
+    write_files = [File.join(login_info_dir, user_name), File.join(login_info_dir, request.remote_ip)]
+    write_files.each do |file_path|
+      time_offset = File.file?(file_path) ? File.read(file_path).lines[1].to_i : 0
+      File.open(file_path, 'w') { |file| file.write("#{Time.current}\n#{time_offset+1}") }
+    end
+  end
+
+  # Delete files containing information about the amount of time require
+  # to wait until another login attempt can be made for a given +user_name+
+  # and from the the remote ip address the login attempt is coming from
+  def clear_wait_for_login(user_name)
+    login_info_dir = MarkusConfigurator.markus_login_info_dir
+    return unless login_info_dir
+    clear_files = [File.join(login_info_dir, user_name), File.join(login_info_dir, request.remote_ip)]
+    clear_files.each do |file_path|
+      FileUtils.rm_f(file_path)
+    end
+  end
+
   # Returns the user with user name "effective_user" from the database given that the user
   # with user name "real_user" is authenticated. Effective and real users might be the
   # same for regular logins and are different on an assume role call.
@@ -371,9 +421,20 @@ private
     if login
       # Two stage user verification: authentication and authorization
       ip = MarkusConfigurator.markus_config_validate_ip? ? request.remote_ip : nil
+
+      if wait_for_login?(real_user)
+        validation_result[:error] = I18n.t('wait_for_login')
+        return validation_result
+      end
+
       authenticate_response = User.authenticate(real_user,
                                                 password,
                                                 ip: ip)
+
+      if authenticate_response == User::AUTHENTICATE_BAD_PASSWORD
+        write_wait_for_login(real_user)
+      end
+
       if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
         validation_result[:error] = I18n.t('external_authentication_not_supported')
         return validation_result
@@ -409,6 +470,7 @@ private
 
     # All good, set error to nil. Let's be explicit.
     # Also, set the user key to found_user
+    clear_wait_for_login(real_user)
     validation_result[:error] = nil
     validation_result[:user] = found_user
     validation_result

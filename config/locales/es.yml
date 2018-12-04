@@ -922,6 +922,7 @@ es:
     external_authentication_not_supported: "La autenticación externa no es soportada en su plataforma!"
     account_disabled:                      "Esta cuenta ha sido desabilitada"
     additional_information:                "Información Adicional"
+    wait_for_login:                        "UPDATE ME"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

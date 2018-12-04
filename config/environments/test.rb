@@ -108,6 +108,14 @@ Markus::Application.configure do
   LOGOUT_REDIRECT = "DEFAULT"
 
   ###################################################################
+  # Directory to store files containing login information based on username
+  # and IP address. These files are used to slow down repeated login attempts
+  # with bad passwords in order to prevent a brute force password guessing
+  # attack
+
+  LOGIN_INFO_STORAGE = "#{::Rails.root.to_s}/data/test/logins"
+
+  ###################################################################
   # File storage (Repository) settings
   ###################################################################
   # Options for Repository_type are 'svn' and 'memory'

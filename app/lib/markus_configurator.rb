@@ -109,6 +109,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_login_info_dir
+    if defined? LOGIN_INFO_STORAGE
+      return LOGIN_INFO_STORAGE
+    else
+      return nil
+    end
+  end
+
   def markus_config_remote_user_auth
     if defined? REMOTE_USER_AUTH
       return REMOTE_USER_AUTH

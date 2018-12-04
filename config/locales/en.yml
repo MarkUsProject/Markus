@@ -800,6 +800,7 @@ en:
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
     additional_information: "Additional Information"
+    wait_for_login: "Please wait and try again"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

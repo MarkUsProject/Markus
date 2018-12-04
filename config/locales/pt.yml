@@ -669,6 +669,7 @@ pt:
     external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
     account_disabled: "Essa conta foi desativada"
     additional_information: "Informações Adicionais"
+    wait_for_login: "UPDATE ME"
 
     #app/helpers/submissions_helper.rb
     assign_folder_missing:      "Oh não! Falta pasta Assignment."

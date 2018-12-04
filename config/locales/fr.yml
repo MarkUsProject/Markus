@@ -673,6 +673,7 @@ fr:
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
     additional_information: "Informations Complémentaires"
+    wait_for_login: "Veuillez patienter et réessayer"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
