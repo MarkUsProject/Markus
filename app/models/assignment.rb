@@ -1144,8 +1144,8 @@ class Assignment < ApplicationRecord
   def each_group_repo
     failed_groups = []
     self.groupings.each do |grouping|
+      group = grouping.group
       begin
-        group = grouping.group
         group.access_repo do |repo|
           yield(repo)
         end
@@ -1163,6 +1163,38 @@ class Assignment < ApplicationRecord
         # give up
       end
     end
+  end
+
+  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil)
+    txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+                                                      assignment: self.short_identifier))
+    group_revision = group_repo.get_latest_revision
+    internal_file_names = Repository.get_class.internal_file_names
+    starter_tree.each do |starter_obj_name, starter_obj|
+      next if internal_file_names.include?(File.basename(starter_obj_name))
+      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
+      already_exists = group_revision.path_exists?(starter_obj_path)
+      next if already_exists && !overwrite
+      if starter_obj.is_a? Repository::RevisionDirectory
+        txn.add_path(starter_obj_path) unless already_exists
+      else # Repository::RevisionFile
+        if starter_files.nil? || !starter_files.has_key?(starter_obj_name) # handle cache of starter code files
+          starter_file = starter_repo.download_as_string(starter_obj)
+          unless starter_files.nil?
+            starter_files[starter_obj_name] = starter_file
+          end
+        else
+          starter_file = starter_files[starter_obj_name]
+        end
+        if already_exists
+          txn.replace(starter_obj_path, starter_file, starter_obj.mime_type, group_revision.revision_identifier)
+        else
+          txn.add(starter_obj_path, starter_file, starter_obj.mime_type)
+        end
+      end
+    end
+
+    txn
   end
 
   # Repository authentication subtleties:
