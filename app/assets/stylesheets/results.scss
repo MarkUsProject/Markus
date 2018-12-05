@@ -158,3 +158,15 @@ input:focus {
 .actual_output {
   white-space: normal !important;
 }
+
+.remove-icon::after {
+  content: asset_url('icons/cross.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.edit-icon::after {
+  content: asset_url('icons/pencil.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}

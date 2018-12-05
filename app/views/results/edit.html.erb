@@ -12,7 +12,8 @@
             submission_id: <%= @result.submission_id %>,
             assignment_id: <%= @result.submission.grouping.assignment_id %>,
             detailed: <%= @current_user.admin? || @current_user.ta? ||
-                          @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+                          @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+            released_to_students: <%= @result.released_to_students %>
           }
       );
 
