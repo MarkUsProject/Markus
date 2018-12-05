@@ -528,7 +528,7 @@ class Grouping < ApplicationRecord
         starter_revision = starter_repo.get_latest_revision
         next unless starter_revision.path_exists?(assignment_folder)
         starter_tree = starter_revision.tree_at_path(assignment_folder)
-        txn = self.assignment.update_starter_code_files(starter_repo, starter_tree, group_repo)
+        txn = self.assignment.update_starter_code_files(group_repo, starter_repo, starter_tree)
         if txn.has_jobs?
           result = group_repo.commit(txn)
           self.starter_code_revision_identifier = group_repo.get_latest_revision.revision_identifier
