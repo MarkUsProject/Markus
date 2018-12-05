@@ -159,10 +159,10 @@ input:focus {
   white-space: normal !important;
 }
 
-.remove-icon::after {
+.remove-icon::before {
   content: asset_url('icons/cross.png');
-  padding-left: 5px;
-  vertical-align: text-top;
+  padding-right: 5px;
+  vertical-align: middle;
 }
 
 .edit-icon::after {

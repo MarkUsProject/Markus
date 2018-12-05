@@ -21,7 +21,7 @@ class AnnotationTable extends React.Component {
     {
       Header: '#',
       id: 'number',
-      maxWidth: 40,
+      maxWidth: 50,
       resizeable: false,
       Cell: row => {
         let remove_button = "";
@@ -31,12 +31,14 @@ class AnnotationTable extends React.Component {
             className="remove-icon"
             title={I18n.t('remove')}
             onClick={() => this.removeAnnotation(row.original.id)}
-          />
+          />;
         }
         return (
           <div>
             {remove_button}
-            {row.original.number}
+            <span className="alignright">
+              {row.original.number}
+            </span>
           </div>
         );
       }
