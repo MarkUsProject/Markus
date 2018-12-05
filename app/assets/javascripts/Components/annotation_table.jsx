@@ -176,7 +176,7 @@ class AnnotationTable extends React.Component {
     } else {
       let newAnnotations = [...this.state.data];
       let i = newAnnotations.findIndex(a => a.id === annotation.id);
-      if (i) {
+      if (i >= 0) {
         // Manually copy the annotation.
         newAnnotations[i] = {...newAnnotations[i]};
         newAnnotations[i].content = annotation.content;
@@ -189,7 +189,7 @@ class AnnotationTable extends React.Component {
     let newAnnotations = [...this.state.data];
     let i = newAnnotations.findIndex(a => a.id === annotation_id);
 
-    if (i) {
+    if (i >= 0) {
       newAnnotations.splice(i, 1);
       this.setState({data: newAnnotations});
     }
