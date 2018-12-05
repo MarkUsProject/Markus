@@ -5807,10 +5807,10 @@ react-dom@^16.6.3:
     prop-types "^15.6.2"
     scheduler "^0.11.2"
 
-react-keyed-file-browser@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.1.tgz#945c9d206e7fc5c6573bd5265f1b08c08e7140e8"
-  integrity sha512-Ilu3KshNcbL0abeBBu8mwly7Blc1oE8RlWCYh0vSHN9fZM9YEdwSI1DQMd0SXw8F/JOJNDd/azyObLt634+hxw==
+react-keyed-file-browser@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.2.tgz#11bd07aba48d614b2ca6b90a00d449228f4ceb37"
+  integrity sha512-VBbDsY37auAfXcXIFd6UFtmUHVRQ7qdMOJwpkYNEJs55ubR/ALgVHxFfPTitXZT8lIHEvj0oYcQQcA/OIvAh/A==
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"
