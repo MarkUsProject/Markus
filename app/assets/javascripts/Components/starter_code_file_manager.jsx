@@ -78,7 +78,7 @@ class StarterCodeFileManager extends React.Component {
     let update = null;
     if (this.props.groupsExist) {
       update =
-        <form method="get" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
+        <form method="post" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
           <p>{I18n.t('assignment.starter_code.groups_exist')}</p>
           <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
           <input id="starter_code_overwrite" type="checkbox" name="overwrite" value="true"/>
