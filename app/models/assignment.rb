@@ -1057,11 +1057,6 @@ class Assignment < ApplicationRecord
     groupings.includes(:current_result).map(&:current_result)
   end
 
-  # TODO Make it more robust, to accept uploads after groupings are created
-  def can_upload_starter_code?
-    MarkusConfigurator.markus_starter_code_on && groups.size == 0
-  end
-
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
@@ -1101,8 +1096,7 @@ class Assignment < ApplicationRecord
   ### REPO ###
 
   def build_starter_code_repo
-    return unless MarkusConfigurator.markus_config_repository_admin?
-    return unless can_upload_starter_code?
+    return unless MarkusConfigurator.markus_config_repository_admin? && MarkusConfigurator.markus_starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
         Repository.get_class.create(starter_code_repo_path, with_hooks: false)

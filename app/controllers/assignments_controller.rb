@@ -482,12 +482,12 @@ class AssignmentsController < ApplicationController
     render json: entries
   end
 
-  def update_files
-    @assignment = Assignment.find(params[:id])
-    unless @assignment.can_upload_starter_code?
+  def upload_starter_code
+    unless MarkusConfigurator.markus_starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 
+    @assignment = Assignment.find(params[:id])
     students_filename = []
     path = params[:path] || '/'
     assignment_folder = File.join(@assignment.repository_folder, path)
@@ -562,6 +562,12 @@ class AssignmentsController < ApplicationController
         head :bad_request
       end
     end
+  end
+
+  def update_starter_code
+    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, false))
+    flash_message(:success, t('assignment.starter_code.enqueued'))
+    redirect_back(fallback_location: root_path)
   end
 
   def download_starter_code

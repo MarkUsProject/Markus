@@ -31,7 +31,7 @@ class StarterCodeFileManager extends React.Component {
       data.append('grouping_id', this.props.grouping_id);
     }
     $.post({
-      url: Routes.update_files_assignment_path(this.props.assignment_id),
+      url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: data,
       processData: false,  // tell jQuery not to process the data
       contentType: false   // tell jQuery not to set contentType
@@ -53,7 +53,7 @@ class StarterCodeFileManager extends React.Component {
     let file_revisions = {};
     file_revisions[file.key] = file.last_modified_revision;
     $.post({
-      url: Routes.update_files_assignment_path(this.props.assignment_id),
+      url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: {
         delete_files: [file.key],
         file_revisions: file_revisions,
@@ -75,33 +75,39 @@ class StarterCodeFileManager extends React.Component {
   };
 
   render() {
-    let message;
-    if (this.props.readOnly) {
-      message = I18n.t('assignment.starter_code_read_only');
-    } else {
-      message = I18n.t('assignment.starter_code_edit_html');
+    let update = null;
+    if (this.props.groupsExist) {
+      update =
+        <form method="post" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
+          <p>{I18n.t('assignment.starter_code.groups_exist')}</p>
+          <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
+          <input id="starter_code_overwrite" type="checkbox" name="overwrite" value="true"/>
+          <label for="starter_code_overwrite">{I18n.t('assignment.starter_code.overwrite')}</label>
+          <input type="submit" value={I18n.t('assignment.starter_code.update')}/>
+        </form>
     }
     return (
       <div>
-        <p>{I18n.t('repository_folder')}: {this.props.repo_url}</p>
-        <p>{message}</p>
+        <p>{I18n.t('assignment.starter_code.repo_url')}: {this.props.repo_url}</p>
+        <p>{I18n.t('assignment.starter_code.description')}</p>
 
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('student.submission.no_files_available')}
 
-          readOnly={this.props.readOnly}
-          onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
-          onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
+          readOnly={false}
+          onDeleteFile={this.handleDeleteFile}
+          onCreateFiles={this.handleCreateFiles}
           downloadAllURL={this.getDownloadAllURL()}
         />
+        {update}
       </div>
     );
   }
 }
 
 StarterCodeFileManager.defaultProps = {
-  readOnly: true,
+  groupsExist: false,
 };
 
 
