@@ -666,7 +666,7 @@ class Assignment < ApplicationRecord
                               :accepted_students,
                               :inviter,
                               :tas,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
     else
       groupings = self.groupings
                     .includes(:group,
@@ -713,22 +713,24 @@ class Assignment < ApplicationRecord
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
     else
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
                     .joins(:memberships)
                     .where('memberships.user_id': user.id)
     end
 
-    headers = [['User name', 'Group', 'Final grade', 'Bonus/Deductions'], ['', 'Out of', self.max_mark, '']]
+    headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
     criteria = self.get_criteria(:ta)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
+    headers[0] << 'Bonus/Deductions'
+    headers[1] << ''
 
     maximum_mark = max_mark(:all)
     CSV.generate do |csv|
@@ -744,8 +746,8 @@ class Assignment < ApplicationRecord
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row << result.get_total_extra_marks(max_mark: maximum_mark)
             row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row << result.get_total_extra_marks(max_mark: maximum_mark)
           end
           csv << row
         end
