@@ -475,7 +475,7 @@ class AssignmentsController < ApplicationController
   def populate_file_manager
     assignment = Assignment.find(params[:id])
     entries = []
-    assignment.access_repo do |repo|
+    assignment.access_starter_code_repo do |repo|
       revision = repo.get_latest_revision
       entries = get_all_file_data(revision, assignment, '')
     end
@@ -510,9 +510,10 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    @assignment.access_repo do |repo|
+    @assignment.access_starter_code_repo do |repo|
       # Create transaction, setting the author.
-      txn = repo.get_transaction(current_user.user_name)
+      txn = repo.get_transaction(current_user.user_name, I18n.t('repo.commits.starter_code',
+                                                                assignment: @assignment.short_identifier))
 
       # delete files marked for deletion
       delete_files.each do |filename|
@@ -569,7 +570,7 @@ class AssignmentsController < ApplicationController
 
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
-    assignment.access_repo do |repo|
+    assignment.access_starter_code_repo do |repo|
       if revision_identifier.nil?
         revision = repo.get_latest_revision
       else
