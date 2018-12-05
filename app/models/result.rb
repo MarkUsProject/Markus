@@ -99,13 +99,42 @@ class Result < ApplicationRecord
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
   def get_total_extra_marks(max_mark: nil, user_visibility: :ta)
-    extras = extra_marks.pluck_to_hash(:extra_mark, :unit).group_by { |d| d['unit'] }
-    extras&.transform_values! { |a| a.map { |h| h['extra_mark'] } }
-    points = (extras['points']&.sum || 0).round(1)
-    percs = (extras['percentage']&.sum || 0).round(1)
-    max_mark ||= submission.assignment.max_mark(user_visibility)
-    perc_points = (percs * max_mark / 100).round(1)
-    points + perc_points
+    Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
+  end
+
+  # The sum of the bonuses deductions and late penalties for multiple results.
+  # This returns a hash mapping the result ids from the +result_ids+ argument to
+  # the sum of all extra marks calculated for that result.
+  #
+  # If the +max_mark+ value is nil, its value will be determined dynamically
+  # based on the max_mark value of the associated assignment.
+  # However, passing the +max_mark+ value explicitly is more efficient if we are
+  # repeatedly calling this method where the max_mark doesn't change, such as when
+  # all the results are associated with the same assignment.
+  #
+  # +user_visibility+ is passed to the Assignment.max_mark method to determine the
+  # max_mark value only if the +max_mark+ argument is nil.
+  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta)
+    result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
+                        .where(id: result_ids)
+                        .pluck(:id, :extra_mark, :unit, 'assignments.id')
+    extra_marks_hash = Hash.new { |h,k| h[k] = 0 }
+    max_mark_hash = Hash.new
+    result_data.each do |id, extra_mark, unit, assignment_id|
+      if unit == 'points'
+        extra_marks_hash[id] += extra_mark.round(1)
+      elsif unit == 'percentage'
+        if max_mark
+          assignment_max_mark = max_mark
+        else
+          max_mark_hash[assignment_id] ||= Assignment.find(assignment_id)&.max_mark(user_visibility)
+          assignment_max_mark = max_mark_hash[assignment_id]
+        end
+        max_mark = max_mark_hash[assignment_id]
+        extra_marks_hash[id] = (extra_mark * assignment_max_mark / 100).round(1)
+      end
+    end
+    extra_marks_hash
   end
 
   # The sum of the bonuses and deductions, other than late penalty
