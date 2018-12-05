@@ -84,7 +84,7 @@ module Repository
 
     # Static method: Creates a new repository at given location; returns
     # an AbstractRepository instance, with the repository opened.
-    def self.create(connect_string)
+    def self.create(connect_string, with_hooks: false)
       raise NotImplementedError, "Repository::create Not yet implemented"
     end
 

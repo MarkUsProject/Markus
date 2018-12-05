@@ -197,6 +197,10 @@ en:
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
         peer_review: "Peer Review"
+        action:
+            assign: "Assign Peer Reviewer(s)"
+            unassign: "Unassign Peer Reviewer(s)"
+            random_assign: "Randomly Assign Reviewers"
         download:
             assigned_reviewers_header: "Download Peer Review Assignments"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
@@ -957,6 +961,8 @@ en:
       submissions_job: "%{progress}/%{total} Submissions collected"
     repo:
       commits:
+        assignment_folder: "Create assignment folder for %{assignment}"
         initial: "Initial commit"
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
+        starter_code: "Update starter code files for assignment %{assignment}"

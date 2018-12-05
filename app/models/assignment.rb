@@ -132,7 +132,7 @@ class Assignment < ApplicationRecord
 
   validate :minimum_number_of_groups
 
-  after_create :build_repository
+  after_create :build_starter_code_repo
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
@@ -145,7 +145,7 @@ class Assignment < ApplicationRecord
   after_save :create_peer_review_assignment_if_not_exist
 
   BLANK_MARK = ''
-  STARTER_CODE_REPO_FORMAT = "%s_starter_code"
+  STARTER_CODE_REPO_NAME = "starter-code"
 
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
@@ -666,7 +666,7 @@ class Assignment < ApplicationRecord
                               :accepted_students,
                               :inviter,
                               :tas,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
     else
       groupings = self.groupings
                     .includes(:group,
@@ -677,6 +677,7 @@ class Assignment < ApplicationRecord
                     .where('memberships.user_id': user.id)
     end
 
+    maximum_mark = max_mark
     grouping_data = groupings.map do |g|
       result = g.current_result
       {
@@ -685,10 +686,11 @@ class Assignment < ApplicationRecord
         members: g.accepted_students.map { |s| [s.user_name, s.first_name, s.last_name] },
         graders: user.admin? ? g.tas.map(&:user_name) : [],
         marking_state: g.marking_state(result, self, user),
-        final_grade: result && result.total_mark,
+        final_grade: result&.total_mark,
         criteria: result.nil? ? {} : result.mark_hash,
-        result_id: result && result.id,
-        submission_id: result && result.submission_id
+        result_id: result&.id,
+        submission_id: result&.submission_id,
+        total_extra_marks: result&.get_total_extra_marks(max_mark: maximum_mark)
       }
     end
     criteria_columns = self.get_criteria(:ta).map do |crit|
@@ -711,12 +713,12 @@ class Assignment < ApplicationRecord
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
     else
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: :marks)
+                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
                     .joins(:memberships)
                     .where('memberships.user_id': user.id)
     end
@@ -727,7 +729,10 @@ class Assignment < ApplicationRecord
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
+    headers[0] << 'Bonus/Deductions'
+    headers[1] << ''
 
+    maximum_mark = max_mark(:all)
     CSV.generate do |csv|
       csv << headers[0]
       csv << headers[1]
@@ -738,10 +743,11 @@ class Assignment < ApplicationRecord
         g.accepted_students.each do |s|
           row = [s.user_name, g.group.group_name]
           if result.nil?
-            row += Array.new(1 + criteria.length, nil)
+            row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
             row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row << result.get_total_extra_marks(max_mark: maximum_mark)
           end
           csv << row
         end
@@ -1094,53 +1100,43 @@ class Assignment < ApplicationRecord
 
   ### REPO ###
 
-  def self.repository_names
-    pluck(:short_identifier).map { |sid| STARTER_CODE_REPO_FORMAT % sid }
-  end
-
-  def repository_name
-    STARTER_CODE_REPO_FORMAT % short_identifier
-  end
-
-  def build_repository
-    # create repositories if and only if we are admin
-    return true unless MarkusConfigurator.markus_config_repository_admin?
-    # only create if we can add starter code
-    return true unless can_upload_starter_code?
+  def build_starter_code_repo
+    return unless MarkusConfigurator.markus_config_repository_admin?
+    return unless can_upload_starter_code?
     begin
-      Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
-    rescue Repository::RepositoryCollision => e
-      # log the collision
-      errors.add(:base, self.repository_name)
+      unless Repository.get_class.repository_exists?(starter_code_repo_path)
+        Repository.get_class.create(starter_code_repo_path, with_hooks: false)
+      end
+      access_starter_code_repo do |repo|
+        txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
+        txn.add_path(self.repository_folder)
+        repo.commit(txn)
+      end
+    rescue StandardError => e
+      errors.add(:base, starter_code_repo_path)
       m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{repository_name}' caused repository collision. " +
-                     "Error message: '#{e.message}'",
-                   MarkusLogger::ERROR)
+      m_logger.log("Creating repository '#{starter_code_repo_path}' failed with '#{e.message}'", MarkusLogger::ERROR)
     end
-    access_repo do |repo|
-      txn = repo.get_transaction('Markus')
-      txn.add_path(repository_folder)
-      repo.commit(txn)
-    end
-    true
   end
 
-  def repo_loc
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    unless Repository.get_class.repository_exists?(repo_loc)
-      raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
-    end
-    repo_loc
+  def starter_code_repo_path
+    File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
   end
 
   # Return a repository object, if possible
-  def repo
-    Repository.get_class.open(repo_loc)
+  def starter_code_repo
+    unless Repository.get_class.repository_exists?(starter_code_repo_path)
+      raise 'Repository not found'
+    end
+    Repository.get_class.open(starter_code_repo_path)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
-  def access_repo(&block)
-    Repository.get_class.access(repo_loc, &block)
+  def access_starter_code_repo(&block)
+    unless Repository.get_class.repository_exists?(starter_code_repo_path)
+      raise 'Repository not found'
+    end
+    Repository.get_class.access(starter_code_repo_path, &block)
   end
 
   # Repository authentication subtleties:
@@ -1355,7 +1351,7 @@ class Assignment < ApplicationRecord
           base[:marking_state] = result[2]
         end
       else
-        base[:marking_state] = I18n.t('results.state.not_collected')
+        base[:marking_state] = 'not_collected'
       end
 
       base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]

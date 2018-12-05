@@ -63,7 +63,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Static method: Creates a new Git repository at
   # location 'connect_string'
-  def self.create(connect_string)
+  def self.create(connect_string, with_hooks: true)
     if GitRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -89,7 +89,7 @@ class GitRepository < Repository::AbstractRepository
     repo.index.add('.required.json')
 
     # Add client-side hooks
-    unless MarkusConfigurator.markus_config_repository_client_hooks.empty?
+    if with_hooks && !MarkusConfigurator.markus_config_repository_client_hooks.empty?
       client_hooks_path = MarkusConfigurator.markus_config_repository_client_hooks
       FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
       FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
@@ -98,9 +98,11 @@ class GitRepository < Repository::AbstractRepository
 
     GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
 
-    # Set up hooks
-    MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
-      FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
+    # Set up server-side hooks
+    if with_hooks
+      MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
+        FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
+      end
     end
 
     true

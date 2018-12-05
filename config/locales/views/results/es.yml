@@ -12,7 +12,7 @@ es:
     set_to_incomplete: "Marcar como Incompleto"
     set_to_complete: "Marcar como Completo"
     state:
-      completed: "Completado"
+      complete: "Completado"
       in_progress: "En progreso"
       not_collected: "No ha sido recolectado"
       released: "Publicado"

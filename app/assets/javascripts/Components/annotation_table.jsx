@@ -17,13 +17,31 @@ class AnnotationTable extends React.Component {
     this.fetchData = this.fetchData.bind(this);
   }
 
-  static columns = [
+  columns = [
     {
       Header: '#',
-      accessor: 'number',
       id: 'number',
-      maxWidth: 40,
+      maxWidth: 50,
       resizeable: false,
+      Cell: row => {
+        let remove_button = "";
+        if (!this.props.released_to_students) {
+          remove_button = <a
+            href="#"
+            className="remove-icon"
+            title={I18n.t('remove')}
+            onClick={() => this.removeAnnotation(row.original.id)}
+          />;
+        }
+        return (
+          <div>
+            {remove_button}
+            <span className="alignright">
+              {row.original.number}
+            </span>
+          </div>
+        );
+      }
     },
     {
       Header: I18n.t('filename'),
@@ -52,12 +70,27 @@ class AnnotationTable extends React.Component {
     {
       Header: I18n.t('annotations.text'),
       accessor: 'content',
-      Cell: data =>
-        <div dangerouslySetInnerHTML={{__html: marked(data.value, {sanitize: true})}} />
+      Cell: data => {
+        let edit_button = "";
+        if (!this.props.released_to_students) {
+          edit_button = <a
+            href="#"
+            className="edit-icon"
+            title={I18n.t('edit')}
+            onClick={() => this.editAnnotation(data.original.id)}
+          />
+        }
+        return (
+          <div>
+            <div dangerouslySetInnerHTML={{__html: marked(data.value, {sanitize: true})}}/>
+            <div className={"alignright"}>{edit_button}</div>
+          </div>
+        )
+      }
     },
   ];
 
-  static detailedColumns = [
+  detailedColumns = [
     {
       Header: I18n.t('activerecord.attributes.annotation.creator'),
       accessor: 'creator',
@@ -76,6 +109,29 @@ class AnnotationTable extends React.Component {
       maxWidth: 150,
     },
   ];
+
+  editAnnotation = (annot_id) => {
+    $.ajax({
+      url: Routes.edit_annotation_path(annot_id, {locale: I18n.locale}),
+      method: 'GET',
+      data: {
+        id: annot_id,
+        result_id: this.props.result_id,
+        assignment_id: this.props.assignment_id },
+      dataType: 'script'
+    })
+  };
+
+  removeAnnotation = (annot_id) => {
+    $.ajax({
+      url: Routes.annotations_path(),
+      method: 'DELETE',
+      data: { id: annot_id,
+        result_id: this.props.result_id,
+        assignment_id: this.props.assignment_id },
+      dataType: 'script'
+    }).then(this.fetchData())
+  };
 
   componentDidMount() {
     this.fetchData();
@@ -192,9 +248,9 @@ class AnnotationTable extends React.Component {
 
   render() {
     const {data} = this.state;
-    let allColumns = AnnotationTable.columns;
+    let allColumns = this.columns;
     if (this.props.detailed) {
-      allColumns = allColumns.concat(AnnotationTable.detailedColumns);
+      allColumns = allColumns.concat(this.detailedColumns);
     }
 
     return (

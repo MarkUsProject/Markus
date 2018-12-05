@@ -65,7 +65,7 @@ class Result < ApplicationRecord
   def get_total_mark(assignment: nil)
     user_visibility = is_a_review? ? :peer : :ta
     subtotal = get_subtotal(user_visibility: user_visibility, assignment: assignment)
-    extra_marks = get_total_extra_marks(user_visibility: user_visibility, assignment: assignment)
+    extra_marks = get_total_extra_marks(user_visibility: user_visibility)
     [0, subtotal + extra_marks].max
   end
 
@@ -90,15 +90,21 @@ class Result < ApplicationRecord
 
   # The sum of the bonuses deductions and late penalties
   #
-  # See the documentation for update_total_mark for information about when to explicitly
-  # pass the +assignment+ variable and associated warnings.
-  def get_total_extra_marks(user_visibility: :ta, assignment: nil)
+  # If the +max_mark+ value is nil, its value will be determined dynamically
+  # based on the max_mark value of the associated assignment.
+  # However, passing the +max_mark+ value explicitly is more efficient if we are
+  # repeatedly calling this method where the max_mark doesn't change, such as when
+  # all the results are associated with the same assignment.
+  #
+  # +user_visibility+ is passed to the Assignment.max_mark method to determine the
+  # max_mark value only if the +max_mark+ argument is nil.
+  def get_total_extra_marks(max_mark: nil, user_visibility: :ta)
     extras = extra_marks.pluck_to_hash(:extra_mark, :unit).group_by { |d| d['unit'] }
     extras&.transform_values! { |a| a.map { |h| h['extra_mark'] } }
     points = (extras['points']&.sum || 0).round(1)
     percs = (extras['percentage']&.sum || 0).round(1)
-    assignment ||= submission.assignment
-    perc_points = (percs * assignment.max_mark(user_visibility) / 100).round(1)
+    max_mark ||= submission.assignment.max_mark(user_visibility)
+    perc_points = (percs * max_mark / 100).round(1)
     points + perc_points
   end
 

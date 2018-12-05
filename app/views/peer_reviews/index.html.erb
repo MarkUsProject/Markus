@@ -1,8 +1,15 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'react.min',
-                             'JSXTransformer' %>
-  <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
-  <%= render partial: 'peer_reviews_new_manager', formats: [:'js.jsx'], handlers: [:erb] %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makePeerReviewsManager(document.getElementById('peer_reviews_manager'),
+        {
+          assignment_id: <%= @assignment.id %>,
+          showSections: <%= Section.exists? %>
+        }
+      );
+    });
+  </script>
 <% end %>
 
 <% content_for :title, t('peer_reviews') %>

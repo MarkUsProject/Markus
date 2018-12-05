@@ -183,6 +183,10 @@ fr:
         cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
         number_per_group: "Nombre d'examens par les pairs par groupe"
         number_assigned_reviewers: "Numéro attribué examinateurs"
+        action:
+            assign: "Assigner des réviseurs"
+            unassign: "Annuler les pairs examinateurs"
+            random_assign: "Attribuer des réviseurs au hasard"
         download:
             assigned_reviewers_header: "Télécharger Peer Review missions"
             assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"
@@ -953,6 +957,8 @@ fr:
       submissions_job: "%{progress}/%{total} Soumissions collectées"
     repo:
       commits:
+        assignment_folder: "UPDATE ME %{assignment}"
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
+        starter_code: "UPDATE ME %{assignment}"

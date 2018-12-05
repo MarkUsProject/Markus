@@ -105,6 +105,15 @@ class AssignmentSummaryTable extends React.Component {
     },
   ];
 
+  bonusColumn = {
+    Header: I18n.t('marker.marks.bonus_deductions'),
+    accessor: 'total_extra_marks',
+    Cell: ({value}) => parseFloat(value) ? value : '',
+    className: 'number',
+    filterable: false,
+    defaultSortDesc: true,
+  };
+
   render() {
     const {data, criteriaColumns} = this.state;
     return (
@@ -128,7 +137,7 @@ class AssignmentSummaryTable extends React.Component {
         }
         <ReactTable
           data={data}
-          columns={this.fixedColumns.concat(criteriaColumns)}
+          columns={this.fixedColumns.concat(criteriaColumns, [this.bonusColumn])}
           filterable
           defaultSorted={[{id: 'group_name'}]}
           SubComponent={(row) => {

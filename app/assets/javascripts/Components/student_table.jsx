@@ -61,6 +61,7 @@ class RawStudentTable extends React.Component {
           sections={data.sections}
           disabled={this.props.selection.length === 0}
           onSubmit={this.onSubmit}
+          authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}
@@ -243,6 +244,9 @@ class StudentsActionBox extends React.Component {
                disabled={this.props.disabled}
                value={I18n.t('apply')}>
         </input>
+        <input type="hidden"
+               name="authenticity_token"
+               value={this.props.authenticity_token} />
       </form>
     );
   };
@@ -252,6 +256,6 @@ class StudentsActionBox extends React.Component {
 let StudentTable = withSelection(RawStudentTable);
 
 
-export function makeStudentTable(elem) {
-  render(<StudentTable />, elem);
+export function makeStudentTable(elem, props) {
+  render(<StudentTable {...props}/>, elem);
 }
