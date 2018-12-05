@@ -565,7 +565,7 @@ class AssignmentsController < ApplicationController
   end
 
   def update_starter_code
-    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, false))
+    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
     flash_message(:success, t('assignment.starter_code.enqueued'))
     redirect_back(fallback_location: root_path)
   end

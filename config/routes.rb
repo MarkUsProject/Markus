@@ -49,7 +49,7 @@ Rails.application.routes.draw do
         get 'view_summary'
         get 'populate_file_manager'
         post 'upload_starter_code'
-        post 'update_starter_code'
+        get 'update_starter_code'
         get 'download_starter_code'
         get 'peer_review'
         get 'summary'

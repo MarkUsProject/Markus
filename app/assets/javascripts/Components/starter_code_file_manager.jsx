@@ -78,11 +78,11 @@ class StarterCodeFileManager extends React.Component {
     let update = null;
     if (this.props.groupsExist) {
       update =
-        <form method="post" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
+        <form method="get" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
           <p>{I18n.t('assignment.starter_code.groups_exist')}</p>
           <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
           <input id="starter_code_overwrite" type="checkbox" name="overwrite" value="true"/>
-          <label for="starter_code_overwrite">{I18n.t('assignment.starter_code.overwrite')}</label>
+          <label htmlFor="starter_code_overwrite">{I18n.t('assignment.starter_code.overwrite')}</label>
           <input type="submit" value={I18n.t('assignment.starter_code.update')}/>
         </form>
     }
@@ -90,7 +90,6 @@ class StarterCodeFileManager extends React.Component {
       <div>
         <p>{I18n.t('assignment.starter_code.repo_url')}: {this.props.repo_url}</p>
         <p>{I18n.t('assignment.starter_code.description')}</p>
-
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('student.submission.no_files_available')}
