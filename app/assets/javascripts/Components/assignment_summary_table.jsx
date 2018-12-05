@@ -103,6 +103,14 @@ class AssignmentSummaryTable extends React.Component {
       filterable: false,
       defaultSortDesc: true,
     },
+    {
+      Header: I18n.t('marker.marks.bonus_deductions'),
+      accessor: 'total_extra_marks',
+      Cell: ({value}) => parseFloat(value) ? value : '',
+      className: 'number',
+      filterable: false,
+      defaultSortDesc: true,
+    }
   ];
 
   render() {

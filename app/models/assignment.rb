@@ -677,6 +677,7 @@ class Assignment < ApplicationRecord
                     .where('memberships.user_id': user.id)
     end
 
+    maximum_mark = max_mark
     grouping_data = groupings.map do |g|
       result = g.current_result
       {
@@ -685,10 +686,11 @@ class Assignment < ApplicationRecord
         members: g.accepted_students.map { |s| [s.user_name, s.first_name, s.last_name] },
         graders: user.admin? ? g.tas.map(&:user_name) : [],
         marking_state: g.marking_state(result, self, user),
-        final_grade: result && result.total_mark,
+        final_grade: result&.total_mark,
         criteria: result.nil? ? {} : result.mark_hash,
-        result_id: result && result.id,
-        submission_id: result && result.submission_id
+        result_id: result&.id,
+        submission_id: result&.submission_id,
+        total_extra_marks: result&.get_total_extra_marks(max_mark: maximum_mark)
       }
     end
     criteria_columns = self.get_criteria(:ta).map do |crit|
@@ -721,13 +723,14 @@ class Assignment < ApplicationRecord
                     .where('memberships.user_id': user.id)
     end
 
-    headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
+    headers = [['User name', 'Group', 'Final grade', 'Bonus/Deductions'], ['', 'Out of', self.max_mark, '']]
     criteria = self.get_criteria(:ta)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
 
+    maximum_mark = max_mark(:all)
     CSV.generate do |csv|
       csv << headers[0]
       csv << headers[1]
@@ -738,9 +741,10 @@ class Assignment < ApplicationRecord
         g.accepted_students.each do |s|
           row = [s.user_name, g.group.group_name]
           if result.nil?
-            row += Array.new(1 + criteria.length, nil)
+            row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
+            row << result.get_total_extra_marks(max_mark: maximum_mark)
             row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
           end
           csv << row
