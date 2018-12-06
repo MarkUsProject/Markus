@@ -464,12 +464,14 @@ class SubmissionsController < ApplicationController
   def get_file
     assignment = Assignment.find(params[:assignment_id])
     submission = Submission.find(params[:id])
+    result = submission.get_latest_result
     grouping = submission.grouping
 
     # TODO: allow for peer reviewers.
     # current_user.is_reviewer_for?(assignment.pr_assignment, <any result>)
     if @current_user.student? &&
-        @current_user.accepted_grouping_for(assignment.id).id != grouping.id
+        @current_user.accepted_grouping_for(assignment.id).id != grouping.id &&
+        !@current_user.is_a_reviewer?(assignment.pr_assignment)
       flash_message(:error,
                     t('submission_file.error.no_access',
                           submission_file_id: params[:submission_file_id]))
