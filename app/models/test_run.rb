@@ -75,13 +75,13 @@ class TestRun < ApplicationRecord
     submission&.set_autotest_marks
   end
 
-  def create_test_script_result_from_json(json_test_script)
+  def create_test_script_result_from_json(json_test_script, hooks_error_all: '')
     # create test script result
     file_name = json_test_script['file_name']
     time = json_test_script.fetch('time', 0)
     stderr = json_test_script['stderr']
     malformed = json_test_script['malformed']
-    hooks_stderr = json_test_script['hooks_stderr']
+    hooks_stderr = "#{hooks_error_all}#{json_test_script['hooks_stderr']}"
     if stderr.blank? && malformed.blank? && hooks_stderr.blank?
       extra = nil
     else
@@ -159,14 +159,14 @@ class TestRun < ApplicationRecord
       time_delta = time_to_service_estimate - time_to_service
       test_batch.adjust_time_to_service_estimate(time_delta)
     end
-    # TODO: Create a better interface to display global errors (server + hooks)
+    # TODO: Create a better interface to display global errors (server)
     # check for server errors
     server_error = json_root['error']
-    hooks_error = json_root['hooks_error']
-    unless server_error.blank? && hooks_error.blank?
+    hooks_error_all = json_root['hooks_error'] || ''
+    unless server_error.blank?
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_server', hostname: MarkusConfigurator.autotest_server_host,
-                                                                      error: "#{server_error} #{hooks_error}") }
+                                                                      error: "#{server_error}") }
       extra = I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
       create_error_for_all_test_scripts(test_scripts, error, extra_info: extra)
       return
@@ -176,7 +176,7 @@ class TestRun < ApplicationRecord
     new_test_script_results = {}
     json_root.fetch('test_scripts', []).each do |json_test_script|
       file_name = json_test_script['file_name']
-      new_test_script_result = create_test_script_result_from_json(json_test_script)
+      new_test_script_result = create_test_script_result_from_json(json_test_script, hooks_error_all: hooks_error_all)
       new_test_script_results[file_name] = new_test_script_result
     end
     # handle missing test scripts (could be added while running)
