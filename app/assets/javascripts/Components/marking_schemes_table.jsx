@@ -2,6 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
+import {stringFilter} from './Helpers/table_helpers';
 
 
 class MarkingSchemeTable extends React.Component {
@@ -65,6 +66,7 @@ class MarkingSchemeTable extends React.Component {
       <ReactTable
         data={this.state.data}
         columns={this.nameColumns.concat(this.state.columns).concat(this.modifyColumn)}
+        defaultFilterMethod={stringFilter}
         defaultSorted = {[
           {
             id: 'name'

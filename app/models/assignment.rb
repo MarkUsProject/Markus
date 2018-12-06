@@ -666,7 +666,7 @@ class Assignment < ApplicationRecord
                               :accepted_students,
                               :inviter,
                               :tas,
-                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
+                              current_result: :marks)
     else
       groupings = self.groupings
                     .includes(:group,
@@ -677,7 +677,8 @@ class Assignment < ApplicationRecord
                     .where('memberships.user_id': user.id)
     end
 
-    maximum_mark = max_mark
+    result_ids = groupings.pluck('results.id').uniq.compact
+    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
     grouping_data = groupings.map do |g|
       result = g.current_result
       {
@@ -690,7 +691,7 @@ class Assignment < ApplicationRecord
         criteria: result.nil? ? {} : result.mark_hash,
         result_id: result&.id,
         submission_id: result&.submission_id,
-        total_extra_marks: result&.get_total_extra_marks(max_mark: maximum_mark)
+        total_extra_marks: extra_marks_hash[result&.id]
       }
     end
     criteria_columns = self.get_criteria(:ta).map do |crit|
@@ -713,12 +714,12 @@ class Assignment < ApplicationRecord
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
+                              current_result: :marks)
     else
       groupings = self.groupings
                     .includes(:group,
                               :accepted_students,
-                              current_result: [:marks, :extra_marks_points, :extra_marks_percentage])
+                              current_result: :marks)
                     .joins(:memberships)
                     .where('memberships.user_id': user.id)
     end
@@ -732,7 +733,8 @@ class Assignment < ApplicationRecord
     headers[0] << 'Bonus/Deductions'
     headers[1] << ''
 
-    maximum_mark = max_mark(:all)
+    result_ids = groupings.pluck('results.id').uniq.compact
+    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
     CSV.generate do |csv|
       csv << headers[0]
       csv << headers[1]
@@ -747,7 +749,7 @@ class Assignment < ApplicationRecord
           else
             row << result.total_mark
             row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
-            row << result.get_total_extra_marks(max_mark: maximum_mark)
+            row << extra_marks_hash[result&.id]
           end
           csv << row
         end

@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-
+import {stringFilter} from './Helpers/table_helpers';
 
 class CourseSummaryTable extends React.Component {
   constructor() {
@@ -54,6 +54,7 @@ class CourseSummaryTable extends React.Component {
       <ReactTable
         data={this.state.data}
         columns={this.nameColumns.concat(this.state.columns)}
+        defaultFilterMethod={stringFilter}
         defaultSorted={[
           {
             id: 'user_name'

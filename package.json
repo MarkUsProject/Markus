@@ -10,10 +10,10 @@
     "mousetrap": "^1.6.2",
     "prop-types": "^15.6.2",
     "rails-erb-loader": "^5.5.0",
-    "rails-ujs": "^5.2.1",
+    "rails-ujs": "^5.2.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-keyed-file-browser": "^1.4.1",
+    "react-keyed-file-browser": "^1.4.2",
     "react-table": "^6.8.6",
     "react-tabs": "^2.3.0"
   },

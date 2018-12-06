@@ -2,6 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
+import {stringFilter} from './Helpers/table_helpers';
 
 
 class ExamScanLogTable extends React.Component {
@@ -98,6 +99,7 @@ class ExamScanLogTable extends React.Component {
         data={data}
         columns={this.columns}
         filterable
+        defaultFilterMethod={stringFilter}
         SubComponent={(row) => (
           <ExamScanErrorsTable
             data={row.original.page_data}
