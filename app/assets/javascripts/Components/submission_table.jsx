@@ -2,6 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
+import {stringFilter, dateSort} from './Helpers/table_helpers';
 
 
 class RawSubmissionTable extends React.Component {
@@ -127,15 +128,7 @@ class RawSubmissionTable extends React.Component {
       accessor: 'submission_time',
       filterable: false,
       minWidth: 150,
-      sortMethod: (a,b) => {
-        if (typeof a === 'string' && typeof b === 'string') {
-          let a_date = Date.parse(a);
-          let b_date = Date.parse(b);
-          return a_date > b_date ? 1 : -1;
-        } else {
-        return a > b ? 1 : -1;
-        }
-      }
+      sortMethod: dateSort,
     },
     {
       Header: I18n.t('submissions.grace_credits_used'),
@@ -315,6 +308,7 @@ class RawSubmissionTable extends React.Component {
             }
           ]}
           filterable
+          defaultFilterMethod={stringFilter}
           loading={loading}
 
           getTrProps={this.getTrProps}
