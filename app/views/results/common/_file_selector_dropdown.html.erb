@@ -64,9 +64,7 @@
                   .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
                   .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
                   .first) %>
-          console.log('<%= assignmentfile %>');
           <% index = files.find_index{|x| x.filename === assignmentfile.filename}.to_i %>
-          console.log('<%= index %>');
           first_file_id = <%= files[index].id %>;
           first_file_path = '<%= files[index].path %>/<%= files[index].filename %>';
         <% else %>
