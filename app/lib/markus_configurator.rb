@@ -328,7 +328,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_RUN_QUEUE)
       AUTOTEST_RUN_QUEUE
     else
-      'autotest_run'
+      'jobs'
     end
   end
 
@@ -336,7 +336,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_CANCEL_QUEUE)
       AUTOTEST_CANCEL_QUEUE
     else
-      'autotest_cancel'
+      'jobs'
     end
   end
 
@@ -344,7 +344,7 @@ module MarkusConfigurator
     if autotest_on? && (defined? AUTOTEST_SCRIPTS_QUEUE)
       AUTOTEST_SCRIPTS_QUEUE
     else
-      'autotest_scripts'
+      'jobs'
     end
   end
 
@@ -395,49 +395,57 @@ module MarkusConfigurator
 
   def markus_job_create_individual_groups_queue_name
     if defined? JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
-      return JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
+      JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
     else
-      return 'job_groups'
+      'jobs'
     end
   end
 
   def markus_job_collect_submissions_queue_name
     if defined? JOB_COLLECT_SUBMISSIONS_QUEUE_NAME
-      return JOB_COLLECT_SUBMISSIONS_QUEUE_NAME
+      JOB_COLLECT_SUBMISSIONS_QUEUE_NAME
     else
-      return 'job_collect'
+      'jobs'
     end
   end
 
   def markus_job_uncollect_submissions_queue_name
     if defined? JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME
-      return JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME
+      JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME
     else
-      return 'job_uncollect'
+      'jobs'
     end
   end
 
   def markus_job_update_repo_required_files_queue_name
     if defined? JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME
-      return JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME
+      JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME
     else
-      return 'job_req_files'
+      'jobs'
     end
   end
 
   def markus_job_generate_queue_name
     if defined? JOB_GENERATE_QUEUE_NAME
-      return JOB_GENERATE_QUEUE_NAME
+      JOB_GENERATE_QUEUE_NAME
     else
-      return 'job_generate'
+      'jobs'
     end
   end
 
   def markus_job_split_pdf_queue_name
     if defined? JOB_SPLIT_PDF_QUEUE_NAME
-      return JOB_SPLIT_PDF_QUEUE_NAME
+      JOB_SPLIT_PDF_QUEUE_NAME
     else
-      return 'job_split_pdf'
+      'jobs'
+    end
+  end
+
+  def markus_job_update_starter_code_queue_name
+    if defined? JOB_UPDATE_STARTER_CODE
+      JOB_UPDATE_STARTER_CODE
+    else
+      'jobs'
     end
   end
 

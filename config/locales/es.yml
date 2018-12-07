@@ -155,7 +155,14 @@ es:
             allow:    "Permitir solicitudes de recalificación"
             due_date: "Último plazo para recalificación"
             message:  "Mensaje de recalificación"
-        starter_code: "Código Inicial"
+        starter_code:
+            description: "UPDATE ME."
+            enqueued: "UPDATE ME."
+            groups_exist: "UPDATE ME."
+            overwrite: "UPDATE ME"
+            repo_url: "UPDATE ME"
+            title: "Código Inicial"
+            update: "UPDATE ME"
         notice:
             change_marking_scheme_type: "Cambiar el esquema de calificación eliminará sus criterios de calificación y
                                          notas."

@@ -255,7 +255,7 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
       end
       flash_message(:success, I18n.t('assignment.update_success'))
       redirect_to action: 'edit', id: params[:id]
@@ -326,7 +326,7 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
       end
     end
     redirect_to action: 'edit', id: @assignment.id
@@ -482,12 +482,12 @@ class AssignmentsController < ApplicationController
     render json: entries
   end
 
-  def update_files
-    @assignment = Assignment.find(params[:id])
-    unless @assignment.can_upload_starter_code?
+  def upload_starter_code
+    unless MarkusConfigurator.markus_starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 
+    @assignment = Assignment.find(params[:id])
     students_filename = []
     path = params[:path] || '/'
     assignment_folder = File.join(@assignment.repository_folder, path)
@@ -562,6 +562,12 @@ class AssignmentsController < ApplicationController
         head :bad_request
       end
     end
+  end
+
+  def update_starter_code
+    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
+    flash_message(:success, t('assignment.starter_code.enqueued'))
+    redirect_back(fallback_location: root_path)
   end
 
   def download_starter_code
