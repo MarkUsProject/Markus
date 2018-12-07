@@ -132,6 +132,9 @@ class ResultsController < ApplicationController
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
       @authorized = false
+      if @assignment.enable_test
+        flash_now(:notice, e.result.reasons.full_messages.join(' '))
+      end
     end
 
     m_logger = MarkusLogger.instance
