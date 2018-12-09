@@ -45,4 +45,42 @@ class PeerReview < ApplicationRecord
       return peer_review
     end
   end
+
+  # Deletes a peer review between the reviewer and reviewee groupings,
+  # otherwise if none exists returns nil
+  def self.delete_peer_review_between(reviewer, reviewee)
+    if review_exists_between?(reviewer, reviewee)
+      peer_review = reviewer.review_for(reviewee)
+      peer_review.destroy
+    end
+  end
+
+  # Deletes all peer reviewers for the reviewee groupings
+  def self.delete_all_peer_reviews_for(reviewee_id)
+    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).delete_all
+  end
+
+  def self.assign(reviewer_groups, reviewee_groups)
+    reviewer_groups.each do |reviewer_group|
+      reviewee_groups.each do |reviewee_group|
+        if reviewee_group.current_submission_used.nil?
+          raise SubmissionsNotCollectedException
+        end
+        self.create_peer_review_between(reviewer_group, reviewee_group)
+      end
+    end
+  end
+
+  def self.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+    # First do specific unassigning.
+    reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
+      reviewer_id_to_bool.each do |reviewer_id, dummy_value|
+        reviewee_group = Grouping.find_by_id(reviewee_id)
+        reviewer_group = Grouping.find_by_id(reviewer_id)
+        self.delete_peer_review_between(reviewer_group, reviewee_group)
+      end
+    end
+
+    self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
+  end
 end

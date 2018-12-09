@@ -104,7 +104,7 @@ class PeerReviewsController < ApplicationController
         reviewer_groups = Grouping.where(id: selected_reviewer_group_ids)
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         begin
-          assign(reviewer_groups, reviewee_groups)
+          PeerReview.assign(reviewer_groups, reviewee_groups)
         rescue ActiveRecord::RecordInvalid
           flash_now(:error, t('peer_review.problem'))
           head 400
@@ -115,7 +115,7 @@ class PeerReviewsController < ApplicationController
           return
         end
       when 'unassign'
-        unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
+        PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
       else
         flash_now(:error, t('peer_review.problem'))
         head 400
@@ -123,33 +123,6 @@ class PeerReviewsController < ApplicationController
     end
 
     head :ok
-  end
-
-  def assign(reviewer_groups, reviewee_groups)
-    reviewer_groups.each do |reviewer_group|
-      reviewee_groups.each do |reviewee_group|
-        if reviewee_group.current_submission_used.nil?
-          raise SubmissionsNotCollectedException
-        end
-        PeerReview.create_peer_review_between(reviewer_group, reviewee_group)
-      end
-    end
-  end
-
-  def unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
-    # First do specific unassigning.
-    reviewers_to_remove_from_reviewees_map.each do |reviewee_id, reviewer_id_to_bool|
-      reviewer_id_to_bool.each do |reviewer_id, _|
-        reviewee_group = Grouping.find_by_id(reviewee_id)
-        reviewer_group = Grouping.find_by_id(reviewer_id)
-        peer_review = reviewer_group.review_for(reviewee_group)
-        peer_review&.destroy
-      end
-    end
-
-    PeerReview.joins(result: :submission)
-              .where(submissions: { grouping_id: selected_reviewee_group_ids })
-              .delete_all
   end
 
   # Create a mapping of reviewer grouping -> set(reviewee groupings)
