@@ -48,4 +48,44 @@
         <div class='arrow_down'></div>
       </div>
     </div>
+
+    <!-- load the first file -->
+    <script>
+      var first_file_id;
+      var first_file_path;
+      <% files = @files.reject { |file| Repository.get_class.internal_file_names.include?(file.filename) } %>
+      <% if files.empty? %>
+        first_file_id = null;
+        first_file_path = null;
+      <% else %>
+        <% if @current_user.ta? && (assignmentfile =
+                  AssignmentFile.select(:filename)
+                  .joins('JOIN criteria_assignment_files_joins c ON c.assignment_file_id = assignment_files.id')
+                  .joins('JOIN criterion_ta_associations t ON c.criterion_id = t.criterion_id')
+                  .where('t.ta_id = ? AND assignment_files.assignment_id = ?', @current_user.id, @assignment.id)
+                  .first) %>
+          <% index = files.find_index{|x| x.filename === assignmentfile.filename}.to_i %>
+          first_file_id = <%= files[index].id %>;
+          first_file_path = '<%= files[index].path %>/<%= files[index].filename %>';
+        <% else %>
+          first_file_id = <%= files[0].id %>;
+          first_file_path = '<%= files[0].path %>/<%= files[0].filename %>';
+          if (localStorage.getItem('assignment_id') === '<%= @assignment.id %>' && localStorage.getItem('file_path')) {
+            var file = $('.file_item[data-path="' + localStorage.getItem('file_path') + '"]');
+            if (file.length === 1) {
+              first_file_id = file.data("id");
+              first_file_path = file.data("path");
+            }
+          }
+        <% end %>
+        if (first_file_id !== null && first_file_path !== null) {
+          document.addEventListener('DOMContentLoaded', () => {
+            // for code viewer
+            open_file(first_file_id, first_file_path, false);
+            // for download modal
+            open_file(first_file_id, first_file_path, true);
+          });
+        }
+      <% end %>
+    </script>
 <% end %>
