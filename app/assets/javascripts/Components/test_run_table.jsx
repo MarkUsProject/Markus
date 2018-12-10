@@ -2,18 +2,19 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import treeTableHOC from 'react-table/lib/hoc/treeTable';
+import {dateSort} from './Helpers/table_helpers';
 
 const TreeTable = treeTableHOC(ReactTable);
 
 
-class TestScriptResultTable extends React.Component {
+class TestRunTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
       expanded: {},
       resized: [],
-      sorted: [],
+      sorted: ['created_at'],
     };
   }
 
@@ -68,6 +69,13 @@ class TestScriptResultTable extends React.Component {
         <TreeTable
           data={data}
           columns={[
+            {
+              id: 'created_at',
+              accessor: 'test_runs.created_at',
+              show: false,
+              defaultSortDesc: false,
+              sortMethod: dateSort
+            },
             {
               id: 'created_at_user_name',
               accessor: row => `${I18n.l('time.formats.default', row['test_runs.created_at'])}
@@ -179,6 +187,7 @@ class TestScriptResultTable extends React.Component {
   }
 }
 
-export function makeTestScriptResultTable(elem, props) {
-  render(<TestScriptResultTable {...props} />, elem);
+
+export function makeTestRunTable(elem, props) {
+  render(<TestRunTable {...props} />, elem);
 }
