@@ -1,6 +1,6 @@
 class UpdateStarterCodeJob < ApplicationJob
 
-  queue_as MarkusConfigurator.markus_job_update_starter_code_queue_name
+  queue_as MarkusConfigurator.markus_job_update_starter_code_queue
 
   def perform(assignment_id, overwrite)
     assignment = Assignment.includes(groupings: :group).find(assignment_id)
