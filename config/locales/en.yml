@@ -733,6 +733,7 @@ en:
       run_tests: "Run tests"
       stop_test: "Stop test"
       stop_batch: "Stop batch"
+      fetch_testers: "Fetch testers list"
       test_run: "Test Run"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests."

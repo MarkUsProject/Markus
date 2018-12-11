@@ -161,6 +161,11 @@ class AutomatedTestsController < ApplicationController
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
+  def fetch_testers
+    AutotestTestersJob.perform_later
+    head :no_content
+  end
+
   private
 
   def assignment_params

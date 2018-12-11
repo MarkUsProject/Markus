@@ -618,6 +618,7 @@ fr:
       run_tests: "Exécuter les tests."
       stop_test: "Arrêter ce test"
       stop_batch: "Arrêter ce lot de tests"
+      fetch_testers: "UPDATE ME"
       test_run: "L'exécution du test"
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."

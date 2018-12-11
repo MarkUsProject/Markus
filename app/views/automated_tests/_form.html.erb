@@ -18,6 +18,8 @@
   <%= render partial: 'shared/flash_message' %>
 </div>
 
+<%= button_to t('automated_tests.fetch_testers'), fetch_testers_automated_test_path(id: @assignment.id) %>
+
 <%= form_for @assignment,
              as: :assignment,
              url: manage_assignment_automated_tests_path,

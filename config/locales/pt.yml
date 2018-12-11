@@ -606,6 +606,7 @@ pt:
       run_tests: "Executar testes"
       stop_test: "UPDATE ME"
       stop_batch: "UPDATE ME"
+      fetch_testers: "UPDATE ME"
       test_run: "Execução de Teste"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
