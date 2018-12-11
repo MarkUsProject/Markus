@@ -29,7 +29,7 @@
       <%= label_tag "is_testing_framework_enabled", Assignment.human_attribute_name(:enable_test), class: "checkbox_label" %>
     </p>
     <fieldset style="<%= 'display:none;' unless @student_tests_on %>">
-      <legend><%= t("automated_tests.student_tests") %></legend>
+      <legend><span><%= t("automated_tests.student_tests") %></span></legend>
       <p>
         <%= f.check_box :enable_student_tests, id: "are_student_tests_enabled", onchange: "toggle_student_tests($('#are_student_tests_enabled').is(':checked'))" %>
         <%= label_tag "are_student_tests_enabled", Assignment.human_attribute_name(:enable_student_tests), class: "checkbox_label" %>
@@ -70,7 +70,7 @@
     </fieldset>
 
     <fieldset>
-      <legend><%= t("automated_tests.assignment_test_script_files") %></legend>
+      <legend><span><%= t("automated_tests.assignment_test_script_files") %></span></legend>
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
 
       <div id="test_scripts">
@@ -81,8 +81,8 @@
     </fieldset>
 
     <fieldset>
-      <legend><%= t("automated_tests.assignment_test_support_files") %></legend>
-      <p><%= t("required_fields") %> <span class='required_field'>*</span></p>
+      <legend><span><%= t("automated_tests.assignment_test_support_files") %></span></legend>
+      <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
       <div class="wrapLeft">
         <div id="test_support_files">
           <% @assignment.test_support_files.each do |tsf| %>
@@ -94,4 +94,3 @@
 
     <%= f.submit t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
   <% end %>
-</div>
