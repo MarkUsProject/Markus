@@ -348,6 +348,14 @@ module MarkusConfigurator
     end
   end
 
+  def autotest_testers_queue
+    if autotest_on? && (defined? AUTOTEST_TESTERS_QUEUE)
+      AUTOTEST_TESTERS_QUEUE
+    else
+      'jobs'
+    end
+  end
+
   ###################################################################
   # Starter code configuration
   ###################################################################
