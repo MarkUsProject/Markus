@@ -792,7 +792,7 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
-    fields = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
+    fields = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
               'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
               'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
@@ -801,7 +801,7 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|

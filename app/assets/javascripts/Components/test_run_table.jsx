@@ -1,10 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
-import treeTableHOC from 'react-table/lib/hoc/treeTable';
 import {dateSort} from './Helpers/table_helpers';
-
-const TreeTable = treeTableHOC(ReactTable);
 
 
 class TestRunTable extends React.Component {
@@ -54,24 +51,38 @@ class TestRunTable extends React.Component {
       for (let i = 0; i < res.length; i++) {
         sub_row_map[i] = true;
       }
+      let rows = [];
+      for (let test_run_id in res) {
+        if (res.hasOwnProperty(test_run_id)) {
+          let test_data = res[test_run_id];
+          let row = {
+            id_: test_run_id,
+            'test_runs.created_at': test_data[0]['test_runs.created_at'],
+            'users.user_name': test_data[0]['users.user_name'],
+            'test_results': [],
+          };
+          test_data.forEach(data => {
+            Array.prototype.push.apply(row['test_results'], data['test_data']);
+          });
+          rows.push(row);
+        }
+      }
       this.setState({
-        data: res,
+        data: rows,
         expanded: {0: sub_row_map},
       });
     });
   };
 
   render() {
-    const {data} = this.state;
-
     return (
       <div>
-        <TreeTable
-          data={data}
+        <ReactTable
+          data={this.state.data}
           columns={[
             {
               id: 'created_at',
-              accessor: 'test_runs.created_at',
+              accessor: row => row['test_runs.created_at'],
               show: false,
               defaultSortDesc: false,
               sortMethod: dateSort
@@ -79,83 +90,16 @@ class TestRunTable extends React.Component {
             {
               id: 'created_at_user_name',
               accessor: row => `${I18n.l('time.formats.default', row['test_runs.created_at'])}
-                                (${row['users.user_name']})`,
-              maxWidth: 0
+                                (${row['users.user_name']})`
             },
-            {
-              id: 'file_name_description',
-              accessor: row => row['test_scripts.description'] ?
-                                 `${row['test_scripts.file_name']} - ${row['test_scripts.description']}` :
-                                 row['test_scripts.file_name']
-            }
           ]}
-          SubComponent={ row => {
-            let columns = [
-              {
-                Header: I18n.t('automated_tests.test_results_table.test_name'),
-                id: 'test_scripts.name',
-                accessor: row => row['test_results.name']
-              },
-              {
-                Header: I18n.t('automated_tests.test_results_table.status'),
-                id: 'test_results.completion_status',
-                accessor: row => row['test_results.completion_status'],
-                minWidth: 50
-              },
-              {
-                Header: I18n.t('automated_tests.test_results_table.marks_earned'),
-                id: 'test_results.marks_earned',
-                accessor: row => row['test_results.marks_earned'],
-                minWidth: 40,
-                className: 'number'
-              },
-              {
-                Header: I18n.t('automated_tests.test_results_table.marks_total'),
-                id: 'test_results.marks_total',
-                accessor: row => row['test_results.marks_total'],
-                minWidth: 40,
-                className: 'number'
-              }
-            ];
-            const rowData = row.original['test_data'];
-            const extraInfo = row.original['test_data'][0]['test_script_results.extra_info'] || '';
-            let extraInfoDisplay;
-            if (extraInfo) {
-              extraInfoDisplay = (
-                <div>
-                  <h4>{I18n.t('automated_tests.test_results_table.extra_info')}</h4>
-                  <pre>{extraInfo}</pre>
-                </div>);
-            } else {
-              extraInfoDisplay = '';
-            }
-            if ('test_results.actual_output' in rowData[0]) {
-              columns.splice(1, 0, {
-                id: 'actual_output',
-                Header: I18n.t('automated_tests.test_results_table.output'),
-                accessor: row => row['test_results.actual_output'] ? row['test_results.actual_output'] : '',
-                className: 'actual_output'
-              })
-            }
-            return (
-              <div>
-                <ReactTable
-                  data={rowData}
-                  columns={columns}
-                  getTdProps={ (state, rowInfo, colInfo) => {
-                    if (rowInfo) { // highlight submissions that have been collected
-                      return {className: `test-result-${rowInfo.row['test_results.completion_status']}`}
-                    }
-                    return {};
-                  }}
-                />
-                {extraInfoDisplay}
-              </div>
-            );
-          }}
-          pivotBy={['created_at_user_name']}
+          SubComponent={ row => (
+            <TestScriptResultTable
+              data={row.original['test_results']}
+            />
+          )}
           noDataText={I18n.t('automated_tests.no_results')}
-          getTheadThProps={ (state, rowInfo, colInfo) => {
+          getTheadThProps={ () => {
             return {
               style: {display: 'none'}
             }
@@ -168,22 +112,107 @@ class TestRunTable extends React.Component {
           onExpandedChange={expanded => this.setState({ expanded })}
           onResizedChange={resized => this.setState({ resized })}
           onSortedChange={sorted => this.setState({ sorted })}
-          // Custom Sort Method to sort by latest date first
-          defaultSortMethod={ (a, b) => {
-            // sorting for created_at_user_name to ensure it's sorted by date
-            if (this.state.sorted[0].id === 'created_at_user_name') {
-              if (typeof a === 'string' && typeof b === 'string') {
-                let a_date = Date.parse(a.split('(')[0]);
-                let b_date = Date.parse(b.split('(')[0]);
-                return a_date > b_date ? 1 : -1;
-              }
-            } else {
-              return a > b ? 1 : -1;
-            }
-          }}
         />
       </div>
     );
+  }
+}
+
+
+class TestScriptResultTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show_output: props.data[0] && 'test_results.actual_output' in props.data[0]
+    };
+  }
+
+  columns = () => [
+    {
+      id: 'script_name',
+      Header: '',
+      accessor: row => row['test_scripts.file_name'],
+      Cell: _ => '',
+      Aggregated: _ => '',
+      maxWidth: 30
+    },
+    {
+      id: 'name',
+      Header: I18n.t('automated_tests.test_results_table.test_name'),
+      accessor: row => row['test_results.name'],
+      aggregate: (values, rows) => {
+        if (rows.length === 0) {
+          return '';
+        } else if (rows[0]['script_description']) {
+          return `${rows[0]['script_name']} - ${rows[0]['script_description']}`;
+        } else {
+          return rows[0]['script_name'];
+        }
+      },
+    },
+    {
+      id: 'actual_output',
+      Header: I18n.t('automated_tests.test_results_table.output'),
+      accessor: row => row['test_results.actual_output'] || '',
+      show: this.state.show_output,
+      aggregate: _ => '',
+      className: 'actual_output'
+    },
+    {
+      id: 'completion_status',
+      Header: I18n.t('automated_tests.test_results_table.status'),
+      accessor: row => row['test_results.completion_status'],
+      minWidth: 50,
+      aggregate: _ => ''
+    },
+    {
+      id: 'marks_earned',
+      Header: I18n.t('automated_tests.test_results_table.marks_earned'),
+      accessor: row => row['test_results.marks_earned'],
+      minWidth: 40,
+      className: 'number',
+      aggregate: vals => vals.reduce((a, b) => a + b, 0),
+    },
+    {
+      Header: I18n.t('automated_tests.test_results_table.marks_total'),
+      id: 'test_results.marks_total',
+      accessor: row => row['test_results.marks_total'],
+      minWidth: 40,
+      className: 'number',
+      aggregate: vals => vals.reduce((a, b) => a + b, 0),
+    }
+  ];
+
+  render() {
+    const extraInfo = this.props.data[0]['test_script_results.extra_info'] || '';
+    let extraInfoDisplay;
+    if (extraInfo) {
+      extraInfoDisplay = (
+        <div>
+          <h4>{I18n.t('automated_tests.test_results_table.extra_info')}</h4>
+          <pre>{extraInfo}</pre>
+        </div>);
+    } else {
+      extraInfoDisplay = '';
+    }
+
+    return (
+      <div>
+        <ReactTable
+          data={this.props.data}
+          columns={this.columns()}
+          pivotBy={['script_name']}
+          getTdProps={ (state, rowInfo) => {
+            if (rowInfo) {
+              return {className: `test-result-${rowInfo.row['completion_status']}`}
+            } else {
+              return {};
+            }
+          }}
+        />
+        {extraInfoDisplay}
+      </div>
+    )
   }
 }
 
