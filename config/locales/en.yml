@@ -182,6 +182,11 @@ en:
             status: "Status"
             estimated_remaining_time: "Estimated Remaining Time"
             action: "Action"
+        test_runs_statuses:
+            complete: "complete"
+            in_progress: "in progress"
+            cancelled: "cancelled"
+            complete_with_errors: "complete with errors"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
@@ -921,6 +926,7 @@ en:
         fail: "Failed"
         error: "Error"
         extra_info: "Extra Info:"
+        run_by: "Run by"
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"

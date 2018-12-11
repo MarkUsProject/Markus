@@ -172,6 +172,11 @@ fr:
             status: "UPDATE ME"
             estimated_remaining_time: "UPDATE ME"
             action: "UPDATE ME"
+        test_runs_statuses:
+            complete: "UPDATE ME"
+            in_progress: "UPDATE ME"
+            cancelled: "UPDATE ME"
+            complete_with_errors: "UPDATE ME"
     peer_review:
         assign: "Attribuer examen par les pairs"
         review: "Avis "
@@ -806,6 +811,7 @@ fr:
         fail: "Échoué"
         error: "Erreur"
         extra_info: "Info Supplémentaires:"
+        run_by: "UPDATE ME"
       results:
         all_tests: "Tous les tests"
         unknown_test: "Test inconnu"

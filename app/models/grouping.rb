@@ -45,7 +45,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           -> { left_outer_joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -801,7 +801,8 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name',
+                     'test_scripts.description']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -810,6 +811,12 @@ class Grouping < ApplicationRecord
       h['test_data'] = val
       new_hash_list << h
     end
+
+    status_hash = TestRun.statuses(new_hash_list.map { |h| h['test_runs.id'] })
+    new_hash_list.each do |h|
+      h['test_runs.status'] = status_hash[h['test_runs.id']]
+    end
+
     new_hash_list
   end
 

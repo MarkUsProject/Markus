@@ -9,10 +9,8 @@ class TestRunTable extends React.Component {
     super(props);
     this.state = {
       data: [],
-      expanded: {},
-      resized: [],
-      sorted: ['created_at'],
     };
+    this.testRuns = React.createRef();
   }
 
   componentDidMount() {
@@ -47,10 +45,6 @@ class TestRunTable extends React.Component {
       }
     }
     $.ajax(ajaxDetails).then(res => {
-      let sub_row_map = {};
-      for (let i = 0; i < res.length; i++) {
-        sub_row_map[i] = true;
-      }
       let rows = [];
       for (let test_run_id in res) {
         if (res.hasOwnProperty(test_run_id)) {
@@ -59,6 +53,7 @@ class TestRunTable extends React.Component {
             id_: test_run_id,
             'test_runs.created_at': test_data[0]['test_runs.created_at'],
             'users.user_name': test_data[0]['users.user_name'],
+            'test_runs.status': test_data[0]['test_runs.status'],
             'test_results': [],
           };
           test_data.forEach(data => {
@@ -67,10 +62,9 @@ class TestRunTable extends React.Component {
           rows.push(row);
         }
       }
-      this.setState({
-        data: rows,
-        expanded: {0: sub_row_map},
-      });
+      this.setState({data: rows},
+        () => this.testRuns.current.setState({expanded: rows.length > 0 ? {0: true} : {}})
+      );
     });
   };
 
@@ -78,20 +72,24 @@ class TestRunTable extends React.Component {
     return (
       <div>
         <ReactTable
+          ref={this.testRuns}
           data={this.state.data}
           columns={[
             {
               id: 'created_at',
               accessor: row => row['test_runs.created_at'],
-              show: false,
-              defaultSortDesc: false,
-              sortMethod: dateSort
+              Cell: ({value}) => I18n.l('time.formats.default', value),
+              sortMethod: dateSort,
             },
             {
-              id: 'created_at_user_name',
-              accessor: row => `${I18n.l('time.formats.default', row['test_runs.created_at'])}
-                                (${row['users.user_name']})`
+              id: 'user_name',
+              accessor: row => row['users.user_name'],
+              Cell: ({value}) => I18n.t('automated_tests.test_results_table.run_by') + ' ' + value,
             },
+            {
+              id: 'status',
+              accessor: row => I18n.t('assignment.test_runs_statuses.' + row['test_runs.status'])
+            }
           ]}
           SubComponent={ row => (
             <TestScriptResultTable
@@ -104,14 +102,7 @@ class TestRunTable extends React.Component {
               style: {display: 'none'}
             }
           }}
-          // Controlled props
-          expanded={this.state.expanded}
-          resized={this.state.resized}
-          sorted={this.state.sorted}
-          // Callbacks
-          onExpandedChange={expanded => this.setState({ expanded })}
-          onResizedChange={resized => this.setState({ resized })}
-          onSortedChange={sorted => this.setState({ sorted })}
+          defaultSorted={[{id: 'created_at', desc: true}]}
         />
       </div>
     );
@@ -132,9 +123,7 @@ class TestScriptResultTable extends React.Component {
       id: 'script_name',
       Header: '',
       accessor: row => row['test_scripts.file_name'],
-      Cell: _ => '',
-      Aggregated: _ => '',
-      maxWidth: 30
+      maxWidth: 30,
     },
     {
       id: 'name',
@@ -209,6 +198,7 @@ class TestScriptResultTable extends React.Component {
               return {};
             }
           }}
+          PivotValueComponent={() => ''}
         />
         {extraInfoDisplay}
       </div>
