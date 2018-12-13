@@ -158,7 +158,7 @@ class AutomatedTestsController < ApplicationController
   def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
-    render json: test_runs
+    render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   private

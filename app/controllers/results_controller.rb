@@ -679,13 +679,13 @@ class ResultsController < ApplicationController
   def get_test_runs_instructors
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors(submission)
-    render json: test_runs
+    render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   def get_test_runs_instructors_released
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors_released(submission)
-    render json: test_runs
+    render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   private
