@@ -30,7 +30,7 @@
     <% end %>
     (
     <em><%= Result.human_attribute_name(:total_mark) %>:</em>
-    <span id='current_mark_div'><%= result.total_mark %></span>/
+    <span id='current_mark_div'><%= result.get_total_mark(assignment: @assignment) %></span>/
     <span id='total_mark_div'><%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     )
     |

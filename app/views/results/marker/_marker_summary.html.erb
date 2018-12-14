@@ -16,7 +16,7 @@
 
   <div class='summary_block'>
     <span><strong><%= t('marker.marks.subtotal') %></strong></span>
-    <span id='current_subtotal_div'> <%= result.get_subtotal %></span>
+    <span id='current_subtotal_div'> <%= result.get_subtotal(user_visibility: @result.is_a_review? ? :peer : :ta, assignment: @assignment) %></span>
     <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
   </div>
 
@@ -135,7 +135,7 @@
 
 <div class='mark_total'>
   <span class='final_mark'>
-    <span id='current_total_mark_div'><%= result.total_mark %> </span>
+    <span id='current_total_mark_div'><%= result.get_total_mark(assignment: @assignment) %> </span>
     <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
   </span>
   <span><%= Result.human_attribute_name(:total_mark) %></span>

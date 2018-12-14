@@ -60,8 +60,8 @@ class ResultsController < ApplicationController
     reviewer_access = false
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+        @assignment = @assignment.pr_assignment
         @mark_criteria = @assignment.get_criteria(:peer)
-        assignment = @assignment.pr_assignment
         reviewer_access = true
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
@@ -111,7 +111,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    group_order = reviewer_access ? 'grouping.id' : 'group_name'
+    group_order = reviewer_access ? 'groups.id' : 'group_name'
     all_groupings = assignment.groupings.joins(:group).order(group_order)
     if current_user.ta?
       assigned_groupings = current_user.groupings

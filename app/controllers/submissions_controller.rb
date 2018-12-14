@@ -469,7 +469,9 @@ class SubmissionsController < ApplicationController
     # TODO: allow for peer reviewers.
     # current_user.is_reviewer_for?(assignment.pr_assignment, <any result>)
     if @current_user.student? &&
+        !@current_user.is_a_reviewer?(assignment.pr_assignment) &&
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
+
       flash_message(:error,
                     t('submission_file.error.no_access',
                           submission_file_id: params[:submission_file_id]))
