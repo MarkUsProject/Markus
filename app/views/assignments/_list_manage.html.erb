@@ -9,7 +9,7 @@
         <thead>
           <tr>
             <th><%= Assignment.model_name.human.pluralize %></th>
-            <th><%= t(:due) %></th>
+            <th><%= Assignment.human_attribute_name(:due_date) %></th>
             <th><%= t('submissions.status') %></th>
           </tr>
         </thead>

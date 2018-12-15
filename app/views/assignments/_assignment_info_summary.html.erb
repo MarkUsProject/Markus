@@ -1,5 +1,5 @@
 <p class="due_date">
-  <%= "#{t(:due)}: #{l(assignment.due_date)}" %>
+  <%= "#{Assignment.human_attribute_name(:due_date)}: #{l(assignment.due_date)}" %>
 </p>
 
 <% if assignment.outstanding_remark_request_count && assignment.outstanding_remark_request_count > 0%>

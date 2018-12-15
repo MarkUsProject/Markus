@@ -14,8 +14,7 @@
 
 <div class='title_bar'>
   <h1>
-    <%= t('student.assignment',
-        short_identifier: @assignment.short_identifier) %>
+    <%= "#{Assignment.model_name.human} #{@assignment.short_identifier}" %>
   </h1>
 </div>
 
@@ -260,7 +259,7 @@
           <% if @assignment.student_form_groups &&
                 !@assignment.invalid_override &&
                 @assignment.group_max > 1 %>
-            <li><%= t('student.students_can_form_groups') %></li>
+            <li><%= Assignment.human_attribute_name(:student_form_groups) %></li>
             <li>
               <%= raw( t('student.form_group',
                         group_min: @assignment.group_min,

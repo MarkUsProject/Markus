@@ -7,7 +7,7 @@
 <% end %>
 
 <div class='title_bar'>
-  <h1><%= t('student_interface_assignments') %></h1>
+  <h1><%= Assignment.model_name.human.pluralize %></h1>
 </div>
 
 <%= render partial: 'assignments/list',

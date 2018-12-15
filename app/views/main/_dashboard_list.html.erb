@@ -6,8 +6,8 @@
       <table>
         <thead>
         <tr>
-          <th><%= t(:name) %></th>
-          <th><%= t(:due) %></th>
+          <th><%= Assignment.model_name.human %></th>
+          <th><%= Assignment.human_attribute_name(:due_date) %></th>
         </tr>
         </thead>
         <tbody>

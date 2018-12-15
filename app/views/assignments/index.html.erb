@@ -19,7 +19,7 @@
                 action: 'new' },
               class: 'button' %>
   <% if MarkusConfigurator.markus_experimental_scanned_exam_on? %>
-        <%= link_to t(:create_new_scanned_assignment),
+        <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
                     { controller: 'assignments',
                       scanned: true,
                       action: 'new' },
