@@ -12,12 +12,12 @@
       </div>
     <% end %>
   <% else %>
-    <h3><%= t('marker.remark_instructions') %></h3>
+    <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
     <%= assignment.remark_message %>
 
     <h3><%= t('marker.remark_request') %></h3>
     <% if student_can_edit_remark_request(submission) %>
-      <%= t('marker.remark_due_date') %>:
+      <%= Assignment.human_attribute_name(:remark_due_date) %>:
       <% if assignment.remark_due_date %>
         <%= l(assignment.remark_due_date) %>
       <% else %>

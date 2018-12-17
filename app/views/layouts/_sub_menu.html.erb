@@ -22,7 +22,7 @@
         <div class='dropdown'>
           <%# Display an appropriate message in the dropdown menu %>
           <% if @assignment.nil? && @grade_entry_form.nil? %>
-            <%= t(:choose_assignment) %>
+            <%= t(:choose) %>
           <% elsif controller.controller_name == 'assignments' &&
                    (controller.action_name == 'new' ||
                     controller.action_name == 'create') %>
@@ -176,7 +176,7 @@
     <li id='dropdown'>
       <span class='dropdown'>
         <% if @assignment.nil? && @grade_entry_form.nil? %>
-          <%= t(:choose_assignment) %>
+          <%= t(:choose) %>
         <% else %>
           <%= @assignment.is_peer_review? ?
                   @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
@@ -211,7 +211,7 @@
       <li id='dropdown'>
         <span class='dropdown'>
           <% if @assignment.nil? && @grade_entry_form.nil? %>
-            <%= t(:choose_assignment) %>
+            <%= t(:choose) %>
           <% elsif !@assignment.nil? %>
             <% # Display the assignment's short identifier %>
               <%= @assignment.is_peer_review? ?

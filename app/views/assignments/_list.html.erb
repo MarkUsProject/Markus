@@ -6,8 +6,8 @@
       <table>
         <thead>
           <tr>
-            <th><%= t(:name) %></th>
-            <th><%= t(:due_date) %></th>
+            <th><%= Assignment.human_attribute_name(:description) %></th>
+            <th><%= Assignment.human_attribute_name(:due_date) %></th>
             <th><%= Result.model_name.human.pluralize %></th>
           </tr>
         </thead>

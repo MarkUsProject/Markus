@@ -30,7 +30,7 @@
 
   <div class='exam-template-section'>
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>
-    <p class='required'><%= raw t('assignment.required_fields') %> <span class='required_field'>*</span></p>
+    <p class='required'><%= t('required_fields') %> <span class='required_field'>*</span></p>
     <%= render partial: 'template_division_pane',
                locals: { f: f,
                          exam_template: exam_template } %>

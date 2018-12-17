@@ -186,14 +186,11 @@ class Assignment < ApplicationRecord
 
   # Return an array with names of sections past
   def section_names_past_due_date
-    sections_past = []
-
-    unless self.section_due_dates_type
-      if !due_date.nil? && Time.zone.now > due_date
-        return sections_past << 'Due Date'
-      end
+    if !self.section_due_dates_type && !due_date.nil? && Time.zone.now > due_date
+      return []
     end
 
+    sections_past = []
     self.section_due_dates.each do |d|
       if !d.due_date.nil? && Time.zone.now > d.due_date
         sections_past << d.section.name

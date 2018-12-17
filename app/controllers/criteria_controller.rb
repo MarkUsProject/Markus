@@ -8,7 +8,7 @@ class CriteriaController < ApplicationController
   def index
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.marking_started?
-      flash_now(:notice, I18n.t('marking_started_warning'))
+      flash_now(:notice, I18n.t('assignments.due_date.marking_started_warning'))
     end
     @criteria = @assignment.get_criteria
   end
