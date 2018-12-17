@@ -11,15 +11,11 @@ class TestRun < ApplicationRecord
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
-    cancelled: 'cancelled',
-    complete_with_errors: 'complete_with_errors'
+    cancelled: 'cancelled'
   }.freeze
 
   def status
     if test_script_results.exists?
-      if test_script_results.joins(:test_results).where('test_results.completion_status': 'error').size&.positive?
-        return STATUSES[:complete_with_errors]
-      end
       return STATUSES[:complete]
     end
     return STATUSES[:cancelled] if time_to_service&.negative?
@@ -30,14 +26,10 @@ class TestRun < ApplicationRecord
     status_hash = Hash.new
     TestRun.left_outer_joins(test_script_results: :test_results)
            .where(id: test_run_ids)
-           .pluck(:id, 'test_script_results.id', :time_to_service, 'test_results.completion_status')
-           .map do |id, test_script_results_id, time_to_service, completion_status|
+           .pluck(:id, 'test_script_results.id', :time_to_service)
+           .map do |id, test_script_results_id, time_to_service|
       if test_script_results_id
-        if completion_status == 'error' || status_hash[id] == STATUSES[:complete_with_errors]
-          status_hash[id] = STATUSES[:complete_with_errors]
-        else
-          status_hash[id] = STATUSES[:complete]
-        end
+        status_hash[id] = STATUSES[:complete]
       elsif time_to_service&.negative?
         status_hash[id] = STATUSES[:cancelled]
       else

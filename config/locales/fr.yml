@@ -137,7 +137,6 @@ fr:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
-            complete_with_errors: "UPDATE ME"
     peer_review:
         assign: "Attribuer examen par les pairs"
         review: "Avis "
