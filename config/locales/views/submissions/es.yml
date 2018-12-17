@@ -78,6 +78,7 @@ es:
       viewing_revision: "Mirando Revisión:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Su grupo no es válido. Usted no puede enviar ningún documento."
       no_submission: "Usted no ha enviado ninguna entrega todavía"
 
     # Miscellaneous

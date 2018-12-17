@@ -6,3 +6,4 @@ es:
     attributes:
       group:
         group_name: "Nombre del grupo"
+        student_memberships: "Miembros"

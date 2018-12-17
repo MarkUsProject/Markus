@@ -456,7 +456,7 @@ class GroupsController < ApplicationController
     membership.save
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
-    flash_message(:success, I18n.t('student.member_disinvited'))
+    flash_message(:success, I18n.t('groups.members.member_disinvited'))
     redirect_to student_interface_assignment_path(assignment.id)
   end
 

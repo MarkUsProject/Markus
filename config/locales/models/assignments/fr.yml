@@ -17,6 +17,7 @@ fr:
         enable_student_tests: "Permettre aux étudiants d'éxecuter des tests"
         enable_test: "Permettre l'éxecution de test"
         has_peer_review: "Activer élèves-étudiants d'examen par les pairs"
+        invalid_override: "Les correcteurs/administrateurs forment les groupes"
         is_hidden: "Cacher le projet aux étudiants"
         group_max: "Nombre maximal d'étudiants par groupe"
         group_min: "Nombre minimal d'étudiants par groupe"

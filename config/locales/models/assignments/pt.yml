@@ -17,6 +17,7 @@ pt:
         enable_student_tests: "UPDATE ME"
         enable_test: "Permitir testes para esse projeto"
         has_peer_review: "Enable student-to-student peer review"
+        invalid_override: "Instrutor forma os grupos"
         is_hidden: "Ocultar este projeto dos alunos"
         group_max: "Máximo de estudantes por grupo"
         group_min: "Minimo de estudantes por grupo"

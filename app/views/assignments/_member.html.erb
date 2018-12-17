@@ -1,40 +1,30 @@
-<%
-   # Erb template for inserting member's of a group into the assignment
-   # view of students
-%>
-
-
-<%# If this member is an inviter%>
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
-<li id="member_inviter">
-   <span class="last_name"><%= member.user.first_name %> </span> <%=
-member.user.last_name %> <%= I18n.t("student.inviter") %></li>
-<%# If this member is an accepted member %>
+  <li id="member_inviter">
+    <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.inviter')})" %>
+  </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
-<li>
-   <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %></li>
-<%# If this member is pending%>
+  <li>
+    <%= "#{member.user.first_name} #{member.user.last_name}" %>
+  </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
-<li class="membership_status_pending">
-   <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %> <%= I18n.t("student.invited") %>
-   <% if grouping.is_inviter?(@current_user) %>
-     <%= link_to I18n.t(:cancel), disinvite_member_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
-        method: 'PATCH',
-        title: I18n.t("student.cancel_invitation_title"),
-        class: "delete",
-        data: {confirm: I18n.t("student.cancel_invitation")}
-        %>
-   <% end %>
-</li>
-<%# If this member is rejected %>
+  <li class="membership_status_pending">
+     <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.pending')})" %>
+     <% if grouping.is_inviter?(@current_user) %>
+       <%= link_to t('groups.members.cancel_invitation'),
+                   disinvite_member_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
+                   method: 'PATCH',
+                   class: 'delete',
+                   data: { confirm: t('groups.members.cancel_invitation_confirm') }
+       %>
+     <% end %>
+  </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
-   <% if grouping.is_inviter?(@current_user) %>
-<li class="membership_status_rejected">
-   <span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name %> (<%=t(:rejected_invitation)%>)
-     <%= link_to I18n.t(:delete), delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
-         method: 'DELETE'%>
-</li>
-   <% end %>
+  <% if grouping.is_inviter?(@current_user) %>
+    <li class="membership_status_rejected">
+       <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.rejected')})" %>
+       <%= link_to t(:delete),
+                   delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
+                   method: 'DELETE'%>
+    </li>
+  <% end %>
 <% end %>
-

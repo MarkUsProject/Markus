@@ -81,7 +81,7 @@ class BatchTestRunTable extends React.Component {
               PivotValue: ({value}) => value
             },
             {
-              Header: I18n.t('assignment.batch_tests_status_table.group_name'),
+              Header: I18n.t('activerecord.attributes.group.group_name'),
               accessor: 'group_name',
               // If more than one value, show the total number of groups under this pivot
               aggregate: vals => {
