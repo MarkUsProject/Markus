@@ -27,3 +27,46 @@ en:
     select_a_group: "Select a group"
     select_a_student: "Select a student"
     select_only_one_group: "You may only assign each student to one group."
+
+    # Student interface
+    student_interface:
+      confirm_create_group: "This action will decline your pending invitations. Are you sure?"
+      confirm_delete_group: "WARNING: You will lose access to your submitted files after deleting your group.
+                             Make sure you have a local copy of your files before clicking OK."
+      form_group: "Create or join a group"
+      group_information: "Group information"
+      group_options: "Group options"
+      group_properties: "Policies"
+      group_size_html: "Each group must have between <strong>%{group_min}</strong> to <strong>%{group_max}</strong> members, inclusive."
+      invite_more_students: "Your group does not have enough members, and you need to invite more students."
+      may_not_add_more: "You may not invite any more students to your group."
+      may_not_modify: "You may not modify your group at this time."
+      modification_limited: "Modification of your group is very limited, because the final due date has passed."
+      no_group_yet: "You are not currently in a group for this assignment."
+      not_allowed_to_delete_group: "If you would like to remove this group, you must contact your instructor."
+      not_allowed_to_form_group: "You are not allowed to form a group yourself.
+                                  Please wait until your instructor forms your group."
+      section_groups_only: "You can only form a group with students in your section."
+      students_work_alone: "Students work individually."
+      url_group_repository: "Group repository URL"
+      work_alone: "Work alone"
+      working_alone: "You have indicated you are working individually on this assignment.
+                      If you change your mind and want to create or join a group,
+                      first delete your group using the button below."
+      your_group: "Your group"
+
+    members:
+      cancel_invitation: "Cancel invitation"
+      cancel_invitation_confirm: "Are you sure you want to cancel this invitation?"
+      decline: "Decline Invitation"
+      decline_invitation_confirm: "Are you sure you want to decline this invitation?"
+      invitations: "Group invitations"
+      invite: "Invite student(s)"
+      invite_instructions: "Enter one or more student user names, separated by commas."
+      invited_by: "You have been invited to a group by %{inviter_first_name} %{inviter_last_name}."
+      join: "Join Group"
+      member_disinvited: "Member disinvited."
+      statuses:
+        inviter: "inviter"
+        pending: "invited"
+        rejected: "declined"

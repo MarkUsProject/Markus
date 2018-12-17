@@ -31,6 +31,7 @@ es:
     clear_role_switch_session_link: "Cancelar cambio de rol."
     working:                        "Cargando"
     login_as:                       "Iniciar sesión como"
+    please_wait:                    "Por favor espere..."
 
     # app/views/main/_about_content.html.erb
     about_markus:               "Acerca de MarkUs"
@@ -117,7 +118,6 @@ es:
             select_a_criterion:           "Seleccione al menos un criterio de calificación"
             group_submission_no_files:    "Uno o más de los grupos seleccionados no tienen archivos en su entrega. El
                                            evaluador no ha sido asignado."
-            properties:                   "Propiedades del grupo"
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
@@ -161,7 +161,6 @@ es:
             in_progress: "UPDATE ME"
             test_run_complete: "UPDATE ME"
             created_at: "UPDATE ME"
-            group_name: "UPDATE ME"
             status: "UPDATE ME"
             estimated_remaining_time: "UPDATE ME"
             action: "UPDATE ME"
@@ -203,9 +202,6 @@ es:
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
     your_mark: "Su nota:"
 
-    members:                     "Miembros"
-    add_members:                 "Añadir miembros"
-    remove_members:              "Remover miembros"
     search_graders:              "Buscar evaluadores"
     add_graders:                 "Añadir evaluadores"
     remove_graders:              "Remover evaluadores"
@@ -231,10 +227,6 @@ es:
     peer_reviews:                "Revisiones de Compañeros"
     rubrics:                     "Rúbricas"
     marking_scheme:              "Esquema de calificación"
-    join:                        "Unir"
-    refuse:                      "Declinar"
-    invite:                      "Invitar"
-    disinvite:                   "Retirar la invitación"
     help:                        "Ayuda"
     no_remark_result:            "Los resultados de la recalificación no están disponibles para este proyecto todavía."
     preview:                     "Vista previa"
@@ -338,7 +330,6 @@ es:
                                    sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                    ellos tenga su nota correspondiente."
 
-    separate_multiple_with_commas:       "Separe múltiples nombres de usuarios con comas"
     csv_valid_format:                    "Un problema ha ocurrido con el análisis sintáctico del archivo en formato CSV
                                           que ha sido subido. Por favor asegúrese que el archivo tenga un formato CSV
                                           válido y que cada línea termine en un carriage-return o un line-feed.
@@ -446,13 +437,9 @@ es:
       error:
         validate_criteria: "debe ser un número entre 0 y la nota máxima para el criterio de calificación"
 
-    rejected_invitation:                       "Declinado"
-
     #Sutdent's View (student)
     student:
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
-      group_information:                  "Información del Grupo"
-      group_not_valid:                    "Su grupo no es válido. Usted no puede enviar ningún documento."
       overview:                           "Vista General"
       last_revision_date:                 "Última fecha de revisión:
                                            <br><span class=\"info_date\">%{last_modified_date}</span>"
@@ -461,47 +448,6 @@ es:
                                            archivos requeridos no encontrados</span>"
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
-      no_group_yet:                       "Usted no tiene un grupo todavía"
-      not_allowed_to_form_group:          "Usted no puede formar grupos para este proyecto. Por favor espere hasta que
-                                           el instructor forme los grupos."
-      invitations:                        "Invitaciones"
-      invited_by:                         "Usted ha sido invitado/a por %{inviter_first_name}
-                                           <span class=\"last_name\">%{inviter_last_name}</span>"
-      decline_invitation:                 "¿Está seguro/a de querer rechazar esta invitación?"
-      confirm_work_alone:                 "¿Está seguro/a de querer trabajar sólo? Usted no puede cambiar esta opción
-                                           a menos que contacte a su profesor."
-      form_own_group:                     "Formar su propio grupo"
-      form_group:                         "Los grupos deben tener de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> personas."
-      decline_invitation2:                "Esto rechazará la invitación que se le ha realizado. ¿Está seguro/a de querer rechazar esta invitación?"
-      your_group:                         "Su grupo"
-      group_options:                      "Opciones del grupo"
-      modification_limited:               "En este momento, las modificaciones de su grupo son limitadas. La fecha
-                                           límite y período de aplazamiento de gracia (si existe uno) han pasado."
-      invite_more_students:               " El grupo no es válido. Usted necesita invitar más estudiantes."
-      working_alone:                      "Usted ha solicitado trabajar sólo/a en este proyecto. Si cambia de opinión y
-                                           desea formar o unirse a un grupo primero elimine su grupo."
-      may_not_add_more:                   "Usted no puede añadir más personas a su grupo en este momento."
-      may_not_modify:                     "Usted no puede modificar su grupo en este momento."
-      group_not_deletable:                "Usted debe contactar su profesor para remover el grupo."
-      url_group_repository:               "El URL para el repositorio del grupo"
-      invalid_override:                   "El instructor forma los grupos."
-      student_work_alone:                 "Los estudiantes trabajan solos"
-      invite:                             "Invitar"
-      please_wait:                        " Por favor espere..."
-      work_alone:                         "Trabajar solo"
-      confirm_delete_group:               "PRECAUCIÓN: Usted perderá acceso a los archivos enviados en su entrega
-                                           después de eliminar su grupo. Asegúrese de tener una copia local de sus
-                                           archivos antes de dar click en OK."
-      delete_your_group:                  "Eliminar su grupo"
-      delete_group:                       "Eliminar Grupo"
-      disinvite_member:                   "¿Está seguro/a de querer anular la invitación de este miembro?"
-      member_disinvited:                  "La invitación de este miembro ha sido anulada"
-      invited:                            "(invitado/a)"
-      inviter:                            "(Invitador)"
-      disinvite:                          "Anular la invitación"
-      cancel_invitation:                  "¿Está seguro/a de querer cancelar esta invitación?"
-      cancel_invitation_title:            "Cancelar invitación"
-      section_groups_only:                "Usted sólo puede invitar estudiantes de su sección"
       submission:
         search_files:                     "Buscar archivos"
         file_manager:                     "%{short_identifier}: Administrador de Archivos"

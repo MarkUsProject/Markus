@@ -5,4 +5,5 @@ es:
     confirm:
       delete: "¿Está seguro/a de querer eliminar este %{model}?"
     submit:
+      create: "Crear %{model}"
       delete: "Eliminar este %{model}"

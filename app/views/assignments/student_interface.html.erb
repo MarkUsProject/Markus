@@ -34,8 +34,8 @@
           <p class='notice'><%= t('submissions.student.no_submission') %></p>
         <% else %>
           <% unless @grouping.is_valid? %>
-            <p class='notice'>
-              <%= t('student.group_not_valid') %>
+            <p class='warning'>
+              <%= t('submissions.student.invalid_group_cannot_submit') %>
             </p>
           <% end %>
           <h3><%= t('student.overview') %></h3>
@@ -58,28 +58,28 @@
 
   <div id='student_column_right'>
     <div class='block'>
-      <h2><%= t('student.group_information') %></h2>
+      <h2><%= t('groups.student_interface.group_information') %></h2>
 
       <div class='block_content'>
         <% # If student has no group, inform them
            if @grouping.nil? %>
           <p class='notice'>
-            <%= t('student.no_group_yet') %>.
+            <%= t('groups.student_interface.no_group_yet') %>
             <% if @assignment.past_collection_date?(@student.section) %>
               <%= t('assignments.due_date.final_due_date_passed') %>
             <% end %>
           </p>
 
           <% # Test if the student can form groupings or not
-             if !@assignment.student_form_groups %>
+             unless @assignment.student_form_groups %>
             <p>
-              <%= t('student.not_allowed_to_form_group') %>
+              <%= t('groups.student_interface.not_allowed_to_form_group') %>
             </p>
           <% end %>
 
           <% # See if the student has been invited to some group
              if @student.has_pending_groupings_for?(@assignment.id) %>
-            <h3><%= t('student.invitations') %></h3>
+            <h3><%= t('groups.members.invitations') %></h3>
 
             <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
               <div class='notice'>
@@ -89,9 +89,9 @@
 
             <% @pending_grouping.each do |grouping|%>
               <div class='sub_block'>
-                <p><%= raw(t('student.invited_by',
-                             inviter_last_name: grouping.inviter.last_name,
-                             inviter_first_name: grouping.inviter.first_name)) %>
+                <p><%= t('groups.members.invited_by',
+                         inviter_last_name: grouping.inviter.last_name,
+                         inviter_first_name: grouping.inviter.first_name) %>
                 </p>
                 <% grouping.student_memberships.includes(:user).each do |member|%>
                   <ul>
@@ -101,13 +101,13 @@
                   </ul>
                 <% end -%>
 
-                <%= link_to t(:join),
+                <%= link_to t('groups.members.join'),
                             accept_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
                             { method: :patch, class: 'button' } %>
-                <%= link_to t(:refuse),
+                <%= link_to t('groups.members.decline'),
                             decline_invitation_assignment_groups_path(assignment_id: @assignment.id, grouping_id: grouping.id),
                             { class: 'button',
-                              method: :patch, data: { confirm: t('student.decline_invitation') } } %>
+                              method: :patch, data: { confirm: t('groups.members.decline_invitation_confirm') } } %>
                 </div>
             <% end %>
           <% end %>
@@ -117,31 +117,27 @@
              # render UI elements for group creation
              if !@assignment.past_collection_date?(@student.section) && @assignment.student_form_groups %>
 
-            <h3><%= t('student.form_own_group') %></h3>
-            <p><%= raw(t('student.form_group',
-                         group_min: @assignment.group_min,
-                         group_max: @assignment.group_max)) %>
-            </p>
+            <h3><%= t('groups.student_interface.form_group') %></h3>
 
+            <% if @student.has_pending_groupings_for?(@assignment.id) %>
+              <% confirm = t('groups.student_interface.confirm_create_group') %>
+            <% else %>
+              <% confirm = nil %>
+            <% end %>
             <% if @assignment.group_min == 1 %>
               <p>
-                <%= link_to t('student.work_alone'),
+                <%= link_to t('groups.student_interface.work_alone'),
                             assignment_groups_path(assignment_id: @assignment.id, workalone: 'true'),
-                            { class: 'button', method: :post, data: { confirm: t('student.confirm_work_alone'),
-                                                                      disable_with: t('student.please_wait') } } %>
+                            { class: 'button', method: :post,
+                              data: { confirm: confirm, disable_with: t(:please_wait) } } %>
               </p>
             <% end %>
             <p>
-              <% if @student.has_pending_groupings_for?(@assignment.id)%>
-                <%= link_to t(:create),
-                            assignment_groups_path(@assignment.id),
-                            { class: 'button', method: :post, data: { confirm: t('student.decline_invitation2'),
-                                                                      disable_with: t('student.please_wait') } } %>
-              <% else %>
-                <%= link_to t(:create),
-                            assignment_groups_path(@assignment.id),
-                            { class: 'button', method: :post, data: { disable_with: t('student.please_wait') } } %>
-              <% end %>
+              <%= link_to t('helpers.submit.create', model: Group.model_name.human),
+                          assignment_groups_path(@assignment.id),
+                          { class: 'button', method: :post,
+                            data: { confirm: confirm,
+                                    disable_with: t(:please_wait) } } %>
             </p>
           <% end %>
         <% else %>
@@ -151,7 +147,7 @@
             <% if @assignment.group_name_displayed %>
               <%= @group.group_name %>
             <% else %>
-              <%= t("student.your_group") %>
+              <%= t('groups.student_interface.your_group') %>
             <% end %>
           </h3>
           <% # Display group properties are read only warning
@@ -159,7 +155,7 @@
              if @assignment.past_collection_date?(@student.section) && @assignment.student_form_groups &&
                 !@assignment.invalid_override && @assignment.group_max > 1 %>
             <p class='information'>
-              <%= t('student.modification_limited') %>
+              <%= t('groups.student_interface.modification_limited') %>
             </p>
           <% end %>
 
@@ -179,9 +175,9 @@
 
           <% # If the group does not have the right amount of members yet, display
              # 'group is not valid' warning.
-             if !@grouping.is_valid? %>
+             unless @grouping.is_valid? %>
             <p class='warning'>
-              <%= t('student.invite_more_students') %>
+              <%= t('groups.student_interface.invite_more_students') %>
             </p>
           <% end %>
 
@@ -196,7 +192,7 @@
 
           <% # Display the URL of this group's repository if applicable
              if @assignment.vcs_submit %>
-            <h3><%= t('student.url_group_repository') %></h3>
+            <h3><%= t('groups.student_interface.url_group_repository') %></h3>
             <div class='sub_block'>
               <a href='<%= @grouping.group.repository_external_access_url %>'><%= @grouping.group.repository_external_access_url %></a>
             </div>
@@ -205,11 +201,9 @@
 
         <% unless @group.nil? %>
           <div class='group-options'>
-            <h3><%= t('student.group_options') %></h3>
+            <h3><%= t('groups.student_interface.group_options') %></h3>
             <% if @group.group_name == @current_user.user_name && !@assignment.past_collection_date?(@student.section) && @assignment.group_max > 1 %>
-              <p class='information'>
-                <%= t('student.working_alone') %>
-              </p>
+              <p><%= t('groups.student_interface.working_alone') %></p>
             <% end %>
 
             <% # Student not reached the group max and is not working alone
@@ -220,15 +214,15 @@
                  if @grouping.student_membership_number < @assignment.group_max &&
                          @group.group_name != @current_user.user_name %>
                 <div class='group-button'>
-                  <%= button_tag t(:invite), onclick: 'invite(); return false;' %>
+                  <%= button_tag t('groups.members.invite'), onclick: 'invite(); return false;' %>
                 </div>
               <% elsif @grouping.student_membership_number ==
                          @assignment.group_max &&
                        @group.group_name != @current_user.user_name %>
-                <p class='information'><%= t('student.may_not_add_more') %></p>
+                <p><%= t('groups.student_interface.may_not_add_more') %></p>
               <% end %>
             <% else %>
-              <p class='information'><%= t('student.may_not_modify') %></p>
+              <p><%= t('groups.student_interface.may_not_modify') %></p>
             <% end %>
 
             <% if !@grouping.nil? && @assignment.group_max > 1 &&
@@ -237,38 +231,38 @@
               <% if @grouping.inviter == @current_user &&
                     @grouping.accepted_students.size == 1 %>
                 <div class='group-button'>
-                  <%= button_to t('student.delete_group'),
+                  <%= button_to t('helpers.submit.delete', model: Group.model_name.human),
                                 assignment_group_path(@assignment.id),
                                 method: :delete,
-                                data: { confirm: t('student.confirm_delete_group') }
+                                data: { confirm: t('groups.student_interface.confirm_delete_group') }
                                 %>
                 </div>
               <% else %>
-                <p class='information'> <%= t('student.group_not_deletable') %> </p>
+                <p><%= t('groups.student_interface.not_allowed_to_delete_group') %></p>
               <% end %>
             <% end %>
           </div>
         <% end %>
 
-        <h3><%= t('student.group_properties') %></h3>
+        <h3><%= t('groups.student_interface.group_properties') %></h3>
         <ul>
           <% if @assignment.section_groups_only && Section.any? %>
-            <li><%= t('student.section_groups_only') %></li>
+            <li><%= t('groups.student_interface.section_groups_only') %></li>
           <% end %>
 
           <% if @assignment.student_form_groups &&
                 !@assignment.invalid_override &&
                 @assignment.group_max > 1 %>
-            <li><%= Assignment.human_attribute_name(:student_form_groups) %></li>
+            <li><%= Assignment.human_attribute_name(:student_form_groups) %>.</li>
             <li>
-              <%= raw( t('student.form_group',
-                        group_min: @assignment.group_min,
-                        group_max: @assignment.group_max)) %>
+              <%= t('groups.student_interface.group_size_html',
+                    group_min: @assignment.group_min,
+                    group_max: @assignment.group_max) %>
             </li>
           <% elsif @assignment.invalid_override %>
-            <li><%= t('student.invalid_override') %></li>
+            <li><%= Assignment.human_attribute_name(:invalid_override) %>.</li>
           <% else %>
-            <li><%= t('student.student_work_alone') %></li>
+            <li><%= t('groups.student_interface.students_work_alone') %></li>
           <% end %>
         </ul>
       </div>
@@ -281,8 +275,8 @@
   <aside class='dialog' id='invite_dialog'>
     <%= form_tag(invite_member_assignment_groups_path(assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { onsubmit: "document.getElementById('working').style.display = '';" }) do %>
-      <h2><%= t('student.invite') %></h2>
-      <p class='information'><%= t(:separate_multiple_with_commas) %></p>
+      <h2><%= t('groups.members.invite') %></h2>
+      <p><%= t('groups.members.invite_instructions') %></p>
       <fieldset>
         <span><label for='invite_member'><%= User.human_attribute_name(:user_name).pluralize %></label></span>
         <%= text_field_tag 'invite_member'%>
@@ -291,7 +285,7 @@
       <section class='dialog-actions'>
         <%= submit_tag t(:submit) %>
         <input type='reset'
-               value='<%= t('cancel') %>'
+               value='<%= t(:cancel) %>'
                onclick="invite_modal.close();
                         document.getElementById('working').style.display = 'none';">
       </section>

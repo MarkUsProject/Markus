@@ -37,6 +37,7 @@ en:
       viewing_revision: "Viewing Revision:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Your group does not have enough members, and so you cannot submit any work."
       no_submission: "You have not submitted any work yet."
 
     # Miscellaneous

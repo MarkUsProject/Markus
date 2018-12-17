@@ -25,6 +25,7 @@ fr:
       viewing_revision: "Révision:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
       no_submission: "Vous n'avez encore rien envoyé"
 
     # Miscellaneous

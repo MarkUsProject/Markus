@@ -209,7 +209,7 @@ class RawGroupsTable extends React.Component {
       }
     },
     {
-      Header: I18n.t('members'),
+      Header: I18n.t('activerecord.attributes.group.student_memberships'),
       accessor: 'members',
       Cell: row => {
         if (row.value.length > 0 || !this.props.scanned_exam) {
