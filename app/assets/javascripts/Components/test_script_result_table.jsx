@@ -126,6 +126,7 @@ class TestScriptResultTable extends React.Component {
                 id: 'actual_output',
                 Header: I18n.t('automated_tests.test_results_table.output'),
                 accessor: row => row['test_results.actual_output'] ? row['test_results.actual_output'] : '',
+                Cell: ({value}) => <pre className={'test-results-output'}>{value}</pre>,
                 className: 'actual_output'
               })
             }
