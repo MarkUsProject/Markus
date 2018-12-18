@@ -4,7 +4,7 @@ module Api
   # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
-    include ActionPolicy::Controller
+    include ActionPolicy::Controller, SessionHandler
 
     authorize :user, through: :current_user
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
