@@ -99,6 +99,7 @@ group :development do
   gem 'bootsnap', require: false
   gem 'brakeman', require: false
   gem 'bullet'
+  gem 'i18n-tasks'
   gem 'rails-erd'
 end
 
