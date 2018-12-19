@@ -138,7 +138,6 @@ en:
             complete: "complete"
             in_progress: "in progress"
             cancelled: "cancelled"
-            complete_with_errors: "complete with errors"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "

@@ -138,7 +138,6 @@ pt:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
-            complete_with_errors: "UPDATE ME"
     peer_review:
         assign: "Atribuir avaliações pelos pares"
         review: "Revisão "
