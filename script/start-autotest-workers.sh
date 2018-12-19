@@ -8,7 +8,7 @@ fi
 
 echo "[MARKUS] Starting autotest workers using supervisord"
 source "${AUTOTEST_ROOT}"/server/venv/bin/activate
-pushd "${AUTOTEST_ROOT}"/server/workspace > /dev/null
-supervisord -c "${AUTOTEST_ROOT}"/server/supervisord.conf
+pushd "${AUTOTEST_ROOT}"/server/workspace/logs > /dev/null
+supervisord -c supervisord.conf
 popd > /dev/null
 deactivate
