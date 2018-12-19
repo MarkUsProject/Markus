@@ -5,8 +5,8 @@ pt:
   median: "Mediana"
   assignments_submitted: "Projetos submetidos"
   assignments_graded: "Projetos avalidos"
-  assignments_failed: "Número de falhas"
-  assignments_zeros: "Número de zeros"
+  num_failed: "Número de falhas"
+  num_zeros: "Número de zeros"
   refresh_graph: "Atualizar gráfico"
   outstanding_remark_request:
     one: "%{count} pedidos de avaliação"

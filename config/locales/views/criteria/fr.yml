@@ -4,7 +4,7 @@ fr:
       button: "Ajouter Critère"
 
     upload:
-      format_yml_html: "
+      yml_instructions_html: "
         <ul>
           <li><p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>
             <code>criterion_name:<br>
@@ -72,19 +72,17 @@ fr:
       Pour un aperçu, sauvegardez."
     max_mark_short: "Note"
 
-    rubric_criteria:
-      name: "Nom du critère"
-      level:
-        levels: "Niveaux"
-        level_index: "Niveau %{index}"
-      defaults:
-        level_0: "Très insuffisant"
-        level_1: "Insuffisant"
-        level_2: "Passable"
-        level_3: "Bon"
-        level_4: "Excellent"
-        description_0: "Ce critère n'a pas été compris."
-        description_1: "Ce critère n'a pas été très bien compris."
-        description_2: "Ce critère a été partiellement compris."
-        description_3: "Ce critère a été compris."
-        description_4: "Ce critère a été parfaitement compris."
+  rubric_criteria:
+    level:
+      level_index: "Niveau %{index}"
+    defaults:
+      level_0: "Très insuffisant"
+      level_1: "Insuffisant"
+      level_2: "Passable"
+      level_3: "Bon"
+      level_4: "Excellent"
+      description_0: "Ce critère n'a pas été compris."
+      description_1: "Ce critère n'a pas été très bien compris."
+      description_2: "Ce critère a été partiellement compris."
+      description_3: "Ce critère a été compris."
+      description_4: "Ce critère a été parfaitement compris."

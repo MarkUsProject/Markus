@@ -18,5 +18,4 @@ pt:
       success: "Sessão %{name} atualizada com sucesso."
 
     # Miscellaneous
-    all: "Todas as Sessões"
     none: "Ainda não há sessões."

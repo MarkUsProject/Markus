@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      test_run:
+        one: "Test Run"

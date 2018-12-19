@@ -26,28 +26,7 @@
 ] %>
 
 <% content_for :wrap_left_content do %>
-  <div id='list'>
-    <% # Display lines in csv file that has not been successfully processed %>
-    <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
-      <div class='errorExplanation' id='errorExplanation'>
-        <p><%= t('tas.not_added') %></p>
-        <ul>
-          <% for line in flash[:invalid_lines] -%>
-            <li><%= line %></li>
-          <% end -%>
-        </ul>
-        <p><%= t('tas.make_sure') %></p>
-        <ul>
-          <li><%= t('tas.ta_names') %></li>
-          <li><%= t('tas.each_field') %></li>
-          <li><%= t('tas.each_line') %></li>
-        </ul>
-      </div>
-    <% end %>
-
-    <div id='tas_table'></div>
-
-  </div>
+  <div id='tas_table'></div>
 <% end %>
 
 <!-- Modals -->

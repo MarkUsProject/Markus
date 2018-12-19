@@ -1,8 +1,6 @@
 fr:
   exam_templates:
     update:
-      general:
-        "Modèle d'examen de mise à jour"
       success:
         "Le modèle d'examen a été mis à jour avec succès"
       failure:
@@ -16,8 +14,6 @@ fr:
         "Modèle d'examen supprimé avec succès"
       failure:
         "Modèle d'examen non supprimé avec succès"
-      template_divisions:
-        "Add/edit template divisions(s) of the exam template:"
       confirm:
         "Êtes-vous sûr de vouloir supprimer %{name}?"
     create:
@@ -65,14 +61,6 @@ fr:
     split_pdf_log:
       view_logs:
         "regardes les connexions"
-      log:
-        "bûche"
-      success_log:
-        "%{filename} est divisé en pages %{original_num_pages}"
-      failure_general_log:
-        "Alors que %{filename} est constitué de pages %{original_num_pages}, il existe des pages %{num_pages_qr_scan_error} avec des erreurs de scan QR"
-      failure_missing_pages_log:
-        "Bien qu'il y ait %{num_pages_qr_scan_error} Erreurs d'analyse QR avec %{nom de fichier}, il peut y avoir des pages manquantes"
       scan_error:
         "Certains fichiers n'ont pas été correctement examinés."
 
