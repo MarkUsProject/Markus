@@ -1,0 +1,5 @@
+es:
+  activerecord:
+    models:
+      marking_scheme:
+        one: "Esquema de calificación"

@@ -18,5 +18,4 @@ fr:
       success: "Section mise à jour."
 
     # Miscellaneous
-    all: "Tous les Sections"
     none: "Il n'y a pas encore de section."

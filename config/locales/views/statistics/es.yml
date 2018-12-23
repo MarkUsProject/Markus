@@ -5,8 +5,8 @@ es:
   median: "Media"
   assignments_submitted: "Proyectos Entregados"
   assignments_graded: "Proyectos Calificados"
-  assignments_failed: "Número de fallos"
-  assignments_zeros: "Número de ceros"
+  num_failed: "Número de fallos"
+  num_zeros: "Número de ceros"
   outstanding_remark_request:
     one: "%{count} solicitud de recalificación pendiente"
     other: "%{count} solicitudes de recalificación pendientes"

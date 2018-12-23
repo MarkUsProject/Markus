@@ -11,6 +11,8 @@ es:
   upload_with_format: "Subir en formato %{file}"
   upload_prompt_csv: "Seleccione el archivo con formato CSV que desea subir"
   upload_errors:
+    malformed_csv: "El archivo seleccionado fue formado inapropiadamente. Por favor asegúrese de
+                    que el archivo siga las especificaciones de MarkUs."
     syntax_error: "Existe un error en el archivo que usted subió: %{error}"
     unparseable_yml: "No se pudo interpretar el archivo con formato YAML"
   uploading_please_wait: "Subiendo - por favor espere..."

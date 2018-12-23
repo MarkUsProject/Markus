@@ -1,9 +1,0 @@
-es:
-  template_divisions:
-    create:
-      add_new:
-        "Agregar división de plantillas"
-      success:
-        "Plantilla de examen creada correctamente"
-      failure:
-        "Plantilla de examen no creada correctamente"

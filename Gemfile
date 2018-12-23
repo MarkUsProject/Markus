@@ -119,6 +119,7 @@ end
 # listed here
 group :development, :test do
   gem 'byebug'
+  gem 'i18n-tasks'
   gem 'rspec-rails'
 end
 

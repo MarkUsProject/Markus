@@ -1,8 +1,6 @@
 en:
   exam_templates:
     update:
-      general:
-        "Update Exam Template"
       success:
         "Exam Template has been successfully updated"
       failure:
@@ -16,8 +14,6 @@ en:
         "Exam Template successfully deleted"
       failure:
         "Exam Template not successfully deleted"
-      template_divisions:
-        "Add/edit template divisions(s) of the exam template:"
       confirm:
         "Are you sure you want to delete %{name}?"
     create:
@@ -67,14 +63,6 @@ en:
     split_pdf_log:
       view_logs:
         "View Logs"
-      log:
-        "Log"
-      success_log:
-        "%{filename} is split into %{original_num_pages} pages"
-      failure_general_log:
-        "While %{filename} is made up of %{original_num_pages} pages, there are %{num_pages_qr_scan_error} pages with QR scan errors"
-      failure_missing_pages_log:
-        "While there are %{num_pages_qr_scan_error} QR scan errors with %{filename}, there might be missing pages"
       scan_error:
         "Some files have not been scanned properly."
 

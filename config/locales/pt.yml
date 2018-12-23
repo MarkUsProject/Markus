@@ -6,19 +6,13 @@ pt:
     close:              "Fechar"
     password:           "Senha"
     all:                "Todos"
-    none:               "Nenhum"
-    and:                " e "
-    search:             "Pesquisar:"
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
     continue:           "Continuar"
 
     # app/views/main/login.html.erb
-    welcome_to:         "Bem-vindo ao MarkUs!"
-    welcome_to_markus:     "%{user_name}, bem-vindo ao MarkUs, uma ferramenta de avaliação online."
     log_in:             "Conectar"
     logging_in:         "Conectando..."
-    login:              "Login"
     login_failed:       "Falha de conexão"
     password_not_blank: "Sua senha não deve ser vazia."
     username_not_blank: "Seu nome de usuário não pode ser vazio."
@@ -86,10 +80,7 @@ pt:
     message:  "Mensagem"
     remove:  "Remover"
     csv_grade_report:  "relatório de notas em formato CSV"
-    days_and_hours_left:      "(%{days} dias(s) e %{hours} hora(s) restante(s))"
-    hours_and_days_left:      "(%{hours} hora(s) e %{minutes} minuto(s) restante(s)"
     days_left:          "(%{days} dia(s) restante(s))"
-    short_identifier:   "Identificador"
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
     remove_date:        "Remover data"
@@ -119,9 +110,6 @@ pt:
             repo_url: "UPDATE ME"
             title: "UPDATE ME"
             update: "UPDATE ME"
-        has_peer_review: "Ativar aluno-aluno de revisão por pares"
-        configure_peer_review: "Configurar revisão por pares"
-        peer_review_record_missing: "Erro: Par atribuição de avaliação em falta a partir do banco de dados"
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"
@@ -129,7 +117,6 @@ pt:
         batch_tests_status_table:
             test_runs_status: "UPDATE ME"
             in_progress: "UPDATE ME"
-            test_run_complete: "UPDATE ME"
             created_at: "UPDATE ME"
             status: "UPDATE ME"
             estimated_remaining_time: "UPDATE ME"
@@ -148,7 +135,6 @@ pt:
         number_of_reviews_header: "Número de comentários"
         assigned_reviewers_header: "Atribuído usuários"
         reviewer_group: "Grupo de Viajante"
-        reviewee_group: "Grupo de ser revistos"
         reviews_made_on_submission: "Avaliações feitas em sua submissão: "
         reviewers_reviews: "As avaliações deste colaborador: "
         view_ta_result: "Resultado vista TA"
@@ -169,32 +155,22 @@ pt:
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
     your_mark:  "Sua nota:"
 
-    members:            "Membros"
-    search_graders:     "Pesquisar avaliadores"
-    add_graders:        "Adicionar avaliadores"
-    remove_graders:     "Remover avaliadores"
     add_new:            "Adicionar novo"
     edit:               "Editar"
     save:               "Salvar"
     save_changes:       "Saval mudanças"
     apply:              "Aplicar"
     delete:             "Apagar"
-    create:             "Criar"
-    bulk_action:        "Aplicar ação"
     submit_request:     "Enviar pedido ao instrutor"
     submit:             "Enviar"
     cancel:             "Cancelar"
     cancel_remark:      "Cancelar pedido de revisão"
-    filters:            "Filtros"
     all:                "Todos"
-    hidden:             "Oculto"
     active:             "Ativo"
     not_active:         "Não ativo"
     choose:             "Escolher..."
     properties:         "Propriedades"
     peer_reviews:       "Avaliações pelos pares"
-    rubrics:            "Rúbricas"
-    marking_scheme:     "Esquema de avalição"
     help:               "Ajuda"
     no_remark_result:   "Resultados ainda não estão disponíveis para esse projeto."
     preview:            "Prever"
@@ -202,7 +178,6 @@ pt:
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
 
-    commit_after_due_date: "O envio foi fora do prazo."
     past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
     last_commit: "Último envio"
 
@@ -246,7 +221,6 @@ pt:
         total_extra_percentages: "Porcentagem extra total:&nbsp;"
         translated_to_points: "Transformação para pontos:"
         previous_mark: "Nota antiga&nbsp;"
-        old: "Antiga:&nbsp;"
         show_old_marks: "Mostrar antigo resumo de notas"
       annotation:
         average_annotations: "%{average_annotations} anotaciones por presentación marcada"
@@ -255,14 +229,10 @@ pt:
         new_annotation: "Criar nova anotação"
         edit_annotation: "Edit annotation"
         preview: "Visualização"
-        preview_title: "Veja como a anotação vai olhar:"
-        sure_to_remove: "Tem certeza que quer remover essa anotação?"
-        submit_edit: "Enviar mudanças"
         change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
         select_some_text: "Você deve selecionar algum texto do código fonte"
         select_an_area: "Você deve selecionar uma área da imagem para anotar"
         select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
-        provide_text:   "Você deve fornecer alguma anotação"
         context_menu:
           new: "New Annotation"
           common: "Common Annotations"
@@ -278,35 +248,25 @@ pt:
       cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
       criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
 
-    csv_valid_format:   "Houve um problema ao interpretar o arquivo CSV enviado. Verifique se é um formato CSV válido, e que cada linha termina com os caracteres carriage-return. Nenhuma alteração realizada. "
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
     csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-    discard_changes_message: "Tem certeza que quer descartas as modificações?"
     cancel_remark_request: "Tem certeza que quer cancelar o pedido de revisão?  O pedido será apagado e isso não poderá ser desfeito."
     confirm_remark_submit: "Tem certeza que quer enviar o pedido de revisão? Você não poderá ver os resultados até que a revisão seja feita."
-    invalid_id: "deve ser um id inteiro maior que 0"
     still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
-      line_nr_csv_file_prefix: "Linha %{line_number} do arquivo CSV:"
       group_to_grader:         "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       student_to_grader:       "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
       invalid_csv:             "O formato do arquivo CSV não foi reconhecido"
       invalid_row:
-              duplicate_entry: "Entrada duplicada"
               invalid_format:  "Formato de linha inválida"
       upload:
-        malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
         non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     browse_submissions:
-      release_prs:          "Comentários liberação de pares"
-      unrelease_prs:        "Avaliações pelos pares Un - lançamento"
-      reviewer_name:        "Crítico"
-      reviewee_name:        "Pessoa que está sendo revisado"
       review_state:         "Estado de revisão"
 
     course_summaries_index:
@@ -319,8 +279,6 @@ pt:
     groups:
       assign_scans: "Atribuir varreduras"
       skip_group: "UPDATE ME"
-      graders: "Avaliadores (%{graders})"
-      lines_not_processed: "As seguintes linhas não puderam ser processadas:"
       done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
       randomly_assign_graders: "Designar avaliadores aleatoriamente"
       upload:
@@ -361,44 +319,25 @@ pt:
       no_peer_submission_yet: "Você não tem observações a avaliar ainda."
       no_reviews: "Ninguém comentou você ainda."
       submission:
-        search_files: "Arquivos de pesquisa"
         file_manager: "%{short_identifier}: Gerenciador de Arquivos"
-        current_path: "Caminho atual:"
         conflicts: "Conflitos"
         file_conflicts: "Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:"
         missing_files: "Você ainda precisa enviar %{file} arquivos para este projeto"
-        toggle_file_list: "Clique aqui para ver a lista de arquivos que faltam."
         no_action_detected: "Nenhuma mudança foi detectada."
         no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         no_files_available: "Nenhum arquivo disponível"
-        no_groupings_available: "Nenhum grupo disponível"
         no_revision_available: "Nenhuma revisão disponível"
-        expect_filter: "Esperado um filtro na seleção"
-        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
-        # See app/views/submissions/_file_manager_boot.js.erb
-        filename_sanitization_js_warning: "\"Depois do envio, o nome do arquivo mudará de '\" + file_name + \"' para '\" + sanitized_filename + \"'. Você tem certeza disso?\""
-        # DO NOT change 'file_name' and 'new_file_name' in the following message.
-        # See app/views/submissions/_file_manager_boot.js.erb
-        replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
         version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
         empty_file_warning: "UPDATE ME"
-        success: "Avaliador %{user_name} suprimido com sucesso."
 
     #Graders' View
     graders:
       assigned_graders:   "Atribuir avaliador"
-      possible_graders:   "Possiveis avaliadores"
-      unassigned_graders: "Avaliadores sem atribuição"
-      not_covered:        "Não coberto"
-      covered:            "Coberto"
       coverage:           "Cobertura"
-      problem:            "Havia um problema..."
-      search_criteria:    "Pesquisar os critérios"
       assign_to_criteria: "Atribuir avaliador aos critérios"
-      lines_not_processed: "As linhas a seguir não puderam ser processadas:"
       skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
       download:
         begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
@@ -417,7 +356,6 @@ pt:
       success: "Aluno %{user_name} adicionado."
       fail:
         general: "Algo saiu errado. Não foi possível inserir %{user_name}."
-        dne:  "Não foi possível inserir %{user_name} - esse aluno não existe."
         hidden:  "Não foi possível inserir %{user_name} - a conta desse aluno foi desabilitada."
         already_grouped: "Não foi possível inserir %{user_name} - esse aluno já é membro de outro grupo."
 
@@ -450,17 +388,6 @@ pt:
       error:
         no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
         binary_file_message: "Conteudo binário: Use o botao de download para ver o arquivo!"
-    test_result:
-      error:
-        no_access: "Não há accesso para resultado do teste com id #%{test_result_id}."
-      button:
-        load: "Carregar"
-      no_files_available: "[Nenhum resultado disponíveis dos testes]"
-      loading_results: "Carregando resultados..."
-      running_tests: "Executando testes. Por favor, atualize esta página para visualizar os resultados."
-      build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
-      build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
-      build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."
 
     feedback_file:
       error:
@@ -475,9 +402,6 @@ pt:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria_csv_error:
-      incomplete_row: "contém poucas informações."
-      name_not_unique: "Nome do critério já utilizado nesse projeto."
-      max_zero: "valor maximo é zero ou não é um número."
       weight_not_number: "peso não é um número."
 
     criteria:
@@ -490,7 +414,6 @@ pt:
         messages:
           name_taken:             "Nome de critério já utilizado."
           assignment_association: "Associação não é forte com uma atribuição."
-          assignment_id:          "Só pode ser o número inteiro maior que 0."
           input_number:           "Deve ser um número maior do que 0.0."
           released_marks:         "TODO"
 
@@ -553,8 +476,6 @@ pt:
         new:
             note_message: "Mensagem de observação"
             title: "Criar anotação"
-            loading_groupings: "Carregando grupos..."
-            loading_selector: "Carregando seletor..."
             invalid_selector: "Seletor escolhido inválido."
             no_noteables: "Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro."
         create:
@@ -583,10 +504,6 @@ pt:
     account_disabled: "Essa conta foi desativada"
     additional_information: "Informações Adicionais"
 
-    #app/helpers/submissions_helper.rb
-    assign_folder_missing:      "Oh não! Falta pasta Assignment."
-    group_repo_missing:         "Oh não! Nenhum repositório encontrado para este grupo."
-
     #lib/validators/
     date_validator:
       invalid_date: "Não é uma data válida"
@@ -597,39 +514,19 @@ pt:
       test_results: "UPDATE ME"
       no_results: "UPDATE ME"
       student_tests: "UPDATE ME"
-      required_files_ant: "Arquivos exigidos para Ant"
       need_group_for_test: "Você precisa possuir um grupo para executar os testes"
-      test: "Teste"
-      revision_used_for_test: "<span class=\"prop_label\">Revisão utilizada:</span> %{revision}"
       information: "Informação"
       run_tests: "Executar testes"
       stop_test: "UPDATE ME"
       stop_batch: "UPDATE ME"
-      test_run: "Execução de Teste"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
-      collect_and_test: "Colete e prepare os testes"
       new_test_script_file: "UPDATE ME"
       new_test_support_file: "UPDATE ME"
-      build_xml: "build.xml"
-      build_prop: "build.properties"
-      add_test_file_link: "Inserir arquivo de teste"
-      add_lib_file_link: "Inserir arquivo de biblioteca"
-      add_parser_file_link: "Inserir arquivo interpretador (Parser)"
-      add_test_file_alert: "Você deve habilitar os testes para esse projeto para inserir um arquivo de teste."
-      add_lib_file_alert: "Você deve habilitar testes para esse projeto para inserir um arquivo de biblioteca."
-      add_parser_file_alert: "Você deve habilitar testes para esse projeto para inserir um arquivo interpretador (Parser)."
       convert_newline_notice: "UPDATE ME"
-      assignment_test_files: "Arquivos testes associados"
-      assignment_lib_files: "Arquivos de bibliotecas associadas"
-      assignment_parser_files: "Arquivos de interpretador associados"
       filename_exists: "já foi tomado"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
-      invalid_buildxml: "Arquivo Ant build.xml deve ser nomeado build.xml"
-      invalid_buildproperties: "Arquivo Ant build.properties deve ser nomeado build.properties"
-      invalid_filename: "Arquivos de testes, bibliotecas e interpretadores não pode ser nomeado build.xml ou build.properties"
-      dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       script_option:
         upload_required: "UPDATE ME <span class='required_field'>*</span>"
         upload_help: "UPDATE ME"
@@ -637,11 +534,8 @@ pt:
         replace_help: "UPDATE ME"
         remove_file: "UPDATE ME"
         remove_file_help: "UPDATE ME"
-        run_settings: "UPDATE ME"
         display_settings: "UPDATE ME"
         description: "UPDATE ME"
-        update_description: "UPDATE ME"
-        seq_num: "UPDATE ME"
         timeout: "UPDATE ME <span class='required_field'>*</span>"
         timeout_help: "UPDATE ME"
         run_by_instructors: "UPDATE ME"
@@ -671,26 +565,16 @@ pt:
         hours: "horas"
         no_regeneration: "Sem regeneração"
       test_results_table:
-        time: "UPDATE ME"
-        file_name: "UPDATE ME"
         test_name: "Nome do Teste"
-        input: "Entrada"
         output: "Saída"
-        expected: "Esperado"
         marks_earned: "Marca"
         marks_total: "UPDATE ME"
-        marks_bonus: "UPDATE ME"
         status: "Estado"
-        pass: "Passou"
-        partial: "UPDATE ME"
-        fail: "Fracassado"
-        error: "UPDATE ME"
         extra_info: "UPDATE ME"
         run_by: "UPDATE ME"
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        unknown_test_script: "UPDATE ME"
         missing_test_script: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"

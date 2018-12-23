@@ -11,6 +11,7 @@ pt:
   upload_with_format: "Carregar em formato %{file}"
   upload_prompt_csv: "Selecione um arquivo CSV para carregar"
   upload_errors:
+    malformed_csv: "O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus."
     syntax_error: "Existe um erro no arquivo carregado: %{error}"
     unparseable_yml: "Não foi possível analisar o arquivo YAML"
   uploading_please_wait: "Carregando - por favor aguarde..."

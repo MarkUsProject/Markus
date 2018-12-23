@@ -1,8 +1,6 @@
 es:
   exam_templates:
     update:
-      general:
-        "Actualizar plantilla de examen"
       success:
         "Plantilla de examen se ha actualizado correctamente"
       failure:
@@ -16,8 +14,6 @@ es:
         "Plantilla de examen eliminada correctamente"
       failure:
         "Plantilla de examen no eliminada correctamente"
-      template_divisions:
-        "Añadir / editar divisiones de plantilla de la plantilla de examen:"
       confirm:
         "Está seguro de que desea eliminar %{name}?"
     create:
@@ -65,14 +61,6 @@ es:
     split_pdf_log:
       view_logs:
         "ver los registros"
-      log:
-        "Iniciar sesión"
-      success_log:
-        "%{filename} se divide enm %{original_num_pages} páginas"
-      failure_general_log:
-        "Mientras %{filename} está formado por páginas %{original_num_pages}, hay páginas %{num_pages_qr_scan_error} con errores de análisis QR"
-      failure_missing_pages_log:
-        "Si bien hay %{num_pages_qr_scan_error} errores de análisis QR con %{filename}, es posible que falten páginas"
       scan_error:
         "Algunos archivos no se han escaneado correctamente."
 
