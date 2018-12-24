@@ -31,6 +31,6 @@
 
 <div id='<%="flexible_#{mark_criterion.id}_old_mark"%>' class='<%= old_mark_class %>'>
   <% if !old_mark.nil? && (mark.mark != old_mark.mark) %>
-      (Old Mark: <%= old_mark.mark %>)
+    <%= "(#{t('results.remark.old_mark')} #{old_mark.mark})" %>
   <% end %>
 </div>

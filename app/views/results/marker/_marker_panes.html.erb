@@ -3,16 +3,16 @@
     <div id='left-pane'>
       <div class='tab-pane flex-pane' id='code_pane'>
         <ul id='code_and_annotations_tabs' class='subsection_tabs'>
-           <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+           <li><a href='#code_holder'><%= Submission.human_attribute_name(:submission_files) %></a></li>
            <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
           <% if !@result.is_a_review? && assignment.enable_test %>
-              <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+              <li><a href='#test_result_tab'><%= t('automated_tests.test_results') %></a></li>
           <% end %>
           <% if !@result.is_a_review? && can_show_feedback_files_tab?(submission) %>
-              <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
+              <li><a href='#feedback_file_tab'><%= Submission.human_attribute_name(:feedback_files) %></a></li>
           <% end %>
            <% if can_show_remark_request_tab_in_marker_pane(submission) %>
-              <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
+              <li><a href='#remark_request_tab'><%= Submission.human_attribute_name(:submitted_remark) %></a></li>
            <% end %>
         </ul>
 
@@ -45,7 +45,7 @@
                        locals: { result: old_result ? old_result : result } %>
 
             <h3><%= Annotation.model_name.human.pluralize %></h3>
-            <p><%= t('marker.across_all_submission_files') %></p>
+            <p><%= t('results.annotation.across_all_submission_files') %></p>
           </div>
 
           <ul id='annotation_table'></ul>
@@ -91,23 +91,23 @@
     <div id='right-pane'>
       <div class='tab-pane flex-pane' id='mark_pane'>
         <ul id='mark_tabs' class='subsection_tabs'>
-          <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
-          <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
+          <li><a href='#mark_viewer'><%= Mark.model_name.human.pluralize %></a></li>
+          <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
           <% unless @result.is_a_review? %>
-            <li><a href='#tag_viewer'><%= t('marker.marks.tags') %></a></li>
+            <li><a href='#tag_viewer'><%= t('tags.tags') %></a></li>
           <% end %>
         </ul>
 
         <div id='mark_viewer' class='flex-col'>
           <div class='mark_tools'>
             <button class='inline-button' id='expand_all'>
-              <%= t('marker.marks.expand_all') %>
+              <%= t('results.expand_all') %>
             </button>
             <button class='inline-button' id='collapse_all'>
-              <%= t('marker.marks.collapse_all') %>
+              <%= t('results.collapse_all') %>
             </button>
             <button class='inline-button' id='expand_unmarked'>
-              <%= t('marker.marks.expand_unmarked') %>
+              <%= t('results.expand_unmarked') %>
             </button>
           </div>
 

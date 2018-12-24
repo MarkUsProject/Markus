@@ -171,7 +171,6 @@ es:
         upload:
             header:      "Subir la Revisión de Compañeros en formato CSV"
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
-    your_mark: "Su nota:"
 
     add_new:                     "Añadir Nuevo Archivo"
     edit:                        "Editar"
@@ -179,10 +178,8 @@ es:
     save_changes:                "Guardar cambios"
     apply:                       "Aplicar"
     delete:                      "Eliminar"
-    submit_request:              "Entregar la solicitud al instructor"
     submit:                      "Enviar"
     cancel:                      "Cancelar"
-    cancel_remark:               "Cancelar la solicitud de recalificación"
     all:                         "Todos/as"
     active:                      "Activo"
     not_active:                  "Inactivo"
@@ -190,108 +187,28 @@ es:
     properties:                  "Propiedades"
     peer_reviews:                "Revisiones de Compañeros"
     help:                        "Ayuda"
-    no_remark_result:            "Los resultados de la recalificación no están disponibles para este proyecto todavía."
     preview:                     "Vista previa"
     encoding:                    "Codificación"
     select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
     all_csv_file:                "Todos los campos: "
 
     past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
-    past_due_date_edit_result_warning: "El %{href} de este grupo se ha realizado después de la fecha límite de entrega."
-    last_commit:                       "último commit"
 
     #app/views/results/marker/
     marker:
-      overall_comments_success:    "Los Comentarios Generales han sido actualizados exitosamente."
-      across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
-                                    número de línea para ser redirigido al lugar exacto en el archivo que contiene la
-                                    anotación."
-      source_code:                 "Código Inicial"
-      test_results:                "Resultados de la Prueba"
-      feedback_files:              "Archivos de Retroalimentación"
-      remark_request:              "Solicitud de recalificación"
-      remark_submitted_on:         "Solicitud de recalificación enviada en"
-      no_remark_due_date:          "La fecha límite de entrega no ha sido asignada"
-      past_remark_due_date:        "La fecha límite para solicitar una recalificación ha pasado"
-      about_remark_save:           "Por favor tenga en cuenta que el instructor no será notificado acerca de los cambios
-                                    guardados a menos que estos sean enviados."
-      about_remark_submission:     "Una vez que la solicitud de recalificación ha sido enviada, usted no será capaz de
-                                    ver los resultados originales hasta que los resultados de la recalificación esten
-                                    disponibles. Usted tampoco podrá editar la solicitud."
-      cancel_remark_to_change:     "Si desea modificar su solicitud, usted deberá cancelar la misma y crear una nueva."
-      remark_submitted:            "Su solicitud de recalificación ha sido enviada:"
-      notes:                       "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations:         "Incluir Anotaciones"
-      include_annotations_warning: "Precaución! Las anotaciones en los PDFs no pueden ser descargados por el momento."
       marks:
-        comment:                   "Comentario"
-        percentage:                "Porcentaje"
-        invalid_mark:              "Nota Inválida!"
-        add_extra_mark:            "Agregar una nota adicional"
-        mark:                      "Nota"
-        marks:                     "Notas"
-        summary:                   "Resumen"
-        tags:                      "Etiquetas"
         current_tags:              "Etiquetas Recientes:"
         available_tags:            "Etiquetas Disponibles:"
         tag_summary:               "Etiquetas más usadas:"
         new_tag:                   "Añadir una nueva etiqueta..."
         delete_tag:                "Elimnar Etiquetas..."
-        expand_all:                "Expandir todos"
-        collapse_all:              "Reducir todos"
-        expand_unmarked:           "Expandir no calificados"
-        confirm_remove_mark:       "¿Está seguro/a de querer remover esta nota adicional?"
-        confirm_remove_percentage: "¿Está seguro/a de querer remover este porcentaje adicional?"
-        subtotal:                  "Subtotal: "
-        old_subtotal:              "Subtotal Anterior: "
-        bonus_deductions:          "Bonificaciones/Deducciones"
-        bonus_marks:               "Notas de bonificación:&nbsp;"
-        deducted_marks:            "Notas reducidas:&nbsp;"
-        total_extra_marks:         "Notas adicionales totales:&nbsp;"
-        total_extra_percentages:   "Porcentajes adicionales totales:&nbsp;"
-        translated_to_points:      "Convertidos a Puntos:"
-        previous_mark:             "Nota Previa&nbsp;"
-        show_old_marks:            "Ver el Resumen de Notas Anteriores"
-      annotation:
-        average_annotations:            "%{average_annotations} anotaciones por entrega calificada"
-        placeholder:                    "Notación de Markdown y LaTeX"
-        remark_flag:                    "(Recalificación)"
-        new_annotation:                 "Crear una nueva anotación"
-        edit_annotation:                "Edit annotation"
-        preview:                        "Vista Previa"
-        change_across_submissions:      "Este cambio afectará todas las entregas marcadas con esta anotación. ¿Está de
-                                         acuerdo?"
-        select_some_text:               "Usted debe seleccionar el código al que pertenece la anotación"
-        select_an_area:                 "Usted debe seleccionar un área o imagen a anotar"
-        select_an_area_pdf:             "Usted debe seleccionar un área a anotar en el PDF "
-        context_menu:
-          new:                          "New Annotation"
-          common:                       "Common Annotations"
-          edit:                         "Edit"
-          delete:                       "Remove"
-          copy:                         "Copy"
-          download:                     "Download File"
-          download_annotated:           "Download Annotated File"
-
-    #app/views/results/common
-    common:
-      feedback_files:             "Archivos de retroalimentación"
-      cant_display_image:         "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
-                                   por favor asegurese de habilitar el soporte para pdf. De click en el botón de
-                                   descargas para descargar el archivo"
-      criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
-                                   sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
-                                   ellos tenga su nota correspondiente."
+    copy:                         "Copy"
 
     csv_invalid_lines:                   "Las siguientes líneas en formato CSV fueron inválidas: "
     csv_valid_lines:                     "Se han actualizado %{valid_line_count} líneas exitosamente"
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
-    cancel_remark_request:               "¿Está seguro/a de querer cancelar su solictud de recalificación? La solicitud
-                                          será eliminada y no se podrá recuperar."
-    confirm_remark_submit:               "¿Está seguro/a de querer enviar su solictud de recalificación? Usted no podrá
-                                          ver sus resultados hasta que el proceso de recalificación haya finalizado."
     still_working_warning:               "Existen procesos sin finalizar. Estos no se guardarán si abandona la sesión en
                                           este momento."
 
@@ -392,7 +309,6 @@ es:
         missing_files:                    "Usted todavía necesita subir %{file} archivo(s) requeridos para este
                                            proyecto:"
         no_action_detected:               "No se ha detectado niguna acción en el último envío. Nada ha cambiado."
-        no_marks_available:               "No existen notas disponibles."
         external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
         invalid_file_name:                "El nombre del archivo enviado no es válido"
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
@@ -545,7 +461,6 @@ es:
     feedback_file:
       error:
         no_access:        "No existe acceso al archivo de retroalimentación con id #%{feedback_file_id}."
-      no_files_available: "[El archivo de retroalimentación no está disponible]"
 
     csv_special_characters_html: "
     <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").<br>
@@ -569,10 +484,6 @@ es:
           assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
           input_number:           "Debe ser un número mayor a 0.0."
           released_marks:         "TODO"
-
-    summary_table:
-      title:             "Título"
-      grade:             "Nota"
 
     key_pairs:
       title:           "Pares de Claves"
@@ -680,7 +591,6 @@ es:
       title:                              "Pruebas Automatizadas"
       testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
       automated_tests:                    "Estructura de la prueba"
-      test_results:                       "Resultados de la Prueba"
       no_results:                         "UPDATE ME"
       student_tests:                      "UPDATE ME"
       need_group_for_test:                "Usted debe tener un grupo para lanzar la prueba"

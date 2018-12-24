@@ -11,9 +11,9 @@
       <h2><%= title %></h2>
       <p>
         <%= f.text_area :content, id: 'new_annotation_content', name: 'content', value: content, required: true,
-                        placeholder: t('marker.annotation.placeholder') %>
+                        placeholder: t('results.annotation.placeholder') %>
       </p>
-      <h3 id="annotation_preview_title"><%= t('marker.annotation.preview') %></h3>
+      <h3 id="annotation_preview_title"><%= t(:preview) %></h3>
       <div id="annotation_preview" style="word-wrap: break-word;"></div>
       <% if new_annotation %>
         <% if current_user.is_reviewer_for?(assignment.pr_assignment, result) %>

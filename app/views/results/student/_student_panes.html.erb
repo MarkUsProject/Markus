@@ -3,16 +3,16 @@
     <div id='left-pane'>
       <div class='tab-pane flex-pane' id='code_pane'>
         <ul>
-          <li><a href='#code_holder'><%= t('marker.source_code') %></a></li>
+          <li><a href='#code_holder'><%= Submission.human_attribute_name(:submission_files) %></a></li>
           <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
           <% if assignment.enable_test %>
-              <li><a href='#test_result_tab'><%= t('marker.test_results') %></a></li>
+              <li><a href='#test_result_tab'><%= t('automated_tests.test_results') %></a></li>
           <% end %>
           <% if can_show_feedback_files_tab?(submission) %>
-            <li><a href='#feedback_file_tab'><%= t('marker.feedback_files') %></a></li>
+            <li><a href='#feedback_file_tab'><%= Submission.human_attribute_name(:feedback_files) %></a></li>
           <% end %>
           <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission, result) %>
-            <li><a href='#remark_request_tab'><%= t('marker.remark_request') %></a></li>
+            <li><a href='#remark_request_tab'><%= Submission.human_attribute_name(:submitted_remark) %></a></li>
           <% end %>
         </ul>
 
@@ -91,8 +91,8 @@
     <div id='right-pane'>
       <div class='tab-pane flex-pane' id='mark_pane'>
         <ul>
-          <li><a href='#mark_viewer'><%= t('marker.marks.marks') %></a></li>
-          <li><a href='#summary_viewer'><%= t('marker.marks.summary') %></a></li>
+          <li><a href='#mark_viewer'><%= Mark.model_name.human.pluralize %></a></li>
+          <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
         </ul>
 
         <div id='mark_viewer' class='flex-col'>

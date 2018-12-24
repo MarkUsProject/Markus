@@ -153,7 +153,6 @@ pt:
         upload:
             header: "Carregar CSV Peer Review"
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
-    your_mark:  "Sua nota:"
 
     add_new:            "Adicionar novo"
     edit:               "Editar"
@@ -161,10 +160,8 @@ pt:
     save_changes:       "Saval mudanças"
     apply:              "Aplicar"
     delete:             "Apagar"
-    submit_request:     "Enviar pedido ao instrutor"
     submit:             "Enviar"
     cancel:             "Cancelar"
-    cancel_remark:      "Cancelar pedido de revisão"
     all:                "Todos"
     active:             "Ativo"
     not_active:         "Não ativo"
@@ -172,88 +169,17 @@ pt:
     properties:         "Propriedades"
     peer_reviews:       "Avaliações pelos pares"
     help:               "Ajuda"
-    no_remark_result:   "Resultados ainda não estão disponíveis para esse projeto."
     preview:            "Prever"
     encoding:           "Codificação"
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
 
-    past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
-    last_commit: "Último envio"
-
-    #app/views/resluts/marker/
-    marker:
-      overall_comments_success: "Comentários gerais atualizado com sucesso."
-      across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
-      source_code: "código fonte"
-      test_results: "Resultado dos testes"
-      feedback_files: "Arquivos de comentários"
-      remark_request: "Pedido de revisão"
-      remark_submitted_on: "Pedido de revisão enviado"
-      no_remark_due_date: "Nenhum prazo atribuido"
-      past_remark_due_date: "O prazo para a revisão já foi atingido."
-      about_remark_save: "Por favor note que o instrutor não será avisado sobre o seu pedido salvo a não ser que o envie."
-      about_remark_submission: "Assim que o pedido de revisão for enviado , você não poderá ver os seus resultados originais até que a revisão seja feita. Você também não poderá alterar o pedido de revisão."
-      cancel_remark_to_change: "Para alterar o pedido, você deve cancelar o atual e criar um novo."
-      remark_submitted: "Seu pedido de avalição foi enviado:"
-      notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Incluir anotações"
-      include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
-      marks:
-        comment: "Comentário"
-        percentage: "Porcentagem"
-        invalid_mark: "Nota inválida!"
-        add_extra_mark: "Adicionar nota extra"
-        mark: "Nota"
-        marks: "Notas"
-        summary: "Resumo"
-        expand_all: "Expandir todos"
-        collapse_all: "Agrupar todos"
-        expand_unmarked: "Expandir não-selecionados"
-        confirm_remove_mark: "Tem certeza que você deseja remover essa nota extra?"
-        confirm_remove_percentage: "Tem certeza que deseja remover essa porcentagem extra?"
-        subtotal: "Subtotal: "
-        old_subtotal: "Subtotal antigo: "
-        bonus_deductions: "Bônus/Deduções"
-        bonus_marks: "Notas bônus:&nbsp;"
-        deducted_marks: "Nota deduzida:&nbsp;"
-        total_extra_marks: "Nota extra total:&nbsp;"
-        total_extra_percentages: "Porcentagem extra total:&nbsp;"
-        translated_to_points: "Transformação para pontos:"
-        previous_mark: "Nota antiga&nbsp;"
-        show_old_marks: "Mostrar antigo resumo de notas"
-      annotation:
-        average_annotations: "%{average_annotations} anotaciones por presentación marcada"
-        placeholder: "A notação Markdown e LaTeX é suportada"
-        remark_flag: "(Reavaliado)"
-        new_annotation: "Criar nova anotação"
-        edit_annotation: "Edit annotation"
-        preview: "Visualização"
-        change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
-        select_some_text: "Você deve selecionar algum texto do código fonte"
-        select_an_area: "Você deve selecionar uma área da imagem para anotar"
-        select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
-        context_menu:
-          new: "New Annotation"
-          common: "Common Annotations"
-          edit: "Edit"
-          delete: "Remove"
-          copy: "Copy"
-          download: "Download File"
-          download_annotated: "Download Annotated File"
-
-    #app/views/results/common
-    common:
-      feedback_files: "Arquivos de comentários"
-      cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
-      criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
+    copy: "Copy"
 
     csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
     csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-    cancel_remark_request: "Tem certeza que quer cancelar o pedido de revisão?  O pedido será apagado e isso não poderá ser desfeito."
-    confirm_remark_submit: "Tem certeza que quer enviar o pedido de revisão? Você não poderá ver os resultados até que a revisão seja feita."
     still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
@@ -324,7 +250,6 @@ pt:
         file_conflicts: "Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:"
         missing_files: "Você ainda precisa enviar %{file} arquivos para este projeto"
         no_action_detected: "Nenhuma mudança foi detectada."
-        no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
@@ -392,7 +317,6 @@ pt:
     feedback_file:
       error:
         no_access: "Não há accesso para resultado do teste com id #%{feedback_file_id}."
-      no_files_available: "[No arquivo de feedback disponíveis]"
 
     csv_special_characters_html: "
     <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br>
@@ -416,10 +340,6 @@ pt:
           assignment_association: "Associação não é forte com uma atribuição."
           input_number:           "Deve ser um número maior do que 0.0."
           released_marks:         "TODO"
-
-    summary_table:
-      title: "Título"
-      grade: "Nota"
 
     key_pairs:
       title: "Os Pares de Chaves"

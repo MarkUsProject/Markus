@@ -1,0 +1,10 @@
+es:
+  activerecord:
+    models:
+      extra_mark:
+        one: "Bonificacion/Deduccion"
+        other: "Bonificaciones/Deducciones"
+    attributes:
+      extra_mark:
+        description: "Comentario"
+        extra_mark: "Mark"

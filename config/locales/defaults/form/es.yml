@@ -6,4 +6,5 @@ es:
       delete: "¿Está seguro/a de querer eliminar este %{model}?"
     submit:
       create: "Crear %{model}"
+      update: "Edit %{model}"
       delete: "Eliminar este %{model}"

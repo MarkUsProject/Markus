@@ -1,7 +1,7 @@
 <% if old_result %>
   <p>
     <a href='#' onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'>
-      <%= t('marker.marks.show_old_marks') %>
+      <%= t('results.remark.show_old_marks') %>
     </a>
   </p>
 
@@ -14,7 +14,7 @@
     <% if old_result.get_negative_extra_points != 0 || old_result.get_positive_extra_points != 0 ||
         old_result.extra_marks.percentage.size != 0 %>
     <div class='summary_block'>
-      <strong><%= t('marker.marks.old_subtotal') %></strong>
+      <strong><%= t('results.remark.old_subtotal') %>:</strong>
       <span><%= old_result.get_subtotal %> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     </div>
     <% end %>
@@ -34,7 +34,7 @@
     <% if old_result.get_positive_extra_points != 0 || old_result.get_negative_extra_points != 0 %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
-        <strong><%= t('marker.marks.bonus_deductions') %></strong>
+        <strong><%= ExtraMark.model_name.human(count: 2) %></strong>
       </div>
 
       <%= render partial: 'results/student/extra_marks_table',
@@ -44,7 +44,7 @@
       <table>
         <tr>
           <td>
-            <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
+            <strong><%= t('results.bonus_marks') %>:</strong>
           </td>
           <td id='extra_marks_bonus'>
             <%= old_result.get_positive_extra_points %>
@@ -52,7 +52,7 @@
         </tr>
         <tr>
           <td>
-            <strong><%= t('marker.marks.deducted_marks').html_safe %></strong>
+            <strong><%= t('results.deducted_marks') %>:</strong>
           </td>
           <td id='extra_marks_deducted'>
             <%= old_result.get_negative_extra_points %>
@@ -68,9 +68,9 @@
                            result_id: old_result.id } %>
     </div>
     <div class='summary_block'>
-      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+      <strong><%= t('results.total_extra_percentages') %>:</strong>
       <span id='total_extra_percentage'><%= old_result.get_total_extra_percentage %></span><br>
-      <strong><%= t('marker.marks.translated_to_points') %></strong>
+      <strong><%= t('results.translated_to_points') %>:</strong>
       <span id='total_extra_percentage_as_points'><%= old_result.get_total_extra_percentage_as_points %></span><br>
     </div>
     <% end %>
@@ -88,7 +88,7 @@
     <% if @result.get_negative_extra_points != 0 || @result.get_positive_extra_points != 0 ||
         @result.extra_marks.percentage.size != 0 %>
     <div class='summary_block'>
-        <strong><%= t('marker.marks.subtotal') %></strong>
+        <strong><%= t('results.subtotal') %>:</strong>
         <span><%= result.get_subtotal %> / <%= assignment.max_mark %></span>
     </div>
     <% end %>
@@ -108,7 +108,7 @@
     <% if @result.get_negative_extra_points != 0 || @result.get_positive_extra_points != 0 %>
     <div class='extra_marks_pane'>
       <div class='bonus_deduction'>
-        <strong><%= t('marker.marks.bonus_deductions') %></strong>
+        <strong><%= ExtraMark.model_name.human(count: 2) %></strong>
       </div>
 
       <%= render partial: 'results/student/extra_marks_table',
@@ -118,7 +118,7 @@
       <table>
         <tr>
           <td>
-            <strong><%= t('marker.marks.bonus_marks').html_safe %></strong>
+            <strong><%= t('results.bonus_marks') %>:</strong>
           </td>
           <td id='extra_marks_bonus'>
             <%= @result.get_positive_extra_points %>
@@ -126,7 +126,7 @@
         </tr>
         <tr>
           <td>
-            <strong><%= t('marker.marks.deducted_marks').html_safe %></strong>
+            <strong><%= t('results.deducted_marks') %>:</strong>
           </td>
           <td id='extra_marks_deducted'>
             <%= @result.get_negative_extra_points %>
@@ -143,9 +143,9 @@
     </div>
 
     <div class='summary_block'>
-      <strong><%= t('marker.marks.total_extra_percentages').html_safe %></strong>
+      <strong><%= t('results.total_extra_percentages') %>:</strong>
       <span id='total_extra_percentage'><%= result.get_total_extra_percentage %></span><br>
-      <strong><%= t('marker.marks.translated_to_points') %></strong>
+      <strong><%= t('results.translated_to_points') %>:</strong>
       <span id='total_extra_percentage_as_points'><%= result.get_total_extra_percentage_as_points %></span><br>
     </div>
     <% end %>
@@ -158,7 +158,7 @@
       <span id='old_total_mark_div'><%= old_result.total_mark %> </span>
       <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
     </span>
-    <span><%= t('marker.marks.previous_mark').html_safe %></span>
+    <span><%= t('results.remark.old_total') %></span>
   </div>
 <% end %>
 
