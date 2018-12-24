@@ -5,7 +5,7 @@
                       id: submission.id,
                       assignment_id: assignment.id },
                remote: true do |f| %>
-    <%= f.text_area :remark_request, cols: 50, rows: 5,
+    <%= f.text_area :remark_request, cols: 50, rows: 10,
                     id: 'remark_request_text_area',
                     onkeydown: 'enableRemarkRequestButtons();' %>
 
@@ -13,11 +13,11 @@
       <%= f.submit t(:save_changes),
                    disabled: true,
                    id: 'remark_request_save',
-                   data: { disable_with: t('working') },
+                   data: { disable_with: t(:working) },
                    name: 'save' %>
-      <%= f.submit t(:submit_request),
+      <%= f.submit t('results.remark.submit'),
                    id: 'remark_request_submit',
-                   data: { confirm: t(:confirm_remark_submit),
+                   data: { confirm: t('results.remark.submit_confirm'),
                            disable_with: t(:working) },
                    name: 'submit' %>
     </div>

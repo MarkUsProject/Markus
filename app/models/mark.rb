@@ -11,7 +11,7 @@ class Mark < ApplicationRecord
   validates_numericality_of :mark,
                             allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            message: I18n.t('marker.marks.invalid_mark')
+                            message: I18n.t('results.invalid_mark')
   validate :valid_mark
 
   belongs_to :markable, polymorphic: true

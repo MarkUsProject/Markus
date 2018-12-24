@@ -1,8 +1,8 @@
 <table class='extra_marks_pane_list'>
   <thead>
     <tr>
-      <th><%= t('marker.marks.comment') %></th>
-      <th><%= t('marker.marks.mark') %></th>
+      <th><%= ExtraMark.human_attribute_name(:description) %></th>
+      <th><%= ExtraMark.human_attribute_name(:extra_mark).pluralize %></th>
     </tr>
   </thead>
   <tbody id='extra_marks_list'>

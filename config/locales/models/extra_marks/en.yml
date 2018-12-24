@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    models:
+      extra_mark:
+        one: "Bonus/Deduction"
+        other: "Bonuses/Deductions"
+    attributes:
+      extra_mark:
+        description: "Description"
+        extra_mark: "Mark"

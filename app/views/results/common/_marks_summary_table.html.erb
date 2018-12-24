@@ -1,8 +1,8 @@
 <table class='summary_criteria_pane_list'>
   <thead>
     <tr>
-      <th><%=t('summary_table.title')%></th>
-      <th><%=t('summary_table.grade')%></th>
+      <th><%= Criterion.model_name.human %></th>
+      <th><%= Mark.model_name.human %></th>
     </tr>
   </thead>
   <% @mark_criteria.each do |criterion| -%>

@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    models:
+      mark:
+        one: "Mark"

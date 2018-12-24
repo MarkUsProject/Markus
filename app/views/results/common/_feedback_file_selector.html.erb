@@ -1,11 +1,11 @@
 <%= label_tag 'select_feedback_file_id',
-              t('common.feedback_files'),
+              Submission.human_attribute_name(:feedback_files),
               class: 'inline_label' %>
 
 <select id='select_feedback_file_id'
         onchange='load_feedback_file($(this).val());'>
   <% if feedback_files.where(submission_id: submission_id).empty? %>
-    <option value=''><%= t('feedback_file.no_files_available') %></option>
+    <option value=''><%= t('results.no_feedback_files') %></option>
   <% else %>
     <% feedback_files.where(submission_id: submission_id)
                      .order(created_at: :desc).each do |file| %>

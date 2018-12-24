@@ -16,18 +16,19 @@ var annotation_context_menu = {
   setup: function(annot_path, result_id, assignment_id, file_dl_path) {
     var menu_items = {
       new_annotation: {
-        title: I18n.t('marker.annotation.context_menu.new'),
+        title: I18n.t('helpers.submit.create',
+                      {model: I18n.t('activerecord.models.annotation.one')}),
         cmd: 'new_annotation',
         action: make_new_annotation,
         disabled: true
       },
       common_annotations: {
-        title: `${I18n.t('marker.annotation.context_menu.common')} <kbd>></kbd>`,
+        title: `${I18n.t('results.annotation.common')} <kbd>></kbd>`,
         cmd: 'common_annotations',
         disabled: true
       },
       edit_annotation: {
-        title: I18n.t('marker.annotation.context_menu.edit'),
+        title: I18n.t('edit'),
         cmd: 'edit_annotation',
         action: function(event, ui) {
           var clicked_element = $(ui.target);
@@ -48,7 +49,7 @@ var annotation_context_menu = {
         disabled: true
       },
       delete_annotation: {
-        title: I18n.t('marker.annotation.context_menu.delete'),
+        title: I18n.t('delete'),
         cmd: "delete_annotation",
         action: function(event, ui) {
           var clicked_element = $(ui.target);
@@ -71,19 +72,19 @@ var annotation_context_menu = {
         title: '----'
       },
       copy: {
-        title: I18n.t('marker.annotation.context_menu.copy'),
+        title: I18n.t('copy'),
         cmd: 'copy',
         action: function(){ document.execCommand('copy'); },
         disabled: true
       },
       download: {
-        title: I18n.t('marker.annotation.context_menu.download'),
+        title: I18n.t('download'),
         cmd: 'download',
         action: function() { download_func('false'); },
         disabled: false
       },
       download_annotated: {
-        title: I18n.t('marker.annotation.context_menu.download_annotated'),
+        title: I18n.t('results.annotation.download_annotated'),
         cmd: 'download_annotated',
         action: function() { download_func('true'); },
         disabled: false
@@ -179,7 +180,7 @@ var annotation_context_menu = {
   set_common_annotations: function(common_annotations_menu_children) {
     if (common_annotations_menu_children.length > 0) {
       $(document).contextmenu("setEntry", "common_annotations", {
-        title: `${I18n.t('marker.annotation.context_menu.common')} <kbd>></kbd>`,
+        title: `${I18n.t('results.annotation.common')} <kbd>></kbd>`,
         cmd: 'common_annotations',
         addClass: 'has_common_annotations',
         action: function(event, ui){ return false; },

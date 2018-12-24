@@ -96,7 +96,7 @@ class AnnotationTable extends React.Component {
       accessor: 'creator',
       Cell: row => {
         if (row.original.is_remark) {
-          return `${row.value} (${I18n.t('marker.annotation.remark_flag')})`;
+          return `${row.value} (${I18n.t('results.annotation.remark_flag')})`;
         } else {
           return row.value;
         }

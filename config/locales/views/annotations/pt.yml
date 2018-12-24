@@ -1,7 +1,5 @@
 pt:
   annotations:
-    new:
-      button: "Nova anotação"
     upload:
       csv_instructions_html: "
        <p>

@@ -157,7 +157,6 @@ en:
         upload:
             header: "Upload Peer Review CSV"
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
-    your_mark:  "Your mark:"
 
     remove_grader:      "Remove Grader"
     add_new:            "Add New File"
@@ -167,10 +166,8 @@ en:
     skip:               "Skip"
     apply:              "Apply"
     delete:             "Delete"
-    submit_request:     "Submit Request to Instructor"
     submit:             "Submit"
     cancel:             "Cancel"
-    cancel_remark:      "Cancel Remark Request"
     all:                "All"
     active:             "Active"
     not_active:         "Not active"
@@ -178,95 +175,27 @@ en:
     properties:         "Properties"
     peer_reviews:       "Peer reviews"
     help:               "Help"
-    no_remark_result:   "Remark results are not yet available for this assignment."
     preview:            "Preview"
     encoding:           "Encoding"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
-    past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
-    last_commit: "last commit"
 
     #app/views/results/marker/
     marker:
-      overall_comments_success: "Overall comments successfully updated."
-      across_all_submission_files: "New: click on the filename to jump to the annotation. You can edit/remove annotations by right-clicking on them."
-      source_code: "Source Code"
-      test_results: "Test Results"
-      feedback_files: "Feedback files"
-      remark_request: "Remark Request"
-      remark_submitted_on: "Remark Request Submitted On"
-      no_remark_due_date: "No due date assigned"
-      past_remark_due_date: "It is already past the remark due date."
-      about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
-      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request."
-      cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
-      remark_submitted: "Your remark request has been submitted:"
-      notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Include Annotations"
-      include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
       marks:
-        comment: "Comment"
-        percentage: "Percentage"
-        invalid_mark: "Invalid Mark!"
-        add_extra_mark: "Add Extra Mark"
-        mark: "Mark"
-        marks: "Marks"
-        summary: "Summary"
-        tags: "Tags"
         current_tags: "Current Tags:"
         available_tags: "Available Tags:"
         tag_summary: "Top Tags Used:"
         new_tag: "Add New Tag..."
         delete_tag: "Delete Tags..."
-        expand_all: "Expand All"
-        collapse_all: "Collapse All"
-        expand_unmarked: "Expand Unmarked"
-        confirm_remove_mark: "Are you sure you want to remove this extra mark?"
-        confirm_remove_percentage: "Are you sure you want to remove this extra percentage?"
-        subtotal: "Subtotal: "
-        old_subtotal: "Old Subtotal: "
-        bonus_deductions: "Bonus/Deductions"
-        bonus_marks: "Bonus Marks:&nbsp;"
-        deducted_marks: "Deducted Marks:&nbsp;"
-        total_extra_marks: "Total Extra Marks:&nbsp;"
-        total_extra_percentages: "Total Extra Percentage:&nbsp;"
-        translated_to_points: "Translated to Points:"
-        previous_mark: "Previous Mark&nbsp;"
-        show_old_marks: "Show Old Mark Summary"
-      annotation:
-        average_annotations: "%{average_annotations} annotations per marked submission"
-        placeholder: "Markdown and basic LaTeX notation is supported"
-        remark_flag: "(remark)"
-        new_annotation: "Create new annotation"
-        edit_annotation: "Edit annotation"
-        preview: "Preview"
-        change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
-        select_some_text: "You must select some source code text"
-        select_an_area: "You should select an area on the image to annotate"
-        select_an_area_pdf: "You should select an area on the PDF to annotate"
-        context_menu:
-          new: "New Annotation"
-          common: "Common Annotations"
-          edit: "Edit"
-          delete: "Remove"
-          copy: "Copy"
-          download: "Download File"
-          download_annotated: "Download Annotated File"
-
-    #app/views/results/common
-    common:
-      feedback_files: "Feedback Files"
-      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
-      criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
+    copy: "Copy"
 
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
-    cancel_remark_request: "Are you sure you want to cancel your remark request?  Your existing request will be deleted, and this cannot be undone."
-    confirm_remark_submit: "Are you sure you want to submit your remark request?  You will not be able to see your results until remarking is finished."
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
@@ -346,7 +275,6 @@ en:
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
         missing_files: "You still need to submit %{file} required file(s) for this assignment:"
         no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
-        no_marks_available: "No marks are available."
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}.  File may be missing."
@@ -490,7 +418,6 @@ en:
     feedback_file:
       error:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
-      no_files_available: "[No feedback file available]"
 
     csv_special_characters_html: "
     <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br>
@@ -514,10 +441,6 @@ en:
           assignment_association: "Association is not strong with an assignment."
           input_number:           "Must be a number greater than 0.0."
           released_marks:         "Cannot update criteria for an assignment with released marks"
-
-    summary_table:
-      title: "Title"
-      grade: "Grade"
 
     key_pairs:
       title: "Key Pairs"

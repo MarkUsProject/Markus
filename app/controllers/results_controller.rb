@@ -157,6 +157,18 @@ class ResultsController < ApplicationController
       @top_tags_num[current.id] = get_num_groupings_for_tag(current.id)
     end
 
+    # Check whether this group made a submission after the final deadline.
+    if @grouping.past_due_date?
+      flash_message(:warning,
+                    t('results.late_submission_warning_html',
+                      url: repo_browser_assignment_submission_path(@assignment, @grouping)))
+    end
+
+    # Check whether marks have been released.
+    if @result.released_to_students
+      flash_message(:notice, t('results.marks_released'))
+    end
+
     # Respond to AJAX request.
     respond_to do |format|
       format.html do
@@ -625,7 +637,8 @@ class ResultsController < ApplicationController
   def update_overall_comment
     Result.find(params[:id]).update_attributes(
       overall_comment: params[:result][:overall_comment])
-    flash_message :success, t('marker.overall_comments_success')
+    flash_message :success,
+                  t('flash.actions.update.success', resource_name: Result.human_attribute_name(:overall_comment))
     head :ok
   end
 

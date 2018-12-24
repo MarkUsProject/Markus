@@ -1,29 +1,26 @@
 <div class="wrapLeft">
-  <p class="notice"><%= t(:no_remark_result) %></p>
+  <p class="notice"><%= t('results.remark.no_remark_result') %></p>
   <p>
-    <em><%= t('marker.remark_submitted') %></em>
-    <% if @submission.remark_request_timestamp %>
-      <%= l(@submission.remark_request_timestamp) %>
-    <% end %>
+    <em><%= t('results.remark.submitted_on', time: l(@submission.remark_request_timestamp)) %></em>
   </p>
   <div id="remark_request">
     <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
     <%= @assignment.remark_message %>
-    <h3><%= t('marker.remark_request') %></h3>
+    <h3><%= Submission.human_attribute_name(:submitted_remark) %></h3>
     <div id="remark_request_text">
       <%= markdown(@submission.remark_request) %>
     </div>
   </div>
   <div>
-    <p class="notice"><%= t('marker.cancel_remark_to_change') %></p>
+    <p class="notice"><%= t('results.remark.cancel_remark_to_change') %></p>
     <p>
-      <%= link_to t(:cancel_remark),
+      <%= link_to t('results.remark.cancel'),
                   { controller: 'results',
                     action: 'cancel_remark_request',
                     id: @assignment.id,
                     submission_id: @submission.id },
                   class: 'button',
-                  data: { confirm: t(:cancel_remark_request) },
+                  data: { confirm: t('results.remark.cancel_confirm') },
                   method: :delete %>
     </p>
   </div>
