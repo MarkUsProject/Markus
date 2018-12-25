@@ -11,6 +11,7 @@ fr:
   upload_with_format: "Envoi au format %{file}"
   upload_prompt_csv: "Sélectionner un fichier CSV à envoyer"
   upload_errors:
+    malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
     syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
     unparseable_yml: "Ne pourrait pas analyzer le fichier YAML"
   uploading_please_wait: "Envoi en cours — veuillez patienter…"

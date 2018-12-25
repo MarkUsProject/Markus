@@ -3,7 +3,7 @@ pt:
     edit:
       title: "Projeto %{assignment_name}: %{group_name}"
 
-    marks_released_notice: "As notas foram liberadas. Você não pode alterá-las."
+    marks_released: "As notas foram liberadas. Você não pode alterá-las."
     next_submission: "Próxima submissão"
     no_result: "Nenhuma nota está disponível."
     previous_submission: "Submissão anterior"

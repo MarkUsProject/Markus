@@ -10,6 +10,11 @@ en:
       destroy:
         success: "%{resource_name} was successfully deleted."
         error: "%{resource_name} could not be deleted."
+    assignments:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     criteria:
       destroy:
         success: "Criterion and all associated marks were successfully deleted."

@@ -2,8 +2,29 @@ pt:
   assignments:
     due_date:
       final_due_date_passed: "O período de tolerância para este projeto já passou"
+      marking_started_warning: "UPDATE ME"
+      past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
+    form:
+      add_required_file: "Inserir arquivo exigido"
+      group_properties: "Propriedades do Grupo"
+      past_due_date_edit_warning: "O data selecionada está no passado."
+      persist_groups_from: "Guardar grupos e propriedades de"
+      remarks: "Regras de revisão"
+      required_files_by_student: "Inserir nome dos arquivos(s) exigidos para submissão:"
+      section_due_dates_option: "Se a opção de prazo de entrega por sessão foi selecionada, alunos só podem formar grupos dentro da sua sessão."
+      section_due_dates_info_html: "<strong>Importante</strong>: o prazo de entrega final deve ser preenchido.
+        Se a sessão não possui uma data específica, o prazo global será usado no lugar.
+        Alunos que não foram atribuídos a uma sessão só poderão formar grupos com alunos que também não estão atribuídos."
+    help:
+      edit:
+        assignment_type_html: "UPDATE ME"
+        properties_html: "UPDATE ME"
+        remark_request_rules: "UPDATE ME"
+        required_files: "UPDATE ME"
+        submission_rules: "UPDATE ME"
     scanned_exam:
       under_review: "Este exame está sendo marcado"
 
     # Miscellaneous
+    information: "Regras do projeto"
     marking_scheme: "Esquema de avalição: %{identifier}"

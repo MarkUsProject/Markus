@@ -2,6 +2,8 @@ require 'base64'
 
 
 class AssignmentsController < ApplicationController
+  responders :flash
+
   before_action      :authorize_only_for_admin,
                      except: [:index,
                               :student_interface,
@@ -227,12 +229,14 @@ class AssignmentsController < ApplicationController
   # Called on editing assignments (GET)
   def edit
     @assignment = Assignment.find_by_id(params[:id])
-    @past_date = @assignment.section_names_past_due_date
+    past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
     @sections = Section.all
 
-    unless @past_date.nil? || @past_date.empty?
-      flash_now(:notice, t('past_due_date_notice') + @past_date.join(', '))
+    if @assignment.past_collection_date?
+      flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
+    elsif !past_date.blank?
+      flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
     end
 
     # build section_due_dates for each section that doesn't already have a due date
@@ -259,17 +263,11 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
       end
-      flash_message(:success, I18n.t('assignment.update_success'))
-      redirect_to action: 'edit', id: params[:id]
-    rescue SubmissionRule::InvalidRuleType => e
-      @assignment.errors.add(:base, e.message)
-      flash_message(:error, e.message)
-      render :edit, id: @assignment.id
     rescue
-      render :edit, id: @assignment.id
     end
+    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
   end
 
   # Called in order to generate a form for creating a new assignment.
@@ -316,7 +314,7 @@ class AssignmentsController < ApplicationController
         @sections = Section.all
         @clone_assignments = Assignment.where(vcs_submit: true)
                                        .order(:id)
-        render :new
+        respond_with @assignment, location: -> { new_assignment_path(@assignment) }
         return
       end
       if params[:persist_groups_assignment]
@@ -325,15 +323,12 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if @assignment.save
-        flash_message(:success, I18n.t('assignment.create_success'))
-      end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user)
+        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
       end
     end
-    redirect_to action: 'edit', id: @assignment.id
+    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
   end
 
   def summary
@@ -486,12 +481,12 @@ class AssignmentsController < ApplicationController
     render json: entries
   end
 
-  def update_files
-    @assignment = Assignment.find(params[:id])
-    unless @assignment.can_upload_starter_code?
+  def upload_starter_code
+    unless MarkusConfigurator.markus_starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 
+    @assignment = Assignment.find(params[:id])
     students_filename = []
     path = params[:path] || '/'
     assignment_folder = File.join(@assignment.repository_folder, path)
@@ -566,6 +561,12 @@ class AssignmentsController < ApplicationController
         head :bad_request
       end
     end
+  end
+
+  def update_starter_code
+    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
+    flash_message(:success, t('assignment.starter_code.enqueued'))
+    redirect_back(fallback_location: root_path)
   end
 
   def download_starter_code
@@ -667,7 +668,7 @@ class AssignmentsController < ApplicationController
         assignment.display_grader_names_to_students = false
       end
       assignment.update_attributes!(map)
-      flash_message(:success, t('assignment.create_success'))
+      flash_message(:success, t('flash.actions.create.success', resource_name: assignment.short_identifier))
     end
 
   def process_assignment_form(assignment)
@@ -843,5 +844,10 @@ class AssignmentsController < ApplicationController
               :_destroy
             ] }
           ])
+  end
+
+  def flash_interpolation_options
+    { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
+      errors: @assignment.errors.full_messages.join('; ') }
   end
 end

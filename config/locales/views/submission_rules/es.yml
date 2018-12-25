@@ -29,7 +29,6 @@ es:
       "El último plazo para este proyecto ha pasado, y usted no podrá usar más días de aplazamiento de gracia."
 
   penalty_decay_period_submission_rules:
-    deadline_html: "Fecha límite incluyendo la <br> máxima penalidad por demora <br>"
     details_message_first:
       "Una deducción de %{deduction}% será aplicada cada %{interval} horas hasta
        %{hours} horas después del último plazo de entrega del proyecto."

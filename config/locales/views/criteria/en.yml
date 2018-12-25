@@ -71,7 +71,6 @@ en:
 
   rubric_criteria:
     level:
-      levels: "Levels"
       level_index: "Level %{index}"
     defaults:
       level_0: "Very Poor"

@@ -1,6 +1,6 @@
 <%= fields_for :note do |f| %>
   <p>
-    <%= label_tag 'assignment_id', t('notes.noteables.Assignment') %>
+    <%= label_tag 'assignment_id', Assignment.model_name.human %>
     <%= select_tag 'assignment_id',
                    options_from_collection_for_select(@assignments,
                                                       :id,

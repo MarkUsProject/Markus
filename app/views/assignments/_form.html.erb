@@ -11,14 +11,12 @@
 <% end %>
 
 <%= render 'shared/flash_message' %>
-<%= render partial: 'shared/error_explanation',
-           locals: { model: @assignment } %>
 
 <%= form_for @assignment do |f| %>
 
   <input type="hidden" name="assignment[scanned_exam]" value="<%= @assignment.scanned_exam %>">
 
-  <label class='required'><%= t('assignment.required_fields') %></label>
+  <label class='required'><%= t('required_fields') %></label>
 
   <%# Assignment properties %>
   <fieldset>
@@ -28,13 +26,13 @@
 
     <div class='help assignment_properties_help'>
       <p class='help-message-box assignment_properties_help'>
-        <%= t('assignment.help.assignment_form.properties').html_safe %>
+        <%= t('assignments.help.edit.properties_html') %>
       </p>
     </div>
 
     <div>
       <%= f.label :short_identifier,
-                  t('assignment.short_identifier'),
+                  Assignment.human_attribute_name(:short_identifier),
                   class: 'required' %>
       <%= f.text_field :short_identifier,
                        onchange: 'set_onbeforeunload(true);',
@@ -46,7 +44,7 @@
     <div>
 
       <%= f.label :repository_folder,
-                  t(:repository_folder),
+                  Assignment.human_attribute_name(:repository_folder),
                   class: 'required' %>
       <%= f.text_field :repository_folder,
                        onchange: 'set_onbeforeunload(true);',
@@ -57,7 +55,7 @@
 
     <div>
       <%= f.label :description,
-                  t('assignment.name'),
+                  Assignment.human_attribute_name(:description),
                   class: 'required' %>
       <%= f.text_field :description,
                        onchange: 'set_onbeforeunload(true);',
@@ -75,11 +73,11 @@
 
     <% unless @sections.empty? %>
       <div class='information'>
-        <%= t('assignment.section_due_date_option') %>
+        <%= t('assignments.form.section_due_dates_option') %>
       </div>
 
       <div>
-        <%= f.label :section_due_dates_type, t('assignment.section_due_dates_type') %>
+        <%= f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
         <%= f.check_box :section_due_dates_type,
                         onclick: 'set_onbeforeunload(true);' %>
       </div>
@@ -87,7 +85,7 @@
       <div id='section_due_dates_information'
            style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
         <p class='information'>
-          <%= t('assignment.section_due_dates_info').html_safe %>
+          <%= t('assignments.form.section_due_dates_info_html') %>
         </p>
         <div class='section_due_date_form'>
           <%= f.fields_for :section_due_dates,
@@ -97,7 +95,7 @@
               <%= due_date_f.label :section, Section.model_name.human %>
               <%= obj.section.name %>
               <%= due_date_f.text_field :section_id, class: 'hidden' %>
-              <%= due_date_f.label :due_date, t(:due_date),
+              <%= due_date_f.label :due_date, Assignment.human_attribute_name(:due_date),
                                    class: 'section_due_date_label' %>
               <%= due_date_f.text_field :due_date,
                                         class: 'section_due_date_input',
@@ -112,7 +110,7 @@
 
     <div>
       <%= f.label :due_date,
-                  t('assignment.due_date'),
+                  Assignment.human_attribute_name(:due_date),
                   class: 'required' %>
       <%= f.text_field :due_date,
                        onchange: 'set_onbeforeunload(true);',
@@ -129,14 +127,14 @@
       <%= f.check_box :allow_web_submits,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :allow_web_submits,
-                  t('assignment.allow_web_submits') %>
+                  Assignment.human_attribute_name(:allow_web_submits) %>
     </div>
 
     <div>
       <%= f.check_box :vcs_submit,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :vcs_submit,
-                  t('assignment.vcs_submit') %>
+                  Assignment.human_attribute_name(:vcs_submit) %>
     </div>
     <% end %>
 
@@ -144,26 +142,26 @@
       <%= f.check_box :display_median_to_students,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :display_median_to_students,
-                  t('assignment.display_median_to_students') %>
+                  Assignment.human_attribute_name(:display_median_to_students) %>
     </div>
 
     <div>
       <%= f.check_box :display_grader_names_to_students,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :display_grader_names_to_students,
-                  t('assignment.display_grader_names_to_students') %>
+                  Assignment.human_attribute_name(:display_grader_names_to_students) %>
     </div>
 
     <div>
       <%= f.check_box :is_hidden,
                       onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :is_hidden, t('assignment.is_hidden') %>
+      <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
     </div>
     <div>
       <%= f.check_box :has_peer_review,
                       onclick: 'set_onbeforeunload(true);' %>
       <%= f.label :has_peer_review,
-                  t('assignment.has_peer_review') %>
+                  Assignment.human_attribute_name(:has_peer_review) %>
     </div>
   </fieldset>
 
@@ -171,16 +169,16 @@
   <%# Required files %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.required_files') %></span>
+      <span><%= Assignment.human_attribute_name(:required_files) %></span>
     </legend>
 
     <div class='help assignment_required_files_help'>
       <p class='help-message-box assignment_required_files_help'>
-        <%= t('assignment.help.assignment_form.required_files') %>
+        <%= t('assignments.help.edit.required_files') %>
       </p>
     </div>
 
-    <h4><%= t('assignment.required_files_by_student') %></h4>
+    <h4><%= t('assignments.form.required_files_by_student') %></h4>
     <div id='assignment_files'>
       <%= f.fields_for :assignment_files do |assignment_file_form| %>
         <%= render partial: 'assignment_file',
@@ -189,7 +187,7 @@
       <% end %>
     </div>
     <p id='assignment_file_add_link'>
-      <%= link_to t('assignment.add_required_file'),
+      <%= link_to t('assignments.form.add_required_file'),
                   '#',
                   onclick: 'add_assignment_file(); return false;' %>
     </p>
@@ -199,7 +197,7 @@
        <% end %>>
       <%= f.check_box :only_required_files,
                       onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :only_required_files, t('required_file_warning') %>
+      <%= f.label :only_required_files, Assignment.human_attribute_name(:only_required_files) %>
     </p>
   </fieldset>
 
@@ -211,14 +209,14 @@
 
     <div class='help assignment_assignment_type_help'>
       <p class='help-message-box assignment_assignment_type_help'>
-        <%= t('assignment.help.assignment_form.assignment_type').html_safe %>
+        <%= t('assignments.help.edit.assignment_type_html') %>
       </p>
     </div>
 
     <% if @assignment.new_record? && @clone_assignments.size > 0 %>
       <p id='persist_groups_assignment_style'>
         <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
-        <%= label_tag :persist_groups, t('assignment.group.persist_group_from') %>
+        <%= label_tag :persist_groups, t('assignments.form.persist_groups_from') %>
         <%= select_tag :persist_groups_assignment,
                        options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
                        disabled: true %>
@@ -230,11 +228,11 @@
                         @assignment.invalid_override,
                         onchange: 'set_onbeforeunload(true);' %>
       <%= label_tag :is_group_assignment,
-                    t('assignment.group.work_in_groups') %>
+                    Assignment.human_attribute_name(:allow_groups) %>
     </p>
     <fieldset class='group_properties'>
       <legend>
-        <span><%= t('assignment.group.properties') %></span>
+        <span><%= t('assignments.form.group_properties') %></span>
       </legend>
 
       <div id='group_properties'>
@@ -242,18 +240,19 @@
           <%= f.check_box :student_form_groups,
                           onchange: 'set_onbeforeunload(true);' %>
           <%= f.label :student_form_groups,
-                      t('assignment.group.students_allowed_form_groups') %>
+                      Assignment.human_attribute_name(:student_form_groups) %>
         </p>
 
         <p id='group_limit_style'>
           <%= f.label :group_min,
-                      t('assignment.group.limit_min') %>
+                      Assignment.human_attribute_name(:group_min) %>
           <%= f.number_field :group_min,
                              min: 1,
                              max: 999,
                              onchange: 'set_onbeforeunload(true);' %>
+          <br>
           <%= f.label :group_max,
-                      t('assignment.group.limit_max') %>
+                      Assignment.human_attribute_name(:group_max) %>
           <%= f.number_field :group_max,
                              min: 1,
                              max: 999,
@@ -263,7 +262,7 @@
         <p id='group_name_autogenerated_style'>
           <%= f.check_box :group_name_autogenerated %>
           <%= f.label :group_name_autogenerated,
-                      t('assignment.group.name_autogenerated'),
+                      Assignment.human_attribute_name(:group_name_autogenerated),
                       onchange: 'set_onbeforeunload(true);' %>
 
         </p>
@@ -279,7 +278,7 @@
 
     <div class='help assignment_submission_rules_help'>
       <p class='help-message-box assignment_submission_rules_help'>
-        <%= t('assignment.help.assignment_form.submission_rules') %>
+        <%= t('assignments.help.edit.submission_rules') %>
       </p>
     </div>
 
@@ -422,24 +421,24 @@
   <%# Remark request rules %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.remark.rules')%></span>
+      <span><%= t('assignments.form.remarks')%></span>
     </legend>
 
     <div class='help assignment_remark_request_rules_help'>
       <p class='help-message-box assignment_remark_request_rules_help'>
-        <%= t('assignment.help.assignment_form.remark_request_rules') %>
+        <%= t('assignments.help.edit.remark_request_rules') %>
       </p>
     </div>
 
     <p id='allow_remark_requests'>
       <%= f.check_box :allow_remarks,
                       onchange: 'set_onbeforeunload(true);' %>
-      <%= f.label :allow_remarks, t('assignment.remark.allow') %>
+      <%= f.label :allow_remarks, Assignment.human_attribute_name(:allow_remarks) %>
     </p>
 
     <div id='remark_properties'>
       <p>
-        <%= f.label :remark_due_date, t('assignment.remark.due_date') %>
+        <%= f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
         <%= f.text_field :remark_due_date,
                          onchange: 'set_onbeforeunload(true);',
                          value: @assignment.remark_due_date.nil? ? '' :
@@ -448,7 +447,7 @@
                          size: 35 %>
       </p>
       <p>
-        <%= f.label :remark_message, t('assignment.remark.message') %>
+        <%= f.label :remark_message, Assignment.human_attribute_name(:remark_message) %>
         <%= f.text_area :remark_message,
                         rows: 8,
                         cols: 65,
@@ -466,7 +465,7 @@
 <% if MarkusConfigurator.markus_starter_code_on && @assignment.id %>
   <fieldset>
     <legend>
-      <span><%= t('upload_the', item: t('assignment.starter_code')) %></span>
+      <span><%= t('upload_the', item: t('assignment.starter_code.title')) %></span>
     </legend>
     <%= render 'file_manager' %>
   </fieldset>

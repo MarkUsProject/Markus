@@ -24,4 +24,47 @@ fr:
     select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
     unassigned_students: "Non assigné(s)"
     validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
-    valid_grouping_counts: "Valide?"
+
+    # Student interface
+    student_interface:
+      confirm_create_group: "Êtes-vous sûr de vouloir décliner l'invitation ?"
+      confirm_delete_group: "AVERTISSEMENT : Vous perdrez l'accès à vos dossiers présentés après la suppression de
+                             votre groupe . Assurez-vous que vous avez une copie locale de vos fichiers avant de
+                             cliquer sur OK ."
+      form_group: "Former votre propre groupe"
+      group_information: "Informations sur le groupe"
+      group_options: "Options du groupe"
+      group_properties: "Propriétés du groupe"
+      group_size_html: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
+      invite_more_students: "Ce groupe n'est pas valide : vous devez inviter plus d'étudiants."
+      may_not_add_more: "Vous ne pouvez pas ajouter plus de personnes à votre groupe en ce moment."
+      may_not_modify: "Vous ne pouvez pas modifier votre groupe pour le moment."
+      modification_limited: "Pour le moment, les modifications sur le groupe sont très limitées.
+                             La date de retour et la période de grâce (s'il y en avait une) sont toutes les deux passées."
+      no_group_yet: "Vous ne faites pas encore partie d'un groupe"
+      not_allowed_to_delete_group: "Vous devez contacter votre formateur de supprimer le groupe."
+      not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
+                                  Merci d'attendre que les correcteurs et les administrateurs forment des groupes."
+      section_groups_only: "Vous ne pouvez inviter que des étudiants de votre section."
+      students_work_alone: "Les étudiants travaillent seuls."
+      url_group_repository: "L'adresse du répertoire de votre groupe"
+      work_alone: "Travailleur seul"
+      working_alone: "Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former
+                      ou rejoindre un groupe, d'abord supprimer votre groupe."
+      your_group: "Votre groupe"
+
+    members:
+      cancel_invitation: "Annuler l'invitation"
+      cancel_invitation_confirm: "Êtes-vous sûr de vouloir annuler l'invitation ?"
+      decline: "Refuser"
+      decline_invitation_confirm: "Êtes-vous sûr de vouloir refuser cette invitation ?"
+      invitations: "Invitations"
+      invite: "Inviter"
+      invite_instructions: "Séparer les noms d'utilisateur par des virgules."
+      invited_by: "Vous avez été invité par %{inviter_first_name} %{inviter_last_name}."
+      join: "Rejoindre"
+      member_disinvited: "Ce membre ne fait plus partie du groupe."
+      statuses:
+        inviter: "créateur du groupe"
+        pending: "invité"
+        rejected: "déclinée"

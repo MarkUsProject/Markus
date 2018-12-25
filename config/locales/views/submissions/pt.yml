@@ -6,11 +6,10 @@ pt:
                            será penalizado , independentemente do tempo de apresentação . )"
       collection_job_started_for_groups: "Coleta das submissões para grupos selecionados para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
       could_not_collect_some: "Não foi possível recolher inscrições para alguns grupos e projecto %{assignment_identifier} - a data de coleta não foi alcançado por estes agrupamentos."
-      overwrite: "Coletando e avaliando essa revisão irá sobrescrever coletas/avalições anteriores feitas para esse grupo no projeto. Tem certeza que quer fazer isso?"
+      overwrite_warning: "Coletando e avaliando essa revisão irá sobrescrever coletas/avalições anteriores feitas para esse grupo no projeto. Tem certeza que quer fazer isso?"
       progress: "%{count}/%{size} submissões coletadas"
       results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas. Tem certeza que deseja continuar?"
       submit: "Coletar as submissões"
-      successfully_collected: " %{collected} submissões coletadas com sucesso."
       this_revision: "Coletar e avaliar essa revisão"
     errors:
       no_submission: "%{group_name} não tem submissões"
@@ -19,11 +18,10 @@ pt:
     help:
       browse:
         admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
-        graders: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
+        tas: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
     repo_browser:
       client_time: "commit:"
       collected: "coletada"
-      last_revised: "última revisão"
       repository: "Repositório"
       repository_name: "Repositório: %{repository}"
       revised_by: "Revisado por"
@@ -31,6 +29,7 @@ pt:
       viewing_revision: "Vendo revisão:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Seu grupo não é válido. Você não pode enviar nada."
       no_submission: "Você não tem nenhum envio ainda."
 
     # Miscellaneous

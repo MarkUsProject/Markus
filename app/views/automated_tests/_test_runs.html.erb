@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeTestScriptResultTable(document.getElementById('test_script_result_table'), {
+      makeTestRunTable(document.getElementById('test_run_table'), {
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
         assignment_id: <%= @assignment.id %>,
@@ -24,5 +24,5 @@
   <% end %>
 </h2>
 <div class="block_content">
-  <div id='test_script_result_table'></div>
+  <div id='test_run_table'></div>
 </div>

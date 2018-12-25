@@ -10,7 +10,7 @@ en:
   num_zeros: "Number of zeros"
   outstanding_remark_request:
     one: "%{count} outstanding remark request"
-    other: "%{count} outstanding remark requests"
+    other: "%{request_count} outstanding remark requests"
   refresh_graph: "Refresh the graph"
 
   # app/views/main/_grader_summary.erb

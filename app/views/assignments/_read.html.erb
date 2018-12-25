@@ -1,4 +1,4 @@
-<h2 class='legend'><%= t('assignment.rules') %></h2>
+<h2 class='legend'><%= t('assignments.information') %></h2>
 
 <div class='block_content'>
   <div class='sub_block'>
@@ -67,7 +67,7 @@
               <li><%= t('penalty_decay_period_submission_rules.details_message_first',
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% else %>
-              <li><%= t('penalty_decay_period_submission_rules.details_message_first',
+              <li><%= t('penalty_decay_period_submission_rules.details_message_other',
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% end %>
           <% end %>
@@ -104,7 +104,7 @@
   <% end %>
 
   <% unless peer_review %>
-    <h3><%= t('assignment.required_files_read') %></h3>
+    <h3><%= Assignment.human_attribute_name(:required_files) %></h3>
     <% if @assignment.assignment_files.length == 0 %>
       <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
     <% else %>

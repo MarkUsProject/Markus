@@ -78,21 +78,23 @@ class Group < ApplicationRecord
     true
   end
 
-  def repo_loc
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, repository_name)
-    unless Repository.get_class.repository_exists?(repo_loc)
-      raise 'Repository not found and MarkUs not in authoritative mode!' # repository not found, and we are not repo-admin
-    end
-    repo_loc
+  def repo_path
+    File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
   end
 
   # Return a repository object, if possible
   def repo
-    Repository.get_class.open(repo_loc)
+    unless Repository.get_class.repository_exists?(repo_path)
+      raise 'Repository not found'
+    end
+    Repository.get_class.open(repo_path)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
-    Repository.get_class.access(repo_loc, &block)
+    unless Repository.get_class.repository_exists?(repo_path)
+      raise 'Repository not found'
+    end
+    Repository.get_class.access(repo_path, &block)
   end
 end

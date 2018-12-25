@@ -34,4 +34,47 @@ es:
     unassigned_students: "No asignados"
     validate_confirm: "Esto le permitirá a este grupo realizar el envío sin el número requerido de
                       estudiantes. ¿Está seguro/a de hacer esto?"
-    valid_grouping_counts: "¿Válido?"
+
+    # Student interface
+    student_interface:
+      confirm_create_group: "Esto rechazará la invitación que se le ha realizado. ¿Está seguro/a de querer rechazar esta invitación?"
+      confirm_delete_group: "PRECAUCIÓN: Usted perderá acceso a los archivos enviados en su entrega
+                             después de eliminar su grupo. Asegúrese de tener una copia local de sus
+                             archivos antes de dar click en OK."
+      form_group: "Formar su propio grupo"
+      group_information: "Información del Grupo"
+      group_options: "Opciones del grupo"
+      group_properties: "Propiedades del grupo"
+      group_size_html: "Los grupos deben tener de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> personas."
+      invite_more_students: "El grupo no es válido. Usted necesita invitar más estudiantes."
+      may_not_add_more: "Usted no puede añadir más personas a su grupo en este momento."
+      may_not_modify: "Usted no puede modificar su grupo en este momento."
+      modification_limited: "En este momento, las modificaciones de su grupo son limitadas. La fecha
+                             límite y período de aplazamiento de gracia (si existe uno) han pasado."
+      no_group_yet: "Usted no tiene un grupo todavía."
+      not_allowed_to_delete_group: "Usted debe contactar su profesor para remover el grupo."
+      not_allowed_to_form_group: "Usted no puede formar grupos para este proyecto. Por favor espere hasta que
+                                  el instructor forme los grupos."
+      section_groups_only: "Usted sólo puede invitar estudiantes de su sección"
+      students_work_alone: "Los estudiantes trabajan solos"
+      url_group_repository: "El URL para el repositorio del grupo"
+      work_alone: "Trabajar solo"
+      working_alone: "Usted ha solicitado trabajar sólo/a en este proyecto. Si cambia de opinión y
+                      desea formar o unirse a un grupo primero elimine su grupo."
+      your_group: "Su grupo"
+
+    members:
+      cancel_invitation: "Cancelar invitación"
+      cancel_invitation_confirm: "¿Está seguro/a de querer cancelar esta invitación?"
+      decline: "Declinar invitación"
+      decline_invitation_confirm: "¿Está seguro/a de querer rechazar esta invitación?"
+      invitations: "Invitaciones"
+      invite: "Invite student(s)"
+      invite_instructions: "Separe múltiples nombres de usuarios con comas."
+      invited_by: "Usted ha sido invitado/a por %{inviter_first_name} %{inviter_last_name}."
+      join: "Unir"
+      member_disinvited: "La invitación de este miembro ha sido anulada."
+      statuses:
+        inviter: "invitador"
+        pending: "invitado/a"
+        rejected: "declinado"

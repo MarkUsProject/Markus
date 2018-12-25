@@ -2,8 +2,30 @@ fr:
   assignments:
     due_date:
       final_due_date_passed: "La période de grâce pour ce projet est terminée"
+      marking_started_warning: "UPDATE ME"
+      past_due_date_notice: "La date de retour de ce projet est passée pour : "
+    form:
+      add_required_file: "Ajouter un fichier requis"
+      group_properties: "Propriétés du groupe"
+      past_due_date_edit_warning: "La date de retour que vous avez choisie est antérieure à la date actuelle."
+      persist_groups_from: "Garder les groupes et les propriétés de"
+      remarks: "Règles de révisions"
+      required_files_by_student: "Ajouter le(s) fichier(s) que les étudiants devront envoyer :"
+      section_due_dates_option: "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections."
+      section_due_dates_info_html: "<strong>Important</strong> La date de retour « globale » doit être indiquée.
+        Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée.
+        Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée.
+        Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
+    help:
+      edit:
+        assignment_type_html: "UPDATE ME"
+        properties_html: "UPDATE ME"
+        remark_request_rules: "UPDATE ME"
+        required_files: "UPDATE ME"
+        submission_rules: "UPDATE ME"
     scanned_exam:
       under_review: "Cet examen est marqué"
 
     # Miscellaneous
+    information: "Règles du projet"
     marking_scheme: "Barème: %{identifier}"

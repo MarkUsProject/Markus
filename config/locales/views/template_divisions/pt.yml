@@ -1,9 +1,0 @@
-pt:
-  template_divisions:
-    create:
-      add_new:
-        "Adicionar Divisão de Modelo"
-      success:
-        "Modelo de exame criado com sucesso"
-      failure:
-        "Modelo de exame não criado com sucesso"

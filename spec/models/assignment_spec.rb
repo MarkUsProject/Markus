@@ -1010,7 +1010,7 @@ describe Assignment do
         it 'returns one name for the assignment' do
           @assignment.update_attributes(due_date: 1.days.ago)
 
-          expect(@assignment.section_names_past_due_date).to eq ['Due Date']
+          expect(@assignment.section_names_past_due_date).to eq []
         end
       end
 

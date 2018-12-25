@@ -45,7 +45,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           -> { left_outer_joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -513,53 +513,30 @@ class Grouping < ApplicationRecord
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    # create folder only if we are repo admin
-    unless MarkusConfigurator.markus_config_repository_admin?
-      return
-    end
-    self.group.access_repo do |repo|
-      revision = repo.get_latest_revision
+    return unless MarkusConfigurator.markus_config_repository_admin? # create folder only if we are repo admin
+    result = true
+    self.group.access_repo do |group_repo|
       assignment_folder = self.assignment.repository_folder
-      result = true
-      unless revision.path_exists?(assignment_folder)
-        txn = repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
-                                                    assignment: self.assignment.short_identifier))
+      unless group_repo.get_latest_revision.path_exists?(assignment_folder)
+        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
+                                                          assignment: self.assignment.short_identifier))
         txn.add_path(assignment_folder)
-        result = repo.commit(txn)
-        revision = repo.get_latest_revision
+        result = group_repo.commit(txn)
       end
-      begin
-        self.assignment.access_starter_code_repo do |starter_repo|
-          starter_revision = starter_repo.get_latest_revision
-          if starter_revision.path_exists?(assignment_folder)
-            internal_file_names = Repository.get_class.internal_file_names
-            txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
-                                                        assignment: self.assignment.short_identifier))
-            starter_revision.tree_at_path(assignment_folder).each do |starter_file_name, starter_obj|
-              starter_file_path = File.join(assignment_folder, starter_file_name)
-              if starter_obj.is_a? Repository::RevisionDirectory
-                txn.add_path(starter_file_path)
-              elsif !internal_file_names.include?(starter_file_name)
-                if revision.path_exists? starter_file_path
-                  txn.replace(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type,
-                              revision.revision_identifier)
-                else
-                  txn.add(starter_file_path, starter_repo.download_as_string(starter_obj), starter_obj.mime_type)
-                end
-              end
-            end
-            if txn.has_jobs?
-              result = repo.commit(txn)
-              revision = repo.get_latest_revision
-              self.starter_code_revision_identifier = revision.revision_identifier
-            end
-          end
+      next unless Repository.get_class.repository_exists?(self.assignment.starter_code_repo_path)
+      self.assignment.access_starter_code_repo do |starter_repo|
+        starter_revision = starter_repo.get_latest_revision
+        next unless starter_revision.path_exists?(assignment_folder)
+        starter_tree = starter_revision.tree_at_path(assignment_folder)
+        txn = self.assignment.update_starter_code_files(group_repo, starter_repo, starter_tree)
+        if txn.has_jobs?
+          result = group_repo.commit(txn)
+          self.starter_code_revision_identifier = group_repo.get_latest_revision.revision_identifier
         end
-      rescue StandardError
-        # repo for starter code does not exist, just continue
       end
-      return result
     end
+
+    result
   end
 
   def assigned_tas_for_criterion(criterion)
@@ -815,7 +792,7 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
-    fields = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
+    fields = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
               'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
               'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
               'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
@@ -824,7 +801,8 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name',
+                     'test_scripts.description']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -833,6 +811,12 @@ class Grouping < ApplicationRecord
       h['test_data'] = val
       new_hash_list << h
     end
+
+    status_hash = TestRun.statuses(new_hash_list.map { |h| h['test_runs.id'] })
+    new_hash_list.each do |h|
+      h['test_runs.status'] = status_hash[h['test_runs.id']]
+    end
+
     new_hash_list
   end
 

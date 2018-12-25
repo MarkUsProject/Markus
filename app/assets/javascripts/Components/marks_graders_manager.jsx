@@ -144,7 +144,7 @@ class MarksGradersManager extends React.Component {
 
 
 class RawGradersTable extends React.Component {
-  static columns = [
+  columns = [
     {
       show: false,
       accessor: '_id',
@@ -183,7 +183,7 @@ class RawGradersTable extends React.Component {
         ref={(r) => this.checkboxTable = r}
 
         data={this.props.graders}
-        columns={RawGradersTable.columns}
+        columns={this.columns}
         defaultSorted={[
           {
             id: 'user_name'

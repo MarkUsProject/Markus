@@ -111,7 +111,7 @@
 
   function check_due_date(new_due_date) {
     if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('past_due_date_edit_warning'));
+      alert(I18n.t('assignments.form.past_due_date_edit_warning'));
     }
   }
 

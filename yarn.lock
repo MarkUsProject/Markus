@@ -4337,10 +4337,10 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
-moment@^2.10.2, moment@^2.17.0, moment@^2.22.2:
-  version "2.22.2"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
-  integrity sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y=
+moment@^2.10.2, moment@^2.17.0, moment@^2.23.0:
+  version "2.23.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.23.0.tgz#759ea491ac97d54bac5ad776996e2a58cc1bc225"
+  integrity sha512-3IE39bHVqFbWWaPOMHZF98Q9c3LDKGTmypMiTM2QygGXXElkFWIH7GxfmlwmY2vwa+wmNsoYZmG2iusf1ZjJoA==
 
 mousetrap@^1.6.2:
   version "1.6.2"
@@ -5807,10 +5807,10 @@ react-dom@^16.6.3:
     prop-types "^15.6.2"
     scheduler "^0.11.2"
 
-react-keyed-file-browser@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.2.tgz#11bd07aba48d614b2ca6b90a00d449228f4ceb37"
-  integrity sha512-VBbDsY37auAfXcXIFd6UFtmUHVRQ7qdMOJwpkYNEJs55ubR/ALgVHxFfPTitXZT8lIHEvj0oYcQQcA/OIvAh/A==
+react-keyed-file-browser@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.3.tgz#c8f97ab90bc4fa1a7c5688192fd38103ceaf6577"
+  integrity sha512-kXR7/mcUJWUY2bspRTJvQmW1r+pu9lDk9o2O7y0Z94cZKHJQDXsTVKV3clR+57JzOEjFQcfbz6YwfMaUA0Rkyg==
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"

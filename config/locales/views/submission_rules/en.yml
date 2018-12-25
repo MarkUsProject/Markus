@@ -23,7 +23,6 @@ en:
     overtime_message_without_credits_left: "The due date for this assignment has passed, and you do not have enough grace credits to submit new work."
 
   penalty_decay_period_submission_rules:
-    deadline_html: "Deadline including <br> maximum late <br> penalty"
     details_message_first: "A deduction of %{deduction}% will be applied every %{interval} hours up to %{hours} hours after the assignment is due."
     details_message_other: "Thereafter, a deduction of %{deduction}% will be applied every %{interval} hours up to a maximum of %{hours} hours."
     extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction."

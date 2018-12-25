@@ -12,10 +12,7 @@ en:
                              Creates the views for annotating and grading each submission.
                              Warning: If this operation is carried out after grading has begun, this grading work will be overwritten. This work can be recovered using the Undo Collection button."
       submit: "Collect Submissions"
-      successfully_collected: "Successfully collected %{collected} submissions."
       this_revision: "Collect and Grade This Revision"
-      uncollect_all: "Undo Previous Collection"
-      uncollection_started: "Starting uncollection of assignments"
       undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
                                   WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
     errors:
@@ -29,7 +26,6 @@ en:
     repo_browser:
       client_time: "commit:"
       collected: "collected"
-      last_revised: "Last Revised"
       repository: "Repository"
       repository_name: "Repository: %{repository}"
       revised_by: "Revised By"
@@ -37,6 +33,7 @@ en:
       viewing_revision: "Viewing Revision:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Your group does not have enough members, and so you cannot submit any work."
       no_submission: "You have not submitted any work yet."
 
     # Miscellaneous

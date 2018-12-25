@@ -7,3 +7,4 @@ en:
     attributes:
       group:
         group_name: "Group name"
+        student_memberships: "Members"

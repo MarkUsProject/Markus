@@ -1,0 +1,5 @@
+pt:
+  activerecord:
+    models:
+      marking_scheme:
+        one: "Esquema de avalição"

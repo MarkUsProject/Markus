@@ -1,8 +1,6 @@
 pt:
   exam_templates:
     update:
-      general:
-        "Atualize Modelo de Exame"
       success:
         "Modelo de exame foi atualizado com sucesso"
       failure:
@@ -16,8 +14,6 @@ pt:
         "Modelo de exame excluído com sucesso"
       failure:
         "Modelo de exame não foi excluído com sucesso"
-      template_divisions:
-        "Ajoutez / modifiez les divisions de modèle du modèle d'examen:"
       confirm:
         "Tem certeza de que deseja excluir %{name}?"
     create:
@@ -65,14 +61,6 @@ pt:
     split_pdf_log:
       view_logs:
         "ver registros"
-      log:
-        "registro"
-      success_log:
-        "%{filename} é dividido em páginas %{original_num_pages}"
-      failure_general_log:
-        "Enquanto %{filename} é composto de páginas %{original_num_pages}, existem páginas %{num_pages_qr_scan_error} com erros de varredura QR"
-      failure_missing_pages_log:
-        "Embora existam %{num_pages_qr_scan_error} erros de varredura QR com %{filename}, pode haver páginas perdidas"
       scan_error:
         "Alguns arquivos não foram digitalizados corretamente."
 

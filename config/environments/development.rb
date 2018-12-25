@@ -191,7 +191,7 @@ Markus::Application.configure do
   # Starter code settings
   ###################################################################
   # Global flag to enable/disable starter code feature.
-  EXPERIMENTAL_STARTER_CODE_ON = true
+  STARTER_CODE_ON = true
 
   ###################################################################
   # Set this to the desired default language MarkUs should load if
@@ -261,6 +261,8 @@ Markus::Application.configure do
   JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108'
   JOB_GENERATE_QUEUE_NAME = 'CSC108'
   JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108'
+  # The name of the queue where jobs to update starter code files to student repos wait to be executed.
+  JOB_UPDATE_STARTER_CODE_QUEUE = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings

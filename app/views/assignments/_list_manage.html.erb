@@ -9,7 +9,7 @@
         <thead>
           <tr>
             <th><%= Assignment.model_name.human.pluralize %></th>
-            <th><%= t(:due) %></th>
+            <th><%= Assignment.human_attribute_name(:due_date) %></th>
             <th><%= t('submissions.status') %></th>
           </tr>
         </thead>
@@ -136,10 +136,10 @@
                     <br>
                     <span id='ta_avg_annotations__<%= assignment.short_identifier %>'>
                       <% if @current_user.admin? %>
-                        <%= t('annotation.average_annotations',
+                        <%= t('marker.annotation.average_annotations',
                               average_annotations: assignment.average_annotations()) %>
                       <% else %>
-                        <%= t('annotation.average_annotations',
+                        <%= t('marker.annotation.average_annotations',
                               average_annotations: assignment.average_annotations(@current_user.id)) %>
                       <% end %>
                     </span>

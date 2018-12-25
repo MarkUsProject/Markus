@@ -132,7 +132,9 @@ class ResultsController < ApplicationController
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
       @authorized = false
-      flash_now(:notice, e.result.reasons.full_messages.join(' '))
+      if @assignment.enable_test
+        flash_now(:notice, e.result.reasons.full_messages.join(' '))
+      end
     end
 
     m_logger = MarkusLogger.instance
@@ -677,13 +679,13 @@ class ResultsController < ApplicationController
   def get_test_runs_instructors
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors(submission)
-    render json: test_runs
+    render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   def get_test_runs_instructors_released
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors_released(submission)
-    render json: test_runs
+    render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   private

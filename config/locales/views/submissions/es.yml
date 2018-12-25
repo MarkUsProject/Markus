@@ -22,10 +22,7 @@ es:
                              calificación ha iniciado, los datos serán reescritos. Los datos pueden ser
                              recuperados usando el botón para deshacer la recolección."
       submit: "Recolectar entregas"
-      successfully_collected: "Entregas recolectadas exitosamente %{collected}."
       this_revision: "Recolectar y Calificar esta revisión"
-      uncollect_all: "Deshacer recolección anterior"
-      uncollection_started: "Deshaciendo la recolección de los proyectos"
       undo_results_loss_warning: "Esta operación deshacera las operaciones anteriores del tipo Recolectar
                                   Todas las Entregas. Esto se deberá hacer sólo si las operaciones anteriores
                                   del mismo tipo fueron realizadas por error. PRECAUCIÓN: Todo el proceso de
@@ -70,7 +67,6 @@ es:
     repo_browser:
       client_time: "commit:"
       collected: "recolectada"
-      last_revised: "Revisado por última vez"
       repository: "Repository"
       repository_name: "Repository: %{repository}"
       revised_by: "Revisado Por"
@@ -78,6 +74,7 @@ es:
       viewing_revision: "Mirando Revisión:"
       server_time: "push:"
     student:
+      invalid_group_cannot_submit: "Su grupo no es válido. Usted no puede enviar ningún documento."
       no_submission: "Usted no ha enviado ninguna entrega todavía"
 
     # Miscellaneous

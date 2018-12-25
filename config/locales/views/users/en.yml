@@ -11,7 +11,6 @@ en:
       give_grace_credits: "Give grace credits"
       mark_active: "Mark as active"
       mark_inactive: "Mark as inactive"
-    all: "All students"
     edit: "Edit a Student"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."
@@ -27,16 +26,10 @@ en:
       student_same_number: "If a student with the same username exists, then the student's information is updated. WARNING: when an update occurs, if you have a blank value in one of the last three columns (e.g., email), but the student already has a value for that column, then the existing value will be deleted!"
 
   tas:
-    all: "All graders"
     edit: "Edit a Grader"
     new: "Add a Grader"
     help:
       manage_graders: "Create graders."
     upload:
-      each_field: "Each field is separated by a comma (no spaces)"
-      each_line: "Each line has the required fields specified above"
       grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-      make_sure: "Make sure that:"
-      not_added: "The following TAs have not been successfully added:"
       select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
-      ta_names: "TA names are alphanumeric"

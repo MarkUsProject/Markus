@@ -186,14 +186,11 @@ class Assignment < ApplicationRecord
 
   # Return an array with names of sections past
   def section_names_past_due_date
-    sections_past = []
-
-    unless self.section_due_dates_type
-      if !due_date.nil? && Time.zone.now > due_date
-        return sections_past << 'Due Date'
-      end
+    if !self.section_due_dates_type && !due_date.nil? && Time.zone.now > due_date
+      return []
     end
 
+    sections_past = []
     self.section_due_dates.each do |d|
       if !d.due_date.nil? && Time.zone.now > d.due_date
         sections_past << d.section.name
@@ -1059,11 +1056,6 @@ class Assignment < ApplicationRecord
     groupings.includes(:current_result).map(&:current_result)
   end
 
-  # TODO Make it more robust, to accept uploads after groupings are created
-  def can_upload_starter_code?
-    MarkusConfigurator.markus_starter_code_on && groups.size == 0
-  end
-
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
@@ -1103,8 +1095,7 @@ class Assignment < ApplicationRecord
   ### REPO ###
 
   def build_starter_code_repo
-    return unless MarkusConfigurator.markus_config_repository_admin?
-    return unless can_upload_starter_code?
+    return unless MarkusConfigurator.markus_config_repository_admin? && MarkusConfigurator.markus_starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
         Repository.get_class.create(starter_code_repo_path, with_hooks: false)
@@ -1139,6 +1130,64 @@ class Assignment < ApplicationRecord
       raise 'Repository not found'
     end
     Repository.get_class.access(starter_code_repo_path, &block)
+  end
+
+  # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
+  # try to mitigate concurrent accesses to those repos.
+  def each_group_repo
+    failed_groups = []
+    self.groupings.each do |grouping|
+      group = grouping.group
+      begin
+        group.access_repo do |repo|
+          yield(repo)
+        end
+      rescue StandardError
+        # in the event of a concurrent repo modification, retry later
+        failed_groups << group
+      end
+    end
+    failed_groups.each do |group|
+      begin
+        group.access_repo do |repo|
+          yield(repo)
+        end
+      rescue StandardError
+        # give up
+      end
+    end
+  end
+
+  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil)
+    txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+                                                      assignment: self.short_identifier))
+    group_revision = group_repo.get_latest_revision
+    internal_file_names = Repository.get_class.internal_file_names
+    starter_tree.each do |starter_obj_name, starter_obj|
+      next if internal_file_names.include?(File.basename(starter_obj_name))
+      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
+      already_exists = group_revision.path_exists?(starter_obj_path)
+      next if already_exists && !overwrite
+      if starter_obj.is_a? Repository::RevisionDirectory
+        txn.add_path(starter_obj_path) unless already_exists
+      else # Repository::RevisionFile
+        if starter_files.nil? || !starter_files.has_key?(starter_obj_name) # handle cache of starter code files
+          starter_file = starter_repo.download_as_string(starter_obj)
+          unless starter_files.nil?
+            starter_files[starter_obj_name] = starter_file
+          end
+        else
+          starter_file = starter_files[starter_obj_name]
+        end
+        if already_exists
+          txn.replace(starter_obj_path, starter_file, starter_obj.mime_type, group_revision.revision_identifier)
+        else
+          txn.add(starter_obj_path, starter_file, starter_obj.mime_type)
+        end
+      end
+    end
+
+    txn
   end
 
   # Repository authentication subtleties:

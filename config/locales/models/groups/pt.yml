@@ -6,3 +6,4 @@ pt:
     attributes:
       group:
         group_name: "Nome do grupo"
+        student_memberships: "Membros"
