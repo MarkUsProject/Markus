@@ -56,7 +56,6 @@ fr:
     filename:  "Fichier"
     message:  "Informations "
     remove:  "Enlever"
-    csv_grade_report:  "liste des étudiants et des devoirs au format CSV"
     days_left:          "(%{days} jour(s) restant(s))"
     description:        "Description "
     shortened_date:     "Date<span class='required_field'>*</span>"
@@ -194,12 +193,7 @@ fr:
     browse_submissions:
       review_state:         "Avis Etat"
 
-    course_summaries_index:
-      page_title:     "Sommaire"
-
     no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
-
-    student_course_summary: "Vos marques de terme"
 
     groups:
       assign_scans: "Affecter des scans"
@@ -342,17 +336,6 @@ fr:
           assignment_association: "Association est pas forte avec une mission."
           input_number:           "Doit être un nombre supérieur à 0.0."
           released_marks:         "TODO"
-
-    course_summaries:
-      title: "Sommaire"
-
-    marking_schemes:
-      title: "Marquage Barème"
-      name: "Nom"
-      add_new: "Ajouter Nouveau Marquage Barème"
-      edit: "Modifier Barème de Notation"
-      weight_label: "Poids Pour Les "
-      table_modify_column: "Modifier"
 
     notes:
         note_on: "%{user_name} sur <b>%{display_for}</b>"

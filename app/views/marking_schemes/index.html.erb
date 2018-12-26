@@ -6,13 +6,13 @@
   </script>
 <% end %>
 
-<% content_for :title, t('marking_schemes.title') %>
+<% content_for :title, MarkingScheme.model_name.human.pluralize %>
 
 <% @heading_buttons = [
-    { link_text: t('marking_schemes.add_new'),
+    { link_text: t('helpers.submit.create', model: MarkingScheme.model_name.human),
       link_path: new_marking_scheme_path,
       html_options: { remote: true } },
-    { link_text: t('course_summaries.title'),
+    { link_text: t('course_summary.title'),
       link_path: course_summaries_path }
 ] %>
 

@@ -6,8 +6,8 @@
     <div class='table'>
       <table>
         <tr>
-          <td><%= raw(f.label(:name, t('marking_scheme.name'))) %>:</td>
-          <td><%= raw(f.text_field :name) %></td>
+          <td><%= f.label :name, MarkingScheme.human_attribute_name(:name) %></td>
+          <td><%= f.text_field :name %></td>
         </tr>
 
         <% @marking_scheme.marking_weights.each_with_index do |marking_weight, index| %>
@@ -15,8 +15,8 @@
             <tr>
               <%= builder.hidden_field :type, value: (@all_gradable_items[index].is_a?(Assignment)) ? 'Assignment' : 'GEF' %>
               <%= builder.hidden_field :id, value: @all_gradable_items[index].id %>
-              <td><%= raw(builder.label(t('marking_schemes.weight_label') + @all_gradable_items[index].short_identifier)) %>:</td>
-              <td><%= raw(builder.text_field :weight) %></td>
+              <td><%= builder.label "#{MarkingScheme.human_attribute_name(:weight)} #{@all_gradable_items[index].short_identifier}" %></td>
+              <td><%= builder.text_field :weight %></td>
             </tr>
           <% end %>
         <% end %>

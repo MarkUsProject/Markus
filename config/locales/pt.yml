@@ -57,7 +57,6 @@ pt:
     filename:  "Nome do Arquivo"
     message:  "Mensagem"
     remove:  "Remover"
-    csv_grade_report:  "relatório de notas em formato CSV"
     days_left:          "(%{days} dia(s) restante(s))"
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
@@ -173,12 +172,7 @@ pt:
     browse_submissions:
       review_state:         "Estado de revisão"
 
-    course_summaries_index:
-      page_title:     "Sumário"
-
     no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
-
-    student_course_summary: "Suas notas"
 
     groups:
       assign_scans: "Atribuir varreduras"
@@ -340,17 +334,6 @@ pt:
         success: "Par de Chaves foi atualizado com sucesso"
       delete:
         success: "Par de Chaves foi removido com sucesso"
-
-    course_summaries:
-      title: "Sumário"
-
-    marking_schemes:
-      title: "Esquema de marcação"
-      name: "Nome"
-      add_new: "Adicionar novo Esquema de marcação"
-      edit: "Editar esquema de marcação"
-      weight_label: "Peso para "
-      table_modify_column: "Modificar"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"

@@ -57,7 +57,6 @@ en:
     filename:  "Filename"
     message:  "Message"
     remove:  "Remove"
-    csv_grade_report:  "CSV grades report"
     days_left:          "(%{days} day(s) left)"
     description:        "Description"
     shortened_date:     "Date"
@@ -198,12 +197,7 @@ en:
       review_state:         "Review State"
       tags_used:            "Tags Used"
 
-    course_summaries_index:
-        page_title:     "Summary"
-
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
-
-    student_course_summary: "Your Term Marks"
 
     groups:
       assign_scans:     "Assign Scans"
@@ -441,18 +435,6 @@ en:
         success: "Key Pair was updated successfully"
       delete:
         success: "Key Pair was removed successfully"
-
-    course_summaries:
-      model_name: "Course Summary"
-      title: "Summary"
-
-    marking_schemes:
-      title: "Marking Schemes"
-      name: "Name"
-      add_new: "Add New Marking Scheme"
-      edit: "Edit Marking Scheme"
-      weight_label: "Weight for "
-      table_modify_column: "Modify"
 
     notes:
         note_on: "%{user_name} on <strong>%{display_for}</strong>"
