@@ -4,27 +4,13 @@ es:
     answer_no:          "No"
     markus:             "MarkUs"
     close:              "Cerrar"
-    password:           "Contaseña"
     all:                "Todos"
     issues:             "GitHub Lista de problemas"
     actions:            "Acciones"
     continue:           "Continuar"
 
-    # app/views/main/login.html.erb
-    log_in:                          "Iniciar sesión"
-    logging_in:                      "Iniciando sesión..."
-    login_failed:                    "El inicio de sesión falló."
-    password_not_blank:              "La contraseña no puede dejarse en blanco."
-    username_not_blank:              "El nombre de usuario no puede dejarse en blanco."
-    username_and_password_not_blank: "Su contraseña y nombre de usuario no pueden dejarse en blanco."
-    session_expired:                 "Su sesión ha expirado. Por favor inicie la sesión."
-    please_log_in:                   "Por favor inicie la sesión."
-
     # app/views/layouts/_header.html.erb
-    log_out:                        "Cerrar sesión"
-    clear_role_switch_session_link: "Cancelar cambio de rol."
     working:                        "Cargando"
-    login_as:                       "Iniciar sesión como"
     please_wait:                    "Por favor espere..."
 
     # app/views/main/_about_content.html.erb
@@ -49,9 +35,6 @@ es:
                                  para más información.<br>Si desea reportar un error o problema por favor visite
                                  <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Su sesión está por expirar."
-
     # app/views/api/_key_display.html.erb
     api_key:             "Su clave API"
     api_key_unavailable: "No disponible"
@@ -71,11 +54,6 @@ es:
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '_' o '/'"
-
-    # app/views/main/index.html.erb
-    switch_role:                   "Cambio de rol"
-    admin_password:                "Clave del administrador"
-    cannot_login_as_another_admin: "Usted no puede iniciar la sesión como otro administrador."
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "No existen proyectos por el momento."
@@ -573,8 +551,6 @@ es:
     #app/views/assignments/_read.html.erb
     no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
     locale_not_available:                  "La traducción %{locale} no esta disponible!"
-    external_authentication_not_supported: "La autenticación externa no es soportada en su plataforma!"
-    account_disabled:                      "Esta cuenta ha sido desabilitada"
     additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb

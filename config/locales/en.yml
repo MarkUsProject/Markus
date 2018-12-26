@@ -4,27 +4,13 @@ en:
     answer_no:          "No"
     markus:             "MarkUs"
     close:              "Close"
-    password:           "Password"
     all:                "All"
     issues:             "GitHub issues list"
     actions:            "Actions"
     continue:           "Continue"
 
-    # app/views/main/login.html.erb
-    log_in:             "Log in"
-    logging_in:         "Logging in..."
-    login_failed:       "Login failed"
-    password_not_blank: "Your password must not be blank."
-    username_not_blank: "Your username must not be blank."
-    username_and_password_not_blank: "Your username and password must not be blank."
-    session_expired:     "Your session has expired. Please log in"
-    please_log_in:       "Please log in"
-
     # app/views/layouts/_header.html.erb
-    log_out:            "Log out"
-    clear_role_switch_session_link: "Cancel role switch"
     working:            "Loading"
-    login_as:           "Login as"
     please_wait:        "Please wait…"
 
     # app/views/main/_about_content.html.erb
@@ -45,9 +31,6 @@ en:
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Your session is about to expire: you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in"
-
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
     api_key_unavailable:        "Unavailable"
@@ -65,11 +48,6 @@ en:
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "must include alphanumeric, '.', '-', '_' or '/' characters only"
-
-    # app/views/main/index.html.erb
-    switch_role:         "Switch Role"
-    admin_password:      "Admin Password"
-    cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "There are currently no assignments."
@@ -529,8 +507,6 @@ en:
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
     locale_not_available: "%{locale} translation not available!"
-    external_authentication_not_supported: "External authentication not supported on your platform!"
-    account_disabled: "This account has been disabled"
     additional_information: "Additional Information"
 
     #app/views/job_messages/_job_poller.js.erb

@@ -11,11 +11,11 @@ module MainHelper
     return '' unless blank_login || blank_password
 
     if blank_login && blank_password
-      I18n.t(:username_and_password_not_blank)
+      I18n.t('main.username_and_password_not_blank')
     elsif blank_login
-      I18n.t(:username_not_blank)
+      I18n.t('main.username_not_blank')
     elsif blank_password
-      I18n.t(:password_not_blank)
+      I18n.t('main.password_not_blank')
     end
 
   end

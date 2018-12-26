@@ -4,27 +4,13 @@ pt:
     answer_no:          "Não"
     markus:             "MarkUs"
     close:              "Fechar"
-    password:           "Senha"
     all:                "Todos"
     issues:             "GitHub lista de problemas"
     actions:            "Ações"
     continue:           "Continuar"
 
-    # app/views/main/login.html.erb
-    log_in:             "Conectar"
-    logging_in:         "Conectando..."
-    login_failed:       "Falha de conexão"
-    password_not_blank: "Sua senha não deve ser vazia."
-    username_not_blank: "Seu nome de usuário não pode ser vazio."
-    username_and_password_not_blank: "Seu nome e senha não podem ser vazios."
-    session_expired:     "Sua sessão expirou. Por favor, conecte."
-    please_log_in:       "Por favor faça o login"
-
     # app/views/layouts/_header.html.erb
-    log_out:            "Sair"
-    clear_role_switch_session_link: "Cancelar troca de papel"
     working:            "Carregando"
-    login_as:           "Fazer login como "
     please_wait:        "Aguarde por favor..."
 
     # app/views/main/_about_content.html.erb
@@ -45,9 +31,6 @@ pt:
     contact_us:         "Contate-nos"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "A sessão está prestes a expirar."
-
     # app/views/api/_key_display.html.erb
     api_key:            "Chave da API"
     api_key_unavailable:        "Indisponível"
@@ -65,11 +48,6 @@ pt:
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "apenas letras, números, '.', '-', '_' ou '/'"
-
-    # app/views/main/index.html.erb
-    switch_role:         "Trocar de papel"
-    admin_password:      "Senha do administrador"
-    cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Não existem projetos atualmente."
@@ -420,8 +398,6 @@ pt:
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
     locale_not_available: "%{locale} tradução não disponível!"
-    external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
-    account_disabled: "Essa conta foi desativada"
     additional_information: "Informações Adicionais"
 
     #lib/validators/
