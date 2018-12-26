@@ -63,7 +63,6 @@ es:
     filename:                  "Nombre del archivo"
     message:                   "Mensaje"
     remove:                    "Remover"
-    csv_grade_report: "el reporte de notas en formato CSV"
     days_left:                 "(%{days} días(s) restantes)"
     description:               "Descripción"
     shortened_date:            "Fecha"
@@ -227,12 +226,7 @@ es:
       review_state:                         "Estado de la Revisión"
       tags_used:                            "Etiquetas Usadas"
 
-    course_summaries_index:
-        page_title: "Resumen"
-
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
-
-    student_course_summary:          "Sus notas del semestre"
 
     groups:
       assign_scans:                  "Asignar Escaneado"
@@ -484,17 +478,6 @@ es:
         success: "El Par de Claves fue actualizado exitosamente"
       delete:
         success: "El Par de Claves fue removido exitosamente"
-
-    course_summaries:
-      title: "Resumen"
-
-    marking_schemes:
-      title:               "Esquemas de Calificación"
-      name:                "Nombre"
-      add_new:             "Añadir un nuevo Esquema de Calificación"
-      edit:                "Editar Esquemas de Calificación"
-      weight_label:        "Peso para "
-      table_modify_column: "Modificar"
 
     notes:
         note_on:  "%{user_name} en <strong>%{display_for}</strong>"

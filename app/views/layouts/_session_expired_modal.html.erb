@@ -2,7 +2,7 @@
 
 <%= content_for :modal_content do %>
   <div id='session_expired_text'>
-    <%= t(:session_expired) %>
+    <%= t('main.session_expired') %>
   </div>
   <section class='dialog-actions'>
     <%= button_tag t('main.log_in'), onclick:'session_expired_modal.close(); window.location.reload();' %>
