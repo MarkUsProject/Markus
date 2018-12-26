@@ -1,0 +1,23 @@
+pt:
+  main:
+    role_switch:
+      admin_password: "Senha do administrador"
+      clear_role_switch_session: "Cancelar troca de papel"
+      cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
+      log_in_as: "Fazer login como"
+      switch_role: "Trocar de papel"
+
+    # Miscellaneous
+    account_disabled: "Essa conta foi desativada."
+    external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
+    log_in: "Conectar"
+    log_out: "Sair"
+    logging_in: "Conectando..."
+    login_failed: "Falha de conexão."
+    password: "Senha"
+    password_not_blank: "Sua senha não deve ser vazia."
+    please_log_in: "Por favor faça o login."
+    session_expired: "Sua sessão expirou. Por favor, conecte."
+    timeout_imminent: "A sessão está prestes a expirar."
+    username_not_blank: "Seu nome de usuário não pode ser vazio."
+    username_and_password_not_blank: "Seu nome e senha não podem ser vazios."

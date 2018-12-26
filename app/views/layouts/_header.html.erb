@@ -16,14 +16,14 @@
       <% if @current_user.admin? || (session[:real_uid] &&
               User.find_by_id(session[:real_uid]).admin?) %>
         <%= link_to image_tag('icons/group_go.png',
-                              alt: t(:switch_role),
-                              title: t(:switch_role),
+                              alt: t('main.role_switch.switch_role'),
+                              title: t('main.role_switch.switch_role'),
                               id: 'switch_role_icon'),
                     role_switch_main_index_path,
                     remote: true %>
       <% end %>
 
-      <%= link_to(t(:log_out),
+      <%= link_to(t('main.log_out'),
                   logout_main_index_path,
                   id: 'logout_link',
                   method: :post) unless
@@ -31,7 +31,7 @@
 
       <% if MarkusConfigurator.markus_config_remote_user_auth &&
             !session[:real_uid].nil? %>
-        <%= link_to t(:clear_role_switch_session_link),
+        <%= link_to t('main.role_switch.clear_role_switch_session'),
                     controller: 'main',
                     action: 'clear_role_switch_session' %>
       <% end %>

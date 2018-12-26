@@ -4,27 +4,13 @@ fr:
     answer_no:          "Non"
     markus:             "MarkUs"
     close:              "Fermer"
-    password:           "Mot de passe"
     all:                "Tous"
     issues:             "GitHub liste des problèmes"
     actions:            "Actes"
     continue:           "Continuer"
 
-    # app/views/main/login.html.erb
-    log_in:             "Se connecter"
-    logging_in:         "Connexion"
-    login_failed:       "L'établissement de la connexion a échoué."
-    password_not_blank: "Veuillez entrer votre mot de passe."
-    username_not_blank: "Veuillez entrer votre nom d'utilisateur."
-    username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
-    session_expired:     "Votre session a expiré. Merci de vous reconnecter."
-    please_log_in:       "Merci de vous connecter."
-
     # app/views/layouts/_header.html.erb
-    log_out:            "Déconnexion"
-    clear_role_switch_session_link: "Annuler le changement d'utilisateur."
     working:            "Chargement"
-    login_as:           "Connexion en tant que"
     please_wait:        "Merci de patienter…"
 
     # app/views/main/_about_content.html.erb
@@ -45,9 +31,6 @@ fr:
     contact_us:         "Contactez-nous"
     email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Votre session est sur le point d'expirer."
-
     # app/views/api/_key_display.html.erb
     api_key:              "Votre clé - API"
     api_key_unavailable:  "Non disponible"
@@ -64,11 +47,6 @@ fr:
     # app/models/assignment_file.rb
     validation_messages:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - », « _ » ou « / » uniquement."
-
-    # app/views/main/index.html.erb
-    switch_role:         "Changer d'utilisateur"
-    admin_password:      "Mot de passe Administrateur"
-    cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Aucun devoir pour le moment."
@@ -422,8 +400,6 @@ fr:
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
     locale_not_available: "La traduction %{locale} n'est pas disponible"
-    external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
-    account_disabled: "Ce compte a été désactivé"
     additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb

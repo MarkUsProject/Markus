@@ -1,0 +1,23 @@
+es:
+  main:
+    role_switch:
+      admin_password: "Clave del administrador"
+      clear_role_switch_session: "Cancelar cambio de rol"
+      cannot_login_as_another_admin: "Usted no puede iniciar la sesión como otro administrador."
+      log_in_as: "Iniciar sesión como"
+      switch_role: "Cambio de rol"
+
+    # Miscellaneous
+    account_disabled: "Esta cuenta ha sido desabilitada."
+    external_authentication_not_supported: "La autenticación externa no es soportada en su plataforma!"
+    log_in: "Iniciar sesión"
+    log_out: "Cerrar sesión"
+    logging_in: "Iniciando sesión..."
+    login_failed: "El inicio de sesión falló."
+    password: "Contaseña"
+    password_not_blank: "La contraseña no puede dejarse en blanco."
+    please_log_in: "Por favor inicie la sesión."
+    session_expired: "Su sesión ha expirado. Por favor inicie la sesión."
+    timeout_imminent: "Su sesión está por expirar."
+    username_not_blank: "El nombre de usuario no puede dejarse en blanco."
+    username_and_password_not_blank: "Su contraseña y nombre de usuario no pueden dejarse en blanco."
