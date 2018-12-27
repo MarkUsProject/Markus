@@ -16,9 +16,15 @@ document.getElementById('criterion_incomplete_error').addClass('hidden');
 
 <%
   @assignment = @result.submission.assignment
+  if @result.is_a_review?
+    @assignment = @assignment.pr_assignment
+  end
   if @current_user.admin?
     num_marked = @assignment.get_num_marked
     num_assigned = @assignment.get_num_assigned
+  elsif @current_user.is_reviewer_for?(@assignment, @result)
+    num_marked = @assignment.get_num_marked(nil, @current_user.grouping_for(@assignment.id))
+    num_assigned = @assignment.get_num_assigned(nil, @current_user.grouping_for(@assignment.id))
   else
     num_marked = @assignment.get_num_marked(@current_user.id)
     num_assigned = @assignment.get_num_assigned(@current_user.id)

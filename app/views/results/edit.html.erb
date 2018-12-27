@@ -12,12 +12,12 @@
             submission_id: <%= @result.submission_id %>,
             assignment_id: <%= @result.submission.grouping.assignment_id %>,
             detailed: <%= @current_user.admin? || @current_user.ta? ||
-                          @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+                          @current_user.is_reviewer_for?(@assignment, @result) %>,
             released_to_students: <%= @result.released_to_students %>
           }
       );
 
-      <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+      <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment, @result) %>
       window.annotationManager =
         makeAnnotationManager(document.getElementById('annotation_options'),
           {
@@ -76,6 +76,9 @@
       if @current_user.admin?
         num_marked = @assignment.get_num_marked
         num_assigned = @assignment.get_num_assigned
+      elsif @current_user.is_reviewer_for?(@assignment, @result)
+        num_marked = @assignment.get_num_marked(nil, @current_user.grouping_for(@assignment.id))
+        num_assigned = @assignment.get_num_assigned(nil, @current_user.grouping_for(@assignment.id))
       else
         num_marked = @assignment.get_num_marked(@current_user.id)
         num_assigned = @assignment.get_num_assigned(@current_user.id)

@@ -929,8 +929,10 @@ class Assignment < ApplicationRecord
     assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
-  def get_num_assigned(ta_id = nil)
-    if ta_id.nil?
+  def get_num_assigned(ta_id = nil, reviewer_group = nil)
+    if !reviewer_group.nil?
+      pr_peer_reviews.where(reviewer_id: reviewer_group).size
+    elsif ta_id.nil?
       groupings.size
     else
       ta_memberships.where(user_id: ta_id).size
@@ -942,8 +944,15 @@ class Assignment < ApplicationRecord
       .select(&:is_valid?).count
   end
 
-  def get_num_marked(ta_id = nil)
-    if ta_id.nil?
+  def get_num_marked(ta_id = nil, reviewer_group = nil)
+    if !reviewer_group.nil?
+      assigned = pr_peer_reviews.includes(:result).where(reviewer_id: reviewer_group)
+      count = 0
+      assigned.each do |pr|
+        count += 1 if pr.result.marking_state == Result::MARKING_STATES[:complete]
+      end
+      count
+    elsif ta_id.nil?
       groupings.includes(:current_result).select(&:marking_completed?).count
     else
       if is_criteria_mark?(ta_id)
