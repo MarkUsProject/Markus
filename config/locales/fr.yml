@@ -314,13 +314,6 @@ fr:
       error:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
 
-    csv_special_characters_html: "
-    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").<br>
-    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br>
-    doubler chaque double quotes (\"\").</p>
-    <p>Voici un exemple d'un champ CSV contenant des virgules et des doubles quotes :</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
-
     criteria_csv_error:
       weight_not_number: "le coefficient n'est pas un nombre."
 

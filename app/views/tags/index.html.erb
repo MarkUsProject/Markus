@@ -10,14 +10,14 @@
                handlers: [:erb] %>
 <% end %>
 
-<!--The title bar for the page-->
 <% content_for :title,
-  t('tags.title', assignment_short_identifier: @assignment.is_peer_review? ?
-    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
-    @assignment.short_identifier) %>
+               Tag.model_name.human.pluralize + ': ' +
+                 (@assignment.is_peer_review? ?
+                  @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                  @assignment.short_identifier) %>
 
 <% @heading_buttons = [
-  { link_text: t('tags.create.create_new'),
+  { link_text: t('helpers.submit.create', model: Tag.model_name.human),
     link_path: '#',
     html_options: { onclick:'modal_create_new.open()' } },
   { link_text: t('download'),
