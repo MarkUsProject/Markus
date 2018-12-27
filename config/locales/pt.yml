@@ -290,13 +290,6 @@ pt:
       error:
         no_access: "Não há accesso para resultado do teste com id #%{feedback_file_id}."
 
-    csv_special_characters_html: "
-    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br>
-    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br>
-    duplique cada uma de suas aspas duplas(\"\").</p>
-    <p>Segue um exemplo de um campo contendo vírgulas e aspas duplas:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
-
     criteria_csv_error:
       weight_not_number: "peso não é um número."
 

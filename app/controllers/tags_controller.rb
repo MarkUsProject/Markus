@@ -2,6 +2,7 @@ class TagsController < ApplicationController
   include TagsHelper
 
   before_action :authorize_only_for_admin
+  responders :flash
 
   layout 'assignment_content'
 
@@ -30,15 +31,13 @@ class TagsController < ApplicationController
       user: @current_user)
 
     if new_tag.save
-      flash_message(:success, I18n.t('tags.create.successful'))
+      # flash_message(:success, I18n.t('tags.create.successful'))
       if params[:grouping_id]
         create_grouping_tag_association(params[:grouping_id], new_tag)
       end
-    else
-      flash_message(:error, I18n.t('tags.create.error'))
     end
 
-    redirect_back(fallback_location: root_path)
+    respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
   end
 
   def get_all_tags
@@ -176,15 +175,7 @@ class TagsController < ApplicationController
 
       # Handles errors associated with loads.
       rescue Psych::SyntaxError => e
-        flash_message(:error, I18n.t('tags.upload.error') + '  ' +
-            t('upload_errors.syntax_error', error: "#{e}"))
-        redirect_back(fallback_location: root_path)
-        return
-      end
-
-      unless tags
-        flash_message(:error, I18n.t('tags.upload.error') +
-            '  ' + I18n.t('tags.upload.empty_error'))
+        flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
         redirect_back(fallback_location: root_path)
         return
       end
@@ -217,12 +208,12 @@ class TagsController < ApplicationController
       end
 
       if successes < tags.length
-        flash_message(:error, I18n.t('tags.upload.error') + bad_names)
+        flash_message(:error, I18n.t('upload_errors.syntax_error', error: bad_names))
       end
 
       # Displays the tags that are successful.
       if successes > 0
-        flash_message(:success, I18n.t('tags.upload.upload_success', nb_updates: successes))
+        flash_message(:success, I18n.t(:upload_success, count: successes))
       end
     end
 

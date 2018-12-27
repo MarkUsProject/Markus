@@ -196,7 +196,7 @@ class RawSubmissionTable extends React.Component {
       defaultSortDesc: true,
     },
     {
-      Header: I18n.t('browse_submissions.tags_used'),
+      Header: I18n.t('activerecord.models.tag.other'),
       accessor: 'tags',
       Cell: row => (
         <div className="tag_list">

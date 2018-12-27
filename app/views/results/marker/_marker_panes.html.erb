@@ -94,7 +94,7 @@
           <li><a href='#mark_viewer'><%= Mark.model_name.human.pluralize %></a></li>
           <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
           <% unless @result.is_a_review? %>
-            <li><a href='#tag_viewer'><%= t('tags.tags') %></a></li>
+            <li><a href='#tag_viewer'><%= Tag.model_name.human.pluralize %></a></li>
           <% end %>
         </ul>
 

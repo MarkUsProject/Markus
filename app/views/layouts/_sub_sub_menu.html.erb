@@ -19,7 +19,7 @@
             <%= link_to t(:properties), edit_assignment_path(@assignment) %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'tags' %>'>
-            <%= link_to t('tags.tags'),
+            <%= link_to Tag.model_name.human.pluralize,
                         assignment_tags_path(@assignment) %>
           </li>
           <li <% if controller.controller_name == 'criteria'%>

@@ -171,14 +171,6 @@ es:
 
     past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
 
-    #app/views/results/marker/
-    marker:
-      marks:
-        current_tags:              "Etiquetas Recientes:"
-        available_tags:            "Etiquetas Disponibles:"
-        tag_summary:               "Etiquetas más usadas:"
-        new_tag:                   "Añadir una nueva etiqueta..."
-        delete_tag:                "Elimnar Etiquetas..."
     copy:                         "Copy"
 
     csv_invalid_lines:                   "Las siguientes líneas en formato CSV fueron inválidas: "
@@ -224,7 +216,6 @@ es:
 
     browse_submissions:
       review_state:                         "Estado de la Revisión"
-      tags_used:                            "Etiquetas Usadas"
 
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
@@ -349,82 +340,6 @@ es:
     update_files:
       success: "Sus cambios han sido realizados."
 
-    tags:
-      tags:        "Etiquetas"
-      title:       "Etiquetas del Proyecto: %{assignment_short_identifier}"
-      search_tags: "Buscar etiquetas..."
-      edit_tag:    "Editar Etiqueta..."
-      edit_update: "Actualizar"
-      updating:    "Actualizando..."
-
-      messages:
-        no_assigned: "--No se han asignado etiquetas--"
-        no_left:     "--No hay más etiquetas por asignar--"
-
-      create:
-        create_new:      "Añadir Etiqueta"
-        tag_prompt:      "Nombre de la Etiqueta:"
-        tag_description: "Descripción de la Etiqueta:"
-        button_text:     "Guardar Cambios"
-        name_prompt:     "Ingresar el nombre de la etiqueta..."
-        descript_prompt: "Ingresar la descripción de la etiqueta..."
-        successful:      "La etiqueta ha sido creada exitosamente!"
-        error:           "La etiqueta no pudo ser creada."
-
-      delete:
-        delete_tags: "Eliminar Etiquetas"
-        tag_prompt:  "Por favor seleccione las etiquetas en la parte inferior para eliminarlas:"
-
-      upload:
-        upload_success:    "%{nb_updates} etiqueta(s) han sido añadidad exitosamente!"
-        upload_csv_html:   "
-          <p>
-            El archivo debería tener el siguiente formato:<br>
-            <ul>
-              <li>Sólo un registro por línea.
-              <li>Cada línea debería ser terminada en un carriage-return o un line-feed.</li>
-              <li>El nombre y la descripción de la etiqueta son los únicos usados. Cualquier otra información en la
-                  línea es ignorada.</li>
-            </ul>
-            <code>tag_name,tag_description, ...</code><br><br>
-            <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
-            <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
-          </p>"
-        upload_yml_html:   "
-          <p>
-            El archivo debería tener el siguiente formato:<br>
-            <ul>
-              <li>Sólo un registro por línea.
-              <li>Cada línea debería ser terminada en un carriage-return o un line-feed.
-              <li>Cualquier otra información en la línea es ignorada.
-            </ul>
-            <code>tag_id:<br>
-              &nbsp;&nbsp;name: name<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;user:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
-              [...]</code><br><br>
-            <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
-            <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
-            <i>id</i> representa el id del usuario asociado con la etiqueta.<br>
-          </p>"
-        error:             "Un error ha ocurrido mientras se subian las etiquetas: "
-        empty_error:       " El archivo con formato YAML está vacío."
-
-      download:
-        download_title: "Descargar Etiquetas"
-        button_message: "Descargar en formato %{file_format} "
-
-      table:
-        name:        "Nombre"
-        creator:     "Creador"
-        description: "Descripción"
-        use:         "Uso"
-        actions:     "Acciones"
-        all:         "Todas las etiquetas"
-        in_use:      "Etiquetas en uso"
-        not_in_use:  "Etiquetas no usadas"
-
     submission_file:
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
@@ -433,13 +348,6 @@ es:
     feedback_file:
       error:
         no_access:        "No existe acceso al archivo de retroalimentación con id #%{feedback_file_id}."
-
-    csv_special_characters_html: "
-    <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").<br>
-    Si desea usar comillas dobles en un campo CSV, usted debe rodear el campo completo con comillas dobles y<br>
-    duplicar cada una de sus comillas dobles (\"\").</p>
-    <p>Este es un ejemplo de un campo CSV que contiene comas y comillas dobles:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria_csv_error:
       weight_not_number: "el peso no es un número."

@@ -1,4 +1,11 @@
 en:
+  csv_special_characters_html: "
+    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").
+    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
+    double each one of your double quotes (\"\").</p>
+    <p>Here's an example of a CSV field containing commas and double quotes:</p>
+    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
+
   download: "Download"
   download_csv: "Download in CSV Format"
   download_the: "Download %{item}"
