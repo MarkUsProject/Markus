@@ -1,10 +1,10 @@
 <footer>
-  <%= link_to(I18n.t(:about_markus),
-              about_main_index_path(),
-              remote: true) %>
+  <%= link_to t(:about_markus),
+              about_main_index_path,
+              remote: true %>
 
   <span class="lang_chooser">
-    <%= I18n.t(:choose_language) %>
+    <%= t(:language) %>
     <%= #gets the relative path without the language choice, then on change of the language,
         #it adds this relative path to the end of the new language that was chosen.
         relative_root = Rails.application.config.action_controller.relative_url_root || ''
@@ -24,7 +24,7 @@
 
   <% if @current_user.admin? or @current_user.ta? %>
     <span class="issues">
-      <a href="https://github.com/MarkUsProject/Markus/issues/"><%= I18n.t(:issues) %></a>
+      <a href="https://github.com/MarkUsProject/Markus/issues/"><%= t(:issues) %></a>
     </span>
   <% end %>
 </footer>
