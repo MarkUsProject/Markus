@@ -387,40 +387,6 @@ es:
       delete:
         success: "El Par de Claves fue removido exitosamente"
 
-    notes:
-        note_on:  "%{user_name} en <strong>%{display_for}</strong>"
-        add_new:  "Añadir una nueva nota"
-        existing: "Notas Existentes"
-        comment:  "Su comentario"
-        save:     "Guardar Nota"
-        success:  "La nota fue guardada exitosamente"
-        error:    "No se pudo guardar nota"
-        title:    "Notas"
-        note:     "Nota"
-        noteable: "Objeto para el que se puede crear notas"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author:         "Autor"
-        creation_time:  "Tiempo de creación"
-        delete:
-            link_title:        "Eliminar esta nota"
-            link_confirm:      "Esto removerá la nota permanentemente. ¿Desea continuar?"
-            success:           "La nota fue eliminada exitosamente."
-            error_permissions: "Usted no tiene permiso para eliminar esta nota."
-        new:
-            note_message:      "Mensaje Notas"
-            title:             "Crear Nota"
-            invalid_selector:  "El seleccionador escogido es inválido."
-            no_noteables:      "Las notas están vinculadas a grupos, proyectos o estudiantes, pero no existe niguno de
-                                estos todavía. Por favor cree uno primero."
-        create:
-            success: "La nota fue creada exitosamente."
-        edit:
-            title: "Editar Nota"
-        update:
-            success: "La nota fue actualizada exitosamente."
-        help: "Las notas pueden ser creadas para estudiantes, grupos, o proyectos. Estas son visibles para
-               administradores y evaluadores, pero no para estudiantes."
-
     section:
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números

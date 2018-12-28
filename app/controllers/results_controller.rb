@@ -7,14 +7,12 @@ class ResultsController < ApplicationController
                          :update_overall_comment, :remove_extra_mark,
                          :toggle_marking_state,
                          :download, :download_zip,
-                         :note_message,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :remove_extra_mark,
-                       :note_message, :get_test_runs_instructors]
+                       :remove_extra_mark, :get_test_runs_instructors]
   before_action :authorize_for_user,
                 only: [:download, :download_zip,
                        :view_marks, :get_annotations]
@@ -29,15 +27,6 @@ class ResultsController < ApplicationController
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
-
-  def note_message
-    @result = Result.find(params[:id])
-    if params[:success]
-      flash[:note_success] = I18n.t('notes.success')
-    else
-      flash[:fail_notice] = I18n.t('notes.error')
-    end
-  end
 
   def edit
     @host = Rails.application.config.action_controller.relative_url_root

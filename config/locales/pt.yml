@@ -328,37 +328,6 @@ pt:
       delete:
         success: "Par de Chaves foi removido com sucesso"
 
-    notes:
-        note_on: "%{user_name} em <b>%{display_for}</b>"
-        add_new: "Inserir nova observação"
-        existing: "Notas existentes"
-        comment: "Seu comentário"
-        save: "Salvar observação"
-        success: "Nota salva com sucesso"
-        error: "Impossível salvar observação"
-        title: "Observação"
-        note: "Observação"
-        noteable: "Para"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author: "Autor"
-        creation_time: "Data de criação"
-        delete:
-            link_title: "Apagar essa anotação"
-            link_confirm: "Isso removerá a anotação permanentemente. Continuar?"
-            success: "Anotação apagada com sucesso ."
-            error_permissions: "Você não possúi permissão para apagar a anotação."
-        new:
-            note_message: "Mensagem de observação"
-            title: "Criar anotação"
-            invalid_selector: "Seletor escolhido inválido."
-            no_noteables: "Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro."
-        create:
-            success: "Anotação criada com sucesso."
-        edit:
-            title: "Editar anotação"
-        update:
-            success: "Anotação foi atualizada com sucesso."
-
     keybinding:
       keyboard_help:          "Ajuda de atalho de teclado"
       toggle_compact:         "Alternar vista compacta"

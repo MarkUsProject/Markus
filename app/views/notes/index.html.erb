@@ -1,6 +1,6 @@
 <div class='title_bar'>
   <h1>
-    <%= t('notes.title') %>
+    <%= Note.model_name.human.pluralize %>
     <span class='title-help notes_help'>
       <p class='help-message-title notes_help'>
         <%= t('notes.help') %>
@@ -15,7 +15,7 @@
 
   <%# If there are no noteables,we can't add notes, so do not show Add New link. %>
   <% if @noteables_available %>
-    <%= link_to t('notes.add_new'),
+    <%= link_to t('helpers.submit.create', model: Note.model_name.human),
                 { action: 'new' },
                 class: 'button' %>
   <% else %>
@@ -26,17 +26,17 @@
     <table id='notes'>
       <thead>
         <tr>
-          <th><%= t('notes.existing') %></th>
-          <th><%= t('notes.new.note_message') %></th>
-          <th><%= t('actions') %></th>
+          <th><%= Note.model_name.human.pluralize %></th>
+          <th><%= Note.human_attribute_name(:notes_message) %></th>
+          <th><%= t(:actions) %></th>
         </tr>
       </thead>
       <% for note in @notes %>
         <tr>
           <td>
-            <%= raw(t('notes.note_on',
-                    user_name: note.user.user_name,
-                    display_for: note.noteable.display_for_note )) %>
+            <%= t('notes.note_on_html',
+                  user_name: note.user.user_name,
+                  display_for: note.noteable.display_for_note) %>
             <br>
             <small><%= note.format_date %></small>
           </td>

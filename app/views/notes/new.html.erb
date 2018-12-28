@@ -7,7 +7,7 @@
            handlers: [:erb] %>
 
 <div class='title_bar'>
-  <h1><%= t('notes.new.title') %></h1>
+  <h1><%= t('helpers.submit.create', model: Note.model_name.human) %></h1>
 </div>
 
 <div class='wrapper'>
@@ -16,11 +16,10 @@
                locals: { model: @note } %>
 
     <p id='noteable_type'>
-      <%= label_tag 'noteable_type', t('notes.noteable') %>
+      <%= label_tag 'noteable_type', Note.human_attribute_name(:noteable) %>
       <%= select_tag 'noteable_type',
                      options_for_select(
-                        Note::NOTEABLES.map { |item| [t('notes.noteables.' + item),
-                                                      item ]}) %>
+                        Note::NOTEABLES.map { |item| [item, item] }) %>
     </p>
 
     <div id='noteable_selector'>
@@ -28,7 +27,7 @@
     </div>
 
     <p>
-      <%= raw(f.label :notes_message, t('notes.note')) %>
+      <%= raw(f.label :notes_message, Note.human_attribute_name(:notes_message)) %>
       <%= raw(f.text_area :notes_message,
                           rows: 10,
                           onchange: 'set_onbeforeunload(true);') %>

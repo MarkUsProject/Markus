@@ -345,38 +345,6 @@ en:
       delete:
         success: "Key Pair was removed successfully"
 
-    notes:
-        note_on: "%{user_name} on <strong>%{display_for}</strong>"
-        add_new: "Add a new note"
-        existing: "Existing Notes"
-        comment: "Your comment"
-        save: "Save Note"
-        success: "Note saved succesfully"
-        error: "Unable to save the note"
-        title: "Notes"
-        note: "Note"
-        noteable: "Noteable"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author: "Author"
-        creation_time: "Creation Time"
-        delete:
-            link_title: "Delete this note"
-            link_confirm: "This will remove this note permanently. Continue?"
-            success: "Note was deleted successfully."
-            error_permissions: "You do not have sufficient permissions to delete this note."
-        new:
-            note_message: "Notes message"
-            title: "Create Note"
-            invalid_selector: "Invalid selector chosen."
-            no_noteables: "Notes are attached to groups, assignments, or students, but there are none yet. Please create one first."
-        create:
-            success: "Note was successfully created."
-        edit:
-            title: "Edit Note"
-        update:
-            success: "Note was successfully updated."
-        help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
-
     section:
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
