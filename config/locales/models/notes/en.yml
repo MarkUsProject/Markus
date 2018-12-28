@@ -1,0 +1,11 @@
+en:
+  activerecord:
+    models:
+      note:
+        one: "Note"
+    attributes:
+      notes:
+        created_at: "Created at"
+        noteable: "Noteable"
+        notes_message: "Message"
+        user: "Creator"

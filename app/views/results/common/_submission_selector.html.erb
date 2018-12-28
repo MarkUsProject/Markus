@@ -15,7 +15,7 @@
 
   <span class='middle'>
     <% unless @result.is_a_review? %>
-      <%= link_to (raw "#{t('notes.title')} (<span id='number_of_notes'>#{@grouping.notes.size}</span>)"),
+      <%= link_to (raw "#{Note.model_name.human.pluralize} (<span id='number_of_notes'>#{@grouping.notes.size}</span>)"),
                   notes_dialog_note_path(id: @grouping.assignment_id,
                                          noteable_id: @grouping.id,
                                          noteable_type: 'Grouping',

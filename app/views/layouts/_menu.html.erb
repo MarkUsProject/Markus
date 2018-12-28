@@ -53,7 +53,7 @@
 
   <% if @current_user.admin? || @current_user.ta? %>
     <li class='<%= "active" if controller.controller_name == 'notes' %>'>
-      <%= link_to t('notes.title'), notes_path %>
+      <%= link_to Note.model_name.human.pluralize, notes_path %>
     </li>
   <% end %>
 

@@ -330,37 +330,6 @@ fr:
           input_number:           "Doit être un nombre supérieur à 0.0."
           released_marks:         "TODO"
 
-    notes:
-        note_on: "%{user_name} sur <b>%{display_for}</b>"
-        add_new: "Nouvelle remarque"
-        existing: "Remarques existantes"
-        comment: "Votre commentaire"
-        save: "Enregistrer la remarque"
-        success: "Note sauvegardée"
-        error: "Impossible de sauvegarder la remarque"
-        title: "Remarques"
-        note: "Remarque"
-        noteable: "Remarque à propos de"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author: "Auteur"
-        creation_time: "Date de création"
-        delete:
-            link_title: "Supprimer la remarque"
-            link_confirm: "Cela supprimera définitivement la remarque. Êtes-vous sûr de vouloir continuer ?"
-            success: "La remarque a bien été supprimée."
-            error_permissions: "Vous n'avez pas les permissions suffisantes pour supprimer cette remarque."
-        new:
-            note_message: "Remarque"
-            title: "Création d'une remarque"
-            invalid_selector: "Mauvais sélecteur."
-            no_noteables: "Les remarques sont rattachées aux groupes, projets ou étudiants, mais il n'existe pas encore de remarque. Merci d'en créer une d'abord."
-        create:
-            success: "Remarque sauvegardée."
-        edit:
-            title: "Édition de la remarque"
-        update:
-            success: "Remarque mise à jour."
-
     keybinding:
       keyboard_help:          "Aide sur le raccourci clavier"
       toggle_compact:         "Basculer affichage compact"

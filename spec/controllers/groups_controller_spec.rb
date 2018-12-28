@@ -10,8 +10,6 @@ describe GroupsController do
       allow(controller).to receive(:current_user).and_return(build(:admin))
     end
 
-    describe '#note_message'
-
     describe 'GET #new' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)

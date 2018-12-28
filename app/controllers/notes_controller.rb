@@ -2,6 +2,8 @@ class NotesController < ApplicationController
   before_action :authorize_for_ta_and_admin
   before_action :ensure_can_modify, only: [:edit, :update]
 
+  responders :flash, :collection
+
   # TODO this method needs explaining ! What is return_id ?
   def notes_dialog
     @return_id = params[:id]
@@ -59,8 +61,7 @@ class NotesController < ApplicationController
     @note.creator_id = @current_user.id
 
     if @note.save
-      flash_message(:success, I18n.t('notes.create.success'))
-      redirect_to action: 'index'
+      respond_with @note
     else
       new_retrieve
       render 'new', formats: [:html], handlers: [:erb]
@@ -97,8 +98,7 @@ class NotesController < ApplicationController
 
   def update
     if @note.update_attributes(notes_params)
-      flash_message(:success, I18n.t('notes.update.success'))
-      redirect_to action: 'index'
+      respond_with @note
     else
       render 'edit', formats: [:html], handlers: [:erb]
     end
@@ -108,11 +108,11 @@ class NotesController < ApplicationController
     @note = Note.find(params[:id])
     if @note.user_can_modify?(current_user)
       @note.destroy
-      flash_message(:success, I18n.t('notes.delete.success'))
+      respond_with @note
     else
       flash_message(:error, I18n.t('notes.delete.error_permissions'))
+      render 'destroy', formats: [:js], handlers: [:erb]
     end
-	  render 'destroy', formats: [:js], handlers: [:erb]
   end
 
   private

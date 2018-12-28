@@ -1,0 +1,11 @@
+fr:
+  activerecord:
+    models:
+      note:
+        one: "Remarque"
+    attributes:
+      notes:
+        created_at: "Date de création"
+        noteable: "Remarque à propos de"
+        notes_message: "Remarque"
+        user: "Auteur"

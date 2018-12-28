@@ -22,15 +22,6 @@ class GroupsController < ApplicationController
 
   layout 'assignment_content'
 
-  def note_message
-    @assignment = Assignment.find(params[:id])
-    if params[:success]
-      flash_message(:success, I18n.t('notes.create.success'))
-    else
-      flash_message(:error, I18n.t('notes.error'))
-    end
-  end
-
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
