@@ -628,7 +628,7 @@ class Grouping < ApplicationRecord
       # grab only the groupings of reviewees that this reviewer
       # is responsible for
       user_group = user.grouping_for(assignment.id)
-      groupings = user_group.peer_reviews_to_others
+      groupings = user_group.peer_reviews_to_others.order('id')
       groupings.map {|p| Result.find(p.result_id).submission.grouping}
     elsif user.admin? && assignment.scanned_exam?
       assignment.groupings.includes(:group)

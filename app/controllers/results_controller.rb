@@ -2,7 +2,7 @@ class ResultsController < ApplicationController
   include TagsHelper
   before_action :authorize_only_for_admin,
                 except: [:edit, :update_mark, :view_marks,
-                         :create, :add_extra_mark, :next_grouping,
+                         :create, :add_extra_mark, :next_pr, :next_grouping,
                          :get_annotations,
                          :update_overall_comment, :remove_extra_mark,
                          :toggle_marking_state,
@@ -21,9 +21,10 @@ class ResultsController < ApplicationController
   before_action :authorize_for_student,
                 only: [:update_remark_request,
                        :cancel_remark_request,
+                       :next_pr,
                        :get_test_runs_instructors_released]
   before_action only: [:edit, :update_mark, :toggle_marking_state,
-                       :update_overall_comment, :next_grouping] do |c|
+                       :update_overall_comment, :next_pr, :next_grouping] do |c|
                   c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
                 end
   after_action  :update_remark_request_count,
@@ -120,6 +121,11 @@ class ResultsController < ApplicationController
                              .order('group_name')
       @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
+    elsif @result.is_a_review? && @current_user.is_reviewer_for?(@assignment, @result)
+      user_group = @current_user.grouping_for(@assignment.id)
+      assigned_prs = user_group.peer_reviews_to_others
+      @next_pr = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
+      @previous_pr = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
     else
       @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
@@ -229,14 +235,22 @@ class ResultsController < ApplicationController
     end
   end
 
+  def next_pr
+    pr = PeerReview.find(params[:pr_id])
+    next_result = Result.find(pr.result.id)
+
+    redirect_to action: 'edit',
+                id: next_result.id
+  end
+
   def next_grouping
     grouping = Grouping.find(params[:grouping_id])
     assignment = Assignment.find(params[:assignment_id])
     result = Result.find(params[:id])
 
     if grouping.has_submission? && grouping.is_collected?
-      if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
-        reviewer = @current_user.grouping_for(assignment.pr_assignment.id)
+      if @current_user.is_reviewer_for?(assignment, result)
+        reviewer = @current_user.grouping_for(assignment.id)
         next_pr = reviewer.review_for(grouping)
         next_result = Result.find(next_pr.result_id)
 
@@ -422,6 +436,7 @@ class ResultsController < ApplicationController
 
   def update_mark
     result_mark = Mark.find(params[:mark_id])
+    @assignment = Assignment.find(params[:assignment_id])
     submission = result_mark.result.submission  # get submission for logging
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
@@ -449,6 +464,10 @@ class ResultsController < ApplicationController
       if @current_user.admin?
         num_marked = assignment.get_num_marked
         num_assigned = assignment.get_num_assigned
+      elsif @current_user.is_a_reviewer?(@assignment.pr_assignment)
+        @assignment = @assignment.pr_assignment
+        num_marked = @assignment.get_num_marked(nil, @current_user.grouping_for(@assignment.id))
+        num_assigned = @assignment.get_num_assigned(nil, @current_user.grouping_for(@assignment.id))
       else
         num_marked = assignment.get_num_marked(@current_user.id)
         num_assigned = assignment.get_num_assigned(@current_user.id)

@@ -253,8 +253,10 @@
              locals: { group: @group,
                        result: @result,
                        assignment: @assignment,
-                       previous_grouping: @previous_grouping,
-                       next_grouping: @next_grouping } %>
+                       previous_grouping: @result.is_a_review? && @current_user.is_reviewer_for?(@assignment, @result) ?
+                                            @previous_pr : @previous_grouping,
+                       next_grouping: @result.is_a_review? && @current_user.is_reviewer_for?(@assignment, @result) ?
+                                        @next_pr : @next_grouping } %>
 
   <%= render partial: 'results/common/errors' %>
 

@@ -223,6 +223,7 @@ Rails.application.routes.draw do
         member do
           get 'view_marks'
           post 'add_extra_mark'
+          get 'next_pr'
           get 'next_grouping'
           post 'toggle_marking_state'
           post 'update_mark'

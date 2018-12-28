@@ -4,9 +4,15 @@
   <% unless @result.is_a_review? && !@current_user.student? %>
     <span class='left'>
       <% if !previous_grouping.nil?%>
-        <%= link_to t('results.previous_submission'), action: 'next_grouping',
-                    assignment_id: @assignment.id, id: @result.id,
-                    grouping_id: previous_grouping.id %>
+        <% if @result.is_a_review? && @current_user.student? %>
+          <%= link_to t('results.previous_submission'), action: 'next_pr',
+                      assignment_id: @assignment.parent_assignment.id, id: @result.id,
+                      pr_id: previous_grouping.id %>
+        <% else %>
+          <%= link_to t('results.previous_submission'), action: 'next_grouping',
+                      assignment_id: @assignment.id, id: @result.id,
+                      grouping_id: previous_grouping.id %>
+        <% end %>
       <% else %>
         <span class='disable'><%= t('results.previous_submission') %></span>
       <% end %>
@@ -70,9 +76,15 @@
   <% unless @result.is_a_review? && !@current_user.student? %>
     <span class='right'>
       <% if !next_grouping.nil? %>
-        <%= link_to t('results.next_submission'), action: 'next_grouping',
-                    assignment_id: @assignment.id, id: @result.id,
-                    grouping_id: @next_grouping.id%>
+        <% if @result.is_a_review? && @current_user.student? %>
+          <%= link_to t('results.next_submission'), action: 'next_pr',
+                      assignment_id: @assignment.parent_assignment.id, id: @result.id,
+                      pr_id: next_grouping.id %>
+        <% else %>
+          <%= link_to t('results.next_submission'), action: 'next_grouping',
+                      assignment_id: @assignment.id, id: @result.id,
+                      grouping_id: next_grouping.id%>
+        <% end %>
       <% else %>
         <span class='disable'><%= t('results.next_submission') %></span>
       <% end %>
