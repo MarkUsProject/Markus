@@ -1,35 +1,15 @@
 fr:
-    choose_language:    "Langue:"
     answer_yes:         "Oui"
     answer_no:          "Non"
     markus:             "MarkUs"
     close:              "Fermer"
     all:                "Tous"
-    issues:             "GitHub liste des problèmes"
     actions:            "Actes"
     continue:           "Continuer"
 
     # app/views/layouts/_header.html.erb
     working:            "Chargement"
     please_wait:        "Merci de patienter…"
-
-    # app/views/main/_about_content.html.erb
-    about_markus:       "À propos de MarkUs"
-    version:            "Version"
-    using_markus_version:       "Vous utilisez la version : "
-    using_ruby_version: "Version de ruby : "
-    using_rails_version: "Version de rails : "
-    license:            "Licence"
-    markus_license_OSI: "MarkUs est rendu disponible conformément à la <a href=\"http://www.opensource.org/licenses/mit-license.html\">licence MIT</a> approuvée par l'<a href=\"http://www.opensource.org\">OSI</a>."
-    markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
-    markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
-    markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:   "Copyright (c) 2008-2011 par les auteurs."
-    markus_credits:     "Crédits"
-    markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs. Remerciements particuliers à :"
-    supervisors:        "Chefs de projet : "
-    contact_us:         "Contactez-nous"
-    email_more_info:    "Mél. : <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>N'hésitez pas à vous rendre sur <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations.<br>Pour soumettre un bug ou un problème visitez <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
 
     # app/views/api/_key_display.html.erb
     api_key:              "Votre clé - API"
@@ -344,7 +324,6 @@ fr:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
-    locale_not_available: "La traduction %{locale} n'est pas disponible"
     additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb
