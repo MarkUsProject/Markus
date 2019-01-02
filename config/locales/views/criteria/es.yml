@@ -71,7 +71,6 @@ es:
 
   rubric_criteria:
     level:
-      levels: "Niveles"
       level_index: "Nivel %{index}"
     defaults:
       level_0: "Insuficiente"

@@ -12,7 +12,6 @@ es:
       give_grace_credits: "Dar créditos de gracia:"
       mark_active: "Markar como activo"
       mark_inactive: "Markar como inactivo"
-    all: "Todos los/las estudiantes"
     edit: "Editar un Estudiante"
     help:
       manage_students: "Markar estudiantes como activos o inactivos, darles créditos de gracia."
@@ -31,16 +30,10 @@ es:
         estudiante es actualizada."
 
   tas:
-    all: "Todos los Evaluadores"
     edit: "Editar la información del evaluador"
     new: "Crear un nuevo evaluador"
     help:
       manage_graders: "Crear evaluadores."
     upload:
-      each_field: "Cada campo está separado por una coma (no existen espacios)"
-      each_line: "Cada línea tiene los campos requeridos especificados en la parte superior"
       grader_same_user: "Si un asistente de cátedra con el mismo nombre existe, la información del asistente es actualizada."
-      make_sure: "Asegúrese que:"
-      not_added: "Los siguientes asistentes de cátedra no han podido ser añadidos exitosamente:"
       select_csv_file: "Seleccionar el archivo en formato CSV que tiene la siguiente forma: <code>user_name,last_name,first_name</code>"
-      ta_names: "Los nombres de los asistentes de cátedra son alfanuméricos"

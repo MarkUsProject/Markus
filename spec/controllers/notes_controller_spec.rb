@@ -128,7 +128,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Grouping', note: { noteable_id: grouping.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -140,7 +140,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Student', note: { noteable_id: student.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -152,7 +152,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Assignment', note: { noteable_id: assignment.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -222,8 +222,7 @@ describe NotesController do
                   :update,
                   params: { id: @note.id, note: { notes_message: @new_message } }
           expect(assigns :note).not_to be_nil
-          i18t_string = [I18n.t('notes.update.success')].map { |f| extract_text f }
-          expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
+          expect(flash[:success]).to eq I18n.t('flash.actions.update.success', resource_name: Note.model_name.human)
           expect(response).to redirect_to(controller: 'notes')
         end
       end
@@ -243,7 +242,7 @@ describe NotesController do
         @note = create(:note, creator_id: @ta.id)
         delete_as @ta, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.delete.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
       end
 
       it 'for a note belonging to someone else (delete as TA)' do
@@ -353,7 +352,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Grouping', note: { noteable_id: grouping.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -365,7 +364,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Student', note: { noteable_id: student.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -377,7 +376,7 @@ describe NotesController do
                 :create,
                 params: { noteable_type: 'Assignment', note: { noteable_id: assignment.id, notes_message: @message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.create.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
@@ -424,7 +423,7 @@ describe NotesController do
         @new_message = 'Changed message'
         post_as @admin, :update, params: { id: @note.id, note: { notes_message: @new_message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.update.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.update.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
       end
 
@@ -433,7 +432,7 @@ describe NotesController do
         @new_message = 'Changed message'
         post_as @admin, :update, params: { id: @note.id, note: { notes_message: @new_message } }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.update.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.update.success', resource_name: Note.model_name.human)
         expect(response).to redirect_to(controller: 'notes')
       end
 
@@ -441,14 +440,14 @@ describe NotesController do
         @note = create(:note, creator_id: @admin.id)
         delete_as @admin, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.delete.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
       end
 
       it 'for a note belonging to someone else (delete as Admin)' do
         @note = create(:note, creator_id: create(:ta).id)
         delete_as @admin, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
-        expect(flash[:success].map { |f| extract_text f }).to eq [I18n.t('notes.delete.success')].map { |f| extract_text f }
+        expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
       end
 
       it 'have noteable options for selection when viewing noteable_type Grouping' do

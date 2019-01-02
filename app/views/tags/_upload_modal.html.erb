@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('annotation_categories.upload.title') %>
+<%= content_for :modal_title, t('upload_the', item: Tag.model_name.human.pluralize) %>
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
@@ -26,7 +26,7 @@
                  html: { multipart: true, size: 1 } do |f| %>
       <div class='content'>
         <%= file_field_tag 'csv_tags' %>
-        <%= t('tags.upload.upload_csv_html') %>
+        <%= t('tags.upload.csv_instructions_html') %>
         <%= t('csv_special_characters_html') %>
       </div>
       <div class='encoding_type'>
@@ -55,7 +55,7 @@
                  html: { multipart: true, size: 1 } do |f| %>
       <div class='content'>
         <%= file_field_tag 'yml_tags' %>
-        <%= t('tags.upload.upload_yml_html') %>
+        <%= t('tags.upload.yml_instructions_html') %>
       </div>
 
       <div class='encoding_type'>

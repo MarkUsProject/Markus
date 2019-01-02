@@ -75,7 +75,7 @@ class AnnotationManager extends React.Component {
       <div>
       <button id='new_annotation_button'
               onClick={this.make_new_annotation}>
-        {I18n.t('annotations.new.button')}
+        {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.annotation.one')})}
       </button>
 
       <ul className='tags' id='annotation_categories'>

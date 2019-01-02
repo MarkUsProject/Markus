@@ -3,11 +3,11 @@
                { method: 'post', remote: true } do %>
     <div id='role_switch_error'></div>
 
-    <h2><%= t(:switch_role)%></h2>
+    <h2><%= t('main.role_switch.switch_role')%></h2>
 
     <%= text_field_tag 'effective_user_login',
                        nil,
-                       placeholder: t(:login_as),
+                       placeholder: t('main.role_switch.log_in_as'),
                        autocorrect: 'off',
                        tabindex: 10 %>
 
@@ -18,13 +18,13 @@
     <% if !MarkusConfigurator.markus_config_remote_user_auth %>
       <%= password_field_tag 'admin_password',
                              nil,
-                             placeholder: t(:admin_password),
+                             placeholder: t('main.role_switch.admin_password'),
                              tabindex: 20 %>
     <% end %>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:log_in),
-                     data: { disable_with: t(:logging_in) },
+      <%= submit_tag t('main.log_in'),
+                     data: { disable_with: t('main.logging_in') },
                      tabindex: 100 %>
       <%= button_tag t(:cancel),
                      onclick: 'role_switch_modal.close()',

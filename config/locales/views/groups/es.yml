@@ -34,7 +34,6 @@ es:
     unassigned_students: "No asignados"
     validate_confirm: "Esto le permitirá a este grupo realizar el envío sin el número requerido de
                       estudiantes. ¿Está seguro/a de hacer esto?"
-    valid_grouping_counts: "¿Válido?"
 
     # Student interface
     student_interface:

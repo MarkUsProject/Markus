@@ -1,7 +1,7 @@
 <div id='remark_request'>
   <% if assignment.past_remark_due_date? %>
     <% if student_can_edit_remark_request(submission) %>
-      <p class='notice'><%= t('marker.past_remark_due_date') %></p>
+      <p class='notice'><%= t('results.remark.past_remark_due_date') %></p>
     <% else %>
       <div id='remark_request_show_results'>
         <%= markdown(submission.remark_request) %>
@@ -13,26 +13,28 @@
     <% end %>
   <% else %>
     <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
-    <%= assignment.remark_message %>
+    <p><%= assignment.remark_message %></p>
 
-    <h3><%= t('marker.remark_request') %></h3>
-    <% if student_can_edit_remark_request(submission) %>
-      <%= Assignment.human_attribute_name(:remark_due_date) %>:
+    <p>
+      <%= t('results.remark.about_remark_save') %>
+      <%= t('results.remark.about_remark_submission') %>
+      <%= t('results.remark.cancel_remark_to_change') %>
+    </p>
+
+    <h3><%= Assignment.human_attribute_name(:remark_due_date) %></h3>
+    <p>
       <% if assignment.remark_due_date %>
         <%= l(assignment.remark_due_date) %>
       <% else %>
-        <%= t('marker.no_remark_due_date') %>
+        <%= t('results.remark.no_remark_due_date') %>
       <% end %>
+    </p>
 
+    <h3><%= Submission.human_attribute_name(:submitted_remark) %></h3>
+    <% if student_can_edit_remark_request(submission) %>
       <%= render partial: 'results/student/remark_request_form',
                  locals: { submission: submission,
                            assignment: assignment } %>
-
-      <p class='information'>
-        <%= t('marker.about_remark_save') %>
-        <%= t('marker.about_remark_submission') %>
-        <%= t('marker.cancel_remark_to_change') %>
-      </p>
     <% else %>
       <div id='remark_request_show'>
         <%= markdown(submission.remark_request) %>

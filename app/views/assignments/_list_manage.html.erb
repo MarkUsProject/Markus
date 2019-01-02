@@ -136,10 +136,10 @@
                     <br>
                     <span id='ta_avg_annotations__<%= assignment.short_identifier %>'>
                       <% if @current_user.admin? %>
-                        <%= t('annotation.average_annotations',
+                        <%= t('assignments.average_annotations',
                               average_annotations: assignment.average_annotations()) %>
                       <% else %>
-                        <%= t('annotation.average_annotations',
+                        <%= t('assignments.average_annotations',
                               average_annotations: assignment.average_annotations(@current_user.id)) %>
                       <% end %>
                     </span>

@@ -106,7 +106,7 @@ class AssignmentSummaryTable extends React.Component {
   ];
 
   bonusColumn = {
-    Header: I18n.t('marker.marks.bonus_deductions'),
+    Header: I18n.t('activerecord.models.extra_mark.other'),
     accessor: 'total_extra_marks',
     Cell: ({value}) => parseFloat(value) ? value : '',
     className: 'number',

@@ -10,62 +10,28 @@
         columns: [
           {
             id: 'tags_name',
-            content: '<%= j raw I18n.t(:'tags.table.name') %>',
+            content: '<%= t('activerecord.attributes.tags.name') %>',
             sortable: true
           },
           {
             id: 'creator_name',
-            content: '<%= j raw I18n.t(:'tags.table.creator') %>',
+            content: '<%= t('activerecord.attributes.tags.user') %>',
             sortable: true
           },
           {
             id: 'tags_description',
-            content: '<%= j raw I18n.t(:'tags.table.description') %>',
+            content: '<%= t('activerecord.attributes.tags.description') %>',
             sortable: true
           },
           {
             id: 'tags_use',
-            content: '<%= j raw I18n.t(:'tags.table.use') %>',
+            content: '<%= t('tags.use') %>',
           },
           {
             id: 'tags_actions',
-            content: '<%= j raw I18n.t(:'tags.table.actions') %>',
+            content: '<%= t(:actions) %>',
           }
         ],
-        // Creates filters for the tags table. This allows
-        // users to filter tags based on whether or not the
-        // tag is in use.
-        filters: [
-          {
-            name: 'all',
-            text: '<%= j raw I18n.t(:'tags.table.all') %>',
-            func: function(tag) {
-              return true;
-            }
-          },
-          {
-            name: 'in_use',
-            text: '<%= j raw I18n.t(:'tags.table.in_use') %>',
-            func: function(tag) {
-              if (tag.tags_use.charAt(0) == '0'){
-                return false;
-              }
-
-              return true;
-            }
-          },
-          {
-            name: 'not_in_use',
-            text: '<%= j raw I18n.t(:'tags.table.not_in_use') %>',
-            func: function(tag) {
-              if (tag.tags_use.charAt(0) == '0'){
-                return true;
-              }
-
-              return false;
-            }
-          }
-        ]
       }
     },
     getInitialState: function() {
@@ -106,7 +72,7 @@
         t['tags_name'] = tag.name;
         t['creator_name'] = tag.user_name;
         t['tags_description'] = tag.description;
-        t['tags_use'] = tag.use + ' assignment(s) have this tag.'
+        t['tags_use'] = I18n.t('tags.submissions_used', {count: tag.use});
 
         var action_links = [];
         action_links.push(tag.edit_link);
@@ -119,7 +85,6 @@
       return (
         <div>
           <Table data={tags_data}
-            search_placeholder={'<%= j raw I18n.t(:'tags.search_tags') %>'}
             selectable={false}
             onSelectedRowsChange={this.updateSelectedTags}
             columns={this.props.columns}

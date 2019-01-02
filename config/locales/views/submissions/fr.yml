@@ -8,7 +8,6 @@ fr:
       progress: "%{count}/%{size} envois récupérés"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations. Êtes-vous sûr de vouloir continuer ?"
       submit: "Récupérer les envois"
-      successfully_collected: "Récupération de %{collected} envoi(s)."
       this_revision: "Récupérer et évaluer cette révision"
     errors:
       no_submission: "%{group_name} n'a pas d'envoi"
@@ -17,7 +16,6 @@ fr:
     repo_browser:
       client_time: "commit:"
       collected: "recueillie"
-      last_revised: "Dernière révision"
       repository: "Répertoire"
       repository_name: "Répertoire : %{repository}"
       revised_by: "Révision par"

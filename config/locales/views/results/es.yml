@@ -3,8 +3,23 @@ es:
     edit:
       title: "Proyecto %{assignment_name}: %{group_name}"
 
+    bonus_marks: "Notas de bonificación"
+    cant_display_image: "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
+                         por favor asegurese de habilitar el soporte para pdf. De click en el botón de
+                         descargas para descargar el archivo."
+    collapse_all: "Reducir todos"
+    criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
+                                 sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
+                                 ellos tenga su nota correspondiente."
+    deducted_marks: "Notas reducidas"
+    delete_extra_mark_confirm: "¿Está seguro/a de querer remover esta nota adicional?"
+    expand_all: "Expandir todos"
+    expand_unmarked: "Expandir no calificados"
+    invalid_mark: "Nota Inválida!"
+    late_submission_warning_html: "El <a href=\"%{url}\">submitted work</a> de este grupo se ha realizado después de la fecha límite de entrega."
     marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
     next_submission: "Siguiente Entrega"
+    no_feedback_files: "[El archivo de retroalimentación no está disponible]"
     no_result: "No existen notas disponibles."
     previous_submission: "Entrega Anterior"
     results_for: "Resultados para"
@@ -17,3 +32,49 @@ es:
       not_collected: "No ha sido recolectado"
       released: "Publicado"
       remark_requested: "Recalificación solicitada"
+    subtotal: "Subtotal"
+    summary: "Resumen"
+    total_extra_marks: "Notas Adicionales Totales"
+    total_extra_percentages: "Porcentajes Adicionales Totales"
+    translated_to_points: "Convertidos a Puntos"
+    your_mark: "Su nota: %{mark}"
+
+    # Annotations
+    annotation:
+      across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
+                                    número de línea para ser redirigido al lugar exacto en el archivo que contiene la
+                                    anotación."
+      change_across_submissions: "Este cambio afectará todas las entregas marcadas con esta anotación. ¿Está de
+                                  acuerdo?"
+      common: "Common Annotations"
+      download_annotated: "Download Annotated File"
+      include_in_download: "Incluir Anotaciones"
+      include_in_download_warning: "Precaución! Las anotaciones en los PDFs no pueden ser descargados por el momento."
+      placeholder: "Notación de Markdown y LaTeX."
+      remark_flag: "recalificación"
+      select_some_text: "Usted debe seleccionar el código al que pertenece la anotación."
+      select_an_area: "Usted debe seleccionar un área o imagen a anotar."
+      select_an_area_pdf: "Usted debe seleccionar un área o imagen a anotar."
+
+    # Remark requests
+    remark:
+      about_remark_save: "Por favor tenga en cuenta que el instructor no será notificado acerca de los cambios
+                          guardados a menos que estos sean enviados."
+      about_remark_submission: "Una vez que la solicitud de recalificación ha sido enviada, usted no será capaz de
+                                ver los resultados originales hasta que los resultados de la recalificación esten
+                                disponibles. Usted tampoco podrá editar la solicitud."
+      cancel: "Cancelar la solicitud de recalificación"
+      cancel_confirm: "¿Está seguro/a de querer cancelar su solictud de recalificación? La solicitud
+                       será eliminada y no se podrá recuperar."
+      cancel_remark_to_change: "Si desea modificar su solicitud, usted deberá cancelar la misma y crear una nueva."
+      old_mark: "Old Mark"
+      old_subtotal: "Subtotal Anterior"
+      old_total: "Nota Previa"
+      no_remark_due_date: "La fecha límite de entrega no ha sido asignada."
+      no_remark_result: "Los resultados de la recalificación no están disponibles para este proyecto todavía."
+      past_remark_due_date: "La fecha límite para solicitar una recalificación ha pasado."
+      show_old_marks: "Ver el Resumen de Notas Anteriores"
+      submit: "Entregar la solicitud al instructor"
+      submit_confirm: "¿Está seguro/a de querer enviar su solictud de recalificación? Usted no podrá
+                       ver sus resultados hasta que el proceso de recalificación haya finalizado."
+      submitted_on: "Solicitud de recalificación enviada en %{time}."

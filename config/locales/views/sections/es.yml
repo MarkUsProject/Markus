@@ -18,5 +18,4 @@ es:
       success: "La sección %{name} fue actualizada exitosamente."
 
     # Miscellaneous
-    all: "Todas las Secciones"
     none: "No hay secciones todavía."

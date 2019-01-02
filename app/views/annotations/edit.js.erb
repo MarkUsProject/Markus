@@ -5,11 +5,11 @@ document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
          locals: { form_url: { action: 'update_annotation',
                                controller: 'annotations' },
                    form_values: params,
-                   title: t('marker.annotation.edit_annotation'),
+                   title: t('helpers.submit.update', model: Annotation.model_name.human),
                    content: @text_annotation.content,
                    new_annotation: false,
                    submit_btn_data: {
-                     confirm: t('marker.annotation.change_across_submissions')
+                     confirm: t('results.annotation.change_across_submissions')
                    } }
 )%>';
 open_annotation_modal();

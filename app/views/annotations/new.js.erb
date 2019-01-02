@@ -9,7 +9,7 @@ document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
                      @assignment.annotation_categories
                                 .includes(:annotation_texts),
                    form_values: params,
-                   title: t('marker.annotation.new_annotation'),
+                   title: t('helpers.submit.create', model: Annotation.model_name.human),
                    content: '',
                    new_annotation: true,
                    submit_btn_data: {}}

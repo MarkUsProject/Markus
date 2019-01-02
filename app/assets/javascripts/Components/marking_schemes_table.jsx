@@ -33,7 +33,7 @@ class MarkingSchemeTable extends React.Component {
 
   nameColumns = [
     {
-      Header: I18n.t('marking_schemes.name'),
+      Header: I18n.t('activerecord.attributes.marking_schemes.name'),
       accessor: 'name',
       filterable: true,
     }
@@ -41,7 +41,7 @@ class MarkingSchemeTable extends React.Component {
 
   modifyColumn = [
     {
-      Header: I18n.t('marking_schemes.table_modify_column'),
+      Header: I18n.t('actions'),
       Cell: ({original}) => (
         <span>
           <a

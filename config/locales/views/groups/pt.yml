@@ -57,7 +57,7 @@ pt:
       cancel_invitation: "Cancelar o convite"
       cancel_invitation_confirm: "Você tem certeza que deseja cancelar o convite?"
       decline: "Recusar"
-      decline_invitation: "Você tem certeza que quer recusar este convite?"
+      decline_invitation_confirm: "Você tem certeza que quer recusar este convite?"
       invitations: "Convites"
       invite: "Convite"
       invite_instructions:  "Sepere nomes de usuários com vírgulas"

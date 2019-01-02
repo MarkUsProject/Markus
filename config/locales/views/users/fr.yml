@@ -11,7 +11,6 @@ fr:
       give_grace_credits: "Donner du temps supplémentaire"
       mark_active: "Activer les étudiants"
       mark_inactive: "Désactiver les étudiants"
-    all: "Tous les étudiant"
     edit: "Modification d'un(e) étudiant(e)"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."
@@ -27,16 +26,10 @@ fr:
       student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
 
   tas:
-    all: "Tous les correcteurs"
     edit: "Modifier un correcteur"
     new: "Créer un nouveau correcteur"
     help:
       manage_graders: "Créer un nouveau correcteur"
     upload:
-      each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
-      each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-      make_sure: "Vérifiez que : "
-      not_added: "Les correcteurs suivants n'ont pas été ajoutés correctement : "
       select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
-      ta_names: "Les noms des correcteurs sont en caractères alphanumériques."

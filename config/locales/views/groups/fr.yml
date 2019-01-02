@@ -24,7 +24,6 @@ fr:
     select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
     unassigned_students: "Non assigné(s)"
     validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
-    valid_grouping_counts: "Valide?"
 
     # Student interface
     student_interface:
@@ -35,7 +34,7 @@ fr:
       form_group: "Former votre propre groupe"
       group_information: "Informations sur le groupe"
       group_options: "Options du groupe"
-      properties: "Propriétés du groupe"
+      group_properties: "Propriétés du groupe"
       group_size_html: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       invite_more_students: "Ce groupe n'est pas valide : vous devez inviter plus d'étudiants."
       may_not_add_more: "Vous ne pouvez pas ajouter plus de personnes à votre groupe en ce moment."

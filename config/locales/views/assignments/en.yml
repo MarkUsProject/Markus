@@ -26,5 +26,6 @@ en:
       under_review: "This exam is still under review."
 
     # Miscellaneous
+    average_annotations: "%{average_annotations} annotations per marked submission"
     information: "Assignment Information"
     marking_scheme: "Marking Scheme: %{identifier}"

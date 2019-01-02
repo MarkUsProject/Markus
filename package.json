@@ -5,7 +5,7 @@
     "chart.js": "^2.7.3",
     "i18n-js": "^3.1.0",
     "jquery": "^3.3.1",
-    "marked": "^0.5.2",
+    "marked": "^0.6.0",
     "moment": "^2.23.0",
     "mousetrap": "^1.6.2",
     "prop-types": "^15.6.2",
@@ -13,7 +13,7 @@
     "rails-ujs": "^5.2.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-keyed-file-browser": "^1.4.2",
+    "react-keyed-file-browser": "^1.4.3",
     "react-table": "^6.8.6",
     "react-tabs": "^2.3.0"
   },

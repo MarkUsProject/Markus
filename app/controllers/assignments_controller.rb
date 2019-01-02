@@ -232,7 +232,7 @@ class AssignmentsController < ApplicationController
     if @assignment.past_collection_date?
       flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
     elsif !past_date.blank?
-      flash_now(:notice, t('past_due_date_notice') + past_date.join(', '))
+      flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
     end
 
     # build section_due_dates for each section that doesn't already have a due date

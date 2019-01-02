@@ -1,0 +1,9 @@
+fr:
+  activerecord:
+    models:
+      marking_scheme:
+        one: "Barème"
+    attributes:
+      marking_schemes:
+        name: "Nom"
+        weight: "Poids pour"

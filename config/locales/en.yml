@@ -1,57 +1,15 @@
 en:
-    choose_language:    "Language:"
     answer_yes:         "Yes"
     answer_no:          "No"
     markus:             "MarkUs"
     close:              "Close"
-    password:           "Password"
     all:                "All"
-    none:               "None"
-    and:                " and "
-    search:             "Search:"
-    issues:             "GitHub issues list"
     actions:            "Actions"
     continue:           "Continue"
 
-    # app/views/main/login.html.erb
-    welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "Welcome to MarkUs, the online marking tool, %{user_name}."
-    log_in:             "Log in"
-    logging_in:         "Logging in..."
-    login_failed:       "Login failed"
-    password_not_blank: "Your password must not be blank."
-    username_not_blank: "Your username must not be blank."
-    username_and_password_not_blank: "Your username and password must not be blank."
-    session_expired:     "Your session has expired. Please log in"
-    please_log_in:       "Please log in"
-
     # app/views/layouts/_header.html.erb
-    log_out:            "Log out"
-    clear_role_switch_session_link: "Cancel role switch"
     working:            "Loading"
-    login_as:           "Login as"
     please_wait:        "Please wait…"
-
-    # app/views/main/_about_content.html.erb
-    about_markus:       "About MarkUs"
-    version:            "Version"
-    using_markus_version:       "You are using MarkUs version: "
-    using_ruby_version: "Ruby version: "
-    using_rails_version: "Rails version: "
-    license:            "License"
-    markus_license_OSI: "MarkUs is made available under the <a href=\"http://www.opensource.org\">OSI</a>-approved <a href=\"http://www.opensource.org/licenses/mit-license.html\">MIT license</a>."
-    markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
-    markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
-    markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:   "Copyright (c) 2008-2011 by the authors."
-    markus_credits:     "Credits"
-    markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
-    supervisors:        "Supervisors: "
-    contact_us:         "Contact Us"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information.<br>To submit a bug or issue please visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
-
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Your session is about to expire: you will be logged out shortly. Press the Continue button or refresh the current page in the next few seconds to remain logged in"
 
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
@@ -71,11 +29,6 @@ en:
     validation_messages:
       format_of_assignment_file: "must include alphanumeric, '.', '-', '_' or '/' characters only"
 
-    # app/views/main/index.html.erb
-    switch_role:         "Switch Role"
-    admin_password:      "Admin Password"
-    cannot_login_as_another_admin: "You cannot log in as another admin."
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "There are currently no assignments."
 
@@ -84,9 +37,6 @@ en:
     filename:  "Filename"
     message:  "Message"
     remove:  "Remove"
-    csv_grade_report:  "CSV grades report"
-    days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
-    hours_and_minutes_left:   "(%{hours} hour(s) and %{minutes} minute(s) left)"
     days_left:          "(%{days} day(s) left)"
     description:        "Description"
     shortened_date:     "Date"
@@ -120,8 +70,6 @@ en:
         help:
             graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
             assign_scans: "Assign students to scanned exam groups based on printed student names."
-        configure_peer_review: "Configure peer review"
-        peer_review_record_missing: "Error: Peer review assignment missing from database"
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
@@ -129,7 +77,6 @@ en:
         batch_tests_status_table:
             test_runs_status: "Test Runs Status"
             in_progress: "in progress"
-            test_run_complete: "Test run is complete"
             created_at: "Started"
             status: "Status"
             estimated_remaining_time: "Estimated Remaining Time"
@@ -138,7 +85,6 @@ en:
             complete: "complete"
             in_progress: "in progress"
             cancelled: "cancelled"
-            complete_with_errors: "complete with errors"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
@@ -149,7 +95,6 @@ en:
         number_of_reviews_header: "Num reviews"
         assigned_reviewers_header: "Assigned reviewers"
         reviewer_group: "Reviewer group"
-        reviewee_group: "Reviewee group"
         reviews_made_on_submission: "Reviews made on your submission: "
         reviewers_reviews: "This reviewer's reviews: "
         view_ta_result: "View TA Result"
@@ -169,12 +114,7 @@ en:
         upload:
             header: "Upload Peer Review CSV"
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
-    your_mark:  "Your mark:"
 
-    search_graders:     "Search Graders"
-    add_graders:        "Add Graders"
-    remove_graders:     "Remove Graders"
-    remove_all_graders: "Remove All Graders"
     remove_grader:      "Remove Grader"
     add_new:            "Add New File"
     edit:               "Edit"
@@ -183,133 +123,36 @@ en:
     skip:               "Skip"
     apply:              "Apply"
     delete:             "Delete"
-    create:             "Create"
-    bulk_action:        "Bulk action"
-    submit_request:     "Submit Request to Instructor"
     submit:             "Submit"
     cancel:             "Cancel"
-    cancel_remark:      "Cancel Remark Request"
-    filters:            "Filters"
     all:                "All"
-    hidden:             "Hidden"
     active:             "Active"
     not_active:         "Not active"
     choose:             "Choose..."
     properties:         "Properties"
     peer_reviews:       "Peer reviews"
-    rubrics:            "Rubrics"
-    marking_scheme:     "Marking Scheme"
     help:               "Help"
-    no_remark_result:   "Remark results are not yet available for this assignment."
     preview:            "Preview"
     encoding:           "Encoding"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
-    commit_after_due_date: "This commit is after the due date."
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
-    past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
-    last_commit: "last commit"
 
-    #app/views/results/marker/
-    marker:
-      overall_comments_success: "Overall comments successfully updated."
-      across_all_submission_files: "New: click on the filename to jump to the annotation. You can edit/remove annotations by right-clicking on them."
-      source_code: "Source Code"
-      test_results: "Test Results"
-      feedback_files: "Feedback files"
-      remark_request: "Remark Request"
-      remark_submitted_on: "Remark Request Submitted On"
-      no_remark_due_date: "No due date assigned"
-      past_remark_due_date: "It is already past the remark due date."
-      about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
-      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request."
-      cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
-      remark_submitted: "Your remark request has been submitted:"
-      notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Include Annotations"
-      include_annotations_warning: "Warning! Annotations on PDFs are not currently downloaded."
-      marks:
-        comment: "Comment"
-        percentage: "Percentage"
-        invalid_mark: "Invalid Mark!"
-        add_extra_mark: "Add Extra Mark"
-        mark: "Mark"
-        marks: "Marks"
-        summary: "Summary"
-        tags: "Tags"
-        current_tags: "Current Tags:"
-        available_tags: "Available Tags:"
-        tag_summary: "Top Tags Used:"
-        new_tag: "Add New Tag..."
-        delete_tag: "Delete Tags..."
-        create_new_tag: "Create New Tag:"
-        delete_tags: "Delete Tags:"
-        expand_all: "Expand All"
-        collapse_all: "Collapse All"
-        expand_unmarked: "Expand Unmarked"
-        confirm_remove_mark: "Are you sure you want to remove this extra mark?"
-        confirm_remove_percentage: "Are you sure you want to remove this extra percentage?"
-        subtotal: "Subtotal: "
-        old_subtotal: "Old Subtotal: "
-        bonus_deductions: "Bonus/Deductions"
-        bonus_marks: "Bonus Marks:&nbsp;"
-        deducted_marks: "Deducted Marks:&nbsp;"
-        total_extra_marks: "Total Extra Marks:&nbsp;"
-        total_extra_percentages: "Total Extra Percentage:&nbsp;"
-        translated_to_points: "Translated to Points:"
-        previous_mark: "Previous Mark&nbsp;"
-        old: "Old: "
-        show_old_marks: "Show Old Mark Summary"
-      annotation:
-        average_annotations: "%{average_annotations} annotations per marked submission"
-        placeholder: "Markdown and basic LaTeX notation is supported"
-        remark_flag: "(remark)"
-        new_annotation: "Create new annotation"
-        edit_annotation: "Edit annotation"
-        preview: "Preview"
-        preview_title: "Here's how the annotation will look:"
-        sure_to_remove: "Are you sure you want to remove this annotation?"
-        submit_edit: "Submit Edit"
-        change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
-        select_some_text: "You must select some source code text"
-        select_an_area: "You should select an area on the image to annotate"
-        select_an_area_pdf: "You should select an area on the PDF to annotate"
-        provide_text:   "You must provide some annotation text"
-        context_menu:
-          new: "New Annotation"
-          common: "Common Annotations"
-          edit: "Edit"
-          delete: "Remove"
-          copy: "Copy"
-          download: "Download File"
-          download_annotated: "Download Annotated File"
+    copy: "Copy"
 
-    #app/views/results/common
-    common:
-      feedback_files: "Feedback Files"
-      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
-      criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
-
-    csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
-    discard_changes_message: "Are you sure you want to discard your changes?"
-    cancel_remark_request: "Are you sure you want to cancel your remark request?  Your existing request will be deleted, and this cannot be undone."
-    confirm_remark_submit: "Are you sure you want to submit your remark request?  You will not be able to see your results until remarking is finished."
-    invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
-      line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       group_to_grader:         "You must supply a CSV file for group to grader mapping"
       student_to_grader:       "You must supply a CSV file for student to grader mapping"
       invalid_csv:             "The format of the CSV file was not recognized"
       invalid_row:
-        duplicate_entry: "Duplicate Entry"
         invalid_format: "Invalid Row Format"
       upload:
         # when a non-text file has a csv extension (ie: user changes extension
@@ -323,27 +166,13 @@ en:
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
 
     browse_submissions:
-      release_prs:          "Release Peer Reviews"
-      unrelease_prs:        "Unrelease Peer Reviews"
-      reviewer_name:        "Reviewer"
-      reviewee_name:        "Reviewee"
       review_state:         "Review State"
-      tags_used:            "Tags Used"
-      tags_search:          "Search for Tags:"
-      tags_list:            "Filter by Tag:"
-
-    course_summaries_index:
-        page_title:     "Summary"
 
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
-
-    student_course_summary: "Your Term Marks"
 
     groups:
       assign_scans:     "Assign Scans"
       skip_group:       "Skip group"
-      graders: "Graders (%{graders})"
-      lines_not_processed: "The following lines could not be processed:"
       done_assign: "All groups have been successfully assigned students"
       randomly_assign_graders: "Randomly assign Graders"
       upload:
@@ -374,8 +203,6 @@ en:
       error:
         validate_criteria: "must be between 0 and the maximum mark of the criterion"
 
-    declined: "declined"
-
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Peer Reviews"
@@ -386,28 +213,16 @@ en:
       no_peer_submission_yet: "You have no submissions to review yet."
       no_reviews: "No one has reviewed you yet."
       submission:
-        search_files: "Search files"
         file_manager: "%{short_identifier}: File Manager"
-        current_path: "Current Path:"
         conflicts: "Conflicts"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
         missing_files: "You still need to submit %{file} required file(s) for this assignment:"
-        toggle_file_list: "click here to toggle the list of missing files."
         no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
-        no_marks_available: "No marks are available."
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}.  File may be missing."
         no_files_available: "No files available"
-        no_groupings_available: "No group available"
         no_revision_available: "No revision available"
-        expect_filter: "Expected a filter on select full"
-        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
-        # See app/views/submissions/_file_manager_boot.js.erb
-        filename_sanitization_js_warning: "\"After you submit the filename will change from '\" + file_name + \"' to '\" + sanitized_filename + \"'. Is that OK?\""
-        # DO NOT change 'file_name' and 'new_file_name' in the following message.
-        # See app/views/submissions/_file_manager_boot.js.erb
-        replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
         version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
@@ -415,15 +230,8 @@ en:
     #Graders' View
     graders:
       assigned_graders:   "Assigned Graders"
-      possible_graders:   "Possible Graders"
-      unassigned_graders: "Unassigned Graders"
-      not_covered:        "Not Covered"
-      covered:            "Covered"
       coverage:           "Coverage"
-      problem:            "There was a problem..."
-      search_criteria:    "Search Criteria"
       assign_to_criteria: "Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)"
-      lines_not_processed: "The following lines could not be processed:"
       skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
       download:
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
@@ -442,7 +250,6 @@ en:
       success: "Student %{user_name} added."
       fail:
         general: "Something went wrong. Could not add %{user_name}."
-        dne:  "Could not add %{user_name} - this student does not exist."
         hidden:  "Could not add %{user_name} - this student's account has been disabled."
         already_grouped: "Could not add %{user_name} - this student is already a member of another group."
 
@@ -471,121 +278,16 @@ en:
     update_files:
       success:  "Your changes have been made."
 
-    tags:
-      tags: "Tags"
-      title: "Assignment Tags: %{assignment_short_identifier}"
-      delete: "Delete Tag"
-      search_tags: "Search for tags..."
-      edit_tag: "Edit Tag..."
-      edit_update: "Update"
-      updating: "Updating..."
-
-      messages:
-        no_assigned: "--No Tags Assigned--"
-        no_left: "--No More Tags to Assign--"
-        no_tags: "--No Tags to Show--"
-
-      create:
-        create_new: "Add Tag"
-        tag_prompt: "Tag name:"
-        tag_description: "Tag description:"
-        button_text: "Save Changes"
-        name_prompt: "Enter tag name..."
-        descript_prompt: "Enter tag description..."
-        successful: "Tag created successfully!"
-        error: "Tag could not be created."
-
-      delete:
-        delete_tags: "Delete Tags"
-        tag_prompt: "Please select tags below to delete them:"
-
-      upload:
-        upload_success: "%{nb_updates} tag(s) have been successfully added!"
-        invalid_line: "Line is in improper format."
-        upload_csv_html: "
-          <p>
-            The file should have the following format:<br>
-            <ul>
-              <li>Only one record per line.
-              <li>Each line should be terminated by a carriage-return line-feed.</li>
-              <li>The tag name and description are only used. Any other data per line is ignored.</li>
-            </ul>
-            <code>tag_name,tag_description, ...</code><br><br>
-            <i>tag_name</i> represents the name of the tag to be added.<br>
-            <i>tag_description</i> represents the description for that record.<br>
-          </p>"
-        upload_yml_html: "
-          <p>
-            The file should have the following format:<br>
-            <ul>
-              <li>Only one record per line.
-              <li>Each line should be terminated by a carriage-return line-feed.
-              <li>All other fields in the file not specified below are ignored.
-            </ul>
-            <code>tag_id:<br>
-              &nbsp;&nbsp;name: name<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;user:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
-              [...]</code><br><br>
-            <i>tag_name</i> represents the name of the tag to be added.<br>
-            <i>tag_description</i> represents the description for that record.<br>
-            <i>id</i> represents the user id associated with that tag.<br>
-          </p>"
-        error: "There was an error uploading tags: "
-        empty_error: " The YAML file was empty."
-
-      download:
-        download_title: "Download Tags"
-        download_html: "
-          <p>
-            This allows you to download the list of tags used for assignment <b>%{assignment_short_identifier}</b>.<br>
-            They can be downloaded either in CSV or YML format.
-          </p>"
-        button_message: "Download in %{file_format} format"
-
-      table:
-        name: "Name"
-        creator: "Creator"
-        description: "Description"
-        use: "Use"
-        actions: "Actions"
-        all: "All Tags"
-        in_use: "Tags in Use"
-        not_in_use: "Tags Not in Use"
-
     submission_file:
       error:
         no_access: "No access to submission file with id #%{submission_file_id}."
         binary_file_message: "Binary content: Use download button to view file!"
-    test_result:
-      error:
-        no_access: "No access to test result with id #%{test_result_id}."
-      button:
-        load: "Load Results"
-      no_files_available: "[No test results available]"
-      loading_results: "Loading results..."
-      running_tests: "Running Tests..."
-      build_successful: "Tests Completed. View '%{logfile}' for details."
-      build_failed: "Build Failed. View '%{logfile}' to investigate."
-      build_error: "Unknown error with Ant. Is Ant correctly installed? View '%{logfile}' to investigate."
 
     feedback_file:
       error:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
-      no_files_available: "[No feedback file available]"
-
-    csv_special_characters_html: "
-    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br>
-    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
-    double each one of your double quotes (\"\").</p>
-    <p>Here's an example of a CSV field containing commas and double quotes:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria_csv_error:
-      incomplete_row: "contains too little information."
-      name_not_unique: "criterion name already used in the current assignment."
-      max_zero: "maximum value is zero or not a number."
       weight_not_number: "weight is not a number."
 
     criteria:
@@ -598,13 +300,8 @@ en:
         messages:
           name_taken:             "Criterion name already used."
           assignment_association: "Association is not strong with an assignment."
-          assignment_id:          "Can only be whole number greater than 0."
           input_number:           "Must be a number greater than 0.0."
           released_marks:         "Cannot update criteria for an assignment with released marks"
-
-    summary_table:
-      title: "Title"
-      grade: "Grade"
 
     key_pairs:
       title: "Key Pairs"
@@ -628,52 +325,6 @@ en:
       delete:
         success: "Key Pair was removed successfully"
 
-    course_summaries:
-      model_name: "Course Summary"
-      title: "Summary"
-
-    marking_schemes:
-      title: "Marking Schemes"
-      name: "Name"
-      add_new: "Add New Marking Scheme"
-      edit: "Edit Marking Scheme"
-      weight_label: "Weight for "
-      table_modify_column: "Modify"
-
-    notes:
-        note_on: "%{user_name} on <strong>%{display_for}</strong>"
-        add_new: "Add a new note"
-        existing: "Existing Notes"
-        comment: "Your comment"
-        save: "Save Note"
-        success: "Note saved succesfully"
-        error: "Unable to save the note"
-        title: "Notes"
-        note: "Note"
-        noteable: "Noteable"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author: "Author"
-        creation_time: "Creation Time"
-        delete:
-            link_title: "Delete this note"
-            link_confirm: "This will remove this note permanently. Continue?"
-            success: "Note was deleted successfully."
-            error_permissions: "You do not have sufficient permissions to delete this note."
-        new:
-            note_message: "Notes message"
-            title: "Create Note"
-            loading_groupings: "Loading Groups..."
-            loading_selector: "Loading selector..."
-            invalid_selector: "Invalid selector chosen."
-            no_noteables: "Notes are attached to groups, assignments, or students, but there are none yet. Please create one first."
-        create:
-            success: "Note was successfully created."
-        edit:
-            title: "Edit Note"
-        update:
-            success: "Note was successfully updated."
-        help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
-
     section:
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
@@ -694,20 +345,12 @@ en:
 
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Default grader: Course instructor(s)"
-    locale_not_available: "%{locale} translation not available!"
-    external_authentication_not_supported: "External authentication not supported on your platform!"
-    account_disabled: "This account has been disabled"
     additional_information: "Additional Information"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message: "Processing:"
-      processing_message_finished: "Finished Processing. Reloading..."
       processing_message_error: "Processing Failed:"
-
-    #app/helpers/submissions_helper.rb
-    assign_folder_missing:      "Uh oh! Assignment folder missing."
-    group_repo_missing:         "Uh oh! No repo found for this group."
 
     #lib/validators/
     date_validator:
@@ -720,31 +363,16 @@ en:
       automated_tests: "Test Framework"
       test_results: "Test Results"
       no_results: "No test results to display"
-      expand_all: "Expand All"
-      collapse_all: "Collapse All"
       student_tests: "Student Tests"
-      required_test_files: "Required files for testing"
       need_group_for_test: "You must have a group to run a test"
-      test: "Test"
-      script_name: "Script Name"
-      test_parameters: "Test Script Options"
-      revision_used_for_test: "<span class='prop_label'>Revision used:</span> %{revision}"
       information: "Information"
       run_tests: "Run tests"
       stop_test: "Stop test"
       stop_batch: "Stop batch"
       fetch_testers: "Fetch testers list"
-      test_run: "Test Run"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      collect_and_test: "Collect and Prepare Test"
-      date_run: "Date run:"
-      revision_used: "Revision used:"
-      add_test_script_file_link: "Add Test Script File"
-      add_test_support_file_link: "Add Test Support File"
-      add_test_script_file_alert: "You must enable tests for this assignment to add a test script file."
-      add_test_support_file_alert: "You must enable tests for this assignment to add a test support file."
       convert_newline_notice: "Newline characters in %{file} converted to \\n"
       new_test_script_file: "New Test Script File"
       new_test_support_file: "New Test Support File"
@@ -753,7 +381,6 @@ en:
       filename_exists: "has already been taken"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
-      dir_not_exist: "The directory %{dir} required for Ant does not exist"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:
@@ -763,11 +390,8 @@ en:
         replace_help: "The updated file name can be the same as the current one"
         remove_file: "Remove this file"
         remove_file_help: "Check this box and press submit at the bottom to delete the file"
-        run_settings: "Run Settings:"
         display_settings: "Display Settings:"
         description: "Description"
-        update_description: "Enter Description Here"
-        seq_num: "UPDATE ME: seq_num"
         timeout: "Timeout (seconds) <span class='required_field'>*</span>"
         timeout_help: "The number of seconds before the script is forced to stop"
         run_by_instructors: "Runnable by Instructors"
@@ -797,27 +421,16 @@ en:
         hours: "hours"
         no_regeneration: "No regeneration"
       test_results_table:
-        time: "Time"
-        test_runs: "Runs"
-        file_name: "File Name"
         test_name: "Test Name"
-        input: "Input"
         output: "Output"
-        expected: "Expected"
         marks_earned: "Mark"
         marks_total: "Out of"
-        marks_bonus: "bonus"
         status: "Status"
-        pass: "Passed"
-        partial: "Partially Passed"
-        fail: "Failed"
-        error: "Error"
         extra_info: "Extra Info:"
         run_by: "Run by"
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"
-        unknown_test_script: "Unknown test script"
         missing_test_script: "This test script is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"

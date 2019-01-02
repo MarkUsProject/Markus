@@ -3,7 +3,7 @@
            handlers: [:erb] %>
 
 <div class='title_bar'>
-  <h1><%= t('notes.edit.title')%></h1>
+  <h1><%= t('helpers.submit.update', model: Note.model_name.human) %></h1>
 </div>
 
 <div class='wrapper'>
@@ -14,7 +14,7 @@
     <table>
       <tr>
         <td>
-          <strong><%= t('notes.author')%>:</strong>
+          <strong><%= Note.human_attribute_name(:user) %></strong>
         </td>
         <td>
           <%= @note.user.user_name %>
@@ -22,7 +22,7 @@
       </tr>
       <tr>
         <td>
-          <strong><%= t("notes.noteables.#{@note.noteable_type}") %>:</strong>
+          <strong><%= @note.noteable.class.model_name.human %></strong>
         </td>
         <td>
           <%= @note.noteable.display_for_note %>
@@ -30,7 +30,7 @@
       </tr>
       <tr>
         <td>
-          <strong><%=t('notes.creation_time')%>:</strong>
+          <strong><%= Note.human_attribute_name(:created_at) %></strong>
         </td>
         <td>
           <%= @note.format_date %>
@@ -40,7 +40,7 @@
 
     <p>
       <%= raw(f.label :notes_message,
-                      t('notes.note')) %>:
+                      Note.human_attribute_name(:notes_message)) %>
       <%= raw(f.text_area :notes_message,
                           rows: 10,
                           onchange: 'set_onbeforeunload(true);') %>

@@ -1,0 +1,11 @@
+es:
+  activerecord:
+    models:
+      note:
+        one: "Nota"
+    attributes:
+      notes:
+        created_at: "Tiempo de creación"
+        noteable: "Objeto para el que se puede crear notas"
+        notes_message: "Mensaje"
+        user: "Autor"
