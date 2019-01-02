@@ -77,6 +77,8 @@ import { makeTestRunTable } from 'javascripts/Components/test_run_table';
 window.makeTestRunTable = makeTestRunTable;
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 window.makeSubmissionTable = makeSubmissionTable;
+import { makeTagTable } from 'javascripts/Components/tag_table';
+window.makeTagTable = makeTagTable;
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 window.makeMarksGradersManager = makeMarksGradersManager;
 import { makePeerReviewsManager } from 'javascripts/Components/peer_reviews_manager';

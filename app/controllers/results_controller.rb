@@ -143,7 +143,7 @@ class ResultsController < ApplicationController
     @top_tags = get_top_tags
     @top_tags_num = Hash.new
     @top_tags.each do |current|
-      @top_tags_num[current.id] = get_num_groupings_for_tag(current.id)
+      @top_tags_num[current.id] = get_num_groupings_for_tag(current)
     end
 
     # Check whether this group made a submission after the final deadline.
