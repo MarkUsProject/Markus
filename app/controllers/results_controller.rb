@@ -453,9 +453,13 @@ class ResultsController < ApplicationController
       if @current_user.admin?
         num_marked = assignment.get_num_marked
         num_assigned = assignment.get_num_assigned
-      else
+      elsif @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
         num_assigned = assignment.get_num_assigned(@current_user.id)
+      elsif @current_user.is_a_reviewer?(assignment.pr_assignment)
+        reviewer_group = @current_user.grouping_for(assignment.pr_assignment.id)
+        num_marked = PeerReview.get_num_marked(reviewer_group)
+        num_assigned = PeerReview.get_num_assigned(reviewer_group)
       end
       render plain: "#{result_mark.mark.to_f}," +
                    "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
