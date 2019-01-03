@@ -7,9 +7,7 @@ class AnnotationText < ApplicationRecord
   has_many :annotations, dependent: :destroy
 
   belongs_to :annotation_category, optional: true, counter_cache: true
-  validates_associated :annotation_category,
-                       on: :create,
-                       message: 'annotation_category associations failed'
+  validates_associated :annotation_category, on: :create
 
   #Find creator, return nil if not found
   def get_creator

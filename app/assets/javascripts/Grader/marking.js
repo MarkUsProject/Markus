@@ -65,6 +65,7 @@ $(document).ready(function() {
         error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
+          error_div.style = '';
           error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },

@@ -16,6 +16,24 @@ es:
         max_mark: "Nota Máxima"
         peer_visible: "Hacer visible a los revisores de compañeros"
         ta_visible: "Hacer visible a los asistentes de cátedra"
+      checkbox_criterion:
+        description: "Descripción"
+        name: "Nombre del criterio"
+        max_mark: "Nota Máxima"
+        peer_visible: "Hacer visible a los revisores de compañeros"
+        ta_visible: "Hacer visible a los asistentes de cátedra"
+      flexible_criterion:
+        description: "Descripción"
+        name: "Nombre del criterio"
+        max_mark: "Nota Máxima"
+        peer_visible: "Hacer visible a los revisores de compañeros"
+        ta_visible: "Hacer visible a los asistentes de cátedra"
+      rubric_criterion:
+        description: "Descripción"
+        name: "Nombre del criterio"
+        max_mark: "Nota Máxima"
+        peer_visible: "Hacer visible a los revisores de compañeros"
+        ta_visible: "Hacer visible a los asistentes de cátedra"
 
     errors:
       models:

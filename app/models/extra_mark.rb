@@ -17,7 +17,7 @@ class ExtraMark < ApplicationRecord
   scope :positive, -> { where('extra_mark > 0') }
   scope :negative, -> { where('extra_mark < 0') }
 
-  validates_numericality_of :extra_mark, message: 'Mark must be an number'
+  validates_numericality_of :extra_mark
 
   belongs_to :result
 

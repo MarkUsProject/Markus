@@ -1,8 +1,6 @@
 class RubricCriterion < Criterion
   self.table_name = 'rubric_criteria' # set table name correctly
 
-  validates_presence_of :max_mark
-  validates_numericality_of :max_mark
   before_save :round_max_mark
 
   has_many :marks, as: :markable, dependent: :destroy
@@ -15,17 +13,6 @@ class RubricCriterion < Criterion
   has_many :tas, through: :criterion_ta_associations
 
   belongs_to :assignment, counter_cache: true
-  validates_associated :assignment, on: :create
-
-  validates_presence_of :max_mark
-  validates_numericality_of :max_mark,
-                            message: I18n.t('criteria.errors.messages.input_number'),
-                            greater_than: 0.0
-
-  validates_presence_of :name
-  validates_uniqueness_of :name,
-                          scope: :assignment_id,
-                          message: I18n.t('criteria.errors.messages.name_taken')
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count

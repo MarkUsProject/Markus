@@ -24,10 +24,6 @@ fr:
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Liens rapides"
 
-    # app/models/assignment_file.rb
-    validation_messages:
-      format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - », « _ » ou « / » uniquement."
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Aucun devoir pour le moment."
 
@@ -207,10 +203,6 @@ fr:
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
 
-    mark:
-      error:
-        validate_criteria: "La note doit être comprise entre 0 et la note maximale du critère."
-
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
@@ -305,9 +297,6 @@ fr:
         empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
       errors:
         messages:
-          name_taken:             "Nom du critère déjà utilisé."
-          assignment_association: "Association est pas forte avec une mission."
-          input_number:           "Doit être un nombre supérieur à 0.0."
           released_marks:         "TODO"
 
     keybinding:
@@ -514,37 +503,6 @@ fr:
         two_words_connector: " et "
         last_word_connector: " et "
 
-    activerecord:
-      errors:
-        template:
-          header:
-            one: "Impossible d'enregistrer %{model} : 1 erreur"
-            other: "Impossible d'enregistrer %{model} : %{count} erreurs."
-          body: "Veuillez vérifier les champs suivants :"
-        messages:
-          inclusion: "n'est pas inclus(e) dans la liste"
-          exclusion: "n'est pas disponible"
-          invalid: "n'est pas valide"
-          confirmation: "ne concorde pas avec la confirmation"
-          accepted: "doit être accepté(e)"
-          empty: "doit être rempli(e)"
-          blank: "doit être rempli(e)"
-          too_long: "est trop long (pas plus de %{count} caractères)"
-          too_short: "est trop court (au moins %{count} caractères)"
-          wrong_length: "ne fait pas la bonne longueur (doit comporter %{count} caractères)"
-          taken: "n'est pas disponible"
-          not_a_number: "n'est pas un nombre"
-          greater_than: "doit être supérieur à %{count}"
-          greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
-          equal_to: "doit être égal à %{count}"
-          less_than: "doit être inférieur à %{count}"
-          less_than_or_equal_to: "doit être inférieur ou égal à %{count}"
-          odd: "doit être impair"
-          even: "doit être pair"
-          record_invalid: "La validation a échoué : %{errors}"
-
-        full_messages:
-          format: "%{attribute} %{message}"
     server_time: "Heure du serveur :"
 
     poll_job:

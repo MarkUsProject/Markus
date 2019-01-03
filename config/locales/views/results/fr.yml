@@ -11,7 +11,6 @@ fr:
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
-    invalid_mark: "Note invalide!"
     late_submission_warning_html: "La date du <a href=\"%{url}\">envoi</a> de ce groupe est postérieure à la date de retour."
     marks_released: "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     next_submission: "Envoi suivant"

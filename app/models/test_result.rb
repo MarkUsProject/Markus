@@ -30,8 +30,7 @@ class TestResult < ApplicationRecord
   validates_presence_of :actual_output, if: ->(o) { o.actual_output.nil? }
   validates_presence_of :expected_output, if: ->(o) { o.expected_output.nil? }
   validates_inclusion_of :completion_status,
-                         in: %w(pass partial fail error),
-                         message: "%{value} is not a valid status"
+                         in: %w[pass partial fail error]
   validates_numericality_of :marks_earned, greater_than_or_equal_to: 0
   validates_numericality_of :marks_total, greater_than_or_equal_to: 0
   validates_numericality_of :time, greater_than_or_equal_to: 0, only_integer: true, allow_nil: true

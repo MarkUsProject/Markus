@@ -25,10 +25,6 @@ en:
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Quick links"
 
-    # app/models/assignment_file.rb
-    validation_messages:
-      format_of_assignment_file: "must include alphanumeric, '.', '-', '_' or '/' characters only"
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "There are currently no assignments."
 
@@ -199,10 +195,6 @@ en:
       successfully_changed: "Successfully updated %{changed} results"
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
 
-    mark:
-      error:
-        validate_criteria: "must be between 0 and the maximum mark of the criterion"
-
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Peer Reviews"
@@ -298,9 +290,6 @@ en:
         empty_error:     "No criteria were found in the provided file."
       errors:
         messages:
-          name_taken:             "Criterion name already used."
-          assignment_association: "Association is not strong with an assignment."
-          input_number:           "Must be a number greater than 0.0."
           released_marks:         "Cannot update criteria for an assignment with released marks"
 
     key_pairs:
