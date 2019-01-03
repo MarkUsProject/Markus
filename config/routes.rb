@@ -391,12 +391,13 @@ Rails.application.routes.draw do
         post 'refresh_session'
       end
     end
-  end
 
-  resources :automated_tests do
-    member do
-      get 'student_interface'
-      post 'execute_test_run'
+    resources :automated_tests do
+      member do
+        get 'student_interface'
+        post 'execute_test_run'
+        post 'fetch_testers'
+      end
     end
   end
 
