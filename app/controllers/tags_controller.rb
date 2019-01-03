@@ -12,8 +12,19 @@ class TagsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        @assignment = Assignment.find(params[:assignment_id])
-        render json: get_tags_table_info
+        tags = Tag.includes(:user, :groupings).order(:name)
+
+        tag_info = tags.map do |tag|
+          {
+            id: tag.id,
+            name: tag.name,
+            description: tag.description,
+            creator: "#{tag.user.first_name} #{tag.user.last_name}",
+            use: get_num_groupings_for_tag(tag)
+          }
+        end
+
+        render json: tag_info
       end
     end
   end
@@ -31,7 +42,6 @@ class TagsController < ApplicationController
       user: @current_user)
 
     if new_tag.save
-      # flash_message(:success, I18n.t('tags.create.successful'))
       if params[:grouping_id]
         create_grouping_tag_association(params[:grouping_id], new_tag)
       end
@@ -44,29 +54,19 @@ class TagsController < ApplicationController
     Tag.all
   end
 
-  # Update a particular tag.
-  def update_tag
-    @tag = Tag.find(params[:id])
-    @tag.name = params[:update_tag][:name]
-    @tag.description = params[:update_tag][:description]
-    if @tag.save
-      flash_message(:success, I18n.t('tags.create.successful'))
-      redirect_back(fallback_location: root_path)
-    else
-      flash_message(:error, I18n.t('tags.create.error'))
-    end
+  def update
+    tag = Tag.find(params[:id])
+    tag.name = params[:update_tag][:name]
+    tag.description = params[:update_tag][:description]
+    tag.save
+
+    respond_with tag, location: -> { request.headers['Referer'] || root_path }
   end
 
-  # Destroys a particular tag.
   def destroy
-    @tag = Tag.find(params[:id])
-    @tag.destroy
-
-    respond_to do |format|
-      format.html do
-        redirect_back(fallback_location: root_path)
-      end
-    end
+    tag = Tag.find(params[:id])
+    tag.destroy
+    head :ok
   end
 
   # Dialog to edit a tag.

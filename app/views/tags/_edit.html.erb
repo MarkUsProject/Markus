@@ -2,7 +2,8 @@
   <h2><%= t('helpers.submit.update', model: Tag.model_name.human) %></h2>
 
   <%= form_for :update_tag,
-               url: update_tag_assignment_tag_path(@assignment, @tag),
+               url: assignment_tag_path(@assignment, @tag),
+               method: 'PUT',
                html: { multipart: true, size: 1 } do |f| %>
     <div>
       <p><%= Tag.human_attribute_name(:name) %></p>
