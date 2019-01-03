@@ -2,7 +2,7 @@
   function add_annotation_prompt(path) {
     var annotation_text = $('#add_annotation_text #annotation_text_content');
 
-    if (annotation_text.size()) {
+    if (annotation_text.length) {
       annotation_text.select();
       annotation_text.focus();
     } else {
@@ -16,7 +16,7 @@
   function add_annotation_category(path) {
     var category_prompt = $('#add_annotation_category_prompt');
 
-    if (category_prompt.size()) {
+    if (category_prompt.length) {
       category_prompt.select();
       category_prompt.focus();
     } else {
@@ -26,7 +26,7 @@
       });
 
       var info = $('#no_annotation_categories_info');
-      if (info.size()) {
+      if (info.length) {
         info.hide();
       }
     }
