@@ -49,9 +49,8 @@ class ResultsController < ApplicationController
     reviewer_access = false
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        @mark_criteria = @assignment.get_criteria(:peer)
         assignment = @assignment.pr_assignment
-        reviewer_access = true
+        @mark_criteria = assignment.get_criteria(:peer)
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
@@ -100,8 +99,6 @@ class ResultsController < ApplicationController
       end
     end
 
-    group_order = reviewer_access ? 'grouping.id' : 'group_name'
-    all_groupings = assignment.groupings.joins(:group).order(group_order)
     if current_user.ta?
       assigned_groupings = current_user.groupings
                              .where(assignment: assignment)
@@ -109,7 +106,13 @@ class ResultsController < ApplicationController
                              .order('group_name')
       @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
+    elsif @result.is_a_review? && @current_user.is_reviewer_for?(@assignment, @result)
+      user_group = @current_user.grouping_for(@assignment.id)
+      assigned_prs = user_group.peer_reviews_to_others
+      @next_grouping = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
+      @previous_grouping = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
     else
+      all_groupings = assignment.groupings.joins(:group).order('group_name')
       @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
     end
