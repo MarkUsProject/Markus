@@ -12,11 +12,10 @@ describe FlexibleCriterion do
 
     it do
       is_expected.to validate_uniqueness_of(:name).scoped_to(:assignment_id)
-                       .with_message('Criterion name already used.')
     end
 
     it do
-      is_expected.to validate_numericality_of(:max_mark).with_message(I18n.t('criteria.errors.messages.input_number'))
+      is_expected.to validate_numericality_of(:max_mark)
     end
 
     it { is_expected.to allow_value(0.1).for(:max_mark) }

@@ -27,10 +27,6 @@ es:
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Enlaces rápidos"
 
-    # app/models/assignment_file.rb
-    validation_messages:
-      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '_' o '/'"
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "No existen proyectos por el momento."
 
@@ -225,10 +221,6 @@ es:
       successfully_changed:            "%{changed} resultados han sido actualizados exitosamente"
       could_not_find_file:             "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
 
-    mark:
-      error:
-        validate_criteria: "debe ser un número entre 0 y la nota máxima para el criterio de calificación"
-
     #Sutdent's View (student)
     student:
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
@@ -336,9 +328,6 @@ es:
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
       errors:
         messages:
-          name_taken:             "Ya existe otro criterio de calificación con este nombre."
-          assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
-          input_number:           "Debe ser un número mayor a 0.0."
           released_marks:         "TODO"
 
     key_pairs:

@@ -16,6 +16,24 @@ pt:
         max_mark: "Nota máxima"
         peer_visible: "Tornar visível a perscrutar revisores"
         ta_visible: "Tornar visível para assistentes de ensino"
+      checkbox_criterion:
+        description: "Descrição"
+        name: "Nome"
+        max_mark: "Nota máxima"
+        peer_visible: "Tornar visível a perscrutar revisores"
+        ta_visible: "Tornar visível para assistentes de ensino"
+      flexible_criterion:
+        description: "Descrição"
+        name: "Nome"
+        max_mark: "Nota máxima"
+        peer_visible: "Tornar visível a perscrutar revisores"
+        ta_visible: "Tornar visível para assistentes de ensino"
+      rubric_criterion:
+        description: "Descrição"
+        name: "Nome"
+        max_mark: "Nota máxima"
+        peer_visible: "Tornar visível a perscrutar revisores"
+        ta_visible: "Tornar visível para assistentes de ensino"
 
     errors:
       models:

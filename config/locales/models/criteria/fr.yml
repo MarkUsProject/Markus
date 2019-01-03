@@ -16,6 +16,24 @@ fr:
         max_mark: "Note maximale"
         peer_visible: "Rendre visible à leurs auteurs pairs"
         ta_visible: "Rendre visible aux assistants d'enseignement"
+      checkbox_criterion:
+        description: "Description"
+        name: "Nom"
+        max_mark: "Note maximale"
+        peer_visible: "Rendre visible à leurs auteurs pairs"
+        ta_visible: "Rendre visible aux assistants d'enseignement"
+      flexible_criterion:
+        description: "Description"
+        name: "Nom"
+        max_mark: "Note maximale"
+        peer_visible: "Rendre visible à leurs auteurs pairs"
+        ta_visible: "Rendre visible aux assistants d'enseignement"
+      rubric_criterion:
+        description: "Description"
+        name: "Nom"
+        max_mark: "Note maximale"
+        peer_visible: "Rendre visible à leurs auteurs pairs"
+        ta_visible: "Rendre visible aux assistants d'enseignement"
 
     errors:
       models:

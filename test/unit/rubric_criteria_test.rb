@@ -16,10 +16,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
     should validate_presence_of :name
 
-    should validate_uniqueness_of(
-                         :name).scoped_to(
-                               :assignment_id).with_message(
-                                     'Criterion name already used.')
+    should validate_uniqueness_of(:name).scoped_to(:assignment_id)
 
   end
 

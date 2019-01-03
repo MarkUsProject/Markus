@@ -15,7 +15,6 @@ es:
     delete_extra_mark_confirm: "¿Está seguro/a de querer remover esta nota adicional?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir no calificados"
-    invalid_mark: "Nota Inválida!"
     late_submission_warning_html: "El <a href=\"%{url}\">submitted work</a> de este grupo se ha realizado después de la fecha límite de entrega."
     marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
     next_submission: "Siguiente Entrega"
