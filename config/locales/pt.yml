@@ -48,9 +48,6 @@ pt:
         group:
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
             grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
-            select_a_grader: "Selecione um avaliador"
-            select_a_criterion: "Selecione pelo menos um critério"
-            group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
@@ -154,22 +151,9 @@ pt:
       assign_scans: "Atribuir varreduras"
       skip_group: "UPDATE ME"
       done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
-      randomly_assign_graders: "Designar avaliadores aleatoriamente"
       upload:
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
-        upload_grader_map: "Carregar grupo / Mapa avaliador"
-        upload_grader_criteria_map: "Carregar critério / Mapa avaliador"
-        description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: "Remover mapeamentos existentes"
-      download:
-        download_grader_maps: "Baixar mapeamento dos avaliadores"
-        download_grader_groups_csv: "Grupo / Formato CSV mapa avaliadores"
-        download_grader_criteria_csv: "Critério / Formato CSV mapa avaliadores"
-      action:
-        assign_grader: "Designar Avaliador(es)"
-        unassign_grader: "Remover Avaliador(es)"
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
@@ -201,25 +185,6 @@ pt:
         no_revision_available: "Nenhuma revisão disponível"
         version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Atribuir avaliador"
-      coverage:           "Cobertura"
-      assign_to_criteria: "Atribuir avaliador aos critérios"
-      skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
-      download:
-        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Alunos / Atribuição de corretores CSV "
-      upload:
-        upload_grader_map: "Carregar alunos / Atribuição de corretores"
-        description_grader_map: "Formato arquivo CSV:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "Aluno %{user_name} adicionado."
@@ -254,6 +219,9 @@ pt:
       success:  "As alterações foram feitas."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
       error:
         no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
         binary_file_message: "Conteudo binário: Use o botao de download para ver o arquivo!"
@@ -310,7 +278,6 @@ pt:
       confirm_annotation:     "Confirmar anotação"
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
     additional_information: "Informações Adicionais"
 
     #lib/validators/

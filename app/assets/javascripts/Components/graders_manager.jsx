@@ -55,7 +55,7 @@ class GradersManager extends React.Component {
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('assignment.group.select_a_grader'));
+      alert(I18n.t('graders.select_a_grader'));
       return;
     }
 
@@ -83,7 +83,7 @@ class GradersManager extends React.Component {
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('assignment.group.select_a_grader'));
+      alert(I18n.t('graders.select_a_grader'));
       return;
     }
 
@@ -111,7 +111,7 @@ class GradersManager extends React.Component {
     }
 
     if (graders.length === 0) {
-      alert(I18n.t('assignment.group.select_a_grader'));
+      alert(I18n.t('graders.select_a_grader'));
       return;
     }
 
@@ -352,7 +352,7 @@ class RawGroupsTable extends React.Component {
               <a href='#'
                  className="remove-icon"
                  onClick={() => this.props.unassignSingle(row.original._id, ta, 'groups_table')}
-                 title={I18n.t('remove_grader')}
+                 title={I18n.t('graders.actions.unassign_grader')}
               />
             </div>
           )
@@ -417,7 +417,7 @@ class RawCriteriaTable extends React.Component {
               <a href='#'
                  className="remove-icon"
                  onClick={() => this.props.unassignSingle(row.original._id, ta, 'criteria_table')}
-                 title={I18n.t('remove_grader')}
+                 title={I18n.t('graders.actions.unassign_grader')}
               />
             </div>
           )
@@ -475,19 +475,19 @@ class GradersActionBox extends React.Component {
           className='assign-all-button'
           onClick={this.props.assignAll}
         >
-          {I18n.t('groups.action.assign_grader')}
+          {I18n.t('graders.actions.assign_grader')}
         </button>
         <button
           className='assign-randomly-button'
           onClick={this.props.assignRandomly}
         >
-          {I18n.t('groups.randomly_assign_graders')}
+          {I18n.t('graders.actions.randomly_assign_graders')}
         </button>
         <button
           className='unassign-all-button'
           onClick={this.props.unassignAll}
         >
-          {I18n.t('groups.action.unassign_grader')}
+          {I18n.t('graders.actions.unassign_grader')}
         </button>
       </div>
     )

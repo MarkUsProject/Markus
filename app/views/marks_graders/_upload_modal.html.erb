@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('marks_graders.upload.upload_grader_map') %>
+<%= content_for :modal_title, t('upload_the', item: t('graders.download.grader_students')) %>
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
@@ -9,7 +9,7 @@
                              upload_id: 'grader_mapping',
                              button_id: 'upload' %>
 
-  <p><%= raw(t('marks_graders.upload.description_grader_map')) %></p>
+  <p><%= t('graders.upload.instructions_grader_students_html') %></p>
 
   <%= form_tag({ controller: 'marks_graders',
                  action: 'csv_upload_grader_groups_mapping',

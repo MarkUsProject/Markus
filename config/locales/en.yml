@@ -48,9 +48,6 @@ en:
         group:
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
-            select_a_grader: "Select a grader"
-            select_a_criterion: "Select at least one criterion"
-            group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             clone_warning:
                 no_active_students: "Group '%{group}' not cloned: zero active students left"
                 no_member: "Member '%{member}' not added to Group '%{group}': %{error}"
@@ -64,7 +61,6 @@ en:
             title: "Starter Code"
             update: "Update"
         help:
-            graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
             assign_scans: "Assign students to scanned exam groups based on printed student names."
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
@@ -170,22 +166,9 @@ en:
       assign_scans:     "Assign Scans"
       skip_group:       "Skip group"
       done_assign: "All groups have been successfully assigned students"
-      randomly_assign_graders: "Randomly assign Graders"
       upload:
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
-        upload_grader_map: "Upload Group / Grader Map"
-        upload_grader_criteria_map: "Upload Criteria / Grader Map"
-        description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: 'Remove existing mappings'
-      download:
-        download_grader_maps: "Download Grader Maps"
-        download_grader_groups_csv: "Group / Grader map CSV format"
-        download_grader_criteria_csv: "Criteria / Grader map CSV format"
-      action:
-        assign_grader: "Assign Grader(s)"
-        unassign_grader: "Unassign Grader(s)"
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
@@ -218,25 +201,6 @@ en:
         version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Assigned Graders"
-      coverage:           "Coverage"
-      assign_to_criteria: "Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)"
-      skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Student / Grader map CSV format"
-      upload:
-        upload_grader_map: "Upload Student / Grader Map"
-        description_grader_map: "CSV file format:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "Student %{user_name} added."
@@ -271,6 +235,9 @@ en:
       success:  "Your changes have been made."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "No access to submission file with id #%{submission_file_id}."
         binary_file_message: "Binary content: Use download button to view file!"
@@ -333,7 +300,6 @@ en:
 
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Default grader: Course instructor(s)"
     additional_information: "Additional Information"
 
     #app/views/job_messages/_job_poller.js.erb

@@ -47,9 +47,6 @@ fr:
         group:
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
-            select_a_grader: "Sélectionner un correcteur"
-            select_a_criterion: "Sélectionnez au moins un critère"
-            group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
@@ -175,25 +172,10 @@ fr:
       assign_scans: "Affecter des scans"
       skip_group: "UPDATE ME"
       done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
-      randomly_assign_graders: "Attribuer les correcteurs aléatoirement"
       upload:
         description: "Format du fichier CSV : <br>
             <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
-        upload_grader_map: "Envoi de groupes / Attribution des correcteurs"
-        upload_grader_criteria_map: "Envoyer un fichier de critères / attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br>
-            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Format du fichier CSV : <br>
-                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: 'Supprimer les attributions existants'
-      download:
-        download_grader_maps: "Télécharger les attributions des correcteurs"
-        download_grader_groups_csv: "Groupes / attribution des correcteurs CSV"
-        download_grader_criteria_csv: "Critères / attribution des correcteurs CSV"
-      action:
-        assign_grader: "Attribuer un ou plusieurs correcteurs"
-        unassign_grader: "Retirer un ou plusieurs correcteurs"
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
@@ -225,25 +207,6 @@ fr:
         no_revision_available: "Aucune révision disponible"
         version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Correcteurs assignés"
-      coverage:           "Couverture"
-      assign_to_criteria: "Attribuer les correcteurs aux critères"
-      skip_empty_submissions: "Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)"
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
-      upload:
-        upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
@@ -278,6 +241,9 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
         binary_file_message: "Fichier binaire : utiliser le bouton Télécharger pour voir Binary content: Use download button to view file!"
@@ -312,7 +278,6 @@ fr:
       confirm_annotation:     "Confirmer l'annotation"
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
     additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb

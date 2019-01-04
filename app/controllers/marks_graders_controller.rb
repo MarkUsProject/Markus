@@ -123,7 +123,7 @@ class MarksGradersController < ApplicationController
     end
 
     if params[:graders].nil? || params[:graders].empty?
-      flash_now(:error, t('assignment.group.select_a_grader'))
+      flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
     end
@@ -144,7 +144,7 @@ class MarksGradersController < ApplicationController
     end
 
     if params[:graders].nil? || params[:graders].empty?
-      flash_now(:error, t('assignment.group.select_a_grader'))
+      flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
     end
@@ -163,7 +163,7 @@ class MarksGradersController < ApplicationController
     end
 
     if params[:grader_user_name].nil?
-      flash_now(:error, t('assignment.group.select_a_grader'))
+      flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
     end
@@ -187,7 +187,7 @@ class MarksGradersController < ApplicationController
     end
 
     if params[:graders].nil? || params[:graders].empty?
-      flash_now(:error, t('assignment.group.select_a_grader'))
+      flash_now(:error, t('graders.select_a_grader'))
       head :bad_request
       return
     end

@@ -142,13 +142,13 @@ class SubmissionFile < ApplicationRecord
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t('graders.download.begin_annotation',
+           result = result.concat(I18n.t('submission_file.download.begin_annotation',
                id: annot.annotation_number.to_s,
                text: text,
                comment_start: comment_syntax[0],
                comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
-           result = result.concat(I18n.t('graders.download.end_annotation',
+          result = result.concat(I18n.t('submission_file.download.end_annotation',
                id: annot.annotation_number.to_s,
                comment_start: comment_syntax[0],
                comment_end: comment_syntax[1]) + "\n")

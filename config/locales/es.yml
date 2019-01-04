@@ -54,10 +54,6 @@ es:
             grace_day_over_limit:         "Ha asignado uno o más estudiantes que tienen menos créditos para el período
                                            de aplazamiento de gracia que la cantidad ya utilizada por el grupo
                                            %{group}."
-            select_a_grader:              "Seleccione un evaluador"
-            select_a_criterion:           "Seleccione al menos un criterio de calificación"
-            group_submission_no_files:    "Uno o más de los grupos seleccionados no tienen archivos en su entrega. El
-                                           evaluador no ha sido asignado."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
@@ -71,9 +67,6 @@ es:
             title: "Código Inicial"
             update: "UPDATE ME"
         help:
-            graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
-                                  De manera predeterminada, los evaluadores serán asignados a todos los criterios de
-                                  calificación."
             assign_scans:        "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos"
         start_peer_review:                "Revisión de Compañeros"
         peer_review_results:              "Resultados para la Revisión de Compañeros"
@@ -195,22 +188,9 @@ es:
       assign_scans:                  "Asignar Escaneado"
       skip_group:                    "UPDATE ME"
       done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
-      randomly_assign_graders:        "Asignar Evaluadores al azar"
       upload:
         description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
-        upload_grader_map:               "Subir pares Grupo / Evaluador"
-        upload_grader_criteria_map:      "Subir pares Criterios de Calificación / Evaluador"
-        description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-
-      download:
-        download_grader_maps:         "Descargar los pares del evaluador"
-        download_grader_groups_csv:   "Par Grupo / Evaluador en formato CSV"
-        download_grader_criteria_csv: "Par Criterios de Calificación / Evaluador en formato CSV"
-      action:
-        assign_grader:   "Asignar Evaluador(es)"
-        unassign_grader: "Eliminar Asignación para Evaluador(es)"
       csv:
         could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
@@ -251,26 +231,6 @@ es:
                                            antes de realizar la entrega."
         empty_file_warning: "UPDATE ME"
 
-    #Graders' View
-    graders:
-      assigned_graders:       "Asignar los Evaluadores"
-      coverage:               "Cobertura"
-      assign_to_criteria:     "Asignar Evaluadores a los Criterios de Calificación"
-      skip_empty_submissions: "No se asignará Evaluadores a los grupos con entregas vacías (requiere que las entregas
-                               sean recolectadas)"
-      download:
-        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
-        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Par Estudiante / Evaluador en formato CSV"
-      upload:
-        upload_grader_map:      "Subir el par Estudiante/Evaluador"
-        description_grader_map: "Formato del archivo CSV:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
-
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
       fail:
@@ -309,6 +269,9 @@ es:
       success: "Sus cambios han sido realizados."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
+        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
         binary_file_message: "Contenido binario: Use el botón de descarga para ver el archivo!"
@@ -371,7 +334,6 @@ es:
       confirm_annotation:     "Confirmar anotación"
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
     additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb

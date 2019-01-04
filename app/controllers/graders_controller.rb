@@ -149,7 +149,7 @@ class GradersController < ApplicationController
     if grader_ids.blank?
       grader_ids = Ta.where(user_name: params[:grader_user_names]).pluck(:id)
       if grader_ids.blank?
-        flash_now(:error, I18n.t('assignment.group.select_a_grader'))
+        flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
         return
       end
@@ -176,7 +176,7 @@ class GradersController < ApplicationController
         end
         if found_empty_submission
           assign_all_graders(filtered_grouping_ids, grader_ids)
-          flash_now(:info, I18n.t('assignment.group.group_submission_no_files'))
+          flash_now(:info, I18n.t('graders.group_submission_no_files'))
           head 200
         else
           assign_all_graders(grouping_ids, grader_ids)
@@ -192,7 +192,7 @@ class GradersController < ApplicationController
         end
         if found_empty_submission
           randomly_assign_graders(filtered_grouping_ids, grader_ids)
-          flash_now(:info, I18n.t('assignment.group.group_submission_no_files'))
+          flash_now(:info, I18n.t('graders.group_submission_no_files'))
         else
           randomly_assign_graders(grouping_ids, grader_ids)
         end
@@ -205,7 +205,7 @@ class GradersController < ApplicationController
           @assignment.flexible_criteria.where(position: positions).pluck(:id).map { |id| [id, 'FlexibleCriterion'] } +
           @assignment.checkbox_criteria.where(position: positions).pluck(:id).map { |id| [id, 'CheckboxCriterion'] }
       if criterion_ids_types.blank?
-        flash_now(:error, I18n.t('assignment.group.select_a_criterion'))
+        flash_now(:error, I18n.t('graders.select_a_criterion'))
         head :bad_request
         return
       end

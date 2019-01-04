@@ -1,6 +1,6 @@
 <p class="grader_distribution"><%= t(:grader_distribution) %></p>
 <% if assignment.tas.empty? %>
-  (<%= link_to t('groups.action.assign_grader'), assignment_graders_path(assignment) %>)
+  (<%= link_to t('graders.actions.assign_grader'), assignment_graders_path(assignment) %>)
 <% else %>
   (<%= link_to Ta.model_name.human.pluralize,
                { controller: 'graders',

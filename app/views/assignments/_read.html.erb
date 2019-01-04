@@ -95,10 +95,10 @@
           <%= ta.user.last_name%>
         <% end -%>
         <% if @grouping.ta_memberships.size == 0%>
-          <%= t(:no_grader_assigned) %>
+          <%= t('graders.no_grader_assigned') %>
         <% end -%>
       <% else -%>
-        <%= t(:no_grader_assigned) %>
+        <%= t('graders.no_grader_assigned') %>
       <% end -%>
     </div>
   <% end %>
