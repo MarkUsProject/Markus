@@ -89,11 +89,8 @@ class PeerReview < ApplicationRecord
   end
 
   def self.get_num_marked(reviewer_group)
-    assigned = self.includes(:result).where(reviewer_id: reviewer_group)
-    count = 0
-    assigned.each do |pr|
-      count += 1 if pr.result.marking_state == Result::MARKING_STATES[:complete]
+    self.includes(:result).where(reviewer_id: reviewer_group).count do |pr|
+      pr.result.marking_state == Result::MARKING_STATES[:complete]
     end
-    count
   end
 end
