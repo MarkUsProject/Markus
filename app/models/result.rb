@@ -64,7 +64,7 @@ class Result < ApplicationRecord
   # pass the +assignment+ variable and associated warnings.
   def get_total_mark(assignment: nil)
     user_visibility = is_a_review? ? :peer : :ta
-    subtotal = get_subtotal(user_visibility: user_visibility, assignment: assignment)
+    subtotal = get_subtotal(assignment: assignment)
     extra_marks = get_total_extra_marks(user_visibility: user_visibility)
     [0, subtotal + extra_marks].max
   end
@@ -73,7 +73,7 @@ class Result < ApplicationRecord
   #
   # See the documentation for update_total_mark for information about when to explicitly
   # pass the +assignment+ variable and associated warnings.
-  def get_subtotal(user_visibility: :ta, assignment: nil)
+  def get_subtotal(assignment: nil)
     if marks.empty?
       0
     else
@@ -81,6 +81,8 @@ class Result < ApplicationRecord
       if is_a_review?
         user_visibility = :peer
         assignment = assignment.pr_assignment
+      else
+        user_visibility = :ta
       end
       criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
       marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark

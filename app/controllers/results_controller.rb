@@ -443,7 +443,6 @@ class ResultsController < ApplicationController
 
     result_mark.mark = mark_value * weight_criterion
 
-    visibility = result_mark.result.is_a_review? ? :peer : :ta
     if result_mark.save
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
@@ -458,7 +457,7 @@ class ResultsController < ApplicationController
         num_assigned = assignment.get_num_assigned(@current_user.id)
       end
       render plain: "#{result_mark.mark.to_f}," +
-                   "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
+                   "#{result_mark.result.get_subtotal}," +
                    "#{result_mark.result.total_mark}," +
                    "#{num_marked}," +
                    "#{num_assigned}"
