@@ -78,6 +78,9 @@ class Result < ApplicationRecord
       0
     else
       assignment ||= submission.grouping.assignment
+      if user_visibility == :peer
+        assignment = assignment.pr_assignment
+      end
       criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
       marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.

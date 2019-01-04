@@ -16,7 +16,7 @@
 
   <div class='summary_block'>
     <span><strong><%= t('results.subtotal') %></strong>:</span>
-    <span id='current_subtotal_div'> <%= result.get_subtotal %></span>
+    <span id='current_subtotal_div'> <%= result.get_subtotal(user_visibility: @result.is_a_review? ? :peer : :ta) %></span>
     <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
   </div>
 
