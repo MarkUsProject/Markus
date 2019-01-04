@@ -203,7 +203,7 @@ en:
       files: "files"
       missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_peer_submission_yet: "You have no submissions to review yet."
-      no_reviews: "No one has reviewed you yet."
+      no_reviews: "No one has reviewed your submissions yet."
       submission:
         file_manager: "%{short_identifier}: File Manager"
         conflicts: "Conflicts"
