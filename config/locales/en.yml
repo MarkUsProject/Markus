@@ -124,23 +124,12 @@ en:
 
     copy: "Copy"
 
-    csv_invalid_lines: "The following CSV lines were invalid: "
-    csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
-      group_to_grader:         "You must supply a CSV file for group to grader mapping"
-      student_to_grader:       "You must supply a CSV file for student to grader mapping"
-      invalid_csv:             "The format of the CSV file was not recognized"
-      invalid_row:
-        invalid_format: "Invalid Row Format"
-      upload:
-        # when a non-text file has a csv extension (ie: user changes extension
-        # from .pdf to .csv on a pdf file)
-        non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
       group_with_different_repo: "Error: Group %{group_name} cannot be created since a group with the same name and a different repository already exists"
       group_with_different_membership_current_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for the current assignment"
       group_with_different_membership_different_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for a different assignment"

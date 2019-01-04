@@ -39,7 +39,7 @@ class GradersController < ApplicationController
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_groups_mapping
     if params[:grader_mapping].nil?
-      flash_message(flash[:error], I18n.t('csv.group_to_grader'))
+      flash_message(flash[:error], I18n.t('upload_errors.missing_file'))
     else
       assignment = Assignment.find(params[:assignment_id])
       if params[:remove_existing_mappings]

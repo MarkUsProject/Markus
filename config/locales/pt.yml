@@ -121,21 +121,12 @@ pt:
 
     copy: "Copy"
 
-    csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
-    csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
     still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
-      group_to_grader:         "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      student_to_grader:       "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      invalid_csv:             "O formato do arquivo CSV não foi reconhecido"
-      invalid_row:
-              invalid_format:  "Formato de linha inválida"
-      upload:
-        non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     browse_submissions:
       review_state:         "Estado de revisão"

@@ -46,15 +46,16 @@ class MarkusCSV
       end
       # Return string representation of the erroneous lines.
       unless invalid_lines.empty?
-        result[:invalid_lines] = I18n.t('csv_invalid_lines') + invalid_lines.take(MAX_INVALID_LINES).join(INVALID_LINE_SEP)
+        result[:invalid_lines] = I18n.t('upload_errors.invalid_rows') +
+          invalid_lines.take(MAX_INVALID_LINES).join(INVALID_LINE_SEP)
       end
-      if valid_line_count > 0
-        result[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: valid_line_count - header_count)
+      if valid_line_count > header_count
+        result[:valid_lines] = I18n.t('upload_success', count: valid_line_count - header_count)
       end
     rescue CSV::MalformedCSVError
       result[:invalid_lines] = I18n.t('upload_errors.malformed_csv')
     rescue ArgumentError => e
-      result[:invalid_lines] = I18n.t('csv.upload.non_text_file_with_csv_extension')
+      result[:invalid_lines] = I18n.t('upload_errors.unparseable_csv')
     end
     result
   end

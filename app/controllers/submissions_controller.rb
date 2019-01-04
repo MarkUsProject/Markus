@@ -618,7 +618,7 @@ class SubmissionsController < ApplicationController
         begin
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
-          flash_message(:error, t('student.submission.no_revision_available'))
+          flash_message(:error, t('submissions.student.no_revision_available'))
           redirect_back(fallback_location: root_path)
           return
         end

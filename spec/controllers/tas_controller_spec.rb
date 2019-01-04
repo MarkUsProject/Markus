@@ -42,7 +42,7 @@ describe TasController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      i18t_string = [I18n.t('csv_valid_lines', valid_line_count: 2)].map { |f| extract_text f }
+      i18t_string = [I18n.t('upload_success', count: 2)].map { |f| extract_text f }
       expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       expect(response).to redirect_to action: 'index'
 

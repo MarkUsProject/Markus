@@ -153,7 +153,7 @@ class PeerReviewsController < ApplicationController
     encoding = params[:encoding]
 
     if params[:peer_review_mapping].nil?
-      flash_message(flash[:error], I18n.t('csv.group_to_grader'))
+      flash_message(flash[:error], I18n.t('upload_errors.missing_file'))
     else
       result = MarkusCSV.parse(pr_mapping.read, encoding: encoding) do |row|
         raise CSVInvalidLineError if row.size < 2

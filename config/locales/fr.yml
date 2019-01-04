@@ -120,21 +120,12 @@ fr:
 
     copy: "Copy"
 
-    csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
-    csv_valid_lines: "Avec succès téléchargé %{valid_line_count} entrées"
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
       repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
-      group_to_grader:         "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
-      student_to_grader:       "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
-      invalid_csv:             "Le format du fichier CSV n'a pas été reconnu"
-      invalid_row:
-              invalid_format:  "Invalid format de ligne"
-      upload:
-        non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
 
     browse_submissions:
       review_state:         "Avis Etat"

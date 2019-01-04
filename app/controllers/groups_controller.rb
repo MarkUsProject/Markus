@@ -254,7 +254,7 @@ class GroupsController < ApplicationController
         end
       end
     else
-      flash_message(:error, I18n.t('csv.invalid_csv'))
+      flash_message(:error, I18n.t('upload_errors.missing_file'))
     end
     redirect_to action: 'index', id: params[:id]
   end
