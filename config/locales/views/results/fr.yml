@@ -66,3 +66,15 @@ fr:
       submit: "Envoyer la demande au correcteur."
       submit_confirm: "Êtes-vous sûr de vouloir envoyer votre demande de retour ? Vous ne verrez pas les résultats avant que la réévaluation ne soit terminée."
       submitted_on: "Demande de retour activée %{time}."
+
+    keybinding:
+      confirm_level: "Confirmer le niveau"
+      confirm_annotation: "Confirmer l'annotation"
+      keyboard_help: "Aide sur le raccourci clavier"
+      next_criterion: "Sélectionnez le prochain critère"
+      next_level: "Sélectionnez le prochain niveau"
+      open_annotation: "Modem d'annotation ouverte"
+      previous_criterion: "Sélectionnez le critère précédent"
+      previous_level: "Sélectionnez le niveau précédent"
+      toggle_compact: "Basculer affichage compact"
+      when_rubric: "(Quand à la rubrique) "

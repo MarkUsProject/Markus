@@ -252,45 +252,9 @@ en:
         messages:
           released_marks:         "Cannot update criteria for an assignment with released marks"
 
-    key_pairs:
-      title: "Key Pairs"
-      key_pairs_title:         "Your Key Pairs"
-      time_of_upload:         "Time Of Upload"
-      key_content:         "Key Content"
-      new_key_pair:         "New Key Pair"
-      add_key_pair:         "Add a Key Pair"
-      remove_key:         "Remove Key"
-      are_you_sure:         "Are you sure?"
-      file:         "File"
-      or:         "OR"
-      copy_paste_key:         "Copy and paste your public key"
-      create_key_pair:         "Create Key Pair"
-      back:         "Back"
-      create:
-        success: "Key Pair was created successfully"
-        invalid_key: "Key Pair was not created: Invalid key"
-      update:
-        success: "Key Pair was updated successfully"
-      delete:
-        success: "Key Pair was removed successfully"
-
     section:
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
-
-
-    keybinding:
-      keyboard_help:          "Keyboard Shortcut Help"
-      toggle_compact:         "Toggle compact view"
-      next_criterion:         "Select next criterion"
-      previous_criterion:     "Select previous criterion"
-      next_level:             "Select next level"
-      previous_level:         "Select previous level"
-      confirm_level:          "Confirm level"
-      when_rubric:            "(When on rubric) "
-      open_annotation:        "Open annotation modal"
-      confirm_annotation:     "Confirm annotation"
-
 
     #app/views/assignments/_read.html.erb
     additional_information: "Additional Information"

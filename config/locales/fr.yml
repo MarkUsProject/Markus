@@ -118,28 +118,6 @@ fr:
     select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
     all_csv_file:       "Tous les champs : "
 
-    key_pairs:
-      title: "Les Paires de Clés"
-      key_pairs_title:         "Vos Paires de Clés"
-      time_of_upload:         "Moment du Téléchargement"
-      key_content:         "Contenu de Key"
-      new_key_pair:         "Nouvelle Paire de Clés"
-      add_key_pair:         "Ajouter une Paire de Clés"
-      remove_key:         "Retirez la clé"
-      are_you_sure:         "Êtes-vous sûr?"
-      file:         "Fichier"
-      or:         "OU"
-      copy_paste_key:         "Copiez et Collez Votre clé Publique"
-      create_key_pair:         "Créer une Paire de Clés"
-      back:         "Retourner"
-      create:
-        success: "Paire de Clés créé avec succès"
-        invalid_key: "Une Paire de Clés n'a pas été créé: Clé non valide"
-      update:
-        success: "Paire de Clés mis à jour avec succès"
-      delete:
-        success: "Paire de Clés supprimé avec succès"
-
     copy: "Copy"
 
     csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
@@ -259,18 +237,6 @@ fr:
       errors:
         messages:
           released_marks:         "TODO"
-
-    keybinding:
-      keyboard_help:          "Aide sur le raccourci clavier"
-      toggle_compact:         "Basculer affichage compact"
-      next_criterion:         "Sélectionnez le prochain critère"
-      previous_criterion:     "Sélectionnez le critère précédent"
-      next_level:             "Sélectionnez le prochain niveau"
-      previous_level:         "Sélectionnez le niveau précédent"
-      confirm_level:          "Confirmer le niveau"
-      when_rubric:            "(Quand à la rubrique) "
-      open_annotation:        "Modem d'annotation ouverte"
-      confirm_annotation:     "Confirmer l'annotation"
 
     #app/views/assignments/_read.html.erb
     additional_information: "Informations Complémentaires"

@@ -238,40 +238,6 @@ pt:
         messages:
           released_marks:         "TODO"
 
-    key_pairs:
-      title: "Os Pares de Chaves"
-      key_pairs_title:         "Os Seus Pares de Chaves"
-      time_of_upload:         "Tempo de Carregamento"
-      key_content:         "Conteúdo de Chave"
-      new_key_pair:         "Novo Par de Chaves"
-      add_key_pair:         "Adicionar um Par de Chaves"
-      remove_key:         "Remova a Chave"
-      are_you_sure:         "Tem certeza?"
-      file:         "Arquivo"
-      or:         "OU"
-      copy_paste_key:         "Copie e Cole a Sua Chave Pública"
-      create_key_pair:         "Criar Par de Chaves"
-      back:         "De Volta"
-      create:
-        success: "Par de Chaves foi criado com sucesso"
-        invalid_key: "Par de Chaves não foi criado: Chave inválida"
-      update:
-        success: "Par de Chaves foi atualizado com sucesso"
-      delete:
-        success: "Par de Chaves foi removido com sucesso"
-
-    keybinding:
-      keyboard_help:          "Ajuda de atalho de teclado"
-      toggle_compact:         "Alternar vista compacta"
-      next_criterion:         "Selecione o próximo critério"
-      previous_criterion:     "Selecione o critério anterior"
-      next_level:             "Selecione o próximo nível"
-      previous_level:         "Selecione o nível anterior"
-      confirm_level:          "Confirme o nível"
-      when_rubric:            "(Quando na rubrica) "
-      open_annotation:        "Abrir tela de anotação"
-      confirm_annotation:     "Confirmar anotação"
-
     #app/views/assignments/_read.html.erb
     additional_information: "Informações Adicionais"
 

@@ -70,3 +70,15 @@ en:
       submit_confirm: "You will not be able to see your results until remarking is finished.
                        Are you sure you want to submit your remark request now?"
       submitted_on: "Remark request was submitted on %{time}."
+
+    keybinding:
+      confirm_annotation: "Confirm annotation"
+      confirm_level: "Confirm level"
+      keyboard_help: "Keyboard Shortcut Help"
+      next_criterion: "Select next criterion"
+      next_level: "Select next level"
+      open_annotation: "Open annotation modal"
+      previous_criterion: "Select previous criterion"
+      previous_level: "Select previous level"
+      toggle_compact: "Toggle compact view"
+      when_rubric: "(When on rubric) "

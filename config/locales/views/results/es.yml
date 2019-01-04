@@ -77,3 +77,15 @@ es:
       submit_confirm: "¿Está seguro/a de querer enviar su solictud de recalificación? Usted no podrá
                        ver sus resultados hasta que el proceso de recalificación haya finalizado."
       submitted_on: "Solicitud de recalificación enviada en %{time}."
+
+    keybinding:
+      confirm_annotation: "Confirmar anotación"
+      confirm_level: "Confirmar nivel"
+      next_criterion: "Seleccione el siguiente criterio"
+      next_level: "Seleccione el siguiente nivel"
+      open_annotation: "Modalidad de anotación abierta"
+      previous_criterion: "Seleccione el criterio anterior"
+      previous_level: "Seleccionar nivel anterior"
+      keyboard_help: "Ayuda del acceso directo del teclado"
+      toggle_compact: "Cambiar vista compacta"
+      when_rubric: "(Cuándo en Rúbrica) "

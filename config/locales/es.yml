@@ -285,45 +285,11 @@ es:
         messages:
           released_marks:         "TODO"
 
-    key_pairs:
-      title:           "Pares de Claves"
-      key_pairs_title: "Sus Pares de Claves"
-      time_of_upload:  "Hora de Subida"
-      key_content:     "Contenido de la clave"
-      new_key_pair:    "Nuevo Par de Claves"
-      add_key_pair:    "Añadir un Par de Claves"
-      remove_key:      "Remover Clave"
-      are_you_sure:    "¿Está seguro/a?"
-      file:            "Archivo"
-      or:              "O"
-      copy_paste_key:  "Copie y pegue su clave pública"
-      create_key_pair: "Crear Par de Claves"
-      back:            "Atrás"
-      create:
-        success:     "El Par de Claves ha sido creado exitosamente"
-        invalid_key: "El Par de Claves no fue creado: Clave inválida"
-      update:
-        success: "El Par de Claves fue actualizado exitosamente"
-      delete:
-        success: "El Par de Claves fue removido exitosamente"
-
     section:
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
                             a una sección, use the la vista de Usuarios."
-
-    keybinding:
-      keyboard_help:          "Ayuda del acceso directo del teclado"
-      toggle_compact:         "Cambiar vista compacta"
-      next_criterion:         "Seleccione el siguiente criterio"
-      previous_criterion:     "Seleccione el criterio anterior"
-      next_level:             "Seleccione el siguiente nivel"
-      previous_level:         "Seleccionar nivel anterior"
-      confirm_level:          "Confirmar nivel"
-      when_rubric:            "(Cuándo en Rúbrica) "
-      open_annotation:        "Modalidad de anotación abierta"
-      confirm_annotation:     "Confirmar anotación"
 
     #app/views/assignments/_read.html.erb
     additional_information:                "Información Adicional"
