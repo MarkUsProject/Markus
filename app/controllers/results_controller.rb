@@ -106,8 +106,8 @@ class ResultsController < ApplicationController
                              .order('group_name')
       @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
-    elsif @result.is_a_review? && @current_user.is_reviewer_for?(@assignment, @result)
-      user_group = @current_user.grouping_for(@assignment.id)
+    elsif @result.is_a_review? && @current_user.is_reviewer_for?(assignment, @result)
+      user_group = @current_user.grouping_for(assignment.id)
       assigned_prs = user_group.peer_reviews_to_others
       @next_grouping = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
       @previous_grouping = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
@@ -234,25 +234,24 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
-    grouping = Grouping.find(params[:grouping_id])
     assignment = Assignment.find(params[:assignment_id])
     result = Result.find(params[:id])
 
-    if grouping.has_submission? && grouping.is_collected?
-      if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
-        reviewer = @current_user.grouping_for(assignment.pr_assignment.id)
-        next_pr = reviewer.review_for(grouping)
-        next_result = Result.find(next_pr.result_id)
+    if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
+      next_pr = PeerReview.find(params[:grouping_id])
+      next_result = Result.find(next_pr.result_id)
 
-        redirect_to action: 'edit',
-                    id: next_result.id
-      else
+      redirect_to action: 'edit',
+                  id: next_result.id
+    else
+      grouping = Grouping.find(params[:grouping_id])
+      if grouping.has_submission? && grouping.is_collected?
         redirect_to action: 'edit',
                     id: grouping.current_submission_used.get_latest_result.id
+      else
+        redirect_to controller: 'submissions',
+                    action: 'browse'
       end
-    else
-      redirect_to controller: 'submissions',
-                  action: 'browse'
     end
   end
 
