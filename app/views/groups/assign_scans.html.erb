@@ -74,10 +74,10 @@
              formats: [:js] %>
 </script>
 <% content_for :title do %>
-    <%= t('groups.assign_scans') %>
+    <%= t('exam_templates.assign_scans.title') %>
     <span class='title-help assignment_groups_help'>
       <p class='help-message-title assignment_groups_help'>
-        <%= t('assignment.help.assign_scans') %>
+        <%= t('exam_templates.assign_scans.help') %>
       </p>
     </span>
 <% end %>
@@ -249,7 +249,7 @@
           <input id="student_id" name="s_id" type="hidden">
           <input id="grouping_id" name="g_id" value="" type="hidden">
           <br>
-          <label for="skip"><%= t('groups.skip_group') %></label>
+          <label for="skip"><%= t('exam_templates.assign_scans.skip_group') %></label>
           <input type="checkbox" name="skip" id="skip" value="1">
           <br>
           <button type="submit"><%= t('save') %></button>

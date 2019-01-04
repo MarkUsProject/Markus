@@ -73,6 +73,12 @@ es:
       page_number:    "número de página"
       upside_down:    "Página al revés?"
 
+    assign_scans:
+      done: "Todos los grupos han sido asignados con éxito a los estudiantes"
+      help: "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos."
+      skip_group: "Skip group"
+      title: "Asignar Escaneado"
+
   flash:
     exam_templates:
       update:

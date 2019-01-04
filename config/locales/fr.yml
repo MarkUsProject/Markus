@@ -142,9 +142,6 @@ fr:
     no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
 
     groups:
-      assign_scans: "Affecter des scans"
-      skip_group: "UPDATE ME"
-      done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
       upload:
         description: "Format du fichier CSV : <br>
             <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"

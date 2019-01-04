@@ -196,7 +196,7 @@ class ExamTemplatesController < ApplicationController
                       .find_by('status LIKE ?', 'ERROR%')
     end
     if @next_error.nil?
-      flash_message(:success, t('groups.done_assign'))
+      flash_message(:success, t('exam_templates.assign_scans.done'))
     end
   end
 
@@ -256,7 +256,7 @@ class ExamTemplatesController < ApplicationController
     end
 
     if next_error.nil?
-      flash_now(:success, t('groups.done_assign'))
+      flash_now(:success, t('exam_templates.assign_scans.done'))
       render plain: ''
     else
       render plain: "#{next_error.id}.pdf"

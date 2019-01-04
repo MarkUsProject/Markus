@@ -54,8 +54,6 @@ en:
             repo_url: "Repository URL"
             title: "Starter Code"
             update: "Update"
-        help:
-            assign_scans: "Assign students to scanned exam groups based on printed student names."
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
@@ -156,9 +154,6 @@ en:
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
 
     groups:
-      assign_scans:     "Assign Scans"
-      skip_group:       "Skip group"
-      done_assign: "All groups have been successfully assigned students"
       upload:
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"

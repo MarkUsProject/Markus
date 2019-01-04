@@ -143,9 +143,6 @@ pt:
     no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
 
     groups:
-      assign_scans: "Atribuir varreduras"
-      skip_group: "UPDATE ME"
-      done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
       upload:
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
