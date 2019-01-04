@@ -281,11 +281,7 @@ class Assignment < ApplicationRecord
   def max_mark(user_visibility = :ta)
     # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
     #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    if user_visibility == :peer
-      max_marks = pr_assignment.get_criteria(user_visibility).map(&:max_mark)
-    else
-      max_marks = get_criteria(user_visibility).map(&:max_mark)
-    end
+    max_marks = get_criteria(user_visibility).map(&:max_mark)
     s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end

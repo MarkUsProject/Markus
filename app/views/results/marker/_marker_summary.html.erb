@@ -16,8 +16,8 @@
 
   <div class='summary_block'>
     <span><strong><%= t('results.subtotal') %></strong>:</span>
-    <span id='current_subtotal_div'> <%= result.get_subtotal(user_visibility: @result.is_a_review? ? :peer : :ta) %></span>
-    <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
+    <span id='current_subtotal_div'> <%= result.get_subtotal %></span>
+    <span> / <%= @result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta) %></span>
   </div>
 
   <% unless @result.is_a_review? %>
@@ -76,7 +76,7 @@
     <div class='summary_block'>
       <span><strong><%= t('results.remark.old_subtotal') %></strong>:</span>
       <span id='old_subtotal_div'> <%= old_result.get_subtotal %></span>
-      <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
+      <span> / <%= @result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta) %></span>
     </div>
 
     <% unless @result.is_a_review? %>
@@ -127,7 +127,7 @@
   <div class='mark_total'>
     <span class='final_mark'>
       <span id='old_total_mark_div'><%= old_result.total_mark %> </span>
-      <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
+      <span> / <%= @result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta) %></span>
     </span>
     <span><%= t('results.remark.old_total') %></span>
   </div>
@@ -136,7 +136,7 @@
 <div class='mark_total'>
   <span class='final_mark'>
     <span id='current_total_mark_div'><%= result.total_mark %> </span>
-    <span> / <%= assignment.max_mark(@result.is_a_review? ? :peer : :ta) %></span>
+    <span> / <%= @result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta) %></span>
   </span>
   <span><%= Result.human_attribute_name(:total_mark) %></span>
 </div>

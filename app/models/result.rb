@@ -78,7 +78,8 @@ class Result < ApplicationRecord
       0
     else
       assignment ||= submission.grouping.assignment
-      if user_visibility == :peer
+      if is_a_review?
+        user_visibility == :peer
         assignment = assignment.pr_assignment
       end
       criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
