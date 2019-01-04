@@ -128,8 +128,11 @@ class AssignmentsController < ApplicationController
     @penalty = @assignment.submission_rule
     @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
 
-    @prs = @student.grouping_for(@assignment.parent_assignment.id).
-        peer_reviews.where(results: { released_to_students: true })
+    @prs = @student.grouping_for(@assignment.parent_assignment.id)&.
+        peer_reviews&.where(results: { released_to_students: true })
+    if @prs.nil?
+      @prs = []
+    end
 
     if @student.section &&
         !@student.section.section_due_date_for(@assignment.id).nil?
