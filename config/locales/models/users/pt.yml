@@ -12,6 +12,7 @@ pt:
         one: "Usuário"
     attributes:
       user:
+        api_key: "Chave da API"
         email: "Email"
         first_name: "Primeiro nome"
         full_name: "Nome completo"

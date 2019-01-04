@@ -11,12 +11,6 @@ en:
     working:            "Loading"
     please_wait:        "Please wait…"
 
-    # app/views/api/_key_display.html.erb
-    api_key:            "Your API Key"
-    api_key_unavailable:        "Unavailable"
-    reset_api_key:        "Reset my API key"
-    api_key_help: "The API key is used for the REST interface for authentication. See <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">MarkUs Wiki</a> for information on how to use the REST API."
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
     home:               "Home"
@@ -107,7 +101,6 @@ en:
             header: "Upload Peer Review CSV"
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
-    remove_grader:      "Remove Grader"
     add_new:            "Add New File"
     edit:               "Edit"
     save:               "Save"

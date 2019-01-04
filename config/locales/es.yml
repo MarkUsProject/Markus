@@ -11,14 +11,6 @@ es:
     working:                        "Cargando"
     please_wait:                    "Por favor espere..."
 
-    # app/views/api/_key_display.html.erb
-    api_key:             "Su clave API"
-    api_key_unavailable: "No disponible"
-    reset_api_key:       "Reiniciar mi clave API"
-    api_key_help:        "La clave API es usada como autenticación para la interface REST. Mira la
-                          <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">
-                          Wiki de MarkUs</a> para más información acerca del uso de la REST API."
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Panel"
     home:               "Inicio"

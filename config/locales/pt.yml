@@ -11,11 +11,6 @@ pt:
     working:            "Carregando"
     please_wait:        "Aguarde por favor..."
 
-    # app/views/api/_key_display.html.erb
-    api_key:            "Chave da API"
-    api_key_unavailable:        "Indisponível"
-    reset_api_key:       "Gerar outra chave para a API"
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Painel"
     sections:           "Sessões"
