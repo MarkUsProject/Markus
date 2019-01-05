@@ -145,7 +145,7 @@ class SubmissionsController < ApplicationController
     end
 
     if @assignment.allow_web_submits && @assignment.vcs_submit
-      flash_message(:notice, t('student.submission.version_control_warning'))
+      flash_message(:notice, t('submissions.student.version_control_warning'))
     end
     render layout: 'assignment_content'
   end
@@ -626,7 +626,7 @@ class SubmissionsController < ApplicationController
 
       files = revision.files_at_path(assignment.repository_folder)
       if files.count == 0
-        flash_message(:error, t('student.submission.no_files_available'))
+        flash_message(:error, t('submissions.no_files_available'))
         redirect_back(fallback_location: root_path)
         return
       end

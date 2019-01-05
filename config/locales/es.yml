@@ -178,16 +178,9 @@ es:
     #Sutdent's View (student)
     student:
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
-      overview:                           "Vista General"
-      last_revision_date:                 "Última fecha de revisión:
-                                           <br><span class=\"info_date\">%{last_modified_date}</span>"
-      files:                              "Archivos"
-      missing_required_files:             "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\">
-                                           archivos requeridos no encontrados</span>"
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       submission:
-        file_manager:                     "%{short_identifier}: Administrador de Archivos"
         conflicts:                        "Conflictos"
         file_conflicts:                   "Sus cambios no han sido realizados. Los siguientes conflictos fueron
                                            detectados:"
@@ -198,11 +191,6 @@ es:
         invalid_file_name:                "El nombre del archivo enviado no es válido"
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
-        no_files_available:               "No existen archivos disponibles"
-        no_revision_available:            "No existe ninguna revisión disponible"
-        version_control_warning:          "Entregar archivos aquí reescribe todos los cambios realizados usando
-                                           version control. Asegúrese que haya trabajado en los archivos más recientes
-                                           antes de realizar la entrega."
         empty_file_warning: "UPDATE ME"
 
     add_student:
@@ -375,8 +363,6 @@ es:
         extra_stderr: "UPDATE ME \n%{extra}\n"
         extra_malformed: "UPDATE ME \n%{extra}\n"
         extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
-
-    server_time: "Tiempo Servidor:"
 
     poll_job:
       working_message: "%{progress} fuera de %{total}"

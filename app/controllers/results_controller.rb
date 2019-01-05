@@ -363,7 +363,7 @@ class ResultsController < ApplicationController
 
     submission = Submission.find(params[:submission_id])
     if submission.revision_identifier.nil?
-      render plain: t('student.submission.no_files_available')
+      render plain: t('submissions.no_files_available')
       return
     end
 

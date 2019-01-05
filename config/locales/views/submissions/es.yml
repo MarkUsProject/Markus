@@ -74,8 +74,23 @@ es:
       viewing_revision: "Mirando Revisión:"
       server_time: "push:"
     student:
+      file_manager: "%{short_identifier}: Administrador de Archivos"
+      files_submitted:
+        zero: "%{count} archivos"
+        one: "%{count} archivos"
+        other: "%{count} archivos"
       invalid_group_cannot_submit: "Su grupo no es válido. Usted no puede enviar ningún documento."
+      last_revision_date: "Última fecha de revisión"
+      missing_required_files:
+        zero: "%{count} archivos requeridos no encontrados"
+        one: "%{count} archivos requeridos no encontrados"
+        other: "%{count} archivos requeridos no encontrados"
+      no_revision_available: "No existe ninguna revisión disponible."
       no_submission: "Usted no ha enviado ninguna entrega todavía"
+      server_time: "Tiempo Servidor"
+      version_control_warning: "Entregar archivos aquí reescribe todos los cambios realizados usando
+                                version control. Asegúrese que haya trabajado en los archivos más recientes
+                                antes de realizar la entrega."
 
     # Miscellaneous
     commit_date: "Fecha del Commit"
@@ -87,6 +102,7 @@ es:
     grading_can_begin_after_for_sections: "El proceso de calificación puede iniciar después de %{time} para las
                                            secciones: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} proyectos han sido calificados"
+    no_files_available: "No existen archivos disponibles"
     marking_incomplete_warning: "Nota: Esto sólo descargará las entregas que han sido recolectadas.\n\n¿Está
                                  seguro/a de querer proceder?"
     release_marks: "Publicar Notas"

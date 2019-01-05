@@ -149,14 +149,9 @@ fr:
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
-      overview: "Vue d'ensemble"
-      last_revision_date: "Dernière révision : <br><span class=\"info_date\">%{last_modified_date}</span>"
-      files: "Fichiers"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_peer_submission_yet: "Vous avez aucune observation à révision."
       no_reviews: "Personne ne vous a encore de commentaires."
       submission:
-        file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         conflicts: "Conflits"
         file_conflicts: "Vos changements n'ont pas été pris en compte. Les fichiers suivants sont en conflit :"
         missing_files: "Vous devez toujours envoyer %{file} fichier(s) pour ce projet."
@@ -164,9 +159,6 @@ fr:
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
-        no_files_available: "Aucun fichier disponible"
-        no_revision_available: "Aucune révision disponible"
-        version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
         empty_file_warning: "UPDATE ME"
 
     add_student:
@@ -324,8 +316,6 @@ fr:
         extra_stderr: "Messages d'erreur: \n%{extra}\n"
         extra_malformed: "Resultats mal formés: \n%{extra}\n"
         extra_hooks_stderr: "Erreurs des scripts auxiliares: \n%{extra}\n"
-
-    server_time: "Heure du serveur :"
 
     poll_job:
       working_message: "%{progress} hors de %{total}"

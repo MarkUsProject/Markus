@@ -158,14 +158,9 @@ en:
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Peer Reviews"
-      overview: "Overview"
-      last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
-      files: "files"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_peer_submission_yet: "You have no submissions to review yet."
       no_reviews: "No one has reviewed your submissions yet."
       submission:
-        file_manager: "%{short_identifier}: File Manager"
         conflicts: "Conflicts"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
         missing_files: "You still need to submit %{file} required file(s) for this assignment:"
@@ -173,9 +168,6 @@ en:
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}.  File may be missing."
-        no_files_available: "No files available"
-        no_revision_available: "No revision available"
-        version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
@@ -340,8 +332,6 @@ en:
         extra_stderr: "Messages on stderr: \n%{extra}\n"
         extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
         extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
-
-    server_time: "Server Time:"
 
     poll_job:
       working_message: "%{progress} out of %{total}"
