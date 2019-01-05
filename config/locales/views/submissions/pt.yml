@@ -29,8 +29,22 @@ pt:
       viewing_revision: "Vendo revisão:"
       server_time: "push:"
     student:
+      file_manager: "%{short_identifier}: Gerenciador de Arquivos"
+      files_submitted:
+        zero: "%{count} arquivos"
+        one: "%{count} arquivos"
+        other: "%{count} arquivos"
       invalid_group_cannot_submit: "Seu grupo não é válido. Você não pode enviar nada."
+      last_revision_date: "Última data de revisão"
+      missing_required_files:
+        zero: "%{count} arquivos exigidos"
+        one: "%{count} arquivos exigidos"
+        other: "%{count} arquivos exigidos"
+      no_revision_available: "Nenhuma revisão disponível."
       no_submission: "Você não tem nenhum envio ainda."
+      server_time: "Data servidor"
+      version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão.
+                                Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
 
     # Miscellaneous
     commit_date: "Data de envio"
@@ -42,6 +56,7 @@ pt:
     grading_can_begin_after_for_sections: "Avaliação pode começar depois %{time} para o seções: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} submissões são corrigidos"
     marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
+    no_files_available: "Nenhum arquivo disponível"
     release_marks: "Mostrar notas"
     repo_list: "Lista de repositórios"
     repo_checkout_file: "Comando para transferir projetos"

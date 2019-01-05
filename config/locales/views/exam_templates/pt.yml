@@ -73,6 +73,12 @@ pt:
       page_number:    "Número de página"
       upside_down:    "Página de cabeça para baixo?"
 
+    assign_scans:
+      done: "Todos os grupos foram atribuídos com sucesso a estudantes"
+      help: "Assign students to scanned exam groups based on printed student names."
+      skip_group: "Skip group"
+      title: "Atribuir varreduras"
+
   flash:
     exam_templates:
       update:

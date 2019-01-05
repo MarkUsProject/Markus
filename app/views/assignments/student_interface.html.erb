@@ -38,18 +38,18 @@
               <%= t('submissions.student.invalid_group_cannot_submit') %>
             </p>
           <% end %>
-          <h3><%= t('student.overview') %></h3>
-          <div class='info'>
-            <%= raw(t('student.last_revision_date', last_modified_date: l(@last_modified_date))) %>
+          <div class='sub_block'>
+            <span class='prop_label'><%= t('submissions.student.last_revision_date') %></span>
+            <span class="prop_paragraph">
+              <%= l(@last_modified_date) %>
+            </span>
           </div>
-          <span class='info_number'>
-            <%= @num_submitted_files.to_s %>
-          </span>
-          <span class='info'><%= t('student.files') %></span>
+          <span class='info'><%= t('submissions.student.files_submitted', count: @num_submitted_files) %></span>
           <br>
-          <%= raw(t('student.missing_required_files',
-                     missing_files: @num_missing_assignment_files.to_s,
-                     style_class: ('red' unless @num_missing_assignment_files == 0))) %>
+          <span class='info <%= @num_missing_assignment_files > 0 ? 'red' : '' %>'>
+            <%= t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
+          </span>
+
           <br>
         <% end %>
       </div>

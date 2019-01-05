@@ -11,14 +11,6 @@ es:
     working:                        "Cargando"
     please_wait:                    "Por favor espere..."
 
-    # app/views/api/_key_display.html.erb
-    api_key:             "Su clave API"
-    api_key_unavailable: "No disponible"
-    reset_api_key:       "Reiniciar mi clave API"
-    api_key_help:        "La clave API es usada como autenticación para la interface REST. Mira la
-                          <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">
-                          Wiki de MarkUs</a> para más información acerca del uso de la REST API."
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Panel"
     home:               "Inicio"
@@ -54,10 +46,6 @@ es:
             grace_day_over_limit:         "Ha asignado uno o más estudiantes que tienen menos créditos para el período
                                            de aplazamiento de gracia que la cantidad ya utilizada por el grupo
                                            %{group}."
-            select_a_grader:              "Seleccione un evaluador"
-            select_a_criterion:           "Seleccione al menos un criterio de calificación"
-            group_submission_no_files:    "Uno o más de los grupos seleccionados no tienen archivos en su entrega. El
-                                           evaluador no ha sido asignado."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
@@ -70,11 +58,6 @@ es:
             repo_url: "UPDATE ME"
             title: "Código Inicial"
             update: "UPDATE ME"
-        help:
-            graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
-                                  De manera predeterminada, los evaluadores serán asignados a todos los criterios de
-                                  calificación."
-            assign_scans:        "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos"
         start_peer_review:                "Revisión de Compañeros"
         peer_review_results:              "Resultados para la Revisión de Compañeros"
         your_reviews:                     "Sus Revisiones"
@@ -145,8 +128,6 @@ es:
 
     copy:                         "Copy"
 
-    csv_invalid_lines:                   "Las siguientes líneas en formato CSV fueron inválidas: "
-    csv_valid_lines:                     "Se han actualizado %{valid_line_count} líneas exitosamente"
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
@@ -156,17 +137,6 @@ es:
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
                                era: '%{group_name}'."
-      group_to_grader:         "Usted debe proveer un archivo con formato CSV para crear los pares de evaluador y grupo."
-      student_to_grader:       "Usted debe proveer un archivo con formato CSV para crear los pares de estudiante y
-                                evaluador"
-      invalid_csv:             "El formato del archivo no ha sido reconocido"
-      invalid_row:
-        invalid_format:  "El formato de la fila es inválido"
-      upload:
-        # cuando un archivo que no es de tipo texto tiene una extensión .csv (En otras palabras: si el usuario cambia
-        # la extensión de .pdf a .csv de un archivo pdf)
-        non_text_file_with_csv_extension: "El archivo seleccionado no es un archivo con formato CSV (a pesar de que
-                                           pueda tener csv como extensión)."
       group_with_different_repo:                            "Error: El grupo %{group_name} no puede ser creado debido a
                                                              que un grupo con el mismo nombre y un repositorio diferente
                                                              ya existe"
@@ -192,25 +162,9 @@ es:
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
     groups:
-      assign_scans:                  "Asignar Escaneado"
-      skip_group:                    "UPDATE ME"
-      done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
-      randomly_assign_graders:        "Asignar Evaluadores al azar"
       upload:
         description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
-        upload_grader_map:               "Subir pares Grupo / Evaluador"
-        upload_grader_criteria_map:      "Subir pares Criterios de Calificación / Evaluador"
-        description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-
-      download:
-        download_grader_maps:         "Descargar los pares del evaluador"
-        download_grader_groups_csv:   "Par Grupo / Evaluador en formato CSV"
-        download_grader_criteria_csv: "Par Criterios de Calificación / Evaluador en formato CSV"
-      action:
-        assign_grader:   "Asignar Evaluador(es)"
-        unassign_grader: "Eliminar Asignación para Evaluador(es)"
       csv:
         could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
@@ -224,16 +178,9 @@ es:
     #Sutdent's View (student)
     student:
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
-      overview:                           "Vista General"
-      last_revision_date:                 "Última fecha de revisión:
-                                           <br><span class=\"info_date\">%{last_modified_date}</span>"
-      files:                              "Archivos"
-      missing_required_files:             "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\">
-                                           archivos requeridos no encontrados</span>"
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       submission:
-        file_manager:                     "%{short_identifier}: Administrador de Archivos"
         conflicts:                        "Conflictos"
         file_conflicts:                   "Sus cambios no han sido realizados. Los siguientes conflictos fueron
                                            detectados:"
@@ -244,32 +191,7 @@ es:
         invalid_file_name:                "El nombre del archivo enviado no es válido"
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
-        no_files_available:               "No existen archivos disponibles"
-        no_revision_available:            "No existe ninguna revisión disponible"
-        version_control_warning:          "Entregar archivos aquí reescribe todos los cambios realizados usando
-                                           version control. Asegúrese que haya trabajado en los archivos más recientes
-                                           antes de realizar la entrega."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:       "Asignar los Evaluadores"
-      coverage:               "Cobertura"
-      assign_to_criteria:     "Asignar Evaluadores a los Criterios de Calificación"
-      skip_empty_submissions: "No se asignará Evaluadores a los grupos con entregas vacías (requiere que las entregas
-                               sean recolectadas)"
-      download:
-        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
-        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Par Estudiante / Evaluador en formato CSV"
-      upload:
-        upload_grader_map:      "Subir el par Estudiante/Evaluador"
-        description_grader_map: "Formato del archivo CSV:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
@@ -309,6 +231,9 @@ es:
       success: "Sus cambios han sido realizados."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
+        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
         binary_file_message: "Contenido binario: Use el botón de descarga para ver el archivo!"
@@ -330,48 +255,13 @@ es:
         messages:
           released_marks:         "TODO"
 
-    key_pairs:
-      title:           "Pares de Claves"
-      key_pairs_title: "Sus Pares de Claves"
-      time_of_upload:  "Hora de Subida"
-      key_content:     "Contenido de la clave"
-      new_key_pair:    "Nuevo Par de Claves"
-      add_key_pair:    "Añadir un Par de Claves"
-      remove_key:      "Remover Clave"
-      are_you_sure:    "¿Está seguro/a?"
-      file:            "Archivo"
-      or:              "O"
-      copy_paste_key:  "Copie y pegue su clave pública"
-      create_key_pair: "Crear Par de Claves"
-      back:            "Atrás"
-      create:
-        success:     "El Par de Claves ha sido creado exitosamente"
-        invalid_key: "El Par de Claves no fue creado: Clave inválida"
-      update:
-        success: "El Par de Claves fue actualizado exitosamente"
-      delete:
-        success: "El Par de Claves fue removido exitosamente"
-
     section:
       help:
         manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
                             a una sección, use the la vista de Usuarios."
 
-    keybinding:
-      keyboard_help:          "Ayuda del acceso directo del teclado"
-      toggle_compact:         "Cambiar vista compacta"
-      next_criterion:         "Seleccione el siguiente criterio"
-      previous_criterion:     "Seleccione el criterio anterior"
-      next_level:             "Seleccione el siguiente nivel"
-      previous_level:         "Seleccionar nivel anterior"
-      confirm_level:          "Confirmar nivel"
-      when_rubric:            "(Cuándo en Rúbrica) "
-      open_annotation:        "Modalidad de anotación abierta"
-      confirm_annotation:     "Confirmar anotación"
-
     #app/views/assignments/_read.html.erb
-    no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
     additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb
@@ -473,21 +363,6 @@ es:
         extra_stderr: "UPDATE ME \n%{extra}\n"
         extra_malformed: "UPDATE ME \n%{extra}\n"
         extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
-
-#Missing Activerecord Translations for english
-    datetime:
-      distance_in_words:
-        less_than_x_seconds:
-          zero: "menos de un segundo"
-        less_than_x_minutes:
-          zero: "menos de un minuto"
-
-    support:
-      array:
-        sentence_connector: "y"
-        skip_last_comma:    true
-
-    server_time: "Tiempo Servidor:"
 
     poll_job:
       working_message: "%{progress} fuera de %{total}"

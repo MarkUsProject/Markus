@@ -32,9 +32,24 @@ en:
       submitted_at:  "Submitted At"
       viewing_revision: "Viewing Revision:"
       server_time: "push:"
+
     student:
+      file_manager: "%{short_identifier}: File Manager"
+      files_submitted:
+        zero: "No files submitted"
+        one: "One file submitted"
+        other: "%{count} files submitted"
       invalid_group_cannot_submit: "Your group does not have enough members, and so you cannot submit any work."
+      last_revision_date: "Last Revision Date"
+      missing_required_files:
+        zero: "No missing required files"
+        one: "One missing required file"
+        other: "%{count} missing required files"
+      no_revision_available: "No revision available."
       no_submission: "You have not submitted any work yet."
+      server_time: "Server Time"
+      version_control_warning: "Submitting files here overrides any changes made using version control.
+                                Make sure you have worked on the most recent files before submitting."
 
     # Miscellaneous
     commit_date: "Submission Date"
@@ -46,6 +61,7 @@ en:
     grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
+    no_files_available: "No files available"
     release_marks: "Release Marks"
     repo_list: "Repository List"
     repo_checkout_file: "Repository Checkout File"

@@ -174,7 +174,7 @@ describe GradersController do
                 params: { assignment_id: @assignment.id, grader_mapping: tempfile, encoding: 'UTF-8' }
 
         expect(response).to be_redirect
-        i18t_string = [I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f }
+        i18t_string = [I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f }
         expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end #groups csv upload
@@ -344,7 +344,7 @@ describe GradersController do
                 params: { assignment_id: @assignment.id, grader_criteria_mapping: tempfile, encoding: 'UTF-8' }
 
         expect(response).to be_redirect
-        i18t_string = [I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f }
+        i18t_string = [I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f }
         expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end # criteria csv upload

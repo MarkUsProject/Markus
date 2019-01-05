@@ -444,7 +444,7 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
     file_format = params[:file_format]
     if assignment_list.blank?
-      flash_message(:error, I18n.t('csv.invalid_csv'))
+      flash_message(:error, I18n.t('upload_errors.missing_file'))
       redirect_to action: 'index'
       return
     end

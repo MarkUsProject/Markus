@@ -11,11 +11,6 @@ fr:
     working:            "Chargement"
     please_wait:        "Merci de patienter…"
 
-    # app/views/api/_key_display.html.erb
-    api_key:              "Votre clé - API"
-    api_key_unavailable:  "Non disponible"
-    reset_api_key:        "Générer une nouvelle clé"
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Tableau de bord"
     home:               "Accueil"
@@ -47,9 +42,6 @@ fr:
         group:
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
-            select_a_grader: "Sélectionner un correcteur"
-            select_a_criterion: "Sélectionnez au moins un critère"
-            group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
@@ -126,45 +118,14 @@ fr:
     select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
     all_csv_file:       "Tous les champs : "
 
-    key_pairs:
-      title: "Les Paires de Clés"
-      key_pairs_title:         "Vos Paires de Clés"
-      time_of_upload:         "Moment du Téléchargement"
-      key_content:         "Contenu de Key"
-      new_key_pair:         "Nouvelle Paire de Clés"
-      add_key_pair:         "Ajouter une Paire de Clés"
-      remove_key:         "Retirez la clé"
-      are_you_sure:         "Êtes-vous sûr?"
-      file:         "Fichier"
-      or:         "OU"
-      copy_paste_key:         "Copiez et Collez Votre clé Publique"
-      create_key_pair:         "Créer une Paire de Clés"
-      back:         "Retourner"
-      create:
-        success: "Paire de Clés créé avec succès"
-        invalid_key: "Une Paire de Clés n'a pas été créé: Clé non valide"
-      update:
-        success: "Paire de Clés mis à jour avec succès"
-      delete:
-        success: "Paire de Clés supprimé avec succès"
-
     copy: "Copy"
 
-    csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
-    csv_valid_lines: "Avec succès téléchargé %{valid_line_count} entrées"
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
       repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
-      group_to_grader:         "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
-      student_to_grader:       "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
-      invalid_csv:             "Le format du fichier CSV n'a pas été reconnu"
-      invalid_row:
-              invalid_format:  "Invalid format de ligne"
-      upload:
-        non_text_file_with_csv_extension: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
 
     browse_submissions:
       review_state:         "Avis Etat"
@@ -172,28 +133,10 @@ fr:
     no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
 
     groups:
-      assign_scans: "Affecter des scans"
-      skip_group: "UPDATE ME"
-      done_assign: "Tous les groupes ont été attribués avec succès à des étudiants"
-      randomly_assign_graders: "Attribuer les correcteurs aléatoirement"
       upload:
         description: "Format du fichier CSV : <br>
             <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
-        upload_grader_map: "Envoi de groupes / Attribution des correcteurs"
-        upload_grader_criteria_map: "Envoyer un fichier de critères / attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br>
-            <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Format du fichier CSV : <br>
-                       <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: 'Supprimer les attributions existants'
-      download:
-        download_grader_maps: "Télécharger les attributions des correcteurs"
-        download_grader_groups_csv: "Groupes / attribution des correcteurs CSV"
-        download_grader_criteria_csv: "Critères / attribution des correcteurs CSV"
-      action:
-        assign_grader: "Attribuer un ou plusieurs correcteurs"
-        unassign_grader: "Retirer un ou plusieurs correcteurs"
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
@@ -206,14 +149,9 @@ fr:
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
-      overview: "Vue d'ensemble"
-      last_revision_date: "Dernière révision : <br><span class=\"info_date\">%{last_modified_date}</span>"
-      files: "Fichiers"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> fichier(s) requis sont manquants</span>"
       no_peer_submission_yet: "Vous avez aucune observation à révision."
       no_reviews: "Personne ne vous a encore de commentaires."
       submission:
-        file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         conflicts: "Conflits"
         file_conflicts: "Vos changements n'ont pas été pris en compte. Les fichiers suivants sont en conflit :"
         missing_files: "Vous devez toujours envoyer %{file} fichier(s) pour ce projet."
@@ -221,29 +159,7 @@ fr:
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
-        no_files_available: "Aucun fichier disponible"
-        no_revision_available: "Aucune révision disponible"
-        version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Correcteurs assignés"
-      coverage:           "Couverture"
-      assign_to_criteria: "Attribuer les correcteurs aux critères"
-      skip_empty_submissions: "Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)"
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
-      upload:
-        upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
-        description_grader_map: "Format du fichier CSV : <br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
@@ -278,6 +194,9 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
         binary_file_message: "Fichier binaire : utiliser le bouton Télécharger pour voir Binary content: Use download button to view file!"
@@ -299,20 +218,7 @@ fr:
         messages:
           released_marks:         "TODO"
 
-    keybinding:
-      keyboard_help:          "Aide sur le raccourci clavier"
-      toggle_compact:         "Basculer affichage compact"
-      next_criterion:         "Sélectionnez le prochain critère"
-      previous_criterion:     "Sélectionnez le critère précédent"
-      next_level:             "Sélectionnez le prochain niveau"
-      previous_level:         "Sélectionnez le niveau précédent"
-      confirm_level:          "Confirmer le niveau"
-      when_rubric:            "(Quand à la rubrique) "
-      open_annotation:        "Modem d'annotation ouverte"
-      confirm_annotation:     "Confirmer l'annotation"
-
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
     additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb
@@ -410,100 +316,6 @@ fr:
         extra_stderr: "Messages d'erreur: \n%{extra}\n"
         extra_malformed: "Resultats mal formés: \n%{extra}\n"
         extra_hooks_stderr: "Erreurs des scripts auxiliares: \n%{extra}\n"
-
-#Missing Activerecord Translations for french
-    datetime:
-      distance_in_words:
-        half_a_minute: "une demi-minute"
-        less_than_x_seconds:
-          zero: "moins d'une seconde"
-          one: "moins d'une seconde"
-          other: "moins de %{count} secondes"
-        x_seconds:
-          one: "une seconde"
-          other: "%{count} secondes"
-        less_than_x_minutes:
-          zero: "moins d'une minute"
-          one: "moins d'une minute"
-          other: "moins de %{count} minutes"
-        x_minutes:
-          one: "une minute"
-          other: "%{count} minutes"
-        about_x_hours:
-          one: "environ une heure"
-          other: "environ %{count} heures"
-        x_days:
-          one: "un jour"
-          other: "%{count} jours"
-        about_x_months:
-          one: "environ un mois"
-          other: "environ %{count} mois"
-        x_months:
-          one: "un mois"
-          other: "%{count} mois"
-        about_x_years:
-          one: "environ un an"
-          other: "environ %{count} ans"
-        over_x_years:
-          one: "plus d'un an"
-          other: "plus de %{count} ans"
-        almost_x_years:
-          one:   "presqu'un an"
-          other: "presque %{count} ans"
-      prompts:
-        hour: "Heure"
-        minute: "Minute"
-
-    number:
-      percentage:
-        format:
-          delimiter:  " "
-      precision:
-        format:
-          delimiter: " "
-      format:
-        precision: 3
-        separator: ','
-        delimiter: ' '
-      currency:
-        format:
-          unit: '€'
-          delimiter: " "
-          separator: ","
-          precision: 2
-          format: '%n %u'
-      human:
-        format:
-          # These three are to override number.format and are optional
-          # separator:
-          delimiter: ""
-          precision: 2
-        # Rails <= v2.2.2
-        # storage_units: [octet, kb, Mb, Gb, Tb]
-        # Rails >= v2.3
-        storage_units:
-          format: "%n %u"
-          units:
-            byte:
-              one: "octet"
-              other: "octets"
-            kb: "ko"
-            mb: "Mo"
-            gb: "Go"
-            tb: "To"
-
-    support:
-      select:
-      # default value for :prompt => true in FormOptionsHelper
-        prompt: "Please select"
-      array:
-        sentence_connector: 'et'
-        skip_last_comma: true
-        words_connector: ", "
-        two_words_connector: " et "
-        last_word_connector: " et "
-
-    server_time: "Heure du serveur :"
 
     poll_job:
       working_message: "%{progress} hors de %{total}"

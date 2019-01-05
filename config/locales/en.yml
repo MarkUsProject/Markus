@@ -11,12 +11,6 @@ en:
     working:            "Loading"
     please_wait:        "Please wait…"
 
-    # app/views/api/_key_display.html.erb
-    api_key:            "Your API Key"
-    api_key_unavailable:        "Unavailable"
-    reset_api_key:        "Reset my API key"
-    api_key_help: "The API key is used for the REST interface for authentication. See <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">MarkUs Wiki</a> for information on how to use the REST API."
-
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
     home:               "Home"
@@ -48,9 +42,6 @@ en:
         group:
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
-            select_a_grader: "Select a grader"
-            select_a_criterion: "Select at least one criterion"
-            group_submission_no_files: "One or more of the groups selected has no files in their submission. Grader not assigned."
             clone_warning:
                 no_active_students: "Group '%{group}' not cloned: zero active students left"
                 no_member: "Member '%{member}' not added to Group '%{group}': %{error}"
@@ -63,9 +54,6 @@ en:
             repo_url: "Repository URL"
             title: "Starter Code"
             update: "Update"
-        help:
-            graders: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."
-            assign_scans: "Assign students to scanned exam groups based on printed student names."
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
@@ -111,7 +99,6 @@ en:
             header: "Upload Peer Review CSV"
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
-    remove_grader:      "Remove Grader"
     add_new:            "Add New File"
     edit:               "Edit"
     save:               "Save"
@@ -137,23 +124,12 @@ en:
 
     copy: "Copy"
 
-    csv_invalid_lines: "The following CSV lines were invalid: "
-    csv_valid_lines: "Successfully uploaded %{valid_line_count} entries"
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
-      group_to_grader:         "You must supply a CSV file for group to grader mapping"
-      student_to_grader:       "You must supply a CSV file for student to grader mapping"
-      invalid_csv:             "The format of the CSV file was not recognized"
-      invalid_row:
-        invalid_format: "Invalid Row Format"
-      upload:
-        # when a non-text file has a csv extension (ie: user changes extension
-        # from .pdf to .csv on a pdf file)
-        non_text_file_with_csv_extension: "The selected file is not a csv file (even though it may have a csv extension)."
       group_with_different_repo: "Error: Group %{group_name} cannot be created since a group with the same name and a different repository already exists"
       group_with_different_membership_current_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for the current assignment"
       group_with_different_membership_different_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for a different assignment"
@@ -167,25 +143,9 @@ en:
     no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
 
     groups:
-      assign_scans:     "Assign Scans"
-      skip_group:       "Skip group"
-      done_assign: "All groups have been successfully assigned students"
-      randomly_assign_graders: "Randomly assign Graders"
       upload:
         description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
-        upload_grader_map: "Upload Group / Grader Map"
-        upload_grader_criteria_map: "Upload Criteria / Grader Map"
-        description_grader_map: "CSV file format:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "CSV file format:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: 'Remove existing mappings'
-      download:
-        download_grader_maps: "Download Grader Maps"
-        download_grader_groups_csv: "Group / Grader map CSV format"
-        download_grader_criteria_csv: "Criteria / Grader map CSV format"
-      action:
-        assign_grader: "Assign Grader(s)"
-        unassign_grader: "Unassign Grader(s)"
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
@@ -198,14 +158,9 @@ en:
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Peer Reviews"
-      overview: "Overview"
-      last_revision_date: "Last Revision Date:<br><span class=\"info_date\">%{last_modified_date}</span>"
-      files: "files"
-      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> missing required file(s)</span>"
       no_peer_submission_yet: "You have no submissions to review yet."
       no_reviews: "No one has reviewed your submissions yet."
       submission:
-        file_manager: "%{short_identifier}: File Manager"
         conflicts: "Conflicts"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
         missing_files: "You still need to submit %{file} required file(s) for this assignment:"
@@ -213,30 +168,8 @@ en:
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}.  File may be missing."
-        no_files_available: "No files available"
-        no_revision_available: "No revision available"
-        version_control_warning: "Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Assigned Graders"
-      coverage:           "Coverage"
-      assign_to_criteria: "Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)"
-      skip_empty_submissions: "Do not assign Graders to groups with empty submissions (requires that submissions are collected)"
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Student / Grader map CSV format"
-      upload:
-        upload_grader_map: "Upload Student / Grader Map"
-        description_grader_map: "CSV file format:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "Student %{user_name} added."
@@ -271,6 +204,9 @@ en:
       success:  "Your changes have been made."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "No access to submission file with id #%{submission_file_id}."
         binary_file_message: "Binary content: Use download button to view file!"
@@ -292,48 +228,11 @@ en:
         messages:
           released_marks:         "Cannot update criteria for an assignment with released marks"
 
-    key_pairs:
-      title: "Key Pairs"
-      key_pairs_title:         "Your Key Pairs"
-      time_of_upload:         "Time Of Upload"
-      key_content:         "Key Content"
-      new_key_pair:         "New Key Pair"
-      add_key_pair:         "Add a Key Pair"
-      remove_key:         "Remove Key"
-      are_you_sure:         "Are you sure?"
-      file:         "File"
-      or:         "OR"
-      copy_paste_key:         "Copy and paste your public key"
-      create_key_pair:         "Create Key Pair"
-      back:         "Back"
-      create:
-        success: "Key Pair was created successfully"
-        invalid_key: "Key Pair was not created: Invalid key"
-      update:
-        success: "Key Pair was updated successfully"
-      delete:
-        success: "Key Pair was removed successfully"
-
     section:
       help:
         manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
 
-
-    keybinding:
-      keyboard_help:          "Keyboard Shortcut Help"
-      toggle_compact:         "Toggle compact view"
-      next_criterion:         "Select next criterion"
-      previous_criterion:     "Select previous criterion"
-      next_level:             "Select next level"
-      previous_level:         "Select previous level"
-      confirm_level:          "Confirm level"
-      when_rubric:            "(When on rubric) "
-      open_annotation:        "Open annotation modal"
-      confirm_annotation:     "Confirm annotation"
-
-
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Default grader: Course instructor(s)"
     additional_information: "Additional Information"
 
     #app/views/job_messages/_job_poller.js.erb
@@ -433,21 +332,6 @@ en:
         extra_stderr: "Messages on stderr: \n%{extra}\n"
         extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
         extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
-
-#Missing Activerecord Translations for english
-    datetime:
-      distance_in_words:
-        less_than_x_seconds:
-          zero: "less than one second"
-        less_than_x_minutes:
-          zero: "less than one minute"
-
-    support:
-      array:
-        sentence_connector: "and"
-        skip_last_comma: true
-
-    server_time: "Server Time:"
 
     poll_job:
       working_message: "%{progress} out of %{total}"

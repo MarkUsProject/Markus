@@ -214,7 +214,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           RubricCriterion.create_or_update_from_csv_row(row, @assignment)
         end
         assert_instance_of CSVInvalidLineError, e
-        assert_equal t('csv.invalid_row.invalid_format'), e.message
+        assert_equal t('upload_errors.invalid_csv_row_format'), e.message
       end
 
       context 'and the row is valid' do

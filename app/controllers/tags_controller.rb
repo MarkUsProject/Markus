@@ -157,7 +157,7 @@ class TagsController < ApplicationController
         end
       end
     else
-      flash_message(:error, I18n.t('csv.invalid_csv'))
+      flash_message(:error, I18n.t('upload_errors.missing_file'))
     end
     redirect_back(fallback_location: root_path)
   end

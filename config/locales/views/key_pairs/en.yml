@@ -1,0 +1,22 @@
+en:
+  key_pairs:
+    are_you_sure: "Are you sure?"
+    add_key_pair: "Add a Key Pair"
+    back: "Back"
+    copy_paste_key: "Copy and paste your public key"
+    create:
+      invalid_key: "Key Pair was not created: Invalid key"
+      success: "Key Pair was created successfully"
+    create_key_pair: "Create Key Pair"
+    delete:
+      success: "Key Pair was removed successfully"
+    file: "File"
+    key_content: "Key Content"
+    key_pairs_title: "Your Key Pairs"
+    or: "OR"
+    new_key_pair: "New Key Pair"
+    remove_key: "Remove Key"
+    time_of_upload: "Time Of Upload"
+    title: "Key Pairs"
+    update:
+      success: "Key Pair was updated successfully"

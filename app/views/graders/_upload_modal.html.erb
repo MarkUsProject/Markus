@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('groups.upload.upload_grader_map') %>
+<%= content_for :modal_title, t('upload_the', item: t('graders.download.grader_groups')) %>
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
@@ -10,7 +10,7 @@
                              upload_id: 'grader_mapping',
                              button_id: 'upload' %>
 
-  <p><%= raw(t('groups.upload.description_grader_map')) %></p>
+  <p><%= t('graders.upload.instructions_grader_groups_html') %></p>
 
   <%= form_tag({controller:'graders',
                 action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
@@ -23,7 +23,7 @@
 
     <p>
       <%= label_tag :remove_existing_mappings,
-                    t('groups.upload.remove_existing_mappings') %>
+                    t('graders.upload.remove_existing_mappings') %>
       <%= check_box_tag :remove_existing_mappings %>
     </p>
 
@@ -37,8 +37,8 @@
   <% end %>
 
   <% if @assignment.assign_graders_to_criteria %>
-    <h2><%= t('groups.upload.upload_grader_criteria_map') %></h2>
-    <%= raw(t('groups.upload.description_grader_criteria_map')) %>
+    <h2><%= t('upload_the', item: t('graders.download.grader_criteria')) %></h2>
+    <%= t('graders.upload.instructions_grader_criteria_html') %>
     <%= form_tag({controller:'graders',
                   action: 'csv_upload_grader_criteria_mapping',id: @assignment.id},
                  {multipart: true}) do %>

@@ -236,7 +236,7 @@ class RawGroupsTable extends React.Component {
             grouping_id: row.original._id
           });
           return (
-            <a href={assign_url}>{I18n.t('groups.assign_scans')}</a>
+            <a href={assign_url}>{I18n.t('exam_templates.assign_scans.title')}</a>
           );
         }
       },

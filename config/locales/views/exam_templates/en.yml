@@ -75,6 +75,12 @@ en:
       page_number:    "Page Number"
       upside_down:    "Page Upside Down?"
 
+    assign_scans:
+      done: "All groups have been successfully assigned students"
+      help: "Assign students to scanned exam groups based on printed student names."
+      skip_group: "Skip group"
+      title: "Assign Scans"
+
   flash:
     exam_templates:
       update:

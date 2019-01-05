@@ -19,8 +19,12 @@ en:
   upload_prompt_csv: "Select a CSV file to upload"
   upload_prompt_yml: "Select a YML file to upload"
   upload_errors:
+    invalid_csv_row_format: "Invalid row format"
+    invalid_rows: "The following CSV rows were invalid: "
     malformed_csv: "The selected file was improperly formed. Please ensure the file meets MarkUs specifications."
+    missing_file: "You must select a file to upload."
     syntax_error: "There is an error in the file you uploaded: %{error}"
+    unparseable_csv: "The selected file is not a CSV file (even though it may have a .csv extension)."
     unparseable_yml: "Could not parse YAML file"
   uploading_please_wait: "Uploading - please wait..."
 

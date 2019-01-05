@@ -65,3 +65,15 @@ pt:
       submit: "Enviar pedido ao instrutor"
       submit_confirm: "Tem certeza que quer enviar o pedido de revisão? Você não poderá ver os resultados até que a revisão seja feita."
       submitted_on: "Pedido de revisão enviado %{time}."
+
+    keybinding:
+      confirm_annotation: "Confirmar anotação"
+      confirm_level: "Confirme o nível"
+      keyboard_help: "Ajuda de atalho de teclado"
+      next_criterion: "Selecione o próximo critério"
+      next_level: "Selecione o próximo nível"
+      open_annotation: "Abrir tela de anotação"
+      previous_criterion: "Selecione o critério anterior"
+      previous_level: "Selecione o nível anterior"
+      toggle_compact: "Alternar vista compacta"
+      when_rubric: "(Quando na rubrica) "

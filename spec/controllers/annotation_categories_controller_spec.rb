@@ -48,8 +48,8 @@ describe AnnotationCategoriesController do
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('csv_valid_lines',
-                                                                valid_line_count: 2)].map { |f| extract_text f })
+      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
+                                                                       count: 2)].map { |f| extract_text f })
       expect(response).to redirect_to(action: 'index',
                                       id: assignment.id)
 
@@ -99,7 +99,7 @@ describe AnnotationCategoriesController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(flash[:error].map { |f| extract_text f })
-                            .to eq([I18n.t('csv.upload.non_text_file_with_csv_extension')].map { |f| extract_text f })
+        .to eq([I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f })
       expect(response).to redirect_to(action: 'index',
                                       id: assignment.id)
     end
