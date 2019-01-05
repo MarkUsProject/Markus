@@ -315,19 +315,6 @@ pt:
         extra_malformed: "UPDATE ME \n%{extra}\n"
         extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
 
-#Missing Activerecord Translations for english
-    datetime:
-      distance_in_words:
-        less_than_x_seconds:
-          zero: "menos de um segundo"
-        less_than_x_minutes:
-          zero: "menos de um minuto"
-
-    support:
-      array:
-        sentence_connector: "e"
-        skip_last_comma: true
-
     server_time: "Data servidor:"
 
     poll_job:
