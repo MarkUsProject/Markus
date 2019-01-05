@@ -19,9 +19,13 @@ document.getElementById('criterion_incomplete_error').addClass('hidden');
   if @current_user.admin?
     num_marked = @assignment.get_num_marked
     num_assigned = @assignment.get_num_assigned
-  else
+  elsif @current_user.ta?
     num_marked = @assignment.get_num_marked(@current_user.id)
     num_assigned = @assignment.get_num_assigned(@current_user.id)
+  elsif @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+    reviewer_group = @current_user.grouping_for(@assignment.pr_assignment.id)
+    num_marked = PeerReview.get_num_marked(reviewer_group)
+    num_assigned = PeerReview.get_num_assigned(reviewer_group)
   end
 %>
 
