@@ -8,6 +8,10 @@ FactoryBot.define do
 
     factory :complete_result do
       marking_state { Result::MARKING_STATES[:complete] }
+
+      factory :released_result do
+        released_to_students { true }
+      end
     end
   end
 end
