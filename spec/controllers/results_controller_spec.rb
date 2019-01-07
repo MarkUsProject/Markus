@@ -11,10 +11,10 @@ describe ResultsController do
   let(:rubric_mark) { create :rubric_mark, result: incomplete_result }
   let(:flexible_mark) { create :flexible_mark, result: incomplete_result }
 
-  SAMPLE_FILE_CONTENT = 'sample file content'
-  SAMPLE_ERROR_MESSAGE = 'sample error message'
-  SAMPLE_COMMENT = 'sample comment'
-  SAMPLE_FILE_NAME = 'file.java'
+  SAMPLE_FILE_CONTENT = 'sample file content'.freeze
+  SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
+  SAMPLE_COMMENT = 'sample comment'.freeze
+  SAMPLE_FILE_NAME = 'file.java'.freeze
 
   after(:each) do
     destroy_repos
@@ -28,7 +28,7 @@ describe ResultsController do
 
   def self.test_assigns_nil(key)
     it "should not assign #{key}" do
-      expect(assigns key).to be_nil
+      expect(assigns(key)).to be_nil
     end
   end
 
@@ -108,7 +108,7 @@ describe ResultsController do
                                      submission_id: submission.id,
                                      select_file_id: submission_file.id,
                                      id: incomplete_result.id,
-                                     show_in_browser: true}
+                                     show_in_browser: true }
           end
           it { expect(response).to have_http_status(:success) }
           test_no_flash
@@ -188,7 +188,6 @@ describe ResultsController do
                                         id: @submission.id,
                                         grouping_id: grouping.id,
                                         include_annotations: 'true' }
-
         end
         after :each do
           FileUtils.rm_f @file_path_ann
@@ -333,29 +332,29 @@ describe ResultsController do
     end
   end
 
-  ROUTES = {update_mark: :post,
-            edit: :get,
-            download: :post,
-            get_annotations: :get,
-            add_extra_marks: :get,
-            add_extra_mark: :post,
-            download_zip: :get,
-            cancel_remark_request: :delete,
-            delete_grace_period_deduction: :post,
-            next_grouping: :get,
-            remove_extra_mark: :post,
-            set_released_to_students: :post,
-            update_overall_comment: :post,
-            toggle_marking_state: :post,
-            update_remark_request: :patch,
-            update_positions: :get,
-            view_marks: :get,
-            add_tag: :post,
-            remove_tag: :post,
-            run_tests: :post,
-            stop_test: :get,
-            get_test_runs_instructors: :get,
-            get_test_runs_instructors_released: :get}
+  ROUTES = { update_mark: :post,
+             edit: :get,
+             download: :post,
+             get_annotations: :get,
+             add_extra_marks: :get,
+             add_extra_mark: :post,
+             download_zip: :get,
+             cancel_remark_request: :delete,
+             delete_grace_period_deduction: :post,
+             next_grouping: :get,
+             remove_extra_mark: :post,
+             set_released_to_students: :post,
+             update_overall_comment: :post,
+             toggle_marking_state: :post,
+             update_remark_request: :patch,
+             update_positions: :get,
+             view_marks: :get,
+             add_tag: :post,
+             remove_tag: :post,
+             run_tests: :post,
+             stop_test: :get,
+             get_test_runs_instructors: :get,
+             get_test_runs_instructors_released: :get }.freeze
 
   context 'A not logged in user' do
     [:edit,
@@ -452,21 +451,24 @@ describe ResultsController do
     context 'accessing edit' do
       context 'with one grouping with a released result and two others with incomplete results' do
         let :released_result do
-          submissions = 3.times.map do
+          submissions = Array.new(3) do
             create :version_used_submission, grouping: (create :grouping_with_inviter, assignment: assignment)
           end
           create :released_result, submission: submissions.second
         end
-        let(:groupings) { released_result; assignment.groupings.order(:id) }
-        let(:submissions) { groupings.map { |gr| gr.current_submission_used } }
-        let(:results) { submissions.map { |sub| sub.get_latest_result } }
+        let(:groupings) do
+          released_result
+          assignment.groupings.order(:id)
+        end
+        let(:submissions) { groupings.map(&:current_submission_used) }
+        let(:results) { submissions.map(&:get_latest_result) }
         xcontext 'and a remark request result' do # TODO: move this to a view spec
           render_views
           before :each do
             released_result.submission.make_remark_result
             released_result.submission.update(remark_request_timestamp: Time.zone.now)
             get :edit, params: { assignment_id: assignment.id, submission_id: released_result.submission.id,
-                                            id: released_result.submission.remark_result.id }
+                                 id: released_result.submission.remark_result.id }
           end
           it 'should have an edit form with fields for an overall comment' do
             path = "/en/assignments/#{assignment.id}/submissions/#{released_result.submission.id}/results/#{released_result.id}/update_overall_comment"
