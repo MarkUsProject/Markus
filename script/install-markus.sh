@@ -21,7 +21,7 @@ sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev 
 sudo apt-get install software-properties-common -y
 sudo add-apt-repository ppa:brightbox/ruby-ng
 sudo apt-get update
-sudo apt-get install ruby2.5 ruby2.5-dev -y
+sudo apt-get install ruby2.6 ruby2.6-dev -y
 sudo gem update --system
 sudo update-alternatives --config ruby
 sudo update-alternatives --config gem
