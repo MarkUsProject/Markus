@@ -35,6 +35,10 @@ Layout/MultilineOperationIndentation:
 Metrics/AbcSize:
   Enabled: false
 
+# Disable max block length for rspec blocks
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context', 'shared_examples', 'shared_context']
+
 Metrics/LineLength:
   Max: 120
 
