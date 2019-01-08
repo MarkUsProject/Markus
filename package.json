@@ -15,7 +15,7 @@
     "react-dom": "^16.6.3",
     "react-keyed-file-browser": "^1.4.3",
     "react-table": "^6.8.6",
-    "react-tabs": "^2.3.0"
+    "react-tabs": "^3.0.0"
   },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
