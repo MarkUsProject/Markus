@@ -650,7 +650,7 @@ class GitRevision < Repository::AbstractRevision
     end
     reflog_times = reflog_times.compact.reverse
     entries_by_time.each do |entry|
-      while entry.last_modified_date > reflog_times[0]
+      while reflog_times[0] && entry.last_modified_date > reflog_times[0]
         reflog_times.shift
       end
       entry.submitted_date = reflog_times[0]
