@@ -636,7 +636,7 @@ class GitRevision < Repository::AbstractRevision
   # time the change was pushed to the server
   def _add_push_time(entries)
     return entries if entries.empty?
-    entries_by_time = entries.sort_by { |_, e| e.last_modified_date }.map { |_, e| e }
+    entries_by_time = entries.sort_by { |_, e| e.last_modified_date.to_i }.map { |_, e| e }
     repo_path, _sep, repo_name = File.dirname(@repo.path).rpartition(File::SEPARATOR)
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
@@ -650,7 +650,7 @@ class GitRevision < Repository::AbstractRevision
     end
     reflog_times = reflog_times.compact.reverse
     entries_by_time.each do |entry|
-      while reflog_times[0] && entry.last_modified_date > reflog_times[0]
+      while reflog_times.length > 1 && entry.last_modified_date.to_i > reflog_times[0].to_i
         reflog_times.shift
       end
       entry.submitted_date = reflog_times[0]
