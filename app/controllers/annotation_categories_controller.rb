@@ -64,9 +64,9 @@ class AnnotationCategoriesController < ApplicationController
 
     @annotation_category.update_attributes(annotation_category_params)
     if @annotation_category.save
-      flash.now[:success] = t('.success')
+      flash_message(:success, t('.success'))
     else
-      flash.now[:error] = @annotation_category.errors.full_messages
+      flash_message(:error, @annotation_category.errors.full_messages)
     end
   end
 

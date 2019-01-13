@@ -2,12 +2,15 @@
 
   <div id='annotation_category_controls'>
     <div class='float_right'>
-    <%= button_to t('remove'),
-                  [@assignment, annotation_category],
-                  method: 'delete',
-                  data: { confirm: t('annotation_categories.destroy.warning') },
-                  html: { class: 'delete' },
-                  remote: true %>
+      <%= form_tag assignment_annotation_category_path(@assignment, annotation_category),
+                   method: 'delete',
+                   id: 'delete_annotation_category',
+                   remote: true do |f| %>
+        <%= submit_tag t(:remove),
+                       data: { confirm: t('annotation_categories.destroy.warning') },
+                       class: 'delete'
+        %>
+      <% end %>
     </div>
     <h2><%= annotation_category.annotation_category_name %></h2>
 
