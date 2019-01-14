@@ -11,6 +11,7 @@ class MarkingSchemeTable extends React.Component {
     this.state = {
       data: [],
       columns: [],
+      loading: true,
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -27,6 +28,7 @@ class MarkingSchemeTable extends React.Component {
       this.setState({
         data: res.data,
         columns: res.columns,
+        loading: false,
       });
     });
   }
@@ -72,6 +74,7 @@ class MarkingSchemeTable extends React.Component {
             id: 'name'
           }
         ]}
+        loading={this.state.loading}
       />
     );
   }

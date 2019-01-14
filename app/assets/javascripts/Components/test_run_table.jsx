@@ -9,6 +9,7 @@ class TestRunTable extends React.Component {
     super(props);
     this.state = {
       data: [],
+      loading: true
     };
     this.testRuns = React.createRef();
   }
@@ -62,7 +63,7 @@ class TestRunTable extends React.Component {
           rows.push(row);
         }
       }
-      this.setState({data: rows},
+      this.setState({data: rows, loading: false},
         () => this.testRuns.current.setState({expanded: rows.length > 0 ? {0: true} : {}})
       );
     });
@@ -103,6 +104,7 @@ class TestRunTable extends React.Component {
             }
           }}
           defaultSorted={[{id: 'created_at', desc: true}]}
+          loading={this.state.loading}
         />
       </div>
     );

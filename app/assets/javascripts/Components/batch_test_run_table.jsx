@@ -6,7 +6,8 @@ import {dateSort} from './Helpers/table_helpers';
 const makeDefaultState = () => ({
   data: [],
   sorted: [{id: 'created_at', desc: true}],
-  statuses: {}
+  statuses: {},
+  loading: true
 });
 
 
@@ -62,7 +63,8 @@ class BatchTestRunTable extends React.Component {
     });
     this.setState({
       data: data,
-      statuses: status
+      statuses: status,
+      loading: false
     });
   }
 
@@ -167,6 +169,7 @@ class BatchTestRunTable extends React.Component {
               return a > b ? 1 : -1;
             }
           }}
+          loading={this.state.loading}
         />
       </div>
     );
