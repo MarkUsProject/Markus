@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/palkan/action_policy.git
-  revision: 8695ae10f02f151e9de477a2006a4302dd5ee35a
+  revision: 311177cb39437f89ba090fd32fc4fbd36ac4c725
   specs:
     action_policy (0.2.4)
 
