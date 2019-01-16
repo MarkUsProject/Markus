@@ -15,9 +15,9 @@
   </p>
   <p>
     <%= t(:all_csv_file) %>
-    <%= link_to '[...]', '#', onclick: "toggleElem('hide')" %>
-    <span id='hide' style='display: none;'>
-      <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
+    <%= link_to '[...]', '#', onclick: 'document.getElementById("hide").classList.toggle("hidden")' %>
+    <span id='hide' class="hidden">
+      <code><%= @default_fields.join(', ') %></code>
     </span>
   </p>
 
@@ -32,17 +32,15 @@
 
     <section class='dialog-actions'>
       <%= hidden_field_tag :file_format, '', id: 'file_format' %>
-      <% if @current_user.admin? %>
-          <%= submit_tag t(:upload_with_format, file: 'YML'),
-                         disabled: true,
-                         id: 'yml_upload',
-                         onclick: 'choose_upload("yml")' %>
-          <%= submit_tag t(:upload_with_format, file: 'CSV'),
-                         disabled: true,
-                         id: 'csv_upload',
-                         onclick: 'choose_upload("csv")' %>
-          <input type='reset' value='<%= t(:cancel) %>'/>
-      <% end %>
+      <%= submit_tag t(:upload_with_format, file: 'YML'),
+                     disabled: true,
+                     id: 'yml_upload',
+                     onclick: 'document.getElementById("file_format").value = "yml"' %>
+      <%= submit_tag t(:upload_with_format, file: 'CSV'),
+                     disabled: true,
+                     id: 'csv_upload',
+                     onclick: 'document.getElementById("file_format").value = "csv"' %>
+      <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
 <% end %>
