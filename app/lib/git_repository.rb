@@ -597,7 +597,7 @@ class GitRevision < Repository::AbstractRevision
     end
     # phase 2: walk the git history once and collect the last commits that modified each entry
     # 2a: use the git reflog to get a list of pushes
-    repo_path, _sep, repo_name = @repo.workdir.rpartition(File::SEPARATOR)
+    repo_path, _sep, repo_name = @repo.workdir[0..-2].rpartition(File::SEPARATOR)
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
