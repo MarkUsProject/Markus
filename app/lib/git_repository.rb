@@ -598,28 +598,24 @@ class GitRevision < Repository::AbstractRevision
       return entries
     end
     # phase 2: walk the git history once and collect the last commits that modified each entry
-    # 2a: use the git reflog to get a list of pushes, starting from this revision's commit
+    # 2a: use the git reflog to get a list of pushes
     repo_path, _sep, repo_name = @repo.workdir.rpartition(File::SEPARATOR)
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
-    current_reflog_entry = {}
-    reflog.each_with_index do |reflog_entry, i|
-      #TODO @commit.oid may not be a pushed oid, need to get the closest push
-      if @commit.oid == reflog_entry[:id_new]
-        current_reflog_entry[:sha] = reflog_entry[:id_new]
-        current_reflog_entry[:time] = reflog_entry[:committer][:time].in_time_zone
-        current_reflog_entry[:index] = i
-        break
-      end
-    end
-    # 2b: walk through the commits and check entries that were modified
+    # 2b: walk through all the commits until this revision's +@commit+ is found
+    # (this is needed to advance the reflog to the right point, since +@commit+ may be between two pushes)
     walker_entries = entries.dup
+    current_reflog_entry = { index: -1 }
+    found = false
     walker = Rugged::Walker.new(@repo)
     walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
-    walker.push(@commit)
+    walker.push(@repo.last_commit)
     walker.each do |commit|
       GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      found = true if @commit.oid == commit.oid
+      next unless found
+      # 2c: check entries that were modified
       mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
       mod_entries = walker_entries.extract!(*mod_keys)
       mod_entries.each do |_, mod_entry|
