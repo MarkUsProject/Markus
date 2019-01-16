@@ -735,7 +735,7 @@ class SubversionRevision < Repository::AbstractRevision
   end
 
   # Return all of the files in this repository at the root directory
-  def files_at_path(path)
+  def files_at_path(path, with_attrs: true)
     files_at_path_helper(path)
   end
 
@@ -744,7 +744,7 @@ class SubversionRevision < Repository::AbstractRevision
   end
 
   # Return all directories at 'path' (including subfolders?!)
-  def directories_at_path(path = '/')
+  def directories_at_path(path = '/', with_attrs: true)
     result = Hash.new(nil)
     raw_contents = @repo.__get_files(path, @revision_identifier)
     raw_contents.each do |file_name, type|
@@ -788,7 +788,7 @@ class SubversionRevision < Repository::AbstractRevision
   # It returns an array to ensure ordering, so that a directory
   # will always appear before any of the files or subdirectories
   # contained within it
-  def tree_at_path(path)
+  def tree_at_path(path, with_attrs: true)
     result = files_at_path(path).to_a
     dirs = directories_at_path(path)
     result.push(*dirs.to_a)

@@ -306,12 +306,12 @@ module Repository
     end
 
     # Returns all the files under +path+ (but not in subdirectories) in this revision of the repository.
-    def files_at_path(path)
+    def files_at_path(path, with_attrs: true)
       raise NotImplementedError, "Revision.files_at_path not yet implemented"
     end
 
     # Returns all the directories under +path+ (but not in subdirectories) in this revision of the repository.
-    def directories_at_path(path)
+    def directories_at_path(path, with_attrs: true)
       raise NotImplementedError, "Revision.directories_at_path not yet implemented"
     end
 

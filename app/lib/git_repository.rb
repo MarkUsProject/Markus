@@ -499,6 +499,10 @@ class GitRevision < Repository::AbstractRevision
     @server_timestamp = @timestamp
   end
 
+  def last_modified_date
+    self.timestamp
+  end
+
   # Gets a file or directory at +path+ from a +commit+ as a Rugged Hash.
   # The +path+ is relative to the repo root, the +commit+ can be omitted to default to this GitRevision.
   def get_entry_hash(path, commit=@commit)
@@ -564,11 +568,10 @@ class GitRevision < Repository::AbstractRevision
     entry_changed?(path)
   end
 
-  # Gets all entries at directory +path+ of a specified +type+ (:blob, :tree, or nil for both), as
+  # Get all entries at directory +path+ of a specified +type+ (:blob, :tree, or nil for both), as
   # Repository::RevisionFile and Repository::RevisionDirectory.
-  def entries_at_path(path, type=nil)
-    # phase 1: collect all entries
-    bare_repo = nil
+  # If +recursive+ is true, get all entries in subdirectories too.
+  def entries_at_path(path, type: nil, recursive: false)
     entries = {}
     path_tree = get_entry(path)
     if path_tree.nil?
@@ -590,18 +593,23 @@ class GitRevision < Repository::AbstractRevision
                                                            mime_type: mime_type)
       elsif entry_type == :tree
         entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
+        if recursive
+          entries.merge!(entries_at_path(File.join(path, entry_name), type, recursive)
+                           .transform_keys! { |sub_name| File.join(entry_name, sub_name) })
+        end
       end
     end
-    if entries.empty?
-      return entries
-    end
-    # phase 2: walk the git history once and collect the last commits that modified each entry
-    # 2a: use the git reflog to get a list of pushes
+    entries
+  end
+
+  # Walk the git history once and collect the last commits and pushes that modified the +entries+ found at +path+.
+  def add_entries_info(entries, path)
+    # use the git reflog to get a list of pushes
     repo_path, _sep, repo_name = @repo.workdir[0..-2].rpartition(File::SEPARATOR)
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
-    # 2b: walk through all the commits until this revision's +@commit+ is found
+    # walk through all the commits until this revision's +@commit+ is found
     # (this is needed to advance the reflog to the right point, since +@commit+ may be between two pushes)
     walker_entries = entries.dup
     current_reflog_entry = { index: -1 }
@@ -613,7 +621,7 @@ class GitRevision < Repository::AbstractRevision
       GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
       found = true if @commit.oid == commit.oid
       next unless found
-      # 2c: check entries that were modified
+      # check entries that were modified
       mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
       mod_entries = walker_entries.extract!(*mod_keys)
       mod_entries.each do |_, mod_entry|
@@ -625,17 +633,22 @@ class GitRevision < Repository::AbstractRevision
       end
       break if walker_entries.empty?
     end
-    entries
   ensure
-    bare_repo&.close
+    bare_repo.close
   end
 
-  def files_at_path(path)
-    entries_at_path(path, :blob)
+  def files_at_path(path, with_attrs: true)
+    entries = entries_at_path(path, type: :blob)
+    return entries if entries.empty? || !with_attrs
+    add_entries_info(entries, path)
+    entries
   end
 
-  def directories_at_path(path)
-    entries_at_path(path, :tree)
+  def directories_at_path(path, with_attrs: true)
+    entries = entries_at_path(path, type: :tree)
+    return entries if entries.empty? || !with_attrs
+    add_entries_info(entries, path)
+    entries
   end
 
   # Walks all files and subdirectories starting at +path+ and
@@ -645,7 +658,11 @@ class GitRevision < Repository::AbstractRevision
   # It returns an array to ensure ordering, so that a directory
   # will always appear before any of the files or subdirectories
   # contained within it
-  def tree_at_path(path)
+  def tree_at_path(path, with_attrs: true)
+    # entries = entries_at_path(path, recursive: true) #TODO generate ordered array
+    # return entries if entries.empty? || !with_attrs
+    # add_entries_info(entries, path)
+    # entries
     result = entries_at_path(path).to_a
     result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
       result.push(*(tree_at_path(File.join(path, dir_path)).map do |sub_path, obj|
@@ -653,9 +670,5 @@ class GitRevision < Repository::AbstractRevision
       end))
     end
     result
-  end
-
-  def last_modified_date
-    self.timestamp
   end
 end
