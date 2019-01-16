@@ -146,14 +146,12 @@ class GitRepository < Repository::AbstractRepository
   # Checks whether the next +reflog+ entry corresponds to +commit_sha+, and updates +current_reflog_entry+ accordingly.
   def self.try_advance_reflog!(reflog, current_reflog_entry, commit_sha)
     next_index = current_reflog_entry[:index] + 1
-    if reflog.length > next_index
-      next_reflog_entry = reflog[next_index]
-      if commit_sha == next_reflog_entry[:id_new]
-        current_reflog_entry[:sha] = next_reflog_entry[:id_new]
-        current_reflog_entry[:time] = next_reflog_entry[:committer][:time].in_time_zone
-        current_reflog_entry[:index] = next_index
-      end
-    end
+    return if reflog.length <= next_index
+    next_reflog_entry = reflog[next_index]
+    return if commit_sha != next_reflog_entry[:id_new]
+    current_reflog_entry[:sha] = next_reflog_entry[:id_new]
+    current_reflog_entry[:time] = next_reflog_entry[:committer][:time].in_time_zone
+    current_reflog_entry[:index] = next_index
   end
 
   # Gets the first revision +at_or_earlier_than+ some timestamp and +later_than+ some other timestamp (can be nil).
@@ -629,7 +627,7 @@ class GitRevision < Repository::AbstractRevision
     end
     entries
   ensure
-    bare_repo.close unless bare_repo.nil?
+    bare_repo&.close
   end
 
   def files_at_path(path)
