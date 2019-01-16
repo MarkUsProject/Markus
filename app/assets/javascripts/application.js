@@ -29,33 +29,3 @@ Element.prototype.hasClass = function(className) {
   else
     return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }
-
-$(document).ajaxComplete(function(event, request) {
-  var keys = ['notice', 'warning', 'success', 'error'];
-  var keysLength = keys.length;
-  var flashMessageList = [];
-  var receive = false;
-  for (var i = 0; i < keysLength; i++) {
-    flashMessageList.push(request.getResponseHeader('X-Message-' + keys[i]));
-    if (flashMessageList[i]) receive = true;
-  }
-  for (var i = 0; i < keysLength; i++) {
-    var flashMessage = flashMessageList[i];
-    if (flashMessage) {
-      var messages = flashMessage.split(';');
-      $('.' + keys[i]).empty();
-      $('.' + keys[i]).append(
-        '<a class="hide-flash" onclick="$(this).parent().hide()">&nbsp;</a>'
-      );
-      for (var j = 0; j < messages.length; j++) {
-        $('.' + keys[i]).append('<p>' + messages[j] + '</p>');
-      }
-      $('.' + keys[i]).show();
-    } else if (receive) {
-      $('.' + keys[i]).empty();
-    }
-    if ($('.' + keys[i]).is(':empty')) {
-      $('.' + keys[i]).hide()
-    }
-  }
-});

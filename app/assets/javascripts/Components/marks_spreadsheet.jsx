@@ -64,7 +64,6 @@ class RawMarksSpreadsheet extends React.Component {
       section: this.actionBox.state.section
     };
 
-    this.setState({loading: true});
     $.ajax({
       method: 'patch',
       url: Routes.bulk_modify_students_path(),
@@ -189,11 +188,13 @@ class RawMarksSpreadsheet extends React.Component {
       students: this.props.selection
     };
 
-    $.ajax({
-      method: 'POST',
-      url: Routes.update_grade_entry_students_grade_entry_form_path(this.props.grade_entry_form_id),
-      data: dataLoad,
-    }).then(this.fetchData);
+    this.setState({loading: true}, () => {
+      $.ajax({
+        method: 'POST',
+        url: Routes.update_grade_entry_students_grade_entry_form_path(this.props.grade_entry_form_id),
+        data: dataLoad,
+      }).then(this.fetchData);
+    });
   };
 
   render() {

@@ -9,6 +9,7 @@ class TagTable extends React.Component {
     super();
     this.state = {
       tags: [],
+      loading: true,
     };
   }
 
@@ -83,6 +84,7 @@ class TagTable extends React.Component {
         data={this.state.tags}
         columns={this.columns()}
         defaultSorted={[{id: 'name'}]}
+        loading={this.state.loading}
       />
     );
   }

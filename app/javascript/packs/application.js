@@ -11,6 +11,10 @@
 import $ from 'jquery/src/jquery';
 window.$ = window.jQuery = $;
 
+// Callbacks for AJAX events (both jQuery and ujs).
+import * as ajax_events from 'javascripts/ajax_events';
+window.ajax_events = ajax_events;
+
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 

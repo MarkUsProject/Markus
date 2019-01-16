@@ -259,24 +259,17 @@ class RawSubmissionTable extends React.Component {
     });
   };
 
-  releaseMarks = () => {
-    $.post({
-      url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
-      data: {
-        release_results: true,
-        groupings: this.props.selection
-      }
-    }).then(this.fetchData);
-  };
-
-  unreleaseMarks = () => {
-    $.post({
-      url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
-      data: {
-        release_results: false,
-        groupings: this.props.selection
-      }
-    }).then(this.fetchData);
+  toggleRelease = (released) => {
+    this.setState({loading: true}, () => {
+      $.post({
+        url: Routes.update_submissions_assignment_submissions_path(this.props.assignment_id),
+        data: {
+          release_results: released,
+          groupings: this.props.selection
+        }
+      }).then(this.fetchData)
+        .catch(this.fetchData);
+    });
   };
 
   render() {
@@ -294,8 +287,8 @@ class RawSubmissionTable extends React.Component {
           collectSubmissions={this.collectSubmissions}
           downloadGroupingFiles={this.downloadGroupingFiles}
           runTests={this.runTests}
-          releaseMarks={this.releaseMarks}
-          unreleaseMarks={this.unreleaseMarks}
+          releaseMarks={() => this.toggleRelease(true)}
+          unreleaseMarks={() => this.toggleRelease(false)}
         />
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}

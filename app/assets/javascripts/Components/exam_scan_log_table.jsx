@@ -10,6 +10,7 @@ class ExamScanLogTable extends React.Component {
     super();
     this.state = {
       data: [],
+      loading: true,
     };
   }
 
@@ -22,7 +23,7 @@ class ExamScanLogTable extends React.Component {
       url: Routes.view_logs_assignment_exam_templates_path(this.props.assignment_id),
       dataType: 'json',
     }).then(data => {
-      this.setState({data: data});
+      this.setState({data: data, loading: false});
     });
   };
 
@@ -107,6 +108,7 @@ class ExamScanLogTable extends React.Component {
             split_pdf_log_id={row.original.file_id}
             assignment_id={this.props.assignment_id}
           />)}
+        loading={this.state.loading}
       />
     );
   }
