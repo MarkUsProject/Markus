@@ -216,7 +216,7 @@ class RawSubmissionTable extends React.Component {
   // Custom getTrProps function to highlight submissions that have been collected.
   getTrProps = (state, ri, ci, instance) => {
     if (ri.original.marking_state === undefined ||
-        ri.original.marking_state === I18n.t('results.state.not_collected')) {
+        ri.original.marking_state === 'not_collected') {
       return {ri};
     } else {
       return {ri, className: 'submission_collected'};
