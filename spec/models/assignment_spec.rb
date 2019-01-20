@@ -20,6 +20,7 @@ describe Assignment do
       is_expected.to have_many(:flexible_criteria).dependent(:destroy)
         .order(:position)
     end
+
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_scripts).dependent(:destroy) }
     it { is_expected.to have_many(:test_support_files).dependent(:destroy) }
@@ -61,28 +62,35 @@ describe Assignment do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
 
-    it 'should create a valid assignment' do
-      assignment = create(:assignment)
-      expect(assignment).to be_valid
+    describe 'Validation of basic infos of an assignment' do
+      before :each do
+        @assignment = create(:assignment)
+      end
+      it 'should create a valid assignment' do
+        expect(@assignment).to be_valid
+      end
+
+      it 'should require case sensitive unique value for short_identifier' do
+        expect(@assignment).to validate_uniqueness_of(:short_identifier)
+      end
+      it 'should have a nil parent_assignment by default' do
+        expect(@assignment.parent_assignment).to be_nil
+      end
+      it 'should have a nil peer_review by default' do
+        expect(@assignment.pr_assignment).to be_nil
+      end
+      it 'should not be a peer review if there is no parent_assignment_id' do
+        expect(@assignment.parent_assignment_id).to be_nil
+        expect(@assignment.is_peer_review?).to be false
+      end
     end
 
-    it 'should require case sensitive unique value for short_identifier' do
-      assignment = create(:assignment)
-      expect(assignment).to validate_uniqueness_of(:short_identifier)
+    it 'should catch an invalid date' do
+      assignment = create(:assignment, due_date: '2020/02/31')  #31st day of february
+      !expect(assignment).to be_valid
     end
-    it 'should have a nil parent_assignment by default' do
-      assignment = create(:assignment)
-      expect(assignment.parent_assignment).to be_nil
-    end
-    it 'should have a nil peer_review by default' do
-      assignment = create(:assignment)
-      expect(assignment.pr_assignment).to be_nil
-    end
-    it 'should not be a peer review if there is no parent_assignment_id' do
-      assignment = create(:assignment)
-      expect(assignment.parent_assignment_id).to be_nil
-      expect(assignment.is_peer_review?).to be false
-    end
+
+
     it 'should be a peer review if it has a parent_assignement_id' do
       parent_assignment = create(:assignment)
       assignment = create(:assignment, parent_assignment: parent_assignment)
@@ -104,6 +112,14 @@ describe Assignment do
   end
 
   describe 'custom validations' do
+    it 'should catch a zero group_min' do
+      expect{create(:assignment, group_min: 0)}.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'should catch a negative group_min' do
+      expect{create(:assignment, group_min: -5)}.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
     it 'fails when group_max less than group_min' do
       assignment = build(:assignment, group_max: 1, group_min: 2)
       expect(assignment).not_to be_valid
@@ -112,6 +128,7 @@ describe Assignment do
       assignment = build(:assignment, enable_test: true, enable_student_tests: true, tokens_per_period: '-10', unlimited_tokens: false)
       expect(assignment).not_to be_valid
     end
+
     context 'fails when repository_folder is one of the reserved locations' do
       Repository.get_class.reserved_locations.each do |loc|
         it loc.to_s do
@@ -545,6 +562,62 @@ describe Assignment do
     end
   end
 
+  context 'A past due assignment w/ No Late submission rule' do
+    context 'without sections' do
+      before(:each) do
+        @assignment = create(:assignment, due_date: 2.days.ago)
+      end
+
+      it 'return the last due date' do
+         expect(@assignment.latest_due_date.day()).to eq(2.days.ago.day)
+      end
+
+      it 'return true on past_collection_date? call' do
+        expect(@assignment.past_collection_date?).to be_truthy
+      end
+    end
+
+    context 'with a section' do
+      before(:each) do
+        @assignment = create(:assignment,due_date: 2.days.ago, section_due_dates_type: true)
+        @section = create(:section, name: 'section_name')
+        create(:section_due_date, section: @section, assignment: @assignment,
+               due_date: 1.day.ago)
+
+        student = create(:student, section: @section)
+        @grouping = create(:grouping, assignment: @assignment)
+        create(:student_membership, grouping: @grouping, user: student,
+               membership_status: StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'return the normal due date for section due date' do
+        expect @assignment.section_due_date(@section)
+      end
+
+      context 'another' do
+        before(:each) do
+          @section = create(:section, name: "section_name2")
+          create(:section_due_date, section: @section, assignment: @assignment,
+                 due_date: 1.day.ago)
+          student = create(:Student, section: @section)
+          @grouping = create(:grouping, assignment: @assignment)
+          create(:StudentMembership, grouping: @grouping, user: student,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+      end
+    end
+  end
+
+  context 'A before due assignment w/ No Late submission rule' do
+    before(:each) do
+      @assignment = create(:assignment, due_date: 2.days.from_now)
+    end
+
+    it 'return false on past_collection_date? call' do
+      expect !@assignment.past_collection_date?
+    end
+  end
+
   describe '#past_remark_due_date?' do
     context 'before the remark due date' do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
@@ -562,6 +635,71 @@ describe Assignment do
       end
     end
   end
+
+context 'An Assignment' do
+  before :each do
+    @assignment = create(:assignment, group_name_autogenerated: false)
+  end
+
+  context 'as a noteable' do
+    it 'display for note without seeing an exception' do
+      assignment = create(:assignment)
+      if assignment.valid?
+        assignment.display_for_note
+      end
+    end
+  end
+
+  context 'with a student in a group with a marked submission' do
+    before :each do
+      @membership = create(:student_membership, grouping: create(:grouping, assignment: @assignment),
+                           membership_status: StudentMembership::STATUSES[:accepted])
+      sub = create(:submission, grouping: @membership.grouping)
+      @result = sub.get_latest_result
+
+      @sum = 0
+      [2,2.7,2.2,2].each do |weight|
+        create(:mark, {mark: 4, result: @result, markable: create(:rubric_criterion,
+                                                                  {assignment: @assignment, max_mark: weight * 4})})
+        @sum += weight
+      end
+      @total = @sum * 4
+    end
+
+    it 'return the correct maximum mark for rubric criteria' do
+      expect(@total).to eq (@assignment.max_mark)
+    end
+
+    it 'return the correct group for a given student' do
+      expect(@membership.grouping.group).to eq(@assignment.group_by(@membership.user))
+    end
+  end
+
+  context "with some groupings with students and ta's assigned " do
+    before :each do
+      (1..5).each do
+        grouping = create(:grouping, assignment: @assignment)
+        (1..3).each do
+          create(:student_membership, {grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted]})
+        end
+        create(:ta_membership, {grouping: grouping, membership_status: StudentMembership::STATUSES[:accepted]})
+      end
+    end
+
+    it "be able to have it's groupings cloned correctly" do
+      clone = create(:assignment, {group_min: 1, group_max: 1})
+      number = StudentMembership.all.size + TaMembership.all.size
+      clone.clone_groupings_from(@assignment.id)
+
+      expect(@assignment.group_min).to eql(clone.group_min)
+      expect(@assignment.group_max).to eql(clone.group_max)
+      expect(@assignment.groupings.size).to eql(clone.groupings.size)
+      # Since we clear between each test, there should be twice as much as previously
+      expect(2 * number).to eql(StudentMembership.all.size + TaMembership.all.size)
+    end
+  end
+
+end
 
   describe '#groups_submitted' do
     before :each do
@@ -1462,3 +1600,5 @@ describe Assignment do
     end
   end
 end
+
+
