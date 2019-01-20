@@ -37,19 +37,7 @@
           <div id='codeviewer' class='flex-col'></div>
         </div>
 
-        <div id='annotations_summary' class='flex-col'>
-          <div id='annotations_summary_head'>
-            <h3><%= Result.human_attribute_name(:overall_comment) %></h3>
-
-            <%= render partial: 'results/marker/overall_comment',
-                       locals: { result: old_result ? old_result : result } %>
-
-            <h3><%= Annotation.model_name.human.pluralize %></h3>
-            <p><%= t('results.annotation.across_all_submission_files') %></p>
-          </div>
-
-          <ul id='annotation_table'></ul>
-        </div>
+        <div id='annotations_summary' class='flex-col'></div>
 
         <% if !@result.is_a_review? && assignment.enable_test %>
           <div id='test_result_tab' style='display:none;'>

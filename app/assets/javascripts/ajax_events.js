@@ -66,3 +66,6 @@ $(document).ajaxSend((event, request, settings) => {
     hideFlash();
   }
 });
+
+
+$(document).ajaxComplete(renderFlash);
