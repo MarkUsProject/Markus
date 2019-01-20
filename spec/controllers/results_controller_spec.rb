@@ -472,7 +472,7 @@ describe ResultsController do
           end
           it 'should have an edit form with fields for an overall comment' do
             path = "/en/assignments/#{assignment.id}/submissions/#{released_result.submission.id}/results/#{released_result.id}/update_overall_comment"
-            assert_select "#overall_comment_edit form[action='#{path}']"
+            assert_select '.overall-comment textarea'
           end
         end
         context 'while viewing the first submission' do

@@ -15,7 +15,7 @@ class ResultsController < ApplicationController
                        :remove_extra_mark, :get_test_runs_instructors]
   before_action :authorize_for_user,
                 only: [:download, :download_zip,
-                       :view_marks, :get_annotations]
+                       :view_marks, :get_annotations, :show]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
                        :cancel_remark_request,
@@ -27,6 +27,25 @@ class ResultsController < ApplicationController
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
+
+  def show
+    respond_to do |format|
+      format.json do
+        result = Result.find(params[:id])
+        submission = result.submission
+        assignment = submission.assignment
+        remark_submitted = submission.remark_submitted?
+        render json: {
+          overall_comment: result.overall_comment,
+          released_to_students: result.released_to_students,
+          remark_submitted: remark_submitted,
+          remark_request_text: submission.remark_request,
+          remark_request_timestamp: submission.remark_request_timestamp,
+          assignment_remark_message: assignment.remark_message
+        }
+      end
+    end
+  end
 
   def edit
     @host = Rails.application.config.action_controller.relative_url_root

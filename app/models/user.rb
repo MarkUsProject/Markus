@@ -141,7 +141,7 @@ class User < ApplicationRecord
   end
 
   def is_a_reviewer?(assignment)
-    is_a?(Student) && assignment.is_peer_review?
+    is_a?(Student) && !assignment.nil? && assignment.is_peer_review?
   end
 
   def is_reviewer_for?(assignment, result)

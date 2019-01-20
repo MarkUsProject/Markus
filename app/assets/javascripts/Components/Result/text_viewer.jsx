@@ -18,7 +18,7 @@ export class TextViewer extends React.Component {
       // Apply modifications to Syntax Highlighter
       syntax_highlighter_adapter.applyMods();
 
-      annotationTable.display_annotations(this.props.submission_file_id);
+      annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
 
       if (this.props.focus_line !== undefined) {
         focus_source_code_line(this.props.focus_line);
@@ -34,7 +34,7 @@ export class TextViewer extends React.Component {
       // Apply modifications to Syntax Highlighter
       syntax_highlighter_adapter.applyMods();
 
-      annotationTable.display_annotations(this.props.submission_file_id);
+      annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
 
       if (this.props.focus_line !== undefined) {
         focus_source_code_line(this.props.focus_line);
