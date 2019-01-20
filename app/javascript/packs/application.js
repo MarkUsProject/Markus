@@ -32,6 +32,7 @@ import 'mousetrap';
 // rails-ujs
 import Rails from 'rails-ujs';
 Rails.start();
+window.Rails = Rails;
 
 // i18n-js
 import * as I18n from 'i18n-js';

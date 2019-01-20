@@ -1,10 +1,8 @@
 import React from 'react';
-import {render} from 'react-dom';
-
 import ReactTable from 'react-table';
 
 
-class AnnotationTable extends React.Component {
+export class AnnotationTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -269,9 +267,4 @@ class AnnotationTable extends React.Component {
       />
     );
   }
-}
-
-
-export function makeAnnotationTable(elem, props) {
-  return render(<AnnotationTable {...props}/>, elem);
 }

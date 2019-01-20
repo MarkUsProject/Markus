@@ -354,11 +354,8 @@ ul.annotation_text_list {
 
 
 /* Annotations pane */
-
-#annotations_summary_head {
-  padding: 0.5em 0;
-
-  textarea#overall_comment_text_area {
+.overall-comment {
+  textarea {
     margin: 1em 0;
     width: 100%;
   }
@@ -373,6 +370,7 @@ ul.annotation_text_list {
   min-height: 43px;
   max-height: 15em;
   overflow-y: scroll;
+  word-wrap: break-word;
 }
 
 #annotation_preview {

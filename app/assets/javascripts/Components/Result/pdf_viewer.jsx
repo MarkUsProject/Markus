@@ -26,14 +26,14 @@ export class PDFViewer extends React.Component {
 
         PDFView.onLoadComplete = () => {
           window.source_code_ready_for_pdf(PDFView, 'viewer');
-          annotationTable.display_annotations(this.props.submission_file_id);
+          annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
         };
         webViewerLoad(this.props.url);
       });
     } else {
       PDFView.onLoadComplete = () => {
         window.source_code_ready_for_pdf(PDFView, 'viewer');
-        annotationTable.display_annotations(this.props.submission_file_id);
+        annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
       };
       webViewerLoad(this.props.url);
     }

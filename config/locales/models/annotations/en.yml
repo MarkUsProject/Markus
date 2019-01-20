@@ -3,6 +3,7 @@ en:
     models:
       annotation:
         one: "Annotation"
+        other: "Annotations"
     attributes:
       annotation:
         creator: "Created By"

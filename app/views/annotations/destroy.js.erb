@@ -7,7 +7,7 @@
   remove_annotation('<%= @annotation.id %>', null, '<%= @annotation.annotation_text_id %>');
 <% end %>
 
-annotationTable.destroyAnnotation(<%= @annotation.id %>);
+annotationPanel.annotationTable.current.destroyAnnotation(<%= @annotation.id %>);
 
 hide_all_annotation_content_editors();
 reloadDOM();

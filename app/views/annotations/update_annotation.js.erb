@@ -1,4 +1,4 @@
-annotationTable.updateAnnotation({
+annotationPanel.annotationTable.current.updateAnnotation({
   id: <%= @annotation.id %>,
   content: '<%= @annotation.annotation_text.escape_newlines %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
@@ -6,7 +6,7 @@ annotationTable.updateAnnotation({
 
 
 <% if @annotation_text.annotation_category_id != nil %>
-  annotationManager.fetchData();
+  annotationPanel.annotationTable.current.fetchData();
 <% end %>
 
 update_annotation_text('<%= @annotation_text.id %>', '<%= escape_javascript(markdown(@annotation_text.content)) %>');
