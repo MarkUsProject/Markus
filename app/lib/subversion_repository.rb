@@ -781,19 +781,13 @@ class SubversionRevision < Repository::AbstractRevision
     # p.start_with?(path) only would be wrong, there can be two assignments named like 'aX' and 'aXsuffix'
   end
 
-  # Walks all files and subdirectories starting at +path+ and
-  # returns an array of tuples containing [path, revision_object]
-  # for every file and directory discovered in this way
-  #
-  # It returns an array to ensure ordering, so that a directory
-  # will always appear before any of the files or subdirectories
-  # contained within it
   def tree_at_path(path, with_attrs: true)
-    result = files_at_path(path).to_a
+    result = files_at_path(path)
     dirs = directories_at_path(path)
-    result.push(*dirs.to_a)
+    result.merge!(dirs)
     dirs.each do |dir_path, _|
-      result.push(*(tree_at_path(File.join(path, dir_path)).map { |sub_pth, obj| [File.join(dir_path, sub_pth), obj] }))
+      result.merge!(tree_at_path(File.join(path, dir_path))
+                      .transform_keys! { |sub_path| File.join(dir_path, sub_path) })
     end
     result
   end
