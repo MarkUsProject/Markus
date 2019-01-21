@@ -456,11 +456,11 @@ class MemoryRevision < Repository::AbstractRevision
   end
 
   def tree_at_path(path, with_attrs: true)
-    result = files_at_path(path)
-    dirs = directories_at_path(path)
+    result = files_at_path(path, with_attrs: with_attrs)
+    dirs = directories_at_path(path, with_attrs: with_attrs)
     result.merge!(dirs)
     dirs.each do |dir_path, _|
-      result.merge!(tree_at_path(File.join(path, dir_path))
+      result.merge!(tree_at_path(File.join(path, dir_path), with_attrs: with_attrs)
                       .transform_keys! { |sub_path| File.join(dir_path, sub_path) })
     end
     result
