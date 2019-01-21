@@ -319,7 +319,7 @@ module Repository
     # returns an array of tuples containing [path, revision_object]
     # for every file and directory discovered in this way
     def tree_at_path(path)
-      raise NotImplementedError, "Revision.tree_at_path not yet implemented"
+      raise NotImplementedError, 'Revision.tree_at_path not yet implemented'
     end
   end
 
