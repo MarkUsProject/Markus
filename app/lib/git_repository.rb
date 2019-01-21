@@ -653,18 +653,11 @@ class GitRevision < Repository::AbstractRevision
     entries
   end
 
-  # Walks all files and subdirectories starting at +path+ and
-  # returns an array of tuples containing [path, revision_object]
-  # for every file and directory discovered in this way
-  #
-  # It returns an array to ensure ordering, so that a directory
-  # will always appear before any of the files or subdirectories
-  # contained within it
   def tree_at_path(path, with_attrs: true)
     entries = entries_at_path(path, recursive: true)
     if with_attrs && !entries.empty?
       add_entries_info(entries, path)
     end
-    entries.to_a.sort! { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) }
+    entries
   end
 end

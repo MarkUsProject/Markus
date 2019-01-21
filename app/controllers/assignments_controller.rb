@@ -627,6 +627,7 @@ class AssignmentsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     entries = revision.tree_at_path(full_path)
+                      .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
                       .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
       data = get_file_info(file_name, file_obj, assignment.id, path)
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
