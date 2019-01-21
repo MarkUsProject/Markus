@@ -594,7 +594,7 @@ class GitRevision < Repository::AbstractRevision
       elsif entry_type == :tree
         entries[entry_name] = Repository::RevisionDirectory.new(@revision_identifier, name: entry_name, path: path)
         if recursive
-          entries.merge!(entries_at_path(File.join(path, entry_name), type, recursive)
+          entries.merge!(entries_at_path(File.join(path, entry_name), type: type, recursive: recursive)
                            .transform_keys! { |sub_name| File.join(entry_name, sub_name) })
         end
       end
@@ -639,15 +639,17 @@ class GitRevision < Repository::AbstractRevision
 
   def files_at_path(path, with_attrs: true)
     entries = entries_at_path(path, type: :blob)
-    return entries if entries.empty? || !with_attrs
-    add_entries_info(entries, path)
+    if with_attrs && !entries.empty?
+      add_entries_info(entries, path)
+    end
     entries
   end
 
   def directories_at_path(path, with_attrs: true)
     entries = entries_at_path(path, type: :tree)
-    return entries if entries.empty? || !with_attrs
-    add_entries_info(entries, path)
+    if with_attrs && !entries.empty?
+      add_entries_info(entries, path)
+    end
     entries
   end
 
@@ -659,16 +661,10 @@ class GitRevision < Repository::AbstractRevision
   # will always appear before any of the files or subdirectories
   # contained within it
   def tree_at_path(path, with_attrs: true)
-    # entries = entries_at_path(path, recursive: true) #TODO generate ordered array
-    # return entries if entries.empty? || !with_attrs
-    # add_entries_info(entries, path)
-    # entries
-    result = entries_at_path(path).to_a
-    result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
-      result.push(*(tree_at_path(File.join(path, dir_path)).map do |sub_path, obj|
-        [File.join(dir_path, sub_path), obj]
-      end))
+    entries = entries_at_path(path, recursive: true)
+    if with_attrs && !entries.empty?
+      add_entries_info(entries, path)
     end
-    result
+    entries.to_a.sort! { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) }
   end
 end
