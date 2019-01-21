@@ -143,6 +143,17 @@ class GitRepository < Repository::AbstractRepository
     get_revision(@repos.last_commit.oid)
   end
 
+  # Checks whether the next +reflog+ entry corresponds to +commit_sha+, and updates +current_reflog_entry+ accordingly.
+  def self.try_advance_reflog!(reflog, current_reflog_entry, commit_sha)
+    next_index = current_reflog_entry[:index] + 1
+    return if reflog.length <= next_index
+    next_reflog_entry = reflog[next_index]
+    return if commit_sha != next_reflog_entry[:id_new]
+    current_reflog_entry[:sha] = next_reflog_entry[:id_new]
+    current_reflog_entry[:time] = next_reflog_entry[:committer][:time].in_time_zone
+    current_reflog_entry[:index] = next_index
+  end
+
   # Gets the first revision +at_or_earlier_than+ some timestamp and +later_than+ some other timestamp (can be nil).
   # If +path+ is not nil, then gets only a revision with changes under +path+.
   # Push dates in the git reflog are used to compare timestamps, because a commit date can be arbitrarily crafted.
@@ -152,36 +163,28 @@ class GitRepository < Repository::AbstractRepository
     # use the git reflog to get a list of pushes: find first push_time <= at_or_earlier_than && > later_than
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
-    push_info = nil
+    current_reflog_entry = {}
     reflog.each_with_index do |reflog_entry, i|
-      push_time = reflog_entry[:committer][:time]
+      push_time = reflog_entry[:committer][:time].in_time_zone
       return nil if !later_than.nil? && push_time <= later_than.in_time_zone
       if push_time <= at_or_earlier_than.in_time_zone
-        push_info = OpenStruct.new
-        push_info.sha = reflog_entry[:id_new]
-        push_info.time = push_time
-        push_info.index = i
+        current_reflog_entry[:sha] = reflog_entry[:id_new]
+        current_reflog_entry[:time] = push_time
+        current_reflog_entry[:index] = i
         break
       end
     end
-    return nil if push_info.nil?
-    # find first commit that changes path, topologically equal or before the tip of the push
+    return nil if current_reflog_entry.empty?
+    # find first commit that changes path, topologically equal or before the push
     walker = Rugged::Walker.new(@repos)
-    walker.sorting(Rugged::SORT_TOPO)
-    walker.push(push_info.sha)
+    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+    walker.push(current_reflog_entry[:sha])
     walker.each do |commit|
-      if reflog.length > push_info.index + 1 # walk the reflog while walking commits
-        next_reflog_entry = reflog[push_info.index + 1]
-        if commit.oid == next_reflog_entry[:id_new]
-          push_info.sha = next_reflog_entry[:id_new]
-          push_info.time = next_reflog_entry[:committer][:time]
-          push_info.index += 1
-          return nil if !later_than.nil? && push_info.time <= later_than.in_time_zone
-        end
-      end
+      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      return nil if !later_than.nil? && current_reflog_entry[:time] <= later_than.in_time_zone
       revision = get_revision(commit.oid)
       if path.nil? || revision.changes_at_path?(path)
-        revision.server_timestamp = push_info.time
+        revision.server_timestamp = current_reflog_entry[:time]
         return revision
       end
     end
@@ -197,23 +200,15 @@ class GitRepository < Repository::AbstractRepository
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
-    push_info = OpenStruct.new
-    push_info.index = -1
+    current_reflog_entry = { index: -1 }
     # walk through the commits and get revisions
     walker = Rugged::Walker.new(@repos)
     walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
     walker.push(@repos.last_commit)
     walker.map do |commit|
-      if reflog.length > push_info.index + 1 # walk the reflog while walking commits
-        next_reflog_entry = reflog[push_info.index + 1]
-        if commit.oid == next_reflog_entry[:id_new]
-          push_info.sha = next_reflog_entry[:id_new]
-          push_info.time = next_reflog_entry[:committer][:time]
-          push_info.index += 1
-        end
-      end
+      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
       revision = get_revision(commit.oid)
-      revision.server_timestamp = push_info.time
+      revision.server_timestamp = current_reflog_entry[:time]
       revision
     end
   ensure
@@ -329,20 +324,6 @@ class GitRepository < Repository::AbstractRepository
       end
     end
     return repos_meta_files_exist
-  end
-
-  def get_revision_number(hash)
-    # This functions walks down git log and counts the steps from beginning
-    # to get the revision number.
-    walker = Rugged::Walker.new(@repos)
-    walker.sorting(Rugged::SORT_DATE | Rugged::SORT_REVERSE)
-    walker.push(hash)
-    start = 0
-    walker.each do |commit|
-      start += 1
-      break if commit.oid == hash
-    end
-    return start
   end
 
   # Returns a Repository::TransAction object, to work with. Do operations,
@@ -587,6 +568,7 @@ class GitRevision < Repository::AbstractRevision
   # Repository::RevisionFile and Repository::RevisionDirectory.
   def entries_at_path(path, type=nil)
     # phase 1: collect all entries
+    bare_repo = nil
     entries = {}
     path_tree = get_entry(path)
     if path_tree.nil?
@@ -614,56 +596,46 @@ class GitRevision < Repository::AbstractRevision
       return entries
     end
     # phase 2: walk the git history once and collect the last commits that modified each entry
+    # 2a: use the git reflog to get a list of pushes
+    repo_path, _sep, repo_name = @repo.workdir[0..-2].rpartition(File::SEPARATOR)
+    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+    bare_repo = Rugged::Repository.new(bare_path)
+    reflog = bare_repo.ref('refs/heads/master').log.reverse
+    # 2b: walk through all the commits until this revision's +@commit+ is found
+    # (this is needed to advance the reflog to the right point, since +@commit+ may be between two pushes)
     walker_entries = entries.dup
+    current_reflog_entry = { index: -1 }
+    found = false
     walker = Rugged::Walker.new(@repo)
-    walker.sorting(Rugged::SORT_DATE)
-    walker.push(@commit)
+    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+    walker.push(@repo.last_commit)
     walker.each do |commit|
+      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      found = true if @commit.oid == commit.oid
+      next unless found
+      # 2c: check entries that were modified
       mod_keys = walker_entries.keys.select { |entry_name| entry_changed?(File.join(path, entry_name), commit) }
       mod_entries = walker_entries.extract!(*mod_keys)
       mod_entries.each do |_, mod_entry|
         mod_entry.last_modified_revision = commit.oid
         mod_entry.last_modified_date = commit.time.in_time_zone
+        mod_entry.submitted_date = current_reflog_entry[:time]
         mod_entry.changed = commit.oid == @revision_identifier
         mod_entry.user_id = commit.author[:name]
       end
       break if walker_entries.empty?
     end
     entries
-  end
-
-  # Return entries with the submitted date attribute updated to equal the
-  # time the change was pushed to the server
-  def _add_push_time(entries)
-    return entries if entries.empty?
-    entries_by_time = entries.sort_by { |_, e| e.last_modified_date.to_i }.map { |_, e| e }
-    repo_path, _sep, repo_name = File.dirname(@repo.path).rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    bare_repo = Rugged::Repository.new(bare_path)
-    reflog = bare_repo.ref('refs/heads/master').log.reverse
-
-    reflog_times = []
-    reflog.each do |reflog_entry|
-      push_time = reflog_entry[:committer][:time].in_time_zone
-      break if push_time < entries_by_time[0].last_modified_date
-      reflog_times << push_time
-    end
-    reflog_times = reflog_times.compact.reverse
-    entries_by_time.each do |entry|
-      while reflog_times.length > 1 && entry.last_modified_date.to_i > reflog_times[0].to_i
-        reflog_times.shift
-      end
-      entry.submitted_date = reflog_times[0]
-    end
-    entries
+  ensure
+    bare_repo&.close
   end
 
   def files_at_path(path)
-    _add_push_time(entries_at_path(path, :blob))
+    entries_at_path(path, :blob)
   end
 
   def directories_at_path(path)
-    _add_push_time(entries_at_path(path, :tree))
+    entries_at_path(path, :tree)
   end
 
   # Walks all files and subdirectories starting at +path+ and
@@ -673,19 +645,14 @@ class GitRevision < Repository::AbstractRevision
   # It returns an array to ensure ordering, so that a directory
   # will always appear before any of the files or subdirectories
   # contained within it
-  #
-  # The +_finalize+ argument should never be passed explicitly. It is
-  # used internally by this method to indicate when all entries have
-  # been collected so that the push time attribute is only added once
-  # per entry
-  def tree_at_path(path, _finalize=true)
+  def tree_at_path(path)
     result = entries_at_path(path).to_a
     result.select { |_, obj| obj.is_a? Repository::RevisionDirectory }.each do |dir_path, _|
-      result.push(*(tree_at_path(File.join(path, dir_path), false).map do |sub_path, obj|
+      result.push(*(tree_at_path(File.join(path, dir_path)).map do |sub_path, obj|
         [File.join(dir_path, sub_path), obj]
       end))
     end
-    _finalize ? _add_push_time(result) : result
+    result
   end
 
   def last_modified_date
