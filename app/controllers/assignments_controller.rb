@@ -615,7 +615,7 @@ class AssignmentsController < ApplicationController
       @last_modified_date = @revision&.server_timestamp
       files = @revision.tree_at_path(assignment.repository_folder)
                        .select do |_, obj|
-                         obj.is_a?(Repository::RevisionFile) && !GitRepository.internal_file_names.include?(obj.name)
+                         obj.is_a?(Repository::RevisionFile) && !Repository.get_class.internal_file_names.include?(obj.name)
                        end
       @num_submitted_files = files.length
       missing_assignment_files = grouping.missing_assignment_files(@revision)
