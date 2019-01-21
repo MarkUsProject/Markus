@@ -2,4 +2,138 @@ describe RubricCriterion do
   let(:criterion_factory_name) { :rubric_criterion }
 
   it_behaves_like 'a criterion'
+
+  context 'A good rubric criterion model' do
+
+    before(:each) do
+      @rubric = create(:rubric_criterion)
+    end
+
+    it{is_expected.to belong_to(:assignment)}
+    it{is_expected.to validate_numericality_of(:max_mark)}
+    it{is_expected.to validate_presence_of(:max_mark)}
+    it{is_expected.to validate_presence_of(:name)}
+
+    # Test that Criteria assigned to non-existent Assignment
+    #is NOT OK
+    def test_assignment_id_dne
+      assignment_id_dne = create(:rubric_criterion)
+      assignment_id_dne.assignment = create(:assignment)
+      assert !assignment_id_dne.save
+    end
+
+    it 'should round weights that have more than 1 significant digits' do
+      expect(RubricCriterion.count).to be >0
+      criterion = RubricCriterion.first
+      criterion.max_mark = 0.5555555555
+      criterion.save
+      expect(criterion.max_mark).to eq 0.6
+    end
+
+    it 'find a mark for a specific rubric and result' do
+      assignment = create(:assignment)
+      grouping = create(:grouping, assignment: assignment)
+      submission = create(:submission, grouping: grouping)
+
+      complete_result = create(:complete_result, submission: submission)
+
+      rubric = create(:rubric_criterion, assignment: assignment)
+
+      mark = create(:mark, result: complete_result, markable: rubric)
+
+      expect(rubric.mark_for(complete_result.id))
+    end
+
+    it 'Set default levels' do
+      r = RubricCriterion.new
+      expect(r.set_default_levels)
+      r.save
+      expect(r.level_0_name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
+      expect(r.level_1_name).to eq(I18n.t('rubric_criteria.defaults.level_1'))
+      expect(r.level_2_name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
+      expect(r.level_3_name).to eq(I18n.t('rubric_criteria.defaults.level_3'))
+      expect(r.level_4_name).to eq(I18n.t('rubric_criteria.defaults.level_4'))
+    end
+
+    it 'be able to set all the level names at once' do
+      r = RubricCriterion.new
+      levels = []
+      0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
+        levels << 'l' + i.to_s()
+      end
+      expect(r).to receive(:save).once
+      r.set_level_names(levels)
+      0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
+        expect(r['level_' + i.to_s() + '_name']).to eq('l' + i.to_s())
+      end
+
+    end
+
+  end
+
+  context 'A rubric criterion assigning a TA' do
+    before(:each) do
+      @criterion = create(:rubric_criterion)
+      @ta = create(:ta)
+    end
+
+    it 'assign a TA by id' do
+      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      @criterion.add_tas(@ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+    end
+
+    it 'not assign the same TA multiple times' do
+      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      @criterion.add_tas(@ta)
+      @ta.reload
+      @criterion.add_tas(@ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+    end
+
+    it 'unassign a TA by id' do
+      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      @criterion.add_tas(@ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+      @ta.reload
+      @criterion.remove_tas(@ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+    end
+
+    it 'assign multiple TAs' do
+      @ta1 = create(:ta)
+      @ta2 = create(:ta)
+      @ta3 = create(:ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      @criterion.add_tas([@ta1, @ta2, @ta3])
+      expect(@criterion.criterion_ta_associations.count).to be == 3, 'Got unexpected TA membership count'
+    end
+
+    it 'remove multiple TAs' do
+      @ta1 = create(:ta)
+      @ta2 = create(:ta)
+      @ta3 = create(:ta)
+      expect(@criterion.criterion_ta_associations.count).to be == 0
+      @criterion.add_tas([@ta1, @ta2, @ta3])
+      expect(@criterion.criterion_ta_associations.count).to be == 3
+      @ta1.reload
+      @ta2.reload
+      @ta3.reload
+      @criterion.remove_tas([@ta1, @ta3])
+      expect(@criterion.criterion_ta_associations.count).to be == 1
+      @criterion.reload
+      expect(@ta2.id).to be == @criterion.tas[0].id
+    end
+
+    it 'get the names of TAs assigned to it' do
+      @ta1 = create(:ta, user_name: 'g9browni')
+      @ta2 = create(:ta, user_name: 'c7benjam')
+      @criterion.add_tas(@ta1)
+      @criterion.add_tas(@ta2)
+      expect(@criterion.get_ta_names).to contain_exactly('g9browni', 'c7benjam')
+    end
+
+  end
+
 end
+
