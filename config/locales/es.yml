@@ -1,64 +1,15 @@
 es:
-    choose_language:    "Lenguaje:"
     answer_yes:         "Sí"
     answer_no:          "No"
     markus:             "MarkUs"
     close:              "Cerrar"
-    password:           "Contaseña"
     all:                "Todos"
-    issues:             "GitHub Lista de problemas"
     actions:            "Acciones"
     continue:           "Continuar"
 
-    # app/views/main/login.html.erb
-    log_in:                          "Iniciar sesión"
-    logging_in:                      "Iniciando sesión..."
-    login_failed:                    "El inicio de sesión falló."
-    password_not_blank:              "La contraseña no puede dejarse en blanco."
-    username_not_blank:              "El nombre de usuario no puede dejarse en blanco."
-    username_and_password_not_blank: "Su contraseña y nombre de usuario no pueden dejarse en blanco."
-    session_expired:                 "Su sesión ha expirado. Por favor inicie la sesión."
-    please_log_in:                   "Por favor inicie la sesión."
-
     # app/views/layouts/_header.html.erb
-    log_out:                        "Cerrar sesión"
-    clear_role_switch_session_link: "Cancelar cambio de rol."
     working:                        "Cargando"
-    login_as:                       "Iniciar sesión como"
     please_wait:                    "Por favor espere..."
-
-    # app/views/main/_about_content.html.erb
-    about_markus:               "Acerca de MarkUs"
-    version:                    "Versión"
-    using_markus_version:       "Usted está usando la siguiente versión de MarkUs: "
-    using_ruby_version:         "Versión de Ruby: "
-    using_rails_version:        "Versión de Rails: "
-    license:                    "Licencia"
-    markus_license_OSI:         "MarkUs está disponible bajo la <a href=\"http://www.opensource.org/licenses/mit-license.html\">licencia MIT</a> aprovada por <a href=\"http://www.opensource.org\">OSI</a>."
-    markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
-    markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
-    markus_no_warranty:         "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:           "Copyright (c) 2008-2011 por los autores."
-    markus_credits:             "Créditos"
-    markus_credits_thanks:      "Gracias a todos/as quienes contribuyeron, e hicieron Markus posible. Especialmente a:"
-    supervisors:                "Supervisores: "
-    contact_us:                 "Contáctenos"
-    email_more_info:            "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> o
-                                 <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>
-                                 Visita: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a>
-                                 para más información.<br>Si desea reportar un error o problema por favor visite
-                                 <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
-
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "Su sesión está por expirar."
-
-    # app/views/api/_key_display.html.erb
-    api_key:             "Su clave API"
-    api_key_unavailable: "No disponible"
-    reset_api_key:       "Reiniciar mi clave API"
-    api_key_help:        "La clave API es usada como autenticación para la interface REST. Mira la
-                          <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">
-                          Wiki de MarkUs</a> para más información acerca del uso de la REST API."
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Panel"
@@ -68,15 +19,6 @@ es:
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Enlaces rápidos"
 
-    # app/models/assignment_file.rb
-    validation_messages:
-      format_of_assignment_file: "debe incluir sólo caracteres alfanuméricos, '.', '-', '_' o '/'"
-
-    # app/views/main/index.html.erb
-    switch_role:                   "Cambio de rol"
-    admin_password:                "Clave del administrador"
-    cannot_login_as_another_admin: "Usted no puede iniciar la sesión como otro administrador."
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "No existen proyectos por el momento."
 
@@ -85,7 +27,6 @@ es:
     filename:                  "Nombre del archivo"
     message:                   "Mensaje"
     remove:                    "Remover"
-    csv_grade_report: "el reporte de notas en formato CSV"
     days_left:                 "(%{days} días(s) restantes)"
     description:               "Descripción"
     shortened_date:            "Fecha"
@@ -105,10 +46,6 @@ es:
             grace_day_over_limit:         "Ha asignado uno o más estudiantes que tienen menos créditos para el período
                                            de aplazamiento de gracia que la cantidad ya utilizada por el grupo
                                            %{group}."
-            select_a_grader:              "Seleccione un evaluador"
-            select_a_criterion:           "Seleccione al menos un criterio de calificación"
-            group_submission_no_files:    "Uno o más de los grupos seleccionados no tienen archivos en su entrega. El
-                                           evaluador no ha sido asignado."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
@@ -121,11 +58,6 @@ es:
             repo_url: "UPDATE ME"
             title: "Código Inicial"
             update: "UPDATE ME"
-        help:
-            graders:             "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.
-                                  De manera predeterminada, los evaluadores serán asignados a todos los criterios de
-                                  calificación."
-            assign_scans:        "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos"
         start_peer_review:                "Revisión de Compañeros"
         peer_review_results:              "Resultados para la Revisión de Compañeros"
         your_reviews:                     "Sus Revisiones"
@@ -171,7 +103,6 @@ es:
         upload:
             header:      "Subir la Revisión de Compañeros en formato CSV"
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
-    your_mark: "Su nota:"
 
     add_new:                     "Añadir Nuevo Archivo"
     edit:                        "Editar"
@@ -179,10 +110,8 @@ es:
     save_changes:                "Guardar cambios"
     apply:                       "Aplicar"
     delete:                      "Eliminar"
-    submit_request:              "Entregar la solicitud al instructor"
     submit:                      "Enviar"
     cancel:                      "Cancelar"
-    cancel_remark:               "Cancelar la solicitud de recalificación"
     all:                         "Todos/as"
     active:                      "Activo"
     not_active:                  "Inactivo"
@@ -190,125 +119,24 @@ es:
     properties:                  "Propiedades"
     peer_reviews:                "Revisiones de Compañeros"
     help:                        "Ayuda"
-    no_remark_result:            "Los resultados de la recalificación no están disponibles para este proyecto todavía."
     preview:                     "Vista previa"
     encoding:                    "Codificación"
     select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
     all_csv_file:                "Todos los campos: "
 
     past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
-    past_due_date_edit_result_warning: "El %{href} de este grupo se ha realizado después de la fecha límite de entrega."
-    last_commit:                       "último commit"
 
-    #app/views/results/marker/
-    marker:
-      overall_comments_success:    "Los Comentarios Generales han sido actualizados exitosamente."
-      across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
-                                    número de línea para ser redirigido al lugar exacto en el archivo que contiene la
-                                    anotación."
-      source_code:                 "Código Inicial"
-      test_results:                "Resultados de la Prueba"
-      feedback_files:              "Archivos de Retroalimentación"
-      remark_request:              "Solicitud de recalificación"
-      remark_submitted_on:         "Solicitud de recalificación enviada en"
-      no_remark_due_date:          "La fecha límite de entrega no ha sido asignada"
-      past_remark_due_date:        "La fecha límite para solicitar una recalificación ha pasado"
-      about_remark_save:           "Por favor tenga en cuenta que el instructor no será notificado acerca de los cambios
-                                    guardados a menos que estos sean enviados."
-      about_remark_submission:     "Una vez que la solicitud de recalificación ha sido enviada, usted no será capaz de
-                                    ver los resultados originales hasta que los resultados de la recalificación esten
-                                    disponibles. Usted tampoco podrá editar la solicitud."
-      cancel_remark_to_change:     "Si desea modificar su solicitud, usted deberá cancelar la misma y crear una nueva."
-      remark_submitted:            "Su solicitud de recalificación ha sido enviada:"
-      notes:                       "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations:         "Incluir Anotaciones"
-      include_annotations_warning: "Precaución! Las anotaciones en los PDFs no pueden ser descargados por el momento."
-      marks:
-        comment:                   "Comentario"
-        percentage:                "Porcentaje"
-        invalid_mark:              "Nota Inválida!"
-        add_extra_mark:            "Agregar una nota adicional"
-        mark:                      "Nota"
-        marks:                     "Notas"
-        summary:                   "Resumen"
-        tags:                      "Etiquetas"
-        current_tags:              "Etiquetas Recientes:"
-        available_tags:            "Etiquetas Disponibles:"
-        tag_summary:               "Etiquetas más usadas:"
-        new_tag:                   "Añadir una nueva etiqueta..."
-        delete_tag:                "Elimnar Etiquetas..."
-        expand_all:                "Expandir todos"
-        collapse_all:              "Reducir todos"
-        expand_unmarked:           "Expandir no calificados"
-        confirm_remove_mark:       "¿Está seguro/a de querer remover esta nota adicional?"
-        confirm_remove_percentage: "¿Está seguro/a de querer remover este porcentaje adicional?"
-        subtotal:                  "Subtotal: "
-        old_subtotal:              "Subtotal Anterior: "
-        bonus_deductions:          "Bonificaciones/Deducciones"
-        bonus_marks:               "Notas de bonificación:&nbsp;"
-        deducted_marks:            "Notas reducidas:&nbsp;"
-        total_extra_marks:         "Notas adicionales totales:&nbsp;"
-        total_extra_percentages:   "Porcentajes adicionales totales:&nbsp;"
-        translated_to_points:      "Convertidos a Puntos:"
-        previous_mark:             "Nota Previa&nbsp;"
-        show_old_marks:            "Ver el Resumen de Notas Anteriores"
-      annotation:
-        average_annotations:            "%{average_annotations} anotaciones por entrega calificada"
-        placeholder:                    "Notación de Markdown y LaTeX"
-        remark_flag:                    "(Recalificación)"
-        new_annotation:                 "Crear una nueva anotación"
-        edit_annotation:                "Edit annotation"
-        preview:                        "Vista Previa"
-        change_across_submissions:      "Este cambio afectará todas las entregas marcadas con esta anotación. ¿Está de
-                                         acuerdo?"
-        select_some_text:               "Usted debe seleccionar el código al que pertenece la anotación"
-        select_an_area:                 "Usted debe seleccionar un área o imagen a anotar"
-        select_an_area_pdf:             "Usted debe seleccionar un área a anotar en el PDF "
-        context_menu:
-          new:                          "New Annotation"
-          common:                       "Common Annotations"
-          edit:                         "Edit"
-          delete:                       "Remove"
-          copy:                         "Copy"
-          download:                     "Download File"
-          download_annotated:           "Download Annotated File"
+    copy:                         "Copy"
 
-    #app/views/results/common
-    common:
-      feedback_files:             "Archivos de retroalimentación"
-      cant_display_image:         "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
-                                   por favor asegurese de habilitar el soporte para pdf. De click en el botón de
-                                   descargas para descargar el archivo"
-      criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
-                                   sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
-                                   ellos tenga su nota correspondiente."
-
-    csv_invalid_lines:                   "Las siguientes líneas en formato CSV fueron inválidas: "
-    csv_valid_lines:                     "Se han actualizado %{valid_line_count} líneas exitosamente"
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
-    cancel_remark_request:               "¿Está seguro/a de querer cancelar su solictud de recalificación? La solicitud
-                                          será eliminada y no se podrá recuperar."
-    confirm_remark_submit:               "¿Está seguro/a de querer enviar su solictud de recalificación? Usted no podrá
-                                          ver sus resultados hasta que el proceso de recalificación haya finalizado."
     still_working_warning:               "Existen procesos sin finalizar. Estos no se guardarán si abandona la sesión en
                                           este momento."
 
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
                                era: '%{group_name}'."
-      group_to_grader:         "Usted debe proveer un archivo con formato CSV para crear los pares de evaluador y grupo."
-      student_to_grader:       "Usted debe proveer un archivo con formato CSV para crear los pares de estudiante y
-                                evaluador"
-      invalid_csv:             "El formato del archivo no ha sido reconocido"
-      invalid_row:
-        invalid_format:  "El formato de la fila es inválido"
-      upload:
-        # cuando un archivo que no es de tipo texto tiene una extensión .csv (En otras palabras: si el usuario cambia
-        # la extensión de .pdf a .csv de un archivo pdf)
-        non_text_file_with_csv_extension: "El archivo seleccionado no es un archivo con formato CSV (a pesar de que
-                                           pueda tener csv como extensión)."
       group_with_different_repo:                            "Error: El grupo %{group_name} no puede ser creado debido a
                                                              que un grupo con el mismo nombre y un repositorio diferente
                                                              ya existe"
@@ -330,35 +158,13 @@ es:
 
     browse_submissions:
       review_state:                         "Estado de la Revisión"
-      tags_used:                            "Etiquetas Usadas"
-
-    course_summaries_index:
-        page_title: "Resumen"
 
     no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
-    student_course_summary:          "Sus notas del semestre"
-
     groups:
-      assign_scans:                  "Asignar Escaneado"
-      skip_group:                    "UPDATE ME"
-      done_assign:                   "Todos los grupos han sido asignados con éxito a los estudiantes"
-      randomly_assign_graders:        "Asignar Evaluadores al azar"
       upload:
         description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
-        upload_grader_map:               "Subir pares Grupo / Evaluador"
-        upload_grader_criteria_map:      "Subir pares Criterios de Calificación / Evaluador"
-        description_grader_map:          "Archivo en formato CSV:<br><code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Archivo en formato CSV:<br><code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-
-      download:
-        download_grader_maps:         "Descargar los pares del evaluador"
-        download_grader_groups_csv:   "Par Grupo / Evaluador en formato CSV"
-        download_grader_criteria_csv: "Par Criterios de Calificación / Evaluador en formato CSV"
-      action:
-        assign_grader:   "Asignar Evaluador(es)"
-        unassign_grader: "Eliminar Asignación para Evaluador(es)"
       csv:
         could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
@@ -369,60 +175,23 @@ es:
       successfully_changed:            "%{changed} resultados han sido actualizados exitosamente"
       could_not_find_file:             "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
 
-    mark:
-      error:
-        validate_criteria: "debe ser un número entre 0 y la nota máxima para el criterio de calificación"
-
     #Sutdent's View (student)
     student:
       peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
-      overview:                           "Vista General"
-      last_revision_date:                 "Última fecha de revisión:
-                                           <br><span class=\"info_date\">%{last_modified_date}</span>"
-      files:                              "Archivos"
-      missing_required_files:             "<span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\">
-                                           archivos requeridos no encontrados</span>"
       no_peer_submission_yet:             "Usted no tiene entregas por revisar."
       no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       submission:
-        file_manager:                     "%{short_identifier}: Administrador de Archivos"
         conflicts:                        "Conflictos"
         file_conflicts:                   "Sus cambios no han sido realizados. Los siguientes conflictos fueron
                                            detectados:"
         missing_files:                    "Usted todavía necesita subir %{file} archivo(s) requeridos para este
                                            proyecto:"
         no_action_detected:               "No se ha detectado niguna acción en el último envío. Nada ha cambiado."
-        no_marks_available:               "No existen notas disponibles."
         external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
         invalid_file_name:                "El nombre del archivo enviado no es válido"
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
-        no_files_available:               "No existen archivos disponibles"
-        no_revision_available:            "No existe ninguna revisión disponible"
-        version_control_warning:          "Entregar archivos aquí reescribe todos los cambios realizados usando
-                                           version control. Asegúrese que haya trabajado en los archivos más recientes
-                                           antes de realizar la entrega."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:       "Asignar los Evaluadores"
-      coverage:               "Cobertura"
-      assign_to_criteria:     "Asignar Evaluadores a los Criterios de Calificación"
-      skip_empty_submissions: "No se asignará Evaluadores a los grupos con entregas vacías (requiere que las entregas
-                               sean recolectadas)"
-      download:
-        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
-        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Par Estudiante / Evaluador en formato CSV"
-      upload:
-        upload_grader_map:      "Subir el par Estudiante/Evaluador"
-        description_grader_map: "Formato del archivo CSV:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "El estudiante %{user_name} ha sido añadido."
@@ -461,83 +230,10 @@ es:
     update_files:
       success: "Sus cambios han sido realizados."
 
-    tags:
-      tags:        "Etiquetas"
-      title:       "Etiquetas del Proyecto: %{assignment_short_identifier}"
-      search_tags: "Buscar etiquetas..."
-      edit_tag:    "Editar Etiqueta..."
-      edit_update: "Actualizar"
-      updating:    "Actualizando..."
-
-      messages:
-        no_assigned: "--No se han asignado etiquetas--"
-        no_left:     "--No hay más etiquetas por asignar--"
-
-      create:
-        create_new:      "Añadir Etiqueta"
-        tag_prompt:      "Nombre de la Etiqueta:"
-        tag_description: "Descripción de la Etiqueta:"
-        button_text:     "Guardar Cambios"
-        name_prompt:     "Ingresar el nombre de la etiqueta..."
-        descript_prompt: "Ingresar la descripción de la etiqueta..."
-        successful:      "La etiqueta ha sido creada exitosamente!"
-        error:           "La etiqueta no pudo ser creada."
-
-      delete:
-        delete_tags: "Eliminar Etiquetas"
-        tag_prompt:  "Por favor seleccione las etiquetas en la parte inferior para eliminarlas:"
-
-      upload:
-        upload_success:    "%{nb_updates} etiqueta(s) han sido añadidad exitosamente!"
-        upload_csv_html:   "
-          <p>
-            El archivo debería tener el siguiente formato:<br>
-            <ul>
-              <li>Sólo un registro por línea.
-              <li>Cada línea debería ser terminada en un carriage-return o un line-feed.</li>
-              <li>El nombre y la descripción de la etiqueta son los únicos usados. Cualquier otra información en la
-                  línea es ignorada.</li>
-            </ul>
-            <code>tag_name,tag_description, ...</code><br><br>
-            <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
-            <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
-          </p>"
-        upload_yml_html:   "
-          <p>
-            El archivo debería tener el siguiente formato:<br>
-            <ul>
-              <li>Sólo un registro por línea.
-              <li>Cada línea debería ser terminada en un carriage-return o un line-feed.
-              <li>Cualquier otra información en la línea es ignorada.
-            </ul>
-            <code>tag_id:<br>
-              &nbsp;&nbsp;name: name<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;user:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
-              [...]</code><br><br>
-            <i>nombre_etiqueta</i> representa el nombre de la etiqueta a ser añadida.<br>
-            <i>descripción_etiqueta</i> representa la  descripción para este registro.<br>
-            <i>id</i> representa el id del usuario asociado con la etiqueta.<br>
-          </p>"
-        error:             "Un error ha ocurrido mientras se subian las etiquetas: "
-        empty_error:       " El archivo con formato YAML está vacío."
-
-      download:
-        download_title: "Descargar Etiquetas"
-        button_message: "Descargar en formato %{file_format} "
-
-      table:
-        name:        "Nombre"
-        creator:     "Creador"
-        description: "Descripción"
-        use:         "Uso"
-        actions:     "Acciones"
-        all:         "Todas las etiquetas"
-        in_use:      "Etiquetas en uso"
-        not_in_use:  "Etiquetas no usadas"
-
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
+        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
         binary_file_message: "Contenido binario: Use el botón de descarga para ver el archivo!"
@@ -545,14 +241,6 @@ es:
     feedback_file:
       error:
         no_access:        "No existe acceso al archivo de retroalimentación con id #%{feedback_file_id}."
-      no_files_available: "[El archivo de retroalimentación no está disponible]"
-
-    csv_special_characters_html: "
-    <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").<br>
-    Si desea usar comillas dobles en un campo CSV, usted debe rodear el campo completo con comillas dobles y<br>
-    duplicar cada una de sus comillas dobles (\"\").</p>
-    <p>Este es un ejemplo de un campo CSV que contiene comas y comillas dobles:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria_csv_error:
       weight_not_number: "el peso no es un número."
@@ -565,81 +253,7 @@ es:
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
       errors:
         messages:
-          name_taken:             "Ya existe otro criterio de calificación con este nombre."
-          assignment_association: "La asociación con el proyecto no es lo suficientemente fuerte."
-          input_number:           "Debe ser un número mayor a 0.0."
           released_marks:         "TODO"
-
-    summary_table:
-      title:             "Título"
-      grade:             "Nota"
-
-    key_pairs:
-      title:           "Pares de Claves"
-      key_pairs_title: "Sus Pares de Claves"
-      time_of_upload:  "Hora de Subida"
-      key_content:     "Contenido de la clave"
-      new_key_pair:    "Nuevo Par de Claves"
-      add_key_pair:    "Añadir un Par de Claves"
-      remove_key:      "Remover Clave"
-      are_you_sure:    "¿Está seguro/a?"
-      file:            "Archivo"
-      or:              "O"
-      copy_paste_key:  "Copie y pegue su clave pública"
-      create_key_pair: "Crear Par de Claves"
-      back:            "Atrás"
-      create:
-        success:     "El Par de Claves ha sido creado exitosamente"
-        invalid_key: "El Par de Claves no fue creado: Clave inválida"
-      update:
-        success: "El Par de Claves fue actualizado exitosamente"
-      delete:
-        success: "El Par de Claves fue removido exitosamente"
-
-    course_summaries:
-      title: "Resumen"
-
-    marking_schemes:
-      title:               "Esquemas de Calificación"
-      name:                "Nombre"
-      add_new:             "Añadir un nuevo Esquema de Calificación"
-      edit:                "Editar Esquemas de Calificación"
-      weight_label:        "Peso para "
-      table_modify_column: "Modificar"
-
-    notes:
-        note_on:  "%{user_name} en <strong>%{display_for}</strong>"
-        add_new:  "Añadir una nueva nota"
-        existing: "Notas Existentes"
-        comment:  "Su comentario"
-        save:     "Guardar Nota"
-        success:  "La nota fue guardada exitosamente"
-        error:    "No se pudo guardar nota"
-        title:    "Notas"
-        note:     "Nota"
-        noteable: "Objeto para el que se puede crear notas"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author:         "Autor"
-        creation_time:  "Tiempo de creación"
-        delete:
-            link_title:        "Eliminar esta nota"
-            link_confirm:      "Esto removerá la nota permanentemente. ¿Desea continuar?"
-            success:           "La nota fue eliminada exitosamente."
-            error_permissions: "Usted no tiene permiso para eliminar esta nota."
-        new:
-            note_message:      "Mensaje Notas"
-            title:             "Crear Nota"
-            invalid_selector:  "El seleccionador escogido es inválido."
-            no_noteables:      "Las notas están vinculadas a grupos, proyectos o estudiantes, pero no existe niguno de
-                                estos todavía. Por favor cree uno primero."
-        create:
-            success: "La nota fue creada exitosamente."
-        edit:
-            title: "Editar Nota"
-        update:
-            success: "La nota fue actualizada exitosamente."
-        help: "Las notas pueden ser creadas para estudiantes, grupos, o proyectos. Estas son visibles para
-               administradores y evaluadores, pero no para estudiantes."
 
     section:
       help:
@@ -647,23 +261,7 @@ es:
                             en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
                             a una sección, use the la vista de Usuarios."
 
-    keybinding:
-      keyboard_help:          "Ayuda del acceso directo del teclado"
-      toggle_compact:         "Cambiar vista compacta"
-      next_criterion:         "Seleccione el siguiente criterio"
-      previous_criterion:     "Seleccione el criterio anterior"
-      next_level:             "Seleccione el siguiente nivel"
-      previous_level:         "Seleccionar nivel anterior"
-      confirm_level:          "Confirmar nivel"
-      when_rubric:            "(Cuándo en Rúbrica) "
-      open_annotation:        "Modalidad de anotación abierta"
-      confirm_annotation:     "Confirmar anotación"
-
     #app/views/assignments/_read.html.erb
-    no_grader_assigned:                    "Evaluador predeterminado: Instructor(es) del curso"
-    locale_not_available:                  "La traducción %{locale} no esta disponible!"
-    external_authentication_not_supported: "La autenticación externa no es soportada en su plataforma!"
-    account_disabled:                      "Esta cuenta ha sido desabilitada"
     additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb
@@ -680,7 +278,6 @@ es:
       title:                              "Pruebas Automatizadas"
       testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
       automated_tests:                    "Estructura de la prueba"
-      test_results:                       "Resultados de la Prueba"
       no_results:                         "UPDATE ME"
       student_tests:                      "UPDATE ME"
       need_group_for_test:                "Usted debe tener un grupo para lanzar la prueba"
@@ -688,6 +285,7 @@ es:
       run_tests:                          "Lanzar pruebas"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
+      fetch_testers:                      "UPDATE ME"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
                                            pruebas."
@@ -765,21 +363,6 @@ es:
         extra_stderr: "UPDATE ME \n%{extra}\n"
         extra_malformed: "UPDATE ME \n%{extra}\n"
         extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
-
-#Missing Activerecord Translations for english
-    datetime:
-      distance_in_words:
-        less_than_x_seconds:
-          zero: "menos de un segundo"
-        less_than_x_minutes:
-          zero: "menos de un minuto"
-
-    support:
-      array:
-        sentence_connector: "y"
-        skip_last_comma:    true
-
-    server_time: "Tiempo Servidor:"
 
     poll_job:
       working_message: "%{progress} fuera de %{total}"

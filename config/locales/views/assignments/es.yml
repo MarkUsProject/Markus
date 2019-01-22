@@ -66,5 +66,6 @@ es:
       under_review: "Este examen todavía está en revisión"
 
     # Miscellaneous
+    average_annotations: "%{average_annotations} anotaciones por entrega calificada"
     information: "Reglas del Proyecto"
     marking_scheme: "Esquema de Calificación: %{identifier}"

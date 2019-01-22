@@ -1,0 +1,35 @@
+fr:
+  graders:
+    actions:
+      assign_grader: "Attribuer un ou plusieurs correcteurs"
+      randomly_assign_graders: "Attribuer les correcteurs aléatoirement"
+      unassign_grader: "Retirer un ou plusieurs correcteurs"
+
+    assigned_graders: "Correcteurs assignés"
+    assign_to_criteria: "Attribuer les correcteurs aux critères"
+    coverage: "Couverture"
+    grader_maps: "Grader Assignments"
+    group_submission_no_files: "Un ou plusieurs des groupes sélectionnés ne contient aucun fichier dans leur soumission. Grader pas affecté."
+    no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
+    select_a_criterion: "Sélectionnez au moins un critère."
+    select_a_grader: "Sélectionner un correcteur."
+    skip_empty_submissions: "Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)"
+
+    download:
+      grader_groups: "Groupes / Attribution des correcteurs (CSV)"
+      grader_criteria: "Fichier de critères / attribution des correcteurs (CSV)"
+      grader_students: "Étudiants / attribution des correcteurs (CSV)"
+
+    upload:
+      instructions_grader_criteria_html: "
+        Format du fichier CSV : <br>
+        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
+      instructions_grader_groups_html: "
+        Format du fichier CSV : <br>
+        <code>group_name,grader_user_name,grader_user_name,... </code><br>"
+      instructions_grader_students_html: "
+        Format du fichier CSV : <br>
+        <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
+      remove_existing_mappings: "Supprimer les attributions existants"
+
+    help: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."

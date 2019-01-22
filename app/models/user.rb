@@ -141,7 +141,7 @@ class User < ApplicationRecord
   end
 
   def is_a_reviewer?(assignment)
-    is_a?(Student) && assignment.is_peer_review?
+    is_a?(Student) && !assignment.nil? && assignment.is_peer_review?
   end
 
   def is_reviewer_for?(assignment, result)
@@ -206,7 +206,7 @@ class User < ApplicationRecord
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
-          parsed[:invalid_lines] = I18n.t('csv_invalid_lines')
+          parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
         else
           parsed[:invalid_lines] += MarkusCSV::INVALID_LINE_SEP # concat to invalid_lines from MarkusCSV#parse
         end
@@ -214,7 +214,7 @@ class User < ApplicationRecord
           imported.failed_instances.map { |f| "#{f[:user_name]}" }.join(MarkusCSV::INVALID_LINE_SEP)
       end
       unless imported.ids.empty?
-        parsed[:valid_lines] = I18n.t('csv_valid_lines', valid_line_count: imported.ids.size)
+        parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)
       end
     rescue ActiveRecord::RecordNotUnique => e
       # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import

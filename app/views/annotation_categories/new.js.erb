@@ -2,3 +2,5 @@ $('#annotation_category_pane_list').prepend(
   "<%= escape_javascript("#{render partial: 'new_annotation_category',
                                    locals: { assignment_id: @assignment.id }}").html_safe %>");
 $('#add_annotation_category_prompt').select();
+
+ajax_events.setUpCallbacks(document.getElementById('add_annotation_category'));

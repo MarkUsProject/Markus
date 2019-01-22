@@ -13,6 +13,7 @@ en:
         one: "User"
     attributes:
       user:
+        api_key: "Your API Key"
         email: "Email"
         first_name: "First Name"
         full_name: "Name"

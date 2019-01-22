@@ -9,6 +9,7 @@ class AdminTable extends React.Component {
     super();
     this.state = {
       data: [],
+      loading: true
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -22,7 +23,7 @@ class AdminTable extends React.Component {
       url: Routes.admins_path(),
       dataType: 'json',
     }).then(res => {
-      this.setState({data: res});
+      this.setState({data: res, loading: false});
     });
   }
 
@@ -62,6 +63,7 @@ class AdminTable extends React.Component {
           }
         ]}
         filterable
+        loading={this.state.loading}
       />
     );
   }

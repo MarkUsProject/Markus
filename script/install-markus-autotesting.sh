@@ -15,4 +15,4 @@ echo "- - - Setting up the autotester - - -"
 # Note: autotester install.sh requires Python 3.7
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
-yes | ./install.sh || exit 1
+yes | server/bin/install.sh || exit 1

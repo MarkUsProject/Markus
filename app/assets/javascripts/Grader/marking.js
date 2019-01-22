@@ -65,6 +65,7 @@ $(document).ready(function() {
         error: function(err) {
           var error_div = document.getElementById(
             'mark_verify_result_' + mark_id);
+          error_div.style = '';
           error_div.removeClass('hidden');
           error_div.innerHTML = err.responseText;
         },
@@ -195,7 +196,7 @@ $(document).ready(function() {
     var old_mark = this.getAttribute('data-oldmark');
 
     if (old_mark != 'none') {
-      old_mark_elem.innerHTML = '(Old Mark: ' + old_mark + ')';
+      old_mark_elem.innerHTML = `(${I18n.t('results.remark.old_mark')}: ${old_mark})`;
       mark_elem.removeClass('not_remarked');
       mark_elem.addClass('remarked');
     }
@@ -209,8 +210,9 @@ $(document).ready(function() {
     var mark_elems =  document.getElementsByName('mark_' + mark_id);
     var old_mark = this.getAttribute('data-oldmark');
 
+    console.log('changed', old_mark);
     if (old_mark != 'none') {
-      old_mark_elem.innerHTML = '(Old Mark: ' + old_mark + ')';
+      old_mark_elem.innerHTML = `(${I18n.t('results.remark.old_mark')}: ${old_mark})`;
       for (var i = 0; i < mark_elems; i++) {
         mark_elems[i].removeClass('not_remarked');
         mark_elems[i].addClass('remarked');

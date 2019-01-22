@@ -1,17 +1,18 @@
 <div id="edit">
-  <h2><%= I18n.t("tags.edit_tag") %></h2>
+  <h2><%= t('helpers.submit.update', model: Tag.model_name.human) %></h2>
 
   <%= form_for :update_tag,
-               url: update_tag_assignment_tag_path(@assignment, @tag),
+               url: assignment_tag_path(@assignment, @tag),
+               method: 'PUT',
                html: { multipart: true, size: 1 } do |f| %>
     <div>
-      <p><%= t('tags.create.tag_prompt') %></p>
+      <p><%= Tag.human_attribute_name(:name) %></p>
       <p><%= f.text_field :name,
                           id: 'name',
                           value: @tag[:name] %></p>
     </div>
     <div>
-      <p class="alignleft"><%= t('tags.create.tag_description') %></p>
+      <p class="alignleft"><%= Tag.human_attribute_name(:description) %></p>
       <p id='descript_amount' class='alignright'>0/120</p>
       <p class="clear-alignment"><%= f.text_area :description,
                                       id: 'description',
@@ -22,9 +23,9 @@
                                       value: @tag[:description] %></p>
     </div>
     <section class='dialog-actions'>
-      <%= f.submit t('tags.edit_update'),
+      <%= f.submit t(:submit),
                    name: 'submit',
-                   data: { disable_with: t('tags.updating') },
+                   data: { disable_with: t(:working) },
                    class: 'button' %>
       <input type='reset'
              value='<%= t(:cancel) %>'

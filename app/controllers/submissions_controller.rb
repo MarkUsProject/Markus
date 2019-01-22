@@ -145,7 +145,7 @@ class SubmissionsController < ApplicationController
     end
 
     if @assignment.allow_web_submits && @assignment.vcs_submit
-      flash_message(:notice, t('student.submission.version_control_warning'))
+      flash_message(:notice, t('submissions.student.version_control_warning'))
     end
     render layout: 'assignment_content'
   end
@@ -466,9 +466,7 @@ class SubmissionsController < ApplicationController
     submission = Submission.find(params[:id])
     grouping = submission.grouping
 
-    # TODO: allow for peer reviewers.
-    # current_user.is_reviewer_for?(assignment.pr_assignment, <any result>)
-    if @current_user.student? &&
+    if !@current_user.is_a_reviewer?(assignment.pr_assignment) && @current_user.student? &&
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
@@ -620,7 +618,7 @@ class SubmissionsController < ApplicationController
         begin
           revision = repo.get_revision(params[:revision_identifier])
         rescue Repository::RevisionDoesNotExist
-          flash_message(:error, t('student.submission.no_revision_available'))
+          flash_message(:error, t('submissions.student.no_revision_available'))
           redirect_back(fallback_location: root_path)
           return
         end
@@ -628,7 +626,7 @@ class SubmissionsController < ApplicationController
 
       files = revision.files_at_path(assignment.repository_folder)
       if files.count == 0
-        flash_message(:error, t('student.submission.no_files_available'))
+        flash_message(:error, t('submissions.no_files_available'))
         redirect_back(fallback_location: root_path)
         return
       end

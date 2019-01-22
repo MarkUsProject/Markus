@@ -9,7 +9,8 @@ class AssignmentSummaryTable extends React.Component {
     super();
     this.state = {
       data: [],
-      criteriaColumns: []
+      criteriaColumns: [],
+      loading: true
     };
   }
 
@@ -26,7 +27,11 @@ class AssignmentSummaryTable extends React.Component {
         col['filterable'] = false;
         col['defaultSortDesc'] = true;
       });
-      this.setState({data: res.data, criteriaColumns: res.criteriaColumns});
+      this.setState({
+        data: res.data,
+        criteriaColumns: res.criteriaColumns,
+        loading: false
+      });
     });
   };
 
@@ -106,7 +111,7 @@ class AssignmentSummaryTable extends React.Component {
   ];
 
   bonusColumn = {
-    Header: I18n.t('marker.marks.bonus_deductions'),
+    Header: I18n.t('activerecord.models.extra_mark.other'),
     accessor: 'total_extra_marks',
     Cell: ({value}) => parseFloat(value) ? value : '',
     className: 'number',
@@ -158,6 +163,7 @@ class AssignmentSummaryTable extends React.Component {
               </div>
             );
           }}
+          loading={this.state.loading}
         />
       </div>
     );

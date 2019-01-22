@@ -1,4 +1,11 @@
 fr:
+  csv_special_characters_html: "
+    <p>Si vous souhaitez utiliser des virgules (,) dans un champ CSV, il faut placer tout le contenu du champ dans des doubles quotes ou guillemets droits (\").
+    Si vous souhaitez utiliser des double quotes (ou guillemets droits) dans un champ CSV, il faut placer tout le contenu du champ dans des double quotes et<br>
+    doubler chaque double quotes (\"\").</p>
+    <p>Voici un exemple d'un champ CSV contenant des virgules et des doubles quotes :</p>
+    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
+
   download: "Télécharger"
   download_csv: "Télécharger au format CSV"
   download_the: "Télécharger %{item}"
@@ -11,8 +18,12 @@ fr:
   upload_with_format: "Envoi au format %{file}"
   upload_prompt_csv: "Sélectionner un fichier CSV à envoyer"
   upload_errors:
+    invalid_csv_row_format: "Invalid format de ligne"
+    invalid_rows: "Les lignes suivantes du fichier CSV sont invalides : "
     malformed_csv: "Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus."
+    missing_file: "Vous devez envoyer un fichier."
     syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
+    unparseable_csv: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
     unparseable_yml: "Ne pourrait pas analyzer le fichier YAML"
   uploading_please_wait: "Envoi en cours — veuillez patienter…"
 

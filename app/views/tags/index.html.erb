@@ -1,23 +1,22 @@
 <% content_for :head do %>
-    <%= javascript_include_tag 'react.min',
-                               'JSXTransformer' %>
-    <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
     <%= render partial: 'boot',
                formats: [:js],
                handlers: [:erb] %>
-    <%= render partial: 'tags_table',
-               formats: [:'js.jsx'],
-               handlers: [:erb] %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeTagTable(document.getElementById('tags_table'), {assignment_id: <%= @assignment.id %>});
+    });
+  </script>
 <% end %>
 
-<!--The title bar for the page-->
 <% content_for :title,
-  t('tags.title', assignment_short_identifier: @assignment.is_peer_review? ?
-    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
-    @assignment.short_identifier) %>
+               Tag.model_name.human.pluralize + ': ' +
+                 (@assignment.is_peer_review? ?
+                  @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                  @assignment.short_identifier) %>
 
 <% @heading_buttons = [
-  { link_text: t('tags.create.create_new'),
+  { link_text: t('helpers.submit.create', model: Tag.model_name.human),
     link_path: '#',
     html_options: { onclick:'modal_create_new.open()' } },
   { link_text: t('download'),

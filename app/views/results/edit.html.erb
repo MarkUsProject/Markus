@@ -5,15 +5,17 @@
   <%= javascript_pack_tag 'result' %>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-      window.annotationTable =
-        makeAnnotationTable(document.getElementById('annotation_table'),
+      window.annotationPanel =
+        makeAnnotationPanel(document.getElementById('annotations_summary'),
           {
             result_id: <%= @result.id %>,
             submission_id: <%= @result.submission_id %>,
             assignment_id: <%= @result.submission.grouping.assignment_id %>,
             detailed: <%= @current_user.admin? || @current_user.ta? ||
                           @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
-            released_to_students: <%= @result.released_to_students %>
+            released_to_students: <%= @result.released_to_students %>,
+            overallComment: `<%= @old_result ? @old_result.overall_comment : @result.overall_comment %>`,
+            remarkSubmitted: <%= !@old_result.nil? %>
           }
       );
 
@@ -76,9 +78,13 @@
       if @current_user.admin?
         num_marked = @assignment.get_num_marked
         num_assigned = @assignment.get_num_assigned
-      else
+      elsif @current_user.ta?
         num_marked = @assignment.get_num_marked(@current_user.id)
         num_assigned = @assignment.get_num_assigned(@current_user.id)
+      elsif @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
+        reviewer_group = @current_user.grouping_for(@assignment.pr_assignment.id)
+        num_marked = PeerReview.get_num_marked(reviewer_group)
+        num_assigned = PeerReview.get_num_assigned(reviewer_group)
       end
     %>
     update_bar(<%= num_marked %>, <%= num_assigned %>);
@@ -126,11 +132,11 @@
 
 </aside>
 <aside class='dialog' id='help_dialog' style='display:none'>
-  <h1><%=t('keybinding.keyboard_help')%></h1>
+  <h1><%=t('results.keybinding.keyboard_help')%></h1>
   <table class="help_table">
     <tr>
       <td><kbd>Alt</kbd> + <kbd>Enter/return</kbd></td>
-      <td><%=t('keybinding.toggle_compact')%></td>
+      <td><%=t('results.keybinding.toggle_compact')%></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇨</kbd></td>
@@ -142,47 +148,47 @@
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇧</kbd></td>
-      <td><%=t('keybinding.previous_criterion')%></td>
+      <td><%=t('results.keybinding.previous_criterion')%></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>⇩</kbd></td>
-      <td><%=t('keybinding.next_criterion')%></td>
+      <td><%=t('results.keybinding.next_criterion')%></td>
     </tr>
     <tr>
       <td><kbd>⇧</kbd></td>
-      <td><%=t('keybinding.when_rubric') + t('keybinding.previous_level')%></td>
+      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.previous_level')%></td>
     </tr>
     <tr>
       <td><kbd>⇩</kbd></td>
-      <td><%=t('keybinding.when_rubric') + t('keybinding.next_level')%></td>
+      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.next_level')%></td>
     </tr>
     <tr>
       <td><kbd>Enter/return</kbd></td>
-      <td><%=t('keybinding.when_rubric') + t('keybinding.confirm_level')%></td>
+      <td><%=t('results.keybinding.when_rubric') + t('results.keybinding.confirm_level')%></td>
     </tr>
     <tr>
       <td><kbd>Shift</kbd> + <kbd>n</kbd></td>
-      <td><%=t('keybinding.open_annotation')%></td>
+      <td><%=t('results.keybinding.open_annotation')%></td>
     </tr>
     <tr>
       <td><kbd>Cmd/Ctrl</kbd> + <kbd>Enter/return</kbd></td>
-      <td><%=t('keybinding.confirm_annotation')%></td>
+      <td><%=t('results.keybinding.confirm_annotation')%></td>
     </tr>
   </table>
 </aside>
 <% if @current_user.admin? %>
   <aside class='dialog' id='create_new_tag' style='display:none'>
-    <h1><%= t('tags.create.create_new') %></h1>
-    <p><%= t('tags.create.tag_prompt') %></p>
+    <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
+    <p><%= Tag.human_attribute_name(:name) %></p>
     <%= form_for :create_new,
                  url: assignment_tags_path(@assignment),
                  html: { multipart: true } do |f| %>
         <div>
           <p><%= f.text_field :name,
-                              placeholder: t('tags.create.name_prompt') %></p>
+                              placeholder: Tag.human_attribute_name(:name) %></p>
         </div>
         <div>
-          <p class='alignleft'><%= t('tags.create.tag_description') %></p>
+          <p class='alignleft'><%= Tag.human_attribute_name(:description) %></p>
           <p id='descript_amount' class='alignright'>0/120</p>
           <p class="clear-alignment"><%= f.text_area :description,
                                                   id: 'description',
@@ -190,28 +196,16 @@
                                                   rows: 3,
                                                   maxlength: 120,
                                                   onKeyDown: 'updateCharCount()',
-                                                  placeholder: t('tags.create.descript_prompt') %></p>
+                                                  placeholder: Tag.human_attribute_name(:description) %></p>
         </div>
         <section class='dialog-actions'>
           <%= hidden_field_tag 'grouping_id', @grouping.id %>
-          <%= f.submit t('tags.create.button_text') %>
+          <%= f.submit t(:submit) %>
           <input type='reset'
                  value='<%= t(:cancel) %>'
                  onclick='modal_create_new.close();'>
         </section>
     <% end %>
-  </aside>
-  <aside class='dialog' id='delete_tags' style='display:none'>
-    <h1><%= t('tags.delete.delete_tags') %></h1>
-    <p><%= t('tags.delete.tag_prompt') %></p>
-    <%= form_for :delete,
-                 url: assignment_tags_path(@assignment),
-                 html: { multipart: true } do |f| %>
-
-    <% end %>
-    <input type='reset'
-           value='<%= t(:cancel) %>'
-           onclick='modal_delete_tags.close();'>
   </aside>
 <% end %>
 
@@ -229,23 +223,6 @@
 <% end %>
 
 <div class='wrapLeft'>
-  <% if flash[:fail_notice] %>
-    <p class='error'><%= flash[:fail_notice] %></p>
-  <% end %>
-
-  <% if @result.released_to_students %>
-    <p class='notice'><%= t('results.marks_released') %></p>
-  <% end %>
-
-  <% if @grouping.past_due_date? %>
-    <p class='warning'>
-      <%= t(:past_due_date_edit_result_warning,
-            href: link_to(t(:last_commit),
-                          repo_browser_assignment_submission_path(
-                             @assignment, @grouping))).html_safe %>
-    </p>
-  <% end %>
-
   <%= render partial: 'results/common/submission_selector',
              locals: { group: @group,
                        result: @result,

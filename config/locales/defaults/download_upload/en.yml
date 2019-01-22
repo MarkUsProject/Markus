@@ -1,4 +1,11 @@
 en:
+  csv_special_characters_html: "
+    <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").
+    If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br>
+    double each one of your double quotes (\"\").</p>
+    <p>Here's an example of a CSV field containing commas and double quotes:</p>
+    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
+
   download: "Download"
   download_csv: "Download in CSV Format"
   download_the: "Download %{item}"
@@ -12,8 +19,12 @@ en:
   upload_prompt_csv: "Select a CSV file to upload"
   upload_prompt_yml: "Select a YML file to upload"
   upload_errors:
+    invalid_csv_row_format: "Invalid row format"
+    invalid_rows: "The following CSV rows were invalid: "
     malformed_csv: "The selected file was improperly formed. Please ensure the file meets MarkUs specifications."
+    missing_file: "You must select a file to upload."
     syntax_error: "There is an error in the file you uploaded: %{error}"
+    unparseable_csv: "The selected file is not a CSV file (even though it may have a .csv extension)."
     unparseable_yml: "Could not parse YAML file"
   uploading_please_wait: "Uploading - please wait..."
 

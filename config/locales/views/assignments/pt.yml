@@ -26,5 +26,6 @@ pt:
       under_review: "Este exame está sendo marcado"
 
     # Miscellaneous
+    average_annotations: "%{average_annotations} anotaciones por presentación marcada"
     information: "Regras do projeto"
     marking_scheme: "Esquema de avalição: %{identifier}"

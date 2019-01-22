@@ -1,14 +1,13 @@
 import React from 'react';
-import {render} from 'react-dom';
-
 import ReactTable from 'react-table';
 
 
-class AnnotationTable extends React.Component {
+export class AnnotationTable extends React.Component {
   constructor() {
     super();
     this.state = {
       data: [],
+      loading: true,
       // TODO: remove these two when this component and the FileViewer are
       // put under the same parent component.
       initialized: false,
@@ -96,7 +95,7 @@ class AnnotationTable extends React.Component {
       accessor: 'creator',
       Cell: row => {
         if (row.original.is_remark) {
-          return `${row.value} (${I18n.t('marker.annotation.remark_flag')})`;
+          return `${row.value} (${I18n.t('results.annotation.remark_flag')})`;
         } else {
           return row.value;
         }
@@ -138,22 +137,24 @@ class AnnotationTable extends React.Component {
   }
 
   fetchData() {
-    $.ajax({
-      url: Routes.get_annotations_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id),
-      dataType: 'json',
-    }).then(res => {
-      this.setState(
-        {data: res, initialized: true},
-        () => {
-          MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
-          if (this.state.queued_id !== null) {
-            this.display_annotations(this.state.queued_id);
+    this.setState({loading: true}, () => {
+      $.ajax({
+        url: Routes.get_annotations_assignment_submission_result_path(
+          this.props.assignment_id,
+          this.props.submission_id,
+          this.props.result_id),
+        dataType: 'json',
+      }).then(res => {
+        this.setState(
+          {data: res, initialized: true, loading: false},
+          () => {
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
+            if (this.state.queued_id !== null) {
+              this.display_annotations(this.state.queued_id);
+            }
           }
-        }
-      );
+        );
+      })
     });
   }
 
@@ -262,12 +263,8 @@ class AnnotationTable extends React.Component {
           {id: 'filename'},
           {id: 'number'}
         ]}
+        loading={this.state.loading}
       />
     );
   }
-}
-
-
-export function makeAnnotationTable(elem, props) {
-  return render(<AnnotationTable {...props}/>, elem);
 }

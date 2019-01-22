@@ -1,4 +1,11 @@
 es:
+  csv_special_characters_html: "
+    <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").
+    Si desea usar comillas dobles en un campo CSV, usted debe rodear el campo completo con comillas dobles y<br>
+    duplicar cada una de sus comillas dobles (\"\").</p>
+    <p>Este es un ejemplo de un campo CSV que contiene comas y comillas dobles:</p>
+    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
+
   download: "Descargar"
   download_csv: "Descargar en formato CSV"
   download_the: "Descargar %{item}"
@@ -11,9 +18,13 @@ es:
   upload_with_format: "Subir en formato %{file}"
   upload_prompt_csv: "Seleccione el archivo con formato CSV que desea subir"
   upload_errors:
+    invalid_csv_row_format: "El formato de la fila es inválido"
+    invalid_rows: "Las siguientes líneas en formato CSV fueron inválidas: "
     malformed_csv: "El archivo seleccionado fue formado inapropiadamente. Por favor asegúrese de
                     que el archivo siga las especificaciones de MarkUs."
+    missing_file: "Usted debe proveer un archivo."
     syntax_error: "Existe un error en el archivo que usted subió: %{error}"
+    unparseable_csv: "El archivo seleccionado no es un archivo con formato CSV (a pesar de que pueda tener csv como extensión)."
     unparseable_yml: "No se pudo interpretar el archivo con formato YAML"
   uploading_please_wait: "Subiendo - por favor espere..."
 

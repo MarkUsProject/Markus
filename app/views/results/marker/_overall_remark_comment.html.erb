@@ -11,7 +11,7 @@
 		    rows: 5,
 		    id: 'overall_remark_comment_text_area',
 		    onkeypress: "$('#overall_remark_comment_submit').prop('disabled',false);" %>
-        <h3 id="overall_remark_comment_preview_title"><%= t('marker.annotation.preview') %></h3>
+        <h3 id="overall_remark_comment_preview_title"><%= t(:preview) %></h3>
         <div id="overall_remark_comment_preview" style="word-wrap: break-word;"></div>
     <div>
       <%= f.submit t(:save_changes),

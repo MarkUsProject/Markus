@@ -6,4 +6,6 @@ en:
         other: "Submissions"
     attributes:
       submission:
-        name: "Name"
+        feedback_files: "Feedback files"
+        submission_files: "Submission files"
+        submitted_remark: "Remark request"

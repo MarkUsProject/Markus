@@ -10,26 +10,39 @@ describe Mark do
   it { is_expected.to_not allow_value('').for(:markable_type) }
   it { is_expected.to_not allow_value(nil).for(:markable_type) }
 
-  describe '#valid_mark' do
-
-    context 'when markable type is rubric' do
-      let(:rubric_mark) do
-        FactoryBot.create(:rubric_mark, mark: 4)
-      end
-      it 'is valid to have rubric criterion mark smaller or equals to four' do
-        rubric_mark.valid_mark
-        expect(rubric_mark.errors).to be_empty
-      end
+  describe 'when markable type is rubric and the max mark is exceeded' do
+    let(:rubric_mark) do
+      FactoryBot.build(:rubric_mark, mark: 10)
     end
+    it 'should not be valid' do
+      expect(rubric_mark).to_not be_valid
+    end
+  end
 
-    context 'when markable type is flexible' do
-      let(:flexible_mark) do
-        FactoryBot.create(:flexible_mark, mark: 0)
-      end
-      it 'is valid to have rubric criterion mark equals zero' do
-        flexible_mark.valid_mark
-        expect(flexible_mark.errors).to be_empty
-      end
+  describe 'when markable type is flexible and the max mark is exceeded' do
+    let(:flexible_mark) do
+      FactoryBot.build(:flexible_mark, mark: 10)
+    end
+    it 'should not be valid' do
+      expect(flexible_mark).to_not be_valid
+    end
+  end
+
+  describe 'when markable type is flexible and the max mark is exceeded' do
+    let(:checkbox_mark) do
+      FactoryBot.build(:checkbox_mark, mark: 10)
+    end
+    it 'should not be valid' do
+      expect(checkbox_mark).to_not be_valid
+    end
+  end
+
+  describe 'when mark is less than 0' do
+    let(:rubric_mark) do
+      FactoryBot.build(:rubric_mark, mark: -1)
+    end
+    it 'should not be valid' do
+      expect(rubric_mark).to_not be_valid
     end
   end
 

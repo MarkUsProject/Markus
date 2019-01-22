@@ -85,7 +85,7 @@ class MainController < ApplicationController
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash_now(:error, I18n.t('account_disabled'))
+      flash_now(:error, I18n.t('main.account_disabled'))
       redirect_to(action: 'login') && return
     end
 
@@ -99,7 +99,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { action: 'index' } )
     else
-      flash_now(:error, I18n.t(:login_failed))
+      flash_now(:error, I18n.t('main.login_failed'))
     end
   end
 
@@ -221,7 +221,7 @@ class MainController < ApplicationController
       render partial: 'role_switch_handler',
              formats: [:js], handlers: [:erb],
              # TODO: put better error message
-             locals: { error: I18n.t(:login_failed) }
+             locals: { error: I18n.t('main.login_failed') }
       return
 
     end
@@ -230,8 +230,8 @@ class MainController < ApplicationController
     if found_user.admin? && found_user != real_user
       # error
       render partial: 'role_switch_handler',
-        formats: [:js], handlers: [:erb],
-        locals: { error: I18n.t(:cannot_login_as_another_admin) }
+             formats: [:js], handlers: [:erb],
+             locals: { error: I18n.t('main.role_switch.cannot_login_as_another_admin') }
       return
     end
 
@@ -269,8 +269,8 @@ class MainController < ApplicationController
         locals: { error: nil }
     else
       render partial: 'role_switch_handler',
-        formats: [:js], handlers: [:erb],
-        locals: { error: I18n.t(:login_failed) }
+             formats: [:js], handlers: [:erb],
+             locals: { error: I18n.t('main.login_failed') }
     end
   end
 
@@ -326,13 +326,13 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      error_message = MarkusConfigurator.markus_config_validate_user_message || I18n.t(:login_failed)
+      error_message = MarkusConfigurator.markus_config_validate_user_message || I18n.t('main.login_failed')
       return false, error_message
     end
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      return false, I18n.t('account_disabled')
+      return false, I18n.t('main.account_disabled')
     end
 
     # For admins we have a possibility of role switches,
@@ -349,7 +349,7 @@ private
     if logged_in?
       return true, nil
     else
-      return false, I18n.t(:login_failed)
+      return false, I18n.t('main.login_failed')
     end
   end
 
@@ -375,7 +375,7 @@ private
                                                 password,
                                                 ip: ip)
       if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-        validation_result[:error] = I18n.t('external_authentication_not_supported')
+        validation_result[:error] = I18n.t('main.external_authentication_not_supported')
         return validation_result
       end
 
@@ -399,11 +399,12 @@ private
         # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
-        validation_result[:error] = MarkusConfigurator.markus_config_validate_user_message || I18n.t(:login_failed)
+        validation_result[:error] = MarkusConfigurator.markus_config_validate_user_message ||
+                                    I18n.t('main.login_failed')
         return validation_result
       end
     else
-      validation_result[:error] = MarkusConfigurator.markus_config_validate_login_message || I18n.t(:login_failed)
+      validation_result[:error] = MarkusConfigurator.markus_config_validate_login_message || I18n.t('main.login_failed')
       return validation_result
     end
 

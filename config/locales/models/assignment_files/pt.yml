@@ -3,3 +3,12 @@ pt:
     models:
       assignment:
         one: "Arquivo de Atribuição"
+    attributes:
+      assignment_file:
+        filename: "Nome do arquivo"
+    errors:
+      models:
+        assignment_file:
+          attributes:
+            filename:
+              invalid: "apenas letras, números, '.', '-', '_' ou '/'"

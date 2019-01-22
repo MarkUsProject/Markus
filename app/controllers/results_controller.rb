@@ -7,17 +7,15 @@ class ResultsController < ApplicationController
                          :update_overall_comment, :remove_extra_mark,
                          :toggle_marking_state,
                          :download, :download_zip,
-                         :note_message,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :remove_extra_mark,
-                       :note_message, :get_test_runs_instructors]
+                       :remove_extra_mark, :get_test_runs_instructors]
   before_action :authorize_for_user,
                 only: [:download, :download_zip,
-                       :view_marks, :get_annotations]
+                       :view_marks, :get_annotations, :show]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
                        :cancel_remark_request,
@@ -30,12 +28,22 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
-  def note_message
-    @result = Result.find(params[:id])
-    if params[:success]
-      flash[:note_success] = I18n.t('notes.success')
-    else
-      flash[:fail_notice] = I18n.t('notes.error')
+  def show
+    respond_to do |format|
+      format.json do
+        result = Result.find(params[:id])
+        submission = result.submission
+        assignment = submission.assignment
+        remark_submitted = submission.remark_submitted?
+        render json: {
+          overall_comment: result.overall_comment,
+          released_to_students: result.released_to_students,
+          remark_submitted: remark_submitted,
+          remark_request_text: submission.remark_request,
+          remark_request_timestamp: submission.remark_request_timestamp,
+          assignment_remark_message: assignment.remark_message
+        }
+      end
     end
   end
 
@@ -60,9 +68,8 @@ class ResultsController < ApplicationController
     reviewer_access = false
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        @mark_criteria = @assignment.get_criteria(:peer)
         assignment = @assignment.pr_assignment
-        reviewer_access = true
+        @mark_criteria = assignment.get_criteria(:peer)
       else
         @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
       end
@@ -111,8 +118,6 @@ class ResultsController < ApplicationController
       end
     end
 
-    group_order = reviewer_access ? 'grouping.id' : 'group_name'
-    all_groupings = assignment.groupings.joins(:group).order(group_order)
     if current_user.ta?
       assigned_groupings = current_user.groupings
                              .where(assignment: assignment)
@@ -120,7 +125,13 @@ class ResultsController < ApplicationController
                              .order('group_name')
       @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
+    elsif @result.is_a_review? && @current_user.is_reviewer_for?(assignment, @result)
+      user_group = @current_user.grouping_for(assignment.id)
+      assigned_prs = user_group.peer_reviews_to_others
+      @next_grouping = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
+      @previous_grouping = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
     else
+      all_groupings = assignment.groupings.joins(:group).order('group_name')
       @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
       @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
     end
@@ -154,7 +165,19 @@ class ResultsController < ApplicationController
     @top_tags = get_top_tags
     @top_tags_num = Hash.new
     @top_tags.each do |current|
-      @top_tags_num[current.id] = get_num_groupings_for_tag(current.id)
+      @top_tags_num[current.id] = get_num_groupings_for_tag(current)
+    end
+
+    # Check whether this group made a submission after the final deadline.
+    if @grouping.past_due_date?
+      flash_message(:warning,
+                    t('results.late_submission_warning_html',
+                      url: repo_browser_assignment_submission_path(@assignment, @grouping)))
+    end
+
+    # Check whether marks have been released.
+    if @result.released_to_students
+      flash_message(:notice, t('results.marks_released'))
     end
 
     # Respond to AJAX request.
@@ -230,25 +253,24 @@ class ResultsController < ApplicationController
   end
 
   def next_grouping
-    grouping = Grouping.find(params[:grouping_id])
     assignment = Assignment.find(params[:assignment_id])
     result = Result.find(params[:id])
 
-    if grouping.has_submission? && grouping.is_collected?
-      if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
-        reviewer = @current_user.grouping_for(assignment.pr_assignment.id)
-        next_pr = reviewer.review_for(grouping)
-        next_result = Result.find(next_pr.result_id)
+    if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
+      next_pr = PeerReview.find(params[:grouping_id])
+      next_result = Result.find(next_pr.result_id)
 
-        redirect_to action: 'edit',
-                    id: next_result.id
-      else
+      redirect_to action: 'edit',
+                  id: next_result.id
+    else
+      grouping = Grouping.find(params[:grouping_id])
+      if grouping.has_submission? && grouping.is_collected?
         redirect_to action: 'edit',
                     id: grouping.current_submission_used.get_latest_result.id
+      else
+        redirect_to controller: 'submissions',
+                    action: 'browse'
       end
-    else
-      redirect_to controller: 'submissions',
-                  action: 'browse'
     end
   end
 
@@ -360,7 +382,7 @@ class ResultsController < ApplicationController
 
     submission = Submission.find(params[:submission_id])
     if submission.revision_identifier.nil?
-      render plain: t('student.submission.no_files_available')
+      render plain: t('submissions.no_files_available')
       return
     end
 
@@ -439,7 +461,6 @@ class ResultsController < ApplicationController
 
     result_mark.mark = mark_value * weight_criterion
 
-    visibility = result_mark.result.is_a_review? ? :peer : :ta
     if result_mark.save
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
@@ -449,12 +470,16 @@ class ResultsController < ApplicationController
       if @current_user.admin?
         num_marked = assignment.get_num_marked
         num_assigned = assignment.get_num_assigned
-      else
+      elsif @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
         num_assigned = assignment.get_num_assigned(@current_user.id)
+      elsif @current_user.is_a_reviewer?(assignment.pr_assignment)
+        reviewer_group = @current_user.grouping_for(assignment.pr_assignment.id)
+        num_marked = PeerReview.get_num_marked(reviewer_group)
+        num_assigned = PeerReview.get_num_assigned(reviewer_group)
       end
       render plain: "#{result_mark.mark.to_f}," +
-                   "#{result_mark.result.get_subtotal(user_visibility: visibility)}," +
+                   "#{result_mark.result.get_subtotal}," +
                    "#{result_mark.result.total_mark}," +
                    "#{num_marked}," +
                    "#{num_assigned}"
@@ -625,7 +650,8 @@ class ResultsController < ApplicationController
   def update_overall_comment
     Result.find(params[:id]).update_attributes(
       overall_comment: params[:result][:overall_comment])
-    flash_message :success, t('marker.overall_comments_success')
+    flash_message :success,
+                  t('flash.actions.update.success', resource_name: Result.human_attribute_name(:overall_comment))
     head :ok
   end
 

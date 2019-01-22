@@ -1,0 +1,24 @@
+en:
+  main:
+    role_switch:
+      admin_password: "Admin Password"
+      clear_role_switch_session: "Cancel role switch"
+      cannot_login_as_another_admin: "You cannot log in as another admin."
+      log_in_as: "Log in as"
+      switch_role: "Switch Role"
+
+    # Miscellaneous
+    account_disabled: "This account has been disabled."
+    external_authentication_not_supported: "External authentication not supported on your platform!"
+    log_in: "Log in"
+    log_out: "Log out"
+    logging_in: "Logging in..."
+    login_failed: "Login failed."
+    password: "Password"
+    password_not_blank: "Your password must not be blank."
+    please_log_in: "Please log in."
+    session_expired: "Your session has expired. Please log in."
+    timeout_imminent: "Your session is about to expire, and you will be logged out shortly.
+                       Press the Continue button or refresh the current page in the next few seconds to remain logged in."
+    username_not_blank: "Your username must not be blank."
+    username_and_password_not_blank: "Your username and password must not be blank."

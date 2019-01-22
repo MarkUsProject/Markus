@@ -95,16 +95,16 @@
           <%= ta.user.last_name%>
         <% end -%>
         <% if @grouping.ta_memberships.size == 0%>
-          <%= t(:no_grader_assigned) %>
+          <%= t('graders.no_grader_assigned') %>
         <% end -%>
       <% else -%>
-        <%= t(:no_grader_assigned) %>
+        <%= t('graders.no_grader_assigned') %>
       <% end -%>
     </div>
   <% end %>
 
   <% unless peer_review %>
-    <h3><%= Assignment.human_attribute_name(:required_files) %></h3>
+    <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
     <% if @assignment.assignment_files.length == 0 %>
       <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
     <% else %>

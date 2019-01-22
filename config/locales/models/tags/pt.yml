@@ -1,0 +1,11 @@
+pt:
+  activerecord:
+    models:
+      tag:
+        one: "Tag"
+        other: "Tags"
+    attributes:
+      tags:
+        description: "Description"
+        name: "Name"
+        user: "Creator"

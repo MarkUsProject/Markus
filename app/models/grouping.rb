@@ -67,10 +67,10 @@ class Grouping < ApplicationRecord
 
   # user association/validation
   belongs_to :assignment, counter_cache: true
-  validates_associated :assignment, on: :create, message: 'associated assignment need to be valid'
+  validates_associated :assignment, on: :create
 
   belongs_to :group
-  validates_associated :group, message: 'associated group need to be valid'
+  validates_associated :group
 
   validates_inclusion_of :is_collected, in: [true, false]
 

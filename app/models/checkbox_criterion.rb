@@ -8,11 +8,6 @@ class CheckboxCriterion < Criterion
   has_many :tas, through: :criterion_ta_associations
   has_many :test_scripts, as: :criterion
 
-  validates_presence_of :name
-  validates_presence_of :max_mark
-  validates_associated :assignment, message: I18n.t('criteria.errors.messages.assignment_association')
-  validates_uniqueness_of :name, scope: :assignment_id, message: I18n.t('criteria.errors.messages.name_taken')
-  validates_numericality_of :max_mark, greater_than: 0.0, message: I18n.t('criteria.errors.messages.input_number')
   validate :visible?
 
   DEFAULT_MAX_MARK = 1
@@ -91,7 +86,7 @@ class CheckboxCriterion < Criterion
   # criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -104,12 +99,12 @@ class CheckboxCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
     # Check that the maximum mark given is a valid number.
     if criterion.max_mark.nil? or criterion.max_mark.zero?
-      raise CSVInvalidLineError, I18n.t('csv.invalid_row.invalid_format')
+      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
     # Only set the position if this is a new record.

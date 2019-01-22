@@ -7,9 +7,7 @@ class AssignmentFile < ApplicationRecord
   before_validation :clean_filename
   validates_presence_of :filename
   validates_uniqueness_of :filename, scope: :assignment_id
-  validates_format_of :filename,
-          with: /\A[\-\._a-zA-Z0-9][\/\-\._a-zA-Z0-9]*\z/,
-          message: I18n.t('validation_messages.format_of_assignment_file')
+  validates_format_of :filename, with: %r{\A[\-\._a-zA-Z0-9][/\-\._a-zA-Z0-9]*\z}
 
   private
 

@@ -10,6 +10,7 @@ class TATable extends React.Component {
     super();
     this.state = {
       data: [],
+      loading: true,
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -23,7 +24,7 @@ class TATable extends React.Component {
       url: Routes.tas_path(),
       dataType: 'json',
     }).then(res => {
-      this.setState({data: res});
+      this.setState({data: res, loading: false});
     });
   }
 
@@ -69,6 +70,7 @@ class TATable extends React.Component {
         ]}
         filterable
         defaultFilterMethod={stringFilter}
+        loading={this.state.loading}
       />
     );
   }

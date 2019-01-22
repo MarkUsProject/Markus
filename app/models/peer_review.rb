@@ -83,4 +83,14 @@ class PeerReview < ApplicationRecord
 
     self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
   end
+
+  def self.get_num_assigned(reviewer_group)
+    self.where(reviewer_id: reviewer_group).size
+  end
+
+  def self.get_num_marked(reviewer_group)
+    self.includes(:result).where(reviewer_id: reviewer_group).count do |pr|
+      pr.result.marking_state == Result::MARKING_STATES[:complete]
+    end
+  end
 end

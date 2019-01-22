@@ -23,8 +23,22 @@ fr:
       viewing_revision: "Révision:"
       server_time: "push:"
     student:
+      file_manager: "%{short_identifier} : Gestionnaire de fichiers"
+      files_submitted:
+        zero: "%{count} fichiers"
+        one: "%{count} fichiers"
+        other: "%{count} fichiers"
       invalid_group_cannot_submit: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment."
+      last_revision_date: "Dernière révision"
+      missing_required_files:
+        zero: "%{count} fichier(s) requis sont manquants"
+        one: "%{count} fichier(s) requis sont manquants"
+        other: "%{count} fichier(s) requis sont manquants"
+      no_revision_available: "Aucune révision disponible."
       no_submission: "Vous n'avez encore rien envoyé"
+      server_time: "Heure du serveur"
+      version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version.
+                                Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
 
     # Miscellaneous
     commit_date: "Date d'envoi (commit)"
@@ -36,6 +50,7 @@ fr:
     grading_can_begin_after_for_sections: "L'évaluation commencera à partir du %{time} pour les sections: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} soumissions sont corrigés"
     marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
+    no_files_available: "Aucun fichier disponible"
     release_marks: "Montrer les notes"
     repo_list: "Liste des dépôts"
     repo_checkout_file: "Commandes pour extraire les projets"

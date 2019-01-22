@@ -27,5 +27,6 @@ fr:
       under_review: "Cet examen est marqué"
 
     # Miscellaneous
+    average_annotations: "%{average_annotations} annotations par soumission marquée"
     information: "Règles du projet"
     marking_scheme: "Barème: %{identifier}"

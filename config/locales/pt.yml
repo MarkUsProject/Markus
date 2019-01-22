@@ -1,57 +1,15 @@
 pt:
-    choose_language:    "Escolha o idioma:"
     answer_yes:         "Sim"
     answer_no:          "Não"
     markus:             "MarkUs"
     close:              "Fechar"
-    password:           "Senha"
     all:                "Todos"
-    issues:             "GitHub lista de problemas"
     actions:            "Ações"
     continue:           "Continuar"
 
-    # app/views/main/login.html.erb
-    log_in:             "Conectar"
-    logging_in:         "Conectando..."
-    login_failed:       "Falha de conexão"
-    password_not_blank: "Sua senha não deve ser vazia."
-    username_not_blank: "Seu nome de usuário não pode ser vazio."
-    username_and_password_not_blank: "Seu nome e senha não podem ser vazios."
-    session_expired:     "Sua sessão expirou. Por favor, conecte."
-    please_log_in:       "Por favor faça o login"
-
     # app/views/layouts/_header.html.erb
-    log_out:            "Sair"
-    clear_role_switch_session_link: "Cancelar troca de papel"
     working:            "Carregando"
-    login_as:           "Fazer login como "
     please_wait:        "Aguarde por favor..."
-
-    # app/views/main/_about_content.html.erb
-    about_markus:       "Sobre MarkUs"
-    version:            "Versão"
-    using_markus_version:       "Você está usando MarkUs Versão: "
-    using_ruby_version: "Ruby Versão: "
-    using_rails_version: "Rails Versão: "
-    license:            "Licença"
-    markus_license_OSI: "MarkUs está disponível sob a <a href=\"http://www.opensource.org\">OSI</a> aprovada pela <a href=\"http://www.opensource.org/licenses/mit-license.html\">licença MIT </a>."
-    markus_license_permission: "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
-    markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
-    markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:   "Copyright (c) 2008-2011 pelos autores."
-    markus_credits:     "Créditos"
-    markus_credits_thanks:      "Obrigado a todos que contribuiram para tornar MarkUs possível. Em particular para:"
-    supervisors:        "Supervisores: "
-    contact_us:         "Contate-nos"
-    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br>Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> para mais informações.<br>Para enviar um problema ou por favor visite visit <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
-
-    # app/views/main/timeout_imminent.js.erb
-    timeout_imminent:   "A sessão está prestes a expirar."
-
-    # app/views/api/_key_display.html.erb
-    api_key:            "Chave da API"
-    api_key_unavailable:        "Indisponível"
-    reset_api_key:       "Gerar outra chave para a API"
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Painel"
@@ -62,15 +20,6 @@ pt:
     # app/views/shared/_assignments_dropdown.html.erb
     quick_links:  "Links rápidos"
 
-    # app/models/assignment_file.rb
-    validation_messages:
-      format_of_assignment_file: "apenas letras, números, '.', '-', '_' ou '/'"
-
-    # app/views/main/index.html.erb
-    switch_role:         "Trocar de papel"
-    admin_password:      "Senha do administrador"
-    cannot_login_as_another_admin: "Você não pode conectar como outro administrador."
-
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Não existem projetos atualmente."
 
@@ -79,7 +28,6 @@ pt:
     filename:  "Nome do Arquivo"
     message:  "Mensagem"
     remove:  "Remover"
-    csv_grade_report:  "relatório de notas em formato CSV"
     days_left:          "(%{days} dia(s) restante(s))"
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
@@ -95,9 +43,6 @@ pt:
         group:
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
             grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
-            select_a_grader: "Selecione um avaliador"
-            select_a_criterion: "Selecione pelo menos um critério"
-            group_submission_no_files: "Um ou mais dos grupos selecionados não possui arquivos em sua apresentação. Grader não atribuído."
             clone_warning:
                 no_active_students: "UPDATE ME '%{group}'"
                 no_member: "UPDATE ME '%{member}''%{group}': %{error}"
@@ -153,7 +98,6 @@ pt:
         upload:
             header: "Carregar CSV Peer Review"
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
-    your_mark:  "Sua nota:"
 
     add_new:            "Adicionar novo"
     edit:               "Editar"
@@ -161,10 +105,8 @@ pt:
     save_changes:       "Saval mudanças"
     apply:              "Aplicar"
     delete:             "Apagar"
-    submit_request:     "Enviar pedido ao instrutor"
     submit:             "Enviar"
     cancel:             "Cancelar"
-    cancel_remark:      "Cancelar pedido de revisão"
     all:                "Todos"
     active:             "Ativo"
     not_active:         "Não ativo"
@@ -172,130 +114,29 @@ pt:
     properties:         "Propriedades"
     peer_reviews:       "Avaliações pelos pares"
     help:               "Ajuda"
-    no_remark_result:   "Resultados ainda não estão disponíveis para esse projeto."
     preview:            "Prever"
     encoding:           "Codificação"
     select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
     all_csv_file:       "Todos os campos: "
 
-    past_due_date_edit_result_warning: "O %{href} desse grupo está depois do prazo."
-    last_commit: "Último envio"
+    copy: "Copy"
 
-    #app/views/resluts/marker/
-    marker:
-      overall_comments_success: "Comentários gerais atualizado com sucesso."
-      across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
-      source_code: "código fonte"
-      test_results: "Resultado dos testes"
-      feedback_files: "Arquivos de comentários"
-      remark_request: "Pedido de revisão"
-      remark_submitted_on: "Pedido de revisão enviado"
-      no_remark_due_date: "Nenhum prazo atribuido"
-      past_remark_due_date: "O prazo para a revisão já foi atingido."
-      about_remark_save: "Por favor note que o instrutor não será avisado sobre o seu pedido salvo a não ser que o envie."
-      about_remark_submission: "Assim que o pedido de revisão for enviado , você não poderá ver os seus resultados originais até que a revisão seja feita. Você também não poderá alterar o pedido de revisão."
-      cancel_remark_to_change: "Para alterar o pedido, você deve cancelar o atual e criar um novo."
-      remark_submitted: "Seu pedido de avalição foi enviado:"
-      notes:                "Notas (<span id=\"number_of_notes\">%{notes}</span>)"
-      include_annotations: "Incluir anotações"
-      include_annotations_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
-      marks:
-        comment: "Comentário"
-        percentage: "Porcentagem"
-        invalid_mark: "Nota inválida!"
-        add_extra_mark: "Adicionar nota extra"
-        mark: "Nota"
-        marks: "Notas"
-        summary: "Resumo"
-        expand_all: "Expandir todos"
-        collapse_all: "Agrupar todos"
-        expand_unmarked: "Expandir não-selecionados"
-        confirm_remove_mark: "Tem certeza que você deseja remover essa nota extra?"
-        confirm_remove_percentage: "Tem certeza que deseja remover essa porcentagem extra?"
-        subtotal: "Subtotal: "
-        old_subtotal: "Subtotal antigo: "
-        bonus_deductions: "Bônus/Deduções"
-        bonus_marks: "Notas bônus:&nbsp;"
-        deducted_marks: "Nota deduzida:&nbsp;"
-        total_extra_marks: "Nota extra total:&nbsp;"
-        total_extra_percentages: "Porcentagem extra total:&nbsp;"
-        translated_to_points: "Transformação para pontos:"
-        previous_mark: "Nota antiga&nbsp;"
-        show_old_marks: "Mostrar antigo resumo de notas"
-      annotation:
-        average_annotations: "%{average_annotations} anotaciones por presentación marcada"
-        placeholder: "A notação Markdown e LaTeX é suportada"
-        remark_flag: "(Reavaliado)"
-        new_annotation: "Criar nova anotação"
-        edit_annotation: "Edit annotation"
-        preview: "Visualização"
-        change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
-        select_some_text: "Você deve selecionar algum texto do código fonte"
-        select_an_area: "Você deve selecionar uma área da imagem para anotar"
-        select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar"
-        context_menu:
-          new: "New Annotation"
-          common: "Common Annotations"
-          edit: "Edit"
-          delete: "Remove"
-          copy: "Copy"
-          download: "Download File"
-          download_annotated: "Download Annotated File"
-
-    #app/views/results/common
-    common:
-      feedback_files: "Arquivos de comentários"
-      cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
-      criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
-
-    csv_invalid_lines: "As seguintes linhas do arquivo CSV são inválidas: "
-    csv_valid_lines: "carregado com sucesso  %{valid_line_count} entradas"
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-    cancel_remark_request: "Tem certeza que quer cancelar o pedido de revisão?  O pedido será apagado e isso não poderá ser desfeito."
-    confirm_remark_submit: "Tem certeza que quer enviar o pedido de revisão? Você não poderá ver os resultados até que a revisão seja feita."
     still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
-      group_to_grader:         "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      student_to_grader:       "Você deve fornecer um arquivo csv do grupo para o mapeamento do avaliador"
-      invalid_csv:             "O formato do arquivo CSV não foi reconhecido"
-      invalid_row:
-              invalid_format:  "Formato de linha inválida"
-      upload:
-        non_text_file_with_csv_extension: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
 
     browse_submissions:
       review_state:         "Estado de revisão"
 
-    course_summaries_index:
-      page_title:     "Sumário"
-
     no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
 
-    student_course_summary: "Suas notas"
-
     groups:
-      assign_scans: "Atribuir varreduras"
-      skip_group: "UPDATE ME"
-      done_assign: "Todos os grupos foram atribuídos com sucesso a estudantes"
-      randomly_assign_graders: "Designar avaliadores aleatoriamente"
       upload:
         description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
         importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
-        upload_grader_map: "Carregar grupo / Mapa avaliador"
-        upload_grader_criteria_map: "Carregar critério / Mapa avaliador"
-        description_grader_map: "Formato do arquivo CSV:<br> <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-        description_grader_criteria_map: "Formato do arquivo CSV:<br> <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-        remove_existing_mappings: "Remover mapeamentos existentes"
-      download:
-        download_grader_maps: "Baixar mapeamento dos avaliadores"
-        download_grader_groups_csv: "Grupo / Formato CSV mapa avaliadores"
-        download_grader_criteria_csv: "Critério / Formato CSV mapa avaliadores"
-      action:
-        assign_grader: "Designar Avaliador(es)"
-        unassign_grader: "Remover Avaliador(es)"
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
@@ -305,52 +146,20 @@ pt:
       successfully_changed: "%{changed} resultados atualizados"
       could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
 
-    mark:
-      error:
-        validate_criteria: "deve ser entre 0 e a nota máxima do critério"
-
     #Sutdent's View (student)
     student:
       peer_assignment: "%{short_identifier}: Projeto de Revisão de Pares"
-      overview: "Visão global"
-      last_revision_date: "Última data de revisão:<br><span class=\"info_date\">%{last_modified_date}</span>"
-      files: "arquivos"
-      missing_required_files: "Faltando <span class=\"info_number\">%{missing_files}</span><span class=\"info %{style_class}\"> arquivos exigidos</span>"
       no_peer_submission_yet: "Você não tem observações a avaliar ainda."
       no_reviews: "Ninguém comentou você ainda."
       submission:
-        file_manager: "%{short_identifier}: Gerenciador de Arquivos"
         conflicts: "Conflitos"
         file_conflicts: "Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:"
         missing_files: "Você ainda precisa enviar %{file} arquivos para este projeto"
         no_action_detected: "Nenhuma mudança foi detectada."
-        no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
-        no_files_available: "Nenhum arquivo disponível"
-        no_revision_available: "Nenhuma revisão disponível"
-        version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
         empty_file_warning: "UPDATE ME"
-
-    #Graders' View
-    graders:
-      assigned_graders:   "Atribuir avaliador"
-      coverage:           "Cobertura"
-      assign_to_criteria: "Atribuir avaliador aos critérios"
-      skip_empty_submissions: "Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)"
-      download:
-        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
-
-    #Grade Entry Forms Graders' View
-    marks_graders:
-      download:
-        download_grader_students_csv: "Alunos / Atribuição de corretores CSV "
-      upload:
-        upload_grader_map: "Carregar alunos / Atribuição de corretores"
-        description_grader_map: "Formato arquivo CSV:<br>
-            <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
 
     add_student:
       success: "Aluno %{user_name} adicionado."
@@ -385,6 +194,9 @@ pt:
       success:  "As alterações foram feitas."
 
     submission_file:
+      download:
+        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
       error:
         no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
         binary_file_message: "Conteudo binário: Use o botao de download para ver o arquivo!"
@@ -392,14 +204,6 @@ pt:
     feedback_file:
       error:
         no_access: "Não há accesso para resultado do teste com id #%{feedback_file_id}."
-      no_files_available: "[No arquivo de feedback disponíveis]"
-
-    csv_special_characters_html: "
-    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br>
-    Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br>
-    duplique cada uma de suas aspas duplas(\"\").</p>
-    <p>Segue um exemplo de um campo contendo vírgulas e aspas duplas:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     criteria_csv_error:
       weight_not_number: "peso não é um número."
@@ -412,96 +216,9 @@ pt:
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
       errors:
         messages:
-          name_taken:             "Nome de critério já utilizado."
-          assignment_association: "Associação não é forte com uma atribuição."
-          input_number:           "Deve ser um número maior do que 0.0."
           released_marks:         "TODO"
 
-    summary_table:
-      title: "Título"
-      grade: "Nota"
-
-    key_pairs:
-      title: "Os Pares de Chaves"
-      key_pairs_title:         "Os Seus Pares de Chaves"
-      time_of_upload:         "Tempo de Carregamento"
-      key_content:         "Conteúdo de Chave"
-      new_key_pair:         "Novo Par de Chaves"
-      add_key_pair:         "Adicionar um Par de Chaves"
-      remove_key:         "Remova a Chave"
-      are_you_sure:         "Tem certeza?"
-      file:         "Arquivo"
-      or:         "OU"
-      copy_paste_key:         "Copie e Cole a Sua Chave Pública"
-      create_key_pair:         "Criar Par de Chaves"
-      back:         "De Volta"
-      create:
-        success: "Par de Chaves foi criado com sucesso"
-        invalid_key: "Par de Chaves não foi criado: Chave inválida"
-      update:
-        success: "Par de Chaves foi atualizado com sucesso"
-      delete:
-        success: "Par de Chaves foi removido com sucesso"
-
-    course_summaries:
-      title: "Sumário"
-
-    marking_schemes:
-      title: "Esquema de marcação"
-      name: "Nome"
-      add_new: "Adicionar novo Esquema de marcação"
-      edit: "Editar esquema de marcação"
-      weight_label: "Peso para "
-      table_modify_column: "Modificar"
-
-    notes:
-        note_on: "%{user_name} em <b>%{display_for}</b>"
-        add_new: "Inserir nova observação"
-        existing: "Notas existentes"
-        comment: "Seu comentário"
-        save: "Salvar observação"
-        success: "Nota salva com sucesso"
-        error: "Impossível salvar observação"
-        title: "Observação"
-        note: "Observação"
-        noteable: "Para"
-        # visible options for dropdown. Symbols intentionally capitalized.
-        author: "Autor"
-        creation_time: "Data de criação"
-        delete:
-            link_title: "Apagar essa anotação"
-            link_confirm: "Isso removerá a anotação permanentemente. Continuar?"
-            success: "Anotação apagada com sucesso ."
-            error_permissions: "Você não possúi permissão para apagar a anotação."
-        new:
-            note_message: "Mensagem de observação"
-            title: "Criar anotação"
-            invalid_selector: "Seletor escolhido inválido."
-            no_noteables: "Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro."
-        create:
-            success: "Anotação criada com sucesso."
-        edit:
-            title: "Editar anotação"
-        update:
-            success: "Anotação foi atualizada com sucesso."
-
-    keybinding:
-      keyboard_help:          "Ajuda de atalho de teclado"
-      toggle_compact:         "Alternar vista compacta"
-      next_criterion:         "Selecione o próximo critério"
-      previous_criterion:     "Selecione o critério anterior"
-      next_level:             "Selecione o próximo nível"
-      previous_level:         "Selecione o nível anterior"
-      confirm_level:          "Confirme o nível"
-      when_rubric:            "(Quando na rubrica) "
-      open_annotation:        "Abrir tela de anotação"
-      confirm_annotation:     "Confirmar anotação"
-
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
-    locale_not_available: "%{locale} tradução não disponível!"
-    external_authentication_not_supported: "Autenticação externa não é suportada pela sua plataforma!"
-    account_disabled: "Essa conta foi desativada"
     additional_information: "Informações Adicionais"
 
     #lib/validators/
@@ -519,6 +236,7 @@ pt:
       run_tests: "Executar testes"
       stop_test: "UPDATE ME"
       stop_batch: "UPDATE ME"
+      fetch_testers: "UPDATE ME"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
@@ -588,21 +306,6 @@ pt:
         extra_stderr: "UPDATE ME \n%{extra}\n"
         extra_malformed: "UPDATE ME \n%{extra}\n"
         extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
-
-#Missing Activerecord Translations for english
-    datetime:
-      distance_in_words:
-        less_than_x_seconds:
-          zero: "menos de um segundo"
-        less_than_x_minutes:
-          zero: "menos de um minuto"
-
-    support:
-      array:
-        sentence_connector: "e"
-        skip_last_comma: true
-
-    server_time: "Data servidor:"
 
     poll_job:
       working_message: "%{progress} fora de %{total}"

@@ -11,6 +11,10 @@
 import $ from 'jquery/src/jquery';
 window.$ = window.jQuery = $;
 
+// Callbacks for AJAX events (both jQuery and ujs).
+import * as ajax_events from 'javascripts/ajax_events';
+window.ajax_events = ajax_events;
+
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
@@ -28,6 +32,7 @@ import 'mousetrap';
 // rails-ujs
 import Rails from 'rails-ujs';
 Rails.start();
+window.Rails = Rails;
 
 // i18n-js
 import * as I18n from 'i18n-js';
@@ -77,6 +82,8 @@ import { makeTestRunTable } from 'javascripts/Components/test_run_table';
 window.makeTestRunTable = makeTestRunTable;
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
 window.makeSubmissionTable = makeSubmissionTable;
+import { makeTagTable } from 'javascripts/Components/tag_table';
+window.makeTagTable = makeTagTable;
 import { makeMarksGradersManager } from 'javascripts/Components/marks_graders_manager';
 window.makeMarksGradersManager = makeMarksGradersManager;
 import { makePeerReviewsManager } from 'javascripts/Components/peer_reviews_manager';

@@ -25,12 +25,12 @@
 <% end %>
 
 <% content_for :title do %>
-    <%= t('student.submission.file_manager',
+    <%= t('submissions.student.file_manager',
           short_identifier: sanitize(@assignment.short_identifier)) %>
 <% end %>
 
 <% content_for :additional_headings do %>
-  <strong><%= t('server_time') %></strong>
+  <strong><%= t('submissions.student.server_time') %></strong>:
   <span id='current_time'><%= l(Time.zone.now)%></span>
 <% end %>
 

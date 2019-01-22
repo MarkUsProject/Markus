@@ -12,11 +12,10 @@ describe FlexibleCriterion do
 
     it do
       is_expected.to validate_uniqueness_of(:name).scoped_to(:assignment_id)
-                       .with_message('Criterion name already used.')
     end
 
     it do
-      is_expected.to validate_numericality_of(:max_mark).with_message(I18n.t('criteria.errors.messages.input_number'))
+      is_expected.to validate_numericality_of(:max_mark)
     end
 
     it { is_expected.to allow_value(0.1).for(:max_mark) }
@@ -34,12 +33,12 @@ describe FlexibleCriterion do
 
     it 'raises en error message on an empty row' do
       expect { FlexibleCriterion.create_or_update_from_csv_row([], @assignment) }
-        .to raise_error(CSVInvalidLineError, 'Invalid Row Format')
+        .to raise_error(CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
     it 'raises an error message on a 1 element row' do
       expect { FlexibleCriterion.create_or_update_from_csv_row(%w(name), @assignment) }
-        .to raise_error(CSVInvalidLineError, 'Invalid Row Format')
+        .to raise_error(CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
     it 'raises an error message on an invalid maximum value' do

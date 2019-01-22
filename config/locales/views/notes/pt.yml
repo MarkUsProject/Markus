@@ -1,0 +1,13 @@
+pt:
+  notes:
+    delete:
+      error_permissions: "Você não possúi permissão para apagar a anotação."
+      link_confirm: "Isso removerá a anotação permanentemente. Continuar?"
+      link_title: "Apagar essa anotação"
+    help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
+    new:
+      invalid_selector: "Seletor escolhido inválido."
+      no_noteables: "Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro."
+
+    existing: "Notas existentes"
+    note_on_html: "%{user_name} em <strong>%{display_for}</strong>"

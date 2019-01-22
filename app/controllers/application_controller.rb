@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
         else
           str = flash[key]
         end
-        response.headers["X-message-#{key}"] = str
+        response.headers["X-Message-#{key}"] = str
       end
     end
     flash.discard

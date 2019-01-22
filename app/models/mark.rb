@@ -11,22 +11,12 @@ class Mark < ApplicationRecord
   validates_numericality_of :mark,
                             allow_nil: true,
                             greater_than_or_equal_to: 0,
-                            message: I18n.t('marker.marks.invalid_mark')
-  validate :valid_mark
+                            less_than_or_equal_to: ->(m) { m.markable.max_mark }
 
   belongs_to :markable, polymorphic: true
 
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
-
-  # Custom validator for checking the upper range of a mark
-  def valid_mark
-    unless mark.nil?
-      if mark > markable.max_mark
-        errors.add(:mark, I18n.t('mark.error.validate_criteria'))
-      end
-    end
-  end
 
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
     return if mark.nil?

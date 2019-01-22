@@ -7,15 +7,6 @@ class StudentsController < ApplicationController
 
   responders :flash, :collection
 
-  def note_message
-    @student = Student.find(params[:id])
-    if params[:success]
-      flash_message(:success, I18n.t('notes.create.success'))
-    else
-      flash_message(:error, I18n.t('notes.error'))
-    end
-  end
-
   def index
     respond_to do |format|
       format.html
@@ -131,7 +122,7 @@ class StudentsController < ApplicationController
         flash_message(:success, result[:valid_lines])
       end
     else
-      flash_message(:error, I18n.t('csv.invalid_csv'))
+      flash_message(:error, I18n.t('upload_errors.missing_file'))
     end
     redirect_to action: 'index'
   end

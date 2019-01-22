@@ -6,4 +6,5 @@ pt:
       delete: "Você tem certeza que quer apagar esse %{model}?"
     submit:
       create: "Criar %{model}"
+      update: "Edit %{model}"
       delete: "Apagar esse %{model}"

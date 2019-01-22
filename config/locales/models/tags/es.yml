@@ -1,0 +1,11 @@
+es:
+  activerecord:
+    models:
+      tag:
+        one: "Etiqueta"
+        other: "Etiquetas"
+    attributes:
+      tags:
+        description: "Descripción"
+        name: "Nombre"
+        user: "Creador"

@@ -1,31 +1,10 @@
 module TagsHelper
-  def get_tags_table_info
-    tags = Tag.order(:name)
-
-    tags.map do |tag|
-      t = tag.attributes
-      t[:user_name] = tag.user.first_name + ' ' + tag.user.last_name
-      t[:use] = get_num_groupings_for_tag(tag.id)
-      t[:edit_link] = view_context.link_to(
-          'Edit',
-          edit_tag_dialog_assignment_tag_path(@assignment, tag),
-          remote: true)
-      t[:delete_link] = view_context.link_to(
-          'Delete',
-          controller: 'tags',
-          action: 'destroy',
-          data: { confirm: 'Are you sure you want to delete this tag?' },
-          id: tag.id)
-      t
-    end
-  end
-
   ###  Global Tag Methods  ###
 
   def get_top_tags
     # Sorts all the tags by number of groupings.
     sorted_tag = Tag.all.sort_by do |tag|
-      get_num_groupings_for_tag(tag.id)
+      get_num_groupings_for_tag(tag)
     end
 
     # Loops until the top 5 tags are found
@@ -68,8 +47,7 @@ module TagsHelper
     grouping.tags
   end
 
-  def get_num_groupings_for_tag(tag_id)
-    tag = Tag.find(tag_id)
+  def get_num_groupings_for_tag(tag)
     tag.groupings.size
   end
 

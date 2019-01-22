@@ -4,3 +4,8 @@ pt:
       submission:
         one: "Submissõ"
         other: "Submissões"
+    attributes:
+      submission:
+        feedback_files: "Arquivos de comentários"
+        submission_files: "código fonte"
+        submitted_remark: "Pedido de revisão"

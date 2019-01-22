@@ -33,3 +33,8 @@ fr:
     upload:
       grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
       select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
+
+  users:
+    api_key:
+      reset: "Générer une nouvelle clé"
+      unavailable: "Non disponible"

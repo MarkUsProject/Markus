@@ -17,6 +17,24 @@ en:
         max_mark: "Maximum mark"
         peer_visible: "Make visible to peer reviewers"
         ta_visible: "Make visible to teaching assistants"
+      checkbox_criterion:
+        description: "Description"
+        name: "Name"
+        max_mark: "Maximum mark"
+        peer_visible: "Make visible to peer reviewers"
+        ta_visible: "Make visible to teaching assistants"
+      flexible_criterion:
+        description: "Description"
+        name: "Name"
+        max_mark: "Maximum mark"
+        peer_visible: "Make visible to peer reviewers"
+        ta_visible: "Make visible to teaching assistants"
+      rubric_criterion:
+        description: "Description"
+        name: "Name"
+        max_mark: "Maximum mark"
+        peer_visible: "Make visible to peer reviewers"
+        ta_visible: "Make visible to teaching assistants"
 
     errors:
       models:

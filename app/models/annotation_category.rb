@@ -2,16 +2,10 @@ class AnnotationCategory < ApplicationRecord
   has_many :annotation_texts, dependent: :destroy
 
   validates_presence_of :annotation_category_name
-  # Unique index for this validation is not require and can cause trouble
-  # (ref. issue #191)
-  validates_uniqueness_of :annotation_category_name,
-                          scope:   :assignment_id,
-                          message: 'is already taken'
+  validates_uniqueness_of :annotation_category_name, scope: :assignment_id
 
   belongs_to :assignment
-  validates_associated :assignment,
-                       on: :create,
-                       message: 'not strongly associated with assignment'
+  validates_associated :assignment, on: :create
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts

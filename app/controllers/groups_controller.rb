@@ -22,15 +22,6 @@ class GroupsController < ApplicationController
 
   layout 'assignment_content'
 
-  def note_message
-    @assignment = Assignment.find(params[:id])
-    if params[:success]
-      flash_message(:success, I18n.t('notes.create.success'))
-    else
-      flash_message(:error, I18n.t('notes.error'))
-    end
-  end
-
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
@@ -154,7 +145,7 @@ class GroupsController < ApplicationController
     num_valid = @assignment.get_num_valid
     num_total = @assignment.get_num_assigned
     if num_valid == num_total
-      flash_message(:success, t('groups.done_assign'))
+      flash_message(:success, t('exam_templates.assign_scans.done'))
     end
     @data = {
       group_name: next_grouping.group.group_name,
@@ -211,7 +202,7 @@ class GroupsController < ApplicationController
     num_valid = @assignment.get_num_valid
     num_total = @assignment.get_num_assigned
     if num_valid == num_total
-      flash_message(:success, t('groups.done_assign'))
+      flash_message(:success, t('exam_templates.assign_scans.done'))
     end
     if !@grouping.nil? && next_grouping.id == @grouping.id
       render json: {
@@ -263,7 +254,7 @@ class GroupsController < ApplicationController
         end
       end
     else
-      flash_message(:error, I18n.t('csv.invalid_csv'))
+      flash_message(:error, I18n.t('upload_errors.missing_file'))
     end
     redirect_to action: 'index', id: params[:id]
   end

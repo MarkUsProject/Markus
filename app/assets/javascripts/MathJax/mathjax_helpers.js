@@ -18,14 +18,10 @@ function updatePreview(source, destination) {
 $(document).ready(function () {
   // Update when the document loads so preview is available for existing comments/annotations
   updatePreview('new_annotation_content', 'annotation_preview');
-  updatePreview('overall_comment_text_area', 'overall_comment_preview');
   updatePreview('overall_remark_comment_text_area', 'overall_remark_comment_preview');
 
   $(document).on("keyup", "#new_annotation_content", function () {
     updatePreview('new_annotation_content', 'annotation_preview');
-  });
-  $(document).on("keyup", "#overall_comment_text_area", function () {
-    updatePreview('overall_comment_text_area', 'overall_comment_preview');
   });
   $(document).on("keyup", "#overall_remark_comment_text_area", function () {
     updatePreview('overall_remark_comment_text_area', 'overall_remark_comment_preview');

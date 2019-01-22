@@ -11,6 +11,7 @@ class MarkingSchemeTable extends React.Component {
     this.state = {
       data: [],
       columns: [],
+      loading: true,
     };
     this.fetchData = this.fetchData.bind(this);
   }
@@ -27,13 +28,14 @@ class MarkingSchemeTable extends React.Component {
       this.setState({
         data: res.data,
         columns: res.columns,
+        loading: false,
       });
     });
   }
 
   nameColumns = [
     {
-      Header: I18n.t('marking_schemes.name'),
+      Header: I18n.t('activerecord.attributes.marking_schemes.name'),
       accessor: 'name',
       filterable: true,
     }
@@ -41,7 +43,7 @@ class MarkingSchemeTable extends React.Component {
 
   modifyColumn = [
     {
-      Header: I18n.t('marking_schemes.table_modify_column'),
+      Header: I18n.t('actions'),
       Cell: ({original}) => (
         <span>
           <a
@@ -72,6 +74,7 @@ class MarkingSchemeTable extends React.Component {
             id: 'name'
           }
         ]}
+        loading={this.state.loading}
       />
     );
   }
