@@ -318,7 +318,7 @@ module Repository
     # Walks all files and subdirectories starting at +path+ and
     # returns an array of tuples containing [path, revision_object]
     # for every file and directory discovered in this way
-    def tree_at_path(path)
+    def tree_at_path(path, with_attrs: true)
       raise NotImplementedError, 'Revision.tree_at_path not yet implemented'
     end
   end
