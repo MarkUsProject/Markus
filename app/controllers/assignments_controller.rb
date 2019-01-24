@@ -613,7 +613,7 @@ class AssignmentsController < ApplicationController
     grouping.group.access_repo do |repo|
       @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       @last_modified_date = @revision&.server_timestamp
-      files = @revision.tree_at_path(assignment.repository_folder)
+      files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
                        .select do |_, obj|
                          obj.is_a?(Repository::RevisionFile) &&
                            !Repository.get_class.internal_file_names.include?(obj.name)
