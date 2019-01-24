@@ -613,7 +613,11 @@ class AssignmentsController < ApplicationController
     grouping.group.access_repo do |repo|
       @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       @last_modified_date = @revision&.server_timestamp
-      files = @revision.files_at_path(assignment.repository_folder)
+      files = @revision.tree_at_path(assignment.repository_folder)
+                       .select do |_, obj|
+                         obj.is_a?(Repository::RevisionFile) &&
+                           !Repository.get_class.internal_file_names.include?(obj.name)
+                       end
       @num_submitted_files = files.length
       missing_assignment_files = grouping.missing_assignment_files(@revision)
       @num_missing_assignment_files = missing_assignment_files.length
