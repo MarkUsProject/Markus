@@ -666,7 +666,8 @@ class ResultsController < ApplicationController
         remark_request_timestamp: Time.zone.now
       )
       if params[:save]
-        render 'update_remark_request', formats: [:js]
+        flash_message(:success, I18n.t('results.remark.update_success'))
+        head :ok
       elsif params[:submit]
         unless @submission.remark_result
           @submission.make_remark_result

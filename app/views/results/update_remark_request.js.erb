@@ -1,9 +1,0 @@
-document.getElementById('remark_request_edit').innerHTML =
-  "<%= escape_javascript(render partial: 'results/student/remark_request_form',
-                                locals: { submission: @submission,
-                                          assignment: @assignment }).html_safe %>";
-
-$('#remark_request_text_area').effect('highlight',
-                                           { color: '#bdfcc9' },
-                                           1000);
-
