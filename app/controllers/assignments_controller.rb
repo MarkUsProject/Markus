@@ -688,7 +688,7 @@ class AssignmentsController < ApplicationController
                          num_files_before != assignment.assignment_files.length
 
     # if there are no section due dates, destroy the objects that were created
-    if params[:assignment][:section_due_dates_type] == '0'
+    if ['0', nil].include? params[:assignment][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
