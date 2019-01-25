@@ -236,7 +236,7 @@ class Assignment < ApplicationRecord
   end
 
   def past_all_collection_dates?
-    if section_due_dates_type
+    if section_due_dates_type && Section.any?
       Section.all.all? do |s|
         past_collection_date? s
       end
