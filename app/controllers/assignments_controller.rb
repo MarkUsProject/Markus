@@ -611,7 +611,11 @@ class AssignmentsController < ApplicationController
     grouping.group.access_repo do |repo|
       @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       @last_modified_date = @revision&.server_timestamp
-      files = @revision.files_at_path(assignment.repository_folder)
+      files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
+                       .select do |_, obj|
+                         obj.is_a?(Repository::RevisionFile) &&
+                           !Repository.get_class.internal_file_names.include?(obj.name)
+                       end
       @num_submitted_files = files.length
       missing_assignment_files = grouping.missing_assignment_files(@revision)
       @num_missing_assignment_files = missing_assignment_files.length
@@ -625,6 +629,7 @@ class AssignmentsController < ApplicationController
     return [] unless revision.path_exists?(full_path)
 
     entries = revision.tree_at_path(full_path)
+                      .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
                       .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
       data = get_file_info(file_name, file_obj, assignment.id, path)
       data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
@@ -681,7 +686,7 @@ class AssignmentsController < ApplicationController
                          num_files_before != assignment.assignment_files.length
 
     # if there are no section due dates, destroy the objects that were created
-    if params[:assignment][:section_due_dates_type] == '0'
+    if ['0', nil].include? params[:assignment][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false

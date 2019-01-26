@@ -52,6 +52,10 @@ class TestScriptResult < ApplicationRecord
     actual = json_test.fetch('actual', '')
     time = json_test['time']
     status = json_test['status']
+    # User code sometimes produces null bytes that are reported back to MarkUs
+    # in the input, actual, or expected. ActiveRecord cannot store null bytes so they
+    # must be converted to a non-null representation.
+    [input, expected, actual].each { |s| s.gsub!("\u0000", "\\u0000") }
     # check first if we have to stop
     if !status.nil? && status == 'error_all'
       stop_processing = true

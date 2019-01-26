@@ -31,6 +31,9 @@ Style/CollectionMethods:
 Layout/MultilineOperationIndentation:
   Enabled: false
 
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
 # Disable ABC code complexity metric
 Metrics/AbcSize:
   Enabled: false
