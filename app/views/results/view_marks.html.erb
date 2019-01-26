@@ -22,6 +22,27 @@
             remarkSubmitted: <%= !@old_result.nil? %>
           }
         );
+
+      <% if can_show_remark_request_tab_in_student_pane(@result.submission.assignment, @current_user, @result.submission, @result) &&
+            @current_user.student? && @result.submission.assignment.allow_remarks %>
+      makeRemarkPanel(document.getElementById('remark_request_tab'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          assignmentRemarkMessage: `<%= @result.submission.assignment.remark_message %>`,
+          remarkDueDate: '<%= @result.submission.assignment.remark_due_date %>',
+          pastRemarkDueDate: <%= @result.submission.assignment.past_remark_due_date? %>,
+          remarkRequestText: `<%= @result.submission.remark_request %>`,
+          remarkRequestTimestamp: '<%= @result.submission.remark_request_timestamp %>',
+          released_to_students: <%= @result.released_to_students %>,
+          remarkSubmitted: <%= !@old_result.nil? %>,
+          overallComment: `<%= @result.overall_comment %>`,
+          studentView: true,
+        }
+      );
+      <% end %>
+
       window.submissionFileViewer =
         makeFileViewer(document.getElementById('codeviewer'),
           {
@@ -67,9 +88,6 @@
              result_id: @result.id,
              assignment_id: @result.submission.grouping.assignment.id
            } %>
-
-<%= render partial: 'results/student/enable_remark_request_buttons',
-           formats: [:js] %>
 
 <!-- Modals -->
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>

@@ -62,7 +62,7 @@ en:
       old_mark: "Old Mark"
       old_subtotal: "Original Subtotal"
       old_total: "Original Total Mark"
-      no_remark_due_date: "No due date specified."
+      no_remark_due_date: "No remark due date specified."
       no_remark_result: "Remark results are not yet available for this assignment."
       past_remark_due_date: "It is already past the remark due date."
       show_old_marks: "Show Original Mark Summary"
@@ -70,6 +70,7 @@ en:
       submit_confirm: "You will not be able to see your results until remarking is finished.
                        Are you sure you want to submit your remark request now?"
       submitted_on: "Remark request was submitted on %{time}."
+      update_success: "Remark request saved, but it has not yet been submitted."
 
     keybinding:
       confirm_annotation: "Confirm annotation"

@@ -19,6 +19,25 @@
           }
       );
 
+      <% if can_show_remark_request_tab_in_marker_pane(@result.submission) %>
+      makeRemarkPanel(document.getElementById('remark_request_tab'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          assignmentRemarkMessage: `<%= @assignment.remark_message %>`,
+          remarkDueDate: '<%= @assignment.remark_due_date %>',
+          pastRemarkDueDate: <%= @assignment.past_remark_due_date? %>,
+          remarkRequestText: `<%= @result.submission.remark_request %>`,
+          remarkRequestTimestamp: '<%= @result.submission.remark_request_timestamp %>',
+          released_to_students: <%= @result.released_to_students %>,
+          remarkSubmitted: <%= !@old_result.nil? %>,
+          overallComment: `<%= @result.overall_comment %>`,
+          studentView: false
+        }
+      );
+      <% end %>
+
       <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       window.annotationManager =
         makeAnnotationManager(document.getElementById('annotation_options'),
