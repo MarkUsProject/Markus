@@ -233,7 +233,7 @@ class Assignment < ApplicationRecord
   end
 
   def past_all_collection_dates?
-    if section_due_dates_type
+    if section_due_dates_type && Section.any?
       Section.all.all? do |s|
         past_collection_date? s
       end
@@ -1163,7 +1163,8 @@ class Assignment < ApplicationRecord
                                                       assignment: self.short_identifier))
     group_revision = group_repo.get_latest_revision
     internal_file_names = Repository.get_class.internal_file_names
-    starter_tree.each do |starter_obj_name, starter_obj|
+    starter_tree.sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
+                .each do |starter_obj_name, starter_obj|
       next if internal_file_names.include?(File.basename(starter_obj_name))
       starter_obj_path = File.join(self.repository_folder, starter_obj_name)
       already_exists = group_revision.path_exists?(starter_obj_path)
