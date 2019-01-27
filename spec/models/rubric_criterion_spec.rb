@@ -78,59 +78,59 @@ describe RubricCriterion do
     end
 
     it 'assign a TA by id' do
-      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
     end
 
     it 'not assign the same TA multiple times' do
-      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
       @ta.reload
       @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
     end
 
     it 'unassign a TA by id' do
-      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 1, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
       @ta.reload
       @criterion.remove_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
     end
 
     it 'assign multiple TAs' do
-      @ta1 = create(:ta)
-      @ta2 = create(:ta)
-      @ta3 = create(:ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 0, 'Got unexpected TA membership count'
-      @criterion.add_tas([@ta1, @ta2, @ta3])
-      expect(@criterion.criterion_ta_associations.count).to be == 3, 'Got unexpected TA membership count'
+      ta1 = create(:ta)
+      ta2 = create(:ta)
+      ta3 = create(:ta)
+      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
+      @criterion.add_tas([ta1, ta2, ta3])
+      expect(@criterion.criterion_ta_associations.count).to eq(3), 'Got unexpected TA membership count'
     end
 
     it 'remove multiple TAs' do
-      @ta1 = create(:ta)
-      @ta2 = create(:ta)
-      @ta3 = create(:ta)
-      expect(@criterion.criterion_ta_associations.count).to be == 0
-      @criterion.add_tas([@ta1, @ta2, @ta3])
-      expect(@criterion.criterion_ta_associations.count).to be == 3
-      @ta1.reload
-      @ta2.reload
-      @ta3.reload
-      @criterion.remove_tas([@ta1, @ta3])
-      expect(@criterion.criterion_ta_associations.count).to be == 1
+      ta1 = create(:ta)
+      ta2 = create(:ta)
+      ta3 = create(:ta)
+      expect(@criterion.criterion_ta_associations.count).to eq(0)
+      @criterion.add_tas([ta1, ta2, ta3])
+      expect(@criterion.criterion_ta_associations.count).to eq(3)
+      ta1.reload
+      ta2.reload
+      ta3.reload
+      @criterion.remove_tas([ta1, @a3])
+      expect(@criterion.criterion_ta_associations.count).to eq(1)
       @criterion.reload
-      expect(@ta2.id).to be == @criterion.tas[0].id
+      expect(ta2.id).to be == @criterion.tas[0].id
     end
 
     it 'get the names of TAs assigned to it' do
-      @ta1 = create(:ta, user_name: 'g9browni')
-      @ta2 = create(:ta, user_name: 'c7benjam')
-      @criterion.add_tas(@ta1)
-      @criterion.add_tas(@ta2)
-      expect(@criterion.get_ta_names).to contain_exactly('g9browni', 'c7benjam')
+      ta1 = create(:ta)
+      ta2 = create(:ta)
+      @criterion.add_tas(ta1)
+      @criterion.add_tas(ta2)
+      expect(@criterion.get_ta_names).to contain_exactly(ta1.user_name, ta2.user_name)
     end
 
   end
@@ -192,6 +192,39 @@ describe RubricCriterion do
             RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError)
           }
         end
+      end
+    end
+
+    context 'and the row is valid' do
+      before(:each) do
+        # we'll need a valid assignment for those cases.
+        @assignment = create(:assignment)
+        @row = ['criterion 5', '1.0']
+        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+          @row << 'name' + i.to_s
+        end
+        # ...containing commas and quotes in the descriptions
+        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+          @row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+        end
+        @csv_base_row = @row
+      end
+    end
+
+    context 'be able to create a new instance without level descriptions' do
+      criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+      expect(criterion).not_to be_nil
+      expect(criterion).to be_an_instance_of(RubricCriterion)
+      expect(criterion.assignment).to equal(@assignment)
+    end
+
+    should 'be able to create a new instance without level descriptions' do
+      criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+      assert_not_nil criterion
+      assert_instance_of RubricCriterion, criterion
+      assert_equal criterion.assignment, @assignment
+      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+        assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
       end
     end
 
