@@ -43,10 +43,7 @@ class AssignmentsController < ApplicationController
       content = @feedback_file.file_content
     end
 
-    send_data content,
-              type: @feedback_file.mime_type,
-              filename: @feedback_file.filename,
-              disposition: 'inline'
+    render plain: content
   end
 
   def student_interface
