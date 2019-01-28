@@ -1559,6 +1559,48 @@ describe Assignment do
     end
   end
 
+  describe '#past_all_collection_dates?' do
+    context 'when before due with no submission rule' do
+      before :each do
+        @assignment = create(:assignment, due_date: 2.days.from_now)
+      end
+
+      it 'returns false' do
+        expect(@assignment.past_all_collection_dates?).to be(false)
+      end
+
+      context 'and section_due_dates_type is true' do
+        before :each do
+          @assignment.update_attributes(section_due_dates_type: true)
+        end
+
+        context 'and there are sections' do
+          before :each do
+            @section = create(:section, name: 'section_name')
+            SectionDueDate.create(section: @section,
+                                  assignment: @assignment,
+                                  due_date: 1.day.ago)
+            student = create(:student, section: @section)
+            @grouping = create(:grouping, assignment: @assignment)
+            create(:accepted_student_membership,
+                   grouping: @grouping,
+                   user: student,
+                   membership_status: StudentMembership::STATUSES[:inviter])
+          end
+
+          it 'returns true' do
+            expect(@assignment.past_all_collection_dates?).to be(true)
+          end
+        end
+        context 'and there are no sections' do
+          it 'returns false' do
+            expect(@assignment.past_all_collection_dates?).to be(false)
+          end
+        end
+      end
+    end
+  end
+
   describe '#update_results_stats' do
     before :each do
       allow(assignment).to receive(:max_mark).and_return(10)

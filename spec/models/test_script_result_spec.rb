@@ -95,6 +95,34 @@ describe TestScriptResult do
         expect(@test_script_result).to be_valid
         expect{@test_script_result.destroy}.to change {TestScriptResult.count}.by(-1)
       end
+
+      it 'can create a test result from a json' do
+        n_test_results = TestResult.count
+        json_test = { name: 'name',
+                      input: 'input',
+                      actual: 'actual',
+                      expected: 'expected',
+                      marks_earned: 1,
+                      marks_total: 1,
+                      status: 'pass',
+                      time: nil }.stringify_keys
+        @test_script_result.create_test_result_from_json(json_test)
+        expect(n_test_results + 1).to eq(TestResult.count)
+      end
+
+      it 'can create a test result from a json containing null bytes' do
+        n_test_results = TestResult.count
+        json_test = { name: 'name',
+                      input: "input\u0000",
+                      actual: "actual\u0000",
+                      expected: "expected\u0000",
+                      marks_earned: 1,
+                      marks_total: 1,
+                      status: 'pass',
+                      time: nil }.stringify_keys
+        @test_script_result.create_test_result_from_json(json_test)
+        expect(n_test_results + 1).to eq(TestResult.count)
+      end
     end
 
     context 'An invalid test script result' do

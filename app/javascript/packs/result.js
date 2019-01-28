@@ -5,7 +5,9 @@ import 'javascripts/react_config';
 import { makeAnnotationManager } from 'javascripts/Components/Result/annotation_manager';
 import { makeFileViewer } from 'javascripts/Components/Result/file_viewer';
 import { makeAnnotationPanel } from 'javascripts/Components/Result/annotation_panel';
+import { makeRemarkPanel } from 'javascripts/Components/Result/remark_panel';
 
 window.makeAnnotationManager = makeAnnotationManager;
 window.makeFileViewer = makeFileViewer;
 window.makeAnnotationPanel = makeAnnotationPanel;
+window.makeRemarkPanel = makeRemarkPanel;
