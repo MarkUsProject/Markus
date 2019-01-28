@@ -1243,6 +1243,12 @@ class Assignment < ApplicationRecord
     self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE).limit(1)
   end
 
+  # Selects the test specs from the test support files.
+  def select_test_specs
+    # TODO: Adjust the specs mechanism when we create a new user interface
+    self.test_support_files.where(file_name: AutomatedTestsClientHelper::SPECS_FILE).limit(1)
+  end
+
   # Retrieve current grader data.
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count

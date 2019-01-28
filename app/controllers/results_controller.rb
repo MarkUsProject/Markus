@@ -259,12 +259,13 @@ class ResultsController < ApplicationController
       assignment = submission.assignment
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! submission, to: :run_tests?
-      test_scripts = assignment.select_test_scripts(current_user)
-                               .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      # test_scripts = assignment.select_test_scripts(current_user)
+      #                          .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
+      test_specs = assignment.select_test_specs.pluck(:file_name)[0]
       hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
       test_run = submission.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_scripts,
-                                   hooks_script, [{ id: test_run.id }])
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_specs, hooks_script,
+                                   [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
