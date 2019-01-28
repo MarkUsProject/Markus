@@ -14,8 +14,10 @@ class AutotestSetup
     # setup instance variables (mostly paths to directories)
     @assg_short_id = short_id
     root_dir = File.join('db', 'data', 'autotest_files', @assg_short_id)
-    script_dir = File.join(root_dir, 'autotest_scripts')
-    @test_files = Dir.glob(File.join(script_dir, '*'))
+    script_dir = File.join(root_dir, 'test_scripts')
+    @test_scripts = Dir.glob(File.join(script_dir, '*'))
+    support_dir = File.join(root_dir, 'test_support_files')
+    @test_support_files = Dir.glob(File.join(support_dir, '*'))
     student_dir = File.join(root_dir, 'student_files')
     @student_paths = Dir.glob(File.join(student_dir, '*')).select {|d| File.directory?(d)}
     @req_files = required_files
@@ -31,7 +33,7 @@ class AutotestSetup
     create_marking_scheme
     create_criteria
     create_students
-    create_test_scripts
+    create_test_files
     collect_submissions
   end
 
@@ -47,8 +49,9 @@ class AutotestSetup
     test_file_destination = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
     FileUtils.makedirs test_file_destination
 
-    # copy test script files into the destination directory
-    FileUtils.cp @test_files, test_file_destination
+    # copy test scripts and support files into the destination directory
+    FileUtils.cp @test_scripts, test_file_destination
+    FileUtils.cp @test_support_files, test_file_destination
   end
 
   def create_marking_scheme
@@ -110,8 +113,6 @@ class AutotestSetup
           end
         end
       end
-
-
     end
   end
 
@@ -153,18 +154,16 @@ class AutotestSetup
     assignment
   end
 
-  def create_test_scripts
+  def create_test_files
     # get the criteria from the assignment
     criteria = @assignment.get_criteria
-
-    test_file_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
-    test_files = Dir.glob(File.join(test_file_dir, '*')).select { |f| File.file?(f) }
-    test_files.zip(criteria) do |test_file, criterion|
-      instructor_run = !File.basename(test_file).include?('student_run_only')
+    # create db objects
+    @test_scripts.zip(criteria) do |test_script, criterion|
+      instructor_run = !File.basename(test_script).include?('student_run_only')
       TestScript.create(
         assignment: @assignment,
         seq_num: 0,
-        file_name: File.basename(test_file),
+        file_name: File.basename(test_script),
         description: "",
         run_by_instructors: instructor_run,
         run_by_students: true,
@@ -179,7 +178,14 @@ class AutotestSetup
         criterion: instructor_run ? criterion : nil
       )
     end
-    # send scripts for both hostnames because the
+    @test_support_files.each do |test_support_file|
+      TestSupportFile.create(
+        assignment: @assignment,
+        file_name: File.basename(test_support_file),
+        description: ''
+      )
+    end
+    # send files for all hostnames because the
     # autotester uses the names as part of a hash key
     AutotestScriptsJob.perform_now('http://localhost:3000', @assignment.id)
     AutotestScriptsJob.perform_now('http://127.0.0.1:3000', @assignment.id)

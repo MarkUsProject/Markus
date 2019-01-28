@@ -1,0 +1,18 @@
+[
+  {
+    "tester_type": "custom",
+    "tester_name": "autotest01",
+    "script_data": [
+      {
+        "runnable_group": [
+          { "script_file_path": "autotest01.sh" },
+          { "script_file_path": "autotest02.sh" },
+          { "script_file_path": "autotest_student_run_only.sh" }
+        ],
+        "enable_feedback_file_hook": false,
+        "feedback_file": null,
+        "script_timeout": 10
+      }
+    ]
+  }
+]
