@@ -2,17 +2,15 @@ describe RubricCriterion do
   let(:criterion_factory_name) { :rubric_criterion }
 
   it_behaves_like 'a criterion'
-
   context 'A good rubric criterion model' do
-
     before(:each) do
       @rubric = create(:rubric_criterion)
     end
 
-    it{is_expected.to belong_to(:assignment)}
-    it{is_expected.to validate_numericality_of(:max_mark)}
-    it{is_expected.to validate_presence_of(:max_mark)}
-    it{is_expected.to validate_presence_of(:name)}
+    it{ is_expected.to belong_to(:assignment) }
+    it{ is_expected.to validate_numericality_of(:max_mark) }
+    it{ is_expected.to validate_presence_of(:max_mark) }
+    it{ is_expected.to validate_presence_of(:name) }
 
     # Test that Criteria assigned to non-existent Assignment
     #is NOT OK
@@ -22,7 +20,7 @@ describe RubricCriterion do
       assert !assignment_id_dne.save
     end
 
-    it 'should round weights that have more than 1 significant digits' do
+    it 'round weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be >0
       criterion = RubricCriterion.first
       criterion.max_mark = 0.5555555555
@@ -34,17 +32,13 @@ describe RubricCriterion do
       assignment = create(:assignment)
       grouping = create(:grouping, assignment: assignment)
       submission = create(:submission, grouping: grouping)
-
       complete_result = create(:complete_result, submission: submission)
-
       rubric = create(:rubric_criterion, assignment: assignment)
-
-      mark = create(:mark, result: complete_result, markable: rubric)
 
       expect(rubric.mark_for(complete_result.id))
     end
 
-    it 'Set default levels' do
+    it 'set default levels' do
       r = RubricCriterion.new
       expect(r.set_default_levels)
       r.save
@@ -59,12 +53,12 @@ describe RubricCriterion do
       r = RubricCriterion.new
       levels = []
       0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
-        levels << 'l' + i.to_s()
+        levels << 'l' + i.to_s
       end
       expect(r).to receive(:save).once
       r.set_level_names(levels)
       0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
-        expect(r['level_' + i.to_s() + '_name']).to eq('l' + i.to_s())
+        expect(r['level_' + i.to_s + '_name']).to eq('l' + i.to_s)
       end
 
     end
@@ -97,7 +91,7 @@ describe RubricCriterion do
       expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
       @ta.reload
       @criterion.remove_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
+      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
     end
 
     it 'assign multiple TAs' do
@@ -119,7 +113,7 @@ describe RubricCriterion do
       ta1.reload
       ta2.reload
       ta3.reload
-      @criterion.remove_tas([ta1, @a3])
+      @criterion.remove_tas([ta1, ta3])
       expect(@criterion.criterion_ta_associations.count).to eq(1)
       @criterion.reload
       expect(ta2.id).to be == @criterion.tas[0].id
@@ -143,9 +137,7 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on an empty row' do
         it 'raises' do
-          expect {
-            RubricCriterion.create_or_update_from_csv_row([], @assignment).to raise_error(CSVInvalidLineError)
-          }
+          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -153,9 +145,7 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 1 element row' do
         it 'raises' do
-          expect {
-            rubric.create_or_update_from_csv_row(%w(name), @assignment).to raise_error(CSVInvalidLineError)
-          }
+          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -163,16 +153,14 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
-          expect {
-            rubric.create_or_update_from_csv_row(%w(name 1.0), @assignment).to raise_error(CSVInvalidLineError)
-          }
+          expect { RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to raise_error(CSVInvalidLineError) }
         end
       end
     end
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on rows with elements without names for every criterion' do
-        row = %w(name 1.0)
+        row = [%w(name 1.0)]
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
           it 'raises' do
@@ -186,7 +174,7 @@ describe RubricCriterion do
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a row with an invalid weight' do
-        row = %w(name max_mark l0 l1 l2 l3 l4)
+        row = [%w(name max_mark l0 l1 l2 l3 l4)]
         it 'raises' do
           expect {
             RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError)
@@ -194,41 +182,96 @@ describe RubricCriterion do
         end
       end
     end
+  end
+
+  context 'from an assignment without criteria' do
+    before(:each) do
+      @assignment = create(:assignment)
+    end
 
     context 'and the row is valid' do
       before(:each) do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
-        @row = ['criterion 5', '1.0']
+        row = ['criterion 5', '1.0']
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-          @row << 'name' + i.to_s
+          row << 'name' + i.to_s
         end
         # ...containing commas and quotes in the descriptions
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-          @row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+          row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
         end
-        @csv_base_row = @row
+        @csv_base_row = row
+      end
+
+      it 'be able to create a new instance without level descriptions' do
+        criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+        expect(criterion).not_to be_nil
+        expect(criterion).to be_an_instance_of(RubricCriterion)
+        expect(criterion.assignment).to eq(@assignment)
+        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+          expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
+        end
+      end
+
+      context 'and there is an existing rubric criterion with the same name' do
+        setup do
+          criterion = RubricCriterion.new
+          criterion.set_default_levels
+          # 'criterion 5' is the name used in the criterion held
+          # in @csv_base_row - but they use different level names/descriptions.
+          # I'll use the defaults here, and see if I can overwrite with
+          # @csv_base_row.
+          criterion.name = 'criterion 5'
+          criterion.assignment = @assignment
+          criterion.position = @assignment.next_criterion_position
+          criterion.max_mark = 5.0
+          expect(criterion.save)
+        end
+
+        context 'allow a criterion with the same name to overwrite' do
+          it "not raise error" do
+            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+              expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
+              expect(4.0).to eq(criterion.max_mark)
+            end
+          end
+        end
+
+        context 'be able to create a new instance with level descriptions' do
+          it "not raise error" do
+            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            expect(criterion).not_to be_nil
+            expect(criterion).to be_an_instance_of(RubricCriterion)
+            expect(criterion.assignment).to eq(@assignment)
+            (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+              assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
+              expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
+              expect('description' + i.to_s + ' with comma (,) and ""quotes""').to eq(criterion['level_' + i.to_s + '_description'])
+            end
+          end
+        end
       end
     end
-
-    context 'be able to create a new instance without level descriptions' do
-      criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-      expect(criterion).not_to be_nil
-      expect(criterion).to be_an_instance_of(RubricCriterion)
-      expect(criterion.assignment).to equal(@assignment)
-    end
-
-    should 'be able to create a new instance without level descriptions' do
-      criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-      assert_not_nil criterion
-      assert_instance_of RubricCriterion, criterion
-      assert_equal criterion.assignment, @assignment
-      (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-        assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
-      end
-    end
-
   end
+  ####################   HELPERS    #################################
 
+  # Helper method for test_validate_presence_of to create a criterion without
+  # the specified attribute. if attr == nil then all attributes are included
+  def create_no_attr(attr)
+    new_rubric_criteria = {
+      name: 'somecriteria',
+      assignment_id: Assignment.make,
+      max_mark: 0.25,
+      level_0_name: 'Horrible',
+      level_1_name: 'Poor',
+      level_2_name: 'Satisfactory',
+      level_3_name: 'Good',
+      level_4_name: 'Excellent'
+    }
+
+    new_rubric_criteria.delete(attr) if attr
+    RubricCriterion.new(new_rubric_criteria)
+  end
 end
-
