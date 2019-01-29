@@ -778,7 +778,7 @@ describe Assignment do
         end
       end
     end
-    
+
     context 'tests on methods returning groups repos' do
       before :each do
         @assignment = create(:assignment,
