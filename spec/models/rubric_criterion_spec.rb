@@ -7,10 +7,10 @@ describe RubricCriterion do
       @rubric = create(:rubric_criterion)
     end
 
-    it{ is_expected.to belong_to(:assignment) }
-    it{ is_expected.to validate_numericality_of(:max_mark) }
-    it{ is_expected.to validate_presence_of(:max_mark) }
-    it{ is_expected.to validate_presence_of(:name) }
+    it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to validate_numericality_of(:max_mark) }
+    it { is_expected.to validate_presence_of(:max_mark) }
+    it { is_expected.to validate_presence_of(:name) }
 
     # Test that Criteria assigned to non-existent Assignment
     #is NOT OK
@@ -137,7 +137,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on an empty row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to raise_error(CSVInvalidLineError) }
+          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to
+          raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -145,7 +146,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 1 element row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to raise_error(CSVInvalidLineError) }
+          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to
+          raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -153,14 +155,15 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to raise_error(CSVInvalidLineError) }
+          expect { RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to
+          raise_error(CSVInvalidLineError) }
         end
       end
     end
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on rows with elements without names for every criterion' do
-        row = [%w(name 1.0)]
+        row = %w(name 1.0)
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
           it 'raises' do
@@ -174,7 +177,7 @@ describe RubricCriterion do
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a row with an invalid weight' do
-        row = [%w(name max_mark l0 l1 l2 l3 l4)]
+        row = %w(name max_mark l0 l1 l2 l3 l4)
         it 'raises' do
           expect {
             RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError)
@@ -230,7 +233,7 @@ describe RubricCriterion do
         end
 
         context 'allow a criterion with the same name to overwrite' do
-          it "not raise error" do
+          it 'not raise error' do
             criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
               expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
@@ -240,7 +243,7 @@ describe RubricCriterion do
         end
 
         context 'be able to create a new instance with level descriptions' do
-          it "not raise error" do
+          it 'not raise error' do
             criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             expect(criterion).not_to be_nil
             expect(criterion).to be_an_instance_of(RubricCriterion)
@@ -248,7 +251,9 @@ describe RubricCriterion do
             (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
               assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
               expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
-              expect('description' + i.to_s + ' with comma (,) and ""quotes""').to eq(criterion['level_' + i.to_s + '_description'])
+              expect(
+                'description' + i.to_s + ' with comma (,) and ""quotes""'
+              ).to eq(criterion['level_' + i.to_s + '_description'])
             end
           end
         end
