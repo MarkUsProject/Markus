@@ -38,6 +38,21 @@
       );
       <% end %>
 
+      <% if !@result.is_a_review? && can_show_feedback_files_tab?(@result.submission) %>
+      makeFeedbackFilePanel(document.getElementById('feedback_file_tab'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          feedbackFiles: [
+            <% @feedback_files.each do |f| %>
+              { id: '<%= f.id %>', filename: '<%= f.filename %>' },
+            <% end %>
+          ]
+        }
+      );
+      <% end %>
+
       <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       window.annotationManager =
         makeAnnotationManager(document.getElementById('annotation_options'),
@@ -120,10 +135,6 @@
 <% # Javascript for showing/hiding old marks %>
 <%= render partial: 'results/common/old_marks_view_functions',
            formats: [:html] %>
-
-<% # Javascript for feedback file window %>
-<%= render partial: 'assignments/feedback_file_window',
-           formats: [:js] %>
 
 <% # Javascript for progress bar %>
 <%= render partial: 'results/marker/update_progress_bar',
@@ -265,8 +276,7 @@
                          submission: @submission,
                          old_result: @old_result,
                          test_results: @test_results,
-                         files: @files,
-                         feedback_files: @feedback_files} %>
+                         files: @files } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
