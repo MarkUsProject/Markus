@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_14_203917) do
+ActiveRecord::Schema.define(version: 2019_01_29_131200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -517,18 +517,44 @@ ActiveRecord::Schema.define(version: 2018_10_14_203917) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "test_results", id: :serial, force: :cascade do |t|
-    t.integer "test_script_result_id"
-    t.string "name"
-    t.string "completion_status", null: false
+  create_table "test_group_results", id: :serial, force: :cascade do |t|
+    t.integer "test_group_id"
     t.float "marks_earned", default: 0.0, null: false
-    t.text "input", default: "", null: false
-    t.text "actual_output", default: "", null: false
-    t.text "expected_output", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "time", null: false
+    t.float "marks_total", default: 0.0, null: false
+    t.integer "test_run_id", null: false
+    t.text "extra_info"
+    t.index ["test_run_id"], name: "index_test_group_results_on_test_run_id"
+  end
+
+  create_table "test_groups", id: :serial, force: :cascade do |t|
+    t.text "name", null: false
+    t.boolean "run_by_instructors", default: true, null: false
+    t.boolean "run_by_students", default: false, null: false
+    t.integer "display_output", default: 0, null: false
+    t.bigint "assignment_id", null: false
+    t.string "criterion_type"
+    t.bigint "criterion_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id", "name"], name: "index_test_groups_on_assignment_id_and_name", unique: true
+    t.index ["assignment_id"], name: "index_test_groups_on_assignment_id"
+    t.index ["criterion_type", "criterion_id"], name: "index_test_groups_on_criterion_type_and_criterion_id"
+  end
+
+  create_table "test_results", id: :serial, force: :cascade do |t|
+    t.text "name", null: false
+    t.text "status", null: false
+    t.float "marks_earned", default: 0.0, null: false
+    t.text "output", default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "marks_total", default: 0.0, null: false
     t.bigint "time"
+    t.bigint "test_group_result_id", null: false
+    t.index ["test_group_result_id"], name: "index_test_results_on_test_group_result_id"
   end
 
   create_table "test_runs", id: :serial, force: :cascade do |t|
@@ -541,50 +567,11 @@ ActiveRecord::Schema.define(version: 2018_10_14_203917) do
     t.datetime "updated_at", null: false
     t.integer "submission_id"
     t.text "revision_identifier"
+    t.text "problems"
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
     t.index ["user_id"], name: "index_test_runs_on_user_id"
-  end
-
-  create_table "test_script_results", id: :serial, force: :cascade do |t|
-    t.integer "test_script_id"
-    t.float "marks_earned", default: 0.0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.bigint "time", null: false
-    t.float "marks_total", default: 0.0, null: false
-    t.integer "test_run_id", null: false
-    t.text "extra_info"
-    t.index ["test_run_id"], name: "index_test_script_results_on_test_run_id"
-  end
-
-  create_table "test_scripts", id: :serial, force: :cascade do |t|
-    t.integer "assignment_id", null: false
-    t.float "seq_num", null: false
-    t.string "file_name", null: false
-    t.text "description", null: false
-    t.boolean "run_by_instructors"
-    t.boolean "run_by_students"
-    t.boolean "halts_testing"
-    t.string "display_description", null: false
-    t.string "display_run_status", null: false
-    t.string "display_marks_earned", null: false
-    t.string "display_input", null: false
-    t.string "display_expected_output", null: false
-    t.string "display_actual_output", null: false
-    t.integer "criterion_id"
-    t.string "criterion_type"
-    t.integer "timeout", null: false
-    t.index ["assignment_id", "seq_num"], name: "index_test_scripts_on_assignment_id_and_seq_num"
-    t.index ["criterion_type", "criterion_id"], name: "index_test_scripts_on_criterion_type_and_criterion_id"
-  end
-
-  create_table "test_support_files", id: :serial, force: :cascade do |t|
-    t.string "file_name", null: false
-    t.integer "assignment_id", null: false
-    t.text "description", null: false
-    t.index ["assignment_id"], name: "index_test_files_on_assignment_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -633,9 +620,11 @@ ActiveRecord::Schema.define(version: 2018_10_14_203917) do
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
+  add_foreign_key "test_group_results", "test_runs"
+  add_foreign_key "test_groups", "assignments"
+  add_foreign_key "test_results", "test_group_results"
   add_foreign_key "test_runs", "groupings"
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
   add_foreign_key "test_runs", "users"
-  add_foreign_key "test_script_results", "test_runs"
 end
