@@ -43,6 +43,21 @@
       );
       <% end %>
 
+      <% if !@result.is_a_review? && can_show_feedback_files_tab?(@result.submission) %>
+      makeFeedbackFilePanel(document.getElementById('feedback_file_tab'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          feedbackFiles: [
+            <% @feedback_files.each do |f| %>
+            { id: '<%= f.id %>', filename: '<%= f.filename %>' },
+            <% end %>
+          ]
+        }
+      );
+      <% end %>
+
       window.submissionFileViewer =
         makeFileViewer(document.getElementById('codeviewer'),
           {
@@ -77,10 +92,6 @@
 <%= render partial: 'results/common/old_marks_view_functions',
            formats: [:html],
            handlers: [:erb] %>
-
-<% # Javascript for feedback file window %>
-<%= render partial: 'assignments/feedback_file_window',
-           formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],
@@ -149,6 +160,5 @@
                        assignment: @assignment,
                        submission: @submission,
                        old_result: @old_result,
-                       files: @files,
-                       feedback_files: @feedback_files} %>
+                       files: @files } %>
 </div>
