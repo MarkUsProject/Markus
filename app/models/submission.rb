@@ -159,7 +159,7 @@ class Submission < ApplicationRecord
   end
 
   def test_script_results_hash
-    TestScriptResult
+    TestGroupResult
       .joins(:test_script, :test_results, test_run: [:user])
       .where(test_runs: { submission_id: id })
       .pluck_to_hash(:created_at, :user_id, :name, :file_name, :user_name,

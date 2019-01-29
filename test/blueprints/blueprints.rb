@@ -294,7 +294,7 @@ TaMembership.blueprint do
   membership_status {'pending'}
 end
 
-TestScript.blueprint do
+TestGroup.blueprint do
   assignment {Assignment.make}
   seq_num {0}
   file_name {Sham.filename}
@@ -310,20 +310,14 @@ TestScript.blueprint do
   display_actual_output {'do_not_display'}
 end
 
-TestSupportFile.blueprint do
-  file_name {Sham.filename}
-  assignment {Assignment.make}
-  description {Sham.description}
-end
-
-TestScriptResult.blueprint do
-  test_script {TestScript.make}
+TestGroupResult.blueprint do
+  test_script {TestGroup.make}
   marks_earned {1}
   marks_total {1}
 end
 
 TestResult.blueprint do
-  test_script_result {TestScriptResult.make}
+  test_script_result {TestGroupResult.make}
   name {Sham.filename}
   completion_status {'pass'}
   marks_earned {1}

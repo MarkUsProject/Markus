@@ -20,11 +20,8 @@ class Assignment < ApplicationRecord
            class_name: 'CheckboxCriterion',
        dependent: :destroy
 
-  has_many :test_support_files, dependent: :destroy
-  accepts_nested_attributes_for :test_support_files, allow_destroy: true
-  has_many :test_scripts, dependent: :destroy
+  has_many :test_groups, dependent: :destroy
   accepts_nested_attributes_for :test_scripts, allow_destroy: true
-
 
   has_many :annotation_categories,
            -> { order(:position) },

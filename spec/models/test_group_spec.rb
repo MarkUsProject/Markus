@@ -1,4 +1,4 @@
-describe TestScript do
+describe TestGroup do
   it { is_expected.to belong_to(:assignment) }
   it { is_expected.to have_many(:test_script_results) }
   it { is_expected.to validate_presence_of :seq_num }
@@ -33,7 +33,7 @@ describe TestScript do
                      section_due_dates_type: false,
                      due_date: 2.days.from_now)
 
-      @script_file = TestScript.create(assignment_id:             @asst.id,
+      @script_file = TestGroup.create(assignment_id:             @asst.id,
                                       seq_num:                    1,
                                       file_name:                  'script.sh',
                                       description:                'This is a bash script file',
@@ -67,35 +67,35 @@ describe TestScript do
                      due_date: 2.days.from_now)
       display_option = %w(do_not_display display_after_submission display_after_collection)
 
-      @valid_script_file = TestScript.create(assignment_id:               @asst.id,
-                                           seq_num:                     1,
-                                           file_name:                   'validscript.sh',
-                                           description:                 'This is a bash script file',
-                                           timeout:                     30,
-                                           run_by_instructors:          true,
-                                           run_by_students:             true,
-                                           halts_testing:               false,
-                                           display_description:         display_option[0],
-                                           display_run_status:          display_option[1],
-                                           display_marks_earned:        display_option[2],
-                                           display_input:               display_option[0],
-                                           display_expected_output:     display_option[1],
-                                           display_actual_output:       display_option[2])
+      @valid_script_file = TestGroup.create(assignment_id:               @asst.id,
+                                            seq_num:                     1,
+                                            file_name:                   'validscript.sh',
+                                            description:                 'This is a bash script file',
+                                            timeout:                     30,
+                                            run_by_instructors:          true,
+                                            run_by_students:             true,
+                                            halts_testing:               false,
+                                            display_description:         display_option[0],
+                                            display_run_status:          display_option[1],
+                                            display_marks_earned:        display_option[2],
+                                            display_input:               display_option[0],
+                                            display_expected_output:     display_option[1],
+                                            display_actual_output:       display_option[2])
 
-      @invalid_script_file = TestScript.create(assignment_id:             @asst.id,
-                                             seq_num:                   2,
-                                             file_name:                 'invalidscript.sh',
-                                             description:               'This is a bash script file',
-                                             timeout:                   30,
-                                             run_by_instructors:        true,
-                                             run_by_students:           true,
-                                             halts_testing:             false,
-                                             display_description:       display_option[2],
-                                             display_run_status:        display_option[1],
-                                             display_marks_earned:      display_option[0],
-                                             display_input:             display_option[2],
-                                             display_expected_output:   display_option[1],
-                                             display_actual_output:     display_option[0])
+      @invalid_script_file = TestGroup.create(assignment_id:             @asst.id,
+                                              seq_num:                   2,
+                                              file_name:                 'invalidscript.sh',
+                                              description:               'This is a bash script file',
+                                              timeout:                   30,
+                                              run_by_instructors:        true,
+                                              run_by_students:           true,
+                                              halts_testing:             false,
+                                              display_description:       display_option[2],
+                                              display_run_status:        display_option[1],
+                                              display_marks_earned:      display_option[0],
+                                              display_input:             display_option[2],
+                                              display_expected_output:   display_option[1],
+                                              display_actual_output:     display_option[0])
     end
 
     context 'script file expected to be invalid when assignment is nil' do

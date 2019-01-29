@@ -15,7 +15,7 @@ describe TestResult do
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
       @user = create(:admin)
-      @test_script = TestScript.create(
+      @test_script = TestGroup.create(
         assignment_id: @asst.id,
         seq_num: 1,
         file_name: 'script.sh',
@@ -37,7 +37,7 @@ describe TestResult do
         user: @user,
         revision_identifier: '1'
       )
-      @test_script_result = TestScriptResult.create(
+      @test_script_result = TestGroupResult.create(
         test_script: @test_script,
         test_run: @test_run,
         marks_earned: 1,

@@ -1,5 +1,5 @@
 class TestRun < ApplicationRecord
-  has_many :test_script_results, dependent: :destroy
+  has_many :test_group_results, dependent: :destroy
   belongs_to :test_batch, optional: true
   belongs_to :submission, optional: true
   belongs_to :grouping
@@ -47,7 +47,7 @@ class TestRun < ApplicationRecord
 
   def create_test_script_result(test_script, time: 0, extra_info: nil)
     unless test_script.respond_to?(:file_name) # the ActiveRecord object can be passed directly
-      test_script = TestScript.find_by(assignment: grouping.assignment, file_name: test_script)
+      test_script = TestGroup.find_by(assignment: grouping.assignment, file_name: test_script)
       # test script can be nil if they are deleted while running
     end
     test_script_results.create(

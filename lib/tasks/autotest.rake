@@ -160,7 +160,7 @@ class AutotestSetup
     # create db objects
     @test_scripts.zip(criteria) do |test_script, criterion|
       instructor_run = !File.basename(test_script).include?('student_run_only')
-      TestScript.create(
+      TestGroup.create(
         assignment: @assignment,
         seq_num: 0,
         file_name: File.basename(test_script),
@@ -176,13 +176,6 @@ class AutotestSetup
         display_actual_output: "display_after_submission",
         timeout: 10,
         criterion: instructor_run ? criterion : nil
-      )
-    end
-    @test_support_files.each do |test_support_file|
-      TestSupportFile.create(
-        assignment: @assignment,
-        file_name: File.basename(test_support_file),
-        description: ''
       )
     end
     # send files for all hostnames because the

@@ -32,7 +32,7 @@ module Api
     # Requires: id
     def show
 
-      test_script_result = TestScriptResult.find(params[:id])
+      test_script_result = TestGroupResult.find(params[:id])
 
       respond_to do |format|
         format.xml{render xml: test_script_result.to_xml(root:
@@ -83,7 +83,7 @@ module Api
     # Requires: id
     def destroy
 
-      test_script_result = TestScriptResult.find(params[:id])
+      test_script_result = TestGroupResult.find(params[:id])
 
       if test_script_result.destroy
         # Successfully deleted the TestResult; render success
@@ -110,7 +110,7 @@ module Api
         return
       end
 
-      test_script_result = TestScriptResult.find(params[:id])
+      test_script_result = TestGroupResult.find(params[:id])
       test_run = TestRun.find(params[:test_run_id])
       if test_run.create_test_script_results_from_json(params[:test_output]) && test_script_result.destroy
         render 'shared/http_status', locals: {code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200']},

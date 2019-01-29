@@ -13,7 +13,7 @@ class FlexibleCriterion < Criterion
 
   belongs_to :assignment, counter_cache: true
 
-  has_many :test_scripts, as: :criterion
+  has_many :test_groups, as: :criterion
 
   validate :visible?
 

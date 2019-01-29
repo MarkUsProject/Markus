@@ -123,7 +123,7 @@ class AutomatedTestsController < ApplicationController
   #  3. file exists and is readable
   def download
     if params[:type] == 'script'
-      model_class = TestScript
+      model_class = TestGroup
     else # params[:type] == 'support'
       model_class = TestSupportFile
     end

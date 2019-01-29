@@ -17,7 +17,7 @@ module AutomatedTestsClientHelper
     # custom variables
     if is_script
       new_file_param = :new_script
-      model_class = TestScript
+      model_class = TestGroup
       upd_name = 'new_update_script'
     else
       new_file_param = :new_support_file
