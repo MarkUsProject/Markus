@@ -1,10 +1,11 @@
 describe TestResult do
 
-  it { is_expected.to belong_to(:test_script_result) }
+  it { is_expected.to belong_to(:test_group_result) }
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:completion_status) }
+  it { is_expected.to validate_presence_of(:status) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
+  it { is_expected.to validate_inclusion_of(:status).in_array(%w(pass partial fail error)) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
@@ -15,21 +16,12 @@ describe TestResult do
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
       @user = create(:admin)
-      @test_script = TestGroup.create(
+      @test_group = TestGroup.create(
         assignment_id: @asst.id,
-        seq_num: 1,
-        file_name: 'script.sh',
-        description: 'This is a bash script file',
-        timeout: 30,
+        name: 'test_group',
         run_by_instructors: true,
         run_by_students: true,
-        halts_testing: false,
-        display_description: 'do_not_display',
-        display_run_status: 'do_not_display',
-        display_marks_earned: 'do_not_display',
-        display_input: 'do_not_display',
-        display_expected_output: 'do_not_display',
-        display_actual_output: 'do_not_display'
+        display_output: 'instructors_only'
       )
       @test_run = TestRun.create(
         grouping: @grouping,
@@ -37,20 +29,18 @@ describe TestResult do
         user: @user,
         revision_identifier: '1'
       )
-      @test_script_result = TestGroupResult.create(
-        test_script: @test_script,
+      @test_group_result = TestGroupResult.create(
+        test_group: @test_group,
         test_run: @test_run,
         marks_earned: 1,
         marks_total: 1,
         time: 0
       )
       @test_result = TestResult.create(
-        test_script_result: @test_script_result,
+        test_group_result: @test_group_result,
         name: 'Unit test 1',
-        completion_status: 'pass',
-        input: 'Input',
-        expected_output: 'Expected output',
-        actual_output: 'Actual output',
+        status: 'pass',
+        output: 'Output',
         marks_earned: 1,
         marks_total: 1
       )
@@ -59,24 +49,12 @@ describe TestResult do
     context 'A valid test result' do
 
       it 'can be saved' do
-        expect(@test_script_result).to be_valid
-        expect(@test_script_result.save).to be true
+        expect(@test_group_result).to be_valid
+        expect(@test_group_result.save).to be true
       end
 
-      it 'can have an empty input' do
-        @test_result.input = ''
-        expect(@test_result).to be_valid
-        expect(@test_result.save).to be true
-      end
-
-      it 'can have an empty actual output' do
-        @test_result.actual_output = ''
-        expect(@test_result).to be_valid
-        expect(@test_result.save).to be true
-      end
-
-      it 'can have an empty expected output' do
-        @test_result.expected_output = ''
+      it 'can have an empty output' do
+        @test_result.output = ''
         expect(@test_result).to be_valid
         expect(@test_result.save).to be true
       end
@@ -132,18 +110,8 @@ describe TestResult do
 
     context 'An invalid test result' do
 
-      it 'has a nil input' do
-        @test_result.input = nil
-        expect(@test_result).not_to be_valid
-      end
-
-      it 'has a nil actual output' do
-        @test_result.actual_output = nil
-        expect(@test_result).not_to be_valid
-      end
-
-      it 'has a nil expected output' do
-        @test_result.expected_output = nil
+      it 'has a nil output' do
+        @test_result.output = nil
         expect(@test_result).not_to be_valid
       end
 

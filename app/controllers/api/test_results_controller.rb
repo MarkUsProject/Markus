@@ -10,9 +10,9 @@ module Api
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
       
-      test_results = submission.test_script_results
+      test_results = submission.test_group_results
                     .includes(:test_results)
-                    .find(params[:test_script_result_id])
+                    .find(params[:test_group_result_id])
                     .test_results
 
       respond_to do |format|
@@ -32,9 +32,9 @@ module Api
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
-      test_result = submission.test_script_results
+      test_result = submission.test_group_results
                             .includes(:test_results)
-                            .find(params[:test_script_result_id])
+                            .find(params[:test_group_result_id])
                             .test_results.find(params[:id])
 
       respond_to do |format|
@@ -57,11 +57,11 @@ module Api
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
-      test_script_result = submission.test_script_results
+      test_group_result = submission.test_group_results
                             .includes(:test_results)
-                            .find(params[:test_script_result_id])
+                            .find(params[:test_group_result_id])
 
-      if test_script_result.test_results.create(test_result_params)
+      if test_group_result.test_results.create(test_result_params)
         render 'shared/http_status', locals: {code: '201', message:
           HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
       else
@@ -81,9 +81,9 @@ module Api
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
-      test_result = submission.test_script_results
+      test_result = submission.test_group_results
                             .includes(:test_results)
-                            .find(params[:test_script_result_id])
+                            .find(params[:test_group_result_id])
                             .test_results.find(params[:id])
 
       if test_result.destroy
@@ -109,9 +109,9 @@ module Api
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
 
-      test_result = submission.test_script_results
+      test_result = submission.test_group_results
                             .includes(:test_results)
-                            .find(params[:test_script_result_id])
+                            .find(params[:test_group_result_id])
                             .test_results.find(params[:id])
 
       # Update filename if provided
@@ -134,9 +134,7 @@ module Api
 
     # User params for create & update
     def test_result_params
-      params.permit(:name, :completion_status, :marks_earned,
-                    :input, :actual_output, :expected_output, :created_at,
-                    :updated_at)
+      params.permit(:name, :status, :marks_earned, :output, :created_at, :updated_at)
     end
 
   end # end TestResultsController
