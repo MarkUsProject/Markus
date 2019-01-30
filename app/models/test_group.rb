@@ -20,7 +20,7 @@ class TestGroup < ApplicationRecord
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       # If the filenames are different, delete the old file
-      if self.file_name_changed?
+      if self.name_changed?
         # Delete old file
         self.delete_file
       end
@@ -31,7 +31,7 @@ class TestGroup < ApplicationRecord
   def write_file
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
-      name = self.file_name
+      name = self.name
       test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
       # Create the file path
@@ -47,7 +47,7 @@ class TestGroup < ApplicationRecord
     test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
     # Delete file if it exists
-    path = File.join(test_dir, self.file_name)
+    path = File.join(test_dir, self.name)
     if File.exist?(path)
       File.delete(path)
     end

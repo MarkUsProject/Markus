@@ -296,7 +296,6 @@ es:
       new_test_support_file:              "Nuevo Archivo de Soporte de Prueba"
       assignment_test_script_files:       "Archivos del Script de la Prueba"
       assignment_test_support_files:      "Archivos de Soporte de la Prueba"
-      filename_exists:                    "ya ha sido tomado"
       duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser

@@ -251,7 +251,6 @@ fr:
       new_test_support_file: "Nouveau fichier additionel"
       assignment_test_script_files: "Scripts de test"
       assignment_test_support_files: "Fichiers additionels"
-      filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       download_wrong_place_or_unreadable: "Le fichier ne peut pas être trouvé où ne peut pas être lu"
       download_not_in_db: "Le fichier n'es pas dans le base de données"

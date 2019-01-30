@@ -243,7 +243,6 @@ pt:
       new_test_script_file: "UPDATE ME"
       new_test_support_file: "UPDATE ME"
       convert_newline_notice: "UPDATE ME"
-      filename_exists: "já foi tomado"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
       script_option:
         upload_required: "UPDATE ME <span class='required_field'>*</span>"
