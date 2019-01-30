@@ -1,5 +1,5 @@
-class AutotestScriptsJob < ApplicationJob
-  queue_as MarkusConfigurator.autotest_scripts_queue
+class AutotestSpecsJob < ApplicationJob
+  queue_as MarkusConfigurator.autotest_specs_queue
 
   def perform(host_with_port, assignment_id)
     assignment = Assignment.find(assignment_id)
@@ -20,7 +20,7 @@ class AutotestScriptsJob < ApplicationJob
         server_path = Dir.mktmpdir(nil, server_path) # create temp subfolder
         FileUtils.cp_r("#{assignment_tests_path}/.", server_path) # includes hidden files
         server_params[:files_path] = server_path
-        scripts_command = [server_command, 'scripts', '-j', JSON.generate(server_params)]
+        scripts_command = [server_command, 'specs', '-j', JSON.generate(server_params)]
         output, status = Open3.capture2e(*scripts_command)
         if status.exitstatus != 0
           raise output
@@ -36,7 +36,7 @@ class AutotestScriptsJob < ApplicationJob
                          "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
           Open3.capture3(*scp_command)
           server_params[:files_path] = server_path
-          scripts_command = "#{server_command} scripts -j '#{JSON.generate(server_params)}'"
+          scripts_command = "#{server_command} specs -j '#{JSON.generate(server_params)}'"
           output = ssh.exec!(scripts_command)
           if output.exitstatus != 0
             raise output

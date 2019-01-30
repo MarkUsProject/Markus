@@ -41,7 +41,7 @@ class AutomatedTestsController < ApplicationController
             end
           end
           if run_job
-            AutotestScriptsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
+            AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
           end
           flash_message(:success, t('assignment.update_success'))
         else

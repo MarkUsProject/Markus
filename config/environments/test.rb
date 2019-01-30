@@ -269,7 +269,7 @@ Markus::Application.configure do
   AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer'
   AUTOTEST_RUN_QUEUE = 'CSC108'
   AUTOTEST_CANCEL_QUEUE = 'CSC108'
-  AUTOTEST_SCRIPTS_QUEUE = 'CSC108'
+  AUTOTEST_SPECS_QUEUE = 'CSC108'
   AUTOTEST_TESTERS_QUEUE = 'CSC108'
 
   ###################################################################

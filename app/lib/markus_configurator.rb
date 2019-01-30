@@ -340,9 +340,9 @@ module MarkusConfigurator
     end
   end
 
-  def autotest_scripts_queue
-    if autotest_on? && (defined? AUTOTEST_SCRIPTS_QUEUE)
-      AUTOTEST_SCRIPTS_QUEUE
+  def autotest_specs_queue
+    if autotest_on? && (defined? AUTOTEST_SPECS_QUEUE)
+      AUTOTEST_SPECS_QUEUE
     else
       'jobs'
     end
