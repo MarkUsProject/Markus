@@ -111,22 +111,22 @@ class Submission < ApplicationRecord
   # Sets marks when automated tests are run
   def set_autotest_marks
     test_run = test_runs.first
-    return if test_run.nil? || test_run.test_script_results.empty?
+    return if test_run.nil? || test_run.test_group_results.empty?
     result = get_latest_result
     complete_marks = true
     if result.marks.empty? # can happen if a criterion is created after collection
       result.create_marks
     end
     result.marks.each do |mark|
-      test_scripts = mark.markable.test_scripts
-      if test_scripts.size == 0 # there's at least one manually-assigned mark
+      test_groups = mark.markable.test_groups
+      if test_groups.size == 0 # there's at least one manually-assigned mark
         complete_marks = false
         next
       end
       all_marks_earned = 0.0
       all_marks_total = 0.0
-      test_scripts.each do |test_script|
-        res = test_run.test_script_results.find_by(test_script: test_script)
+      test_groups.each do |test_group|
+        res = test_run.test_group_results.find_by(test_group: test_group)
         all_marks_earned += res&.marks_earned || 0.0
         all_marks_total += res&.marks_total || 0.0
       end
@@ -158,12 +158,12 @@ class Submission < ApplicationRecord
     end
   end
 
-  def test_script_results_hash
+  def test_group_results_hash
     TestGroupResult
-      .joins(:test_script, :test_results, test_run: [:user])
+      .joins(:test_group, :test_results, test_run: [:user])
       .where(test_runs: { submission_id: id })
-      .pluck_to_hash(:created_at, :user_id, :name, :file_name, :user_name,
-                     :actual_output, :completion_status, :extra_info,
+      .pluck_to_hash(:created_at, :user_id, :user_name, 'test_group.name',
+                     :output, :status, :extra_info, 'test_results.name',
                      'test_results.marks_earned', 'test_results.marks_total')
       .each { |g| g['created_at_user_name'] = "#{I18n.l(g[:created_at])} (#{g[:user_name]})" }
   end

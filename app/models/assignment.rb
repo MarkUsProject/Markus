@@ -21,7 +21,7 @@ class Assignment < ApplicationRecord
        dependent: :destroy
 
   has_many :test_groups, dependent: :destroy
-  accepts_nested_attributes_for :test_scripts, allow_destroy: true
+  accepts_nested_attributes_for :test_groups, allow_destroy: true
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -1222,7 +1222,7 @@ class Assignment < ApplicationRecord
   end
 
   # Selects the appropriate test scripts for this assignment, based on the user requesting them.
-  def select_test_scripts(user)
+  def select_test_groups(user)
     if user.admin?
       condition = { run_by_instructors: true }
     elsif user.student?
@@ -1231,7 +1231,7 @@ class Assignment < ApplicationRecord
       return none # empty chainable ActiveRecord::Relation
     end
 
-    test_scripts.where(condition).order(:seq_num)
+    test_groups.where(condition)
   end
 
   # Selects the hooks script from the test support files.

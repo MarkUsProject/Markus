@@ -104,7 +104,7 @@ class AutotestRunJob < ApplicationJob
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.no_source_files') }
-      test_run.create_error_for_all_test_scripts(test_specs.keys, error)
+      test_run.create_error_for_all_test_groups(test_specs.keys, error)
       return
     end
 
@@ -200,7 +200,7 @@ class AutotestRunJob < ApplicationJob
           #TODO How to do this with specs? Keep the files too?
           error = { name: I18n.t('automated_tests.results.all_tests'),
                     message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-          test_run.create_error_for_all_test_scripts(test_specs.keys, error)
+          test_run.create_error_for_all_test_groups(test_specs.keys, error)
         end
       end
     end

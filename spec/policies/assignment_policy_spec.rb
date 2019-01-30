@@ -16,12 +16,12 @@ describe AssignmentPolicy do
         let(:assignment) { build(:assignment, enable_test: true) }
 
         context 'if a test script is not uploaded' do
-          it { is_expected.not_to pass :run_tests?, because_of: :test_scripts_uploaded? }
+          it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
         end
 
         context 'if a test script is uploaded for students only' do
-          let!(:test_script) { create(:test_script, assignment: assignment, run_by_students: true) } # non-lazy
-          it { is_expected.not_to pass :run_tests?, because_of: :test_scripts_uploaded? }
+          let!(:test_group) { create(:test_group, assignment: assignment, run_by_students: true) } # non-lazy
+          it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
         end
 
         context 'if a test script is uploaded' do
@@ -56,14 +56,14 @@ describe AssignmentPolicy do
             let(:assignment) do
               create(:assignment, enable_test: true, enable_student_tests: true, token_start_date: Time.current)
             end
-            it { is_expected.not_to pass :run_tests?, because_of: :test_scripts_uploaded? }
+            it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
           end
 
           context 'if a test script is uploaded for instructors only' do
             let(:assignment) do
               create(:assignment_for_instructor_tests, enable_student_tests: true, token_start_date: Time.current)
             end
-            it { is_expected.not_to pass :run_tests?, because_of: :test_scripts_uploaded? }
+            it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
           end
 
           context 'if a test script is uploaded' do

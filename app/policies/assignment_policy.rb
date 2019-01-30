@@ -1,7 +1,7 @@
 class AssignmentPolicy < ApplicationPolicy
 
   def run_tests?
-    check?(:not_a_ta?) && check?(:enabled?) && check?(:test_scripts_uploaded?) && (!user.student? ||
+    check?(:not_a_ta?) && check?(:enabled?) && check?(:test_groups_exist?) && (!user.student? ||
       (check?(:tokens_released?) && check?(:before_due_date?))
     )
   end
@@ -14,8 +14,8 @@ class AssignmentPolicy < ApplicationPolicy
     record.enable_test && (!user.student? || record.enable_student_tests)
   end
 
-  def test_scripts_uploaded?
-    record.select_test_scripts(user).exists?
+  def test_groups_exist?
+    record.select_test_groups(user).exists?
   end
 
   def tokens_released?

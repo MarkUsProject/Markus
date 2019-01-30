@@ -293,7 +293,7 @@ pt:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_script: "UPDATE ME"
+        missing_test_group: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

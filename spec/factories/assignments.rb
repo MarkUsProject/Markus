@@ -34,10 +34,10 @@ FactoryBot.define do
   factory :assignment_for_instructor_tests, parent: :assignment do
     enable_test { true }
     after(:build) do |assignment| # called by both create and build
-      create(:test_script, assignment: assignment, run_by_instructors: true)
+      create(:test_group, assignment: assignment, run_by_instructors: true)
     end
     after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_script, assignment: assignment, run_by_instructors: true)
+      build_stubbed(:test_group, assignment: assignment, run_by_instructors: true)
     end
   end
 
@@ -46,10 +46,10 @@ FactoryBot.define do
     enable_student_tests { true }
     token_start_date { Time.current }
     after(:build) do |assignment| # called by both create and build
-      create(:test_script, assignment: assignment, run_by_students: true)
+      create(:test_group, assignment: assignment, run_by_students: true)
     end
     after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_script, assignment: assignment, run_by_students: true)
+      build_stubbed(:test_group, assignment: assignment, run_by_students: true)
     end
   end
 end

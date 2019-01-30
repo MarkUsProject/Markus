@@ -8,7 +8,8 @@ class TestGroup < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :assignment_id }
   validates :run_by_instructors, :run_by_students, inclusion: { in: [true, false] }
-  validates :display_output, presence: true, inclusion: { in: %w(never student_tests_only always) }
+  validates :display_output, presence: true, inclusion: { in: %w(instructors_only instructors_and_student_tests
+                                                                 instructors_and_students) }
 
   # All callback methods are protected methods
   protected

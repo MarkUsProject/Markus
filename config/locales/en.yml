@@ -319,7 +319,7 @@ en:
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"
-        missing_test_script: "This test script is missing from the test run"
+        missing_test_group: "This test group is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
         bad_results: "Test results are malformed: %{error}"
