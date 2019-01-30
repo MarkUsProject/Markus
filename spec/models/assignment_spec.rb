@@ -1,5 +1,4 @@
 describe Assignment do
-
   describe 'ActiveRecord associations' do
     it { is_expected.to have_one(:submission_rule).dependent(:destroy) }
     it { is_expected.to validate_presence_of(:submission_rule) }
@@ -85,12 +84,10 @@ describe Assignment do
     end
 
     it 'should catch an invalid date' do
-      assignment = Assignment.new(due_date: '2020/02/31') #31st day of february
-      expect(assignment).not_to be_valid
+      assignment = create(:assignment, due_date: '2020/02/31')  #31st day of february
+      expect(assignment.due_date).not_to eq '2020/02/31'
     end
-
-
-    it 'should be a peer review if it has a parent_assignement_id' do
+    it 'should be a peer review if it has a parent_assignment_id' do
       parent_assignment = create(:assignment)
       assignment = create(:assignment, parent_assignment: parent_assignment)
       expect(assignment.is_peer_review?).to be true
@@ -549,9 +546,9 @@ describe Assignment do
           student = create(:Student, section: @section)
           @grouping = create(:grouping, assignment: @assignment)
           create(:StudentMembership,
-                 grouping: @grouping,
-                 user: student,
-                 membership_status: StudentMembership::STATUSES[:inviter])
+                  grouping: @grouping,
+                  user: student,
+                  membership_status: StudentMembership::STATUSES[:inviter])
         end
       end
     end
@@ -645,7 +642,7 @@ describe Assignment do
         clone = create(:assignment, group_min: 1, group_max: 1)
         number = StudentMembership.all.size + TaMembership.all.size
         clone.clone_groupings_from(@assignment.id)
-        clone.groupings.reload  # clone.groupings needs to be "reloaded" to obtain the updated value (5 groups created)
+        clone.groupings.reload  #clone.groupings needs to be "reloaded" to obtain the updated value (5 groups created)
         expect(@assignment.group_min).to eql(clone.group_min)
         expect(@assignment.group_max).to eql(clone.group_max)
         expect(@assignment.groupings.size).to eql(clone.groupings.size)
@@ -660,7 +657,7 @@ describe Assignment do
         3.times do
           @members.push create(:student_membership,
                                membership_status: StudentMembership::STATUSES[:accepted],
-                               grouping: @grouping )
+                               grouping: @grouping)
         end
         @source = @assignment
         @group =  @grouping.group
@@ -675,7 +672,7 @@ describe Assignment do
           3.times do |index|
             expect @members[index].user.has_accepted_grouping_for?(@target.id)
           end
-          @group.groupings.reload  #(is it necessary to call reload here?)
+          @group.groupings.reload
           expect(@group.groupings.find_by_assignment_id(@target.id)).not_to be_nil
         end
 
@@ -752,106 +749,106 @@ describe Assignment do
       end
     end
 
-    context 'tests on methods returning groups repos' do
+  context 'tests on methods returning groups repos' do
+    before :each do
+      @assignment = create(:assignment,
+                           group_min: 1,
+                           group_max: 1,
+                           student_form_groups: false,
+                           invalid_override: true,
+                           due_date: 2.days.ago,
+                           created_at: 42.days.ago)
+    end
+
+    def grouping_count(groupings)
+      submissions = 0
+      groupings.each do |grouping|
+        if grouping.current_submission_used
+          submissions += 1
+        end
+      end
+      submissions
+    end
+
+    context 'with a grouping that has a submission and a TA assigned ' do
       before :each do
-        @assignment = create(:assignment,
-                             group_min: 1,
-                             group_max: 1,
-                             student_form_groups: false,
-                             invalid_override: true,
-                             due_date: 2.days.ago,
-                             created_at: 42.days.ago)
+        @grouping = create(:grouping, assignment: @assignment)
+        @tamembership = create(:ta_membership, grouping: @grouping)
+        @studentmembership = create(:student_membership,
+                                    grouping: @grouping,
+                                    membership_status: StudentMembership::STATUSES[:inviter])
+        @submission = create(:submission, grouping: @grouping)
       end
 
-      def grouping_count(groupings)
-        submissions = 0
-        for grouping in groupings do
-          if grouping.current_submission_used
-            submissions += 1
-          end
+      it 'be able to get a list of repository access URLs for each group' do
+        expected_string = ''
+        @assignment.groupings.each do |grouping|
+          group = grouping.group
+          expected_string += [group.group_name, group.repository_external_access_url].to_csv
         end
-        submissions
+        expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
       end
 
-      context 'with a grouping that has a submission and a TA assigned ' do
+      context 'with two groups of a single student each' do
         before :each do
-          @grouping = create(:grouping, assignment: @assignment)
-          @tamembership = create(:ta_membership, grouping: @grouping)
-          @studentmembership = create(:student_membership,
-                                      grouping: @grouping,
-                                      membership_status: StudentMembership::STATUSES[:inviter])
-          @submission = create(:submission, grouping: @grouping)
-        end
-
-        it 'be able to get a list of repository access URLs for each group' do
-          expected_string = ''
-          @assignment.groupings.each do |grouping|
-            group = grouping.group
-            expected_string += [group.group_name,group.repository_external_access_url].to_csv
-          end
-          expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
-        end
-
-        context 'with two groups of a single student each' do
-          before :each do
+          2.times do
+            g = create(:grouping, assignment: @assignment)
+            # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
+            s = create(:submission, grouping: g)
+            r = s.get_latest_result
             2.times do
-              g = create(:grouping, assignment: @assignment)
-              # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
+              create(:rubric_mark, result: r)  #this is create marks under rubric criterion
+              # if we create(:flexible_mark, groping: g)
+              # or create(:checkbox_mark, grouping: g)
+              # they should work as well
+            end
+            r.reload
+            r.marking_state = Result::MARKING_STATES[:complete]
+            r.save
+          end
+        end
+
+        it 'be able to get_repo_checkout_commands' do
+          submissions = grouping_count(@assignment.groupings) # filter out without submission
+          expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+        end
+
+        it 'be able to get_repo_checkout_commands with spaces in group name ' do
+          Group.all.each do |group|
+            group.group_name = group.group_name + ' Test'
+            group.save
+          end
+          submissions = grouping_count(@assignment.groupings) # filter out without submission
+          expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+        end
+      end
+
+      context 'with two groups of a single student each with multiple submission' do
+        before :each do
+          2.times do
+            g = create(:grouping, assignment: @assignment)
+            # create 2 submission for each group
+            2.times do
               s = create(:submission, grouping: g)
               r = s.get_latest_result
               2.times do
-                create(:rubric_mark, result: r)  # this is create marks under rubric criterion
-                # if we create(:flexible_mark, groping: g)
-                # or create(:checkbox_mark, grouping: g)
-                # they should work as well
+                create(:rubric_mark, result: r)
               end
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]
               r.save
             end
-          end
-
-          it 'be able to get_repo_checkout_commands' do
-            submissions = grouping_count(@assignment.groupings) # filter out without submission
-            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
-          end
-
-          it 'be able to get_repo_checkout_commands with spaces in group name ' do
-            Group.all.each do |group|
-              group.group_name = group.group_name + ' Test'
-              group.save
-            end
-            submissions = grouping_count(@assignment.groupings) # filter out without submission
-            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+            g.save
           end
         end
 
-        context 'with two groups of a single student each with multiple submission' do
-          before :each do
-            2.times do
-              g = create(:grouping, assignment: @assignment)
-              # create 2 submission for each group
-              2.times do
-                s = create(:submission, grouping: g)
-                r = s.get_latest_result
-                2.times do
-                  create(:rubric_mark, result: r)
-                end
-                r.reload
-                r.marking_state = Result::MARKING_STATES[:complete]
-                r.save
-              end
-              g.save
-            end
-          end
-
-          it 'be able to get_repo_checkout_commands' do
-            submissions = grouping_count(@assignment.groupings) # filter out without submission
-            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
-          end
+        it 'be able to get_repo_checkout_commands' do
+          submissions = grouping_count(@assignment.groupings) # filter out without submission
+          expect(submissions).to eql @assignment.get_repo_checkout_commands.size
         end
       end
-  end
+    end
+end
   describe '#groups_submitted' do
     before :each do
       @assignment = create(:assignment)
@@ -1450,8 +1447,7 @@ describe Assignment do
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
             @assignment.get_criteria(:all, :rubric).each do |criterion|
-              mark = result.marks
-                       .find_by_markable_id_and_markable_type(criterion.id,
+              mark = result.marks.find_by_markable_id_and_markable_type(criterion.id,
                                                               'RubricCriterion')
               if mark && mark.mark
                 fields.push(mark.mark)
