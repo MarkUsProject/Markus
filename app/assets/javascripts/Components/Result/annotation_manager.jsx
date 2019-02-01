@@ -1,8 +1,7 @@
 import React from 'react';
-import {render} from 'react-dom';
 
 
-class AnnotationManager extends React.Component {
+export class AnnotationManager extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -11,6 +10,8 @@ class AnnotationManager extends React.Component {
   }
 
   componentDidMount() {
+    // TODO: remove this binding.
+    window.annotationManager = this;
     this.fetchData();
   }
 
@@ -32,7 +33,7 @@ class AnnotationManager extends React.Component {
 
   make_new_annotation = () => {
     let data = {
-      submission_file_id: document.getElementById('select_file_id').value,
+      submission_file_id: this.props.submission_file_id,
       result_id: this.props.result_id,
       assignment_id: this.props.assignment_id
     };
@@ -45,7 +46,7 @@ class AnnotationManager extends React.Component {
 
   add_existing_annotation = (annotation_text_id) => {
     let data = {
-      submission_file_id: document.getElementById('select_file_id').value,
+      submission_file_id: this.props.submission_file_id,
       annotation_text_id: annotation_text_id,
       result_id: this.props.result_id
     };
@@ -105,9 +106,4 @@ class AnnotationManager extends React.Component {
       </div>
     );
   }
-}
-
-
-export function makeAnnotationManager(elem, props) {
-  return render(<AnnotationManager {...props}/>, elem);
 }

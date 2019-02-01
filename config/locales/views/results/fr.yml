@@ -40,7 +40,6 @@ fr:
       change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même
                                   celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
       common: "Common Annotations"
-      download_annotated: "Download Annotated File"
       include_in_download: "Ajouter les annotations"
       include_in_download_warning: "Attention ! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."
       placeholder: "La notation Markdown et LaTeX est prise en charge"

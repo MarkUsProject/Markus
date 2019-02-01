@@ -160,7 +160,8 @@ export class AnnotationTable extends React.Component {
 
   addAnnotation(annotation) {
     this.setState({data: this.state.data.concat([annotation])});
-    if (submissionFileViewer.state.submission_file_id === annotation.submission_file_id) {
+    if (submissionFilePanel.state.selectedFile !== null &&
+        submissionFilePanel.state.selectedFile[1] === annotation.submission_file_id) {
       this.display_annotation(annotation);
     }
 
@@ -198,7 +199,7 @@ export class AnnotationTable extends React.Component {
 
   /*
    * Called by text_viewer. Render all annotations for the given
-   * submission file (through the global submissionFileViewer object).
+   * submission file (through the global SubmissionFilePanel object).
    */
   display_annotations = (submission_file_id) => {
     if (this.state.initialized) {
