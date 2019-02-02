@@ -1,11 +1,10 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import { AnnotationManager } from './annotation_manager';
 import { FileViewer } from './file_viewer';
 
 
-class SubmissionFilePanel extends React.Component {
+export class SubmissionFilePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +19,12 @@ class SubmissionFilePanel extends React.Component {
 
   componentDidMount() {
     this.fetchFileList();
-    this.modalDownload = new ModalMarkus('#download_files_dialog');
+    this.modalDownload = new ModalMarkus('#download_dialog');
+    if (localStorage.getItem('assignment_id') !== this.props.assignment_id) {
+      localStorage.removeItem('file');
+      localStorage.removeItem('file_id');
+    }
+    localStorage.setItem('assignment_id', this.props.assignment_id);
   }
 
   fetchFileList = () => {
@@ -55,7 +59,8 @@ class SubmissionFilePanel extends React.Component {
   };
 
   getFirstFile = (fileData) => {
-    if (localStorage.getItem('assignment_id') === this.props.assignment_id.toString() &&
+    if (!this.state.student_view &&
+        localStorage.getItem('assignment_id') === this.props.assignment_id.toString() &&
         localStorage.getItem('file')) {
       return [localStorage.getItem('file'), localStorage.getItem('file_id')];
     }
@@ -129,7 +134,6 @@ class SubmissionFilePanel extends React.Component {
 
   selectFile = (file, id, focus_line) => {
     this.setState({selectedFile: [file, id]});
-    localStorage.setItem('assignment_id', this.props.assignment_id);
     localStorage.setItem('file', file);
     localStorage.setItem('file_id', id)
   };
@@ -237,9 +241,4 @@ class SubmissionFilePanel extends React.Component {
       </div>
     );
   }
-}
-
-
-export function makeSubmissionFilePanel(elem, props) {
-  return render(<SubmissionFilePanel {...props} />, elem);
 }

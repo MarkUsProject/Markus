@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 
-class RemarkPanel extends React.Component {
+export class RemarkPanel extends React.Component {
   componentDidMount() {
     if (this.props.released_to_students) {
       const comment = this.props.overallComment;
@@ -73,7 +73,7 @@ class RemarkPanel extends React.Component {
             initialValue={this.props.remarkRequestText}
           />;
       }
-    } else {
+    } else if (this.props.remarkSubmitted) {
       remarkRequestElement = (
         <div>
           <p>{I18n.t('results.remark.submitted_on',
@@ -81,6 +81,8 @@ class RemarkPanel extends React.Component {
           <div dangerouslySetInnerHTML={{__html: remark_request}} />
         </div>
       );
+    } else {
+      remarkRequestElement = '';
     }
 
     return (
@@ -214,9 +216,4 @@ class RemarkRequestForm extends React.Component {
       </div>
     );
   }
-}
-
-
-export function makeRemarkPanel(elem, props) {
-  return render(<RemarkPanel {...props} />, elem);
 }

@@ -1,7 +1,7 @@
 class ResultsController < ApplicationController
   include TagsHelper
   before_action :authorize_only_for_admin,
-                except: [:edit, :update_mark, :view_marks,
+                except: [:show, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
                          :get_annotations,
                          :update_overall_comment, :remove_extra_mark,
@@ -14,7 +14,7 @@ class ResultsController < ApplicationController
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark, :get_test_runs_instructors]
   before_action :authorize_for_user,
-                only: [:download, :download_zip,
+                only: [:show, :download, :download_zip,
                        :view_marks, :get_annotations, :show]
   before_action :authorize_for_student,
                 only: [:update_remark_request,
@@ -35,14 +35,63 @@ class ResultsController < ApplicationController
         submission = result.submission
         assignment = submission.assignment
         remark_submitted = submission.remark_submitted?
-        render json: {
-          overall_comment: result.overall_comment,
+        original_result = remark_submitted ? submission.get_original_result : nil
+        submission.feedback_files
+
+        if current_user.student? && !@current_user.is_reviewer_for?(assignment.pr_assignment, result)
+          grouping = current_user.accepted_grouping_for(assignment.id)
+          if submission.grouping_id != grouping&.id ||
+              !result.released_to_students?
+            head :forbidden
+            return
+          end
+        end
+
+        data = {
+          grouping_id: submission.grouping_id,
           released_to_students: result.released_to_students,
+          detailed_annotations:
+            @current_user.admin? || @current_user.ta? ||
+            @current_user.is_reviewer_for?(assignment.pr_assignment, result),
+          revision_identifier: submission.revision_identifier,
+          instructor_run: true,
+          allow_remarks: assignment.allow_remarks,
           remark_submitted: remark_submitted,
           remark_request_text: submission.remark_request,
           remark_request_timestamp: submission.remark_request_timestamp,
-          assignment_remark_message: assignment.remark_message
+          assignment_remark_message: assignment.remark_message,
+          remark_due_date: assignment.remark_due_date,
+          past_remark_due_date: assignment.past_remark_due_date?,
+          is_reviewer: @current_user.is_reviewer_for?(assignment.pr_assignment, result),
+          student_view: @current_user.student?
         }
+        if original_result.nil?
+          data[:overall_comment] = result.overall_comment
+          data[:remark_overall_comment] = nil
+        else
+          data[:overall_comment] = original_result.overall_comment
+          data[:remark_overall_comment] = result.overall_comment
+        end
+        data[:feedback_files] = submission.feedback_files.map do |f|
+          { id: f.id, filename: f.filename }
+        end
+
+        if assignment.enable_test
+          begin
+            authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+            authorize! submission, to: :run_tests?
+            authorized = true
+          rescue ActionPolicy::Unauthorized
+            authorized = false
+          end
+          data[:enable_test] = true
+          data[:can_run_tests] = authorized
+        else
+          data[:enable_test] = false
+          data[:can_run_tests] = false
+        end
+
+        render json: data
       end
     end
   end
