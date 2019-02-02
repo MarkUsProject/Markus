@@ -13,30 +13,26 @@ describe Assignment do
     it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
     it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
     it do
-      is_expected.to have_many(:rubric_criteria).dependent(:destroy)
-        .order(:position)
+      is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position)
     end
     it do
-      is_expected.to have_many(:flexible_criteria).dependent(:destroy)
-        .order(:position)
+      is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position)
     end
+
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_scripts).dependent(:destroy) }
     it { is_expected.to have_many(:test_support_files).dependent(:destroy) }
     it do
-      is_expected.to accept_nested_attributes_for(:assignment_files)
-        .allow_destroy(true)
+      is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
     end
     it do
       is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
     end
     it do
-      is_expected.to accept_nested_attributes_for(:submission_rule)
-        .allow_destroy(true)
+      is_expected.to accept_nested_attributes_for(:submission_rule).allow_destroy(true)
     end
     it do
-      is_expected.to accept_nested_attributes_for(:assignment_stat)
-        .allow_destroy(true)
+      is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true)
     end
     it { should allow_value(true).for(:allow_web_submits) }
     it { should allow_value(false).for(:allow_web_submits) }
@@ -61,29 +57,37 @@ describe Assignment do
       is_expected.to validate_numericality_of(:group_max).is_greater_than(0)
     end
 
-    it 'should create a valid assignment' do
-      assignment = create(:assignment)
-      expect(assignment).to be_valid
+    describe 'Validation of basic infos of an assignment' do
+      let(:assignment) { :assignment }
+
+      before :each do
+        @assignment = create(:assignment)
+      end
+
+      it 'should create a valid assignment' do
+        expect(@assignment).to be_valid
+      end
+
+      it 'should require case sensitive unique value for short_identifier' do
+        expect(@assignment).to validate_uniqueness_of(:short_identifier)
+      end
+      it 'should have a nil parent_assignment by default' do
+        expect(@assignment.parent_assignment).to be_nil
+      end
+      it 'should have a nil peer_review by default' do
+        expect(@assignment.pr_assignment).to be_nil
+      end
+      it 'should not be a peer review if there is no parent_assignment_id' do
+        expect(@assignment.parent_assignment_id).to be_nil
+        expect(@assignment.is_peer_review?).to be false
+      end
     end
 
-    it 'should require case sensitive unique value for short_identifier' do
-      assignment = create(:assignment)
-      expect(assignment).to validate_uniqueness_of(:short_identifier)
+    it 'should catch an invalid date' do
+      assignment = create(:assignment, due_date:'2020/02/31')  # 31st day of february
+      expect(assignment.due_date).not_to eq '2020/02/31'
     end
-    it 'should have a nil parent_assignment by default' do
-      assignment = create(:assignment)
-      expect(assignment.parent_assignment).to be_nil
-    end
-    it 'should have a nil peer_review by default' do
-      assignment = create(:assignment)
-      expect(assignment.pr_assignment).to be_nil
-    end
-    it 'should not be a peer review if there is no parent_assignment_id' do
-      assignment = create(:assignment)
-      expect(assignment.parent_assignment_id).to be_nil
-      expect(assignment.is_peer_review?).to be false
-    end
-    it 'should be a peer review if it has a parent_assignement_id' do
+    it 'should be a peer review if it has a parent_assignment_id' do
       parent_assignment = create(:assignment)
       assignment = create(:assignment, parent_assignment: parent_assignment)
       expect(assignment.is_peer_review?).to be true
@@ -100,44 +104,6 @@ describe Assignment do
       assignment = create(:assignment, parent_assignment: parent_assignment)
       expect(parent_assignment.pr_assignment.id).to be assignment.id
       expect(assignment.parent_assignment.id).to be parent_assignment.id
-    end
-  end
-
-  describe 'custom validations' do
-    it 'fails when group_max less than group_min' do
-      assignment = build(:assignment, group_max: 1, group_min: 2)
-      expect(assignment).not_to be_valid
-    end
-    it 'fails with a negative tokens_per_period value' do
-      assignment = build(:assignment, enable_test: true, enable_student_tests: true, tokens_per_period: '-10', unlimited_tokens: false)
-      expect(assignment).not_to be_valid
-    end
-    context 'fails when repository_folder is one of the reserved locations' do
-      Repository.get_class.reserved_locations.each do |loc|
-        it loc.to_s do
-          assignment = build(:assignment, repository_folder: loc)
-          expect(assignment).not_to be_valid
-        end
-      end
-    end
-  end
-
-  let(:assignment) { create :assignment }
-
-  describe '#vcs_submit' do
-    it 'updates the repository permission file when updated to true' do
-      assignment.vcs_submit = false
-      assignment.save!
-      expect(Repository.get_class).to receive(:__update_permissions).once
-      assignment.vcs_submit = true
-      assignment.save!
-    end
-    it 'updates the repository permission file when updated to false' do
-      assignment.vcs_submit = true
-      assignment.save!
-      expect(Repository.get_class).to receive(:__update_permissions).once
-      assignment.vcs_submit = false
-      assignment.save!
     end
   end
 
@@ -211,7 +177,7 @@ describe Assignment do
 
           it 'shows the criteria visible to tas only' do
             expect(@assignment.get_criteria(:ta).select(&:id)).to match_array(@ta_criteria.select(&:id) +
-                                                                                  @ta_and_peer_criteria.select(&:id))
+                                                                                @ta_and_peer_criteria.select(&:id))
           end
 
           context 'a submission and a result are created' do
@@ -442,9 +408,7 @@ describe Assignment do
       describe 'more than one student' do
         before :each do
           @other_student = create(:student)
-          @other_membership = create(:accepted_student_membership,
-                                     user: @other_student,
-                                     grouping: @grouping)
+          @other_membership = create(:accepted_student_membership, user: @other_student, grouping: @grouping)
         end
 
         it 'returns the students' do
@@ -471,9 +435,7 @@ describe Assignment do
     context 'when no students are ungrouped' do
       before :each do
         @students.each do |student|
-          create(:accepted_student_membership,
-                 user: student,
-                 grouping: @grouping)
+          create(:accepted_student_membership, user: student, grouping: @grouping)
         end
       end
 
@@ -545,6 +507,63 @@ describe Assignment do
     end
   end
 
+  context 'A past due assignment with No Late submission rule' do
+    context 'without sections' do
+      before(:each) do
+        @assignment = create(:assignment, due_date: 2.days.ago)
+      end
+
+      it 'return the last due date' do
+        expect(@assignment.latest_due_date.day).to eq(2.days.ago.day)
+      end
+
+      it 'return true on past_collection_date? call' do
+        expect(@assignment.past_collection_date?).to be_truthy
+      end
+    end
+
+    context 'with a section' do
+      before(:each) do
+        @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
+        @section = create(:section, name: 'section_name')
+        create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
+        student = create(:student, section: @section)
+        @grouping = create(:grouping, assignment: @assignment)
+        create(:student_membership,
+               grouping: @grouping,
+               user: student,
+               membership_status: StudentMembership::STATUSES[:inviter])
+      end
+
+      it 'return the normal due date for section due date' do
+        expect @assignment.section_due_date(@section)
+      end
+
+      context 'another' do
+        before(:each) do
+          @section = create(:section, name: 'section_name2')
+          create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
+          student = create(:Student, section: @section)
+          @grouping = create(:grouping, assignment: @assignment)
+          create(:StudentMembership,
+                 grouping: @grouping,
+                 user: student,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+      end
+    end
+  end
+
+  context 'A before due assignment with No Late submission rule' do
+    before(:each) do
+      @assignment = create(:assignment, due_date: 2.days.from_now)
+    end
+
+    it 'return false on past_collection_date? call' do
+      expect !@assignment.past_collection_date?
+    end
+  end
+
   describe '#past_remark_due_date?' do
     context 'before the remark due date' do
       let(:assignment) { build(:assignment, remark_due_date: 1.days.from_now) }
@@ -559,6 +578,275 @@ describe Assignment do
 
       it 'returns true' do
         expect(assignment.past_remark_due_date?).to be true
+      end
+    end
+  end
+
+  context 'An Assignment' do
+    let(:assignment) { create :assignment }
+    before :each do
+      @assignment = create(:assignment, group_name_autogenerated: false, group_max: 2)
+    end
+
+    context 'as a noteable' do
+      it 'display for note without seeing an exception' do
+        assignment = create(:assignment)
+        assignment.display_for_note
+      end
+    end
+
+    context 'with a student in a group with a marked submission' do
+      before :each do
+        @membership = create(:student_membership,
+                             grouping: create(:grouping, assignment: @assignment),
+                             membership_status: StudentMembership::STATUSES[:accepted])
+        sub = create(:submission, grouping: @membership.grouping)
+        @result = sub.get_latest_result
+
+        @sum = 0
+        [2, 2.7, 2.2, 2].each do |weight|
+          create(:mark,
+                 mark: 4,
+                 result: @result,
+                 markable: create(:rubric_criterion, assignment: @assignment, max_mark: weight * 4))
+          @sum += weight
+        end
+        @total = @sum * 4
+      end
+
+      it 'return the correct maximum mark for rubric criteria' do
+        expect(@total).to eq @assignment.max_mark
+      end
+
+      it 'return the correct group for a given student' do
+        expect(@membership.grouping.group).to eq(@assignment.group_by(@membership.user).group)
+      end
+    end
+
+    context 'with some groupings with students and TAs assigned' do
+      before :each do
+        5.times do
+          grouping = create(:grouping, assignment: @assignment)
+          3.times do
+            create(:student_membership,
+                   grouping: grouping,
+                   membership_status: StudentMembership::STATUSES[:accepted])
+          end
+          create(:ta_membership,
+                 grouping: grouping,
+                 membership_status: StudentMembership::STATUSES[:accepted])
+        end
+      end
+
+      it "be able to have it's groupings cloned correctly" do
+        clone = create(:assignment, group_min: 1, group_max: 1)
+        number = StudentMembership.all.size + TaMembership.all.size
+        clone.clone_groupings_from(@assignment.id)
+        clone.groupings.reload  # clone.groupings needs to be "reloaded" to obtain the updated value (5 groups created)
+        expect(@assignment.group_min).to eql(clone.group_min)
+        expect(@assignment.group_max).to eql(clone.group_max)
+        expect(@assignment.groupings.size).to eql(clone.groupings.size)
+        # Since we clear between each test, there should be twice as much as previously
+        expect(2 * number).to eql(StudentMembership.all.size + TaMembership.all.size)
+      end
+    end
+    context 'with a group with 3 accepted students' do
+      before :each do
+        @grouping = create(:grouping, assignment: @assignment)
+        @members = []
+        3.times do
+          @members.push create(:student_membership,
+                               membership_status: StudentMembership::STATUSES[:accepted],
+                               grouping: @grouping)
+        end
+        @source = @assignment
+        @group =  @grouping.group
+      end
+      context 'with another fresh assignment' do
+        before :each do
+          @target = create(:assignment, group_min: 1, group_max: 1)
+        end
+
+        it 'clone all three members if none are hidden' do
+          @target.clone_groupings_from(@source.id)
+          3.times do |index|
+            expect @members[index].user.has_accepted_grouping_for?(@target.id)
+          end
+          @group.groupings.reload
+          expect(@group.groupings.find_by_assignment_id(@target.id)).not_to be_nil
+        end
+
+        it 'ignore a blocked student during cloning' do
+          student = @members[0].user
+          # hide the student
+          student.hidden = true
+          student.save
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for the hidden
+          # student
+          expect(student.has_accepted_grouping_for?(@target.id)).to be_falsey
+          # and let's make sure that the other memberships were cloned
+          expect(@members[1].user.has_accepted_grouping_for?(@target.id)).to be_truthy
+          expect(@members[2].user.has_accepted_grouping_for?(@target.id)).to be_truthy
+          expect(@group.groupings.find_by_assignment_id(@target.id)).not_to be_nil
+        end
+
+        it 'ignore two blocked students during cloning' do
+          # hide the students
+          @members[0].user.hidden = true
+          @members[0].user.save
+          @members[1].user.hidden = true
+          @members[1].user.save
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for the hidden student
+          expect(@members[0].user.has_accepted_grouping_for?(@target.id)).not_to be_truthy
+          expect(@members[1].user.has_accepted_grouping_for?(@target.id)).not_to be_truthy
+          # and let's make sure that the other membership was cloned
+          expect @members[2].user.has_accepted_grouping_for?(@target.id)
+          # and that the proper grouping was created
+          expect(@group.groupings.find_by_assignment_id(@target.id)).not_to be_nil
+        end
+
+        it 'ignore grouping if all students hidden' do
+          # hide all students
+          3.times do |index|
+            @members[index].user.hidden = true
+            @members[index].user.save
+          end
+
+          # Get the Group that these students belong to for assignment_1
+          expect @members[0].user.has_accepted_grouping_for?(@source.id)
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for hidden students
+          3.times do |index|
+            expect(@members[index].user.has_accepted_grouping_for?(@target.id)).to be_falsey
+          end
+          # and let's make sure that the grouping wasn't cloned
+          expect(@group.groupings.find_by_assignment_id(@target.id)).to be_nil
+        end
+      end
+
+      context 'with an assignment with other groupings' do
+        before :each do
+          @target = create(:assignment, group_min: 1, group_max: 1)
+          3.times do
+            target_grouping = create(:grouping, assignment: @target)
+            create(:student_membership,
+                   membership_status: StudentMembership::STATUSES[:accepted],
+                   grouping: target_grouping)
+          end
+        end
+        it 'destroy all previous groupings if cloning was successful' do
+          old_groupings = @target.groupings
+          @target.clone_groupings_from(@source.id)
+          old_groupings.each do |old_grouping|
+            expect(@target.groupings.include?(old_grouping)).to be_falsey
+          end
+        end
+      end
+    end
+
+    context 'tests on methods returning groups repos' do
+      before :each do
+        @assignment = create(:assignment,
+                             group_min: 1,
+                             group_max: 1,
+                             student_form_groups: false,
+                             invalid_override: true,
+                             due_date: 2.days.ago,
+                             created_at: 42.days.ago)
+      end
+
+      def grouping_count(groupings)
+        submissions = 0
+        groupings.each do |grouping|
+          if grouping.current_submission_used
+            submissions += 1
+          end
+        end
+        submissions
+      end
+
+      context 'with a grouping that has a submission and a TA assigned ' do
+        before :each do
+          @grouping = create(:grouping, assignment: @assignment)
+          @tamembership = create(:ta_membership, grouping: @grouping)
+          @studentmembership = create(:student_membership,
+                                      grouping: @grouping,
+                                      membership_status: StudentMembership::STATUSES[:inviter])
+          @submission = create(:submission, grouping: @grouping)
+        end
+
+        it 'be able to get a list of repository access URLs for each group' do
+          expected_string = ''
+          @assignment.groupings.each do |grouping|
+            group = grouping.group
+            expected_string += [group.group_name, group.repository_external_access_url].to_csv
+          end
+          expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
+        end
+
+        context 'with two groups of a single student each' do
+          before :each do
+            2.times do
+              g = create(:grouping, assignment: @assignment)
+              # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
+              s = create(:submission, grouping: g)
+              r = s.get_latest_result
+              2.times do
+                create(:rubric_mark, result: r)  # this is create marks under rubric criterion
+                # if we create(:flexible_mark, groping: g)
+                # or create(:checkbox_mark, grouping: g)
+                # they should work as well
+              end
+              r.reload
+              r.marking_state = Result::MARKING_STATES[:complete]
+              r.save
+            end
+          end
+
+          it 'be able to get_repo_checkout_commands' do
+            submissions = grouping_count(@assignment.groupings) # filter out without submission
+            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+          end
+
+          it 'be able to get_repo_checkout_commands with spaces in group name ' do
+            Group.all.each do |group|
+              group.group_name = group.group_name + ' Test'
+              group.save
+            end
+            submissions = grouping_count(@assignment.groupings) # filter out without submission
+            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+          end
+        end
+
+        context 'with two groups of a single student each with multiple submission' do
+          before :each do
+            2.times do
+              g = create(:grouping, assignment: @assignment)
+              # create 2 submission for each group
+              2.times do
+                s = create(:submission, grouping: g)
+                r = s.get_latest_result
+                2.times do
+                  create(:rubric_mark, result: r)
+                end
+                r.reload
+                r.marking_state = Result::MARKING_STATES[:complete]
+                r.save
+              end
+              g.save
+            end
+          end
+
+          it 'be able to get_repo_checkout_commands' do
+            submissions = grouping_count(@assignment.groupings) # filter out without submission
+            expect(submissions).to eql @assignment.get_repo_checkout_commands.size
+          end
+        end
       end
     end
   end
@@ -729,9 +1017,7 @@ describe Assignment do
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
-        @assignment = create(:assignment,
-                             due_date: Time.now,
-                             section_due_dates_type: false)
+        @assignment = create(:assignment, due_date: Time.now, section_due_dates_type: false)
       end
 
       context 'when no section is specified' do
@@ -743,17 +1029,14 @@ describe Assignment do
       context 'when a section is specified' do
         it 'returns the due date of the assignment' do
           section = create(:section)
-          expect(@assignment.section_due_date(section))
-            .to eq @assignment.due_date
+          expect(@assignment.section_due_date(section)).to eq @assignment.due_date
         end
       end
     end
 
     context 'with SectionDueDates enabled' do
       before :each do
-        @assignment = create(:assignment,
-                             due_date: 1.days.ago,
-                             section_due_dates_type: true)
+        @assignment = create(:assignment, due_date: 1.days.ago, section_due_dates_type: true)
       end
 
       context 'when no section is specified' do
@@ -776,9 +1059,7 @@ describe Assignment do
 
         context 'that has a SectionDueDate for another assignment' do
           before :each do
-            SectionDueDate.create(section: @section,
-                                  assignment: create(:assignment),
-                                  due_date: 2.days.ago)
+            SectionDueDate.create(section: @section, assignment: create(:assignment), due_date: 2.days.ago)
           end
 
           it 'returns the due date of the assignment' do
@@ -789,9 +1070,7 @@ describe Assignment do
 
         context 'that has a SectionDueDate for this assignment' do
           before :each do
-            SectionDueDate.create(section: @section,
-                                  assignment: @assignment,
-                                  due_date: 2.days.ago)
+            SectionDueDate.create(section: @section, assignment: @assignment, due_date: 2.days.ago)
           end
 
           it 'returns the due date of the section' do
@@ -806,9 +1085,7 @@ describe Assignment do
   describe '#latest_due_date' do
     context 'when SectionDueDates are disabled' do
       before :each do
-        @assignment = create(:assignment,
-                             section_due_dates_type: false,
-                             due_date: Time.now)
+        @assignment = create(:assignment, section_due_dates_type: false, due_date: Time.now)
       end
 
       it 'returns the due date of the assignment' do
@@ -818,9 +1095,7 @@ describe Assignment do
 
     context 'when SectionDueDates are enabled' do
       before :each do
-        @assignment = create(:assignment,
-                             section_due_dates_type: true,
-                             due_date: Time.now)
+        @assignment = create(:assignment, section_due_dates_type: true, due_date: Time.now)
       end
 
       context 'and there are no SectionDueDates' do
@@ -907,9 +1182,7 @@ describe Assignment do
       context 'and there is a SectionDueDate not past due' do
         before :each do
           @assignment.update_attributes(section_due_dates_type: true)
-          SectionDueDate.create(section: create(:section),
-                                assignment: @assignment,
-                                due_date: 1.days.from_now)
+          SectionDueDate.create(section: create(:section), assignment: @assignment, due_date: 1.days.from_now)
         end
 
         it 'returns false' do
@@ -922,12 +1195,8 @@ describe Assignment do
   describe '#grouping_past_due_date?' do
     context 'with SectionDueDates disabled' do
       before :each do
-        @due_assignment = create(:assignment,
-                                 section_due_dates_type: false,
-                                 due_date: 1.days.ago)
-        @not_due_assignment = create(:assignment,
-                                     section_due_dates_type: false,
-                                     due_date: 1.days.from_now)
+        @due_assignment = create(:assignment, section_due_dates_type: false, due_date: 1.days.ago)
+        @not_due_assignment = create(:assignment, section_due_dates_type: false, due_date: 1.days.from_now)
       end
 
       context 'when no grouping is specified' do
@@ -967,9 +1236,7 @@ describe Assignment do
           @grouping = create(:grouping, assignment: @assignment)
           @section = create(:section)
           student = create(:student, section: @section)
-          create(:inviter_student_membership,
-                 user: student,
-                 grouping: @grouping)
+          create(:inviter_student_membership, user: student, grouping: @grouping)
         end
 
         context 'that does not have an associated SectionDueDate' do
@@ -1182,9 +1449,7 @@ describe Assignment do
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
             @assignment.get_criteria(:all, :rubric).each do |criterion|
-              mark = result.marks
-                .find_by_markable_id_and_markable_type(criterion.id,
-                                                       'RubricCriterion')
+              mark = result.marks.find_by_markable_id_and_markable_type(criterion.id, 'RubricCriterion')
               if mark && mark.mark
                 fields.push(mark.mark)
               else
@@ -1202,7 +1467,7 @@ describe Assignment do
             fields.push('', '')
           end
           grace_credits_data = student.remaining_grace_credits.to_s + '/' +
-                               student.grace_credits.to_s
+            student.grace_credits.to_s
           fields.push(grace_credits_data)
 
           expected_string += fields.to_csv
@@ -1241,9 +1506,7 @@ describe Assignment do
             fields.push(result.total_mark / @assignment.max_mark * 100)
             fields.push(result.total_mark)
             @assignment.get_criteria(:all, :flexible).each do |criterion|
-              mark = result.marks
-                .find_by_markable_id_and_markable_type(criterion.id,
-                                                       'FlexibleCriterion')
+              mark = result.marks.find_by_markable_id_and_markable_type(criterion.id, 'FlexibleCriterion')
               if mark && mark.mark
                 fields.push(mark.mark)
               else
@@ -1261,7 +1524,7 @@ describe Assignment do
             fields.push('', '')
           end
           grace_credits_data = student.remaining_grace_credits.to_s + '/' +
-                               student.grace_credits.to_s
+            student.grace_credits.to_s
           fields.push(grace_credits_data)
 
           expected_string += fields.to_csv
@@ -1298,9 +1561,7 @@ describe Assignment do
         before :each do
           @assignment = create(:assignment, due_date: 2.days.ago, section_due_dates_type: true)
           @section = create(:section, name: 'section_name')
-          SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 1.day.ago)
+          SectionDueDate.create(section: @section, assignment: @assignment, due_date: 1.day.ago)
           student = create(:student, section: @section)
           @grouping = create(:grouping, assignment: @assignment)
           create(:accepted_student_membership,
@@ -1316,49 +1577,9 @@ describe Assignment do
     end
   end
 
-  describe '#past_all_collection_dates?' do
-    context 'when before due with no submission rule' do
-      before :each do
-        @assignment = create(:assignment, due_date: 2.days.from_now)
-      end
-
-      it 'returns false' do
-        expect(@assignment.past_all_collection_dates?).to be(false)
-      end
-
-      context 'and section_due_dates_type is true' do
-        before :each do
-          @assignment.update_attributes(section_due_dates_type: true)
-        end
-
-        context 'and there are sections' do
-          before :each do
-            @section = create(:section, name: 'section_name')
-            SectionDueDate.create(section: @section,
-                                  assignment: @assignment,
-                                  due_date: 1.day.ago)
-            student = create(:student, section: @section)
-            @grouping = create(:grouping, assignment: @assignment)
-            create(:accepted_student_membership,
-                   grouping: @grouping,
-                   user: student,
-                   membership_status: StudentMembership::STATUSES[:inviter])
-          end
-
-          it 'returns true' do
-            expect(@assignment.past_all_collection_dates?).to be(true)
-          end
-        end
-        context 'and there are no sections' do
-          it 'returns false' do
-            expect(@assignment.past_all_collection_dates?).to be(false)
-          end
-        end
-      end
-    end
-  end
-
   describe '#update_results_stats' do
+    let(:assignment) { create :assignment }
+
     before :each do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
@@ -1437,20 +1658,20 @@ describe Assignment do
 
     context 'when one assignment is found' do
       before :each do
-        @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
+        @assignment1 = create(:assignment, due_date: Date.today - 5)
       end
 
       it 'returns the only assignment' do
         result = Assignment.get_current_assignment
-        expect(result).to eq(@a1)
+        expect(result).to eq(@assignment1)
       end
     end
 
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
         before :each do
-          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryBot.create(:assignment, due_date: Date.today + 3)
+          @a1 = create(:assignment, due_date: Date.today - 5)
+          @a2 = create(:assignment, due_date: Date.today + 3)
         end
 
         it 'returns the assignment due in 3 days' do
@@ -1462,9 +1683,9 @@ describe Assignment do
 
       context 'when the next assignment is due in more than 3 days' do
         before :each do
-          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryBot.create(:assignment, due_date: Date.today - 1)
-          @a3 = FactoryBot.create(:assignment, due_date: Date.today + 8)
+          @a1 = create(:assignment, due_date: Date.today - 5)
+          @a2 = create(:assignment, due_date: Date.today - 1)
+          @a3 = create(:assignment, due_date: Date.today + 8)
         end
 
         it 'returns the assignment that was most recently due' do
@@ -1476,9 +1697,9 @@ describe Assignment do
 
       context 'when all assignments are due in more than 3 days' do
         before :each do
-          @a1 = FactoryBot.create(:assignment, due_date: Date.today + 5)
-          @a2 = FactoryBot.create(:assignment, due_date: Date.today + 12)
-          @a3 = FactoryBot.create(:assignment, due_date: Date.today + 19)
+          @a1 = create(:assignment, due_date: Date.today + 5)
+          @a2 = create(:assignment, due_date: Date.today + 12)
+          @a3 = create(:assignment, due_date: Date.today + 19)
         end
 
         it 'returns the assignment that is due first' do
@@ -1490,9 +1711,9 @@ describe Assignment do
 
       context 'when all assignments are past the due date' do
         before :each do
-          @a1 = FactoryBot.create(:assignment, due_date: Date.today - 5)
-          @a2 = FactoryBot.create(:assignment, due_date: Date.today - 12)
-          @a3 = FactoryBot.create(:assignment, due_date: Date.today - 19)
+          @a1 = create(:assignment, due_date: Date.today - 5)
+          @a2 = create(:assignment, due_date: Date.today - 12)
+          @a3 = create(:assignment, due_date: Date.today - 19)
         end
 
         it 'returns the assignment that was due most recently' do
@@ -1504,3 +1725,4 @@ describe Assignment do
     end
   end
 end
+
