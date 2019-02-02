@@ -13,7 +13,7 @@ describe RubricCriterion do
     it { is_expected.to validate_presence_of(:name) }
 
     # Test that Criteria assigned to non-existent Assignment
-    #is NOT OK
+    # is NOT OK
     def test_assignment_id_dne
       assignment_id_dne = create(:rubric_criterion)
       assignment_id_dne.assignment = create(:assignment)
@@ -21,7 +21,7 @@ describe RubricCriterion do
     end
 
     it 'round weights that have more than 1 significant digits' do
-      expect(RubricCriterion.count).to be >0
+      expect(RubricCriterion.count).to be > 0
       criterion = RubricCriterion.first
       criterion.max_mark = 0.5555555555
       criterion.save
@@ -60,9 +60,7 @@ describe RubricCriterion do
       0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
         expect(r['level_' + i.to_s + '_name']).to eq('l' + i.to_s)
       end
-
     end
-
   end
 
   context 'A rubric criterion assigning a TA' do
@@ -126,7 +124,6 @@ describe RubricCriterion do
       @criterion.add_tas(ta2)
       expect(@criterion.get_ta_names).to contain_exactly(ta1.user_name, ta2.user_name)
     end
-
   end
 
   context 'from an assignment without criteria' do
@@ -138,7 +135,7 @@ describe RubricCriterion do
       describe 'raise csv line error on an empty row' do
         it 'raises' do
           expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to
-          raise_error(CSVInvalidLineError) }
+                    raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -147,7 +144,7 @@ describe RubricCriterion do
       describe 'raise csv line error on a 1 element row' do
         it 'raises' do
           expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to
-          raise_error(CSVInvalidLineError) }
+                    raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -156,7 +153,7 @@ describe RubricCriterion do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
           expect { RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to
-          raise_error(CSVInvalidLineError) }
+                    raise_error(CSVInvalidLineError) }
         end
       end
     end
@@ -179,9 +176,7 @@ describe RubricCriterion do
       describe 'raise csv line error on a row with an invalid weight' do
         row = %w(name max_mark l0 l1 l2 l3 l4)
         it 'raises' do
-          expect {
-            RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError)
-          }
+          expect { RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError) }
         end
       end
     end
