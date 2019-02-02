@@ -1,8 +1,7 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 
-class FeedbackFilePanel extends React.Component {
+export class FeedbackFilePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -85,9 +84,4 @@ class FeedbackFilePanel extends React.Component {
       </div>
     );
   }
-}
-
-
-export function makeFeedbackFilePanel(elem, props) {
-  return render(<FeedbackFilePanel {...props} />, elem);
 }

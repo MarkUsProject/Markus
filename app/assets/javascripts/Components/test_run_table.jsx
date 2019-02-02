@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import {dateSort} from './Helpers/table_helpers';
 
 
-class TestRunTable extends React.Component {
+export class TestRunTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

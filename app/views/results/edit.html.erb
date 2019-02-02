@@ -5,64 +5,11 @@
   <%= javascript_pack_tag 'result' %>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-      window.annotationPanel =
-        makeAnnotationPanel(document.getElementById('annotations_summary'),
-          {
-            result_id: <%= @result.id %>,
-            submission_id: <%= @result.submission_id %>,
-            assignment_id: <%= @result.submission.grouping.assignment_id %>,
-            detailed: <%= @current_user.admin? || @current_user.ta? ||
-                          @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
-            released_to_students: <%= @result.released_to_students %>,
-            overallComment: `<%= @old_result ? @old_result.overall_comment : @result.overall_comment %>`,
-            remarkSubmitted: <%= !@old_result.nil? %>
-          }
-      );
-
-      <% if can_show_remark_request_tab_in_marker_pane(@result.submission) %>
-      makeRemarkPanel(document.getElementById('remark_request_tab'),
+      makeLeftPane(document.getElementById('left-pane'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          assignmentRemarkMessage: `<%= @assignment.remark_message %>`,
-          remarkDueDate: '<%= @assignment.remark_due_date %>',
-          pastRemarkDueDate: <%= @assignment.past_remark_due_date? %>,
-          remarkRequestText: `<%= @result.submission.remark_request %>`,
-          remarkRequestTimestamp: '<%= @result.submission.remark_request_timestamp %>',
-          released_to_students: <%= @result.released_to_students %>,
-          remarkSubmitted: <%= !@old_result.nil? %>,
-          overallComment: `<%= @result.overall_comment %>`,
-          studentView: false
-        }
-      );
-      <% end %>
-
-      <% if !@result.is_a_review? && can_show_feedback_files_tab?(@result.submission) %>
-      makeFeedbackFilePanel(document.getElementById('feedback_file_tab'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          feedbackFiles: [
-            <% @feedback_files.each do |f| %>
-              { id: '<%= f.id %>', filename: '<%= f.filename %>' },
-            <% end %>
-          ]
-        }
-      );
-      <% end %>
-
-      window.submissionFilePanel = makeSubmissionFilePanel(document.getElementById('code_holder'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          grouping_id: <%= @result.submission.grouping_id %>,
-          revision_identifier: '<%= @result.submission.revision_identifier %>',
-          show_annotation_manager: <%= !@result.released_to_students &&
-                                       !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
-          canDownload: <%= !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
         }
       );
     });
@@ -73,7 +20,6 @@
   var modalNotesGroup = null;
 
   $(document).ready(function() {
-    localStorage.setItem('assignment_id', <%= @result.submission.grouping.assignment_id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
 
@@ -145,14 +91,8 @@
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog' style='display:none'></aside>
-<aside class='dialog' id='download_files_dialog' style='display:none'>
-  <h1><%= 'Download Files' %></h1>
+<%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
-  <%= render partial: 'results/common/download_file_selector',
-             locals: { files: @files,
-                       can_download: true } %>
-
-</aside>
 <aside class='dialog' id='help_dialog' style='display:none'>
   <h1><%=t('results.keybinding.keyboard_help')%></h1>
   <table class="help_table">

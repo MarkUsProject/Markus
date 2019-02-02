@@ -1,10 +1,9 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import { AnnotationTable } from '../annotation_table';
 
 
-class AnnotationPanel extends React.Component {
+export class AnnotationPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +15,8 @@ class AnnotationPanel extends React.Component {
   }
 
   componentDidMount() {
+    // TODO: remove this global binding.
+    window.annotationPanel = this;
     const comment = this.state.overallComment;
     let target_id;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
@@ -90,9 +91,4 @@ class AnnotationPanel extends React.Component {
       </div>
     )
   }
-}
-
-
-export function makeAnnotationPanel(elem, props) {
-  return render(<AnnotationPanel {...props} />, elem);
 }

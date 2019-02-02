@@ -1,40 +1,6 @@
 <div id='panes-content'>
   <div id='panes'>
-    <div id='left-pane'>
-      <div class='tab-pane flex-pane' id='code_pane'>
-        <ul id='code_and_annotations_tabs' class='subsection_tabs'>
-           <li><a href='#code_holder'><%= Submission.human_attribute_name(:submission_files) %></a></li>
-           <li><a href='#annotations_summary'><%= Annotation.model_name.human.pluralize %></a></li>
-          <% if !@result.is_a_review? && assignment.enable_test %>
-              <li><a href='#test_result_tab'><%= t('automated_tests.test_results') %></a></li>
-          <% end %>
-          <% if !@result.is_a_review? && can_show_feedback_files_tab?(submission) %>
-              <li><a href='#feedback_file_tab'><%= Submission.human_attribute_name(:feedback_files) %></a></li>
-          <% end %>
-           <% if can_show_remark_request_tab_in_marker_pane(submission) %>
-              <li><a href='#remark_request_tab'><%= Submission.human_attribute_name(:submitted_remark) %></a></li>
-           <% end %>
-        </ul>
-
-        <div id='code_holder' class='flex-col'></div>
-
-        <div id='annotations_summary' class='flex-col'></div>
-
-        <% if !@result.is_a_review? && assignment.enable_test %>
-          <div id='test_result_tab' style='display:none;'>
-            <div id='testviewer' class='block'>
-              <%= render partial: 'automated_tests/test_runs', locals: { ran_by: 'instructor' } %>
-            </div>
-          </div>
-        <% end %>
-
-        <% if !@result.is_a_review? && can_show_feedback_files_tab?(submission) %>
-          <div id='feedback_file_tab' style='display:none;'></div>
-        <% end %>
-
-        <div id='remark_request_tab' style='display:none;'></div>
-      </div> <%# Code Pane %>
-    </div>
+    <div id='left-pane'></div>
 
     <div id='drag'></div>
 
