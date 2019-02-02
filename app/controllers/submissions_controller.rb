@@ -10,6 +10,7 @@ class SubmissionsController < ApplicationController
                          :file_manager,
                          :update_files,
                          :get_file,
+                         :submission_files,
                          :download,
                          :downloads,
                          :download_groupings_files,
@@ -33,7 +34,7 @@ class SubmissionsController < ApplicationController
                 only: [:file_manager,
                        :populate_peer_submissions_table]
   before_action :authorize_for_user,
-                only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
+                only: [:download, :downloads, :get_file, :submission_files, :populate_file_manager, :update_files]
 
   def index
     respond_to do |format|
@@ -748,6 +749,21 @@ class SubmissionsController < ApplicationController
   # This action is called periodically from file_manager.
   def server_time
     render plain: l(Time.zone.now)
+  end
+
+  def submission_files
+    assignment = Assignment.find(params[:assignment_id])
+    submission = Submission.find(params[:id])
+
+    if !@current_user.is_a_reviewer?(assignment.pr_assignment) && @current_user.student? &&
+      @current_user.accepted_grouping_for(assignment.id).id != submission.grouping_id
+      redirect_back(fallback_location: root_path)
+      return
+    end
+
+    file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+    file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+    render json: file_data
   end
 
   private

@@ -673,6 +673,17 @@ nav {
     float: right;
   }
 
+  .arrow_up {
+    border-bottom: 7.5px solid $dark-blue;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+    float: right;
+    height: 0;
+    margin-right: 3px;
+    margin-top: 3px;
+    width: 0;
+  }
+
   ul {
     background: $white;
     border: 1px solid $dark-blue;

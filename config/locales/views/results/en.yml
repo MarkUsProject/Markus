@@ -42,7 +42,6 @@ en:
       change_across_submissions: "This change will propagate across all submissions where this annotation was given.
                                   Is this OK?"
       common: "Common Annotations"
-      download_annotated: "Download Annotated File"
       include_in_download: "Include Annotations"
       include_in_download_warning: "Warning: Annotations on PDFs are not currently downloaded."
       placeholder: "Markdown and basic LaTeX syntax are supported."

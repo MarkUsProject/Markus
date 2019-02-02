@@ -58,14 +58,18 @@
       );
       <% end %>
 
-      window.submissionFileViewer =
-        makeFileViewer(document.getElementById('codeviewer'),
-          {
-            result_id: <%= @result.id %>,
-            submission_id: <%= @result.submission_id %>,
-            assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          }
-        );
+      window.submissionFilePanel = makeSubmissionFilePanel(document.getElementById('code_holder'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
+          revision_identifier: '<%= @result.submission.revision_identifier %>',
+          show_annotation_manager: <%= !@result.released_to_students &&
+                                       !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+          canDownload: <%= !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+        }
+      );
     });
   </script>
 <% end %>

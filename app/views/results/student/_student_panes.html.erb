@@ -16,19 +16,7 @@
           <% end %>
         </ul>
 
-        <div id='code_holder' class='flex-col'>
-          <%# For image/PDF annotations %>
-          <div id='sel_box'></div>
-
-          <div id='file_selector_menu'>
-
-            <%= render partial: 'results/common/file_selector_dropdown',
-                       locals: { files: files,
-                                 can_download: true } %>
-          </div>
-
-          <div id='codeviewer' class='flex-col'></div>
-        </div>
+        <div id='code_holder' class='flex-col'></div>
 
         <div id='annotations_summary' class='flex-col'></div>
 
