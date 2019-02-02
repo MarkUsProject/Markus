@@ -12,7 +12,7 @@
     "rails-erb-loader": "^5.5.1",
     "rails-ujs": "^5.2.2",
     "react": "^16.6.3",
-    "react-dom": "^16.6.3",
+    "react-dom": "^16.7.0",
     "react-keyed-file-browser": "^1.4.3",
     "react-table": "^6.9.0",
     "react-tabs": "^3.0.0"
