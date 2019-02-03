@@ -134,8 +134,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on an empty row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to raise_error
-          (CSVInvalidLineError) }
+          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to
+          raise_error (CSVInvalidLineError) }
         end
       end
     end
@@ -143,8 +143,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 1 element row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to raise_error
-          (CSVInvalidLineError) }
+          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to
+          raise_error (CSVInvalidLineError) }
         end
       end
     end
@@ -152,8 +152,9 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to raise_error
-          (CSVInvalidLineError) }
+          expect {
+            RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to
+            raise_error (CSVInvalidLineError) }
         end
       end
     end
