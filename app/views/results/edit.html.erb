@@ -53,24 +53,18 @@
       );
       <% end %>
 
-      <% unless @result.released_to_students || @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
-      window.annotationManager =
-        makeAnnotationManager(document.getElementById('annotation_options'),
-          {
-            result_id: <%= @result.id %>,
-            submission_id: <%= @result.submission_id %>,
-            assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          }
-        );
-      <% end %>
-      window.submissionFileViewer =
-        makeFileViewer(document.getElementById('codeviewer'),
-          {
-            result_id: <%= @result.id %>,
-            submission_id: <%= @result.submission_id %>,
-            assignment_id: <%= @result.submission.grouping.assignment_id %>,
-          }
-        );
+      window.submissionFilePanel = makeSubmissionFilePanel(document.getElementById('code_holder'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
+          revision_identifier: '<%= @result.submission.revision_identifier %>',
+          show_annotation_manager: <%= !@result.released_to_students &&
+                                       !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+          canDownload: <%= !@current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>,
+        }
+      );
     });
   </script>
 <% end %>
@@ -81,7 +75,6 @@
   $(document).ready(function() {
     localStorage.setItem('assignment_id', <%= @result.submission.grouping.assignment_id %>);
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
-    window.modal_download = new ModalMarkus('#download_files_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
 
     // Set up the 'working' notices
@@ -148,8 +141,7 @@
            } %>
 
 <%= render partial: 'results/marker/boot',
-           formats: [:js],
-           locals: { first_file: @files.first } %>
+           formats: [:js] %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog' style='display:none'></aside>

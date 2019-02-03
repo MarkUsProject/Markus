@@ -14,7 +14,7 @@ export class PDFViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.url) {
+    if (this.props.url && this.props.url !== prevProps.url) {
       this.loadPDFFile();
     }
   }
@@ -103,13 +103,13 @@ export class PDFViewer extends React.Component {
           <div id="viewerContainer" tabIndex="0">
             <div id="viewer" />
           </div>
-          <div id="errorWrapper" hidden='true'>
+          <div id="errorWrapper" hidden={true}>
             <div id="errorMessageLeft">
               <span id="errorMessage" />
               <button id="errorShowMore" data-l10n-id="error_more_info">
                 More Information
               </button>
-              <button id="errorShowLess" data-l10n-id="error_less_info" hidden='true'>
+              <button id="errorShowLess" data-l10n-id="error_less_info" hidden={true}>
                 Less Information
               </button>
             </div>
@@ -119,7 +119,7 @@ export class PDFViewer extends React.Component {
               </button>
             </div>
             <div className="clearBoth" />
-            <textarea id="errorMoreInfo" hidden='true' readOnly="readOnly" />
+            <textarea id="errorMoreInfo" hidden={true} readOnly="readOnly" />
           </div>
         </div>
 

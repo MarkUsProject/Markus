@@ -11,7 +11,6 @@ export class TextViewer extends React.Component {
     if (this.props.content) {
       // Remove existing syntax highlighted code.
       $('.dp-highlighter').remove();
-
       dp.SyntaxHighlighter.HighlightAll('code');
 
       source_code_ready();
@@ -26,8 +25,10 @@ export class TextViewer extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    if (this.props.content) {
+  componentDidUpdate(oldProps) {
+    if (this.props.content !== oldProps.content) {
+      // Remove existing syntax highlighted code.
+      $('.dp-highlighter').remove();
       dp.SyntaxHighlighter.HighlightAll('code');
 
       source_code_ready();
@@ -40,6 +41,10 @@ export class TextViewer extends React.Component {
         focus_source_code_line(this.props.focus_line);
       }
     }
+  }
+
+  componentWillUnmount() {
+    $('.dp-highlighter').remove();
   }
 
   render() {

@@ -80,13 +80,7 @@ var annotation_context_menu = {
       download: {
         title: I18n.t('download'),
         cmd: 'download',
-        action: function() { download_func('false'); },
-        disabled: false
-      },
-      download_annotated: {
-        title: I18n.t('results.annotation.download_annotated'),
-        cmd: 'download_annotated',
-        action: function() { download_func('true'); },
+        action: function() { submissionFilePanel.downloadFile(); },
         disabled: false
       }
     };
@@ -108,14 +102,6 @@ var annotation_context_menu = {
       return annot_id;
     }
 
-    function download_func(include_annot) {
-      var sub_file_id = $('#select_file_id').val();
-      if (sub_file_id !== null && sub_file_id.length !== 0) {
-        window.open(file_dl_path + '?utf8=✓&include_annotations=' +
-                    include_annot + '&select_file_id=' + sub_file_id);
-      }
-    }
-
     $(document).contextmenu({
       delegate: '#codeviewer, #sel_box',
       autoFocus: false,
@@ -135,7 +121,6 @@ var annotation_context_menu = {
         menu_items.separator,
         menu_items.copy,
         menu_items.download,
-        menu_items.download_annotated
       ],
       beforeOpen: function (event, ui) {
         // Enable annotation menu items only if a selection has been made

@@ -1,21 +1,32 @@
 import React from 'react';
-import {render} from 'react-dom';
 
 import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
 import {PDFViewer} from './pdf_viewer';
 
 
-class FileViewer extends React.Component {
-  constructor() {
-    super();
+export class FileViewer extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
       content: '',
       type: '',
-      focus_line: undefined,
+      focus_line: null,
       url: '',
       submission_file_id: undefined
     };
+  }
+
+  componentDidMount() {
+    if (this.props.selectedFile !== null) {
+      this.set_submission_file(this.props.selectedFile);
+    }
+  }
+
+  componentDidUpdate(oldProps) {
+    if (this.props.selectedFile !== null && this.props.selectedFile !== oldProps.selectedFile) {
+      this.set_submission_file(this.props.selectedFile);
+    }
   }
 
   /*
@@ -26,9 +37,6 @@ class FileViewer extends React.Component {
       // TODO: can still scroll to the focus_line here.
       return;
     }
-
-    // Remove existing syntax highlighted code.
-    $('.dp-highlighter').remove();
 
     // TODO: is this the right spot to remove these? Should it be done earlier?
     $('.annotation_text_display').each(function() {
@@ -55,7 +63,7 @@ class FileViewer extends React.Component {
               {
                 select_file_id: submission_file_id,
                 show_in_browser: true,
-                from_codeviewer: true
+                from_codeviewer: true,
               }
             )
           });
@@ -89,9 +97,4 @@ class FileViewer extends React.Component {
         submission_file_id={this.state.submission_file_id} />;
     }
   }
-}
-
-
-export function makeFileViewer(elem, props) {
-  return render(<FileViewer {...props}/>, elem);
 }

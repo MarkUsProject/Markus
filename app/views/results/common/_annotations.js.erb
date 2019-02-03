@@ -22,7 +22,6 @@
   function source_code_ready() {
     annotation_type = ANNOTATION_TYPES.CODE;
 
-    document.getElementById('select_file_id').disabled = false;
     var dp_highlighter = $('.dp-highlighter')[0];
     var first_ol = $('ol')[0];
     syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
@@ -48,8 +47,6 @@
     annotation_manager = new ImageAnnotationGrid(image_event_handler,
                                                  annotation_text_manager,
                                                  annotation_text_displayer);
-
-    document.getElementById('select_file_id').disabled = false;
   }
 
   /**
@@ -327,7 +324,7 @@
       annotation_type: 'pdf',
       result_id: <%= result_id %>,
       assignment_id: <%= assignment_id %>,
-      submission_file_id: $('#select_file_id').val(),
+      submission_file_id: submissionFilePanel.state.selectedFile && submissionFilePanel.state.selectedFile[1]
     };
 
     var box = annotation_manager.selectionRectangleAsInts();
@@ -373,7 +370,7 @@
 
   // Load a submitted file into the code-viewer based on file id's
   function load_submitted_file(submission_file_id, focus_line) {
-    submissionFileViewer.set_submission_file(submission_file_id, focus_line);
+    submissionFilePanel.submissionFileViewer.current.set_submission_file(submission_file_id, focus_line);
     positions = null;
     annotation_manager = null;
   }
@@ -382,12 +379,7 @@
     // First, switch to the source code viewer tab
     $('#code_pane').tabs({ active: 0 });
 
-    if (document.getElementById('select_file_id').value == submission_file_id) {
-      focus_source_code_line(focus_line);
-    } else {
-      document.getElementById('select_file_id').value = submission_file_id;
-      load_submitted_file(submission_file_id, focus_line);
-    }
+    submissionFilePanel.selectFileAndFocus(submission_file_id, focus_line);
   }
 
   function focus_source_code_line(line_num) {

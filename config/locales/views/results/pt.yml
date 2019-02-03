@@ -39,7 +39,6 @@ pt:
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
       change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
       common: "Common Annotations"
-      download_annotated: "Download Annotated File"
       include_in_download: "Incluir anotações"
       include_in_download_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."
       placeholder: "A notação Markdown e LaTeX é suportada"
