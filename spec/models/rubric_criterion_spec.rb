@@ -134,8 +134,10 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on an empty row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row([], @assignment).to
-          raise_error (CSVInvalidLineError) }
+          expect do
+            RubricCriterion.create_or_update_from_csv_row([], @assignment)
+              .to raise_error CSVInvalidLineError
+            end
         end
       end
     end
@@ -143,8 +145,10 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 1 element row' do
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(%w(name), @assignment).to
-          raise_error (CSVInvalidLineError) }
+          expect do
+            RubricCriterion.create_or_update_from_csv_row(%w[name], @assignment)
+              .to raise_error CSVInvalidLineError
+          end
         end
       end
     end
@@ -152,22 +156,24 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
-          expect {
-            RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), @assignment).to
-            raise_error (CSVInvalidLineError) }
+          expect do
+            RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment).
+              to raise_error CSVInvalidLineError
+            end
         end
       end
     end
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on rows with elements without names for every criterion' do
-        row = %w(name 1.0)
+        row = %w[name 1.0]
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
           it 'raises' do
-            expect {
-              RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError)
-            }
+            expect do
+              RubricCriterion.create_or_update_from_csv_row(row, @assignment).
+                to raise_error CSVInvalidLineError
+              end
           end
         end
       end
@@ -175,9 +181,12 @@ describe RubricCriterion do
 
     context 'when parsing a CSV file' do
       describe 'raise csv line error on a row with an invalid weight' do
-        row = %w(name max_mark l0 l1 l2 l3 l4)
+        row = %w[name max_mark l0 l1 l2 l3 l4]
         it 'raises' do
-          expect { RubricCriterion.create_or_update_from_csv_row(row, @assignment).to raise_error(CSVInvalidLineError) }
+          expect do
+            RubricCriterion.create_or_update_from_csv_row(row, @assignment).
+              to raise_error CSVInvalidLineError
+          end
         end
       end
     end
@@ -262,7 +271,7 @@ describe RubricCriterion do
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
     new_rubric_criteria = {
-      name: 'somecriteria',
+      name: 'some criteria',
       assignment_id: Assignment.make,
       max_mark: 0.25,
       level_0_name: 'Horrible',
