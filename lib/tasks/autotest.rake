@@ -162,19 +162,10 @@ class AutotestSetup
       instructor_run = !File.basename(test_script).include?('student_run_only')
       TestGroup.create(
         assignment: @assignment,
-        seq_num: 0,
-        file_name: File.basename(test_script),
-        description: "",
+        name: File.basename(test_script),
         run_by_instructors: instructor_run,
         run_by_students: true,
-        halts_testing: false,
-        display_description: "display_after_submission",
-        display_run_status: "display_after_submission",
-        display_marks_earned: "display_after_submission",
-        display_input: "display_after_submission",
-        display_expected_output: "display_after_submission",
-        display_actual_output: "display_after_submission",
-        timeout: 10,
+        display_output: TestGroup::TO_INSTRUCTORS_AND_STUDENT_TESTS,
         criterion: instructor_run ? criterion : nil
       )
     end

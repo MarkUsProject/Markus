@@ -15,9 +15,7 @@ class AutomatedTestsController < ApplicationController
     begin
       @assignment.transaction do
         new_files = process_test_form(@assignment, params, assignment_params)
-        run_job = !new_files.empty? ||
-                  @assignment.test_scripts.any?(&:marked_for_destruction?) ||
-                  @assignment.test_support_files.any?(&:marked_for_destruction?)
+        run_job = !new_files.empty? || @assignment.test_groups.any?(&:marked_for_destruction?)
         if @assignment.save
           # write the uploaded files
           new_files.each do |file|
@@ -59,15 +57,12 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_scripts.build(
+    @assignment.test_groups.build(
       # TODO: make these default values
       run_by_instructors: true,
       run_by_students: false,
-      display_input: :do_not_display,
-      display_expected_output: :do_not_display,
-      display_actual_output: :do_not_display
+      display_output: TestGroup::TO_INSTRUCTORS
     )
-    @assignment.test_support_files.build
     @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
 

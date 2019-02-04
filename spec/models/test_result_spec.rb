@@ -21,7 +21,7 @@ describe TestResult do
         name: 'test_group',
         run_by_instructors: true,
         run_by_students: true,
-        display_output: 'instructors_only'
+        display_output: TestGroup::TO_INSTRUCTORS
       )
       @test_run = TestRun.create(
         grouping: @grouping,

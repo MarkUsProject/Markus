@@ -1,4 +1,9 @@
 class TestGroup < ApplicationRecord
+  TO_INSTRUCTORS = 'instructors'.freeze
+  TO_INSTRUCTORS_AND_STUDENT_TESTS = 'instructors_and_student_tests'.freeze
+  TO_INSTRUCTORS_AND_STUDENTS = 'instructors_and_students'.freeze
+  DISPLAY_OUTPUT_OPTIONS = [TO_INSTRUCTORS, TO_INSTRUCTORS_AND_STUDENT_TESTS, TO_INSTRUCTORS_AND_STUDENTS].freeze
+
   belongs_to :assignment
   belongs_to :criterion, optional: true, polymorphic: true
   has_many :test_group_results, dependent: :delete_all
@@ -8,8 +13,7 @@ class TestGroup < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :assignment_id }
   validates :run_by_instructors, :run_by_students, inclusion: { in: [true, false] }
-  validates :display_output, presence: true, inclusion: { in: %w(instructors_only instructors_and_student_tests
-                                                                 instructors_and_students) }
+  validates :display_output, presence: true, inclusion: { in: DISPLAY_OUTPUT_OPTIONS }
 
   # All callback methods are protected methods
   protected

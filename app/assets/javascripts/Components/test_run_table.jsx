@@ -116,15 +116,15 @@ class TestScriptResultTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_output: props.data[0] && 'test_results.actual_output' in props.data[0]
+      show_output: props.data[0] && 'test_results.output' in props.data[0]
     };
   }
 
   columns = () => [
     {
-      id: 'script_name',
+      id: 'test_group_name',
       Header: '',
-      accessor: row => row['test_scripts.file_name'],
+      accessor: row => row['test_groups.name'],
       maxWidth: 30,
     },
     {
@@ -134,17 +134,15 @@ class TestScriptResultTable extends React.Component {
       aggregate: (values, rows) => {
         if (rows.length === 0) {
           return '';
-        } else if (rows[0]['script_description']) {
-          return `${rows[0]['script_name']} - ${rows[0]['script_description']}`;
         } else {
-          return rows[0]['script_name'];
+          return rows[0]['test_group_name'];
         }
       },
     },
     {
-      id: 'actual_output',
+      id: 'output',
       Header: I18n.t('automated_tests.test_results_table.output'),
-      accessor: row => row['test_results.actual_output'] || '',
+      accessor: row => row['test_results.output'] || '',
       Cell: ({value}) => <pre className={'test-results-output'}>{value}</pre>,
       show: this.state.show_output,
       aggregate: _ => '',
@@ -153,7 +151,7 @@ class TestScriptResultTable extends React.Component {
     {
       id: 'completion_status',
       Header: I18n.t('automated_tests.test_results_table.status'),
-      accessor: row => row['test_results.completion_status'],
+      accessor: row => row['test_results.status'],
       minWidth: 50,
       aggregate: _ => ''
     },
@@ -193,10 +191,10 @@ class TestScriptResultTable extends React.Component {
         <ReactTable
           data={this.props.data}
           columns={this.columns()}
-          pivotBy={['script_name']}
+          pivotBy={['test_group_name']}
           getTdProps={ (state, rowInfo) => {
             if (rowInfo) {
-              return {className: `test-result-${rowInfo.row['completion_status']}`}
+              return {className: `test-result-${rowInfo.row['status']}`}
             } else {
               return {};
             }

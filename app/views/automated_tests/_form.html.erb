@@ -76,7 +76,7 @@
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
 
       <div id="test_scripts">
-        <% @assignment.test_scripts.each do |ts| %>
+        <% @assignment.test_groups.each do |ts| %>
             <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
         <% end %>
       </div>
@@ -87,9 +87,9 @@
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
       <div class="wrapLeft">
         <div id="test_support_files">
-          <% @assignment.test_support_files.each do |tsf| %>
-              <%= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
-          <% end %>
+          <%# @assignment.test_support_files.each do |tsf| %>
+              <%#= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
+          <%# end %>
         </div>
       </div>
     </fieldset>

@@ -2,16 +2,27 @@
   {
     "tester_type": "custom",
     "tester_name": "autotest01",
-    "script_data": [
+    "test_data": [
       {
-        "runnable_group": [
-          { "script_file_path": "autotest01.sh" },
-          { "script_file_path": "autotest02.sh" },
-          { "script_file_path": "autotest_student_run_only.sh" }
-        ],
+        "id": "1",
+        "script_file_path": "autotest01.sh",
+        "script_timeout": 10,
         "enable_feedback_file_hook": false,
-        "feedback_file": null,
-        "script_timeout": 10
+        "feedback_file": null
+      },
+      {
+        "id": "2",
+        "script_file_path": "autotest02.sh",
+        "script_timeout": 10,
+        "enable_feedback_file_hook": false,
+        "feedback_file": null
+      },
+      {
+        "id": "3",
+        "script_file_path": "autotest_student_run_only.sh",
+        "script_timeout": 10,
+        "enable_feedback_file_hook": false,
+        "feedback_file": null
       }
     ]
   }

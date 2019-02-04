@@ -832,11 +832,11 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_scripts.display_actual_output'] == 'display_after_collection' ||
-         data['test_scripts.display_actual_output'] == 'do_not_display'
-        data.delete('test_results.actual_output')
+      if data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS_AND_STUDENT_TESTS ||
+         data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS
+        data.delete('test_results.output')
       end
-      data.delete('test_script_results.extra_info')
+      data.delete('test_group_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)
@@ -846,10 +846,10 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_scripts.display_actual_output'] == 'do_not_display'
-        data.delete('test_results.actual_output')
+      if data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS
+        data.delete('test_results.output')
       end
-      data.delete('test_script_results.extra_info')
+      data.delete('test_group_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)
