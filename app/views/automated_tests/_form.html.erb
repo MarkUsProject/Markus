@@ -76,8 +76,8 @@
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
 
       <div id="test_scripts">
-        <% @assignment.test_groups.each do |ts| %>
-            <%= render partial: 'test_script_upload', locals: {test_script: ts, form: f} %>
+        <% @assignment.test_groups.each do |tg| %>
+            <%= render partial: 'test_group_upload', locals: {test_group: tg, form: f} %>
         <% end %>
       </div>
     </fieldset>

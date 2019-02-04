@@ -253,7 +253,6 @@ fr:
       assignment_test_support_files: "Fichiers additionels"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       download_wrong_place_or_unreadable: "Le fichier ne peut pas être trouvé où ne peut pas être lu"
-      download_not_in_db: "Le fichier n'es pas dans le base de données"
       test_group_option:
         upload_required: "Envoyer<span class='required_field'>*</span>"
         upload_help: "Il existe déjà un fichier avec le même nom"

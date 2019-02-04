@@ -110,43 +110,17 @@ class AutomatedTestsController < ApplicationController
     redirect_to action: :student_interface, id: params[:id]
   end
 
-  # Download is called when an admin wants to download a test script
-  # or test support file
-  # Check three things:
-  #  1. filename is in DB
-  #  2. file is in the directory it's supposed to be
-  #  3. file exists and is readable
+  # Download is called when an admin wants to download a test file
   def download
-    if params[:type] == 'script'
-      model_class = TestGroup
-    else # params[:type] == 'support'
-      model_class = TestSupportFile
-    end
-    filedb = model_class.find_by(assignment_id: params[:assignment_id], file_name: params[:filename])
-
-    if filedb
-      filename = filedb.file_name
-      assn_short_id = Assignment.find(params[:assignment_id]).short_identifier
-
-      # the given file should be in this directory
-      should_be_in = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assn_short_id)
-      should_be_in = File.expand_path(should_be_in)
-      filename = File.expand_path(File.join(should_be_in, filename))
-
-      if should_be_in == File.dirname(filename) and File.readable?(filename)
-        # Everything looks OK. Send the file over to the client.
-        file_contents = IO.read(filename)
-        send_file filename,
-                  type: ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
-                  x_sendfile: true
-
-        # print flash error messages
-      else
-        flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))
-        redirect_to action: 'manage'
-      end
+    assignment = Assignment.find(params[:assignment_id])
+    file_loc = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:filename])
+    if File.exist?(file_loc)
+      file_contents = IO.read(file_loc)
+      send_file file_loc,
+                type: ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
+                x_sendfile: true
     else
-      flash_message(:error, I18n.t('automated_tests.download_not_in_db'))
+      flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))
       redirect_to action: 'manage'
     end
   end
@@ -166,24 +140,18 @@ class AutomatedTestsController < ApplicationController
 
   def assignment_params
     params.require(:assignment)
-        .permit(:enable_test,
-                :enable_student_tests,
-                :assignment_id,
-                :tokens_per_period,
-                :token_period,
-                :token_start_date,
-                :non_regenerating_tokens,
-                :unlimited_tokens,
-                test_files_attributes:
-                    [:id, :filename, :filetype, :is_private, :_destroy],
-                test_scripts_attributes:
-                    [:id, :assignment_id, :seq_num, :file_name, :description,
-                     :timeout, :run_by_instructors, :run_by_students,
-                     :halts_testing, :display_description, :display_run_status,
-                     :display_marks_earned, :display_input,
-                     :display_expected_output, :display_actual_output,
-                     :criterion_id, :_destroy],
-                test_support_files_attributes:
-                    [:id, :file_name, :assignment_id, :description, :_destroy])
+      .permit(:enable_test,
+              :enable_student_tests,
+              :assignment_id,
+              :tokens_per_period,
+              :token_period,
+              :token_start_date,
+              :non_regenerating_tokens,
+              :unlimited_tokens,
+              test_groups_attributes:
+                [:id, :assignment_id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id,
+                 :_destroy])
+              # test_support_files_attributes:
+              #   [:id, :file_name, :assignment_id, :description, :_destroy])
   end
 end

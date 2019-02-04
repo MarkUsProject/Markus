@@ -300,7 +300,6 @@ es:
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
                                            leído."
-      download_not_in_db:                 "El archivo solicitado no se encuentra en la base de datos."
       test_group_option:
         upload_required:                  "Subir<span class='required_field'>*</span>"
         upload_help:                      "UPDATE ME"

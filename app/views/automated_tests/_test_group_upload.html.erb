@@ -14,7 +14,7 @@
   %>
 
 
-  <%= form.fields_for :test_scripts, test_script do |f| %>
+  <%= form.fields_for :test_groups, test_group do |f| %>
     <% saved = !f.object.new_record? %>
 
     <fieldset class="settings_box">
@@ -24,7 +24,6 @@
             <%= link_to(f.object.name,
                         action: 'download',
                         assignment_id: @assignment.id,
-                        type: 'script',
                         filename: f.object.name) %>
             <%= f.hidden_field :name, value: f.object.name %>
           <% else %>
@@ -40,8 +39,7 @@
                                          t('automated_tests.test_group_option.upload_required').html_safe),
                     title: (saved ? t('automated_tests.test_group_option.replace_help') :
                                     t('automated_tests.test_group_option.upload_help')) %>
-        <%= file_field_tag (saved ? ('new_update_script_'+f.object.name).to_sym :
-                                    :new_script),
+        <%= file_field_tag (saved ? ('new_update_group_'+f.object.name).to_sym : :new_group),
                            class: 'upload_file' %><br/>
 
         <% if saved %>
