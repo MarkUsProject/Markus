@@ -137,7 +137,7 @@ describe RubricCriterion do
           expect do
             RubricCriterion.create_or_update_from_csv_row([], @assignment)
               .to raise_error CSVInvalidLineError
-            end
+          end
         end
       end
     end
@@ -157,9 +157,9 @@ describe RubricCriterion do
       describe 'raise csv line error on a 2 element row' do
         it 'raises' do
           expect do
-            RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment).
-              to raise_error CSVInvalidLineError
-            end
+            RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment)
+              .to raise_error CSVInvalidLineError
+          end
         end
       end
     end
@@ -171,9 +171,9 @@ describe RubricCriterion do
           row << 'name' + i.to_s
           it 'raises' do
             expect do
-              RubricCriterion.create_or_update_from_csv_row(row, @assignment).
-                to raise_error CSVInvalidLineError
-              end
+              RubricCriterion.create_or_update_from_csv_row(row, @assignment)
+                .to raise_error CSVInvalidLineError
+            end
           end
         end
       end
@@ -184,8 +184,8 @@ describe RubricCriterion do
         row = %w[name max_mark l0 l1 l2 l3 l4]
         it 'raises' do
           expect do
-            RubricCriterion.create_or_update_from_csv_row(row, @assignment).
-              to raise_error CSVInvalidLineError
+            RubricCriterion.create_or_update_from_csv_row(row, @assignment)
+              .to raise_error CSVInvalidLineError
           end
         end
       end
