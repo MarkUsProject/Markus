@@ -136,7 +136,10 @@ class GroupsController < ApplicationController
       next_grouping = Grouping.get_assign_scans_grouping(@assignment)
     end
     if next_grouping.nil?
-      redirect_to(:back)
+      if @assignment.groupings.left_outer_joins(:current_submission_used).where('submissions.id': nil).any?
+        flash_message(:warning, I18n.t('exam_templates.assign_scans.not_all_submissions_collected'))
+      end
+      redirect_back(fallback_location: assignment_groups_path(@assignment.id))
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|

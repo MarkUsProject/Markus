@@ -80,6 +80,7 @@ en:
       help: "Assign students to scanned exam groups based on printed student names."
       skip_group: "Skip group"
       title: "Assign Scans"
+      not_all_submissions_collected: "Not all submissions have been collected."
 
   flash:
     exam_templates:
