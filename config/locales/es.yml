@@ -146,9 +146,7 @@ es:
       group_with_different_membership_different_assignment: "Error: El grupo %{group_name} no puede ser creado debido a
                                                              que un grupo con el mismo nombre pero con diferentes
                                                              membresías ya existe para un proyecto diferente"
-      memberships_not_unique:                               "Error: El grupo %{group_name} no puede ser creado debido a
-                                                             que el estudiante '%{student_user_name}' ya pertenece a un
-                                                             grupo diferente para el proyecto"
+      memberships_not_unique:                               "El estudiante ya pertenece a un grupo diferente para el proyecto"
       repository_already_exists:                            "Error: El grupo %{group_name} no puede ser creado debido a
                                                              que un repositorio en la siguiente ruta
                                                              '%{repo_path}' ya existe"
@@ -371,7 +369,7 @@ es:
       failed: "Ha fallado"
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
-      create_individual_groups_job: "%{progress}/%{total} grupos creados"
+      create_groups_job: "%{progress}/%{total} grupos creados"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
     repo:

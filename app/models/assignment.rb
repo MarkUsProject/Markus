@@ -542,7 +542,6 @@ class Assignment < ApplicationRecord
       if !errors[:groupings].blank?
         # groupings error set if a member is already in different group
         membership_error = I18n.t('csv.memberships_not_unique',
-                                  group_name: row[0],
                                   student_user_name: errors[:groupings].first)
         errors.delete(:groupings)
       else

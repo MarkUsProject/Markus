@@ -314,7 +314,7 @@ pt:
       failed: "Falhou"
       split_pdf_job: "Processando a página %{progress} em %{total} para %{exam_name}"
       generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"
-      create_individual_groups_job: "%{progress}/%{total} grupos criados"
+      create_groups_job: "%{progress}/%{total} grupos criados"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
     repo:

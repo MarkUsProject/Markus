@@ -401,9 +401,9 @@ module MarkusConfigurator
   # Resque Configuration
   ##########################################
 
-  def markus_job_create_individual_groups_queue_name
-    if defined? JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
-      JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME
+  def markus_job_create_groups_queue_name
+    if defined? JOB_CREATE_GROUPS_QUEUE_NAME
+      JOB_CREATE_GROUPS_QUEUE_NAME
     else
       'jobs'
     end

@@ -248,8 +248,8 @@ Markus::Application.configure do
   # Resque queues
   ###################################################################
 
-  # The name of the queue where jobs to create individal groups for all students wait to be executed.
-  JOB_CREATE_INDIVIDUAL_GROUPS_QUEUE_NAME = 'CSC108'
+  # The name of the queue where jobs to create groups wait to be executed.
+  JOB_CREATE_GROUPS_QUEUE_NAME = 'CSC108'
   # The name of the queue where jobs to collect submissions wait to be executed.
   JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
