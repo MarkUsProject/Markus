@@ -239,19 +239,10 @@ class GroupsController < ApplicationController
       file = params[:group][:grouplist]
       encoding = params[:encoding]
       @assignment = Assignment.find(params[:assignment_id])
-      # Transaction allows us to potentially roll back if something
-      # really bad happens.
-      ApplicationRecord.transaction do
-        # Loop over each row, which lists the members to be added to the group.
-        result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
-          @assignment.add_csv_group(row)
-        end
-        unless result[:invalid_lines].empty?
-          flash_message(:error, result[:invalid_lines])
-        end
-        unless result[:valid_lines].empty?
-          flash_message(:success, result[:valid_lines])
-        end
+      data = []
+      MarkusCSV.parse(file.read, encoding: encoding) { |row| data << row }
+      if validate_csv_upload_file(@assignment, data)
+        @current_job = CreateGroupsJob.perform_later @assignment, data
       end
     else
       flash_message(:error, I18n.t('upload_errors.missing_file'))
@@ -262,7 +253,9 @@ class GroupsController < ApplicationController
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
-      @current_job = CreateIndividualGroupsForAllStudentsJob.perform_later @assignment
+      # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
+      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name]*3 }
+      @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
 
