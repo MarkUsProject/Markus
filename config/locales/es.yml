@@ -291,7 +291,6 @@ es:
                                            pruebas."
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
-      convert_newline_notice:             "UPDATE ME"
       new_test_script_file:               "Nuevo archivo del script de la prueba"
       new_test_support_file:              "Nuevo Archivo de Soporte de Prueba"
       assignment_test_script_files:       "Archivos del Script de la Prueba"

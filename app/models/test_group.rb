@@ -36,7 +36,7 @@ class TestGroup < ApplicationRecord
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       name = self.name
-      test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
+      test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.assignment.short_identifier)
 
       # Create the file path
       path = File.join(test_dir, name)
@@ -47,13 +47,9 @@ class TestGroup < ApplicationRecord
   end
 
   def delete_file
-    # Automated tests repository to delete from
-    test_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
-
-    # Delete file if it exists
-    path = File.join(test_dir, self.name)
-    if File.exist?(path)
-      File.delete(path)
+    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.assignment.short_identifier, self.name)
+    if File.exist?(file_path)
+      File.delete(file_path)
     end
   end
 

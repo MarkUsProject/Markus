@@ -149,7 +149,7 @@ class TestScriptResultTable extends React.Component {
       className: 'actual_output'
     },
     {
-      id: 'completion_status',
+      id: 'test_status',
       Header: I18n.t('automated_tests.test_results_table.status'),
       accessor: row => row['test_results.status'],
       minWidth: 50,
@@ -194,7 +194,7 @@ class TestScriptResultTable extends React.Component {
           pivotBy={['test_group_name']}
           getTdProps={ (state, rowInfo) => {
             if (rowInfo) {
-              return {className: `test-result-${rowInfo.row['status']}`}
+              return {className: `test-result-${rowInfo.row['test_status']}`}
             } else {
               return {};
             }

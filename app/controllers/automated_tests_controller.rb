@@ -19,20 +19,7 @@ class AutomatedTestsController < ApplicationController
         if @assignment.save
           # write the uploaded files
           new_files.each do |file|
-            # TODO: Move write into the model
-            File.open(file[:path], 'wb') do |f|
-              content = file[:upload].read
-              # remove carriage return or other non-LF whitespace from the end of lines
-              if content.start_with?('#!')
-                newline_chars = content[/\r?\n|\r{1,2}/] # captures line endings: "\n" "\r\n" "\r\r" "\r"
-                if !newline_chars.nil? && newline_chars != "\n"
-                  filename = File.basename file[:path]
-                  flash_message(:notice, t('automated_tests.convert_newline_notice', file: filename))
-                  content = content.encode(content.encoding, universal_newline: true)
-                end
-              end
-              f.write(content)
-            end
+            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
             # delete a replaced file if it was renamed
             if file.key?(:delete) && File.exist?(file[:delete])
               File.delete(file[:delete])
@@ -95,13 +82,12 @@ class AutomatedTestsController < ApplicationController
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
-      # test_scripts = assignment.select_test_scripts(current_user)
-      #                          .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
-      test_specs = assignment.select_test_specs.pluck(:file_name)[0]
-      hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
+      test_group_ids = assignment.select_test_groups(current_user).pluck(:id)
+      test_specs_name = assignment.get_test_specs_name
+      hooks_script_name = assignment.get_hooks_script_name
       test_run = grouping.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_specs, hooks_script,
-                                   [{ id: test_run.id }])
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_group_ids,
+                                   test_specs_name, hooks_script_name, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -113,10 +99,10 @@ class AutomatedTestsController < ApplicationController
   # Download is called when an admin wants to download a test file
   def download
     assignment = Assignment.find(params[:assignment_id])
-    file_loc = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:filename])
-    if File.exist?(file_loc)
-      file_contents = IO.read(file_loc)
-      send_file file_loc,
+    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:filename])
+    if File.exist?(file_path)
+      file_contents = IO.read(file_path)
+      send_file file_path,
                 type: ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
                 x_sendfile: true
     else

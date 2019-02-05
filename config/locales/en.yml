@@ -261,7 +261,6 @@ en:
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      convert_newline_notice: "Newline characters in %{file} converted to \\n"
       new_test_script_file: "New Test Script File"
       new_test_support_file: "New Test Support File"
       assignment_test_script_files: "Test Script Files"

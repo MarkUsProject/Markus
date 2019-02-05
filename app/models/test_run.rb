@@ -47,8 +47,8 @@ class TestRun < ApplicationRecord
   end
 
   def create_test_group_result(test_group, time: 0, extra_info: nil)
-    unless test_group.respond_to?(:name) # the ActiveRecord object can be passed directly
-      test_group = TestGroup.find_by(assignment: grouping.assignment, name: test_group)
+    unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
+      test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
       # test group can be nil if it's deleted while running
     end
     test_group_results.create(
@@ -70,7 +70,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
     # create test script result
-    group_name = json_test_group['name']
+    group_id = json_test_group['id']
     time = json_test_group.fetch('time', 0)
     stderr = json_test_group['stderr']
     malformed = json_test_group['malformed']
@@ -89,7 +89,7 @@ class TestRun < ApplicationRecord
         extra += I18n.t('automated_tests.results.extra_hooks_stderr', extra: hooks_stderr)
       end
     end
-    new_test_group_result = create_test_group_result(group_name, time: time, extra_info: extra)
+    new_test_group_result = create_test_group_result(group_id, time: time, extra_info: extra)
     timeout = json_test_group['timeout']
     json_tests = json_test_group['tests']
     if json_tests.blank?
@@ -168,17 +168,17 @@ class TestRun < ApplicationRecord
     # process results
     new_test_group_results = {}
     json_root.fetch('test_groups', []).each do |json_test_group|
-      group_name = json_test_group['name']
+      group_id = json_test_group['id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
-      new_test_group_results[group_name] = new_test_group_result
+      new_test_group_results[group_id] = new_test_group_result
     end
     # handle missing test groups (could be added while running)
     test_groups.each do |test_group|
-      next if new_test_group_results.key?(test_group.name)
+      next if new_test_group_results.key?(test_group.id)
       new_test_group_result = create_test_group_result(test_group)
       new_test_group_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
-                                                actual: I18n.t('automated_tests.results.missing_test_group'))
-      new_test_group_results[test_group.name] = new_test_group_result
+                                               output: I18n.t('automated_tests.results.missing_test_group'))
+      new_test_group_results[test_group.id] = new_test_group_result
     end
     # set the marks assigned by the test run
     submission&.set_autotest_marks

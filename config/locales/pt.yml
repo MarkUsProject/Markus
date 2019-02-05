@@ -242,7 +242,6 @@ pt:
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
       new_test_script_file: "UPDATE ME"
       new_test_support_file: "UPDATE ME"
-      convert_newline_notice: "UPDATE ME"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
       test_group_option:
         upload_required: "UPDATE ME <span class='required_field'>*</span>"

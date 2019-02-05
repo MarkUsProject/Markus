@@ -242,12 +242,11 @@ class SubmissionsController < ApplicationController
     begin
       if !test_runs.empty?
         authorize! assignment, to: :run_tests?
-        # test_scripts = assignment.select_test_scripts(current_user)
-        #                          .pluck(:file_name, :timeout).to_h # {file_name1: timeout1, ...}
-        test_specs = assignment.select_test_specs.pluck(:file_name)[0]
-        hooks_script = assignment.select_hooks_script.pluck(:file_name)[0] # nil if not found
-        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_specs,
-                                     hooks_script, test_runs)
+        test_group_ids = assignment.select_test_groups(current_user).pluck(:id)
+        test_specs_name = assignment.get_test_specs_name
+        hooks_script_name = assignment.get_hooks_script_name
+        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_group_ids,
+                                     test_specs_name, hooks_script_name, test_runs)
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')

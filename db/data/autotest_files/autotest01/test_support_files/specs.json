@@ -4,21 +4,21 @@
     "tester_name": "autotest01",
     "test_data": [
       {
-        "id": "1",
+        "id": 1,
         "script_file_path": "autotest01.sh",
         "script_timeout": 10,
         "enable_feedback_file_hook": false,
         "feedback_file": null
       },
       {
-        "id": "2",
+        "id": 2,
         "script_file_path": "autotest02.sh",
         "script_timeout": 10,
         "enable_feedback_file_hook": false,
         "feedback_file": null
       },
       {
-        "id": "3",
+        "id": 3,
         "script_file_path": "autotest_student_run_only.sh",
         "script_timeout": 10,
         "enable_feedback_file_hook": false,

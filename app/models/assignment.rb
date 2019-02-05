@@ -1231,19 +1231,23 @@ class Assignment < ApplicationRecord
       return none # empty chainable ActiveRecord::Relation
     end
 
-    test_groups.where(condition)
+    self.test_groups.where(condition)
   end
 
-  # Selects the hooks script from the test support files.
-  def select_hooks_script
+  # Selects the hooks script from the test files.
+  def get_hooks_script_name
     # TODO: Adjust the hooks mechanism when we create a new user interface
-    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE).limit(1)
+    hooks_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
+                           AutomatedTestsClientHelper::HOOKS_FILE)
+    File.exist?(hooks_path) ? File.basename(hooks_path) : nil
   end
 
-  # Selects the test specs from the test support files.
-  def select_test_specs
+  # Selects the test specs from the test files.
+  def get_test_specs_name
     # TODO: Adjust the specs mechanism when we create a new user interface
-    self.test_support_files.where(file_name: AutomatedTestsClientHelper::SPECS_FILE).limit(1)
+    specs_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
+                           AutomatedTestsClientHelper::SPECS_FILE)
+    File.exist?(specs_path) ? File.basename(specs_path) : nil
   end
 
   # Retrieve current grader data.

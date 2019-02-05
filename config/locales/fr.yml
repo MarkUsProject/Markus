@@ -246,7 +246,6 @@ fr:
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
       need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté."
-      convert_newline_notice: "Les caractères de retour dans le fichier %{file} ont été modifié à \\n"
       new_test_script_file: "Nouvelle script de test"
       new_test_support_file: "Nouveau fichier additionel"
       assignment_test_script_files: "Scripts de test"
