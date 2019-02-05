@@ -81,6 +81,7 @@ en:
       skip_group: "Skip group"
       title: "Assign Scans"
       not_all_submissions_collected: "Not all submissions have been collected."
+      no_cover_page: "This submission does not have a cover page."
 
   flash:
     exam_templates:

@@ -158,7 +158,9 @@ class GroupsController < ApplicationController
       num_valid: num_valid
     }
     next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
-    unless next_file.nil?
+    if next_file.nil?
+      flash_message(:warning, I18n.t('exam_templates.assign_scans.no_cover_page'))
+    else
       @data[:filelink] = download_assignment_groups_path(
         select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
         show_in_browser: true
