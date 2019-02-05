@@ -658,6 +658,7 @@ class Grouping < ApplicationRecord
     subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
       .where(admin_approved: false)
+      .joins(:current_submission_used)
       .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
       .where(sub: { id: nil })
       .order(:id)
