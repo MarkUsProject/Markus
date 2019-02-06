@@ -17,19 +17,29 @@ class CreateGroupsJob < ApplicationJob
     status.update(job_class: self.class)
   end
 
+  def log_creation
+    begin
+      obj = yield
+    rescue ActiveRecord::RecordInvalid => e
+      status.update(error_message: e.message)
+      raise
+    end
+    unless obj.errors.blank?
+      msg =  obj.errors.full_messages.join("\n")
+      status.update(error_message: msg)
+      Rails.logger.error msg
+      raise ActiveRecord::Rollback
+    end
+    obj
+  end
+
   def perform(assignment, data)
     progress.total = data.length
     begin
       Repository.get_class.update_permissions_after(only_on_request: true) do
         ApplicationRecord.transaction do
           data.each do |group_name, repo_name, *members|
-            begin
-              group = Group.find_or_create_by!(group_name: group_name, repo_name: repo_name)
-            rescue ActiveRecord::RecordInvalid => e
-              status.update(error_message: group.errors.full_messages.join("\n"))
-              raise
-            end
-
+            group = log_creation { Group.find_or_create_by(group_name: group_name, repo_name: repo_name) }
             member_hash = StudentMembership.joins(:grouping)
                                            .joins(:user)
                                            .where('groupings.group_id': group.id)
@@ -42,33 +52,27 @@ class CreateGroupsJob < ApplicationJob
               # The set of members does not conflict with other members associated with other
               # groupings for this group
               unless member_hash.include? assignment.id
-                begin
-                  grouping = Grouping.create(group: group, assignment: assignment)
-                rescue ActiveRecord::RecordInvalid => e
-                  status.update(error_message: group.errors.full_messages.join("\n"))
-                  raise
-                end
+                grouping = log_creation { Grouping.find_or_create_by(group: group, assignment: assignment) }
                 user_count = 0
                 User.where(user_name: members).find_each.with_index do |student, i|
                   user_count += 1
-                  member_status = i == 0 ?
+                  member_status = i.zero? ?
                                     StudentMembership::STATUSES[:inviter] :
                                     StudentMembership::STATUSES[:accepted]
-                  begin
-                    StudentMembership.find_or_create_by!(user: student,
-                                                         membership_status: member_status,
-                                                         grouping: grouping)
-                  rescue ActiveRecord::RecordInvalid => e
-                    status.update(error_message: group.errors.full_messages.join("\n"))
-                    raise
+                  log_creation do
+                    StudentMembership.find_or_create_by(user: student,
+                                                        membership_status: member_status,
+                                                        grouping: grouping)
                   end
                 end
                 if user_count != members.length
                   # A member in the members list is not a User in the database
-                  bad_names = (Set.new(members) - Set.new(User.where(user_name: members).pluck(:user_name))).join(', ')
+                  all_users = Set.new User.where(user_name: members).pluck(:user_name)
+                  bad_names = (Set.new(members) - all_users).to_a.join(', ')
                   msg = I18n.t('csv.member_does_not_exist', group_name: group_name, student_user_name: bad_names)
                   status.update(error_message: msg)
-                  raise CSVInvalidLineError, msg
+                  Rails.logger.error msg
+                  raise ActiveRecord::Rollback
                 end
               end
             else
@@ -78,7 +82,8 @@ class CreateGroupsJob < ApplicationJob
                 msg = I18n.t('csv.group_with_different_membership_different_assignment', group_name: group_name)
               end
               status.update(error_message: msg)
-              raise CSVInvalidLineError, msg
+              Rails.logger.error msg
+              raise ActiveRecord::Rollback
             end
             progress.increment
           end
