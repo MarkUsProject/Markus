@@ -107,7 +107,8 @@ class Group < ApplicationRecord
     if Repository.get_class.repository_exists? repo_path
       msg = I18n.t 'csv.repo_collision_warning', repo_name: self.repo_name, group_name: group_name
       errors.add(:base, msg)
-      raise ActiveRecord::RecordInvalid, msg
+      self.errors.add(:repo_name, msg)
+      raise ActiveRecord::RecordInvalid.new self
     end
   end
 end

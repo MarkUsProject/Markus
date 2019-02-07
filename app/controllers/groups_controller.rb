@@ -1,6 +1,7 @@
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
+  include GroupsHelper
   # Administrator
   before_action      :authorize_only_for_admin,
                      except: [:create,
@@ -240,9 +241,13 @@ class GroupsController < ApplicationController
       encoding = params[:encoding]
       @assignment = Assignment.find(params[:assignment_id])
       data = []
-      MarkusCSV.parse(file.read, encoding: encoding) { |row| data << row }
-      if validate_csv_upload_file(@assignment, data)
-        @current_job = CreateGroupsJob.perform_later @assignment, data
+      result = MarkusCSV.parse(file.read, encoding: encoding) { |row| data << row }
+      if result[:invalid_lines].empty?
+        if validate_csv_upload_file(@assignment, data)
+          @current_job = CreateGroupsJob.perform_later @assignment, data
+        end
+      else
+        flash_message(:error, result[:invalid_lines])
       end
     else
       flash_message(:error, I18n.t('upload_errors.missing_file'))

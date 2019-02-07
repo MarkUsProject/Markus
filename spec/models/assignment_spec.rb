@@ -661,64 +661,6 @@ describe Assignment do
     end
   end
 
-  describe '#add_csv_group' do
-    before :each do
-      @assignment = create(:assignment)
-    end
-
-    context 'when the row is empty' do
-      it 'does not add a Group or Grouping' do
-        @assignment.add_csv_group([])
-        expect(Group.all).to eq []
-        expect(Grouping.all).to eq []
-      end
-    end
-
-    context 'when the row is not empty' do
-      before :each do
-        @students = Array.new(2) { create(:student) }
-        user_names = @students.map { |student| student.user_name }
-        @row = ['group_name', 'repo_name'] + user_names
-      end
-
-      context 'and the group does not exist' do
-        it 'adds a Group and an associated Grouping' do
-          @row[1] = 'repo_name_1'
-          @assignment.add_csv_group(@row)
-          group = Group.where(group_name: @row[0])
-          grouping = group ? group.first.groupings : nil
-
-          expect(group.size).to eq 1
-          expect(grouping.size).to eq 1
-          expect(group.first.repo_name).to eq(@row[1])
-        end
-
-        it 'adds the StudentMemberships for the students' do
-          @assignment.add_csv_group(@row)
-          memberships = StudentMembership.where(user_id: @students)
-          expect(memberships.size).to eq 2
-        end
-      end
-
-      context 'and the group already exists' do
-        before :each do
-          @existing_group = create(:group, group_name: @row[0])
-        end
-
-        it 'does not add a new Group' do
-          expect { @assignment.add_csv_group(@row) }.to raise_error(CSVInvalidLineError)
-          expect(Group.all.size).to eq 1
-        end
-
-        it 'adds a Grouping to the existing Group' do
-          @row[1] = @existing_group.repo_name
-          @assignment.add_csv_group(@row)
-          expect(Grouping.first.group).to eq @existing_group
-        end
-      end
-    end
-  end
-
   describe '#display_for_note' do
     it 'display for note without seeing an exception' do
       @assignment = create(:assignment)

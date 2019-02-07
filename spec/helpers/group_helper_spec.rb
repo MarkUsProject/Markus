@@ -41,16 +41,9 @@ describe GroupsHelper do
       include_examples 'validate_csv', true, false
     end
 
-    context 'with too many members' do
+    context 'with an invalid cell' do
       before :each do
-        @data = [['group1', 'group1', *students.map(&:user_name)]]
-      end
-      include_examples 'validate_csv', false, false
-    end
-
-    context 'with too few members' do
-      before :each do
-        @data = [['group1', 'group1']]
+        @data = [['group1', 'group1', '']]
       end
       include_examples 'validate_csv', false, false
     end

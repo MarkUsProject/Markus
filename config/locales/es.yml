@@ -137,9 +137,6 @@ es:
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
                                era: '%{group_name}'."
-      group_with_different_repo:                            "Error: El grupo %{group_name} no puede ser creado debido a
-                                                             que un grupo con el mismo nombre y un repositorio diferente
-                                                             ya existe"
       group_with_different_membership_current_assignment:   "Error: El grupo %{group_name} no puede ser creado debido a
                                                              que un grupo con el mismo nombre pero con diferentes
                                                              membresías ya existe para el proyecto"
@@ -147,12 +144,17 @@ es:
                                                              que un grupo con el mismo nombre pero con diferentes
                                                              membresías ya existe para un proyecto diferente"
       memberships_not_unique:                               "El estudiante ya pertenece a un grupo diferente para el proyecto"
-      repository_already_exists:                            "Error: El grupo %{group_name} no puede ser creado debido a
-                                                             que un repositorio en la siguiente ruta
-                                                             '%{repo_path}' ya existe"
       member_does_not_exist:                                "Error: El grupo %{group_name} no puede ser creado debido
                                                              a que ningún estudiante tiene como nombre de usuario
                                                              '%{student_user_name}'"
+      bad_cell: "UPDATE ME: %{bad_cells}"
+      duplicate_group_name: "UPDATE ME: %{group_names}"
+      duplicate_repo_name: "UPDATE ME: %{repo_names}"
+      duplicate_membership_name: "UPDATE ME: %{member_names}"
+      bad_repo_warning: "UPDATE ME: %{group_names}"
+      bad_membership_warning: "UPDATE ME: %{group_names}"
+      bad_students: "UPDATE ME: %{student_names}"
+      memberships_exist: "UPDATE ME: %{student_names}"
 
     browse_submissions:
       review_state:                         "Estado de la Revisión"

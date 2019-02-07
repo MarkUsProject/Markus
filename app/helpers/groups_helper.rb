@@ -51,11 +51,10 @@ module GroupsHelper
   def validate_csv_upload_file(assignment, data, suppress_flash: false)
     errors = Hash.new { |h, k| h[k] = [] }
     group_names, repo_names, students = Set.new, Set.new, Set.new
-    group_max, group_min, assignment_id = assignment.attributes.values_at('group_max', 'group_min', 'id')
+    assignment_id = assignment.id
 
     data.each do |group_name, repo_name, *members|
-      errors[:too_many] << group_name if members.length > group_max
-      errors[:too_few] << group_name if members.length < group_min
+      errors[:bad_cell].concat [group_name, repo_name, *members].select(&:blank?)
       errors[:dup_groups] << group_name if group_names.member?(group_name)
       errors[:dup_repos] << repo_name if repo_names.member?(repo_name)
       errors[:dup_members].concat students.intersection(members).to_a
@@ -68,23 +67,17 @@ module GroupsHelper
     errors[:inconsistent_group_memberships] += find_bad_group_memberships(data).map(&:first)
     errors[:bad_students] = find_bad_students(data)
     errors[:membership_exists] += find_bad_grouping_memberships_query(data, assignment_id).pluck('users.user_name')
-    flash_csv_upload_file_validation_errors(errors, group_max, group_min) unless suppress_flash
+    flash_csv_upload_file_validation_errors(errors) unless suppress_flash
     errors.values.flatten.empty?
   end
 
   private
 
   # Display flash message based errors contained in the +errors+ hash
-  def flash_csv_upload_file_validation_errors(errors, group_max, group_min)
-    unless errors[:too_many].empty?
-      flash_now :error, I18n.t('csv.too_many_members',
-                               max_members: group_max,
-                               group_names: errors[:too_many].join(', '))
-    end
-    unless errors[:too_few].empty?
-      flash_now :error, I18n.t('csv.too_few_members',
-                               min_members: group_min,
-                               group_names: errors[:too_few].join(', '))
+  def flash_csv_upload_file_validation_errors(errors)
+    unless errors[:bad_cell].empty?
+      flash_now :error, I18n.t('csv.bad_cell',
+                               bad_cells: errors[:bad_cell].map{ |c| "'#{c}'" }.join(', '))
     end
     unless errors[:dup_groups].empty?
       flash_now :error, I18n.t('csv.duplicate_group_name',
