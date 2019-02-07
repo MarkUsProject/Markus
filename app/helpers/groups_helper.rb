@@ -113,6 +113,7 @@ module GroupsHelper
   # same group_name but with a different repo_name
   def find_bad_repo_query(data, _query: nil)
     return _query if data.empty?
+
     data = data.dup if _query.nil?
     group_name, repo_name = data.shift
     query_update = Group.where(group_name: group_name).where.not(repo_name: repo_name)
@@ -124,14 +125,15 @@ module GroupsHelper
   # a member that is already a member of a grouping for that assignment
   def find_bad_grouping_memberships_query(data, assignment_id, _query: nil)
     return _query if data.empty?
+
     data = data.dup if _query.nil?
     group_name, _, *memberships = data.shift
     valid_statuses = [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]
     query_update = Group.joins(groupings: [student_memberships: :user])
-                     .where('groupings.assignment_id': assignment_id)
-                     .where('memberships.membership_status': valid_statuses)
-                     .where('users.user_name': memberships)
-                     .where.not(group_name: group_name)
+                        .where('groupings.assignment_id': assignment_id)
+                        .where('memberships.membership_status': valid_statuses)
+                        .where('users.user_name': memberships)
+                        .where.not(group_name: group_name)
     query_update = _query.or(query_update) unless _query.nil?
     find_bad_grouping_memberships_query(data, assignment_id, _query: query_update)
   end
@@ -141,11 +143,11 @@ module GroupsHelper
   def find_bad_group_memberships(data)
     valid_statuses = [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]
     group_memberships = Group.joins(groupings: [student_memberships: :user])
-                          .where('memberships.membership_status': valid_statuses)
-                          .where(group_name: data.map(&:first))
-                          .pluck(:group_name, 'users.user_name')
-                          .group_by(&:first)
-                          .transform_values { |v| Set.new(v.map(&:last)) }
+                             .where('memberships.membership_status': valid_statuses)
+                             .where(group_name: data.map(&:first))
+                             .pluck(:group_name, 'users.user_name')
+                             .group_by(&:first)
+                             .transform_values { |v| Set.new(v.map(&:last)) }
     data.select do |group_name, _repo_name, *memberships|
       if (existant_memberships = group_memberships[group_name])
         existant_memberships != Set.new(memberships)
@@ -157,6 +159,6 @@ module GroupsHelper
   # student in question does not exist
   def find_bad_students(data)
     students = Set.new(Student.where(hidden: false).all.pluck(:user_name))
-    data.map { |_, _, *memberships| memberships }.flatten.select { |student| !students.include?(student) }
+    data.map { |_, _, *memberships| memberships }.flatten.reject { |student| students.include?(student) }
   end
 end

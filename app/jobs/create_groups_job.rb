@@ -1,7 +1,8 @@
+# create groups job
 class CreateGroupsJob < ApplicationJob
   queue_as MarkusConfigurator.markus_job_create_groups_queue_name
 
-  def self.on_complete_js(status)
+  def self.on_complete_js(_status)
     'window.location.reload.bind(window.location)'
   end
 
@@ -10,13 +11,10 @@ class CreateGroupsJob < ApplicationJob
   end
 
   def self.show_error_message(status)
-    unless status[:error_message].blank?
-      return status[:error_message]
-    end
-    ''
+    return status[:error_message] unless status[:error_message].blank?
   end
 
-  before_enqueue do |job|
+  before_enqueue do |_job|
     status.update(job_class: self.class)
   end
 
@@ -28,7 +26,7 @@ class CreateGroupsJob < ApplicationJob
       raise
     end
     unless obj.errors.blank?
-      msg =  obj.errors.full_messages.join("\n")
+      msg = obj.errors.full_messages.join("\n")
       status.update(error_message: msg)
       Rails.logger.error msg
       raise ActiveRecord::Rollback
