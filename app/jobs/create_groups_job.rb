@@ -6,11 +6,14 @@ class CreateGroupsJob < ApplicationJob
   end
 
   def self.show_status(status)
-    if status[:status] == :failed
-      status[:error_message]
-    else
-      I18n.t('poll_job.create_groups_job', progress: status[:progress], total: status[:total])
+    I18n.t('poll_job.create_groups_job', progress: status[:progress], total: status[:total])
+  end
+
+  def self.show_error_message(status)
+    unless status[:error_message].blank?
+      return status[:error_message]
     end
+    ''
   end
 
   before_enqueue do |job|
@@ -90,6 +93,7 @@ class CreateGroupsJob < ApplicationJob
         end
       end
     rescue => e
+      status.update(error_message: e.message)
       Rails.logger.error e.message
       raise
     end
