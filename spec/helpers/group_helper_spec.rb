@@ -8,7 +8,7 @@ describe GroupsHelper do
   context '#validate_csv_upload_file' do
     shared_examples 'validate_csv' do |valid, suppress_flash|
       it "should#{valid ? '' : ' not'} be valid" do
-        expect(validate_csv_upload_file assignment, @data).to eq valid
+        expect(validate_csv_upload_file(assignment, @data)).to eq valid
       end
 
       unless suppress_flash
@@ -131,11 +131,9 @@ describe GroupsHelper do
 
     context 'with a member that does not exist' do
       before :each do
-        @data = [%w'group1 group1 ghost_student']
+        @data = [%w[group1 group1 ghost_student]]
       end
       include_examples 'validate_csv', false, false
     end
   end
 end
-
-

@@ -59,9 +59,11 @@ class CreateGroupsJob < ApplicationJob
                 user_count = 0
                 User.where(user_name: members).find_each.with_index do |student, i|
                   user_count += 1
-                  member_status = i.zero? ?
-                                    StudentMembership::STATUSES[:inviter] :
-                                    StudentMembership::STATUSES[:accepted]
+                  if i.zero?
+                    member_status = StudentMembership::STATUSES[:inviter]
+                  else
+                    member_status = StudentMembership::STATUSES[:accepted]
+                  end
                   log_creation do
                     StudentMembership.find_or_create_by(user: student,
                                                         membership_status: member_status,
@@ -92,7 +94,7 @@ class CreateGroupsJob < ApplicationJob
           end
         end
       end
-    rescue => e
+    rescue StandardError => e
       status.update(error_message: e.message)
       Rails.logger.error e.message
       raise

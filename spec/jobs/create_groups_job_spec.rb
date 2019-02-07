@@ -8,7 +8,6 @@ describe CreateGroupsJob do
   end
 
   shared_examples 'create objects' do |groups_diff, groupings_diff, membership_diff|
-
     it 'should attempt to update permissions file' do
       expect(Repository.get_class).to receive(:update_permissions_after)
       CreateGroupsJob.perform_now(assignment, @data)
@@ -36,7 +35,7 @@ describe CreateGroupsJob do
 
   context 'when creating one group from scratch' do
     before :each do
-      @data = [['group1','group_0001', student1.user_name, student2.user_name]]
+      @data = [['group1', 'group_0001', student1.user_name, student2.user_name]]
     end
 
     include_examples 'create objects', 1, 1, 2
@@ -44,7 +43,7 @@ describe CreateGroupsJob do
 
   context 'when creating multiple group from scratch' do
     before :each do
-      @data = [['group1','group_0001', student1.user_name],
+      @data = [['group1', 'group_0001', student1.user_name],
                ['group2', 'group_0002', student2.user_name]]
     end
 
@@ -54,7 +53,7 @@ describe CreateGroupsJob do
   context 'when creating one good and one bad group' do
     context 'when the bad one is first' do
       before :each do
-        @data = [['group1','group_0001', student1.user_name + 'bad_padding'],
+        @data = [['group1', 'group_0001', student1.user_name + 'bad_padding'],
                  ['group2', 'group_0002', student2.user_name]]
       end
 
@@ -62,7 +61,7 @@ describe CreateGroupsJob do
     end
     context 'when the bad one is not first' do
       before :each do
-        @data = [['group1','group_0001', student1.user_name],
+        @data = [['group1', 'group_0001', student1.user_name],
                  ['group2', 'group_0002', student2.user_name + 'bad_padding']]
       end
 
@@ -71,14 +70,13 @@ describe CreateGroupsJob do
   end
 
   context 'where the group already exists' do
-
     let(:group) { create :group }
 
     context 'and the grouping already exists for that assignment' do
       it 'should not create a new grouping' do
         create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
         data = [[group.group_name, group.repo_name, student1.user_name]]
-        expect { CreateGroupsJob.perform_now(assignment, data) }.not_to change { Grouping.count }
+        expect { CreateGroupsJob.perform_now(assignment, data) }.not_to(change { Grouping.count })
       end
     end
 
@@ -95,7 +93,7 @@ describe CreateGroupsJob do
         it 'should not create a new grouping' do
           create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
           data = [[group.group_name, group.repo_name, student1.user_name, student2.user_name]]
-          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to change { Grouping.count }
+          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
         end
       end
 
@@ -103,7 +101,7 @@ describe CreateGroupsJob do
         it 'should not create a new grouping' do
           create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
           data = [[group.group_name, create(:group).repo_name, student1.user_name]]
-          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to change { Grouping.count }
+          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
         end
       end
     end

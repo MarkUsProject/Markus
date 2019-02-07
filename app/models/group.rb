@@ -104,11 +104,11 @@ class Group < ApplicationRecord
   # Checks if the repository that is about to be created already exists. Used in a
   # before_create callback to check if there will be a repo collision
   def repo_cannot_exist_already
-    if Repository.get_class.repository_exists? repo_path
-      msg = I18n.t 'csv.repo_collision_warning', repo_name: self.repo_name, group_name: group_name
-      errors.add(:base, msg)
-      self.errors.add(:repo_name, msg)
-      raise ActiveRecord::RecordInvalid.new self
-    end
+    return true unless Repository.get_class.repository_exists? repo_path
+
+    msg = I18n.t 'csv.repo_collision_warning', repo_name: self.repo_name, group_name: group_name
+    errors.add(:base, msg)
+    self.errors.add(:repo_name, msg)
+    raise StandardError, msg
   end
 end
