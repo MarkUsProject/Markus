@@ -3,6 +3,7 @@ module GroupsHelper
   # in the table on the front-end. Returns
   # an array of hashes.
   def get_students_table_info
+    # TODO: review and remove if no longer in use
     students = Student.all
     student_memberships = StudentMembership
                           .includes(:user)
@@ -23,6 +24,7 @@ module GroupsHelper
   # on the front-end. Attributes include URLs for actions
   # such as validation, renaming, showing notes, etc.
   def get_groupings_table_info(target_assignment=nil)
+    # TODO: review and remove if no longer in use
     if target_assignment.nil?
       target_assignment = @assignment
     end
@@ -49,18 +51,18 @@ module GroupsHelper
   def validate_csv_upload_file(assignment, data, suppress_flash: false)
     errors = Hash.new { |h, k| h[k] = [] }
     group_names, repo_names, students = Set.new, Set.new, Set.new
-    group_max, group_min, assignment_id = assignment.attributes.slice('group_max', 'group_min', 'id')
+    group_max, group_min, assignment_id = assignment.attributes.values_at('group_max', 'group_min', 'id')
 
     data.each do |group_name, repo_name, *members|
       errors[:too_many] << group_name if members.length > group_max
       errors[:too_few] << group_name if members.length < group_min
       errors[:dup_groups] << group_name if group_names.member?(group_name)
       errors[:dup_repos] << repo_name if repo_names.member?(repo_name)
-      errors[:dup_members].concat students.intersection(members)
+      errors[:dup_members].concat students.intersection(members).to_a
       errors[:dup_members].concat members.group_by(&:itself).values.select { |v| v.size > 1 }.map(&:first)
       group_names << group_name
       repo_names << repo_name
-      students.concat members
+      students.merge members
     end
     errors[:bad_repo] += find_bad_repo_query(data).pluck(:group_name)
     errors[:inconsistent_group_memberships] += find_bad_group_memberships(data).map(&:first)
@@ -138,7 +140,7 @@ module GroupsHelper
                      .where('users.user_name': memberships)
                      .where.not(group_name: group_name)
     query_update = _query.or(query_update) unless _query.nil?
-    find_bad_grouping_memberships(data, assignment_id, _query: query_update)
+    find_bad_grouping_memberships_query(data, assignment_id, _query: query_update)
   end
 
   # Return a list of rows from +data+ where the group_name is a group that exists but the
@@ -150,7 +152,7 @@ module GroupsHelper
                           .where(group_name: data.map(&:first))
                           .pluck(:group_name, 'users.user_name')
                           .group_by(&:first)
-                          .transform_values { |v| Set.new(v.last) }
+                          .transform_values { |v| Set.new(v.map(&:last)) }
     data.select do |group_name, _repo_name, *memberships|
       if (existant_memberships = group_memberships[group_name])
         existant_memberships != Set.new(memberships)
