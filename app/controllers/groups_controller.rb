@@ -260,7 +260,7 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
       # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
-      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name]*3 }
+      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name] * 3 }
       @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end

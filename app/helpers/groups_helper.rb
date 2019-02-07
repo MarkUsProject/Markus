@@ -77,7 +77,7 @@ module GroupsHelper
   def flash_csv_upload_file_validation_errors(errors)
     unless errors[:bad_cell].empty?
       flash_now :error, I18n.t('csv.bad_cell',
-                               bad_cells: errors[:bad_cell].map{ |c| "'#{c}'" }.join(', '))
+                               bad_cells: errors[:bad_cell].map { |c| "'#{c}'" }.join(', '))
     end
     unless errors[:dup_groups].empty?
       flash_now :error, I18n.t('csv.duplicate_group_name',
@@ -111,22 +111,22 @@ module GroupsHelper
 
   # Return a query that can be used to select all groups that appear in +data+ with the
   # same group_name but with a different repo_name
-  def find_bad_repo_query(data, _query: nil)
-    return _query if data.empty?
+  def find_bad_repo_query(data, query: nil)
+    return query if data.empty?
 
-    data = data.dup if _query.nil?
+    data = data.dup if query.nil?
     group_name, repo_name = data.shift
     query_update = Group.where(group_name: group_name).where.not(repo_name: repo_name)
-    query_update = _query.or(query_update) unless _query.nil?
-    find_bad_repo_query(data, _query: query_update)
+    query_update = query.or(query_update) unless query.nil?
+    find_bad_repo_query(data, query: query_update)
   end
 
   # Return a query that can be used to select all groups that appear in +data+ that have
   # a member that is already a member of a grouping for that assignment
-  def find_bad_grouping_memberships_query(data, assignment_id, _query: nil)
-    return _query if data.empty?
+  def find_bad_grouping_memberships_query(data, assignment_id, query: nil)
+    return query if data.empty?
 
-    data = data.dup if _query.nil?
+    data = data.dup if query.nil?
     group_name, _, *memberships = data.shift
     valid_statuses = [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]
     query_update = Group.joins(groupings: [student_memberships: :user])
@@ -134,8 +134,8 @@ module GroupsHelper
                         .where('memberships.membership_status': valid_statuses)
                         .where('users.user_name': memberships)
                         .where.not(group_name: group_name)
-    query_update = _query.or(query_update) unless _query.nil?
-    find_bad_grouping_memberships_query(data, assignment_id, _query: query_update)
+    query_update = query.or(query_update) unless query.nil?
+    find_bad_grouping_memberships_query(data, assignment_id, query: query_update)
   end
 
   # Return a list of rows from +data+ where the group_name is a group that exists but the
