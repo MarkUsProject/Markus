@@ -145,7 +145,7 @@ class AutotestRunJob < ApplicationJob
       server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
       rsync_command = ['rsync', '-a',
-                       "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}" ]
+                       "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
       Open3.capture3(*rsync_command)
       run_command = "#{server_command} run -f '#{server_path}/#{File.basename(params_file.path)}'"
       output = ssh.exec!(run_command)

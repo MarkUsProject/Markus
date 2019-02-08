@@ -33,7 +33,7 @@ class AutotestScriptsJob < ApplicationJob
           server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
           # copy all files using rsync
           rsync_command = ['rsync', '-a',
-                           "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}" ]
+                           "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
           Open3.capture3(*rsync_command)
           server_params[:files_path] = server_path
           scripts_command = "#{server_command} scripts -j '#{JSON.generate(server_params)}'"
