@@ -654,16 +654,16 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def self.get_assign_scans_grouping(assignment, grouping_id=nil)
+  def self.get_assign_scans_grouping(assignment, grouping_id = nil)
     subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
-      .where(admin_approved: false)
-      .where('groupings.id > ?', grouping_id || 0)
-      .joins(:current_submission_used)
-      .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
-      .where(sub: { id: nil })
-      .order(:id)
-      .first
+              .where(admin_approved: false)
+              .where('groupings.id > ?', grouping_id || 0)
+              .joins(:current_submission_used)
+              .joins("LEFT JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id")
+              .where(sub: { id: nil })
+              .order(:id)
+              .first
   end
 
   # Helper for populate_submissions_table.

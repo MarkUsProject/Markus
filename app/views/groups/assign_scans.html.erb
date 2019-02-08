@@ -2,10 +2,7 @@
     <%= stylesheet_link_tag 'grader',
                             'pdfjs/viewer',
                             'jquery-ui' %>
-    <%= javascript_include_tag 'Results/file_selector',
-                               'panes',
-                               'pdfjs',
-                               'Results/context_menu' %>
+    <%= javascript_include_tag 'pdfjs' %>
 
     <%= javascript_tag do -%>
         PDFJS.workerSrc = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
@@ -86,7 +83,7 @@
       <span class="progress_span">
       </span>
     </div>
-    <%= link_to t('groups.manage_groups'), :assignment_groups %>|
+    <%= link_to t('groups.manage_groups'), :assignment_groups %>
 <% end %>
 <div id='panes-content'>
   <div id='panes'>
