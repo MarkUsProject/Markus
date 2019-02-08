@@ -130,8 +130,8 @@ class GroupsController < ApplicationController
 
   def assign_scans
     @assignment = Assignment.find(params[:assignment_id])
-    if params.has_key?(:grouping)
-      next_grouping = Grouping.find(params[:grouping])
+    if params.has_key?(:grouping_id)
+      next_grouping = Grouping.find(params[:grouping_id])
     else
       next_grouping = Grouping.get_assign_scans_grouping(@assignment)
     end
@@ -200,7 +200,7 @@ class GroupsController < ApplicationController
     if params[:a_id].present?
       @assignment = Assignment.find(params[:a_id])
     end
-    next_grouping = Grouping.get_assign_scans_grouping(@assignment)
+    next_grouping = Grouping.get_assign_scans_grouping(@assignment, params[:g_id])
     names = next_grouping.non_rejected_student_memberships.map do |u|
       u.user.first_name + ' ' + u.user.last_name
     end
