@@ -11,7 +11,8 @@
                   Criterion.human_attribute_name(:max_mark) %><br>
     <%= number_field_tag(:max_mark_prompt,
                          RubricCriterion::DEFAULT_MAX_MARK,
-                         size: 4) %><br>
+                         size: 4,
+                         step: 0.1) %><br>
     <%= radio_button_tag(:criterion_type,
                          'RubricCriterion',
                          checked = true) %>
