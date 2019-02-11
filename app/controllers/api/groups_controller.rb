@@ -80,6 +80,41 @@ module Api
       end
     end
 
+    def add_members
+      assignment = Assignment.find(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id' }, status: 404
+        return
+      end
+      grouping = group.grouping_for_assignment(assignment.id)
+      if grouping.nil?
+        # The group doesn't have a grouping associated with that assignment
+        render 'shared/http_status', locals: {code: '422', message:
+          'The group is not involved with that assignment'}, status: 422
+        return
+      end
+
+      students = Student.where(user_name: params[:members])
+      students.each do |student|
+        set_membership_status = grouping.student_memberships.empty? ?
+          StudentMembership::STATUSES[:inviter] :
+          StudentMembership::STATUSES[:accepted]
+        grouping.invite(student.user_name, set_membership_status, true)
+        grouping.reload
+      end
+
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
     # Update the group's marks for the given assignment.
     def update_marks
       assignment = Assignment.find(params[:assignment_id])
