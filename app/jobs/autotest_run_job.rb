@@ -141,12 +141,12 @@ class AutotestRunJob < ApplicationJob
       # tests executed locally or remotely with authentication
       mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
       server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
-      # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
+      # copy all files using rsync
       server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
-      scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
-                     "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
-      Open3.capture3(*scp_command)
+      rsync_command = ['rsync', '-a',
+                       "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
+      Open3.capture3(*rsync_command)
       run_command = "#{server_command} run -f '#{server_path}/#{File.basename(params_file.path)}'"
       output = ssh.exec!(run_command)
       if output.exitstatus != 0
