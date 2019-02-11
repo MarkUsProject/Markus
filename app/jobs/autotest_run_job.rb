@@ -196,6 +196,10 @@ class AutotestRunJob < ApplicationJob
         enqueue_test_run(test_run, host_with_port, test_group_ids, test_specs_name, hooks_script_name, ssh)
       rescue StandardError => e
         unless test_run.nil?
+          #TODO handle test run errors this way
+          # test_run.problems = I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message)
+          # test_run.save
+          # test_run.submission&.set_autotest_marks
           error = { name: I18n.t('automated_tests.results.all_tests'),
                     message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
           test_run.create_error_for_all_test_groups(test_group_ids, error)

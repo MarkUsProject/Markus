@@ -93,7 +93,7 @@ export class TestRunTable extends React.Component {
             }
           ]}
           SubComponent={ row => (
-            <TestScriptResultTable
+            <TestGroupResultTable
               data={row.original['test_results']}
             />
           )}
@@ -112,7 +112,7 @@ export class TestRunTable extends React.Component {
 }
 
 
-class TestScriptResultTable extends React.Component {
+class TestGroupResultTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
