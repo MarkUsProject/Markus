@@ -20,8 +20,8 @@ while os.path.isfile(new_file):
 open(new_file, 'w').close()
 
 if os.path.isfile(new_file):
-  print(json.dumps({'name': 'write_to_parent_dir_test', 'input': 'NA', 'expected': 'NA', 'actual': 'new file written to parent dir', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+  print(json.dumps({'name': 'write_to_parent_dir_test', 'output': 'new file written to parent dir', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  print(json.dumps({'name': 'write_to_parent_dir_test', 'input': 'NA', 'expected': 'NA', 'actual': 'new file not written to parent dir', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'write_to_parent_dir_test', 'output': 'new file not written to parent dir', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 
 os.remove(new_file)

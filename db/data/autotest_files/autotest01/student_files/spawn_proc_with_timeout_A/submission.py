@@ -25,8 +25,8 @@ proc = subprocess.Popen(cmd, shell=True)
 time.sleep(1) # gives the process a second so .poll() can catch an early failure
 
 if proc.poll() is None:
-  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'child process successfully spawned', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'output': 'child process successfully spawned', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'failed to spawn child process', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_A', 'output': 'failed to spawn child process', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
 
 time.sleep(15)

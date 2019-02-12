@@ -12,7 +12,8 @@ class TestRun < ApplicationRecord
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
-    cancelled: 'cancelled'
+    cancelled: 'cancelled',
+    problems: 'problems'
   }.freeze
 
   def status
@@ -27,10 +28,12 @@ class TestRun < ApplicationRecord
     status_hash = Hash.new
     TestRun.left_outer_joins(test_group_results: :test_results)
            .where(id: test_run_ids)
-           .pluck(:id, 'test_group_results.id', :time_to_service)
-           .map do |id, test_group_results_id, time_to_service|
+           .pluck(:id, :problems, 'test_group_results.id', :time_to_service)
+           .map do |id, problems, test_group_results_id, time_to_service|
       if test_group_results_id
         status_hash[id] = STATUSES[:complete]
+      elsif !problems.nil?
+        status_hash[id] = STATUSES[:problems]
       elsif time_to_service&.negative?
         status_hash[id] = STATUSES[:cancelled]
       else
@@ -70,7 +73,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
     # create test script result
-    group_id = json_test_group['test_group_id']
+    test_group_id = json_test_group['test_group_id']
     time = json_test_group.fetch('time', 0)
     stderr = json_test_group['stderr']
     malformed = json_test_group['malformed']
@@ -89,7 +92,7 @@ class TestRun < ApplicationRecord
         extra += I18n.t('automated_tests.results.extra_hooks_stderr', extra: hooks_stderr)
       end
     end
-    new_test_group_result = create_test_group_result(group_id, time: time, extra_info: extra)
+    new_test_group_result = create_test_group_result(test_group_id, time: time, extra_info: extra)
     timeout = json_test_group['timeout']
     json_tests = json_test_group['tests']
     if json_tests.blank?
@@ -168,9 +171,9 @@ class TestRun < ApplicationRecord
     # process results
     new_test_group_results = {}
     json_root.fetch('test_groups', []).each do |json_test_group|
-      group_id = json_test_group['test_group_id']
+      test_group_id = json_test_group['test_group_id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
-      new_test_group_results[group_id] = new_test_group_result
+      new_test_group_results[test_group_id] = new_test_group_result
     end
     # handle missing test groups (could be added while running)
     test_groups.each do |test_group|

@@ -13,4 +13,4 @@ time.sleep(15)
 
 # should be killed before reaching the following:
 
-print(json.dumps({'name': 'timeout_test', 'input': 'NA', 'expected': 'NA', 'actual': 'script should have timed out but did not', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+print(json.dumps({'name': 'timeout_test', 'output': 'script should have timed out but did not', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

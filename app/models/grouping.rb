@@ -794,10 +794,10 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
-    fields = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_groups.name',
+    fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
               'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
-              'test_results.name', 'test_results.status', 'test_results.marks_earned',
-              'test_results.marks_total', 'test_results.output', 'test_results.time']
+              'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
+              'test_results.output', 'test_results.time']
     assoc.pluck_to_hash(*fields)
   end
 

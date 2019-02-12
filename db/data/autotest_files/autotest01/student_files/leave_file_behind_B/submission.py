@@ -13,6 +13,6 @@ import json
 filename = 'abandoned_file.txt'
 
 if os.path.isfile(filename):
-  print(json.dumps({'name': 'leave_file_behind_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'file still there', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+  print(json.dumps({'name': 'leave_file_behind_test_B', 'output': 'file still there', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  print(json.dumps({'name': 'leave_file_behind_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'file removed successfully', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'leave_file_behind_test_B', 'output': 'file removed successfully', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

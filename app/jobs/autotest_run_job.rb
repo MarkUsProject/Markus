@@ -197,12 +197,9 @@ class AutotestRunJob < ApplicationJob
       rescue StandardError => e
         unless test_run.nil?
           #TODO handle test run errors this way
-          # test_run.problems = I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message)
-          # test_run.save
-          # test_run.submission&.set_autotest_marks
-          error = { name: I18n.t('automated_tests.results.all_tests'),
-                    message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-          test_run.create_error_for_all_test_groups(test_group_ids, error)
+          #TODO display problems in the table
+          test_run.problems = I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message)
+          test_run.save
         end
       end
     end

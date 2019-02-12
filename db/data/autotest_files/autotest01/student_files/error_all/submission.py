@@ -9,6 +9,6 @@ It represents the test case where:
   the first test result
 """
 import json
-print(json.dumps({'name': 'error_all_test1', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
-print(json.dumps({'name': 'error_all_test2', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 0, 'marks_total': 0, 'status': 'error_all'}))
-print(json.dumps({'name': 'error_all_test3', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+print(json.dumps({'name': 'error_all_test1', 'output': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+print(json.dumps({'name': 'error_all_test2', 'output': 'NA', 'marks_earned': 0, 'marks_total': 0, 'status': 'error_all'}))
+print(json.dumps({'name': 'error_all_test3', 'output': 'NA', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

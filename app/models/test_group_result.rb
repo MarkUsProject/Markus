@@ -20,7 +20,7 @@ class TestGroupResult < ApplicationRecord
   def create_test_result_from_json(json_test)
     # get basic attributes
     test_name = json_test.fetch('name', I18n.t('automated_tests.results.unknown_test'))
-    output = json_test.fetch('actual', '')
+    output = json_test.fetch('output', '')
     time = json_test['time']
     status = json_test['status']
     # User code sometimes produces null bytes that are reported back to MarkUs

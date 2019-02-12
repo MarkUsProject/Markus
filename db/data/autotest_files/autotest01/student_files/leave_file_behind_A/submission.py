@@ -16,7 +16,7 @@ filename = 'abandoned_file.txt'
 open(filename, 'w').close()
 
 if os.path.isfile(filename):
-  print(json.dumps({'name': 'leave_file_behind_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'file successfully created', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'leave_file_behind_test_A', 'output': 'file successfully created', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  print(json.dumps({'name': 'leave_file_behind_test_A', 'input': 'NA', 'expected': 'NA', 'actual': 'failed to create file', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+  print(json.dumps({'name': 'leave_file_behind_test_A', 'output': 'failed to create file', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 

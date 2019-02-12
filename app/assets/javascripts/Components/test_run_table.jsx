@@ -89,7 +89,7 @@ export class TestRunTable extends React.Component {
             },
             {
               id: 'status',
-              accessor: row => I18n.t('assignment.test_runs_statuses.' + row['test_runs.status'])
+              accessor: row => I18n.t(`assignment.test_runs_statuses.${row['test_runs.status']}`)
             }
           ]}
           SubComponent={ row => (
@@ -174,7 +174,7 @@ class TestGroupResultTable extends React.Component {
   ];
 
   render() {
-    const extraInfo = this.props.data[0]['test_script_results.extra_info'] || '';
+    let extraInfo = this.props.data[0]['test_group_results.extra_info'];
     let extraInfoDisplay;
     if (extraInfo) {
       extraInfoDisplay = (
