@@ -24,15 +24,17 @@ function withSelection(WrappedComponent) {
 
     // From https://react-table.js.org/#/story/select-table-hoc.
     toggleSelection(key, shift, row) {
+      // Input key is of the form `select-${id_}`.
+      key = parseInt(key.slice(key.indexOf('-') + 1), 10);
+      if (isNaN(key)) {
+        return;
+      }
       let selection = [
         ...this.state.selection
       ];
       const keyIndex = selection.indexOf(key);
       if (keyIndex >= 0) {
-        selection = [
-          ...selection.slice(0, keyIndex),
-          ...selection.slice(keyIndex + 1)
-        ]
+        selection.splice(keyIndex, 1);
       } else {
         selection.push(key);
       }
