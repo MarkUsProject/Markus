@@ -53,7 +53,7 @@ class TestGroupResult < ApplicationRecord
       else
         marks_total = marks_total.to_f
       end
-      if status.nil? || !status.in?(%w(pass partial fail error))
+      if status.nil? || !status.in?(%w[pass partial fail error])
         output = I18n.t('automated_tests.results.bad_status', status: status)
         status = 'error'
         marks_earned = 0.0
@@ -69,5 +69,4 @@ class TestGroupResult < ApplicationRecord
 
     [marks_earned, marks_total]
   end
-
 end

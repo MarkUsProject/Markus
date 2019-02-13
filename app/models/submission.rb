@@ -119,7 +119,7 @@ class Submission < ApplicationRecord
     end
     result.marks.each do |mark|
       test_groups = mark.markable.test_groups
-      if test_groups.size == 0 # there's at least one manually-assigned mark
+      if test_groups.empty? # there's at least one manually-assigned mark
         complete_marks = false
         next
       end

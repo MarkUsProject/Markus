@@ -37,7 +37,7 @@ describe TestGroup do
 
   # update
   context 'An invalid test group' do
-    before(:each)  do
+    before(:each) do
       @asst = create(:assignment,
                      section_due_dates_type: false,
                      due_date: 2.days.from_now)

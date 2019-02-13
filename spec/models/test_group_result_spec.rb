@@ -1,5 +1,4 @@
 describe TestGroupResult do
-
   it { is_expected.to have_many(:test_results) }
   it { is_expected.to belong_to(:test_group) }
   it { is_expected.to belong_to(:test_run) }
@@ -39,7 +38,6 @@ describe TestGroupResult do
     end
 
     context 'A valid test group' do
-
       it 'can be saved' do
         expect(@test_group_result).to be_valid
         expect(@test_group_result.save).to be true
@@ -84,7 +82,7 @@ describe TestGroupResult do
 
       it 'can be deleted' do
         expect(@test_group_result).to be_valid
-        expect{@test_group_result.destroy}.to change {TestGroupResult.count}.by(-1)
+        expect { @test_group_result.destroy }.to change { TestGroupResult.count }.by(-1)
       end
 
       it 'can create a test result from a json' do
@@ -113,7 +111,6 @@ describe TestGroupResult do
     end
 
     context 'An invalid test group result' do
-
       it 'has negative marks earned' do
         @test_group_result.marks_earned = -1
         expect(@test_group_result).not_to be_valid

@@ -296,18 +296,10 @@ end
 
 TestGroup.blueprint do
   assignment {Assignment.make}
-  seq_num {0}
-  file_name {Sham.filename}
-  description {Sham.description}
+  name {Sham.filename}
   run_by_instructors {true}
   run_by_students {false}
-  halts_testing {false}
-  display_description {'do_not_display'}
-  display_run_status {'do_not_display'}
-  display_marks_earned {'do_not_display'}
-  display_input {'do_not_display'}
-  display_expected_output {'do_not_display'}
-  display_actual_output {'do_not_display'}
+  display_output {TestGroup::TO_INSTRUCTORS}
 end
 
 TestGroupResult.blueprint do
@@ -317,14 +309,12 @@ TestGroupResult.blueprint do
 end
 
 TestResult.blueprint do
-  test_script_result {TestGroupResult.make}
+  test_group_result {TestGroupResult.make}
   name {Sham.filename}
-  completion_status {'pass'}
+  status {'pass'}
   marks_earned {1}
   marks_total {1}
-  input {Sham.message}
-  actual_output {Sham.message}
-  expected_output {Sham.message}
+  output {Sham.message}
 end
 
 TextAnnotation.blueprint do
