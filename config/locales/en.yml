@@ -275,15 +275,14 @@ en:
         replace_help: "The updated file name can be the same as the current one"
         remove_file: "Remove this file"
         remove_file_help: "Check this box and press submit at the bottom to delete the file"
-        display_settings: "Display Settings:"
         run_by_instructors: "Runnable by Instructors"
         run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
         run_by_students: "Runnable by Students"
         run_by_students_help: "Check to allow students to run this script (student tests, requires explicitly enabling them at the top of the page)"
         associated_criterion: "Associated Criterion"
-        display_output: "Show test Output column"
+        display_output: "Display test Output"
         display_output_help: "Choose when to show the test 'OUTPUT' column to the students (the instructors will always see it regardless of this setting)"
-        display_output_option:
+        display_to:
           instructors: "To instructors only"
           instructors_and_students: "To instructors and students"
           instructors_and_student_tests: "To instructors, then only student tests to students"

@@ -14,7 +14,7 @@ describe TestGroup do
   it { is_expected.to allow_value(false).for(:run_by_instructors) }
   it { is_expected.to allow_value(true).for(:run_by_students) }
   it { is_expected.to allow_value(false).for(:run_by_students) }
-  it { is_expected.to validate_inclusion_of(:display_output).in_array(TestGroup::DISPLAY_OUTPUT_OPTIONS) }
+  it { is_expected.to define_enum_for(:display_output).with(TestGroup.display_outputs.keys) }
 
   # create
   context 'A valid test group' do
@@ -26,8 +26,7 @@ describe TestGroup do
       @test_group = TestGroup.create(assignment_id:      @asst.id,
                                      name:               'test_group',
                                      run_by_instructors: true,
-                                     run_by_students:    true,
-                                     display_output:     TestGroup::TO_INSTRUCTORS)
+                                     run_by_students:    true)
     end
 
     it 'return true when a valid test group is created' do
@@ -41,19 +40,18 @@ describe TestGroup do
       @asst = create(:assignment,
                      section_due_dates_type: false,
                      due_date: 2.days.from_now)
-      display_option = TestGroup::DISPLAY_OUTPUT_OPTIONS
 
       @valid_test_group = TestGroup.create(assignment_id:        @asst.id,
                                            name:                 'valid_test_group',
                                            run_by_instructors:   true,
                                            run_by_students:      true,
-                                           display_output:       display_option[2])
+                                           display_output:       :instructors_and_students)
 
       @invalid_test_group = TestGroup.create(assignment_id:      @asst.id,
                                              name:               'invalid_test_group',
                                              run_by_instructors: true,
                                              run_by_students:    true,
-                                             display_output:     display_option[0])
+                                             display_output:     :instructors)
     end
 
     context 'test group expected to be invalid when assignment is nil' do
@@ -71,9 +69,8 @@ describe TestGroup do
     end
 
     context 'test group expected to be invalid when the display_output option has an invalid option' do
-      it 'return false when the display_output option has an invalid option' do
-        @invalid_test_group.display_output = 'something_else'
-        expect(@invalid_test_group).not_to be_valid
+      it 'raise an ArgumentError when the display_output option has an invalid option' do
+        expect { @invalid_test_group.display_output = 'something_else' }.to raise_error(ArgumentError)
       end
     end
   end

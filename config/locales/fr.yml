@@ -259,7 +259,6 @@ fr:
         replace_help: "Vous pouvez télécharger un fichier avec le même nom"
         remove_file: "Supprimer ce fichier"
         remove_file_help: "Cocher pour supprimer ce fichier"
-        display_settings: "Paramètres d'affichage:"
         run_by_instructors: "Les instructeurs peuvent lancer les tests"
         run_by_instructors_help: "Cocher pour permettre aux instructeurs de lancer les tests"
         run_by_students: "Les étudiants peuvent lancer les tests"
@@ -267,7 +266,7 @@ fr:
         associated_criterion: "Le critère associé"
         display_output: "Montrer les donées de sortie aux étudiants"
         display_output_help: "Cocher pour montrer les donées de sortie pour chaque test aux étudiants"
-        display_output_option:
+        display_to:
           instructors: "Ne montre jamais"
           instructors_and_students: "Montrer toujours"
           instructors_and_student_tests: "Montrer seulement les tests lancés par les étudiants"

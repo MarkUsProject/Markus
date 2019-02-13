@@ -831,8 +831,8 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS_AND_STUDENT_TESTS ||
-         data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS
+      if data['test_groups.display_output'] == 'instructors_and_student_tests' ||
+         data['test_groups.display_output'] == 'instructors'
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -845,7 +845,7 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup::TO_INSTRUCTORS
+      if data['test_groups.display_output'] == 'instructors'
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')

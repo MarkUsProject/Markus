@@ -1,8 +1,6 @@
 class TestGroup < ApplicationRecord
-  TO_INSTRUCTORS = 'instructors'.freeze
-  TO_INSTRUCTORS_AND_STUDENT_TESTS = 'instructors_and_student_tests'.freeze
-  TO_INSTRUCTORS_AND_STUDENTS = 'instructors_and_students'.freeze
-  DISPLAY_OUTPUT_OPTIONS = [TO_INSTRUCTORS, TO_INSTRUCTORS_AND_STUDENT_TESTS, TO_INSTRUCTORS_AND_STUDENTS].freeze
+  enum display_output: { instructors: 0, instructors_and_student_tests: 1, instructors_and_students: 2 },
+       _prefix: :display_to
 
   belongs_to :assignment
   belongs_to :criterion, optional: true, polymorphic: true
@@ -13,7 +11,7 @@ class TestGroup < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :assignment_id }
   validates :run_by_instructors, :run_by_students, inclusion: { in: [true, false] }
-  validates :display_output, presence: true, inclusion: { in: DISPLAY_OUTPUT_OPTIONS }
+  validates :display_output, presence: true
 
   # All callback methods are protected methods
   protected

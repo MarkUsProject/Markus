@@ -250,7 +250,6 @@ pt:
         replace_help: "UPDATE ME"
         remove_file: "UPDATE ME"
         remove_file_help: "UPDATE ME"
-        display_settings: "UPDATE ME"
         run_by_instructors: "UPDATE ME"
         run_by_instructors_help: "UPDATE ME"
         run_by_students: "UPDATE ME"
@@ -258,7 +257,7 @@ pt:
         associated_criterion: "UPDATE ME"
         display_output: "UPDATE ME"
         display_output_help: "UPDATE ME"
-        display_output_option:
+        display_to:
           instructors: "UPDATE ME"
           instructors_and_students: "UPDATE ME"
           instructors_and_student_tests: "UPDATE ME"

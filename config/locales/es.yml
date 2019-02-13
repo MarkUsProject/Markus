@@ -306,7 +306,6 @@ es:
         replace_help:                     "UPDATE ME"
         remove_file:                      "Remover"
         remove_file_help:                 "UPDATE ME"
-        display_settings:                 "Mostrar Configuraciones"
         run_by_instructors:               "Ejecutable por los Instructores"
         run_by_instructors_help:          "UPDATE ME"
         run_by_students:                  "Ejecutable por los Estudiantes"
@@ -314,7 +313,7 @@ es:
         associated_criterion:             "Criterio de Calificación Asociado"
         display_output:                   "Resultado Obtenido"
         display_output_help:              "UPDATE ME"
-        display_output_option:
+        display_to:
           instructors:           "No mostrar"
           instructors_and_students: "Mostrar después de realizar la entrega"
           instructors_and_student_tests: "Mostrar después de realizar la recolección"

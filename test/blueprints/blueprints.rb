@@ -299,7 +299,6 @@ TestGroup.blueprint do
   name {Sham.filename}
   run_by_instructors {true}
   run_by_students {false}
-  display_output {TestGroup::TO_INSTRUCTORS}
 end
 
 TestGroupResult.blueprint do

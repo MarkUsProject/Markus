@@ -20,8 +20,7 @@ describe TestResult do
         assignment_id: @asst.id,
         name: 'test_group',
         run_by_instructors: true,
-        run_by_students: true,
-        display_output: TestGroup::TO_INSTRUCTORS
+        run_by_students: true
       )
       @test_run = TestRun.create(
         grouping: @grouping,

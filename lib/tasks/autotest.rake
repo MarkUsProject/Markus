@@ -165,7 +165,7 @@ class AutotestSetup
         name: File.basename(test_script),
         run_by_instructors: instructor_run,
         run_by_students: true,
-        display_output: TestGroup::TO_INSTRUCTORS_AND_STUDENT_TESTS,
+        display_output: :instructors_and_student_tests,
         criterion: instructor_run ? criterion : nil
       )
     end
