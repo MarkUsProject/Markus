@@ -44,12 +44,7 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    @assignment.test_groups.build(
-      # TODO: make these default values
-      run_by_instructors: true,
-      run_by_students: false,
-      display_output: TestGroup::TO_INSTRUCTORS
-    )
+    @assignment.test_groups.build
     @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
 
@@ -103,7 +98,7 @@ class AutomatedTestsController < ApplicationController
     if File.exist?(file_path)
       file_contents = IO.read(file_path)
       send_file file_path,
-                type: ( SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream':'text/plain' ),
+                type: (SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream' : 'text/plain'),
                 x_sendfile: true
     else
       flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))

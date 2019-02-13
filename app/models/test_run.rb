@@ -66,7 +66,7 @@ class TestRun < ApplicationRecord
   def create_error_for_all_test_groups(test_groups, error, extra_info: nil)
     test_groups.each do |test_group|
       test_script_result = create_test_group_result(test_group, extra_info: extra_info)
-      test_script_result.create_test_result(status: 'error', name: error[:name], output: error[:message])
+      test_script_result.test_results.create(name: error[:name], status: 'error', output: error[:message])
     end
     submission&.set_autotest_marks
   end
@@ -101,7 +101,7 @@ class TestRun < ApplicationRecord
       else
         message = I18n.t('automated_tests.results.timeout', seconds: timeout)
       end
-      new_test_group_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
+      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
                                                output: message)
       return new_test_group_result
     end
@@ -122,8 +122,8 @@ class TestRun < ApplicationRecord
     end
     # handle timeout
     unless timeout.nil?
-      new_test_group_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
-                                               output: I18n.t('automated_tests.results.timeout', seconds: timeout))
+      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
+                                                output: I18n.t('automated_tests.results.timeout', seconds: timeout))
       all_marks_earned = 0.0
     end
     # save marks
@@ -179,8 +179,8 @@ class TestRun < ApplicationRecord
     test_groups.each do |test_group|
       next if new_test_group_results.key?(test_group.id)
       new_test_group_result = create_test_group_result(test_group)
-      new_test_group_result.create_test_result(status: 'error', name: I18n.t('automated_tests.results.all_tests'),
-                                               output: I18n.t('automated_tests.results.missing_test_group'))
+      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
+                                                output: I18n.t('automated_tests.results.missing_test_group'))
       new_test_group_results[test_group.id] = new_test_group_result
     end
     # set the marks assigned by the test run

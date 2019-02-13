@@ -134,7 +134,7 @@ module Api
 
     # User params for create & update
     def test_result_params
-      params.permit(:name, :status, :marks_earned, :output, :created_at, :updated_at)
+      params.permit(:name, :status, :marks_earned, :output)
     end
 
   end # end TestResultsController

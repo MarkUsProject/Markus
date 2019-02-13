@@ -6,17 +6,6 @@ class TestGroupResult < ApplicationRecord
   validates :marks_earned, :marks_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :time, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
-  def create_test_result(name:, output: '', marks_earned: 0.0, marks_total: 0.0, status: 'error', time: nil)
-    test_results.create(
-      name: name,
-      output: output,
-      marks_earned: marks_earned,
-      marks_total: marks_total,
-      status: status,
-      time: time
-    )
-  end
-
   def create_test_result_from_json(json_test)
     # get basic attributes
     test_name = json_test.fetch('name', I18n.t('automated_tests.results.unknown_test'))
@@ -61,8 +50,8 @@ class TestGroupResult < ApplicationRecord
     end
 
     # create test result
-    create_test_result(name: test_name, output: output, marks_earned: marks_earned, marks_total: marks_total,
-                       status: status, time: time)
+    self.test_results.create(name: test_name, status: status, output: output, marks_earned: marks_earned,
+                             marks_total: marks_total, time: time)
     if stop_processing
       raise 'Test script reported a critical failure'
     end
