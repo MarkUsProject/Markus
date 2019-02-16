@@ -10,7 +10,6 @@ export class AnnotationPanel extends React.Component {
       overallComment: props.overallComment,
       unsavedChanges: false
     };
-    this.annotationTable = React.createRef();
     this.submitOverallCommentButton = React.createRef();
   }
 
@@ -81,12 +80,12 @@ export class AnnotationPanel extends React.Component {
         <h3>{I18n.t('activerecord.models.annotation.other')}</h3>
         <p>{I18n.t('results.annotation.across_all_submission_files')}</p>
         <AnnotationTable
-          ref={this.annotationTable}
-          result_id={this.props.result_id}
-          submission_id={this.props.submission_id}
-          assignment_id={this.props.assignment_id}
           detailed={this.props.detailed}
           released_to_students={this.props.released_to_students}
+          annotations={this.props.annotations}
+          editAnnotation={this.props.editAnnotation}
+          removeAnnotation={this.props.removeAnnotation}
+          selectFile={this.props.selectFile}
         />
       </div>
     )

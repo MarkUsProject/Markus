@@ -10,7 +10,7 @@
   <%= javascript_pack_tag 'result' %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeLeftPane(document.getElementById('left-pane'),
+      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,

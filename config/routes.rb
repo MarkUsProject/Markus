@@ -174,7 +174,6 @@ Rails.application.routes.draw do
           post 'repo_browser'
           get 'downloads'
           get 'get_file'
-          get 'submission_files'
         end
 
         resources :results do

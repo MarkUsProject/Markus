@@ -19,49 +19,6 @@
   // in the codeviewer
   var annotation_type;
 
-  function source_code_ready() {
-    annotation_type = ANNOTATION_TYPES.CODE;
-
-    var dp_highlighter = $('.dp-highlighter')[0];
-    var first_ol = $('ol')[0];
-    syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
-        $(dp_highlighter).find(first_ol)[0]);
-
-    var collection   = new SourceCodeLineArray();
-    var line_factory = new SourceCodeLineFactory();
-    var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
-    var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer();
-
-    annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
-  }
-
-  // A version of source_code_ready for image files.
-  function source_code_ready_for_image() {
-    annotation_type = ANNOTATION_TYPES.IMAGE;
-
-    var image_event_handler       = new ImageEventHandler();
-    var annotation_text_manager   = new AnnotationTextManager();
-    var annotation_text_displayer = new AnnotationTextDisplayer();
-
-    annotation_manager = new ImageAnnotationGrid(image_event_handler,
-                                                 annotation_text_manager,
-                                                 annotation_text_displayer);
-  }
-
-  /**
-   * Prepare annotation for pdf annotations.
-   *
-   * @param {PDFView} pdfView     PDF Viewer
-   * @param {String}  pdfViewerId The ID of the PDF viewer.
-   */
-  function source_code_ready_for_pdf(pdfView, pdfViewerId) {
-    annotation_type = ANNOTATION_TYPES.PDF;
-
-    annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
-    annotation_manager.resetAngle();
-  }
-
   /**
    * Called when annotations are being added to the view.
    *
@@ -80,10 +37,6 @@
       var annotation_text = new AnnotationText(annotation_text_id, 0, content);
       annotation_manager.registerAnnotationText(annotation_text);
     }
-  }
-
-  function add_annotation(annotation_id, range, annotation_text_id) {
-    annotation_manager.annotateRange(annotation_id, range, annotation_text_id);
   }
 
   function remove_annotation(annotation_id, range, annotation_text_id) {
@@ -360,37 +313,6 @@
       return false;
     } else {
       return { box: box, boxSize: boxSize };
-    }
-  }
-
-  // Kept for compatibility with context_menu.
-  function make_new_annotation() {
-    annotationManager.make_new_annotation();
-  }
-
-  // Load a submitted file into the code-viewer based on file id's
-  function load_submitted_file(submission_file_id, focus_line) {
-    submissionFilePanel.submissionFileViewer.current.set_submission_file(submission_file_id, focus_line);
-    positions = null;
-    annotation_manager = null;
-  }
-
-  function load_submitted_file_and_focus(submission_file_id, focus_line) {
-    // First, switch to the source code viewer tab
-    $('#code_pane').tabs({ active: 0 });
-
-    submissionFilePanel.selectFileAndFocus(submission_file_id, focus_line);
-  }
-
-  function focus_source_code_line(line_num) {
-    if (typeof(line_num) == 'undefined' || line_num == null) {
-      return;
-    }
-
-    // Scroll to the DOM node that represents this source code line
-    var line = annotation_manager.getLineManager().getLine(line_num);
-    if (line != null) {
-      line.getLineNode().scrollIntoView();
     }
   }
 

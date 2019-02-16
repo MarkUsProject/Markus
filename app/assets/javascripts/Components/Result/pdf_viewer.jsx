@@ -3,19 +3,18 @@ import {render} from 'react-dom';
 
 
 export class PDFViewer extends React.Component {
-  constructor() {
-    super();
-  }
-
   componentDidMount() {
     if (this.props.url) {
       this.loadPDFFile();
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.url && this.props.url !== prevProps.url) {
       this.loadPDFFile();
+    } else {
+      $('.annotation_holder').remove();
+      this.props.annotations.forEach(this.display_annotation);
     }
   }
 
@@ -25,20 +24,55 @@ export class PDFViewer extends React.Component {
         PDFJS.workerSrc = PDFJS_WORKER_PATH;
 
         PDFView.onLoadComplete = () => {
-          window.source_code_ready_for_pdf(PDFView, 'viewer');
-          annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
+          this.ready_annotations(PDFView, 'viewer');
+          this.props.annotations.forEach(this.display_annotation);
         };
         webViewerLoad(this.props.url);
       });
     } else {
       PDFView.onLoadComplete = () => {
-        window.source_code_ready_for_pdf(PDFView, 'viewer');
-        annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
+        this.ready_annotations(PDFView, 'viewer');
+        this.props.annotations.forEach(this.display_annotation);
       };
       webViewerLoad(this.props.url);
     }
+  };
+
+  ready_annotations = (pdfView, pdfViewerId) => {
+    annotation_type = ANNOTATION_TYPES.PDF;
+
+    window.annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
+    window.annotation_manager.resetAngle();
+  };
+
+  componentWillUnmount() {
+    let box = document.getElementById('sel_box');
+    if (box) {
+      box.style.display = 'none';
+      box.style.width   = '0';
+      box.style.height  = '0';
+    }
   }
 
+  display_annotation = (annotation) => {
+    if (annotation.x_range === undefined || annotation.y_range === undefined) {
+      return;
+    }
+
+    add_annotation_text(annotation.annotation_text_id, marked(annotation.content, {sanitize: true}));
+    annotation_manager.addAnnotation(
+      annotation.annotation_text_id,
+      marked(annotation.content, {sanitize: true}),
+      {
+        x1: annotation.x_range.start,
+        x2: annotation.x_range.end,
+        y1: annotation.y_range.start,
+        y2: annotation.y_range.end,
+        page: annotation.page,
+        annot_id: annotation.id
+      }
+    );
+  };
 
   render() {
     return (

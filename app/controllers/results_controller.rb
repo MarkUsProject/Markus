@@ -91,6 +91,44 @@ class ResultsController < ApplicationController
           data[:can_run_tests] = false
         end
 
+        # Submission files
+        file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+        file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+        data[:submission_files] = file_data
+
+        # Annotations
+        all_annotations = result.annotations
+                                .includes(:submission_file, :creator,
+                                          annotation_text: :annotation_category)
+        if remark_submitted
+          all_annotations += original_result.annotations
+                                            .includes(:submission_file, :creator,
+                                                      annotation_text: :annotation_category)
+        end
+
+        data[:annotations] = all_annotations.map do |annotation|
+          annotation.get_data(@current_user.admin? || @current_user.ta?)
+        end
+
+        # Annotation categories
+        if current_user.admin? || current_user.ta?
+          annotation_categories = assignment.annotation_categories
+                                            .order(:position)
+                                            .includes(:annotation_texts)
+          data[:annotation_categories] = annotation_categories.map do |category|
+            {
+              id: category.id,
+              annotation_category_name: category.annotation_category_name,
+              texts: category.annotation_texts.map do |text|
+                {
+                  id: text.id,
+                  content: text.content
+                }
+              end
+            }
+          end
+        end
+
         render json: data
       end
     end

@@ -2,6 +2,9 @@ import React from 'react';
 import {render} from 'react-dom';
 
 
+const RAW_TEXT_DIV_ID = 'code';
+
+
 export class TextViewer extends React.Component {
   constructor() {
     super();
@@ -9,39 +12,53 @@ export class TextViewer extends React.Component {
 
   componentDidMount() {
     if (this.props.content) {
-      // Remove existing syntax highlighted code.
-      $('.dp-highlighter').remove();
-      dp.SyntaxHighlighter.HighlightAll('code');
-
-      source_code_ready();
-      // Apply modifications to Syntax Highlighter
-      syntax_highlighter_adapter.applyMods();
-
-      annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
-
-      if (this.props.focus_line !== undefined) {
-        focus_source_code_line(this.props.focus_line);
-      }
+      this.ready_annotations(RAW_TEXT_DIV_ID);
+      this.props.annotations.forEach(this.display_annotation);
+      scrollToLine(this.props.focusLine);
     }
   }
 
-  componentDidUpdate(oldProps) {
-    if (this.props.content !== oldProps.content) {
-      // Remove existing syntax highlighted code.
-      $('.dp-highlighter').remove();
-      dp.SyntaxHighlighter.HighlightAll('code');
-
-      source_code_ready();
-      // Apply modifications to Syntax Highlighter
-      syntax_highlighter_adapter.applyMods();
-
-      annotationPanel.annotationTable.current.display_annotations(this.props.submission_file_id);
-
-      if (this.props.focus_line !== undefined) {
-        focus_source_code_line(this.props.focus_line);
-      }
+  componentDidUpdate() {
+    if (this.props.content) {
+      this.ready_annotations(RAW_TEXT_DIV_ID);
+      this.props.annotations.forEach(this.display_annotation);
+      scrollToLine(this.props.focusLine);
     }
   }
+
+  // Generate text view with syntax highlighting and annotations.
+  ready_annotations = (source_id) => {
+    // Remove existing syntax highlighted code.
+    $('.dp-highlighter').remove();
+    dp.SyntaxHighlighter.HighlightAll(source_id);
+    window.annotation_type = ANNOTATION_TYPES.CODE;
+    window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
+
+    window.annotation_manager = new SourceCodeLineAnnotations(
+      new SourceCodeLineManager(
+        window.syntax_highlighter_adapter,
+        new SourceCodeLineFactory(),
+        new SourceCodeLineArray()),
+      new AnnotationTextManager(),
+      new AnnotationTextDisplayer());
+
+    // Apply modifications to Syntax Highlighter
+    window.syntax_highlighter_adapter.applyMods();
+  };
+
+  display_annotation = (annotation) => {
+    add_annotation_text(annotation.annotation_text_id, marked(annotation.content, {sanitize: true}));
+    annotation_manager.annotateRange(
+      annotation.id,
+      {
+        start: annotation.line_start,
+        end: annotation.line_end,
+        column_start: annotation.column_start,
+        column_end: annotation.column_end
+      },
+      annotation.annotation_text_id
+    );
+  };
 
   componentWillUnmount() {
     $('.dp-highlighter').remove();
@@ -49,9 +66,22 @@ export class TextViewer extends React.Component {
 
   render() {
     return (
-      <pre id="code" name="code" className={this.props.type}>
+      <pre id={RAW_TEXT_DIV_ID} name={RAW_TEXT_DIV_ID} className={this.props.type}>
         {this.props.content}
       </pre>
     );
+  }
+}
+
+
+// Scroll to display the given line.
+function scrollToLine(lineNumber) {
+  if (lineNumber === undefined || lineNumber === null) {
+    return;
+  }
+
+  const line = $(syntax_highlighter_adapter.root).find(`li:nth-of-type(${lineNumber})`)[0];
+  if (line) {
+    line.scrollIntoView();
   }
 }
