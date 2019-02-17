@@ -86,10 +86,6 @@ export class SubmissionFilePanel extends React.Component {
           <div id='annotation_options'>
             {this.props.show_annotation_manager &&
              <AnnotationManager
-               assignment_id={this.props.assignment_id}
-               submission_id={this.props.submission_id}
-               result_id={this.props.result_id}
-               submission_file_id={submission_file_id}
                categories={this.props.annotation_categories}
                newAnnotation={this.props.newAnnotation}
                addExistingAnnotation={this.props.addExistingAnnotation}

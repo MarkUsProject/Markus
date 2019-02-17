@@ -14,8 +14,6 @@ export class AnnotationPanel extends React.Component {
   }
 
   componentDidMount() {
-    // TODO: remove this global binding.
-    window.annotationPanel = this;
     const comment = this.state.overallComment;
     let target_id;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
