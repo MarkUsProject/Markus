@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AnnotationTable } from '../annotation_table';
+import { AnnotationTable } from './annotation_table';
 
 
 export class AnnotationPanel extends React.Component {
