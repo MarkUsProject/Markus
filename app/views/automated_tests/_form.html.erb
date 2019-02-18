@@ -8,11 +8,28 @@
     <%= render partial: 'boot',
                formats: [:js],
                handlers: [:erb] %>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeAutotestFileManager(document.getElementById('autotest-file-manager'), {assignment_id: <%= @assignment.id %>});
+    });
   </script>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 <% end %>
+
+<aside class='dialog' id='addnew_dialog'>
+  <h2><%= t('add_new') %></h2>
+
+  <%= form_tag upload_starter_code_assignment_path(id: @assignment.id),
+               { multipart: true, id: 'file_form' } do %>
+    <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:submit) %>
+      <%= button_tag t(:close), onclick: 'modal_addnew.close(); return false;' %>
+    </section>
+  <% end %>
+</aside>
 
 <div class="wrapLeft">
   <%= render partial: 'shared/flash_message' %>
@@ -72,6 +89,11 @@
     </fieldset>
 
     <fieldset>
+      <legend><span><%= t("automated_tests.files") %></span></legend>
+      <div id='autotest-file-manager'></div>
+    </fieldset>
+
+    <fieldset>
       <legend><span><%= t("automated_tests.assignment_test_script_files") %></span></legend>
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
 
@@ -79,18 +101,6 @@
         <% @assignment.test_groups.each do |tg| %>
             <%= render partial: 'test_group_upload', locals: {test_group: tg, form: f} %>
         <% end %>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <legend><span><%= t("automated_tests.assignment_test_support_files") %></span></legend>
-      <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
-      <div class="wrapLeft">
-        <div id="test_support_files">
-          <%# @assignment.test_support_files.each do |tsf| %>
-              <%#= render partial: 'test_support_file_upload', locals: {test_support_file: tsf, form: f} %>
-          <%# end %>
-        </div>
       </div>
     </fieldset>
 

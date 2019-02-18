@@ -90,6 +90,7 @@ Rails.application.routes.draw do
           post 'upload'
           get 'download'
           get 'get_test_runs_students'
+          get 'populate_file_manager'
         end
       end
 

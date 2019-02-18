@@ -2,7 +2,7 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsClientHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update, :download]
+                     only: [:manage, :update, :download, :fetch_testers, :populate_file_manager]
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
@@ -115,6 +115,14 @@ class AutomatedTestsController < ApplicationController
   def fetch_testers
     AutotestTestersJob.perform_later
     head :no_content
+  end
+
+  def populate_file_manager
+    assignment = Assignment.find(params[:assignment_id])
+    autotest_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
+    autotest_files = Dir.entries(autotest_path) - ['.', '..']
+    data = autotest_files.map { |file| { key: file, modified: '', size: 1 } }
+    render json: data
   end
 
   private

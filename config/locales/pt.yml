@@ -255,6 +255,7 @@ pt:
       new_test_script_file: "UPDATE ME"
       new_test_support_file: "UPDATE ME"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
+      files: "UPDATE ME"
       test_group_option:
         upload_required: "UPDATE ME <span class='required_field'>*</span>"
         upload_help: "UPDATE ME"

@@ -270,10 +270,10 @@ en:
       new_test_script_file: "New Test Script File"
       new_test_support_file: "New Test Support File"
       assignment_test_script_files: "Test Script Files"
-      assignment_test_support_files: "Test Support Files"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
+      files: "Autotest Files"
       test_group_option:
         upload_required: "Upload <span class='required_field'>*</span>"
         upload_help: "The new file name must not exist already"
