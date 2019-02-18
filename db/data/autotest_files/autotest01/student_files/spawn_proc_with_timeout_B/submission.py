@@ -26,8 +26,8 @@ with open('angler.txt') as f:
 	contents = f.read()
 
 if 'a fish!' in contents:
-  print(json.dumps({'name': 'spawned_proc_with_timeout_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'child process was not killed', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_B', 'output': 'child process was not killed', 'marks_earned': 0, 'marks_total': 0, 'status': 'error'}))
 else:
-  print(json.dumps({'name': 'spawned_proc_with_timeout_test_B', 'input': 'NA', 'expected': 'NA', 'actual': 'child process successfully killed', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'spawned_proc_with_timeout_test_B', 'output': 'child process successfully killed', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 
 os.remove('angler.txt')

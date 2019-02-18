@@ -18,7 +18,7 @@ class RubricCriterion < Criterion
   validates_numericality_of :assigned_groups_count
   before_validation :update_assigned_groups_count
 
-  has_many :test_scripts, as: :criterion
+  has_many :test_groups, as: :criterion
 
   validate :visible?
 

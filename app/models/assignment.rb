@@ -20,11 +20,8 @@ class Assignment < ApplicationRecord
            class_name: 'CheckboxCriterion',
        dependent: :destroy
 
-  has_many :test_support_files, dependent: :destroy
-  accepts_nested_attributes_for :test_support_files, allow_destroy: true
-  has_many :test_scripts, dependent: :destroy
-  accepts_nested_attributes_for :test_scripts, allow_destroy: true
-
+  has_many :test_groups, dependent: :destroy
+  accepts_nested_attributes_for :test_groups, allow_destroy: true
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -1225,7 +1222,7 @@ class Assignment < ApplicationRecord
   end
 
   # Selects the appropriate test scripts for this assignment, based on the user requesting them.
-  def select_test_scripts(user)
+  def select_test_groups(user)
     if user.admin?
       condition = { run_by_instructors: true }
     elsif user.student?
@@ -1234,13 +1231,23 @@ class Assignment < ApplicationRecord
       return none # empty chainable ActiveRecord::Relation
     end
 
-    test_scripts.where(condition).order(:seq_num)
+    self.test_groups.where(condition)
   end
 
-  # Selects the hooks script from the test support files.
-  def select_hooks_script
+  # Selects the hooks script from the test files.
+  def get_hooks_script_name
     # TODO: Adjust the hooks mechanism when we create a new user interface
-    self.test_support_files.where(file_name: AutomatedTestsClientHelper::HOOKS_FILE).limit(1)
+    hooks_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
+                           AutomatedTestsClientHelper::HOOKS_FILE)
+    File.exist?(hooks_path) ? File.basename(hooks_path) : nil
+  end
+
+  # Selects the test specs from the test files.
+  def get_test_specs_name
+    # TODO: Adjust the specs mechanism when we create a new user interface
+    specs_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
+                           AutomatedTestsClientHelper::SPECS_FILE)
+    File.exist?(specs_path) ? File.basename(specs_path) : nil
   end
 
   # Retrieve current grader data.

@@ -10,8 +10,7 @@
             <%= link_to(f.object.file_name,
                         action: 'download',
                         assignment_id: @assignment.id,
-                        type: 'support',
-                        filename: f.object.file_name) %>
+                        filename: f.object.name) %>
             <%= f.hidden_field :file_name, value: f.object.file_name %>
           <% else %>
             <%= t('automated_tests.new_test_support_file') %>

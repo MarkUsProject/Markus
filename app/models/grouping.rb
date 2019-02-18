@@ -45,7 +45,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { left_outer_joins(:user, test_script_results: [:test_script, :test_results]).order('created_at DESC') },
+           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order('created_at DESC') },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -794,17 +794,16 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
-    fields = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name', 'test_scripts.description',
-              'test_scripts.display_actual_output', 'test_script_results.extra_info', 'test_script_results.time',
-              'test_results.name', 'test_results.completion_status', 'test_results.marks_earned',
-              'test_results.marks_total', 'test_results.actual_output', 'test_results.time']
+    fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
+              'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
+              'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
+              'test_results.output', 'test_results.time']
     assoc.pluck_to_hash(*fields)
   end
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_scripts.file_name',
-                     'test_scripts.description']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_groups.name']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -832,11 +831,11 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_scripts.display_actual_output'] == 'display_after_collection' ||
-         data['test_scripts.display_actual_output'] == 'do_not_display'
-        data.delete('test_results.actual_output')
+      if data['test_groups.display_output'] == 'instructors_and_student_tests' ||
+         data['test_groups.display_output'] == 'instructors'
+        data.delete('test_results.output')
       end
-      data.delete('test_script_results.extra_info')
+      data.delete('test_group_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)
@@ -846,10 +845,10 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_scripts.display_actual_output'] == 'do_not_display'
-        data.delete('test_results.actual_output')
+      if data['test_groups.display_output'] == 'instructors'
+        data.delete('test_results.output')
       end
-      data.delete('test_script_results.extra_info')
+      data.delete('test_group_results.extra_info')
       data
     end
     Grouping.group_hash_list(plucked)

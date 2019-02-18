@@ -6,7 +6,7 @@ class CheckboxCriterion < Criterion
   has_many :marks, as: :markable, dependent: :destroy
   accepts_nested_attributes_for :marks
   has_many :tas, through: :criterion_ta_associations
-  has_many :test_scripts, as: :criterion
+  has_many :test_groups, as: :criterion
 
   validate :visible?
 

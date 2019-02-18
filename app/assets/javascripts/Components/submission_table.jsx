@@ -307,7 +307,6 @@ class RawSubmissionTable extends React.Component {
           getTrProps={this.getTrProps}
 
           {...this.props.getCheckboxProps()}
-          {...this.props.getCheckboxProps}
         />
       </div>
     );

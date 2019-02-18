@@ -96,14 +96,14 @@ class AutotestRunJob < ApplicationJob
     retry
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh = nil)
+  def enqueue_test_run(test_run, host_with_port, test_group_ids, test_specs_name, hooks_script_name, ssh = nil)
     params_file = nil
     export_group_repo(test_run)
     unless repo_files_available?(test_run)
       # create empty test results for no submission files
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.no_source_files') }
-      test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+      test_run.create_error_for_all_test_groups(test_group_ids, error)
       return
     end
 
@@ -121,9 +121,9 @@ class AutotestRunJob < ApplicationJob
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
     server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
-                      test_scripts: test_scripts, hooks_script: hooks_script, assignment_id: assignment.id,
-                      group_id: group.id, submission_id: test_run.submission_id, group_repo_name: group.repo_name,
-                      batch_id: test_run.test_batch_id, run_id: test_run.id }
+                      test_group_ids: test_group_ids, test_specs: test_specs_name, hooks_script: hooks_script_name,
+                      assignment_id: assignment.id, group_id: group.id, submission_id: test_run.submission_id,
+                      group_repo_name: group.repo_name, batch_id: test_run.test_batch_id, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
     params_file.write(JSON.generate(server_params))
     params_file.close
@@ -160,7 +160,7 @@ class AutotestRunJob < ApplicationJob
     params_file&.unlink
   end
 
-  def perform(host_with_port, user_id, test_scripts, hooks_script, test_runs)
+  def perform(host_with_port, user_id, test_group_ids, test_specs_name, hooks_script_name, test_runs)
     ssh = nil
     ssh_auth_failure = nil
     # set up SSH channel if needed
@@ -193,12 +193,13 @@ class AutotestRunJob < ApplicationJob
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
-        enqueue_test_run(test_run, host_with_port, test_scripts, hooks_script, ssh)
+        enqueue_test_run(test_run, host_with_port, test_group_ids, test_specs_name, hooks_script_name, ssh)
       rescue StandardError => e
         unless test_run.nil?
-          error = { name: I18n.t('automated_tests.results.all_tests'),
-                    message: I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message) }
-          test_run.create_error_for_all_test_scripts(test_scripts.keys, error)
+          #TODO handle test run errors this way
+          #TODO display problems in the table
+          test_run.problems = I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message)
+          test_run.save
         end
       end
     end

@@ -53,7 +53,7 @@ describe GroupingPolicy do
 
           context 'if a test run is not in progress' do
             let(:test_run) { create(:test_run, user: user, grouping: grouping) }
-            let!(:test_script_result) { create(:test_script_result, test_run: test_run) } # non-lazy
+            let!(:test_group_result) { create(:test_group_result, test_run: test_run) } # non-lazy
 
             context 'if the student has tokens available' do
               let(:grouping) { create(:grouping, assignment: assignment, test_tokens: 1) }

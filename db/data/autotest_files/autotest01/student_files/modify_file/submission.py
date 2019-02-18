@@ -19,6 +19,6 @@ with open(autotest_file) as f:
   contents = f.read()
 
 if extra_text in contents:
-  print(json.dumps({'name': 'modify_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file was modified', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+  print(json.dumps({'name': 'modify_file_test', 'output': 'file was modified', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 else:
-  print(json.dumps({'name': 'modify_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file was not modified', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'modify_file_test', 'output': 'file was not modified', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))

@@ -45,14 +45,6 @@ class LeftPane extends React.Component {
     }
   };
 
-  runTests = () => {
-    $.post({
-      url: Routes.run_tests_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
-      )
-    });
-  };
-
   render() {
     if (this.state.loading) {
       return I18n.t('working');
@@ -101,15 +93,15 @@ class LeftPane extends React.Component {
         </TabPanel>
         <TabPanel>
           <div id='testviewer' className='block'>
-            <h2 className='test_runs_header'>{I18n.t('automated_tests.test_results')}
-              {// student results page (with instructor tests released) does not need the button
-               }
-
+            <h2 className='test_runs_header'>
+              {I18n.t('automated_tests.test_results')}
+              {/* student results page (with instructor tests released) does not need the button */}
               {!this.state.student_view &&
-               <form>
-                 <button onClick={this.runTests} disabled={!this.state.can_run_tests}>
-                   {I18n.t('automated_tests.run_tests')}
-                 </button>
+               <form method='post' action={Routes.run_tests_assignment_submission_result_path(
+                                             this.props.assignment_id, this.props.submission_id, this.props.result_id)}>
+                 <input type="submit" value={I18n.t('automated_tests.run_tests')}
+                        disabled={!this.state.can_run_tests} />
+                 <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
                </form>}
             </h2>
 

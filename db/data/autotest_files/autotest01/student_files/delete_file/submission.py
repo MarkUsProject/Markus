@@ -17,7 +17,7 @@ os.remove(autotest_file) # removes autotest script file (calls this file)
 files = glob.glob('*')
 
 if autotest_file in files:
-  print(json.dumps({'name': 'delete_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file not deleted', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
+  print(json.dumps({'name': 'delete_file_test', 'output': 'file not deleted', 'marks_earned': 2, 'marks_total': 2, 'status': 'pass'}))
 else:
-  print(json.dumps({'name': 'delete_file_test', 'input': 'NA', 'expected': 'NA', 'actual': 'file deleted', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+  print(json.dumps({'name': 'delete_file_test', 'output': 'file deleted', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
 

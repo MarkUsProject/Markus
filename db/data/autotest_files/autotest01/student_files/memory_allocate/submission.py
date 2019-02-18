@@ -14,4 +14,4 @@ big_byte_array = b"a"*(10*gb)
 
 time.sleep(1) # give the calling process a chance to do something
 
-print(json.dumps({'name': 'memory_alloc_test', 'input': 'NA', 'expected': 'NA', 'actual': 'script was allowed to allocate 10GB of memory', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))
+print(json.dumps({'name': 'memory_alloc_test', 'output': 'script was allowed to allocate 10GB of memory', 'marks_earned': 0, 'marks_total': 2, 'status': 'fail'}))

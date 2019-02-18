@@ -4,7 +4,7 @@
 This student submission file is used to test the autotester
 It represents the test case where:
 
-  The test (xml) doesn't contain a <marks_earned> tag
+  The json doesn't contain a 'marks_earned' field
 """
 import json
-print(json.dumps({'name': 'no_marks_earned_test', 'input': 'NA', 'expected': 'NA', 'actual': 'NA', 'marks_total': 0, 'status': 'pass'}))
+print(json.dumps({'name': 'no_marks_earned_test', 'output': 'NA', 'marks_total': 0, 'status': 'pass'}))

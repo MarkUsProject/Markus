@@ -20,8 +20,7 @@ describe Assignment do
     end
 
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
-    it { is_expected.to have_many(:test_scripts).dependent(:destroy) }
-    it { is_expected.to have_many(:test_support_files).dependent(:destroy) }
+    it { is_expected.to have_many(:test_groups).dependent(:destroy) }
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
     end

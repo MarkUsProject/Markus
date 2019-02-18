@@ -5,4 +5,4 @@
 <%= stylesheet_link_tag 'application.css' %>
 <%= stylesheet_link_tag params[:controller], media: 'all' %>
 <%= favicon_link_tag 'favicon.ico' %>
-<%= javascript_tag "const AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery?%>
+<%= javascript_tag "const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;" if protect_against_forgery?%>
