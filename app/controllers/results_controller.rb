@@ -129,6 +129,52 @@ class ResultsController < ApplicationController
           end
         end
 
+        # Marks
+        common_fields = [:id, :name, :position, :max_mark, 'marks.mark']
+        marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
+          if klass == RubricCriterion
+            fields = common_fields + [
+              :level_0_name, :level_0_description,
+              :level_1_name, :level_1_description,
+              :level_2_name, :level_2_description,
+              :level_3_name, :level_3_description,
+              :level_4_name, :level_4_description
+            ]
+          else
+            fields = common_fields + [:description]
+          end
+          klass.left_outer_joins(:marks)
+               .where(
+                 assignment_id: assignment.id,
+                 ta_visible: true,
+                 'marks.result_id': result.id
+               ).pluck_to_hash(*fields)
+               .map { |h| h.merge(criterion_type: klass.name) }
+        end
+        marks_map.sort! { |a, b| a[:position] <=> b[:position] }
+
+        if assignment.assign_graders_to_criteria && current_user.ta?
+          assigned_criteria = current_user.criterion_ta_associations
+                                          .where(assignment_id: assignment.id)
+                                          .pluck(:criterion_type, :criterion_id)
+                                          .map { |t, id| "#{t}-#{id}" }
+
+          marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+                               .flatten
+        else
+          assigned_criteria = nil
+        end
+
+        data[:assigned_criteria] = assigned_criteria
+        data[:marks] = marks_map
+
+        if original_result.nil?
+          old_marks = {}
+        else
+          old_marks = original_result.mark_hash
+        end
+        data[:old_marks] = old_marks
+
         render json: data
       end
     end
@@ -530,25 +576,20 @@ class ResultsController < ApplicationController
   end
 
   def update_mark
-    result_mark = Mark.find(params[:mark_id])
-    submission = result_mark.result.submission  # get submission for logging
-    group = submission.grouping.group           # get group for logging
-    assignment = submission.grouping.assignment # get assignment for logging
-    m_logger = MarkusLogger.instance
-
-    # Update mark attribute in marks table with a weighted mark
-    weight_criterion = result_mark.markable.weight
+    result = Result.find(params[:id])
+    submission = result.submission
+    group = submission.grouping.group
+    assignment = submission.grouping.assignment
     mark_value = params[:mark].to_f
 
-    # If it's a checkbox then we will flip the value since the user requested
-    # it to be toggled.
-    if result_mark.markable.is_a?(CheckboxCriterion)
-      mark_value = params[:radio_type] == 'yes' ? 1.0 : 0.0
-    end
+    result_mark = result.marks.find_or_create_by(
+      markable_id: params[:markable_id],
+      markable_type: params[:markable_type]
+    )
 
-    result_mark.mark = mark_value * weight_criterion
+    m_logger = MarkusLogger.instance
 
-    if result_mark.save
+    if result_mark.update(mark: mark_value)
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
                    "assignment #{assignment.short_identifier} for " +
@@ -565,11 +606,7 @@ class ResultsController < ApplicationController
         num_marked = PeerReview.get_num_marked(reviewer_group)
         num_assigned = PeerReview.get_num_assigned(reviewer_group)
       end
-      render plain: "#{result_mark.mark.to_f}," +
-                   "#{result_mark.result.get_subtotal}," +
-                   "#{result_mark.result.total_mark}," +
-                   "#{num_marked}," +
-                   "#{num_assigned}"
+      render plain: "#{result_mark.id},#{result.get_subtotal},#{result.total_mark},#{num_marked},#{num_assigned}"
     else
       m_logger.log("Error while trying to update mark of submission. " +
                    "User: #{current_user.user_name}, " +

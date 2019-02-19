@@ -936,12 +936,17 @@ class Assignment < ApplicationRecord
 
   def get_num_valid
     groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
-      .select(&:is_valid?).count
+             .select(&:is_valid?)
+             .size
   end
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.includes(:current_result).select(&:marking_completed?).count
+      results_join = groupings.left_outer_joins(:current_result)
+      num_incomplete = results_join.where('results.id': nil)
+                                   .or(results_join.where('results.marking_state': 'incomplete'))
+                                   .count
+      get_num_assigned() - num_incomplete
     else
       if is_criteria_mark?(ta_id)
         n = 0
@@ -962,14 +967,13 @@ class Assignment < ApplicationRecord
         end
         n
       else
-        ta_groupings = groupings.includes(:current_result).joins(:ta_memberships)
+        results_join = groupings.joins(:ta_memberships)
                                 .where('memberships.user_id': ta_id)
-        count = 0
-        ta_groupings.each do |g|
-          next if g.current_result.nil?
-          count += 1 if g.current_result.marking_state == Result::MARKING_STATES[:complete]
-        end
-        count
+                                .left_outer_joins(:current_result)
+        num_incomplete = results_join.where('results.id': nil)
+                                     .or(results_join.where('results.marking_state': 'incomplete'))
+                                     .count
+        get_num_assigned(ta_id) - num_incomplete
       end
     end
   end

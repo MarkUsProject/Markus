@@ -105,16 +105,6 @@
   }
 }
 
-.active-criterion, .active-rubric {
-  -webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
-  -moz-box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
-  box-shadow: inset 0px 0px 10px 0px rgba(0,123,255,0.75);
-}
-
-input:focus {
-  border: 5px solid $blue;
-}
-
 .expanded_view .page {
   margin: 0 auto;
   border: none;

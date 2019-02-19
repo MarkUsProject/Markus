@@ -642,6 +642,27 @@ nav {
 
 
 /** Dropdown menu */
+.arrow_down {
+  width: 0;
+  height: 0;
+  margin-top: 3px;
+  margin-right: 3px;
+  border-left: 7.5px solid transparent;
+  border-right: 7.5px solid transparent;
+  border-top: 7.5px solid $dark-blue;
+  float: right;
+}
+
+.arrow_up {
+  border-bottom: 7.5px solid $dark-blue;
+  border-left: 7.5px solid transparent;
+  border-right: 7.5px solid transparent;
+  float: right;
+  height: 0;
+  margin-right: 3px;
+  margin-top: 3px;
+  width: 0;
+}
 
 .dropdown {
   background: $white;
@@ -660,28 +681,6 @@ nav {
     ul {
       display: block;
     }
-  }
-
-  .arrow_down {
-    width: 0;
-    height: 0;
-    margin-top: 3px;
-    margin-right: 3px;
-    border-left: 7.5px solid transparent;
-    border-right: 7.5px solid transparent;
-    border-top: 7.5px solid $dark-blue;
-    float: right;
-  }
-
-  .arrow_up {
-    border-bottom: 7.5px solid $dark-blue;
-    border-left: 7.5px solid transparent;
-    border-right: 7.5px solid transparent;
-    float: right;
-    height: 0;
-    margin-right: 3px;
-    margin-top: 3px;
-    width: 0;
   }
 
   ul {

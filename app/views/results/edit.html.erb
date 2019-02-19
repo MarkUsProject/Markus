@@ -12,6 +12,14 @@
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
         }
       );
+
+      makeMarksPanel(document.getElementById('mark_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
     });
   </script>
 <% end %>
@@ -31,21 +39,6 @@
       this.style.display = 'none';
       window.onbeforeunload = null;
     });
-
-    // If the mark_description div is empty, that means it isn't marked
-    // Hide the criterion that AREN'T empty (i.e. are marked)
-    // Check if the marks are released, if they are there is nothing to hide
-    <% unless @result.released_to_students %>
-      $('.mark_criterion_level_container').each(function() {
-        expand_unmarked(this, 'RubricCriterion');
-      });
-      $('.mark_grade_input').each(function() {
-        expand_unmarked(this, 'FlexibleCriterion');
-      });
-      $('.mark_grade_input_checkbox_container').each(function() {
-        expand_unmarked(this, 'CheckboxCriterion');
-      });
-    <% end %>
 
     <%
       if @current_user.admin?
