@@ -91,6 +91,8 @@ Rails.application.routes.draw do
           get 'download'
           get 'get_test_runs_students'
           get 'populate_file_manager'
+          get 'download_file'
+          post 'upload_files'
         end
       end
 

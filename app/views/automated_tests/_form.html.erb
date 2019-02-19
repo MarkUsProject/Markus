@@ -19,11 +19,9 @@
 
 <aside class='dialog' id='addnew_dialog'>
   <h2><%= t('add_new') %></h2>
-
-  <%= form_tag upload_starter_code_assignment_path(id: @assignment.id),
+  <%= form_tag upload_files_assignment_automated_tests_path(assignment_id: @assignment.id),
                { multipart: true, id: 'file_form' } do %>
     <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
-
     <section class='dialog-actions'>
       <%= submit_tag t(:submit) %>
       <%= button_tag t(:close), onclick: 'modal_addnew.close(); return false;' %>

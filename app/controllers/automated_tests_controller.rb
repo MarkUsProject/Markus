@@ -2,7 +2,7 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsClientHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update, :download, :fetch_testers, :populate_file_manager]
+                     only: [:manage, :update, :download]
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
@@ -112,6 +112,8 @@ class AutomatedTestsController < ApplicationController
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
+  # TODO use authorizations from here on
+  # TODO change test_scripts save action + select from existing files
   def fetch_testers
     AutotestTestersJob.perform_later
     head :no_content
@@ -121,8 +123,53 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     autotest_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
     autotest_files = Dir.entries(autotest_path) - ['.', '..']
-    data = autotest_files.map { |file| { key: file, modified: '', size: 1 } }
+    data = autotest_files.map do |file|
+      { key: file, size: 1,
+        url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+    end
     render json: data
+  end
+
+  def download_file
+    assignment = Assignment.find(params[:assignment_id])
+    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:file_name])
+    if File.exists?(file_path)
+      send_file file_path, filename: params[:file_name]
+    else
+      render plain: t('student.submission.missing_file', file_name: params[:file_name])
+    end
+  end
+
+  def upload_files
+    assignment = Assignment.find(params[:assignment_id])
+    delete_files = params[:delete_files] || []
+    new_files = params[:new_files] || []
+    autotest_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
+
+    new_files.each do |f|
+      if f.size > MarkusConfigurator.markus_config_max_file_size
+        flash_message(:error, t('student.submission.file_too_large', file_name: f.original_filename,
+                                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)))
+        next
+      elsif f.size == 0
+        flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+      end
+      file_path = File.join(autotest_path, f.original_filename)
+      file_content = f.read
+      mode = SubmissionFile.is_binary?(file_content) ? 'wb' : 'w'
+      File.write(file_path, file_content, mode: mode)
+    end
+    delete_files.each do |f|
+      file_path = File.join(autotest_path, f)
+      File.delete(file_path)
+    end
+
+    flash_message(:success, t('update_files.success'))
+    if new_files
+      redirect_back(fallback_location: root_path)
+    else
+      head :ok
+    end
   end
 
   private
