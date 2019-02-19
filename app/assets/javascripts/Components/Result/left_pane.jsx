@@ -313,7 +313,7 @@ class LeftPane extends React.Component {
               submission_id={this.props.submission_id}
               assignment_id={this.props.assignment_id}
               assignmentRemarkMessage={this.state.assignment_remark_message}
-              remarkDueDate={this.state.assignment_due_date}
+              remarkDueDate={this.state.remark_due_date}
               pastRemarkDueDate={this.state.past_remark_due_date}
               remarkRequestText={this.state.remark_request_text || ''}
               remarkRequestTimestamp={this.state.remark_request_timestamp}
