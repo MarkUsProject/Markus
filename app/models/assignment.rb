@@ -1090,6 +1090,14 @@ class Assignment < ApplicationRecord
     self.test_groups.where(condition)
   end
 
+  def autotest_path
+    File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier)
+  end
+
+  def autotest_files
+    Dir.entries(autotest_path) - ['.', '..']
+  end
+
   # Selects the hooks script from the test files.
   def get_hooks_script_name
     # TODO: Adjust the hooks mechanism when we create a new user interface

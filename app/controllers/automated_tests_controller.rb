@@ -2,48 +2,39 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsClientHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update, :download]
+                     only: [:manage, :update]
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
 
   # Update is called when files are added to the assignment
   def update
-    @assignment = Assignment.find(params[:assignment_id])
-    create_test_repo(@assignment)
-
-    begin
-      @assignment.transaction do
-        new_files = process_test_form(@assignment, params, assignment_params)
-        run_job = !new_files.empty? || @assignment.test_groups.any?(&:marked_for_destruction?)
-        if @assignment.save
-          # write the uploaded files
-          new_files.each do |file|
-            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
-            # delete a replaced file if it was renamed
-            if file.key?(:delete) && File.exist?(file[:delete])
-              File.delete(file[:delete])
-            end
-          end
-          if run_job
-            AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
-          end
-          flash_message(:success, t('assignment.update_success'))
-        else
-          flash_message(:error, @assignment.errors.full_messages)
-        end
-      end
-    rescue => e
-      flash_message(:error, e.message)
-    ensure
-      # TODO the page is not correctly drawn when using render
-      redirect_to action: 'manage', assignment_id: params[:assignment_id]
+    assignment = Assignment.find(params[:assignment_id])
+    assignment.test_groups_attributes = assignment_params[:test_groups_attributes] || []
+    assignment.enable_test = assignment_params[:enable_test]
+    assignment.enable_student_tests = assignment_params[:enable_student_tests]
+    assignment.non_regenerating_tokens = assignment_params[:non_regenerating_tokens]
+    assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
+    assignment.token_start_date = assignment_params[:token_start_date]
+    assignment.token_period = assignment_params[:token_period]
+    assignment.tokens_per_period = assignment_params[:tokens_per_period].nil? ?
+                                     0 : assignment_params[:tokens_per_period]
+    if assignment.save
+      AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
+      flash_message(:success, t('assignment.update_success'))
+    else
+      flash_message(:error, assignment.errors.full_messages)
     end
+    # TODO the page is not correctly drawn when using render
+    redirect_to action: 'manage', assignment_id: params[:assignment_id]
   end
 
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
+    unless File.exist? @assignment.autotest_path
+      FileUtils.mkdir_p @assignment.autotest_path
+    end
     @assignment.test_groups.build
     @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
@@ -91,21 +82,6 @@ class AutomatedTestsController < ApplicationController
     redirect_to action: :student_interface, id: params[:id]
   end
 
-  # Download is called when an admin wants to download a test file
-  def download
-    assignment = Assignment.find(params[:assignment_id])
-    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:filename])
-    if File.exist?(file_path)
-      file_contents = IO.read(file_path)
-      send_file file_path,
-                type: (SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream' : 'text/plain'),
-                x_sendfile: true
-    else
-      flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))
-      redirect_to action: 'manage'
-    end
-  end
-
   def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
@@ -121,9 +97,7 @@ class AutomatedTestsController < ApplicationController
 
   def populate_file_manager
     assignment = Assignment.find(params[:assignment_id])
-    autotest_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
-    autotest_files = Dir.entries(autotest_path) - ['.', '..']
-    data = autotest_files.map do |file|
+    data = assignment.autotest_files.map do |file|
       { key: file, size: 1,
         url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
     end
@@ -132,7 +106,7 @@ class AutomatedTestsController < ApplicationController
 
   def download_file
     assignment = Assignment.find(params[:assignment_id])
-    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:file_name])
+    file_path = File.join(assignment.autotest_path, params[:file_name])
     if File.exists?(file_path)
       send_file file_path, filename: params[:file_name]
     else
@@ -144,7 +118,6 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
-    autotest_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
 
     new_files.each do |f|
       if f.size > MarkusConfigurator.markus_config_max_file_size
@@ -154,13 +127,13 @@ class AutomatedTestsController < ApplicationController
       elsif f.size == 0
         flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
-      file_path = File.join(autotest_path, f.original_filename)
+      file_path = File.join(assignment.autotest_path, f.original_filename)
       file_content = f.read
       mode = SubmissionFile.is_binary?(file_content) ? 'wb' : 'w'
       File.write(file_path, file_content, mode: mode)
     end
     delete_files.each do |f|
-      file_path = File.join(autotest_path, f)
+      file_path = File.join(assignment.autotest_path, f)
       File.delete(file_path)
     end
 
@@ -187,7 +160,5 @@ class AutomatedTestsController < ApplicationController
               test_groups_attributes:
                 [:id, :assignment_id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id,
                  :_destroy])
-              # test_support_files_attributes:
-              #   [:id, :file_name, :assignment_id, :description, :_destroy])
   end
 end
