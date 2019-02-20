@@ -78,8 +78,8 @@ class StudentMembership < Membership
     other_users = StudentMembership.joins(:grouping)
                                    .where('groupings.assignment_id': grouping.assignment_id)
                                    .where(membership_status: [:inviter, :accepted])
-                                   .pluck(:user_id)
-    if other_users.include?(user_id)
+                                   .where(user_id: user_id)
+    unless other_users.empty?
       errors.add(:base, I18n.t('csv.memberships_not_unique'))
       return false
     end

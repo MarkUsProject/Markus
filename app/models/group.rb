@@ -1,7 +1,7 @@
 # Maintains group information for a given user on a specific assignment
 class Group < ApplicationRecord
 
-  after_create :set_repo_name, :repo_cannot_exist_already
+  after_create :set_repo_name, :check_repo_uniqueness
   after_create_commit :build_repository
 
   has_many :groupings
@@ -102,8 +102,14 @@ class Group < ApplicationRecord
   end
 
   # Checks if the repository that is about to be created already exists. Used in a
-  # before_create callback to check if there will be a repo collision
-  def repo_cannot_exist_already
+  # after_create callback to check if there will be a repo collision.
+  #
+  # This raises an error if there will be a repo collision so that the transaction will
+  # rollback before the repo itself is actually created (in an after_create_commit callback).
+  #
+  # Note that this requires the repo_name to be set either explicitly or by calling set_repo_name
+  # after the group has been created. 
+  def check_repo_uniqueness
     return true unless Repository.get_class.repository_exists? repo_path
 
     msg = I18n.t 'csv.repo_collision_warning', repo_name: self.repo_name, group_name: group_name

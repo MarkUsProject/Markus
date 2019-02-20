@@ -29,7 +29,6 @@ class PeerReviewsController < ApplicationController
   end
 
   def populate
-    # TODO: review and remove if no longer in use
     @assignment = Assignment.find(params[:assignment_id])
 
     reviewer_groups = get_groupings_table_info

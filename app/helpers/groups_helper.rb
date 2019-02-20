@@ -3,7 +3,6 @@ module GroupsHelper
   # in the table on the front-end. Returns
   # an array of hashes.
   def get_students_table_info
-    # TODO: review and remove if no longer in use
     students = Student.all
     student_memberships = StudentMembership
                           .includes(:user)
@@ -24,7 +23,6 @@ module GroupsHelper
   # on the front-end. Attributes include URLs for actions
   # such as validation, renaming, showing notes, etc.
   def get_groupings_table_info(target_assignment=nil)
-    # TODO: review and remove if no longer in use
     if target_assignment.nil?
       target_assignment = @assignment
     end
