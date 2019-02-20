@@ -55,7 +55,7 @@
         <% end %>
         <% if dir[:files] != nil %>
             <% dir[:files].each do |file| %>
-                <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>", true)'
+                <li><a onclick='open_file(<%= file.id %>, "<%= file.path %>/<%= file.filename %>")'
                        onmouseover='close_submenu_recursive(
                            this.parentNode.parentNode, null)'>
                   <%= file.filename %>

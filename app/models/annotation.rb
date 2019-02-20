@@ -22,8 +22,8 @@ class Annotation < ApplicationRecord
   def get_data(include_creator=false)
     data = {
       id: id,
-      file: File.join(submission_file.path,
-                      submission_file.filename),
+      filename: submission_file.filename,
+      path: submission_file.path.split('/', 2)[1], # Remove assignment folder
       submission_file_id: submission_file_id,
       annotation_text_id: annotation_text_id,
       content: annotation_text.content,

@@ -25,7 +25,7 @@ function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annot
   this.draw_holders();
 
   image_event_handler.init_listeners(true);
-  document.getElementById('codeviewer').onmousemove = this.draw_holders.bind(this);
+  document.getElementById('image_container').onmousemove = this.draw_holders.bind(this);
 }
 
 ImageAnnotationGrid.prototype.getAnnotationTextManager = function() {
@@ -67,6 +67,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
     vert_range    = grid_element.y_range;
     holder = document.getElementById('annotation_holder_' + annot_id);
 
+    if (horiz_range === undefined || vert_range === undefined) {
+      continue;
+    }
+
     // Left offset of the holder
     holder_left = image_preview.offsetLeft + parseInt(horiz_range.start, 10);
     // Top offset of the holder
@@ -94,8 +98,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 }
 
 ImageAnnotationGrid.prototype.add_to_grid = function(extracted_coords) {
-  // extracted_coords.x_range = { start: extracted_coords.x_range.start, end: extracted_coords.x_range.end };
-  // extracted_coords.y_range = { start: extracted_coords.y_range.start, end: extracted_coords.y_range.end };
+  if (document.getElementById('annotation_holder_' + extracted_coords.annot_id) !== null) {
+    // Annotation already exists.
+    return;
+  }
 
   this.annotation_grid.push(extracted_coords);
   this.share_grid_with_event_handler();
