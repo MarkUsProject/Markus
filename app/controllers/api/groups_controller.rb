@@ -136,6 +136,59 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
+    def annotations
+      if params[:id]
+        grouping_relation = Grouping.where(group_id: params[:id])
+      else
+        grouping_relation = Grouping
+      end
+
+      annotations = grouping_relation.joins(accepted_student_memberships: :user)
+                                     .joins(current_submission_used:
+                                              [submission_files:
+                                                 [annotations:
+                                                    [annotation_text: :annotation_category]]])
+                                     .where('assignment_id': params[:assignment_id])
+                                     .pluck_to_hash('annotations.type',
+                                                    'annotation_texts.content',
+                                                    'submission_files.filename',
+                                                    'submission_files.path',
+                                                    'annotations.line_end',
+                                                    'annotations.line_start',
+                                                    'annotations.page',
+                                                    'group_id',
+                                                    'users.user_name',
+                                                    'annotation_categories.annotation_category_name',
+                                                    'annotations.creator_id',
+                                                    'annotation_texts.creator_id')
+
+      creator_ids = annotations.map { |a| a['annotations.creator_id'] }
+      creator_ids += annotations.map { |a| a['annotation_texts.creator_id'] }
+      creators = User.where(id: creator_ids).pluck(:id, :user_name).to_h
+
+      annotations = annotations.group_by { |h| h['group_id'] }
+                               .transform_values do |v|
+        group_members = v.group_by { |g| g['users.user_name'] }.keys
+        v.map do |h|
+          h['groups.members'] = group_members
+          h.delete('users.user_name')
+          h['annotations.creator'] = creators[h['annotations.creator_id']]
+          h.delete('annotations.creator_id')
+          h['annotation_texts.creator'] = creators[h['annotation_texts.creator_id']]
+          h.delete('annotation_texts.creator_id')
+          h
+        end
+      end.values.flatten
+      respond_to do |format|
+        format.xml do
+          render xml: annotations.to_xml(root: 'annotations', skip_types: 'true')
+        end
+        format.json do
+          render json: annotations.to_json
+        end
+      end
+    end
+
     def add_annotations
       assignment = Assignment.find(params[:assignment_id])
       if assignment.nil?
