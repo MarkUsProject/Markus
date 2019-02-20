@@ -70,7 +70,7 @@ $(document).ready(function() {
 // designate $next_criteria as the currently selected criteria
 function activeCriterion($next_criteria) {
   if (!$next_criteria.hasClass('active-criterion')) {
-    $criteria_list = $('#result_criteria_list>li');
+    $criteria_list = $('.marks-list > li');
     // remove all previous active-criterion (there should only be one)
     $criteria_list.removeClass('active-criterion');
     // scroll the $next_criteria to the top of the criterion bar
@@ -117,7 +117,7 @@ function nextCriterion() {
   $next_criterion = $('.active-criterion').next('li:not(.unassigned)');
   // If no next criterion exists, loop back to the first one
   if (!$next_criterion.length) {
-    $next_criterion = $('#result_criteria_list>li:not(.unassigned)').first();
+    $next_criterion = $('.marks-list > li:not(.unassigned)').first();
   }
   activeCriterion($next_criterion);
 }
@@ -127,7 +127,7 @@ function prevCriterion() {
   $prev_criterion = $('.active-criterion').prev('li:not(.unassigned)');
   // If no previous criterion exists, loop back to the last one
   if (!$prev_criterion.length) {
-    $prev_criterion = $('#result_criteria_list>li:not(.unassigned)').last();
+    $prev_criterion = $('.marks-list > li:not(.unassigned)').last();
   }
   activeCriterion($prev_criterion);
 }

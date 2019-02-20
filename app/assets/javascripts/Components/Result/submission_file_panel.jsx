@@ -183,10 +183,10 @@ class FileSelector extends React.Component {
     const fileSelector = this.hashToHTMLList(this.props.fileData, this.state.expanded);
     let arrow, expand;
     if (this.state.expanded !== null) {
-      arrow = <span className='arrow_up' />;
+      arrow = <span className='arrow-up' />;
       expand = null;
     } else {
-      arrow = <span className='arrow_down' />;
+      arrow = <span className='arrow-down' />;
       expand = [];
     }
     let selectorLabel;

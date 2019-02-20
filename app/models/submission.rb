@@ -18,7 +18,7 @@ class Submission < ApplicationRecord
   has_many   :non_pr_results, -> { where(peer_review_id: nil).order(:created_at) },
              class_name: 'Result'
 
-  has_one    :current_result, -> { where(peer_review_id: nil).order(created_at: :desc).limit(1) },
+  has_one    :current_result, -> { where(peer_review_id: nil).order(created_at: :desc) },
              class_name: 'Result'
 
   has_one    :submitted_remark, -> { where.not remark_request_submitted_at: nil },

@@ -946,7 +946,7 @@ class Assignment < ApplicationRecord
       num_incomplete = results_join.where('results.id': nil)
                                    .or(results_join.where('results.marking_state': 'incomplete'))
                                    .count
-      get_num_assigned() - num_incomplete
+      get_num_assigned - num_incomplete
     else
       if is_criteria_mark?(ta_id)
         n = 0

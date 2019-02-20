@@ -243,7 +243,9 @@ describe ResultsController do
     context 'accessing update_mark' do
       it 'should report an updated mark' do
         post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                     id: incomplete_result.id, mark_id: rubric_mark.id, mark: 1 }, xhr: true
+                                     id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                     markable_type: rubric_mark.markable_type,
+                                     mark: 1 }, xhr: true
         expect(response.body.parse_csv.first.to_f).to eq 1
       end
       it { expect(response).to have_http_status(:redirect) }
@@ -252,7 +254,9 @@ describe ResultsController do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
           post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                       id: incomplete_result.id, mark_id: rubric_mark.id, mark: 1 }, xhr: true
+                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                       markable_type: rubric_mark.markable_type,
+                                       mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
         it 'should report the correct error message' do

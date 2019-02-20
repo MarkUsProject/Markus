@@ -167,7 +167,7 @@ export class MarksPanel extends React.Component {
          </div>
         }
         <div id='mark_criteria'>
-          <ul id='result_criteria_list'>
+          <ul class='marks-list'>
             {markComponents}
           </ul>
         </div>
@@ -200,7 +200,7 @@ class CheckboxCriterionInput extends React.Component {
           <div className='criterion-name'
                onClick={this.props.toggleExpanded}
           >
-            <div className={this.props.expanded ? 'arrow_up' : 'arrow_down'}
+            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
                  style={{float: 'left'}}
             />
             {this.props.name}
@@ -305,7 +305,7 @@ class FlexibleCriterionInput extends React.Component {
           <div className='criterion-name'
                onClick={this.props.toggleExpanded}
           >
-            <div className={this.props.expanded ? 'arrow_up' : 'arrow_down'}
+            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
                  style={{float: 'left'}}
             />
             {this.props.name}
@@ -387,7 +387,7 @@ class RubricCriterionInput extends React.Component {
           <div className='criterion-name'
                onClick={this.props.toggleExpanded}
           >
-            <div className={this.props.expanded ? 'arrow_up' : 'arrow_down'}
+            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
                  style={{float: 'left'}}
             />
             {this.props.name}
