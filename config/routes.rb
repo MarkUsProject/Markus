@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
           collection do
+            get 'annotations'
             get 'group_ids_by_name'
           end
           resources :submission_downloads, except: [:new, :edit]
@@ -21,6 +22,7 @@ Rails.application.routes.draw do
             resources :test_results, except: [:new, :edit]
           end
           member do
+            get 'annotations'
             post 'add_annotations'
             put 'update_marks'
             put 'update_marking_state'
