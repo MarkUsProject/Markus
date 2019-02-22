@@ -17,6 +17,14 @@
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
         }
       );
+
+      makeMarksPanel(document.getElementById('mark_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
     });
   </script>
 <% end %>

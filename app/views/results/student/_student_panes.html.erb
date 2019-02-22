@@ -11,20 +11,7 @@
           <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
         </ul>
 
-        <div id='mark_viewer' class='flex-col'>
-          <div id='mark_criteria_pane'>
-            <ul id='mark_criteria_pane_list'>
-              <%# Also need to render the mark per criteria (if exist) %>
-              <% @mark_criteria.each do |mark_criterion| -%>
-                <%= render partial: "results/student/student_#{mark_criterion.class.to_s.underscore}_li",
-                           locals: { mark_criterion: mark_criterion,
-                                     result: result,
-                                     mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
-                                     old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
-              <% end -%>
-            </ul>
-          </div>
-        </div>
+        <div id='mark_viewer' class='flex-col'></div>
 
         <div id='summary_viewer' class='marks_summary_pane tabbedArea flex-col'>
           <%= render partial: 'results/student/student_summary',
