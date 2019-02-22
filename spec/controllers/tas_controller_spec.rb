@@ -138,6 +138,13 @@ describe TasController do
         get :download_ta_list, format: 'csv'
         expect(response.content_type).to eq 'text/csv'
       end
+
+      it 'filename passes naming conventions' do
+        get :download_ta_list, params: { file_format: 'csv' }
+        filename = response.header['Content-Disposition']
+                     .split.last.split('"').second
+        expect(filename).to eq "ta_list."
+      end
     end
   end
 end

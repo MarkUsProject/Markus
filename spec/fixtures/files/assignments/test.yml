@@ -1,0 +1,10 @@
+- Assignment 1:
+    short_identifier: Assignment 1
+    description: This is the student's first assignment
+    repository_folder: Assignments
+    due_date: 2013-07-22 14:00:00
+- A2:
+    short_identifier: ATest2
+    description: test2
+    repository_folder: ATest2
+    due_date: 2012-05-03 00:00:01
