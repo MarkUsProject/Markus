@@ -127,6 +127,18 @@ pt:
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
+      group_with_different_membership_current_assignment:   "UPDATE ME: %{group_name}"
+      group_with_different_membership_different_assignment: "UPDATE ME: %{group_name}"
+      memberships_not_unique:                               "UPDATE ME:"
+      member_does_not_exist:                                "UPDATE ME: %{group_name} '%{student_user_name}'"
+      bad_cell: "UPDATE ME: %{bad_cells}"
+      duplicate_group_name: "UPDATE ME: %{group_names}"
+      duplicate_repo_name: "UPDATE ME: %{repo_names}"
+      duplicate_membership_name: "UPDATE ME: %{member_names}"
+      bad_repo_warning: "UPDATE ME: %{group_names}"
+      bad_membership_warning: "UPDATE ME: %{group_names}"
+      bad_students: "UPDATE ME: %{student_names}"
+      memberships_exist: "UPDATE ME: %{student_names}"
 
     browse_submissions:
       review_state:         "Estado de revisão"
@@ -302,7 +314,7 @@ pt:
       failed: "Falhou"
       split_pdf_job: "Processando a página %{progress} em %{total} para %{exam_name}"
       generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"
-      create_individual_groups_job: "%{progress}/%{total} grupos criados"
+      create_groups_job: "%{progress}/%{total} grupos criados"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
     repo:

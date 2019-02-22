@@ -129,12 +129,18 @@ en:
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
+      bad_cell: "Error: the csv contains the following invalid cells: %{bad_cells}"
+      duplicate_group_name: "Error: The following groups appear multiple times in the csv file: %{group_names}"
+      duplicate_repo_name: "Error: The following repositories appear multiple times in the csv file: %{repo_names}"
+      duplicate_membership_name: "Error: The following group members appear multiple times in the csv file: %{member_names}"
+      bad_repo_warning: "Error: The following groups already exist with but with a different repository name: %{group_names}"
+      bad_membership_warning: "Error: The following groups already exist with different members: %{group_names}"
+      bad_students: "Error: The following students do not currently exist: %{student_names}"
+      memberships_exist: "Error: The following students already belong to a different group for the current assignment: %{student_names}"
       repo_collision_warning:  "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
-      group_with_different_repo: "Error: Group %{group_name} cannot be created since a group with the same name and a different repository already exists"
       group_with_different_membership_current_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for the current assignment"
       group_with_different_membership_different_assignment: "Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for a different assignment"
-      memberships_not_unique: "Error: Group %{group_name} cannot be created since student '%{student_user_name}' already belongs to a different group for the current assignment"
-      repository_already_exists: "Error: Group %{group_name} cannot be created since a repository with path '%{repo_path}' already exists"
+      memberships_not_unique: "The student already belongs to a different group for the current assignment"
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
 
     browse_submissions:
@@ -327,7 +333,7 @@ en:
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
       generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
-      create_individual_groups_job: "%{progress}/%{total} groups created"
+      create_groups_job: "%{progress}/%{total} groups created"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
     repo:

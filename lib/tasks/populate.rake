@@ -114,9 +114,10 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     a3.display_grader_names_to_students = false
     a3.save!
     # create groupings/groups
-    groups_csv_string.split("\n").each do |row|
+    data = groups_csv_string.split("\n").map do |row|
       a3.add_csv_group(row.split(","))
     end
+    CreateGroupsJob.perform_now(a3, data)
     req_file1.save!
   end
 end
