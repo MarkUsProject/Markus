@@ -132,13 +132,6 @@ function prevCriterion() {
   activeCriterion($prev_criterion);
 }
 
-function update_total_mark(total_mark) {
-  document.getElementById('current_mark_div').innerHTML       = total_mark;
-  document.getElementById('current_total_mark_div').innerHTML = total_mark;
-  // TODO: Enable this once it only moves to next *unmarked* criterion.
-  // nextCriterion();
-}
-
 function compact_view_toggle(init) {
   var toggle_elements = [
     $('#menus'),

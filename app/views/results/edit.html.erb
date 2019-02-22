@@ -20,6 +20,14 @@
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
         }
       );
+
+      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
     });
   </script>
 <% end %>
@@ -63,10 +71,6 @@
     return '<%= t(:still_working_warning) %>';
   }
 </script>
-
-<% # Javascript for showing/hiding old marks %>
-<%= render partial: 'results/common/old_marks_view_functions',
-           formats: [:html] %>
 
 <% # Javascript for progress bar %>
 <%= render partial: 'results/marker/update_progress_bar',
@@ -189,23 +193,14 @@
 
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
-               locals: { extra_marks_points: @result.extra_marks.points,
-                         extra_marks_percentage: @result.extra_marks.percentage,
-                         result: @result,
+               locals: { result: @result,
                          assignment: @assignment,
-                         marks_map: @marks_map,
-                         old_marks_map: @old_marks_map,
-                         mark_criteria:@mark_criteria,
                          submission: @submission,
                          old_result: @old_result } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
-               handlers: [:erb],
-               locals: { extra_marks_points: @result.extra_marks.points,
-                         extra_marks_percentage: @result.extra_marks.percentage
-               }
-    %>
+               handlers: [:erb] %>
   <% end %>
 </div>
 

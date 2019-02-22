@@ -16,8 +16,4 @@ class NoLateSubmissionRule < SubmissionRule
   def apply_submission_rule(submission)
     submission
   end
-
-  def grader_tab_partial
-    'submission_rules/no_late/grader_tab'
-  end
 end

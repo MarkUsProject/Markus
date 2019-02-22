@@ -79,10 +79,6 @@ class SubmissionRule < ApplicationRecord
     raise NotImplementedError.new('SubmissionRule:  apply_submission_rule not implemented')
   end
 
-  def grader_tab_partial(grouping)
-    raise NotImplementedError.new('SubmissionRule:  render_grader_tab not implemented')
-  end
-
   def reset_collection_time
     @get_collection_time = Array.new
     @get_global_collection_time = nil
