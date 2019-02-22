@@ -21,7 +21,7 @@ class Assignment < ApplicationRecord
        dependent: :destroy
 
   has_many :test_groups, dependent: :destroy
-  accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: -> (attrs) { attrs[:name].blank? }
+  accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
            -> { order(:position) },

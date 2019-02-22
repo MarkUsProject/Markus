@@ -5,7 +5,7 @@ $(document).ready(function() {
   });
 
   /* Disables form elements when Remove checkbox is checked */
-  $(".remove_test_group" ).click(function() {
+  $(".remove_test_group").click(function() {
     if(this.checked) {
       $(this).closest(".settings_box").find(":input").not(this).attr('disabled', true);
     } else {

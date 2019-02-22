@@ -21,7 +21,7 @@ class AutomatedTestsController < ApplicationController
     else
       flash_message(:error, assignment.errors.full_messages)
     end
-    # TODO the page is not correctly drawn when using render
+    # TODO: the page is not correctly drawn when using render
     redirect_to action: 'manage', assignment_id: params[:assignment_id]
   end
 
@@ -84,7 +84,7 @@ class AutomatedTestsController < ApplicationController
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
-  # TODO use authorizations from here on
+  # TODO: use authorizations from here on
   def fetch_testers
     AutotestTestersJob.perform_later
     head :no_content
@@ -102,7 +102,7 @@ class AutomatedTestsController < ApplicationController
   def download_file
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_path, params[:file_name])
-    if File.exists?(file_path)
+    if File.exist?(file_path)
       send_file file_path, filename: params[:file_name]
     else
       render plain: t('student.submission.missing_file', file_name: params[:file_name])
@@ -147,6 +147,7 @@ class AutomatedTestsController < ApplicationController
       :enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
       :non_regenerating_tokens, :unlimited_tokens,
       test_groups_attributes:
-        [:id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id, :criterion_type, :_destroy])
+        [:id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id, :criterion_type, :_destroy]
+    )
   end
 end
