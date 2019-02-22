@@ -1,5 +1,4 @@
 class AutomatedTestsController < ApplicationController
-  include AutomatedTestsClientHelper
 
   before_action      :authorize_only_for_admin,
                      only: [:manage, :update]
@@ -10,16 +9,13 @@ class AutomatedTestsController < ApplicationController
   # Update is called when files are added to the assignment
   def update
     assignment = Assignment.find(params[:assignment_id])
-    assignment.test_groups_attributes = assignment_params[:test_groups_attributes] || []
-    assignment.enable_test = assignment_params[:enable_test]
-    assignment.enable_student_tests = assignment_params[:enable_student_tests]
-    assignment.non_regenerating_tokens = assignment_params[:non_regenerating_tokens]
-    assignment.unlimited_tokens = assignment_params[:unlimited_tokens]
-    assignment.token_start_date = assignment_params[:token_start_date]
-    assignment.token_period = assignment_params[:token_period]
-    assignment.tokens_per_period = assignment_params[:tokens_per_period].nil? ?
-                                     0 : assignment_params[:tokens_per_period]
-    if assignment.save
+    # extract criterion_id and criterion_type (there is no automatic support for polymorphic html select)
+    form_params = assignment_params
+    form_params[:test_groups_attributes].each do |_, p|
+      next if p[:criterion_id].blank?
+      p[:criterion_id], p[:criterion_type] = p[:criterion_id].split('_')
+    end
+    if assignment.update form_params
       AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
       flash_message(:success, t('assignment.update_success'))
     else
@@ -89,7 +85,6 @@ class AutomatedTestsController < ApplicationController
   end
 
   # TODO use authorizations from here on
-  # TODO change test_scripts save action + select from existing files
   def fetch_testers
     AutotestTestersJob.perform_later
     head :no_content
@@ -148,17 +143,10 @@ class AutomatedTestsController < ApplicationController
   private
 
   def assignment_params
-    params.require(:assignment)
-      .permit(:enable_test,
-              :enable_student_tests,
-              :assignment_id,
-              :tokens_per_period,
-              :token_period,
-              :token_start_date,
-              :non_regenerating_tokens,
-              :unlimited_tokens,
-              test_groups_attributes:
-                [:id, :assignment_id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id,
-                 :_destroy])
+    params.require(:assignment).permit(
+      :enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
+      :non_regenerating_tokens, :unlimited_tokens,
+      test_groups_attributes:
+        [:id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id, :criterion_type, :_destroy])
   end
 end

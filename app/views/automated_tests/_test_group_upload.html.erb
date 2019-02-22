@@ -1,17 +1,7 @@
 <div class="test_script">
   <% display_options = TestGroup.display_outputs.keys
-       .map { |o| [I18n.t("automated_tests.test_group_option.display_to.#{o}"), o] }.to_h %>
-  <% criterion_options = { '-' => nil }
-    if !@assignment.rubric_criteria_count.nil?
-       @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
-       end
-     else
-       @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
-       end
-     end
-  %>
+    .map { |o| [I18n.t("automated_tests.test_group_option.display_to.#{o}"), o] }.to_h %>
+  <% criterion_options = @assignment.get_criteria.map { |c| [c.name, "#{c.id}_#{c.class.name}"] }.to_h %>
 
   <%= form.fields_for :test_groups, test_group do |tg| %>
     <% saved = !tg.object.new_record? %>
@@ -27,7 +17,7 @@
       </legend>
       <br/><br/>
       <div class="settings_left_side">
-        <%= tg.select :name, options_for_select(@assignment.autotest_files, selected: tg.object.name) %>
+        <%= tg.select :name, options_for_select(@assignment.autotest_files, selected: tg.object.name), prompt: '' %>
         <br/>
         <% if saved %>
           <%= tg.label :_destroy, t('automated_tests.test_group_option.remove'),
@@ -42,8 +32,9 @@
         <%= tg.label :criterion_id, t('automated_tests.test_group_option.associated_criterion') %>
         <% selected = tg.object.criterion_id.nil? ?
                         nil :
-                        [tg.object.criterion_id, tg.object.criterion_type].to_s %>
-        <%= tg.select :criterion_id, options_for_select(criterion_options, selected) %><br/>
+                        "#{tg.object.criterion_id}_#{tg.object.criterion_type}" %>
+        <%= tg.select :criterion_id, options_for_select(criterion_options, selected: selected), include_blank: true %>
+        <br/>
 
         <%= tg.label :run_by_instructors, t('automated_tests.test_group_option.run_by_instructors'),
                     title: t('automated_tests.test_group_option.run_by_instructors_help') %>

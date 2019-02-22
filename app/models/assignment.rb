@@ -21,7 +21,7 @@ class Assignment < ApplicationRecord
        dependent: :destroy
 
   has_many :test_groups, dependent: :destroy
-  accepts_nested_attributes_for :test_groups, allow_destroy: true
+  accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: -> (attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -1091,7 +1091,7 @@ class Assignment < ApplicationRecord
   end
 
   def autotest_path
-    File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier)
+    File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
   end
 
   def autotest_files
@@ -1101,16 +1101,14 @@ class Assignment < ApplicationRecord
   # Selects the hooks script from the test files.
   def get_hooks_script_name
     # TODO: Adjust the hooks mechanism when we create a new user interface
-    hooks_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
-                           AutomatedTestsClientHelper::HOOKS_FILE)
+    hooks_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::HOOKS_FILE)
     File.exist?(hooks_path) ? File.basename(hooks_path) : nil
   end
 
   # Selects the test specs from the test files.
   def get_test_specs_name
     # TODO: Adjust the specs mechanism when we create a new user interface
-    specs_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
-                           AutomatedTestsClientHelper::SPECS_FILE)
+    specs_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::SPECS_FILE)
     File.exist?(specs_path) ? File.basename(specs_path) : nil
   end
 

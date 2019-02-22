@@ -35,10 +35,7 @@
 
 <%= button_to t('automated_tests.fetch_testers'), fetch_testers_automated_test_path(id: @assignment.id) %>
 
-<%= form_for @assignment,
-             as: :assignment,
-             url: manage_assignment_automated_tests_path,
-             html: {multipart: true} do |f| %>
+<%= form_for @assignment, url: manage_assignment_automated_tests_path do |f| %>
   <%= render partial: 'shared/error_explanation',
              locals: { model: @assignment } %>
     <p id="testing_framework_style">
@@ -97,10 +94,10 @@
 
       <div>
         <% @assignment.test_groups.each do |tg| %>
-            <%= render partial: 'test_group_upload', locals: {test_group: tg, form: f} %>
+            <%= render partial: 'test_group_upload', locals: { test_group: tg, form: f } %>
         <% end %>
       </div>
     </fieldset>
 
-    <%= f.submit t(:submit) , disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);'%>
+    <%= f.submit t(:submit), disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);' %>
   <% end %>
