@@ -153,7 +153,6 @@
 
 #mark_viewer,
 #summary_viewer,
-#submission_rule_viewer,
 #codeviewer,
 #testviewer,
 #annotations_summary,
@@ -516,7 +515,7 @@ ul.annotation_text_list {
   }
 }
 
-.old-mark {
+.old-mark:not(.rubric-level) {
   float: right;
   padding-right: 10px;
 }
@@ -539,74 +538,26 @@ ul.annotation_text_list {
 
 /* Submission Rule Pane */
 
-.submission_rule_pane {
-  border: none;
-  margin-top: 1.5em;
-  margin-bottom: 2em;
-}
-
-.submission_rule_label, .bonus_deduction {
+.bonus-deduction {
   background-color: #cee3ea;
-  padding: 3px 3px 3px 3px;
-}
-
-#submission_rule_viewer {
   padding: 3px 3px 3px 3px;
 }
 
 /* Extra Mark holder */
 
-.extra_mark_holder,
-.link {
-  background: #fbfbfb;
-  border-bottom: 1px solid #dadada;
-  min-width: 5px;
-  padding: 5px;
+.extra-marks-pane {
+  border: 0;
+  margin-top: 1em;
 }
-
-  // .extra_mark_title_div {
-  //   cursor: pointer;
-  // }
-
-  // .extra_mark_holder_selected {
-  //   background: #ccf;
-  // }
-
-  // .extra_mark_delete {
-  //   float: right;
-  // }
-
-  .extra_marks_pane {
-    border: none;
-    margin-top: 1em;
-  }
-
-  .extra_marks_pane_list {
-    tbody + tbody {
-      tr {
-        background: $white !important;
-      }
-    }
-
-    #add_extra_mark_prompt {
-      div {
-        margin-bottom: 0.5em;
-      }
-
-      label {
-        display: inline-block;
-        min-width: 25%;
-      }
-    }
-  }
-
-  #extra_marks_bonus,
-  #extra_marks_deducted {
-    text-align: right;
-  }
 
 
 /* Summary pane */
+.marks-summary-pane {
+  .ReactTable .rt-thead,
+  .ReactTable .rt-tbody {
+    overflow-y: auto;
+  }
+}
 
 .summary_block {
   border: none;
@@ -614,54 +565,6 @@ ul.annotation_text_list {
   line-height: 1.6em;
   margin: 0.25em 0.25em 1.5em;
   padding: 5px;
-}
-
-.extra_marks_pane_list,
-.extra_percentage_pane_list,
-.summary_criteria_pane_list {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-
-  thead {
-    border-bottom: 1px solid $light-grey;
-  }
-
-  th {
-    background: transparent;
-    padding: 0.75em 0.25em;
-    text-align: left;
-    width: 83%;
-
-    &:last-of-type{
-      text-align: right;
-    }
-  }
-  th+th {
-    width: auto;
-  }
-
-  tr {
-    &:nth-child(even) {
-      background: $light-grey;
-    }
-
-    &:nth-child(odd) {
-      background: $white;
-    }
-
-    td {
-      padding: 0.75em 0.25em;
-      width: 83%;
-
-      &:last-of-type {
-        text-align: right;
-      }
-    }
-    td+td {
-      width: auto;
-    }
-  }
 }
 
 .mark_subtotal {
@@ -693,12 +596,6 @@ ul.annotation_text_list {
   background-color: #fdfebc;
 }
 
-
-/* Submission rule pane */
-
-#submission_rule_viewer h3 {
-  margin-bottom: 0px;
-}
 
 /* Tag pane */
 

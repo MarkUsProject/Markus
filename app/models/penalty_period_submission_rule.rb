@@ -41,10 +41,6 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     submission
   end
 
-  def grader_tab_partial
-    'submission_rules/penalty_period/grader_tab'
-  end
-
   private
 
   def hours_sum

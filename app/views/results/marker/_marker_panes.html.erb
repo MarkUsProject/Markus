@@ -16,17 +16,7 @@
 
         <div id='mark_viewer' class='flex-col'></div>
 
-        <div id='summary_viewer' class='marks_summary_pane flex-col'>
-          <%= render partial: 'results/marker/marker_summary',
-                     locals: { mark_criteria: mark_criteria,
-                               marks_map: marks_map,
-                               old_marks_map: old_marks_map,
-                               assignment: assignment,
-                               old_result: @old_result,
-                               result: result,
-                               extra_marks_points: extra_marks_points,
-                               extra_marks_percentage: extra_marks_percentage } %>
-        </div>
+        <div id='summary_viewer' class='marks-summary-pane flex-col'></div>
 
         <!-- Tag insertion pane. -->
         <% unless @result.is_a_review? %>

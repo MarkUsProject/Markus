@@ -188,7 +188,6 @@ Rails.application.routes.draw do
           member do
             get 'get_annotations'
             get 'add_extra_marks'
-            get 'add_extra_mark'
             get 'download'
             post 'download'
             get 'download_zip'
@@ -222,7 +221,6 @@ Rails.application.routes.draw do
 
         member do
           get 'view_marks'
-          post 'add_extra_mark'
           get 'next_grouping'
           post 'toggle_marking_state'
           post 'update_mark'

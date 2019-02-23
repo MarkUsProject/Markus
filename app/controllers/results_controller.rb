@@ -175,6 +175,23 @@ class ResultsController < ApplicationController
         end
         data[:old_marks] = old_marks
 
+        # Extra marks
+        data[:extra_marks] = result.extra_marks
+                                   .pluck_to_hash(:id, :description, :extra_mark, :unit)
+
+        # Grace token deductions
+        data[:grace_token_deductions] =
+          submission.grouping
+                    .grace_period_deductions
+                    .joins(membership: :user)
+                    .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+
+        # Totals
+        data[:assignment_max_mark] =
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta)
+        data[:total] = result.total_mark
+        data[:old_total] = original_result&.total_mark
+
         render json: data
       end
     end
@@ -194,60 +211,10 @@ class ResultsController < ApplicationController
     @files = filtered.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
-    @feedback_files = @submission.feedback_files
-    @marks_map = Hash.new
-    @old_marks_map = Hash.new
 
-    reviewer_access = false
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
         assignment = @assignment.pr_assignment
-        @mark_criteria = assignment.get_criteria(:peer)
-      else
-        @mark_criteria = @assignment.pr_assignment.get_criteria(:ta)
-      end
-    else
-      @mark_criteria = @assignment.get_criteria(:ta)
-    end
-
-    # Reorder criteria assigned to specific TAs
-    if @assignment.assign_graders_to_criteria && current_user.ta?
-      assigned_criteria = current_user.get_criterion_associations_by_assignment(@assignment)
-                                       .map &:criterion
-      @mark_criteria = @mark_criteria.partition { |c| assigned_criteria.include? c }.flatten
-    end
-
-    if @old_result
-      marks = @result.marks
-    else
-      marks = @result.marks.includes(:markable)
-    end
-    @mark_criteria.each do |criterion|
-      unless marks.any? { |mark| mark.markable_id == criterion.id &&
-                                 mark.markable_type == criterion.class.name }
-        @result.marks.create(markable: criterion)
-      end
-    end
-    @result.update_total_mark
-    marks.reload
-
-    marks.each do |mark|
-      # NOTE: Due to the way marks were set up, they originally assumed that
-      # there only would ever be unique criterion IDs. Now that we mix them
-      # together, multiple criteria could end up using the same ID due to the
-      # polymorphic nature of criteria. This led to old values getting written
-      # over by other ones with the same criteria ID, so the class String is
-      # used to allow the viewers to differentiate between them.
-      # TODO - An even better idea: create a 'table', or rather hash[key][key]
-      @marks_map[[mark.markable_type, mark.markable_id]] = mark
-
-      # Loading up previous results for the case of a remark
-      if @old_result
-        oldmark = mark.markable.marks.find_or_create_by(result_id: @old_result.id)
-        oldmark.save(validate: false)
-
-        # See above for reasoning on why two elements are used.
-        @old_marks_map[[mark.markable_type, mark.markable_id]] = oldmark
       end
     end
 
@@ -744,31 +711,23 @@ class ResultsController < ApplicationController
 
   def add_extra_mark
     @result = Result.find(params[:id])
-    if request.post?
-      @extra_mark = ExtraMark.new
-      @extra_mark.result = @result
-      @extra_mark.unit = ExtraMark::POINTS
-      if @extra_mark.update_attributes(extra_mark_params)
-        # need to re-calculate total mark
-        @result.update_total_mark
-        render template: 'results/marker/insert_extra_mark'
-      else
-        render template: 'results/marker/add_extra_mark_error'
-      end
-      return
+    @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
+    if @extra_mark.save
+      # need to re-calculate total mark
+      @result.update_total_mark
+      head :ok
+    else
+      head :bad_request
     end
-    render template: 'results/marker/add_extra_mark'
   end
 
-  #Deletes an extra mark from the database and removes it from the html
   def remove_extra_mark
-    #find the extra mark and destroy it
-    @extra_mark = ExtraMark.find(params[:id])
-    @extra_mark.destroy
-    #need to recalculate total mark
-    @result = @extra_mark.result
-    @result.update_total_mark
-    render template: 'results/marker/remove_extra_mark'
+    extra_mark = ExtraMark.find(params[:id])
+    result = extra_mark.result
+
+    extra_mark.destroy
+    result.update_total_mark
+    head :ok
   end
 
   def update_overall_comment
@@ -825,6 +784,7 @@ class ResultsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
     grace_deduction.destroy
+    head :ok
   end
 
   def get_test_runs_instructors

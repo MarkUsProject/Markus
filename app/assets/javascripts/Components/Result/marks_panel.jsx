@@ -86,16 +86,12 @@ export class MarksPanel extends React.Component {
       this.state.expanded.delete(`${criterion_type}-${criterion_id}`);
       this.setState({ marks, expanded: this.state.expanded });
       let items = data.split(',');
-      let mark_id = items[0];
-      let subtotal = items[1];
       let total = items[2];
       let marked = items[3];
       let assigned = items[4];
       document.getElementById('current_mark_div').innerText = total;
-      document.getElementById('current_total_mark_div').innerText = total;
-      document.getElementById('current_subtotal_div').innerText = subtotal;
-      document.getElementById(`mark_${mark_id}_summary_mark_after_weight`).innerHTML = mark;
 
+      window.summaryPanel.fetchData();
       update_bar(marked, assigned);
     });
   };
@@ -167,7 +163,7 @@ export class MarksPanel extends React.Component {
          </div>
         }
         <div id='mark_criteria'>
-          <ul class='marks-list'>
+          <ul className='marks-list'>
             {markComponents}
           </ul>
         </div>

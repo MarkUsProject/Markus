@@ -36,10 +36,6 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     submission
   end
 
-  def grader_tab_partial
-    'submission_rules/penalty_decay_period/grader_tab'
-  end
-
   def hours_sum
     periods.sum('hours')
   end

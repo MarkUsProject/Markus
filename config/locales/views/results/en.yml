@@ -3,11 +3,9 @@ en:
     edit:
       title: "Assignment %{assignment_name}: %{group_name}"
 
-    bonus_marks: "Bonus Marks"
     cant_display_image: "Image cannot be displayed. Click on the Download button to download the file instead."
     collapse_all: "Collapse All"
     criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
-    deducted_marks: "Deducted Marks"
     delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
     expand_all: "Expand All"
     expand_unmarked: "Expand Unmarked"
@@ -32,8 +30,6 @@ en:
     subtotal: "Subtotal"
     summary: "Summary"
     total_extra_marks: "Total Extra Marks"
-    total_extra_percentages: "Total Extra Percentage"
-    translated_to_points: "Translated to Points"
     your_mark: "Your mark: %{mark}"
 
     # Annotations
@@ -59,12 +55,10 @@ en:
                        Your existing request will be deleted, and this cannot be undone."
       cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
       old_mark: "Old Mark"
-      old_subtotal: "Original Subtotal"
       old_total: "Original Total Mark"
       no_remark_due_date: "No remark due date specified."
       no_remark_result: "Remark results are not yet available for this assignment."
       past_remark_due_date: "It is already past the remark due date."
-      show_old_marks: "Show Original Mark Summary"
       submit: "Submit Request to Instructor"
       submit_confirm: "You will not be able to see your results until remarking is finished.
                        Are you sure you want to submit your remark request now?"

@@ -25,7 +25,6 @@
         <%= button_to(t('remove'),
                       delete_grace_period_deduction_student_path(deduction_id: grace_period_deduction.id),
                       confirm: t('grace_period_submission_rules.confirm_remove_deduction'),
-                      class: 'button_to_delete_deduction',
                       remote: true) %>
       </td>
     </tr>
