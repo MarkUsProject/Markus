@@ -19,6 +19,12 @@ describe AssignmentsController do
         File.read(fixture_file_upload(
                     'files/assignments/form_good.csv', 'text/csv')))
 
+      @file_good_yml = fixture_file_upload(
+        'files/assignments/form_good.yml', 'text/yaml')
+      allow(@file_good_yml).to receive(:read).and_return(
+        File.read(fixture_file_upload(
+                    'files/assignments/form_good.yml', 'text/yaml')))
+
       @file_invalid_column = fixture_file_upload(
         'files/assignments/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
@@ -54,6 +60,12 @@ describe AssignmentsController do
                                                                        count: 2)].map { |f| extract_text f })
       expect(response).to redirect_to(action: 'index',
                                       controller: 'assignments')
+    end
+
+    it 'accepts a valid YAML file' do
+      post :upload_assignment_list, params: { assignment_list: @file_good_yml, file_format: 'yml' }
+
+      expect(response.status).to eq(302)
     end
 
     it 'does not accept files with invalid columns' do
@@ -133,9 +145,9 @@ describe AssignmentsController do
       end
       expect(@controller).to receive(:send_data)
                                .with(csv_data.join(',') + "\n", csv_options) {
-        # to prevent a 'missing template' error
-        @controller.head :ok
-      }
+                                 # to prevent a 'missing template' error
+                                 @controller.head :ok
+                               }
       get :download_assignment_list, params: { file_format: 'csv' }
     end
 
@@ -149,8 +161,13 @@ describe AssignmentsController do
     it 'filename passes naming conventions' do
       get :download_assignment_list, params: { file_format: 'csv' }
       filename = response.header['Content-Disposition']
-        .split.last.split('"').second
+                   .split.last.split('"').second
       expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv"
     end
   end
+
+  context 'YML downloads' do
+
+  end
+
 end
