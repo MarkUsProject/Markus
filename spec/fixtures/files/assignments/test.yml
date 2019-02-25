@@ -1,0 +1,9 @@
+- assignment:
+    short_identifier: Assignment 1
+    description: This is the student's first assignment
+    repository_folder: Assignments
+    due_date: 2013-07-22 14:00:00
+    submission_rule: none
+    assignment_stat: none
+    :token_period: 0
+    :unlimited_tokens: none

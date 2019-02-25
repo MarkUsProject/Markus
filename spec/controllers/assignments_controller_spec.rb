@@ -63,6 +63,7 @@ describe AssignmentsController do
     end
 
     it 'accepts a valid YAML file' do
+      # byebug
       post :upload_assignment_list, params: { assignment_list: @file_good_yml, file_format: 'yml' }
 
       expect(response.status).to eq(302)

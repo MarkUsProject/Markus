@@ -1342,12 +1342,14 @@ class Assignment < ApplicationRecord
       result
     when 'yml'
       begin
+        byebug
         map = YAML::load(assignment_data)
         map[:assignments].map do |row|
           row[:submission_rule] = NoLateSubmissionRule.new
           row[:assignment_stat] = AssignmentStat.new
           row[:token_period] = 1
           row[:unlimited_tokens] = false
+          byebug
           update_assignment!(row)
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
