@@ -177,7 +177,7 @@ class GitRepository < Repository::AbstractRepository
     return nil if current_reflog_entry.empty?
     # find first commit that changes path, topologically equal or before the push
     walker = Rugged::Walker.new(@repos)
-    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+    walker.sorting(Rugged::SORT_TOPO)
     walker.push(current_reflog_entry[:sha])
     walker.each do |commit|
       GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
@@ -203,7 +203,7 @@ class GitRepository < Repository::AbstractRepository
     current_reflog_entry = { index: -1 }
     # walk through the commits and get revisions
     walker = Rugged::Walker.new(@repos)
-    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+    walker.sorting(Rugged::SORT_TOPO)
     walker.push(@repos.last_commit)
     walker.map do |commit|
       GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
@@ -615,7 +615,7 @@ class GitRevision < Repository::AbstractRevision
     current_reflog_entry = { index: -1 }
     found = false
     walker = Rugged::Walker.new(@repo)
-    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_DATE)
+    walker.sorting(Rugged::SORT_TOPO)
     walker.push(@repo.last_commit)
     walker.each do |commit|
       GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
