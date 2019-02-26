@@ -1,10 +1,9 @@
 :assignments:
-  - assignment1:
-    - :short_identifier: A1
-    - :description: a1
-    - :repository_folder: A
-    - :due_date: 2
-    - :submission_rule:
-    - :assignment_stat:
-    - :token_period:
-    - :unlimited_tokens:
+  - :short_identifier: A1
+  - :description: a1
+  - :repository_folder: A
+  - :due_date: 2
+  - :submission_rule:
+  - :assignment_stat:
+  - :token_period:
+  - :unlimited_tokens:
