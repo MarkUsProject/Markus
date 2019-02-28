@@ -49,12 +49,7 @@ describe AnnotationCategoriesController do
         'files/annotation_categories/form_invalid_column.csv', 'text/csv'
       )
       allow(@file_invalid_column).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/annotation_categories/form_invalid_column.csv',
-                    'text/csv'
-                  )
-        )
-      )
+        File.read(fixture_file_upload('files/annotation_categories/form_invalid_column.csv', 'text/csv')))
 
       post :csv_upload, params: { assignment_id: assignment.id, annotation_category_list_csv: @file_invalid_column }
 
