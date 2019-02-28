@@ -1,9 +1,5 @@
 :assignments:
-  - :short_identifier: A1
-  - :description: a1
-  - :repository_folder: A
-  - :due_date: 2
-  - :submission_rule:
-  - :assignment_stat:
-  - :token_period:
-  - :unlimited_tokens:
+  - :short_identifier: ATest1
+    :description: test1
+    :repository_folder: ATest1
+    :due_date: 2013-07-22 14:00:00

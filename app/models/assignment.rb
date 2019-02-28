@@ -1342,7 +1342,6 @@ class Assignment < ApplicationRecord
       result
     when 'yml'
       begin
-        byebug
         @testing_controller = AssignmentsController.new
         map = YAML::load(assignment_data)
         map[:assignments].map do |row|
@@ -1350,7 +1349,6 @@ class Assignment < ApplicationRecord
           row[:assignment_stat] = AssignmentStat.new
           row[:token_period] = 1
           row[:unlimited_tokens] = false
-          byebug
           @testing_controller.update_assignment!(row)
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
