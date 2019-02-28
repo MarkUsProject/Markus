@@ -17,7 +17,7 @@ class AutotestTestersJob < ApplicationJob
         # local or remote fetch testers with authentication
         server_host = MarkusConfigurator.autotest_server_host
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-          testers_command = "#{server_command} testers"
+          testers_command = "#{server_command} schema"
           output = ssh.exec!(testers_command)
           if output.exitstatus != 0
             raise output

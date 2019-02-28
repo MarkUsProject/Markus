@@ -64,12 +64,8 @@ class AutomatedTestsController < ApplicationController
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
-      test_group_ids = assignment.select_test_groups(current_user).pluck(:id)
-      test_specs_name = assignment.get_test_specs_name
-      hooks_script_name = assignment.get_hooks_script_name
       test_run = grouping.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_group_ids,
-                                   test_specs_name, hooks_script_name, [{ id: test_run.id }])
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message

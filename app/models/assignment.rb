@@ -1098,13 +1098,6 @@ class Assignment < ApplicationRecord
     Dir.entries(autotest_path) - ['.', '..']
   end
 
-  # Selects the hooks script from the test files.
-  def get_hooks_script_name
-    # TODO: Adjust the hooks mechanism when we create a new user interface
-    hooks_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::HOOKS_FILE)
-    File.exist?(hooks_path) ? File.basename(hooks_path) : nil
-  end
-
   # Selects the test specs from the test files.
   def get_test_specs_name
     # TODO: Adjust the specs mechanism when we create a new user interface
