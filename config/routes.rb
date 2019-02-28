@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
           collection do
+            get 'annotations'
             get 'group_ids_by_name'
           end
           resources :submission_downloads, except: [:new, :edit]
@@ -21,6 +22,7 @@ Rails.application.routes.draw do
             resources :test_results, except: [:new, :edit]
           end
           member do
+            get 'annotations'
             post 'add_annotations'
             put 'update_marks'
             put 'update_marking_state'
@@ -88,6 +90,9 @@ Rails.application.routes.draw do
           post 'upload'
           get 'download'
           get 'get_test_runs_students'
+          get 'populate_file_manager'
+          get 'download_file'
+          post 'upload_files'
         end
       end
 
@@ -174,7 +179,6 @@ Rails.application.routes.draw do
           post 'repo_browser'
           get 'downloads'
           get 'get_file'
-          get 'submission_files'
         end
 
         resources :results do
@@ -187,7 +191,6 @@ Rails.application.routes.draw do
           member do
             get 'get_annotations'
             get 'add_extra_marks'
-            get 'add_extra_mark'
             get 'download'
             post 'download'
             get 'download_zip'
@@ -221,7 +224,6 @@ Rails.application.routes.draw do
 
         member do
           get 'view_marks'
-          post 'add_extra_mark'
           get 'next_grouping'
           post 'toggle_marking_state'
           post 'update_mark'

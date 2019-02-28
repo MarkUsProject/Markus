@@ -14,44 +14,9 @@
           <% end %>
         </ul>
 
-        <div id='mark_viewer' class='flex-col'>
-          <div class='mark_tools'>
-            <button class='inline-button' id='expand_all'>
-              <%= t('results.expand_all') %>
-            </button>
-            <button class='inline-button' id='collapse_all'>
-              <%= t('results.collapse_all') %>
-            </button>
-            <button class='inline-button' id='expand_unmarked'>
-              <%= t('results.expand_unmarked') %>
-            </button>
-          </div>
+        <div id='mark_viewer' class='flex-col'></div>
 
-          <div id='mark_criteria'>
-            <ul id='mark_criteria_pane_list'>
-              <%# Also need to render the mark per criteria (if exist) %>
-              <% @mark_criteria.each do |mark_criterion| -%>
-                <%= render partial: "results/marker/marker_#{mark_criterion.class.to_s.underscore}_li",
-                           locals: { mark_criterion: mark_criterion,
-                                     result: result,
-                                     mark: marks_map[[mark_criterion.class.to_s, mark_criterion.id]],
-                                     old_mark: old_marks_map[[mark_criterion.class.to_s, mark_criterion.id]] } %>
-              <% end -%>
-            </ul>
-          </div>
-        </div> <%# Criterion Viewer %>
-
-        <div id='summary_viewer' class='marks_summary_pane flex-col'>
-          <%= render partial: 'results/marker/marker_summary',
-                     locals: { mark_criteria: mark_criteria,
-                               marks_map: marks_map,
-                               old_marks_map: old_marks_map,
-                               assignment: assignment,
-                               old_result: @old_result,
-                               result: result,
-                               extra_marks_points: extra_marks_points,
-                               extra_marks_percentage: extra_marks_percentage } %>
-        </div>
+        <div id='summary_viewer' class='marks-summary-pane flex-col'></div>
 
         <!-- Tag insertion pane. -->
         <% unless @result.is_a_review? %>

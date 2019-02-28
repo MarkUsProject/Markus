@@ -11,9 +11,8 @@ export class FileViewer extends React.Component {
     this.state = {
       content: '',
       type: '',
-      focus_line: null,
       url: '',
-      submission_file_id: undefined
+      loading: true
     };
   }
 
@@ -23,78 +22,85 @@ export class FileViewer extends React.Component {
     }
   }
 
-  componentDidUpdate(oldProps) {
-    if (this.props.selectedFile !== null && this.props.selectedFile !== oldProps.selectedFile) {
-      this.set_submission_file(this.props.selectedFile);
+  // Manually manage a change of selectedFile, as this requires fetching new file data.
+  shouldComponentUpdate(nextProps) {
+    if (this.props.selectedFile === null || this.props.selectedFile !== nextProps.selectedFile) {
+      this.set_submission_file(nextProps.selectedFile);
+      return false;
+    } else {
+      return true;
     }
   }
 
   /*
    * Update the contents being displayed with the given submission file id.
    */
-  set_submission_file = (submission_file_id, focus_line) => {
-    if (submission_file_id === this.state.submission_file_id) {
-      // TODO: can still scroll to the focus_line here.
-      return;
-    }
-
+  set_submission_file = (submission_file_id) => {
     // TODO: is this the right spot to remove these? Should it be done earlier?
     $('.annotation_text_display').each(function() {
       this.remove();
     });
 
-    fetch(Routes.get_file_assignment_submission_path(
-            '',
-            this.props.assignment_id,
-            this.props.submission_id,
-            {submission_file_id: submission_file_id}),
-          {credentials: 'include'})
-      .then(res => res.json())
-      .then(body => {
-        if (body.type === 'image' || body.type === 'pdf') {
-          this.setState({
-            type: body.type,
-            submission_file_id: submission_file_id,
-            url: Routes.download_assignment_submission_result_path(
+    this.setState({loading: true}, () => {
+      fetch(Routes.get_file_assignment_submission_path(
               '',
               this.props.assignment_id,
               this.props.submission_id,
-              this.props.result_id,
-              {
-                select_file_id: submission_file_id,
-                show_in_browser: true,
-                from_codeviewer: true,
-              }
-            )
-          });
-        } else {
-          const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
-          this.setState({
-            submission_file_id: submission_file_id,
-            content: content,
-            type: body.type,
-            // TODO: use this by calling focus_source_code_line
-            focus_line: focus_line
-          });
-        }
-      });
+              {submission_file_id: submission_file_id}),
+            {credentials: 'include'})
+        .then(res => res.json())
+        .then(body => {
+          if (body.type === 'image' || body.type === 'pdf') {
+            this.setState({
+              type: body.type,
+              url: Routes.download_assignment_submission_result_path(
+                '',
+                this.props.assignment_id,
+                this.props.submission_id,
+                this.props.result_id,
+                {
+                  select_file_id: submission_file_id,
+                  show_in_browser: true,
+                  from_codeviewer: true,
+                }
+              ),
+              loading: false,
+            });
+          } else {
+            const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
+            this.setState({
+              content: content,
+              type: body.type,
+              loading: false,
+            });
+          }
+        });
+    });
   };
 
   render() {
-    if (this.state.type === 'image') {
+    const commonProps = {submission_file_id: this.props.selectedFile, annotations: this.props.annotations};
+    if (this.state.loading) {
+      return I18n.t('working');
+    } else if (this.state.type === 'image') {
       return <ImageViewer
         url={this.state.url}
-        submission_file_id={this.state.submission_file_id} />;
-    } else if(this.state.type === 'pdf') {
+        {...commonProps}
+      />;
+    } else if (this.state.type === 'pdf') {
       return <PDFViewer
         url={this.state.url}
-        submission_file_id={this.state.submission_file_id} />;
-    } else {
+        {...commonProps}
+      />;
+    } else if (this.state.type !== '') {
       return <TextViewer
         type={this.state.type}
         content={this.state.content}
-        focus_line={this.state.focus_line}
-        submission_file_id={this.state.submission_file_id} />;
+        focusLine={this.props.focusLine}
+        {...commonProps}
+      />;
+    } else {
+      return '';
     }
   }
 }

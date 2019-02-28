@@ -137,7 +137,7 @@ describe GroupsController do
       end
     end
 
-    describe '#csv_upload' do
+    describe '#csv_upload', keep_memory_repos: true do
       before :all do
         # remove a generated repo so repeated test runs function properly
         FileUtils.rm_r(
@@ -146,6 +146,9 @@ describe GroupsController do
       end
 
       before :each do
+        # since the git
+        allow(Repository.get_class).to receive(:purge_all).and_return nil
+
         # We need to mock the rack file to return its content when
         # the '.read' method is called to simulate the behaviour of
         # the http uploaded file
@@ -190,34 +193,22 @@ describe GroupsController do
         end
       end
 
-      it 'calls add_csv_group' do
-        expect_any_instance_of(Assignment).to receive(:add_csv_group)
-        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
-        # remove the generated repo so repeated test runs function properly
-        FileUtils.rm_rf File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/')
-      end
-
       it 'accepts a valid file' do
-        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
-
+        ActiveJob::Base.queue_adapter = :test
+        expect do
+          post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
+        end.to have_enqueued_job(CreateGroupsJob)
         expect(response.status).to eq(302)
-        expect(flash[:error]).to be_nil
-        expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('upload_success', count: 1)].map { |f| extract_text f })
+        expect(flash[:error]).to be_blank
         expect(response).to redirect_to(action: 'index')
 
-        expect(Group.find_by(group_name: 'group1').repo_name)
-          .to eq('group_0001')
-        FileUtils.rm_r(
-          File.join(::Rails.root.to_s, 'data/test/repos/group_0001', '/'),
-          force: true)
       end
 
       it 'does not accept files with invalid columns' do
         post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_invalid_column } }
 
         expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_empty
+        expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
       end
 
@@ -225,17 +216,7 @@ describe GroupsController do
         post :csv_upload, params: { assignment_id: @assignment.id }
 
         expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_empty
-        expect(response).to redirect_to(action: 'index')
-      end
-
-      it 'does not accept a non-csv file with .csv extension' do
-        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_bad_csv } }
-
-        expect(response.status).to eq(302)
-        expect(flash[:error].map { |f| extract_text(f) })
-          .to eq([I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text(f) })
-
+        expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
       end
 
@@ -243,7 +224,7 @@ describe GroupsController do
         post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist:  @file_wrong_format } }
 
         expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_empty
+        expect(flash[:error]).to_not be_blank
         expect(response).to redirect_to(action: 'index')
       end
     end

@@ -52,6 +52,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  config.after :each do |test|
+    destroy_repos unless test.metadata[:keep_memory_repos]
+  end
+
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.

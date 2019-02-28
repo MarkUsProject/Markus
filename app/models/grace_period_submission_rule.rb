@@ -80,10 +80,6 @@ class GracePeriodSubmissionRule < SubmissionRule
     submission
   end
 
-  def grader_tab_partial
-    'submission_rules/grace_period/grader_tab'
-  end
-
   #Remove all deductions for this assignment from all accepted members of
   #grouping, so that any new deductions for the assignemnt will not be duplicates
   def remove_deductions(grouping)

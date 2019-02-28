@@ -3,11 +3,9 @@ pt:
     edit:
       title: "Projeto %{assignment_name}: %{group_name}"
 
-    bonus_marks: "Notas bônus"
     cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
     collapse_all: "Agrupar todos"
     criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
-    deducted_marks: "Nota deduzida"
     delete_extra_mark_confirm: "Tem certeza que você deseja remover essa nota extra?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir não-selecionados"
@@ -30,8 +28,6 @@ pt:
     subtotal: "Subtotal"
     summary: "Resumo"
     total_extra_marks: "Nota extra total"
-    total_extra_percentages: "Porcentagem extra total"
-    translated_to_points: "Transformação para pontos"
     your_mark: "Sua nota: %{mark}"
 
     # Annotations
@@ -55,12 +51,10 @@ pt:
       cancel_confirm: "Tem certeza que quer cancelar o pedido de revisão?  O pedido será apagado e isso não poderá ser desfeito."
       cancel_remark_to_change: "Para alterar o pedido, você deve cancelar o atual e criar um novo."
       old_mark: "Old Mark"
-      old_subtotal: "Subtotal antigo"
       old_total: "Nota antiga"
       no_remark_due_date: "Nenhum prazo atribuido."
       no_remark_result: "Remark results are not yet available for this assignment."
       past_remark_due_date: "O prazo para a revisão já foi atingido."
-      show_old_marks: "Mostrar antigo resumo de notas"
       submit: "Enviar pedido ao instrutor"
       submit_confirm: "Tem certeza que quer enviar o pedido de revisão? Você não poderá ver os resultados até que a revisão seja feita."
       submitted_on: "Pedido de revisão enviado %{time}."

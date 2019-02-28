@@ -243,7 +243,9 @@ describe ResultsController do
     context 'accessing update_mark' do
       it 'should report an updated mark' do
         post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                     id: incomplete_result.id, mark_id: rubric_mark.id, mark: 1 }, xhr: true
+                                     id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                     markable_type: rubric_mark.markable_type,
+                                     mark: 1 }, xhr: true
         expect(response.body.parse_csv.first.to_f).to eq 1
       end
       it { expect(response).to have_http_status(:redirect) }
@@ -252,7 +254,9 @@ describe ResultsController do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
           post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                       id: incomplete_result.id, mark_id: rubric_mark.id, mark: 1 }, xhr: true
+                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                       markable_type: rubric_mark.markable_type,
+                                       mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
         it 'should report the correct error message' do
@@ -276,10 +280,7 @@ describe ResultsController do
                                           id: submission.get_latest_result.id,
                                           extra_mark: { extra_mark: 1 } }, xhr: true
         end
-        it { expect(response).to have_http_status(:success) }
-        test_assigns_not_nil :result
-        test_assigns_not_nil :extra_mark
-        it { expect(response).to render_template('results/marker/add_extra_mark_error') }
+        it { expect(response).to have_http_status(:bad_request) }
         it 'should not update the total mark' do
           expect(@old_mark).to eq(submission.get_latest_result.total_mark)
         end
@@ -293,9 +294,6 @@ describe ResultsController do
                                           extra_mark: { extra_mark: 1 } }, xhr: true
         end
         it { expect(response).to have_http_status(:success) }
-        test_assigns_not_nil :result
-        test_assigns_not_nil :extra_mark
-        it { expect(response).to render_template('results/marker/insert_extra_mark') }
         it 'should update the total mark' do
           expect(@old_mark + 1).to eq(submission.get_latest_result.total_mark)
         end
@@ -306,13 +304,11 @@ describe ResultsController do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
         submission.get_latest_result.update_total_mark
         @old_mark = submission.get_latest_result.total_mark
-        get :remove_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                          id: extra_mark.id }, xhr: true
+        post :remove_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                           id: extra_mark.id }, xhr: true
       end
       test_no_flash
-      test_assigns_not_nil :result
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to render_template('results/marker/remove_extra_mark') }
       it 'should change the total value' do
         submission.get_latest_result.update_total_mark
         expect(@old_mark).not_to eq incomplete_result.total_mark
@@ -336,7 +332,6 @@ describe ResultsController do
              edit: :get,
              download: :post,
              get_annotations: :get,
-             add_extra_marks: :get,
              add_extra_mark: :post,
              download_zip: :get,
              cancel_remark_request: :delete,
@@ -442,7 +437,6 @@ describe ResultsController do
         test_assigns_not_nil :files
         test_assigns_not_nil :extra_marks_points
         test_assigns_not_nil :extra_marks_percentage
-        test_assigns_not_nil :marks_map
       end
     end
   end

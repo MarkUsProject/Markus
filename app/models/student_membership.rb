@@ -19,6 +19,7 @@ class StudentMembership < Membership
         -> { where membership_status: [STATUSES[:accepted], STATUSES[:inviter]] }
 
   validate :must_be_valid_student
+  validate :one_accepted_per_assignment
 
   validates_presence_of :membership_status
   validates_format_of :membership_status,
@@ -67,5 +68,21 @@ class StudentMembership < Membership
     if access.include?(old) && no_access.include?(new) || access.include?(new) && no_access.include?(old)
        Repository.get_class.update_permissions
     end
+  end
+
+  def one_accepted_per_assignment
+    return true unless membership_status_changed?
+    old, new = membership_status_change
+    accepted_or_inviter = [STATUSES[:accepted], STATUSES[:inviter]]
+    return true unless accepted_or_inviter.include?(new) && !accepted_or_inviter.include?(old)
+    other_users = StudentMembership.joins(:grouping)
+                                   .where('groupings.assignment_id': grouping.assignment_id)
+                                   .where(membership_status: [:inviter, :accepted])
+                                   .where(user_id: user_id)
+    unless other_users.empty?
+      errors.add(:base, I18n.t('csv.memberships_not_unique'))
+      return false
+    end
+    true
   end
 end

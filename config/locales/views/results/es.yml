@@ -3,7 +3,6 @@ es:
     edit:
       title: "Proyecto %{assignment_name}: %{group_name}"
 
-    bonus_marks: "Notas de bonificación"
     cant_display_image: "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
                          por favor asegurese de habilitar el soporte para pdf. De click en el botón de
                          descargas para descargar el archivo."
@@ -11,7 +10,6 @@ es:
     criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
                                  sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                  ellos tenga su nota correspondiente."
-    deducted_marks: "Notas reducidas"
     delete_extra_mark_confirm: "¿Está seguro/a de querer remover esta nota adicional?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir no calificados"
@@ -34,8 +32,6 @@ es:
     subtotal: "Subtotal"
     summary: "Resumen"
     total_extra_marks: "Notas Adicionales Totales"
-    total_extra_percentages: "Porcentajes Adicionales Totales"
-    translated_to_points: "Convertidos a Puntos"
     your_mark: "Su nota: %{mark}"
 
     # Annotations
@@ -66,12 +62,10 @@ es:
                        será eliminada y no se podrá recuperar."
       cancel_remark_to_change: "Si desea modificar su solicitud, usted deberá cancelar la misma y crear una nueva."
       old_mark: "Old Mark"
-      old_subtotal: "Subtotal Anterior"
       old_total: "Nota Previa"
       no_remark_due_date: "La fecha límite de entrega no ha sido asignada."
       no_remark_result: "Los resultados de la recalificación no están disponibles para este proyecto todavía."
       past_remark_due_date: "La fecha límite para solicitar una recalificación ha pasado."
-      show_old_marks: "Ver el Resumen de Notas Anteriores"
       submit: "Entregar la solicitud al instructor"
       submit_confirm: "¿Está seguro/a de querer enviar su solictud de recalificación? Usted no podrá
                        ver sus resultados hasta que el proceso de recalificación haya finalizado."

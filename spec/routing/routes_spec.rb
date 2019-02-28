@@ -646,26 +646,6 @@ describe 'An Assignment' do
       end
 
       context 'member' do
-        it 'routes GET add_extra_marks properly' do
-          expect(get: res_path + '/1/add_extra_marks').to route_to(
-            controller: res_ctrl,
-            action: 'add_extra_marks',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
-        end
-
-        it 'routes GET add_extra_mark properly' do
-          expect(get: res_path + '/1/add_extra_mark').to route_to(
-            controller: res_ctrl,
-            action: 'add_extra_mark',
-            id: '1',
-            assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s,
-            locale: 'en')
-        end
-
         it 'routes GET download properly' do
           expect(get: res_path + '/1/download').to route_to(
             controller: res_ctrl,

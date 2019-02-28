@@ -3,7 +3,7 @@ class AutotestSpecsJob < ApplicationJob
 
   def perform(host_with_port, assignment_id)
     assignment = Assignment.find(assignment_id)
-    assignment_tests_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
+    assignment_tests_path = File.join(TestRun::ASSIGNMENTS_DIR, assignment.short_identifier)
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
     else

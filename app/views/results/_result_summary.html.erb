@@ -1,14 +1,7 @@
 <div id='result_summary' class='flex-col'>
   <%= render partial: 'results/student/student_panes',
-             locals: { extra_marks_points: extra_marks_points,
-                       extra_marks_percentage: extra_marks_percentage,
-                       result: @result,
-                       mark_criteria: @mark_criteria,
-                       marks_map: @marks_map,
-                       old_marks_map: @old_marks_map,
+             locals: { result: @result,
                        assignment: @assignment,
                        submission: @submission,
-                       old_result: @old_result,
-                       files: @files,
-                       feedback_files: @feedback_files} %>
+                       old_result: @old_result } %>
 </div>

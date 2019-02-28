@@ -10,7 +10,23 @@
   <%= javascript_pack_tag 'result' %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeLeftPane(document.getElementById('left-pane'),
+      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
+
+      makeMarksPanel(document.getElementById('mark_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
+
+      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
@@ -36,11 +52,6 @@
 
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
-           formats: [:html],
-           handlers: [:erb] %>
-
-<% # Javascript for showing/hiding old marks %>
-<%= render partial: 'results/common/old_marks_view_functions',
            formats: [:html],
            handlers: [:erb] %>
 
@@ -98,14 +109,8 @@
   <% end %>
 
   <%= render partial: 'results/student/student_panes',
-             locals: { extra_marks_points: @extra_marks_points,
-                       extra_marks_percentage: @extra_marks_percentage,
-                       result: @result,
-                       mark_criteria: @mark_criteria,
-                       marks_map: @marks_map,
-                       old_marks_map: @old_marks_map,
+             locals: { result: @result,
                        assignment: @assignment,
                        submission: @submission,
-                       old_result: @old_result,
-                       files: @files } %>
+                       old_result: @old_result } %>
 </div>

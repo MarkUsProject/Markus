@@ -1,5 +1,4 @@
 module SubmissionsHelper
-  include AutomatedTestsClientHelper
 
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
@@ -11,49 +10,48 @@ module SubmissionsHelper
 
   def set_pr_release_on_results(groupings, release)
     changed = 0
-    groupings.each do |grouping|
-      name = grouping.group.group_name
+    Result.transaction do
+      groupings.each do |grouping|
+        name = grouping.group.group_name
 
-      result_prs = grouping.peer_reviews_to_others
-      results = result_prs.map &:result
-      results.each do |result|
-        result.released_to_students = release
-        result.save
-        changed += 1
+        result_prs = grouping.peer_reviews_to_others
+        results = result_prs.map &:result
+        results.each do |result|
+          result.released_to_students = release
+          result.save
+          changed += 1
+        end
       end
     end
     changed
   end
 
   # Release or unrelease the submissions of a set of groupings.
-  # TODO: Note that this terminates the first time an error is encountered,
-  # and displays an error message to the user, even though some groupings
-  # *will* have their results released. We should change this to behave
-  # similar to other bulk actions, in which all errors are collected
-  # and reported, but the page does refresh and successes displayed.
   def set_release_on_results(groupings, release)
     changed = 0
-    groupings.each do |grouping|
-      name = grouping.group.group_name
+    Result.transaction do
+      groupings.each do |grouping|
+        name = grouping.group.group_name
 
-      unless grouping.has_submission?
-        raise t('submissions.errors.no_submission', group_name: name)
-      end
-
-      unless grouping.marking_completed?
-        if release
-          raise t('submissions.errors.not_complete', group_name: name)
-        else
-          raise t('submissions.errors.not_complete_unrelease', group_name: name)
+        unless grouping.has_submission?
+          raise t('submissions.errors.no_submission', group_name: name)
         end
-      end
 
-      result = grouping.current_submission_used.get_latest_result
-      result.released_to_students = release
-      result.save
-      changed += 1
+        unless grouping.marking_completed?
+          if release
+            raise t('submissions.errors.not_complete', group_name: name)
+          else
+            raise t('submissions.errors.not_complete_unrelease', group_name: name)
+          end
+        end
+
+        result = grouping.current_submission_used.get_latest_result
+        result.released_to_students = release
+        result.save
+        changed += 1
+      end
+      changed
     end
-    changed
   end
 
   def get_submissions_table_info(assignment, groupings)

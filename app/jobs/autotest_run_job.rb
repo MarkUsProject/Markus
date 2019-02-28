@@ -8,9 +8,9 @@ class AutotestRunJob < ApplicationJob
     grouping = test_run.grouping
     group = grouping.group
     assignment = grouping.assignment
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
     assignment_dir = File.join(repo_dir, assignment.repository_folder)
-    if File.exist?(AutomatedTestsClientHelper::STUDENTS_DIR)
+    if File.exist?(TestRun::STUDENTS_DIR)
       if File.exist?(assignment_dir) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
@@ -27,7 +27,7 @@ class AutotestRunJob < ApplicationJob
         end
       end
     else
-      FileUtils.mkdir_p(AutomatedTestsClientHelper::STUDENTS_DIR)
+      FileUtils.mkdir_p(TestRun::STUDENTS_DIR)
     end
     # export the repo files
     group.access_repo do |repo|
@@ -64,7 +64,7 @@ class AutotestRunJob < ApplicationJob
     submission = test_run.submission
     assignment = grouping.assignment
     group = grouping.group
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
     unless submission.nil?
       # no commits in the submission
       return false if submission.revision_identifier.nil?
@@ -110,7 +110,7 @@ class AutotestRunJob < ApplicationJob
     grouping = test_run.grouping
     assignment = grouping.assignment
     group = grouping.group
-    repo_dir = File.join(AutomatedTestsClientHelper::STUDENTS_DIR, group.repo_name)
+    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
     submission_path = File.join(repo_dir, assignment.repository_folder)
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port

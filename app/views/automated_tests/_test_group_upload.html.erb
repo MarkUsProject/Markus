@@ -1,78 +1,55 @@
 <div class="test_script">
   <% display_options = TestGroup.display_outputs.keys
-       .map { |o| [I18n.t("automated_tests.test_group_option.display_to.#{o}"), o] }.to_h %>
-  <% criterion_options = { '-' => nil }
-    if !@assignment.rubric_criteria_count.nil?
-       @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
-       end
-     else
-       @assignment.get_criteria.each do |criterion|
-         criterion_options[criterion.name] = [criterion.id, criterion.class.name]
-       end
-     end
-  %>
+    .map { |o| [I18n.t("automated_tests.test_group_option.display_to.#{o}"), o] }.to_h %>
+  <% criterion_options = @assignment.get_criteria.map { |c| [c.name, "#{c.id}_#{c.class.name}"] }.to_h %>
 
-
-  <%= form.fields_for :test_groups, test_group do |f| %>
-    <% saved = !f.object.new_record? %>
-
+  <%= form.fields_for :test_groups, test_group do |tg| %>
+    <% saved = !tg.object.new_record? %>
     <fieldset class="settings_box">
       <legend>
         <span class='file_name'>
           <% if saved %>
-            <%= link_to(f.object.name,
-                        action: 'download',
-                        assignment_id: @assignment.id,
-                        filename: f.object.name) %>
-            <%= f.hidden_field :name, value: f.object.name %>
+            <%= tg.object.name %>
           <% else %>
-            <%= t('automated_tests.new_test_script_file') %>
+            <%= t('automated_tests.new_test_group') %>
           <% end %>
         </span>
       </legend>
       <br/><br/>
-
       <div class="settings_left_side">
-
-        <%= f.label :file_name, (saved ? t('automated_tests.test_group_option.replace') :
-                                         t('automated_tests.test_group_option.upload_required').html_safe),
-                    title: (saved ? t('automated_tests.test_group_option.replace_help') :
-                                    t('automated_tests.test_group_option.upload_help')) %>
-        <%= file_field_tag (saved ? ('new_update_group_'+f.object.name).to_sym : :new_group),
-                           class: 'upload_file' %><br/>
-
+        <%= tg.select :name, options_for_select(@assignment.autotest_files, selected: tg.object.name), prompt: '' %>
+        <br/>
         <% if saved %>
-          <%= f.label :_destroy, t('automated_tests.test_group_option.remove_file'),
-                      title: t('automated_tests.test_group_option.remove_file_help') %>
-          <%= f.check_box :_destroy, class: 'remove_test_script_file' %>
+          <%= tg.label :_destroy, t('automated_tests.test_group_option.remove'),
+                       title: t('automated_tests.test_group_option.remove_help') %>
+          <%= tg.check_box :_destroy, class: 'remove_test_group' %>
           <br/><br/>
         <% end %>
-
       </div>
 
       <div class="settings_right_side">
 
-        <%= f.label :criterion_id, t('automated_tests.test_group_option.associated_criterion') %>
-        <% selected = f.object.criterion_id.nil? ?
+        <%= tg.label :criterion_id, t('automated_tests.test_group_option.associated_criterion') %>
+        <% selected = tg.object.criterion_id.nil? ?
                         nil :
-                        [f.object.criterion_id, f.object.criterion_type].to_s %>
-        <%= f.select :criterion_id, options_for_select(criterion_options, selected) %><br/>
+                        "#{tg.object.criterion_id}_#{tg.object.criterion_type}" %>
+        <%= tg.select :criterion_id, options_for_select(criterion_options, selected: selected), include_blank: true %>
+        <br/>
 
-        <%= f.label :run_by_instructors, t('automated_tests.test_group_option.run_by_instructors'),
+        <%= tg.label :run_by_instructors, t('automated_tests.test_group_option.run_by_instructors'),
                     title: t('automated_tests.test_group_option.run_by_instructors_help') %>
-        <%= f.check_box :run_by_instructors, value: f.object.run_by_instructors %><br/>
+        <%= tg.check_box :run_by_instructors, value: tg.object.run_by_instructors %><br/>
 
         <div style="<%= 'display:none;' unless @student_tests_on %>">
-          <%= f.label :run_by_students, t('automated_tests.test_group_option.run_by_students'),
+          <%= tg.label :run_by_students, t('automated_tests.test_group_option.run_by_students'),
                       title: t('automated_tests.test_group_option.run_by_students_help') %>
-          <%= f.check_box :run_by_students, value: f.object.run_by_students %><br/>
+          <%= tg.check_box :run_by_students, value: tg.object.run_by_students %><br/>
         </div>
 
         <div>
-          <%= f.label :display_output, t('automated_tests.test_group_option.display_output'),
+          <%= tg.label :display_output, t('automated_tests.test_group_option.display_output'),
                       title: t('automated_tests.test_group_option.display_output_help') %>
-          <%= f.select :display_output, options_for_select(display_options, f.object.display_output) %>
+          <%= tg.select :display_output, options_for_select(display_options, tg.object.display_output) %>
         </div>
 
       </div>

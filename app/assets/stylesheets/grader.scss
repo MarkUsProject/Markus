@@ -153,7 +153,6 @@
 
 #mark_viewer,
 #summary_viewer,
-#submission_rule_viewer,
 #codeviewer,
 #testviewer,
 #annotations_summary,
@@ -395,11 +394,11 @@ ul.annotation_text_list {
 
 /* Marks pane */
 
-#mark_criteria_pane_list {
-  font-size: 10px;
+.marks-list {
+  font-size: 0.9em;
   list-style: none;
   margin: 0;
-  padding-top: 10px;
+  padding: 0;
   width: 100%;
 
   li {
@@ -407,20 +406,21 @@ ul.annotation_text_list {
     border-radius: 0;
     padding: 5px;
     width: 100%;
-    background: $white;
     display: inline-block;
-  }
-
-  table tr {
-    cursor: pointer;
-  }
-
-  .assigned {
-    border: 3px solid $green;
   }
 
   .unassigned {
     background: $light-grey;
+    color: $grey;
+  }
+
+  .active-criterion,
+  .active-rubric {
+    box-shadow: inset 0 0 10px 0 $dark-blue;
+  }
+
+  input:focus {
+    border: 5px solid $blue;
   }
 }
 
@@ -429,426 +429,135 @@ ul.annotation_text_list {
   text-align: center;
 }
 
-// /* ================ CRITERION STYLES ============== */
-// #old_summary_criteria_pane {
-//   display: none;
-// }
+.rubric-levels {
+  border: 1px solid $grey;
+  border-collapse: collapse;
+  margin-left: 1.5em;
+  width: calc(100% - 1.5em);
 
-//   .mark_criterion_title {
-//     cursor: pointer;
-//   }
-
-//   .mark_criterion_holder_selected,
-//   .mark_level {
-//     background: #ccf;
-//   }
-
-// .mark_criterion_level {
-//   background: none;
-//   color: #000;
-//   font-size: 0.625em;
-// }
-
-.mark_reset {
-  background: none;
-  color: #000;
-  cursor: pointer;
-  float: right;
-  font-size: 0.625em;
-}
-
-.mark_criterion_level_selected,
-.rubric_criterion_level_selected {
-  background-color: $light-green;
-}
-
-.mark_criterion_level_container {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 30px;
-
-  table {
-    background: #fff;
-    border: 1px solid #dadada;
-    border-collapse: collapse;
-    padding: 4px;
-    width: 100%
+  tr {
+    border-bottom: 1px solid $grey;
+    border-top: 1px solid $grey;
   }
 
   td {
-    border-bottom:1px solid #dadada;
-    border-top:1px solid #dadada;
-    font-size: 1.1em;
-    padding: 4px;
-  }
-
-}
-
-.mark_criterion_level_released_container {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 20px;
-
-  table {
-    background: #fff;
-    border: 1px solid #dadada;
-    border-collapse: collapse;
-    padding: 4px;
-    width: 100%
-  }
-
-  td {
-    border-bottom:1px solid #dadada;
-    border-top:1px solid #dadada;
-    font-size: 1.1em;
-    padding: 4px;
+    padding-bottom: 0.75em;
+    padding-top: 0.75em;
   }
 }
-
-.editing {
-  background: #f9ffb1;
-  border: 1px dashed #d6de78;
-}
-
-#selected_criterion_name {
-  font-weight: bold;
-}
-
-/* Rubric Criterion Styles */
 
 .rubric_criterion {
-
-  &.expanded {
-    .rubric_criterion_level {
-      display: inline-block;
-    }
-  }
-
-  &.not_expanded {
-    .rubric_criterion_level {
+  &.collapsed {
+    .rubric-level:not(.selected):not(.old-mark) {
       display: none;
     }
+  }
 
-    .rubric_criterion_level_old_mark {
-      display: inline-block;
+  .rubric-level {
+    cursor: pointer;
+    width: 100%;
+
+    &.selected {
+      background-color: $light-green;
+    }
+
+    &.old-mark:not(.selected) {
+      background: $light-yellow;
     }
   }
 
-  .description {
-    width: 82%;
-    float: left;
-  }
-
-  .mark {
-    float: right;
-    font-weight: bold;
-    margin-left: 15px;
-    margin-right: 10px;
-  }
-
-  .rubric_criterion_level {
+  .rubric-level:not(.selected) {
     background: $white;
-    width: 100%;
   }
 
-  .rubric_criterion_level_old_mark {
-    background: #fdfebc;
-    width: 100%;
-  }
-
-  .title_div_level {
-    padding-top: 2px;
-    font-size: 12px;
-    font-weight: bold;
-    padding-bottom: 5px;
-    padding-left: 20px;
-    cursor: pointer;
-  }
-
-  .criterion_expand {
-    float: left;
-    font-size: 1.2em;
-    width: 1em;
-    cursor: pointer;
-    padding-top: 3px;
-  }
-
-  .criterion_link {
-    padding: 0.25em 0em !important;
+  .level-description {
+    padding-left: 0.5em;
+    width: 82%;
   }
 }
 
-.rubric_criterion.assigned + .rubric_criterion.assigned {
-  margin-top: -2px;
-}
-
-/* Flexible Criterion Styles */
-
-.flexible_criterion {
-
-  .criterion_expand {
-    float: left;
-    cursor: pointer;
-    font-size: 1.2em;
-    width: 1em;
-    padding-top: 2px;
-    height: 20px;
-  }
-
-  &.expanded {
-    .criterion_info {
-      display: block;
-    }
-  }
-
-  &.not_expanded {
-    .criterion_info {
-      display: none;
-    }
-  }
-
-  .unexpandable {
-    .criterion_expand {
-      visibility: hidden;
-      cursor: auto !important;
-    }
-
-    .title_div_level {
-      cursor: auto !important;
-    }
-  }
-
-  .criterion_info {
-    padding-left: 26px;
-    padding-bottom: 5px;
-    margin-left: 5px;
-    float: left;
-    clear: both;
-  }
-
-  .title_div_level {
-    font-size: 12px;
-    float: left;
-    padding-right: 10px;
-    font-weight: bold;
-    padding-bottom: 6px;
-
-    &.released {
-      padding-left: 15px;
-    }
-
-    &.unreleased {
-      cursor: pointer;
-    }
-  }
-
-  .mark_flexible {
-    font-weight: bold;
-    font-size: 11px;
-    float: right;
-    padding-right: 14px;
-
-    .mark_grade_input{
-      font-size: 1em;
-      margin: 1px 1px 4px;
-      margin-right: 6px;
-      min-width: 0;
-      padding: 2px;
-    }
-  }
-
-  .old_mark {
-    font-size: 11px;
-    float: right;
-    padding-right: 10px;
-
-    &.old_mark_unreleased {
-      padding-top: 4px;
-    }
-  }
-
-  .mark_grade_input {
-    &.remarked {
-      background-color: #81d881;
-    }
-
-    &.not_remarked:not([disabled]) {
-      background-color: white;
-    }
-  }
-
-}
-
-/* Checkbox Criterion Styles */
-
-.checkbox_criterion {
-
-  .criterion_expand {
-    float: left;
-    cursor: pointer;
-    font-size: 1.2em;
-    width: 1em;
-    padding-top: 2px;
-    height: 20px;
-  }
-
-  &.expanded {
-    .criterion_info {
-      display: block;
-    }
-  }
-
-  &.not_expanded {
-    .criterion_info {
-      display: none;
-    }
-  }
-
-  .unexpandable {
-    .criterion_expand {
-      visibility: hidden;
-      cursor: auto !important;
-    }
-
-    .title_div_level {
-      cursor: auto !important;
-    }
-  }
-
-  .criterion_info {
-    padding-left: 26px;
-    padding-bottom: 5px;
-    margin-left: 5px;
-    float: left;
-    clear: both;
-  }
-
-  .title_div_level {
-    font-size: 12px;
-    float: left;
-    padding-right: 10px;
-    font-weight: bold;
-    padding-bottom: 6px;
-
-    &.released {
-      padding-left: 15px;
-    }
-
-    &.unreleased {
-      cursor: pointer;
-    }
-  }
-
-  .mark_checkbox {
-    font-weight: bold;
-    font-size: 11px;
-    float: right;
-    padding-top: 4px;
-
-    .mark_grade_input_checkbox {
-      font-size: 1em;
-      margin: 1px 1px 4px;
-      min-width: 0;
-      padding: 2px;
-    }
-  }
-
-  .old_mark {
-    font-size: 11px;
-    float: right;
-    padding-right: 10px;
-
-    &.old_mark_unreleased {
-      padding-top: 4px;
-    }
-  }
-
-  .mark_grade_input {
-    &.remarked {
-      background-color: #81d881;
-    }
-
-    &.not_remarked:not([disabled]) {
-      background-color: white;
-    }
-  }
-
-  .checkbox_radio_button_container {
-    padding-left: 8px;
-    padding-right: 16px;
+.expanded {
+  .criterion-description {
+    display: block;
   }
 }
+
+.collapsed {
+  .criterion-description {
+    display: none;
+  }
+}
+
+.criterion-name {
+  color: $dark-blue;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-top: 2px;
+}
+
+.criterion-description {
+  float: left;
+}
+
+.mark {
+  float: right;
+  font-weight: bold;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: right;
+
+  input[type=text] {
+    font-weight: bold;
+    padding-right: 0.5em;
+    text-align: right;
+  }
+}
+
+.old-mark:not(.rubric-level) {
+  float: right;
+  padding-right: 10px;
+}
+
+.checkbox-criterion-inputs {
+  padding-right: 0.5em;
+  text-align: right;
+
+  label {
+    min-width: 0;
+    padding-right: 0.5em;
+  }
+
+  input[type=radio] {
+    max-width: 20px;
+    min-width: 20px;
+  }
+}
+
 
 /* Submission Rule Pane */
 
-.submission_rule_pane {
-  border: none;
-  margin-top: 1.5em;
-  margin-bottom: 2em;
-}
-
-.submission_rule_label, .bonus_deduction {
+.bonus-deduction {
   background-color: #cee3ea;
-  padding: 3px 3px 3px 3px;
-}
-
-#submission_rule_viewer {
   padding: 3px 3px 3px 3px;
 }
 
 /* Extra Mark holder */
 
-.extra_mark_holder,
-.link {
-  background: #fbfbfb;
-  border-bottom: 1px solid #dadada;
-  min-width: 5px;
-  padding: 5px;
+.extra-marks-pane {
+  border: 0;
+  margin-top: 1em;
 }
-
-  // .extra_mark_title_div {
-  //   cursor: pointer;
-  // }
-
-  // .extra_mark_holder_selected {
-  //   background: #ccf;
-  // }
-
-  // .extra_mark_delete {
-  //   float: right;
-  // }
-
-  .extra_marks_pane {
-    border: none;
-    margin-top: 1em;
-  }
-
-  .extra_marks_pane_list {
-    tbody + tbody {
-      tr {
-        background: $white !important;
-      }
-    }
-
-    #add_extra_mark_prompt {
-      div {
-        margin-bottom: 0.5em;
-      }
-
-      label {
-        display: inline-block;
-        min-width: 25%;
-      }
-    }
-  }
-
-  #extra_marks_bonus,
-  #extra_marks_deducted {
-    text-align: right;
-  }
 
 
 /* Summary pane */
+.marks-summary-pane {
+  .ReactTable .rt-thead,
+  .ReactTable .rt-tbody {
+    overflow-y: auto;
+  }
+}
 
 .summary_block {
   border: none;
@@ -856,54 +565,6 @@ ul.annotation_text_list {
   line-height: 1.6em;
   margin: 0.25em 0.25em 1.5em;
   padding: 5px;
-}
-
-.extra_marks_pane_list,
-.extra_percentage_pane_list,
-.summary_criteria_pane_list {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-
-  thead {
-    border-bottom: 1px solid $light-grey;
-  }
-
-  th {
-    background: transparent;
-    padding: 0.75em 0.25em;
-    text-align: left;
-    width: 83%;
-
-    &:last-of-type{
-      text-align: right;
-    }
-  }
-  th+th {
-    width: auto;
-  }
-
-  tr {
-    &:nth-child(even) {
-      background: $light-grey;
-    }
-
-    &:nth-child(odd) {
-      background: $white;
-    }
-
-    td {
-      padding: 0.75em 0.25em;
-      width: 83%;
-
-      &:last-of-type {
-        text-align: right;
-      }
-    }
-    td+td {
-      width: auto;
-    }
-  }
 }
 
 .mark_subtotal {
@@ -935,12 +596,6 @@ ul.annotation_text_list {
   background-color: #fdfebc;
 }
 
-
-/* Submission rule pane */
-
-#submission_rule_viewer h3 {
-  margin-bottom: 0px;
-}
 
 /* Tag pane */
 

@@ -1,11 +1,7 @@
-function open_file(id, path, downloading) {
-    if (downloading) {
-        document.getElementById('file_id').value = id;
-        document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
-    } else {
-        localStorage.setItem('file_path', path);
-        load_submitted_file(id);
-    }
+// TODO: Remove after converting download file selector to use the new React component.
+function open_file(id, path) {
+  document.getElementById('file_id').value = id;
+  document.getElementById('download_file_selector_dropdown_text').innerHTML = path;
 }
 
 function open_submenu(dir_element) {

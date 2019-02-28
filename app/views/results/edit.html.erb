@@ -5,7 +5,23 @@
   <%= javascript_pack_tag 'result' %>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeLeftPane(document.getElementById('left-pane'),
+      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
+
+      makeMarksPanel(document.getElementById('mark_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+        }
+      );
+
+      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
@@ -32,21 +48,6 @@
       window.onbeforeunload = null;
     });
 
-    // If the mark_description div is empty, that means it isn't marked
-    // Hide the criterion that AREN'T empty (i.e. are marked)
-    // Check if the marks are released, if they are there is nothing to hide
-    <% unless @result.released_to_students %>
-      $('.mark_criterion_level_container').each(function() {
-        expand_unmarked(this, 'RubricCriterion');
-      });
-      $('.mark_grade_input').each(function() {
-        expand_unmarked(this, 'FlexibleCriterion');
-      });
-      $('.mark_grade_input_checkbox_container').each(function() {
-        expand_unmarked(this, 'CheckboxCriterion');
-      });
-    <% end %>
-
     <%
       if @current_user.admin?
         num_marked = @assignment.get_num_marked
@@ -70,10 +71,6 @@
     return '<%= t(:still_working_warning) %>';
   }
 </script>
-
-<% # Javascript for showing/hiding old marks %>
-<%= render partial: 'results/common/old_marks_view_functions',
-           formats: [:html] %>
 
 <% # Javascript for progress bar %>
 <%= render partial: 'results/marker/update_progress_bar',
@@ -196,27 +193,14 @@
 
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
-               locals: { extra_marks_points: @result.extra_marks.points,
-                         extra_marks_percentage: @result.extra_marks.percentage,
-                         annotation_categories:
-                           @assignment.annotation_categories.includes(annotation_texts: [:user]),
-                         result: @result,
+               locals: { result: @result,
                          assignment: @assignment,
-                         marks_map: @marks_map,
-                         old_marks_map: @old_marks_map,
-                         mark_criteria:@mark_criteria,
                          submission: @submission,
-                         old_result: @old_result,
-                         test_results: @test_results,
-                         files: @files } %>
+                         old_result: @old_result } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
-               handlers: [:erb],
-               locals: { extra_marks_points: @result.extra_marks.points,
-                         extra_marks_percentage: @result.extra_marks.percentage
-               }
-    %>
+               handlers: [:erb] %>
   <% end %>
 </div>
 

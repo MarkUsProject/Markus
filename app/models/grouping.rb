@@ -4,8 +4,8 @@ require 'set'
 class Grouping < ApplicationRecord
   include ActiveRecordCreator
 
-  before_create :create_grouping_repository_folder
-  after_save :update_repo_permissions_after_save
+  after_create_commit :create_grouping_repository_folder
+  after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   belongs_to :grouping_queue, optional: true
 

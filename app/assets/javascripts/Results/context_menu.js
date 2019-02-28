@@ -19,7 +19,7 @@ var annotation_context_menu = {
         title: I18n.t('helpers.submit.create',
                       {model: I18n.t('activerecord.models.annotation.one')}),
         cmd: 'new_annotation',
-        action: make_new_annotation,
+        action: () => leftPane.newAnnotation(),
         disabled: true
       },
       common_annotations: {
@@ -34,37 +34,20 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            $.ajax({
-              url:  Routes.edit_annotation_path(annot_id, {locale: I18n.locale}),
-              method: 'GET',
-              data: {
-                id: annot_id,
-                result_id: result_id,
-                assignment_id: assignment_id
-              },
-              dataType: 'script'
-            });
+            leftPane.editAnnotation(annot_id);
           }
         },
         disabled: true
       },
       delete_annotation: {
         title: I18n.t('delete'),
-        cmd: "delete_annotation",
+        cmd: 'delete_annotation',
         action: function(event, ui) {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            $.ajax({
-              url: annot_path,
-              method: 'DELETE',
-              data: { id: annot_id,
-                      result_id: result_id,
-                      assignment_id: assignment_id },
-              dataType: 'script'
-            });
+            leftPane.removeAnnotation(annot_id);
           }
-          return;
         },
         disabled: true
       },

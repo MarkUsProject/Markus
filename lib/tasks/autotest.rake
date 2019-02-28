@@ -40,13 +40,13 @@ class AutotestSetup
   def clear_old_files
     # remove existing files to create room for new ones
     # remove test scripts
-    autotest_dir = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
+    autotest_dir = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
     FileUtils.remove_dir(autotest_dir, force: true)
   end
 
   def move_test_script_files
     # create new directories to put new autotest files into
-    test_file_destination = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, @assg_short_id)
+    test_file_destination = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
     FileUtils.makedirs test_file_destination
 
     # copy test scripts and support files into the destination directory

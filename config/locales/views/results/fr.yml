@@ -3,11 +3,9 @@ fr:
     edit:
       title: "Projet %{assignment_name} : %{group_name}"
 
-    bonus_marks: "Notes bonus"
     cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
     collapse_all: "Cacher toutes"
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
-    deducted_marks: "Notes déduites"
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
@@ -30,8 +28,6 @@ fr:
     subtotal: "Sous-total"
     summary: "Récapitulatif"
     total_extra_marks: "Total Notes Supplémentaires"
-    total_extra_percentages: "Total pourcentages supplémentaires"
-    translated_to_points: "Convertis en points"
     your_mark:  "Votre note : %{mark}"
 
     # Annotations
@@ -56,12 +52,10 @@ fr:
       cancel_confirm: "Êtes-vous sûr de vouloir annuler votre demande de retour ? Votre demande de retour sera supprimée (opération irréversible)."
       cancel_remark_to_change: "Pour changer votre demande de retour, vous devez annuler celle en cours et en créer une nouvelle."
       old_mark: "Old Mark"
-      old_subtotal: "Sous-total précédent"
       old_total: "Note précédente"
       no_remark_due_date: "Pas de date limite pour les retours"
       no_remark_result: "Les retours des remarques de ce projet ne sont pas encore disponibles."
       past_remark_due_date: "La date limite pour des demandes de retour est passée."
-      show_old_marks: "Afficher la note précédente"
       submit: "Envoyer la demande au correcteur."
       submit_confirm: "Êtes-vous sûr de vouloir envoyer votre demande de retour ? Vous ne verrez pas les résultats avant que la réévaluation ne soit terminée."
       submitted_on: "Demande de retour activée %{time}."
