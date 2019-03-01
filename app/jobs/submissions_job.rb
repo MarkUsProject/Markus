@@ -3,7 +3,7 @@ class SubmissionsJob < ApplicationJob
   queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
   def self.on_complete_js(status)
-    'window.location.reload.bind(window.location)'
+    'window.submissionTable.wrapped.fetchData'
   end
 
   def self.show_status(status)
