@@ -53,7 +53,7 @@ GEM
       arel (>= 9.0)
     activerecord-import (0.28.1)
       activerecord (>= 3.2)
-    activerecord-session_store (1.1.1)
+    activerecord-session_store (1.1.2)
       actionpack (>= 4.0)
       activerecord (>= 4.0)
       multi_json (~> 1.11, >= 1.11.2)
