@@ -3,3 +3,4 @@ fr:
     models:
       mark:
         one: "Note"
+        one: "Notes"

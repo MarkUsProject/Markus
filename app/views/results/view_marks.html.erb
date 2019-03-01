@@ -18,19 +18,12 @@
         }
       );
 
-      makeMarksPanel(document.getElementById('mark_viewer'),
+      makeRightPane(document.getElementById('right-pane'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
         }
       );
     });
@@ -46,9 +39,6 @@
 
 <% # VIEWING MARKS FUNCTIONS %>
 <%= javascript_include_tag 'Grader/file_selector.js' %>
-
-<% # BOOT SCRIPTS %>
-<%= javascript_include_tag 'Grader/tabs_boot.js' %>
 
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
@@ -108,9 +98,5 @@
                          current_pr: @current_pr} %>
   <% end %>
 
-  <%= render partial: 'results/student/student_panes',
-             locals: { result: @result,
-                       assignment: @assignment,
-                       submission: @submission,
-                       old_result: @old_result } %>
+  <%= render partial: 'results/student/student_panes' %>
 </div>
