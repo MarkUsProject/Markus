@@ -30,5 +30,4 @@
 //= require panes
 //= require Results/context_menu
 //= require Results/file_selector
-//= require Results/tag_operations
 //= require Tags/text_updater

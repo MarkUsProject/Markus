@@ -1,23 +1,4 @@
 module TagsHelper
-  ###  Global Tag Methods  ###
-
-  def get_top_tags
-    # Sorts all the tags by number of groupings.
-    sorted_tag = Tag.all.sort_by do |tag|
-      get_num_groupings_for_tag(tag)
-    end
-
-    # Loops until the top 5 tags are found
-    i = sorted_tag.length - 1
-    top ||= []
-    while i >= sorted_tag.length - 5 && i >= 0
-      top << sorted_tag.at(i)
-      i -= 1
-    end
-
-    top
-  end
-
   ###  Update methods  ###
 
   def update_name
@@ -40,11 +21,6 @@ module TagsHelper
       grouping = Grouping.find(grouping_id)
       tag.groupings << (grouping)
     end
-  end
-
-  def get_tags_for_grouping(grouping_id)
-    grouping = Grouping.find(grouping_id)
-    grouping.tags
   end
 
   def get_num_groupings_for_tag(tag)

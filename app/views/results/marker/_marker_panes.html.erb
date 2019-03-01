@@ -18,15 +18,7 @@
 
         <div id='summary_viewer' class='marks-summary-pane flex-col'></div>
 
-        <!-- Tag insertion pane. -->
-        <% unless @result.is_a_review? %>
-          <div id='tag_viewer' class='flex-col'>
-            <%= render partial: 'results/marker/tag_summary',
-                       locals: { assignment: assignment,
-                                 old_result: @old_result,
-                                 result: result } %>
-          </div>
-        <% end %>
+        <div id='tag_viewer' class='flex-col'></div>
 
         <!-- Annotation pane-->
         <div id='annotation_holder'></div>
