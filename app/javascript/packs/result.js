@@ -8,3 +8,5 @@ import { makeMarksPanel } from 'javascripts/Components/Result/marks_panel';
 window.makeMarksPanel = makeMarksPanel;
 import { makeSummaryPanel } from 'javascripts/Components/Result/summary_panel';
 window.makeSummaryPanel = makeSummaryPanel;
+import { makeTagsPanel } from 'javascripts/Components/Result/tags_panel';
+window.makeTagsPanel = makeTagsPanel;

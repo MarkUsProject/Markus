@@ -28,6 +28,16 @@
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
         }
       );
+
+      makeTagsPanel(document.getElementById('tag_viewer'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
+        }
+      );
+
     });
   </script>
 <% end %>
@@ -162,7 +172,7 @@
           <%= f.submit t(:submit) %>
           <input type='reset'
                  value='<%= t(:cancel) %>'
-                 onclick='modal_create_new.close();'>
+                 onclick='modal_create_new_tag.close();'>
         </section>
     <% end %>
   </aside>
@@ -193,10 +203,7 @@
 
   <% if !@result.released_to_students %>
     <%= render partial: 'results/marker/marker_panes',
-               locals: { result: @result,
-                         assignment: @assignment,
-                         submission: @submission,
-                         old_result: @old_result } %>
+               locals: { result: @result } %>
   <% else %>
     <%= render partial: 'results/result_summary',
                formats: [:html],
