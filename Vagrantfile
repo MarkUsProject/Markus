@@ -35,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.args = "~/Markus"
   end
 
-  config.vm.provision "start-autotest-workers", type: "shell", run: "always" do |s|
+  config.vm.provision "start-autotest-workers", type: "shell", run: "never" do |s|
     s.path = "script/start-autotest-workers.sh"
     s.privileged = false
     s.args = "~/markus-autotesting"

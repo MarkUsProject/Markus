@@ -594,19 +594,6 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  def update_assignment!(map)
-    assignment = Assignment.
-      find_or_create_by(short_identifier: map[:short_identifier])
-    unless assignment.id
-      assignment.submission_rule = NoLateSubmissionRule.new
-      assignment.assignment_stat = AssignmentStat.new
-      assignment.display_median_to_students = false
-      assignment.display_grader_names_to_students = false
-    end
-    assignment.update_attributes!(map)
-    flash_message(:success, t('flash.actions.create.success', resource_name: assignment.short_identifier))
-  end
-
   private
 
     def sanitize_file_name(file_name)

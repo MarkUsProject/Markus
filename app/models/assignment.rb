@@ -1342,14 +1342,22 @@ class Assignment < ApplicationRecord
       result
     when 'yml'
       begin
-        @testing_controller = AssignmentsController.new
         map = YAML::load(assignment_data)
         map[:assignments].map do |row|
-          row[:submission_rule] = NoLateSubmissionRule.new
-          row[:assignment_stat] = AssignmentStat.new
-          row[:token_period] = 1
-          row[:unlimited_tokens] = false
-          @testing_controller.update_assignment!(row)
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
+          if assignment.new_record?
+            row[:submission_rule] = NoLateSubmissionRule.new
+            row[:assignment_stat] = AssignmentStat.new
+            row[:token_period] = 1
+            row[:unlimited_tokens] = false
+          end
+          assignment.update(row)
+
+          # unless assignment.id
+          #   assignment[:display_median_to_students] = false
+          #   assignment[:display_grader_names_to_students] = false
+          # end
+
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e
