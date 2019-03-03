@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeSubmissionTable(document.getElementById('submission-table'),
+      window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
         {
           assignment_id: <%= @assignment.id %>,
           show_grace_tokens:

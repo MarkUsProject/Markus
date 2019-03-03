@@ -22,8 +22,9 @@ export function renderFlash(event, request) {
       return;
     }
     const messages = flashMessage.split(';');
+    const contents = flashDiv.getElementsByClassName('flash-content')[0] || flashDiv;
+    contents.innerHTML = '';
     messages.forEach(message => {
-      const contents = flashDiv.getElementsByClassName('flash-content')[0] || flashDiv;
       contents.insertAdjacentHTML('beforeend', message);
     });
     flashDiv.style.display = '';
