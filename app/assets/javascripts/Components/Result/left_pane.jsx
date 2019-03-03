@@ -40,7 +40,10 @@ class LeftPane extends React.Component {
       if (res.submission_files) {
         res.submission_files = this.processSubmissionFiles(res.submission_files);
       }
-      this.setState({...res, loading: false}, fix_panes);
+      this.setState({...res, loading: false}, () => {
+        fix_panes();
+        this.updateContextMenu();
+      });
     });
   };
 
@@ -214,6 +217,46 @@ class LeftPane extends React.Component {
     }).then(this.fetchData)
   };
 
+  updateContextMenu = () => {
+    if (this.state.released_to_students) return;
+
+    window.annotation_context_menu.setup(
+      Routes.annotations_path, this.props.result_id,
+      this.props.assignment_id,
+      Routes.download_assignment_submission_result_path(
+        this.props.assignment_id,
+        this.props.submission_id,
+        this.props.result_id)
+    );
+
+    let common_annotations = this.state.annotation_categories.map(annotation_category => {
+      let children;
+      if (annotation_category.texts.length === 0) {
+        children = [{
+          title: I18n.t('annotation_categories.no_annotations'),
+          action: () => false,
+          disabled: true
+        }];
+      } else {
+        children = annotation_category.texts.map(text => {
+          return {
+            title: text.content.replace(/\r?\n/gi, ' '),
+            cmd: `annotation_text_${text.id}`,
+            action: () => this.addExistingAnnotation(text.id)
+          };
+        });
+      }
+      return {
+        title: `${annotation_category.annotation_category_name} <kbd>></kbd>`,
+        cmd: `annotation_category_${annotation_category.id}`,
+        action: () => false,
+        children: children
+      };
+    });
+
+    window.annotation_context_menu.set_common_annotations(common_annotations);
+  };
+
   // Display a given file. Used to changes files from the annotations panel.
   selectFile = (file, submission_file_id, focus_line) => {
     this.submissionFilePanel.current.selectFile(file, submission_file_id, focus_line);
@@ -256,6 +299,7 @@ class LeftPane extends React.Component {
               annotations={this.state.annotations}
               newAnnotation={this.newAnnotation}
               addExistingAnnotation={this.addExistingAnnotation}
+              released_to_students={this.state.released_to_students}
             />
           </div>
         </TabPanel>

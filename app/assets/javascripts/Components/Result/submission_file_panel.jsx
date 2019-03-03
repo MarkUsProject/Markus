@@ -102,6 +102,7 @@ export class SubmissionFilePanel extends React.Component {
             selectedFile={submission_file_id}
             annotations={visibleAnnotations}
             focusLine={this.state.focusLine}
+            released_to_students={this.props.released_to_students}
           />
         </div>
       </div>

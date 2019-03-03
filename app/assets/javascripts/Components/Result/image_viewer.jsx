@@ -28,7 +28,8 @@ export class ImageViewer extends React.Component {
     annotation_manager = new ImageAnnotationGrid(
       new ImageEventHandler(),
       new AnnotationTextManager(),
-      new AnnotationTextDisplayer()
+      new AnnotationTextDisplayer(),
+      !this.props.released_to_students
     );
   };
 

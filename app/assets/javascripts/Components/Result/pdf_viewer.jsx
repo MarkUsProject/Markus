@@ -41,7 +41,7 @@ export class PDFViewer extends React.Component {
   ready_annotations = (pdfView, pdfViewerId) => {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    window.annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId);
+    window.annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId, !this.props.released_to_students);
     window.annotation_manager.resetAngle();
   };
 
@@ -75,9 +75,10 @@ export class PDFViewer extends React.Component {
   };
 
   render() {
+    const cursorStyle = this.props.released_to_students ? 'default' : 'crosshair';
     return (
       <div id="outerContainer" className="loadingInProgress flex-col">
-        <div id="mainContainer">
+        <div id="mainContainer" style={{cursor: cursorStyle}}>
           <div className="toolbar">
             <div id="toolbarContainer">
               <div id="toolbarViewer">
