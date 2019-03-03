@@ -1,22 +1,9 @@
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'></div>
-
     <div id='drag'></div>
+    <div id='right-pane'></div>
 
-    <div id='right-pane'>
-      <div class='tab-pane flex-pane' id='mark_pane'>
-        <ul>
-          <li><a href='#mark_viewer'><%= Mark.model_name.human.pluralize %></a></li>
-          <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
-        </ul>
-
-        <div id='mark_viewer' class='flex-col'></div>
-
-        <div id='summary_viewer' class='marks-summary-pane flex-col'></div>
-
-        <div id='annotation_holder'></div>
-      </div>
-    </div>
+    <div id='annotation_holder'></div>
   </div>
 </div>

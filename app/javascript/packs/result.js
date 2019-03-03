@@ -4,9 +4,5 @@ import 'javascripts/react_config';
 
 import { makeLeftPane } from 'javascripts/Components/Result/left_pane';
 window.makeLeftPane = makeLeftPane;
-import { makeMarksPanel } from 'javascripts/Components/Result/marks_panel';
-window.makeMarksPanel = makeMarksPanel;
-import { makeSummaryPanel } from 'javascripts/Components/Result/summary_panel';
-window.makeSummaryPanel = makeSummaryPanel;
-import { makeTagsPanel } from 'javascripts/Components/Result/tags_panel';
-window.makeTagsPanel = makeTagsPanel;
+import { makeRightPane } from 'javascripts/Components/Result/right_pane';
+window.makeRightPane = makeRightPane;

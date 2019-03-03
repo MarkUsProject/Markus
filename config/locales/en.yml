@@ -126,7 +126,6 @@ en:
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
-    still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       bad_cell: "Error: the csv contains the following invalid cells: %{bad_cells}"

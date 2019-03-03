@@ -1,32 +1,13 @@
 <div id='panes-content'>
   <div id='panes'>
     <div id='left-pane'></div>
-
     <div id='drag'></div>
+    <div id='right-pane'></div>
 
-    <div id='right-pane'>
-      <div class='tab-pane flex-pane' id='mark_pane'>
-        <ul id='mark_tabs' class='subsection_tabs'>
-          <li><a href='#mark_viewer'><%= Mark.model_name.human.pluralize %></a></li>
-          <li><a href='#summary_viewer'><%= t('results.summary') %></a></li>
-          <% unless @result.is_a_review? %>
-            <li><a href='#tag_viewer'><%= Tag.model_name.human.pluralize %></a></li>
-          <% end %>
-        </ul>
+    <!-- Annotation pane-->
+    <div id='annotation_holder'></div>
 
-        <div id='mark_viewer' class='flex-col'></div>
-
-        <div id='summary_viewer' class='marks-summary-pane flex-col'></div>
-
-        <div id='tag_viewer' class='flex-col'></div>
-
-        <!-- Annotation pane-->
-        <div id='annotation_holder'></div>
-
-        <!-- Modal element -->
-        <aside class='dialog' id='annotation_dialog'></aside>
-
-      </div> <!-- Mark pane -->
-    </div>
+    <!-- Modal element -->
+    <aside class='dialog' id='annotation_dialog'></aside>
   </div>
 </div>
