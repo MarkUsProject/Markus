@@ -1,0 +1,36 @@
+Quality of Writing:
+    max_mark: 24.0
+    level_0:
+        name: Beginner
+        description: The essay is very poorly organized structure and gives no new information.
+    level_1:
+        name: Capable
+        description: The essay is poorly organized but gives new information.
+    level_2:
+        name: Accomplished
+        description: The essay is well-structure and conveys new information clearly.    
+    ta_visible: False
+    peer_visible: True
+
+Grammar usage:
+    max_mark: 16.0
+    level_0:
+        name: Beginner
+        description: There are more than 5 grammar mistakes in this entire essay.
+    ta_visible: True
+    peer_visible: False
+
+Definition translation:
+    type: flexible
+    max_mark: 5.0
+    description: This is a flexible criterion and you can put either "Flexible" or "flexible".
+    ta_visible: True
+    peer_visible: False
+
+Proof header:
+    type: Checkbox
+    max_mark: 2.0
+    description: This is one is a checkbox criterion and students either get full marks or 0 for this criterion.
+    ta_visible: True
+    peer_visible: False
+

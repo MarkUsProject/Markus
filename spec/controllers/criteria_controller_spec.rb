@@ -854,7 +854,6 @@ RSpec.describe CriteriaController, type: :controller do
 
       it 'raises an error if the file does not include any criteria' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @empty_file } }
-
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.upload.error.invalid_format') +
                   '  ' + I18n.t('criteria.upload.empty_error')].map { |f| extract_text f })
@@ -931,7 +930,7 @@ RSpec.describe CriteriaController, type: :controller do
         expect(cr1.peer_visible).to be false
       end
 
-      it 'creates criteria; being case insensitive with the type given' do
+      it 'creates criteria being case insensitive with the type given' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
