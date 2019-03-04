@@ -23,10 +23,8 @@
 //= require SourceCodeGlower/PdfAnnotationManager
 
 // Page-specific Javascript
-//= require Grader/file_selector
 //= require Grader/marking
 //= require Grader/mouse_selections
 //= require panes
 //= require Results/context_menu
-//= require Results/file_selector
 //= require Tags/text_updater

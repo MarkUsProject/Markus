@@ -1,7 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import { AnnotationManager } from './annotation_manager';
 import { FileViewer } from './file_viewer';
+import { DownloadSubmissionModal } from './download_submission_modal';
 
 
 export class SubmissionFilePanel extends React.Component {
@@ -27,6 +29,29 @@ export class SubmissionFilePanel extends React.Component {
       localStorage.removeItem('file_id');
     }
     localStorage.setItem('assignment_id', this.props.assignment_id);
+
+    // TODO: Incorporate DownloadSubmissionModal as true child of this component.
+    ReactDOM.render(
+      <DownloadSubmissionModal
+        fileData={this.props.fileData}
+        initialFile={this.state.selectedFile}
+        downloadURL={Routes.download_assignment_submission_result_url(
+          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+      />,
+      document.getElementById('download_dialog_body')
+    );
+  }
+
+  componentDidUpdate() {
+    ReactDOM.render(
+      <DownloadSubmissionModal
+        fileData={this.props.fileData}
+        initialFile={this.state.selectedFile}
+        downloadURL={Routes.download_assignment_submission_result_url(
+          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+      />,
+      document.getElementById('download_dialog_body')
+    );
   }
 
   getFirstFile = (fileData) => {
@@ -112,7 +137,7 @@ export class SubmissionFilePanel extends React.Component {
 
 
 // Component for the file selector.
-class FileSelector extends React.Component {
+export class FileSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

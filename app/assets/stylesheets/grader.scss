@@ -107,34 +107,14 @@
 
 #download_file_selector {
   border-radius: $radius;
-  display: inline-block;
   text-align: center;
   margin-bottom: 10px;
   margin-top: 10px;
   line-height: 16.25px;
 }
 
-#download_button {
-  display: inline-block;
-  float: right;
-  margin-top: 8px;
-  margin-left: 10px;
-}
-
-#download_all_files_button {
-  display: block;
-  margin: auto;
-}
-
-.download_file {
-  .inline_label {
-    margin-left: 0.5em;
-  }
-}
-
-#include_annotations {
-  margin-right: 0.5em;
-  float: left;
+.inline_label {
+  margin-left: 0.5em;
 }
 
 #annotations_options {
@@ -142,10 +122,6 @@
   padding-top: 10px;
   padding-bottom: 5px;
   margin-left: 110px;
-}
-
-#download_files_dialog {
-  top: 17% !important;
 }
 
 
