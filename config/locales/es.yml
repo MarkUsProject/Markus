@@ -131,8 +131,6 @@ es:
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
-    still_working_warning:               "Existen procesos sin finalizar. Estos no se guardarán si abandona la sesión en
-                                          este momento."
 
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo

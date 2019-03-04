@@ -3,7 +3,10 @@
   <%= stylesheet_link_tag 'result_main' %>
   <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
-    <script>
+  <script>
+    let PDFJS_PATH = '<%= asset_path("pdfjs.js") %>';
+    let PDFJS_WORKER_PATH = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
+
     document.addEventListener('DOMContentLoaded', () => {
       window.leftPane = makeLeftPane(document.getElementById('left-pane'),
         {
@@ -13,19 +16,12 @@
         }
       );
 
-      makeMarksPanel(document.getElementById('mark_viewer'),
+      makeRightPane(document.getElementById('right-pane'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
         }
       );
     });
@@ -38,15 +34,6 @@
   $(document).ready(function() {
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
-
-    // Set up the 'working' notices
-    $('#working').ajaxStart(function() {
-      this.style.display = '';
-      window.onbeforeunload = check_working;
-    }).ajaxStop(function() {
-      this.style.display = 'none';
-      window.onbeforeunload = null;
-    });
 
     <%
       if @current_user.admin?
@@ -66,10 +53,6 @@
     <%= render partial: 'results/marker/keybinding',
                formats: [:js] %>
   });
-
-  function check_working() {
-    return '<%= t(:still_working_warning) %>';
-  }
 </script>
 
 <% # Javascript for progress bar %>
@@ -82,9 +65,6 @@
              result_id: @result.id,
              assignment_id: @result.submission.grouping.assignment.id
            } %>
-
-<%= render partial: 'results/marker/boot',
-           formats: [:js] %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog' style='display:none'></aside>
@@ -162,7 +142,7 @@
           <%= f.submit t(:submit) %>
           <input type='reset'
                  value='<%= t(:cancel) %>'
-                 onclick='modal_create_new.close();'>
+                 onclick='modal_create_new_tag.close();'>
         </section>
     <% end %>
   </aside>
@@ -192,15 +172,9 @@
   <%= render partial: 'results/common/errors' %>
 
   <% if !@result.released_to_students %>
-    <%= render partial: 'results/marker/marker_panes',
-               locals: { result: @result,
-                         assignment: @assignment,
-                         submission: @submission,
-                         old_result: @old_result } %>
+    <%= render partial: 'results/marker/marker_panes' %>
   <% else %>
-    <%= render partial: 'results/result_summary',
-               formats: [:html],
-               handlers: [:erb] %>
+    <%= render partial: 'results/student/student_panes' %>
   <% end %>
 </div>
 

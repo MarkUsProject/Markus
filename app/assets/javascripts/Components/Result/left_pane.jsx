@@ -23,7 +23,9 @@ class LeftPane extends React.Component {
   }
 
   componentDidMount() {
+    initializePanes();
     this.fetchData();
+    window.modal = new ModalMarkus('#annotation_dialog');
   }
 
   fetchData = () => {
@@ -38,7 +40,7 @@ class LeftPane extends React.Component {
       if (res.submission_files) {
         res.submission_files = this.processSubmissionFiles(res.submission_files);
       }
-      this.setState({...res, loading: false});
+      this.setState({...res, loading: false}, fix_panes);
     });
   };
 
@@ -239,7 +241,7 @@ class LeftPane extends React.Component {
           </Tab>
         </TabList>
         <TabPanel forceRender={true}>
-          <div id='code_pane'>
+          <div>
             <SubmissionFilePanel
               ref={this.submissionFilePanel}
               result_id={this.props.result_id}

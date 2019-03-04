@@ -123,7 +123,6 @@ pt:
 
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-    still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."

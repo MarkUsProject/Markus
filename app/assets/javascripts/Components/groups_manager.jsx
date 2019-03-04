@@ -431,5 +431,5 @@ class GroupsActionBox extends React.Component {
 
 
 export function makeGroupsManager(elem, props) {
-  render(<GroupsManager {...props} />, elem);
+  return render(<GroupsManager {...props} />, elem);
 }
