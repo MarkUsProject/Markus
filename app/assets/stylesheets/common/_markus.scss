@@ -220,7 +220,8 @@ button,
     color: $dark-blue;
   }
 
-  &[disabled] {
+  &[disabled],
+  &.disabled {
     background: linear-gradient(to bottom, $light-grey, $disabled-grey);
     border-color: $disabled-dark;
     box-shadow: none;
@@ -676,10 +677,6 @@ nav {
       &.active {
         background: $blue;
         color: $white;
-      }
-
-      &.active {
-        padding: 0.5em 1em;
       }
 
       a {

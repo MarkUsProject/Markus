@@ -180,10 +180,3 @@
 
 <%# Javascript files %>
 <%= javascript_include_tag 'Results/main' %>
-
-<%= render partial: 'results/common/context_menu',
-           formats: [:js],
-           locals: {
-               result: @result,
-               annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
-           } %>

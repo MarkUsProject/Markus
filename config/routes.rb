@@ -59,6 +59,7 @@ Rails.application.routes.draw do
         get 'batch_runs'
         get 'stop_test'
         get 'stop_batch_tests'
+        get 'switch_assignment'
       end
 
       resources :tags do

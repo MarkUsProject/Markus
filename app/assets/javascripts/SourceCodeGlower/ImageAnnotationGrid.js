@@ -14,7 +14,8 @@ var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
 var VERTICAL_SCROLLBAR_COMPENSATION   = 4;
 
 
-function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer) {
+function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer,
+                             enable_annotations) {
   this.image_event_handler       = image_event_handler;
   this.annotation_text_manager   = annotation_text_manager;
   this.annotation_text_displayer = annotation_text_displayer;
@@ -24,8 +25,10 @@ function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annot
   this.share_grid_with_event_handler();
   this.draw_holders();
 
-  image_event_handler.init_listeners(true);
-  document.getElementById('image_container').onmousemove = this.draw_holders.bind(this);
+  image_event_handler.init_listeners(enable_annotations);
+  if (enable_annotations) {
+    document.getElementById('image_container').onmousemove = this.draw_holders.bind(this);
+  }
 }
 
 ImageAnnotationGrid.prototype.getAnnotationTextManager = function() {

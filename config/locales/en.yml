@@ -87,7 +87,6 @@ en:
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
-        peer_review: "Peer Review"
         action:
             assign: "Assign Peer Reviewer(s)"
             unassign: "Unassign Peer Reviewer(s)"
