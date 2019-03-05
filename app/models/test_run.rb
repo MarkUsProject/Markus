@@ -58,7 +58,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result(test_group, time: 0, extra_info: nil)
     unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
-      test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
+      test_group = TestGroup.find_by(assignment: grouping.assignment, name: test_group)
       # test group can be nil if it's deleted while running
     end
     test_group_results.create(
@@ -147,6 +147,9 @@ class TestRun < ApplicationRecord
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
+      json_root['test_groups'].each do |j|
+        j['test_group_id'] = test_groups[j['test_group_id']].name
+      end
     rescue StandardError => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_results', error: e.message) }
