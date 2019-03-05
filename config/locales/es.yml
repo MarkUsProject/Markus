@@ -92,7 +92,6 @@ es:
         cannot_allow_reviewer_to_be_reviewee: "Un estudiante no puede ser un revisor y un revisado a la vez"
         number_per_group:                     "Número de Revisiones de Compañeros por grupo"
         number_assigned_reviewers:            "Número de Revisores Asignados"
-        peer_review:                          "Revisión de pares"
         action:
             assign:                           "Asignar Revisor (es) Peer"
             unassign:                         "Desasignar Revisor (es) Peer"
