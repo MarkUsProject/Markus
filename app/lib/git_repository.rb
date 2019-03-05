@@ -143,15 +143,31 @@ class GitRepository < Repository::AbstractRepository
     get_revision(@repos.last_commit.oid)
   end
 
-  # Checks whether the next +reflog+ entry corresponds to +commit_sha+, and updates +current_reflog_entry+ accordingly.
-  def self.try_advance_reflog!(reflog, current_reflog_entry, commit_sha)
+  # Checks whether the next +reflog+ entry corresponds to the +commit+ id, and advances the reflog if it is.
+  # Returns information about the current reflog entry.
+  # In order to correctly handle merges, the reflog is navigated separately for each merge path. +reflog_entries+
+  # contains the status of each of them.
+  def self.try_advance_reflog!(reflog, reflog_entries, commit)
+    current_reflog_entry = reflog_entries[commit.oid]
     next_index = current_reflog_entry[:index] + 1
-    return if reflog.length <= next_index
+    return current_reflog_entry if reflog.length <= next_index
     next_reflog_entry = reflog[next_index]
-    return if commit_sha != next_reflog_entry[:id_new]
-    current_reflog_entry[:sha] = next_reflog_entry[:id_new]
+    return current_reflog_entry if commit.oid != next_reflog_entry[:id_new]
+    current_reflog_entry[:id] = next_reflog_entry[:id_new]
     current_reflog_entry[:time] = next_reflog_entry[:committer][:time].in_time_zone
     current_reflog_entry[:index] = next_index
+    current_reflog_entry
+  ensure
+    # update +reflog_entries+ with next commits (possibly multiple merge paths)
+    commit.parent_ids.each do |parent_id|
+      merge_reflog_entry = reflog_entries[parent_id]
+      # if +merge_reflog_entry+ is not nil, two merge paths are reuniting: pick the earliest push time
+      if merge_reflog_entry.nil? || merge_reflog_entry[:time] > current_reflog_entry[:time]
+        reflog_entries[parent_id] = current_reflog_entry.clone
+      end
+    end
+    # remove the current commit
+    reflog_entries.delete(commit.oid)
   end
 
   # Gets the first revision +at_or_earlier_than+ some timestamp and +later_than+ some other timestamp (can be nil).
@@ -168,7 +184,7 @@ class GitRepository < Repository::AbstractRepository
       push_time = reflog_entry[:committer][:time].in_time_zone
       return nil if !later_than.nil? && push_time <= later_than.in_time_zone
       if push_time <= at_or_earlier_than.in_time_zone
-        current_reflog_entry[:sha] = reflog_entry[:id_new]
+        current_reflog_entry[:id] = reflog_entry[:id_new]
         current_reflog_entry[:time] = push_time
         current_reflog_entry[:index] = i
         break
@@ -176,11 +192,13 @@ class GitRepository < Repository::AbstractRepository
     end
     return nil if current_reflog_entry.empty?
     # find first commit that changes path, topologically equal or before the push
+    reflog_entries = {}
+    reflog_entries[current_reflog_entry[:id]] = current_reflog_entry
     walker = Rugged::Walker.new(@repos)
     walker.sorting(Rugged::SORT_TOPO)
-    walker.push(current_reflog_entry[:sha])
+    walker.push(current_reflog_entry[:id])
     walker.each do |commit|
-      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      current_reflog_entry = GitRepository.try_advance_reflog!(reflog, reflog_entries, commit)
       return nil if !later_than.nil? && current_reflog_entry[:time] <= later_than.in_time_zone
       revision = get_revision(commit.oid)
       if path.nil? || revision.changes_at_path?(path)
@@ -200,13 +218,15 @@ class GitRepository < Repository::AbstractRepository
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     bare_repo = Rugged::Repository.new(bare_path)
     reflog = bare_repo.ref('refs/heads/master').log.reverse
-    current_reflog_entry = { index: -1 }
+    last_commit = @repos.last_commit
+    reflog_entries = {}
+    reflog_entries[last_commit.oid] = { index: -1 }
     # walk through the commits and get revisions
     walker = Rugged::Walker.new(@repos)
     walker.sorting(Rugged::SORT_TOPO)
-    walker.push(@repos.last_commit)
+    walker.push(last_commit)
     walker.map do |commit|
-      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      current_reflog_entry = GitRepository.try_advance_reflog!(reflog, reflog_entries, commit)
       revision = get_revision(commit.oid)
       revision.server_timestamp = current_reflog_entry[:time]
       revision
@@ -544,11 +564,12 @@ class GitRevision < Repository::AbstractRevision
     entry = get_entry_hash(path, commit)
     # if at a root commit, consider it changed if we have this file;
     # i.e. if we added it in the initial commit
-    if commit.parents.empty?
+    parents = commit.parents
+    if parents.empty?
       return entry != nil
     end
     # check each parent commit (a merge has 2+ parents)
-    commit.parents.each do |parent|
+    parents.each do |parent|
       parent_entry = get_entry_hash(path, parent)
       # neither exists, no change
       if not entry and not parent_entry
@@ -612,13 +633,15 @@ class GitRevision < Repository::AbstractRevision
     # walk through all the commits until this revision's +@commit+ is found
     # (this is needed to advance the reflog to the right point, since +@commit+ may be between two pushes)
     walker_entries = entries.dup
-    current_reflog_entry = { index: -1 }
+    last_commit = @repo.last_commit
+    reflog_entries = {}
+    reflog_entries[last_commit.oid] = { index: -1 }
     found = false
     walker = Rugged::Walker.new(@repo)
     walker.sorting(Rugged::SORT_TOPO)
-    walker.push(@repo.last_commit)
+    walker.push(last_commit)
     walker.each do |commit|
-      GitRepository.try_advance_reflog!(reflog, current_reflog_entry, commit.oid)
+      current_reflog_entry = GitRepository.try_advance_reflog!(reflog, reflog_entries, commit)
       found = true if @commit.oid == commit.oid
       next unless found
       # check entries that were modified
