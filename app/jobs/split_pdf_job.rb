@@ -123,6 +123,7 @@ class SplitPDFJob < ApplicationJob
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
+    raw_dir = File.join(exam_template.base_path, 'raw')
 
     groupings = []
     num_complete = 0
@@ -135,10 +136,11 @@ class SplitPDFJob < ApplicationJob
         repo_name: group_name_for(exam_template, exam_num)
       )
 
-      groupings << Grouping.find_or_create_by(
+      grouping = Grouping.find_or_create_by(
         group: group,
         assignment: exam_template.assignment
       )
+      groupings << grouping
 
       # Save raw pages
       if pages.length == exam_template.num_pages
@@ -236,9 +238,94 @@ class SplitPDFJob < ApplicationJob
                 'application/pdf')
         end
         repo.commit(txn)
+
+        # convert PDF to an image
+        imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
+          self.quality = 100
+          self.density = '300'
+        end
+
+        img = imglist.first
+        # Snip out the middle of PDF that contains the student information
+        # TODO: store coordinates in exam template instead of hardcoding
+        student_info = img.crop 50, 1100, img.columns, img.rows / 6.0
+        student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
+        student_info.write(student_info_file)
+
+        begin
+          out = `python3 lib/scanner/read_chars.py #{student_info_file}`
+          tokens = out.split("\n")
+
+          # parse out name and student number for matching
+          first_name = tokens[0]
+          last_name = tokens[2]
+          student_id = tokens[-1]
+
+          student = match_student(first_name, last_name, student_id, exam_template.assignment)
+
+          if student.nil?
+            next
+          end
+
+          StudentMembership.find_or_create_by(user: student,
+                                              grouping: grouping,
+                                              membership_status: StudentMembership::STATUSES[:inviter])
+        rescue
+          # default to letting admin assign scan
+        end
       end
     end
     num_complete
+  end
+
+  def match_student(first_name, last_name, student_id, exam)
+    student = Student.where(id_number: student_id).first
+
+    # if student.nil?
+    #   # get all students who have not been matched for this exam yet
+    #   matched_students = StudentMembership.where(grouping: Grouping.where(assignment: exam)).map(&:user_id)
+    #   unmatched_students = Student.where.not(id: matched_students)
+    #   min_dist = 2 * student_id.length + first_name.length + last_name.length + 1
+    #   student = unmatched_students.first
+    #   # find the student with the smallest edit distance
+    #   unmatched_students.each do |pos_student|
+    #     if pos_student.id_number.nil? or pos_student.first_name.nil? or pos_student.last_name.nil?
+    #       next
+    #     end
+    #     id_dist = levenshtein(student_id, pos_student.id_number)
+    #     name_dist = levenshtein(first_name, pos_student.first_name.upcase) +
+    #       levenshtein(last_name, pos_student.last_name.upcase)
+    #     edit_dist = 2 * id_dist + name_dist
+    #     if edit_dist < min_dist
+    #       min_dist = edit_dist
+    #       student = pos_student
+    #     end
+    #   end
+    # end
+
+    student
+  end
+
+  def levenshtein(first, second)
+    m, n = first.length, second.length
+    return m if n == 0
+    return n if m == 0
+
+    # Create our distance matrix
+    d = Array.new(m + 1) { Array.new(n + 1) }
+    0.upto(m) { |i| d[i][0] = i }
+    0.upto(n) { |j| d[0][j] = j }
+
+    1.upto(n) do |j|
+      1.upto(m) do |i|
+        if first[i - 1] == second[j - 1]
+          d[i][j] = d[i - 1][j - 1]
+        else
+          d[i][j] = [d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + 1].min
+        end
+      end
+    end
+    d[m][n]
   end
 
   def group_name_for(exam_template, exam_num)
