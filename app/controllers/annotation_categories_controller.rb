@@ -164,75 +164,40 @@ class AnnotationCategoriesController < ApplicationController
     end
   end
 
-  def csv_upload
+  def upload
     @assignment = Assignment.find(params[:assignment_id])
-    encoding = params[:encoding]
-    unless request.post?
-      redirect_to action: 'index', id: @assignment.id
-      return
-    end
-    annotation_category_list = params[:annotation_category_list_csv]
-    if annotation_category_list
-      result = MarkusCSV.parse(annotation_category_list.read, encoding: encoding) do |row|
-        next if CSV.generate_line(row).strip.empty?
-        AnnotationCategory.add_by_row(row, @assignment, current_user)
-      end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
-    end
-    redirect_to action: 'index', id: @assignment.id
-  end
-
-  def yml_upload
-    @assignment = Assignment.find(params[:assignment_id])
-    encoding = params[:encoding]
-    unless request.post?
-      redirect_to action: 'index', assignment_id: @assignment.id
-      return
-    end
-    file = params[:annotation_category_list_yml]
-    annotation_category_number = 0
-    annotation_line = 0
-    unless file.blank?
-      begin
-        annotations = YAML::load(file.utf8_encode(encoding))
-      rescue Psych::SyntaxError => e
-        flash_message(:error,
-                      t('upload_errors.syntax_error', error: "#{e}"))
-        redirect_to action: 'index', assignment_id: @assignment.id
-        return
+      if data[:type] == '.csv'
+        result = MarkusCSV.parse(data[:file].read, encoding: data[:encoding]) do |row|
+          next if CSV.generate_line(row).strip.empty?
+          AnnotationCategory.add_by_row(row, @assignment, current_user)
+        end
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      elsif data[:type] == '.yml'
+        successes = 0
+        annotation_line = 0
+        data[:contents].each do |category, texts|
+          AnnotationCategory.add_by_row([category] + texts, @assignment, current_user)
+          successes += 1
+        rescue CSVInvalidLineError
+          flash_message(:error, t('annotation_categories.upload.error',
+                                  annotation_category: key, annotation_line: annotation_line))
+          next
+        end
+        if successes > 0
+          flash_message(:success, t('annotation_categories.upload.success',
+                                    annotation_category_number: successes))
+        end
       end
-
-      # YAML::load returns a hash if successful
-      unless annotations.is_a? Hash
-        flash_message(:error, I18n.t('upload_errors.unparseable_yml'))
-        redirect_to action: 'index', assignment_id: @assignment.id
-        return
-      end
-
-      annotations.each_key do |key|
-      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
-      annotation_line += 1
-      if result[:annotation_upload_invalid_lines].size > 0
-        flash_message(:error, t('annotation_categories.upload.error',
-                                annotation_category: key, annotation_line: annotation_line))
-        break
-      else
-        annotation_category_number += 1
-      end
-     end
-     if annotation_category_number > 0
-       flash_message(:success, t('annotation_categories.upload.success',
-                                 annotation_category_number: annotation_category_number))
-     end
     end
-    redirect_to action: 'index', assignment_id: @assignment.id
+    redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
   end
 
   private

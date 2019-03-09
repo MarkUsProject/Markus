@@ -14,18 +14,21 @@ en:
     unrecognized_format: "Could not recognize %{format} format to download with"
 
   upload: "Upload"
+  upload_help_html: "
+    For information about the file format(s) supported, please visit
+    <a href=\"https://github.com/MarkUsProject/Markus/wiki/Importing-and-Exporting-Data#%{section_id}\">this page.</a>."
   upload_the: "Upload %{item}"
   upload_with_format: "Upload in %{file} format"
   upload_prompt_csv: "Select a CSV file to upload"
   upload_prompt_yml: "Select a YML file to upload"
   upload_errors:
+    blank: "Uploaded file is blank."
     invalid_csv_row_format: "Invalid row format"
     invalid_rows: "The following CSV rows were invalid: "
     malformed_csv: "The selected file was improperly formed. Please ensure the file meets MarkUs specifications."
     missing_file: "You must select a file to upload."
     syntax_error: "There is an error in the file you uploaded: %{error}"
     unparseable_csv: "The selected file is not a CSV file (even though it may have a .csv extension)."
-    unparseable_yml: "Could not parse YAML file"
   uploading_please_wait: "Uploading - please wait..."
 
   upload_success:

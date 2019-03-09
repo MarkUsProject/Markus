@@ -25,7 +25,6 @@ es:
     missing_file: "Usted debe proveer un archivo."
     syntax_error: "Existe un error en el archivo que usted subió: %{error}"
     unparseable_csv: "El archivo seleccionado no es un archivo con formato CSV (a pesar de que pueda tener csv como extensión)."
-    unparseable_yml: "No se pudo interpretar el archivo con formato YAML"
   uploading_please_wait: "Subiendo - por favor espere..."
 
   upload_success:

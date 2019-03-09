@@ -960,10 +960,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST csv_upload properly' do
-        expect(post: annot_path + '/csv_upload').to route_to(
+      it 'routes POST upload properly' do
+        expect(post: annot_path + '/upload').to route_to(
           controller: annot_ctrl,
-          action: 'csv_upload',
+          action: 'upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -972,14 +972,6 @@ describe 'An Assignment' do
         expect(get: annot_path + '/download').to route_to(
           controller: annot_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST yml_upload properly' do
-        expect(post: annot_path + '/yml_upload').to route_to(
-          controller: annot_ctrl,
-          action: 'yml_upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

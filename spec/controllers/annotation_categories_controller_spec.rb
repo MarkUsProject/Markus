@@ -9,17 +9,21 @@ describe AnnotationCategoriesController do
   let(:annotation_category) { FactoryBot.create(:annotation_category) }
   let(:assignment) { FactoryBot.create(:assignment) }
 
-  context 'csv_upload' do
+  context '#upload' do
+    include_examples 'a controller supporting upload' do
+      let(:params) { { assignment_id: assignment.id } }
+    end
+
     it 'accepts a valid csv file' do
       file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
 
-      post :csv_upload, params: { assignment_id: assignment.id, annotation_category_list_csv: file_good }
+      post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
       expect(AnnotationCategory.all.size).to eq(2)
       # check that the data is being updated, in particular
@@ -42,67 +46,18 @@ describe AnnotationCategoriesController do
         'files/annotation_categories/form_invalid_column.csv', 'text/csv'
       )
 
-      post :csv_upload, params: { assignment_id: assignment.id, annotation_category_list_csv: @file_invalid_column }
+      post :upload, params: { assignment_id: assignment.id, upload_file: @file_invalid_column }
 
       expect(response.status).to eq(302)
-      pending('It is better to reject a file with a nameless annotation category with annotation texts.')
+      # One annotation category was created, and one has an error.
+      expect(AnnotationCategory.all.size).to eq(1)
       expect(flash[:error].size).to eq(1)
-      expect(AnnotationCategory.all.size).to eq(0)
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
 
-    it 'does not accept fileless submission' do
-      post :csv_upload, params: { assignment_id: assignment.id }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error].size).to eq(1)
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
-    end
-
-    it 'does not accept a non-CSV file with .CSV extension' do
-      @file_bad_csv = fixture_file_upload(
-        'files/bad_csv.csv', 'text/xls'
-      )
-      post :csv_upload, params: { assignment_id: assignment.id, annotation_category_list_csv: @file_bad_csv }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
-    end
-
-    it 'does not accept a .XLS file' do
-      @file_wrong_format = fixture_file_upload(
-        'files/wrong_csv_format.xls', 'text/xls'
-      )
-
-      post :csv_upload, params: { assignment_id: assignment.id, annotation_category_list_csv: @file_wrong_format }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(AnnotationCategory.all.size).to eq(0)
-      expect(flash[:error].map { |f| extract_text f })
-        .to eq([I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f })
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
-    end
-
-    it 'does not accept any file without .CSV extension' do
-      @yml_file_not_for_csv_upload = fixture_file_upload(
-        'files/annotation_categories/yml_file_should_not_be_saved_by_csv_file.yml', 'text/yml'
-      )
-      post :csv_upload, params: { assignment_id: assignment.id,
-                                  annotation_category_list_csv: @yml_file_not_for_csv_upload }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      pending('The uploaded file is not CSV file so it should not be uploaded even if it gets parsed correctly')
-      expect(AnnotationCategory.all.size).to eq(0)
-      expect(response).to redirect_to(action: 'index', id: assignment.id)
-    end
-  end
-
-  context 'yml_upload' do
-    it 'accept a valid file' do
+    it 'accepts a valid yml file' do
       @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml.yml', 'text/yml')
-      post :yml_upload, params: { assignment_id: assignment.id, annotation_category_list_yml: @valid_yml_file }
+      post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
       expect(flash[:success].size).to eq(1)
       expect(response.status).to eq(302)
@@ -122,36 +77,8 @@ describe AnnotationCategoriesController do
     it 'does not accept files with empty annotation category name' do
       @yml_with_invalid_category = fixture_file_upload('files/annotation_categories/yml_with_invalid_category.yml')
 
-      post :yml_upload, params: { assignment_id: assignment.id,
-                                  annotation_category_list_yml: @yml_with_invalid_category }
-      expect(response.status).to eq(302)
-      expect(flash[:error].size).to eq(1)
-      expect(AnnotationCategory.all.size).to eq(0)
-      expect(response).to redirect_to action: 'index', assignment_id: assignment.id
-    end
-
-    it 'does not accept fileless submission' do
-      post :yml_upload, params: { assignment_id: assignment.id }
-
-      expect(response.status).to eq(302)
-      pending('There should be flash message reporting that users cannot upload without a selected file.')
-      expect(flash[:message]).not_to be_nil
-      expect(response).to redirect_to action: 'index', assignment_id: assignment.id
-    end
-
-    it 'does not accept a non-YML file with .YML extension' do
-      @non_yml_file = fixture_file_upload('files/annotation_categories/non_yml_file.yml', 'image/png')
-      post :yml_upload, params: { assignment_id: assignment.id, annotation_category_list_yml: @non_yml_file }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error].size).to eq(1)
-      expect(response).to redirect_to action: 'index', assignment_id: assignment.id
-    end
-
-    it 'does not accept a .XLS file' do
-      @xls_file = fixture_file_upload('files/annotation_categories/xls_annotation_cat.xls', 'text/xls')
-      post :yml_upload, params: { assignment_id: assignment.id, annotation_category_list_yml: @xls_file }
-
+      post :upload, params: { assignment_id: assignment.id,
+                              upload_file: @yml_with_invalid_category }
       expect(response.status).to eq(302)
       expect(flash[:error].size).to eq(1)
       expect(AnnotationCategory.all.size).to eq(0)
