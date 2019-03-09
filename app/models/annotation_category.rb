@@ -41,7 +41,7 @@ class AnnotationCategory < ApplicationRecord
     raise CSVInvalidLineError unless valid
   end
 
-  # Takes two arrays, one with annotation catogies names and one
+  # Takes two arrays, one with annotation category names and one
   # with associated annotation texts
   # It is used with the Yaml format
   # Format :
