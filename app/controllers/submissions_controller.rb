@@ -203,25 +203,36 @@ class SubmissionsController < ApplicationController
     end
     assignment = Assignment.includes(:groupings).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
-    partition = groupings.partition do |grouping|
+    collectable = []
+    some_before_due = false
+    some_released = Grouping.joins(current_submission_used: :results)
+                            .where('results.released_to_students': true)
+                            .where(id: groupings)
+    groupings.each do |grouping|
       section = grouping.inviter.present? ? grouping.inviter.section : nil
-      assignment.submission_rule.can_collect_now?(section)
+      collect_now = assignment.submission_rule.can_collect_now?(section)
+      some_before_due = true unless collect_now
+      next if !collect_now || some_released.include?(grouping)
+      collectable << grouping
     end
     success = ''
-    error = ''
-    if partition[0].count > 0
-      current_job = SubmissionsJob.perform_later(partition[0])
+    if collectable.count > 0
+      current_job = SubmissionsJob.perform_later(collectable)
       session[:job_id] = current_job.job_id
       success = I18n.t('submissions.collect.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
-    if partition[1].count > 0
-      error = I18n.t('submissions.collect.could_not_collect_some',
+    if some_before_due
+      error = I18n.t('submissions.collect.could_not_collect_some_due',
                      assignment_identifier: assignment.short_identifier)
+      flash_now(:error, error)
+    end
+    if some_released.present?
+      error = I18n.t('submissions.collect.could_not_collect_some_released',
+                     assignment_identifier: assignment.short_identifier)
+      flash_now(:error, error)
     end
     flash_now(:success, success) unless success.empty?
-    flash_now(:error, error) unless error.empty?
-
     render 'shared/_poll_job.js.erb'
   end
 
