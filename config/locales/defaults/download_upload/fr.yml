@@ -24,7 +24,6 @@ fr:
     missing_file: "Vous devez envoyer un fichier."
     syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
     unparseable_csv: "Le fichier sélectionné ne est pas un fichier csv (même si elle peut avoir une extension .csv)."
-    unparseable_yml: "Ne pourrait pas analyzer le fichier YAML"
   uploading_please_wait: "Envoi en cours — veuillez patienter…"
 
   upload_success:

@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
+  include UploadHelper
 
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 

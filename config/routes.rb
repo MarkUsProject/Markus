@@ -273,9 +273,8 @@ Rails.application.routes.draw do
 
         collection do
           post 'update_positions'
-          post 'csv_upload'
+          post 'upload'
           get 'download'
-          post 'yml_upload'
           get 'add_annotation_text'
           post 'delete_annotation_text'
           post 'update_annotation'
