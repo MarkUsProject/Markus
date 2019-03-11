@@ -14,43 +14,29 @@ class AutotestRunJob < ApplicationJob
       if File.exist?(assignment_dir) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
-        if !prev_test_run.nil? &&
-           prev_test_run.revision_identifier == test_run.revision_identifier &&
-           prev_test_run.submission_id.nil? == test_run.submission_id.nil?
-          return
-        end
+        return if prev_test_run&.revision_identifier == test_run.revision_identifier
         # ..otherwise delete grouping's previous files
-        if test_run.submission_id.nil?
-          FileUtils.rm_rf(repo_dir)
-        else
-          FileUtils.rm_rf(assignment_dir)
-        end
+        FileUtils.rm_rf(assignment_dir)
       end
     else
       FileUtils.mkdir_p(TestRun::STUDENTS_DIR)
     end
     # export the repo files
+    required_files = nil
+    if assignment.only_required_files
+      required_files = assignment.assignment_files.map(&:filename).to_set
+    end
     group.access_repo do |repo|
-      if test_run.submission_id.nil?
-        repo.export(repo_dir)
-      else
-        unless assignment.only_required_files.blank?
-          required_files = assignment.assignment_files.map(&:filename).to_set
-        end
-        test_run.submission.submission_files.each do |file|
-          dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-          file_path = dir == '' ? file.filename : File.join(dir, file.filename)
-          unless required_files.nil? || required_files.include?(file_path)
-            # do not export non-required files, if only required files are allowed
-            # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-            next
-          end
-          file_content = file.retrieve_file(false, repo)
-          file_dir = File.join(repo_dir, file.path)
-          FileUtils.mkdir_p(file_dir)
-          File.open(File.join(file_dir, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-            f.write(file_content)
-          end
+      revision = repo.get_revision(test_run.revision_identifier)
+      revision.tree_at_path(assignment.repository_folder, with_attrs: false).each do |_, file|
+        next if file.is_a?(Repository::RevisionDirectory)
+        # do not export non-required files, if only required files are allowed
+        # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+        file_path = File.join(file.path, file.name)
+        next unless required_files.nil? || required_files.include?(file_path)
+        FileUtils.mkdir_p(File.dirname(file_path))
+        File.open(File.join(repo_dir, file_path), 'wb') do |f| # binary write to avoid encoding issues
+          f.write(repo.download_as_string(file))
         end
       end
     end
