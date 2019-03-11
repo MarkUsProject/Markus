@@ -52,8 +52,9 @@ class RightPane extends React.Component {
         }
       });
       this.setState({...res, criterionSummaryData, subtotal, extraMarkSubtotal, loading: false}, fix_panes);
-      document.getElementById('current_mark_div').innerText = res.total;
-      document.getElementById('total_mark_div').innerText = res.assignment_max_mark;
+      if (window.submissionSelector !== undefined) {
+        window.submissionSelector.fetchData();
+      }
     });
   };
 
@@ -91,7 +92,9 @@ class RightPane extends React.Component {
       let marked = items[3];
       let assigned = items[4];
 
-      document.getElementById('current_mark_div').innerText = total;
+      if (window.submissionSelector !== undefined) {
+        window.submissionSelector.fetchData();
+      }
       this.setState({ marks, total });
       update_bar(marked, assigned);
     });

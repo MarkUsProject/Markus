@@ -3,6 +3,7 @@ en:
     models:
       note:
         one: "Note"
+        other: "Notes"
     attributes:
       notes:
         created_at: "Created at"
