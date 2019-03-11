@@ -27,14 +27,24 @@ class GitRepository < Repository::AbstractRepository
     @repos_path = connect_string
     @closed = false
     if GitRepository.repository_exists?(@repos_path)
-      @repos = Rugged::Repository.new(@repos_path)
-      # make sure working directory is up-to-date
-      @repos.fetch('origin')
       begin
-        @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
-      rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
+        @repos = Rugged::Repository.new(@repos_path)
+        # make sure working directory is up-to-date
+        @repos.fetch('origin')
+        begin
+          @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
+        rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
+        end
+        @repos.reset('origin/master', :hard) # align to whatever is in origin/master
+      rescue StandardError # TODO this shouldn't be necessary. It catches the case when a local repo is corrupted,
+                           #      we need to prevent the corruption instead/as well
+        FileUtils.mv(connect_string, "#{connect_string}.bad")
+        repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+        bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+        @repos = Rugged::Repository.clone_at(bare_path, connect_string)
+        m_logger = MarkusLogger.instance
+        m_logger.log "Recloned corrupted git repo: #{connect_string}"
       end
-      @repos.reset('origin/master', :hard) # align to whatever is in origin/master
     else
       raise "Repository does not exist at path \"#{@repos_path}\""
     end
@@ -119,7 +129,7 @@ class GitRepository < Repository::AbstractRepository
     repo = GitRepository.open(connect_string)
     yield repo
   ensure
-    repo.close
+    repo&.close
   end
 
   # static method that deletes the git repo
