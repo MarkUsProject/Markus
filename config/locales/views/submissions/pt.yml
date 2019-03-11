@@ -5,7 +5,8 @@ pt:
                            ( Deixando esta caixa desmarcada , a apresentação não
                            será penalizado , independentemente do tempo de apresentação . )"
       collection_job_started_for_groups: "Coleta das submissões para grupos selecionados para o projeto %{assignment_identifier} começou. O processo pode demorar, você poderá acessar as submissões assim que elas tornarem-se disponíveis."
-      could_not_collect_some: "Não foi possível recolher inscrições para alguns grupos e projecto %{assignment_identifier} - a data de coleta não foi alcançado por estes agrupamentos."
+      could_not_collect_some_due: "Não foi possível recolher inscrições para alguns grupos e projecto %{assignment_identifier} - a data de coleta não foi alcançado por estes agrupamentos."
+      could_not_collect_some_released: "Não foi possível recolher inscrições para alguns grupos e projecto %{assignment_identifier}."
       overwrite_warning: "Coletando e avaliando essa revisão irá sobrescrever coletas/avalições anteriores feitas para esse grupo no projeto. Tem certeza que quer fazer isso?"
       progress: "%{count}/%{size} submissões coletadas"
       results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas. Tem certeza que deseja continuar?"
