@@ -1,0 +1,12 @@
+ATest1,test1,ATest1,2013-07-22 10:00:00 -0400,,1,1,0,true,false,,,false,false,false,false,false,false,true,false,false,false
+ATest2,test2,ATest2,2013-07-22 10:00:00 -0400,,1,1,0,true,false,,,false,false,false,false,false,false,true,false,false,false
+A0,Variables and Simple Operations,A0,2019-02-25 10:40:21 -0500,using basic operators and assigning variables,2,3,0,true,true,,,false,false,false,false,false,false,true,false,false,false
+midterm,The first midterm,midterm,2019-02-26 10:39:53 -0500,Illustrates the use of scanned exams.,1,1,0,true,false,2019-03-05 10:38:53 -0500,,false,false,false,true,false,false,false,false,false,false
+A1,Conditionals and Loops,A1,2019-02-26 10:40:21 -0500,"Learn to use conditional statements, and loops.",1,1,0,true,false,2019-02-24 10:35:21 -0500,,false,false,false,true,false,false,true,false,false,true
+A1_pr,Conditionals and Loops,A1,2019-02-26 10:40:21 -0500,,1,1,0,true,false,,,false,false,false,false,false,false,true,true,false,false
+A2,Cats and Dogs,A2,2019-02-26 10:40:21 -0500,"    Basic exercise in Object Oriented Programming.
+    Implement Animal, Cat, and Dog, as described in class.
+",2,3,0,true,true,,,false,false,false,false,false,false,true,false,false,false
+autotest01,Assignment for testing the autotester,autotest01,2019-03-05 10:38:56 -0500,"",1,1,0,true,false,,,false,true,true,false,false,false,false,false,false,false
+A3,Ode to a Python program,A3,2019-04-26 10:35:21 -0400,"Learn to use files, dictionaries, and testing.",1,1,0,true,false,,,false,false,false,false,false,false,true,false,false,false
+A4,Introduction to Recursion,A4,2019-04-26 10:35:21 -0400,Implement functions using Recursion,2,3,0,true,true,,,false,false,false,false,false,false,true,false,false,false

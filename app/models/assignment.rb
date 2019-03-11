@@ -1352,12 +1352,10 @@ class Assignment < ApplicationRecord
             row[:unlimited_tokens] = false
           end
           assignment.update(row)
-
-          # unless assignment.id
-          #   assignment[:display_median_to_students] = false
-          #   assignment[:display_grader_names_to_students] = false
-          # end
-
+          unless assignment.id
+            assignment[:display_median_to_students] = false
+            assignment[:display_grader_names_to_students] = false
+          end
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e

@@ -458,7 +458,7 @@ class AssignmentsController < ApplicationController
       end
     when 'yml'
       result = Assignment.upload_assignment_list('yml', assignment_list)
-      if result.is_a?(error)
+      if result.is_a?(StandardError)
         flash_message(:error, result.message)
       end
     else
