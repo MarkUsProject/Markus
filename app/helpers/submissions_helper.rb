@@ -1,5 +1,4 @@
 module SubmissionsHelper
-  include AutomatedTestsClientHelper
 
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?

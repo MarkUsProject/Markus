@@ -220,7 +220,8 @@ button,
     color: $dark-blue;
   }
 
-  &[disabled] {
+  &[disabled],
+  &.disabled {
     background: linear-gradient(to bottom, $light-grey, $disabled-grey);
     border-color: $disabled-dark;
     box-shadow: none;
@@ -432,48 +433,6 @@ fieldset {
         border-radius: 0 0 $radius $radius;
       }
     }
-  }
-}
-
-/** Tab pane */
-
-.tab-pane {
-  background: $light-grey;
-  border: 1px solid $blue;
-  border-radius: $radius;
-  padding: 0;
-
-  > ul {
-    margin: 0;
-    padding: 0;
-
-    li {
-      background: $light-blue;
-      border-radius: $radius $radius 0 0;
-      display: inline-block;
-      list-style: none;
-
-      a {
-        border-radius: $radius $radius 0 0;
-        display: inline-block;
-        outline: none;
-        padding: 0.25em 1.5em;
-      }
-
-      &.ui-tabs-active {
-        background: $white;
-
-        a {
-          color: $dark-grey;
-        }
-      }
-    }
-  }
-
-  .ui-tabs-panel {
-    background: $white;
-    border-radius: 0 0 $radius $radius;
-    padding: 0;
   }
 }
 
@@ -718,10 +677,6 @@ nav {
       &.active {
         background: $blue;
         color: $white;
-      }
-
-      &.active {
-        padding: 0.5em 1em;
       }
 
       a {

@@ -122,7 +122,6 @@ fr:
 
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
-    still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
       repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
@@ -258,19 +257,12 @@ fr:
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
       need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté."
-      new_test_script_file: "Nouvelle script de test"
-      new_test_support_file: "Nouveau fichier additionel"
-      assignment_test_script_files: "Scripts de test"
-      assignment_test_support_files: "Fichiers additionels"
-      duplicate_filename: "Attempted to upload the following filename more than once: "
-      download_wrong_place_or_unreadable: "Le fichier ne peut pas être trouvé où ne peut pas être lu"
+      files: "UPDATE ME"
+      specs: "UPDATE ME"
+      new_test_group: "UPDATE ME"
       test_group_option:
-        upload_required: "Envoyer<span class='required_field'>*</span>"
-        upload_help: "Il existe déjà un fichier avec le même nom"
-        replace: "Remplacer"
-        replace_help: "Vous pouvez télécharger un fichier avec le même nom"
-        remove_file: "Supprimer ce fichier"
-        remove_file_help: "Cocher pour supprimer ce fichier"
+        remove: "Supprimer ce groupe"
+        remove_help: "Cocher pour supprimer ce groupe"
         run_by_instructors: "Les instructeurs peuvent lancer les tests"
         run_by_instructors_help: "Cocher pour permettre aux instructeurs de lancer les tests"
         run_by_students: "Les étudiants peuvent lancer les tests"

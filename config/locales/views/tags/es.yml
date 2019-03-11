@@ -7,7 +7,6 @@ es:
 
     results:
       available_tags: "Etiquetas Disponibles"
-      common_tags: "Etiquetas más usadas"
       current_tags: "Etiquetas Recientes"
       no_current_tags: "No hay más etiquetas por asignar."
       no_available_tags: "No se han asignado etiquetas."

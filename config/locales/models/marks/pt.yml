@@ -3,3 +3,4 @@ pt:
     models:
       mark:
         one: "Nota"
+        other: "Notas"

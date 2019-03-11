@@ -192,6 +192,15 @@ class ResultsController < ApplicationController
         data[:total] = result.total_mark
         data[:old_total] = original_result&.total_mark
 
+        # Tags
+        data[:current_tags] = Tag.left_outer_joins(:groupings)
+                                 .where('groupings_tags.grouping_id': submission.grouping_id)
+                                 .pluck_to_hash(:id, :name)
+        data[:available_tags] = Tag.left_outer_joins(:groupings)
+                                   .where.not('groupings_tags.grouping_id': submission.grouping_id)
+                                   .or(Tag.left_outer_joins(:groupings).where('groupings.id': nil))
+                                   .pluck_to_hash(:id, :name)
+
         render json: data
       end
     end
@@ -207,10 +216,6 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
     assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
     @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
-    filtered = @submission.submission_files.where.not(filename: Repository.get_class.internal_file_names)
-    @files = filtered.sort do |a, b|
-      File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
-    end
 
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
@@ -253,21 +258,6 @@ class ResultsController < ApplicationController
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@group.group_name}'")
 
-    # Sets up the tags for the tag pane.
-    # Creates a variable for all the tags not used
-    # and all the tags that are used by the assignment.
-    @all_tags = Tag.all
-    @grouping_tags = get_tags_for_grouping(@grouping.id)
-    @not_grouping_tags = get_tags_not_associated_with_grouping(@grouping.id)
-    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
-
-    # Gets the top tags and their usage.
-    @top_tags = get_top_tags
-    @top_tags_num = Hash.new
-    @top_tags.each do |current|
-      @top_tags_num[current.id] = get_num_groupings_for_tag(current)
-    end
-
     # Check whether this group made a submission after the final deadline.
     if @grouping.past_due_date?
       flash_message(:warning,
@@ -280,28 +270,7 @@ class ResultsController < ApplicationController
       flash_message(:notice, t('results.marks_released'))
     end
 
-    # Respond to AJAX request.
-    respond_to do |format|
-      format.html do
-        render layout: 'result_content'
-      end
-      format.json do
-        @request_type = params[:type]
-
-        # Checks the operation requested.
-        if @request_type.eql? 'add'
-          create_grouping_tag_association_from_existing_tag(
-              params[:grouping_id],
-              params[:tag_id])
-        else
-          delete_grouping_tag_association(params[:tag_id],
-                                          Grouping.find(params[:grouping_id]))
-        end
-
-        # Renders nothing.
-        head :ok
-      end
-    end
+    render layout: 'result_content'
   end
 
   def run_tests
@@ -331,25 +300,19 @@ class ResultsController < ApplicationController
   end
 
   ##  Tag Methods  ##
-
   def add_tag
-    create_grouping_tag_association_from_existing_tag(params[:grouping_id],
+    result = Result.find(params[:id])
+    create_grouping_tag_association_from_existing_tag(result.submission.grouping_id,
                                                       params[:tag_id])
-    respond_to do |format|
-      format.html do
-        redirect_back(fallback_location: root_path)
-      end
-    end
+    head :ok
   end
 
   def remove_tag
+    result = Result.find(params[:id])
+    grouping = result.submission.grouping
     delete_grouping_tag_association(params[:tag_id],
-                                    Grouping.find(params[:grouping_id]))
-    respond_to do |format|
-      format.html do
-        redirect_back(fallback_location: root_path)
-      end
-    end
+                                    grouping)
+    head :ok
   end
 
   def next_grouping

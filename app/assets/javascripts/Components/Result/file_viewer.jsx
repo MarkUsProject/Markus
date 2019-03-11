@@ -79,7 +79,11 @@ export class FileViewer extends React.Component {
   };
 
   render() {
-    const commonProps = {submission_file_id: this.props.selectedFile, annotations: this.props.annotations};
+    const commonProps = {
+      submission_file_id: this.props.selectedFile,
+      annotations: this.props.annotations,
+      released_to_students: this.props.released_to_students
+    };
     if (this.state.loading) {
       return I18n.t('working');
     } else if (this.state.type === 'image') {

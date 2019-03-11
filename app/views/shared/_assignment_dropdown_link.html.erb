@@ -1,0 +1,21 @@
+<li class="<%= active_id == assignment.id ? 'active' : '' %>">
+  <% link_text = assignment.short_identifier %>
+  <% if assignment.is_hidden %>
+    <% link_text = t('assignment.hidden', assignment_text: link_text) %>
+  <% end %>
+
+  <%= link_to link_text,
+              switch_assignment_assignment_path(assignment.id),
+              title: assignment.description %>
+
+  <% if !assignment.pr_assignment.nil? &&
+        (!@current_user.student? || !assignment.pr_assignment.is_hidden) %>
+    <% pr_link_text = "#{t('results.review_for')} #{assignment.short_identifier}" %>
+    <% if assignment.pr_assignment.is_hidden %>
+      <% pr_link_text = t('assignment.hidden', assignment_text: pr_link_text) %>
+    <% end %>
+    <%= link_to "(#{pr_link_text})",
+                switch_assignment_assignment_path(assignment.pr_assignment.id),
+                class: 'pr_link' %>
+  <% end %>
+</li>

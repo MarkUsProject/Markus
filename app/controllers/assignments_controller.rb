@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                               :update_collected_submissions,
                               :render_feedback_file,
                               :peer_review,
-                              :summary]
+                              :summary,
+                              :switch_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -20,7 +21,7 @@ class AssignmentsController < ApplicationController
                             :peer_review]
 
   before_action      :authorize_for_user,
-                     only: [:index, :render_feedback_file]
+                     only: [:index, :render_feedback_file, :switch_assignment]
 
   # Publicly accessible actions ---------------------------------------
 
@@ -591,6 +592,17 @@ class AssignmentsController < ApplicationController
       send_data file_contents,
                 disposition: 'attachment',
                 filename: params[:file_name]
+    end
+  end
+
+  def switch_assignment
+    # TODO: Make this dependent on the referer URL.
+    if current_user.admin?
+      redirect_to edit_assignment_path(params[:id])
+    elsif current_user.ta?
+      redirect_to browse_assignment_submissions_path(params[:id])
+    else # curret_user.student?
+      redirect_to student_interface_assignment_path
     end
   end
 

@@ -397,5 +397,5 @@ class SubmissionsActionBox extends React.Component {
 }
 
 export function makeSubmissionTable(elem, props) {
-  render(<SubmissionTable {...props} />, elem);
+  return render(<SubmissionTable {...props} />, elem);
 }

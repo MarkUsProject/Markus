@@ -87,7 +87,6 @@ en:
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
-        peer_review: "Peer Review"
         action:
             assign: "Assign Peer Reviewer(s)"
             unassign: "Unassign Peer Reviewer(s)"
@@ -126,7 +125,6 @@ en:
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
-    still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       bad_cell: "Error: the csv contains the following invalid cells: %{bad_cells}"
@@ -267,20 +265,13 @@ en:
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      new_test_script_file: "New Test Script File"
-      new_test_support_file: "New Test Support File"
-      assignment_test_script_files: "Test Script Files"
-      assignment_test_support_files: "Test Support Files"
-      duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
-      download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
+      files: "Test Files"
+      specs: "Test Specifications"
+      new_test_group: "New Test Group"
       test_group_option:
-        upload_required: "Upload <span class='required_field'>*</span>"
-        upload_help: "The new file name must not exist already"
-        replace: "Update"
-        replace_help: "The updated file name can be the same as the current one"
-        remove_file: "Remove this file"
-        remove_file_help: "Check this box and press submit at the bottom to delete the file"
+        remove: "Remove this group"
+        remove_help: "Check this box and press submit at the bottom to delete the group"
         run_by_instructors: "Runnable by Instructors"
         run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
         run_by_students: "Runnable by Students"
@@ -291,7 +282,7 @@ en:
         display_to:
           instructors: "To instructors only"
           instructors_and_students: "To instructors and students"
-          instructors_and_student_tests: "To instructors, then only student tests to students"
+          instructors_and_student_tests: "To instructors, and student tests to students"
       token:
         start_date: "Tokens available starting on:"
         available: "Tokens available:"

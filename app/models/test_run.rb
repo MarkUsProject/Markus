@@ -9,6 +9,10 @@ class TestRun < ApplicationRecord
                                                        allow_nil: true }
   validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
 
+  ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments').freeze
+  STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students').freeze
+  HOOKS_FILE = 'hooks.py'.freeze
+  SPECS_FILE = 'specs.json'.freeze
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',

@@ -7,7 +7,6 @@ en:
 
     results:
       available_tags: "Available Tags"
-      common_tags: "Common Tags"
       current_tags: "Current Tags"
       no_current_tags: "No tags have been used."
       no_available_tags: "No more tags are left to be used."
