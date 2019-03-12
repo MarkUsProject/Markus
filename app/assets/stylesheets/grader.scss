@@ -43,40 +43,28 @@
 
 
 /* Top toolbars: student selector/file selector/download buttons */
-
-#student_selector {
-  display: table;
-  margin: 0;
-  padding: 2px 10px;
+#submission-selector-container {
   width: 100%;
+}
 
-  #criterion_incomplete_error {
-    display: table-row;
-  }
-
-  #student_selector_controls {
-    display: table-row;
-  }
-
-  .left,
-  .middle,
-  .right {
-    display: table-cell;
-  }
+#submission-selector {
+  display: flex;
+  margin: 0;
+  width: 100%;
 
   .left {
     text-align: left;
-    width: 20%;
+    flex-basis: 20%;
   }
 
   .middle {
     text-align: center;
-    width: 60%;
+    flex-basis: 60%;
   }
 
   .right {
     text-align: right;
-    width: 20%;
+    flex-basis: 20%;
     float: none;
   }
 }
