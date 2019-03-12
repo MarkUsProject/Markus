@@ -225,5 +225,4 @@ describe AssignmentsController do
       expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.yml"
     end
   end
-
 end
