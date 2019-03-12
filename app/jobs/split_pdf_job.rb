@@ -252,80 +252,34 @@ class SplitPDFJob < ApplicationJob
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
-        begin
-          out = `python3 lib/scanner/read_chars.py #{student_info_file}`
-          tokens = out.split("\n")
+        out = `./lib/scanner/read_chars.py #{student_info_file}`
+        tokens = out.split("\n")
 
-          # parse out name and student number for matching
-          first_name = tokens[0]
-          last_name = tokens[2]
-          student_id = tokens[-1]
+        # check if python script correctly parsed out the student info
+        if tokens.length != 6
+          next
+        end
 
-          student = match_student(first_name, last_name, student_id, exam_template.assignment)
+        # parse out name and student number for matching
+        first_name = tokens[0]
+        last_name = tokens[2]
+        student_id = tokens[-1]
 
-          if student.nil?
-            next
-          end
+        student = match_student(first_name, last_name, student_id, exam_template.assignment)
 
+        unless student.nil?
           StudentMembership.find_or_create_by(user: student,
                                               grouping: grouping,
                                               membership_status: StudentMembership::STATUSES[:inviter])
-        rescue
-          # default to letting admin assign scan
         end
       end
     end
     num_complete
   end
 
-  def match_student(first_name, last_name, student_id, exam)
-    student = Student.where(id_number: student_id).first
-
-    # if student.nil?
-    #   # get all students who have not been matched for this exam yet
-    #   matched_students = StudentMembership.where(grouping: Grouping.where(assignment: exam)).map(&:user_id)
-    #   unmatched_students = Student.where.not(id: matched_students)
-    #   min_dist = 2 * student_id.length + first_name.length + last_name.length + 1
-    #   student = unmatched_students.first
-    #   # find the student with the smallest edit distance
-    #   unmatched_students.each do |pos_student|
-    #     if pos_student.id_number.nil? or pos_student.first_name.nil? or pos_student.last_name.nil?
-    #       next
-    #     end
-    #     id_dist = levenshtein(student_id, pos_student.id_number)
-    #     name_dist = levenshtein(first_name, pos_student.first_name.upcase) +
-    #       levenshtein(last_name, pos_student.last_name.upcase)
-    #     edit_dist = 2 * id_dist + name_dist
-    #     if edit_dist < min_dist
-    #       min_dist = edit_dist
-    #       student = pos_student
-    #     end
-    #   end
-    # end
-
-    student
-  end
-
-  def levenshtein(first, second)
-    m, n = first.length, second.length
-    return m if n == 0
-    return n if m == 0
-
-    # Create our distance matrix
-    d = Array.new(m + 1) { Array.new(n + 1) }
-    0.upto(m) { |i| d[i][0] = i }
-    0.upto(n) { |j| d[0][j] = j }
-
-    1.upto(n) do |j|
-      1.upto(m) do |i|
-        if first[i - 1] == second[j - 1]
-          d[i][j] = d[i - 1][j - 1]
-        else
-          d[i][j] = [d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + 1].min
-        end
-      end
-    end
-    d[m][n]
+  # TODO: add in matching using name
+  def match_student(_first_name, _last_name, student_id, _exam)
+    Student.find_by(id_number: student_id)
   end
 
   def group_name_for(exam_template, exam_num)
