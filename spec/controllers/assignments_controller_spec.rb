@@ -206,9 +206,9 @@ describe AssignmentsController do
         yml_data << assignment.send(f.to_s)
       end
       expect(@controller).to receive(:send_data).with(yml_data.join(',') + "\n", yml_options) {
-                                 # to prevent a 'missing template' error
-                                 @controller.head :ok
-                               }
+        # to prevent a 'missing template' error
+        @controller.head :ok
+      }
       get :download_assignment_list, params: { file_format: 'yml' }
     end
 
