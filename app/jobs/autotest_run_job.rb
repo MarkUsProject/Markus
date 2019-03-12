@@ -8,15 +8,15 @@ class AutotestRunJob < ApplicationJob
     grouping = test_run.grouping
     group = grouping.group
     assignment = grouping.assignment
-    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
-    assignment_dir = File.join(repo_dir, assignment.repository_folder)
+    export_path = File.join(TestRun::STUDENTS_DIR, group.repo_name)
+    assignment_path = File.join(export_path, assignment.repository_folder)
     if File.exist?(TestRun::STUDENTS_DIR)
-      if File.exist?(assignment_dir) # can exist from other test runs
+      if File.exist?(assignment_path) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
         return if prev_test_run&.revision_identifier == test_run.revision_identifier
         # ..otherwise delete grouping's previous files
-        FileUtils.rm_rf(assignment_dir)
+        FileUtils.rm_rf(assignment_path)
       end
     else
       FileUtils.mkdir_p(TestRun::STUDENTS_DIR)
@@ -24,7 +24,7 @@ class AutotestRunJob < ApplicationJob
     # export the repo files
     required_files = nil
     if assignment.only_required_files
-      required_files = assignment.assignment_files.map(&:filename).to_set
+      required_files = assignment.assignment_files.map { |af| File.join(assignment_path, af.filename) }.to_set
     end
     group.access_repo do |repo|
       revision = repo.get_revision(test_run.revision_identifier)
@@ -32,12 +32,11 @@ class AutotestRunJob < ApplicationJob
         next if file.is_a?(Repository::RevisionDirectory)
         # do not export non-required files, if only required files are allowed
         # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-        file_path = File.join(file.path, file.name)
+        file_path = File.join(export_path, file.path, file.name)
         next unless required_files.nil? || required_files.include?(file_path)
         FileUtils.mkdir_p(File.dirname(file_path))
-        File.open(File.join(repo_dir, file_path), 'wb') do |f| # binary write to avoid encoding issues
-          f.write(repo.download_as_string(file))
-        end
+        # binary write to avoid encoding issues
+        File.open(file_path, 'wb') { |f| f.write(repo.download_as_string(file)) }
       end
     end
   end
