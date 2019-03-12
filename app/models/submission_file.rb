@@ -117,7 +117,7 @@ class SubmissionFile < ApplicationRecord
       close_repo = true
     end
     revision = repo.get_revision(revision_identifier)
-    revision_file = revision.files_at_path(self.path)[self.filename]
+    revision_file = revision.files_at_path(self.path, with_attrs: false)[self.filename]
     if revision_file.nil?
       raise I18n.t('results.could_not_find_file',
                    filename: self.filename,
