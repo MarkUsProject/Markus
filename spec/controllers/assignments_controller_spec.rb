@@ -134,7 +134,6 @@ describe AssignmentsController do
     end
 
     it 'expects a call to send_data' do
-      # byebug
       # copied from the controller
       DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
                         :due_date, :message, :group_min, :group_max,
@@ -167,8 +166,7 @@ describe AssignmentsController do
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
       get :download_assignment_list, params: { file_format: 'csv' }
-      filename = response.header['Content-Disposition']
-                   .split.last.split('"').second
+      filename = response.header['Content-Disposition'].split.last.split('"').second
       expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv"
     end
   end
@@ -207,8 +205,7 @@ describe AssignmentsController do
       DEFAULT_FIELDS.map do |f|
         yml_data << assignment.send(f.to_s)
       end
-      expect(@controller).to receive(:send_data)
-                               .with(yml_data.join(',') + "\n", yml_options) {
+      expect(@controller).to receive(:send_data).with(yml_data.join(',') + "\n", yml_options) {
                                  # to prevent a 'missing template' error
                                  @controller.head :ok
                                }
@@ -224,8 +221,7 @@ describe AssignmentsController do
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
       get :download_assignment_list, params: { file_format: 'yml' }
-      filename = response.header['Content-Disposition']
-                   .split.last.split('"').second
+      filename = response.header['Content-Disposition'].split.last.split('"').second
       expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.yml"
     end
   end
