@@ -9,12 +9,3 @@ MAHLER
 444158
 OOOLZSOGGL
 0001250981
-
-
-Dependencies:
-opencv==4.0.0
-torch==1.0.1.post2
-torchvision==0.2.1
-PIL==1.1.7
-numpy==1.16.1
-scipy==1.2.1
