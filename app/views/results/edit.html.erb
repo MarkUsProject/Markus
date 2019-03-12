@@ -24,15 +24,22 @@
           role: '<%= @current_user.class.name %>',
         }
       );
+
+      window.submissionSelector = makeSubmissionSelector(document.getElementById('submission-selector-container'),
+        {
+          result_id: <%= @result.id %>,
+          submission_id: <%= @result.submission_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
+          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
+        }
+      );
     });
   </script>
 <% end %>
 
 <script>
-  var modalNotesGroup = null;
-
   $(document).ready(function() {
-    window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_help = new ModalMarkus('#help_dialog');
 
     <%
@@ -162,12 +169,8 @@
 <% end %>
 
 <div class='wrapLeft'>
-  <%= render partial: 'results/common/submission_selector',
-             locals: { group: @group,
-                       result: @result,
-                       assignment: @assignment,
-                       previous_grouping: @previous_grouping,
-                       next_grouping: @next_grouping } %>
+  <div id='criterion_incomplete_error' class='error hidden'></div>
+  <div id="submission-selector-container"></div>
 
   <%= render partial: 'results/common/errors' %>
 

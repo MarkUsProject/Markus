@@ -469,63 +469,6 @@ describe ResultsController do
             assert_select '.overall-comment textarea'
           end
         end
-        context 'while viewing the first submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.first.id,
-                                 id: results.first.id }
-          end
-          test_assigns_not_nil :next_grouping
-          test_assigns_nil :previous_grouping
-          it 'the next grouping should have a submisison' do
-            expect(assigns(:next_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct next result' do
-            expect(assigns(:next_grouping).current_submission_used.get_latest_result).to eq results.second
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
-        end
-        context 'while viewing the middle submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.second.id,
-                                 id: results.second.id }
-          end
-          test_assigns_not_nil :next_grouping
-          test_assigns_not_nil :previous_grouping
-          it 'the previous grouping should have a submission' do
-            expect(assigns(:previous_grouping).has_submission?).to be_truthy
-          end
-          it 'the next grouping should have a submisison' do
-            expect(assigns(:next_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct previous result' do
-            expect(assigns(:previous_grouping).current_submission_used.get_latest_result).to eq results.first
-          end
-          it 'should show the correct next result' do
-            expect(assigns(:next_grouping).current_submission_used.get_latest_result).to eq results.third
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
-        end
-        context 'while viewing the last submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.last.id,
-                                 id: results.last.id }
-          end
-          test_assigns_nil :next_grouping
-          test_assigns_not_nil :previous_grouping
-          it 'the previous grouping should have a submisison' do
-            expect(assigns(:previous_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct previous result' do
-            expect(assigns(:previous_grouping).current_submission_used.get_latest_result).to eq results.second
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
-        end
       end
     end
     context 'accessing set_released_to_students' do
