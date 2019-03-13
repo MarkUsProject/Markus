@@ -2,9 +2,5 @@
 
 import 'javascripts/react_config';
 
-import { makeLeftPane } from 'javascripts/Components/Result/left_pane';
-window.makeLeftPane = makeLeftPane;
-import { makeRightPane } from 'javascripts/Components/Result/right_pane';
-window.makeRightPane = makeRightPane;
-import { makeSubmissionSelector } from 'javascripts/Components/Result/submission_selector';
-window.makeSubmissionSelector = makeSubmissionSelector;
+import { makeResult } from 'javascripts/Components/Result/result';
+window.makeResult = makeResult;

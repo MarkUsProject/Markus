@@ -10,18 +10,11 @@
   <%= javascript_pack_tag 'result' %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
+      window.resultComponent = makeResult(document.getElementById('result-main'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      makeRightPane(document.getElementById('right-pane'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
           role: '<%= @current_user.class.name %>',
         }
@@ -86,5 +79,8 @@
                          current_pr: @current_pr} %>
   <% end %>
 
-  <%= render partial: 'results/student/student_panes' %>
+  <div id='result-main'></div>
+
+  <!-- Annotation pane-->
+  <div id='annotation_holder'></div>
 </div>
