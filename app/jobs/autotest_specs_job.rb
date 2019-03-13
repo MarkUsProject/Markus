@@ -12,8 +12,8 @@ class AutotestSpecsJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    test_specs_path = File.join(assignment_tests_path, assignment.get_test_specs_name)
-    test_specs = JSON.load File.read(test_specs_path)
+    test_specs_path = File.join(assignment_tests_path, TestRun::SPECS_FILE)
+    test_specs = JSON.parse(File.read(test_specs_path))
     server_params = { markus_address: markus_address, assignment_id: assignment_id, test_specs: test_specs }
 
     begin

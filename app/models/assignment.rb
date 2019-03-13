@@ -1098,13 +1098,6 @@ class Assignment < ApplicationRecord
     Dir.entries(autotest_path) - ['.', '..']
   end
 
-  # Selects the test specs from the test files.
-  def get_test_specs_name
-    # TODO: Adjust the specs mechanism when we create a new user interface
-    specs_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::SPECS_FILE)
-    File.exist?(specs_path) ? File.basename(specs_path) : nil
-  end
-
   # Retrieve current grader data.
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count

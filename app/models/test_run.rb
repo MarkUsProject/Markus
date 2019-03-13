@@ -15,7 +15,7 @@ class TestRun < ApplicationRecord
   TEST_CATEGORIES = {
     admin: 'admin',
     student: 'student'
-  }
+  }.freeze
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
@@ -159,11 +159,11 @@ class TestRun < ApplicationRecord
     end
     # save statistics
     self.time_to_service = json_root['time_to_service']
-    self.save
+    save
     # update estimated time to service for other runs in batch
-    if test_batch && time_to_service_estimate && time_to_service
-      time_delta = time_to_service_estimate - time_to_service
-      test_batch.adjust_time_to_service_estimate(time_delta)
+    if self.test_batch && self.time_to_service_estimate && self.time_to_service
+      time_delta = self.time_to_service_estimate - self.time_to_service
+      self.test_batch.adjust_time_to_service_estimate(time_delta)
     end
     # TODO: Create a better interface to display global errors (server)
     # check for server errors
@@ -194,6 +194,6 @@ class TestRun < ApplicationRecord
       new_test_group_results[test_group.name] = new_test_group_result
     end
     # set the marks assigned by the test run
-    submission&.set_autotest_marks
+    self.submission&.set_autotest_marks
   end
 end
