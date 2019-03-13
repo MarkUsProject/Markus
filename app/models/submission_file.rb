@@ -105,12 +105,11 @@ class SubmissionFile < ApplicationRecord
     all_annotations
   end
 
-  # Return the contents of this SubmissionFile.  Include annotations in the
+  # Return the contents of this SubmissionFile. Include annotations in the
   # file if include_annotations is true.
   def retrieve_file(include_annotations = false, repo = nil)
     student_group = self.submission.grouping.group
     revision_identifier = self.submission.revision_identifier
-    retrieved_file = ''
     close_repo = false
     if repo.nil?
       repo = student_group.repo
