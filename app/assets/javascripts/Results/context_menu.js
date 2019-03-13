@@ -19,7 +19,7 @@ var annotation_context_menu = {
         title: I18n.t('helpers.submit.create',
                       {model: I18n.t('activerecord.models.annotation.one')}),
         cmd: 'new_annotation',
-        action: () => leftPane.newAnnotation(),
+        action: () => resultComponent.newAnnotation(),
         disabled: true
       },
       common_annotations: {
@@ -34,7 +34,7 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            leftPane.editAnnotation(annot_id);
+            resultComponent.editAnnotation(annot_id);
           }
         },
         disabled: true
@@ -46,7 +46,7 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            leftPane.removeAnnotation(annot_id);
+            resultComponent.removeAnnotation(annot_id);
           }
         },
         disabled: true
