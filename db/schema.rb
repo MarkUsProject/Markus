@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_29_131200) do
+ActiveRecord::Schema.define(version: 2019_03_14_180239) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -518,7 +518,6 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
   end
 
   create_table "test_group_results", id: :serial, force: :cascade do |t|
-    t.integer "test_group_id"
     t.float "marks_earned", default: 0.0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -526,22 +525,12 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
     t.float "marks_total", default: 0.0, null: false
     t.integer "test_run_id", null: false
     t.text "extra_info"
-    t.index ["test_run_id"], name: "index_test_group_results_on_test_run_id"
-  end
-
-  create_table "test_groups", id: :serial, force: :cascade do |t|
     t.text "name", null: false
-    t.boolean "run_by_instructors", default: true, null: false
-    t.boolean "run_by_students", default: false, null: false
     t.integer "display_output", default: 0, null: false
-    t.bigint "assignment_id", null: false
     t.string "criterion_type"
     t.bigint "criterion_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["assignment_id", "name"], name: "index_test_groups_on_assignment_id_and_name", unique: true
-    t.index ["assignment_id"], name: "index_test_groups_on_assignment_id"
-    t.index ["criterion_type", "criterion_id"], name: "index_test_groups_on_criterion_type_and_criterion_id"
+    t.index ["criterion_type", "criterion_id"], name: "index_test_group_results_on_criterion_type_and_criterion_id"
+    t.index ["test_run_id"], name: "index_test_group_results_on_test_run_id"
   end
 
   create_table "test_results", id: :serial, force: :cascade do |t|
@@ -621,7 +610,6 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "test_group_results", "test_runs"
-  add_foreign_key "test_groups", "assignments"
   add_foreign_key "test_results", "test_group_results"
   add_foreign_key "test_runs", "groupings"
   add_foreign_key "test_runs", "submissions"
