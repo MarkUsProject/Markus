@@ -1,0 +1,31 @@
+RubricCriteria:
+  max_mark: 3.0
+  level_0:
+    name: consequuntur omnis neque animi
+    description: Id ducimus repellat facilis.
+  level_1:
+    name: sunt id enim numquam itaque
+    description: Ea vero rerum.
+  level_2:
+    name: praesentium labore voluptatum blanditiis
+    description: Quo velit adipisci.
+  level_3:
+    name: itaque aut sunt velit
+    description: Et eum totam.
+  level_4:
+    name: est et distinctio
+    description: Dolorem quod similique error.
+  ta_visible: true
+  peer_visible: false
+FlexibleCriteria:
+  type: flexible
+  max_mark: 2.0
+  description: Doloribus.
+  ta_visible: true
+  peer_visible: false
+CheckboxCriteria:
+  type: checkbox
+  max_mark: 1.0
+  description: Similique.
+  ta_visible: true
+  peer_visible: false
