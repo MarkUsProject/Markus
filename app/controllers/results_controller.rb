@@ -49,6 +49,7 @@ class ResultsController < ApplicationController
 
         data = {
           grouping_id: submission.grouping_id,
+          marking_state: result.marking_state,
           released_to_students: result.released_to_students,
           detailed_annotations:
             @current_user.admin? || @current_user.ta? ||
@@ -127,6 +128,7 @@ class ResultsController < ApplicationController
               end
             }
           end
+          data[:notes_count] = submission.grouping.notes.count
         end
 
         # Marks
@@ -209,37 +211,9 @@ class ResultsController < ApplicationController
   def edit
     @host = Rails.application.config.action_controller.relative_url_root
     @result = Result.find(params[:id])
-    @pr = PeerReview.find_by(result_id: @result.id)
     @submission = @result.submission
     @grouping = @submission.grouping
-    @group = @grouping.group
     @assignment = @grouping.assignment
-    assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
-    @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
-
-    if @result.is_a_review?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        assignment = @assignment.pr_assignment
-      end
-    end
-
-    if current_user.ta?
-      assigned_groupings = current_user.groupings
-                             .where(assignment: assignment)
-                             .joins(:group)
-                             .order('group_name')
-      @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
-      @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
-    elsif @result.is_a_review? && @current_user.is_reviewer_for?(assignment, @result)
-      user_group = @current_user.grouping_for(assignment.id)
-      assigned_prs = user_group.peer_reviews_to_others
-      @next_grouping = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
-      @previous_grouping = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
-    else
-      all_groupings = assignment.groupings.joins(:group).order('group_name')
-      @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
-      @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
-    end
 
     # authorization
     begin
@@ -256,7 +230,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
-                 "#{@group.group_name}'")
+                 "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
     if @grouping.past_due_date?
@@ -318,47 +292,63 @@ class ResultsController < ApplicationController
   def next_grouping
     assignment = Assignment.find(params[:assignment_id])
     result = Result.find(params[:id])
+    grouping = result.submission.grouping
 
-    if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
-      next_pr = PeerReview.find(params[:grouping_id])
-      next_result = Result.find(next_pr.result_id)
-
-      redirect_to action: 'edit',
-                  id: next_result.id
-    else
-      grouping = Grouping.find(params[:grouping_id])
-      if grouping.has_submission? && grouping.is_collected?
-        redirect_to action: 'edit',
-                    id: grouping.current_submission_used.get_latest_result.id
+    if current_user.ta?
+      groupings = current_user.groupings
+                              .where(assignment: assignment)
+                              .joins(:group)
+                              .order('group_name')
+      if params[:direction] == '1'
+        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
       else
-        redirect_to controller: 'submissions',
-                    action: 'browse'
+        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+    elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+      assigned_prs = current_user.grouping_for(assignment.id).peer_reviews_to_others
+      if params[:direction] == '1'
+        next_pr = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+      else
+        next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+      end
+      next_result = Result.find(next_pr.result_id)
+      redirect_to action: 'edit', id: next_result.id
+      return
+    else
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      if params[:direction] == '1'
+        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
+      else
+        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
+      end
+    end
+
+    next_result = next_grouping&.current_result
+    if next_result.nil?
+      redirect_to controller: 'submissions', action: 'browse'
+    else
+      redirect_to action: 'edit', id: next_result.id
     end
   end
 
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = !@result.released_to_students
-    if params[:old_id]
-      @old_result = Result.find(params[:old_id])
-      @old_result.released_to_students = released_to_students
-      @old_result.save
-    end
     @result.released_to_students = released_to_students
     if @result.save
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
       @result.submission.assignment.update_results_stats
+      m_logger = MarkusLogger.instance
+      assignment = @result.submission.assignment
+      if released_to_students
+        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '"\
+                     "#{assignment.id}' (for 1 group).")
+      else
+        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '"\
+                     "#{assignment.id}' (for 1 group).")
+      end
     end
-    m_logger = MarkusLogger.instance
-    assignment = @result.submission.assignment
-    if params[:value] == 'true'
-      m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
-    else
-      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
-    end
+    head :ok
   end
 
   # Toggles the marking state

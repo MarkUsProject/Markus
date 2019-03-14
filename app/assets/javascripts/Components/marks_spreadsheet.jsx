@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-
+import {stringFilter} from './Helpers/table_helpers';
 
 class RawMarksSpreadsheet extends React.Component {
   constructor() {
@@ -216,6 +216,7 @@ class RawMarksSpreadsheet extends React.Component {
           ]}
 
           filterable
+          defaultFilterMethod={stringFilter}
           loading={loading}
           {...this.props.getCheckboxProps()}
         />

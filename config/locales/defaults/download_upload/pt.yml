@@ -24,7 +24,6 @@ pt:
     missing_file: "Você deve fornecer um arquivo."
     syntax_error: "Existe um erro no arquivo carregado: %{error}"
     unparseable_csv: "O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV)."
-    unparseable_yml: "Não foi possível analisar o arquivo YAML"
   uploading_please_wait: "Carregando - por favor aguarde..."
 
   upload_success:
