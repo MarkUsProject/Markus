@@ -12,10 +12,6 @@ class TestRun < ApplicationRecord
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments').freeze
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students').freeze
   SPECS_FILE = 'specs.json'.freeze
-  TEST_CATEGORIES = {
-    admin: 'admin',
-    student: 'student'
-  }.freeze
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
