@@ -958,10 +958,10 @@ RSpec.describe CriteriaController, type: :controller do
       it 'creates criteria with the default visibility options if these are not given in the entries' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
         expect(@assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
-        expect(CheckboxCriterion.find_by(name: 'cr100').ta_visible).to be true
-        expect(CheckboxCriterion.find_by(name: 'cr100').peer_visible).to be false
-        expect(FlexibleCriterion.find_by(name: 'cr60').ta_visible).to be true
-        expect(FlexibleCriterion.find_by(name: 'cr60').peer_visible).to be false
+        expect(@assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').ta_visible).to be true
+        expect(@assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').peer_visible).to be false
+        expect(@assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').ta_visible).to be true
+        expect(@assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').peer_visible).to be false
       end
 
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
@@ -969,7 +969,8 @@ RSpec.describe CriteriaController, type: :controller do
                                                yml_upload: { rubric: @round_max_mark_file } }
 
         expect(@assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
-        expect(@assignment.get_criteria(:all, :rubric).first.max_mark).to eq(0.44e1)
+        pending("It return the maximum mark is 0.44e1, but it should be 4.6")
+        expect(@assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
       end
       it 'does not create criteria with format errors in entries' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
