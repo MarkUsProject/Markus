@@ -56,7 +56,7 @@ class AutotestRunJob < ApplicationJob
     retry
   end
 
-  def enqueue_test_run(test_run, host_with_port, test_categories, ssh = nil)
+  def enqueue_test_run(test_run, host_with_port, ssh = nil)
     params_file = nil
     grouping = test_run.grouping
     assignment = grouping.assignment
@@ -86,7 +86,7 @@ class AutotestRunJob < ApplicationJob
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
     server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
-                      test_categories: test_categories, assignment_id: assignment.id, group_id: group.id,
+                      test_categories: test_run.test_categories, assignment_id: assignment.id, group_id: group.id,
                       submission_id: test_run.submission_id, group_repo_name: group.repo_name,
                       batch_id: test_run.test_batch_id, run_id: test_run.id }
     params_file = Tempfile.new('', submission_path)
@@ -141,16 +141,6 @@ class AutotestRunJob < ApplicationJob
     # create and enqueue test runs
     # TestRun objects can either be created outside of this job (by passing their ids), or here
     test_batch = nil
-
-    # calculate categories based on user type
-    user = User.find(user_id)
-    test_categories = []
-    if user.is_a?(Student)
-      test_categories << TestRun::TEST_CATEGORIES[:student]
-    elsif user.is_a?(Admin)
-      test_categories << TestRun::TEST_CATEGORIES[:admin]
-    end
-
     test_runs.each do |test_run|
       begin
         if test_run[:id].nil?
@@ -167,7 +157,7 @@ class AutotestRunJob < ApplicationJob
         unless ssh_auth_failure.nil?
           raise ssh_auth_failure
         end
-        enqueue_test_run(test_run, host_with_port, test_categories, ssh)
+        enqueue_test_run(test_run, host_with_port, ssh)
       rescue StandardError => e
         unless test_run.nil?
           #TODO handle test run errors this way

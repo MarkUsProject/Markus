@@ -56,6 +56,10 @@ class TestRun < ApplicationRecord
     end
   end
 
+  def test_categories
+    [self.user.type.downcase]
+  end
+
   def create_test_group_result(test_group, time: 0, extra_info: nil)
     unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
       test_group = TestGroup.find_by(assignment: grouping.assignment, name: test_group)
