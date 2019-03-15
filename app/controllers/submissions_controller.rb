@@ -208,11 +208,12 @@ class SubmissionsController < ApplicationController
     some_released = Grouping.joins(current_submission_used: :results)
                             .where('results.released_to_students': true)
                             .where(id: groupings)
+                            .pluck(:id).to_set
     groupings.each do |grouping|
       section = grouping.inviter.present? ? grouping.inviter.section : nil
       collect_now = assignment.submission_rule.can_collect_now?(section)
       some_before_due = true unless collect_now
-      next if !collect_now || some_released.include?(grouping)
+      next if !collect_now || some_released.include?(grouping.id)
       collectable << grouping
     end
     success = ''
