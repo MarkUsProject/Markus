@@ -8,77 +8,37 @@ class AutotestRunJob < ApplicationJob
     grouping = test_run.grouping
     group = grouping.group
     assignment = grouping.assignment
-    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
-    assignment_dir = File.join(repo_dir, assignment.repository_folder)
+    export_path = File.join(TestRun::STUDENTS_DIR, group.repo_name)
+    assignment_path = File.join(export_path, assignment.repository_folder)
     if File.exist?(TestRun::STUDENTS_DIR)
-      if File.exist?(assignment_dir) # can exist from other test runs
+      if File.exist?(assignment_path) # can exist from other test runs
         # optimize if revision hasn't changed since last test run (this test run is already saved in the db)..
         prev_test_run = TestRun.where(grouping: grouping).order(created_at: :desc).second
-        if !prev_test_run.nil? &&
-           prev_test_run.revision_identifier == test_run.revision_identifier &&
-           prev_test_run.submission_id.nil? == test_run.submission_id.nil?
-          return
-        end
+        return if prev_test_run&.revision_identifier == test_run.revision_identifier
         # ..otherwise delete grouping's previous files
-        if test_run.submission_id.nil?
-          FileUtils.rm_rf(repo_dir)
-        else
-          FileUtils.rm_rf(assignment_dir)
-        end
+        FileUtils.rm_rf(assignment_path)
       end
     else
       FileUtils.mkdir_p(TestRun::STUDENTS_DIR)
     end
     # export the repo files
+    required_files = nil
+    if assignment.only_required_files
+      required_files = assignment.assignment_files.map { |af| File.join(assignment_path, af.filename) }.to_set
+    end
     group.access_repo do |repo|
-      if test_run.submission_id.nil?
-        repo.export(repo_dir)
-      else
-        unless assignment.only_required_files.blank?
-          required_files = assignment.assignment_files.map(&:filename).to_set
-        end
-        test_run.submission.submission_files.each do |file|
-          dir = file.path.partition(File::SEPARATOR)[2] # cut the top-level assignment dir
-          file_path = dir == '' ? file.filename : File.join(dir, file.filename)
-          unless required_files.nil? || required_files.include?(file_path)
-            # do not export non-required files, if only required files are allowed
-            # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
-            next
-          end
-          file_content = file.retrieve_file(false, repo)
-          file_dir = File.join(repo_dir, file.path)
-          FileUtils.mkdir_p(file_dir)
-          File.open(File.join(file_dir, file.filename), 'wb') do |f| # binary write to avoid encoding issues
-            f.write(file_content)
-          end
-        end
+      revision = repo.get_revision(test_run.revision_identifier)
+      revision.tree_at_path(assignment.repository_folder, with_attrs: false).each do |_, file|
+        next if file.is_a?(Repository::RevisionDirectory)
+        # do not export non-required files, if only required files are allowed
+        # (a non-required file may end up in a repo if a hook to prevent it does not exist or is not enforced)
+        file_path = File.join(export_path, file.path, file.name)
+        next unless required_files.nil? || required_files.include?(file_path)
+        FileUtils.mkdir_p(File.dirname(file_path))
+        # binary write to avoid encoding issues
+        File.open(file_path, 'wb') { |f| f.write(repo.download_as_string(file)) }
       end
     end
-  end
-
-  # Verify that MarkUs has student files to run the test.
-  # Note: this does not guarantee all required files are presented.
-  # Instead, it checks if there is at least one source file is successfully exported.
-  def repo_files_available?(test_run)
-    grouping = test_run.grouping
-    submission = test_run.submission
-    assignment = grouping.assignment
-    group = grouping.group
-    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
-    unless submission.nil?
-      # no commits in the submission
-      return false if submission.revision_identifier.nil?
-      # no commits after starter code initialization
-      return false if submission.revision_identifier == grouping.starter_code_revision_identifier
-    end
-    assignment_dir = File.join(repo_dir, assignment.repository_folder)
-    # no assignment directory
-    return false unless File.exist?(assignment_dir)
-    entries = Dir.entries(assignment_dir) - ['.', '..'] - Repository.get_class.internal_file_names
-    # no files
-    return false if entries.size <= 0
-
-    true
   end
 
   def get_server_api_key
@@ -98,20 +58,25 @@ class AutotestRunJob < ApplicationJob
 
   def enqueue_test_run(test_run, host_with_port, test_group_ids, test_specs_name, hooks_script_name, ssh = nil)
     params_file = nil
-    export_group_repo(test_run)
-    unless repo_files_available?(test_run)
-      # create empty test results for no submission files
-      error = { name: I18n.t('automated_tests.results.all_tests'),
-                message: I18n.t('automated_tests.results.no_source_files') }
-      test_run.create_error_for_all_test_groups(test_group_ids, error)
-      return
-    end
-
     grouping = test_run.grouping
     assignment = grouping.assignment
     group = grouping.group
-    repo_dir = File.join(TestRun::STUDENTS_DIR, group.repo_name)
-    submission_path = File.join(repo_dir, assignment.repository_folder)
+    error_no_files = { name: I18n.t('automated_tests.results.all_tests'),
+                       message: I18n.t('automated_tests.results.no_source_files') }
+    # no commits in the submission, or no commits after starter code initialization
+    if test_run.revision_identifier.nil? || test_run.revision_identifier == grouping.starter_code_revision_identifier
+      test_run.create_error_for_all_test_groups(test_group_ids, error_no_files)
+      return
+    end
+    export_group_repo(test_run)
+    submission_path = File.join(TestRun::STUDENTS_DIR, group.repo_name, assignment.repository_folder)
+    # no assignment directory, or no files
+    if !File.exist?(submission_path) ||
+         (Dir.entries(submission_path) - ['.', '..'] - Repository.get_class.internal_file_names).size <= 0
+      test_run.create_error_for_all_test_groups(test_group_ids, error_no_files)
+      return
+    end
+
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
     else
@@ -156,8 +121,7 @@ class AutotestRunJob < ApplicationJob
     test_run.time_to_service_estimate = output.to_i
     test_run.save
   ensure
-    params_file&.close
-    params_file&.unlink
+    params_file&.close! # close + unlink
   end
 
   def perform(host_with_port, user_id, test_group_ids, test_specs_name, hooks_script_name, test_runs)
