@@ -111,4 +111,8 @@ cat >> /home/vagrant/.profile << 'EOL'
 export PATH="${PATH}:/home/vagrant/Markus/bin"
 export HOST="0.0.0.0"
 
+# Install Python libraries for exam scanner
+echo "- - - Installing Python Libraries - - -"
+sudo pip3 install -r /home/vagrant/Markus/lib/scanner/requirements.txt
+
 EOL
