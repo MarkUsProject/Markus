@@ -41,6 +41,7 @@ class Result extends React.Component {
         initializePanes();
         fix_panes();
         this.updateContextMenu();
+        this.updateProgressBar();
       });
     });
   };
@@ -91,7 +92,7 @@ class Result extends React.Component {
         extraMarkSubtotal += data.extra_mark * result_data.assignment_max_mark / 100;
       }
     });
-    return {criterionSummaryData, subtotal, extraMarkSubtotal};
+    return {criterionSummaryData, subtotal, extraMarkSubtotal, total: subtotal + extraMarkSubtotal};
   };
 
   /* Interaction with external components/libraries */
@@ -133,6 +134,22 @@ class Result extends React.Component {
     });
 
     window.annotation_context_menu.set_common_annotations(common_annotations);
+  };
+
+  updateProgressBar = () => {
+    if (this.props.role !== 'Student') {
+      const score = this.state.num_marked;
+      const outof = this.state.num_assigned;
+      const width = outof <= 0 ? 100 : (score/outof) * 100;
+      const $bar = $('.progress_span');
+      $bar.text(`${score}/${outof} ${I18n.t('results.state.complete')}`);
+      $bar.css('width', width + '%');
+      if (width > 75) {
+        $bar.css('background-color', 'green')
+      } else if (width > 35) {
+        $bar.css('background-color', '#FBC02D')
+      }
+    }
   };
 
   /* Callbacks for annotations */
@@ -280,13 +297,13 @@ class Result extends React.Component {
       url: Routes.update_mark_assignment_submission_result_path(
         this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
-      method: 'POST',
+      method: 'PATCH',
       data: {
         markable_type: criterion_type,
         markable_id: criterion_id,
         mark: mark
       },
-      dataType: 'text'
+      dataType: 'json'
     }).then(data => {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
@@ -298,16 +315,15 @@ class Result extends React.Component {
           return markData;
         }
       });
-      let items = data.split(',');
-      let total = items[2];
-      let marked = items[3];
-      let assigned = items[4];
-
-      this.setState({ marks, total }, () => {
+      let stateUpdate = { marks };
+      if (data.num_marked !== undefined) {
+        stateUpdate['num_marked'] = data.num_marked;
+      }
+      this.setState(stateUpdate, () => {
         const newData = this.processMarks(this.state);
         this.setState({...newData});
+        this.updateProgressBar();
       });
-      update_bar(marked, assigned);
     });
   };
 

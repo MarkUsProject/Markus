@@ -25,29 +25,10 @@
   $(document).ready(function() {
     window.modal_help = new ModalMarkus('#help_dialog');
 
-    <%
-      if @current_user.admin?
-        num_marked = @assignment.get_num_marked
-        num_assigned = @assignment.get_num_assigned
-      elsif @current_user.ta?
-        num_marked = @assignment.get_num_marked(@current_user.id)
-        num_assigned = @assignment.get_num_assigned(@current_user.id)
-      elsif @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        reviewer_group = @current_user.grouping_for(@assignment.pr_assignment.id)
-        num_marked = PeerReview.get_num_marked(reviewer_group)
-        num_assigned = PeerReview.get_num_assigned(reviewer_group)
-      end
-    %>
-    update_bar(<%= num_marked %>, <%= num_assigned %>);
-
     <%= render partial: 'results/marker/keybinding',
                formats: [:js] %>
   });
 </script>
-
-<% # Javascript for progress bar %>
-<%= render partial: 'results/marker/update_progress_bar',
-           formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],
