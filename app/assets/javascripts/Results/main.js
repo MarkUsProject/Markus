@@ -27,4 +27,5 @@
 //= require Grader/mouse_selections
 //= require panes
 //= require Results/context_menu
+//= require Results/keybinding
 //= require Tags/text_updater

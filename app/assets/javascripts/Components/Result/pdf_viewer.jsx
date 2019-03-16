@@ -74,6 +74,12 @@ export class PDFViewer extends React.Component {
     );
   };
 
+  rotate = () => {
+    annotation_manager.hideSelectionBox();
+    annotation_manager.rotateClockwise90();
+    PDFView.rotatePages(90);
+  };
+
   render() {
     const cursorStyle = this.props.released_to_students ? 'default' : 'crosshair';
     return (

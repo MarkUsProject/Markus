@@ -156,3 +156,15 @@
   padding-left: 5px;
   vertical-align: text-top;
 }
+
+.fullscreen-enter::before {
+  content: asset_url('icons/fullscreen_enter.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+.fullscreen-exit::before {
+  content: asset_url('icons/fullscreen_exit.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}

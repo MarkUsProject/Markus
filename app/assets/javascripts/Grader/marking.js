@@ -5,40 +5,6 @@ $(document).ready(function() {
     compact_view_toggle(true);
   }
 
-  // Changing the marking status
-  $('#marking_state').change(function() {
-    update_status(this, this.value)
-  });
-
-  function update_status(element, value) {
-    var params = {
-      'value': value || '',
-      'authenticity_token': AUTH_TOKEN
-    };
-
-    $.ajax({
-      url:  element.getAttribute('data-action'),
-      type: 'POST',
-      data: params
-    });
-  }
-
-  // Releasing the grades, only available on the admin page
-  $('#released').change(function() {
-    var params = {
-      'value': this.checked || '',
-      'authenticity_token': AUTH_TOKEN
-    };
-
-    $.ajax({
-      url:  this.getAttribute('data-action'),
-      type: 'POST',
-      data: params
-    }).done(function() {
-      window.onbeforeunload = null;
-    });
-  });
-
   // Handle indenting in the new annotation textarea (2 spaces)
   $('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
@@ -57,14 +23,6 @@ $(document).ready(function() {
       this.selectionStart = this.selectionEnd = start + 2;
     }
   });
-
-  $('.error, .notice, .warning').append(
-    $('<a />', {
-      text: 'hide',
-      style: 'float: right;',
-      onclick: '$(this).parent().hide()'
-    })
-  );
 });
 
 // designate $next_criteria as the currently selected criteria

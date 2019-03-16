@@ -407,7 +407,7 @@ class ResultsController < ApplicationController
         file_contents = file.retrieve_file
       end
     rescue Exception => e
-      flash[:file_download_error] = e.message
+      flash_message(:error, e.message)
       redirect_to action: 'edit',
                   assignment_id: params[:assignment_id],
                   submission_id: file.submission,

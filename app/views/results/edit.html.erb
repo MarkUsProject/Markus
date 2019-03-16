@@ -1,8 +1,8 @@
 <% content_for :head do %>
-  <%# TODO: merge 'grader.scss' into 'results.scss' %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
+  <%= javascript_include_tag 'Results/main' %>
   <script>
     let PDFJS_PATH = '<%= asset_path("pdfjs.js") %>';
     let PDFJS_WORKER_PATH = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
@@ -17,18 +17,11 @@
           role: '<%= @current_user.class.name %>',
         }
       );
+
+      window.modal_help = new ModalMarkus('#help_dialog');
     });
   </script>
 <% end %>
-
-<script>
-  $(document).ready(function() {
-    window.modal_help = new ModalMarkus('#help_dialog');
-
-    <%= render partial: 'results/marker/keybinding',
-               formats: [:js] %>
-  });
-</script>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],
@@ -129,12 +122,11 @@
     <span class="progress_span">
     </span>
   </div>
-  <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
+  <a class="fullscreen-enter" onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
 <% end %>
 
 <div class='wrapLeft'>
   <div id='criterion_incomplete_error' class='error hidden'></div>
-  <%= render partial: 'results/common/errors' %>
 
   <div id='result-main'></div>
 
@@ -144,6 +136,3 @@
   <!-- Modal element -->
   <aside class='dialog' id='annotation_dialog'></aside>
 </div>
-
-<%# Javascript files %>
-<%= javascript_include_tag 'Results/main' %>
