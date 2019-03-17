@@ -449,8 +449,7 @@ class Result extends React.Component {
       return I18n.t('working');
     }
 
-    return (
-      <div>
+    return [
         <SubmissionSelector
           {...this.props}
           assignment_max_mark={this.state.assignment_max_mark}
@@ -468,7 +467,7 @@ class Result extends React.Component {
           toggleFullscreen={this.toggleFullscreen}
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
-        />
+        />,
         <div id='panes-content'>
           <div id='panes'>
             <div id='left-pane'>
@@ -539,8 +538,7 @@ class Result extends React.Component {
             </div>
           </div>
         </div>
-      </div>
-    )
+    ];
   }
 }
 

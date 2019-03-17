@@ -157,7 +157,8 @@
 #annotations_summary,
 #remark_request_tab,
 #feedback_file_content {
-  height: 650px;
+  flex-basis: 600px;
+  flex-grow: 1;
 }
 
 #annotations_summary {
@@ -166,11 +167,6 @@
 
 
 /* Source code pane */
-
-// Adjusted height for users that also see the annotation menu
-#annotation_menu + #codeviewer {
-  height: 600px;
-}
 
 .image_container {
   overflow: auto;
@@ -638,6 +634,9 @@ ul.annotation_text_list {
   #left-pane,
   #drag,
   #right-pane {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     margin: 0;
     padding: 0;
     vertical-align: top;
@@ -676,10 +675,7 @@ ul.annotation_text_list {
   #drag {
     background: #ccc;
     cursor: col-resize;
-    height: 50%;
-    overflow: hidden;
-    position: absolute;
-    margin: 5px 1px;
+    position: inherit;
     width: 4px;
 
     @include breakpoint(small) {
@@ -690,4 +686,25 @@ ul.annotation_text_list {
 
 .react-tabs__tab--disabled {
   display: none;
+}
+
+.react-tabs {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.react-tabs__tab-panel {
+  flex-grow: 1;
+}
+
+.react-tabs__tab-panel--selected {
+  display: flex;
+  flex-direction: column;
+}
+
+#result-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
