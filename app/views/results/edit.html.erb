@@ -112,19 +112,6 @@
   </aside>
 <% end %>
 
-<% content_for :title do %>
-  <%= t('results.edit.title',
-        { assignment_name: @assignment.short_identifier,
-          group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
-<% end %>
-<% content_for :additional_headings do %>
-  <div class="progress_meter">
-    <span class="progress_span">
-    </span>
-  </div>
-  <a class="fullscreen-enter" onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
-<% end %>
-
 <div class='wrapLeft'>
   <div id='criterion_incomplete_error' class='error hidden'></div>
 

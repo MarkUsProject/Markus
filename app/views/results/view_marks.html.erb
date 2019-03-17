@@ -63,8 +63,6 @@
 </div>
 
 <div class='wrapLeft'>
-  <%= render partial: 'results/common/errors' %>
-
   <% if @result.is_review_for?(@current_user, @assignment) ||
       (@result.is_a_review? && !@current_user.student?) %>
     <%= render partial: 'results/common/peer_reviews',

@@ -1,33 +1,22 @@
-.progress_meter {
-  height: 24px;  /* Can be anything */
-  position: relative;
+.progress-meter {
   background: $light-grey;
-  margin: 5px 5px 10px 5px;
   border: 1px solid $light-blue;
   display: inline-block;
-  width: 50%;
+  flex-basis: 200px;
+  height: 2.7em;
+  margin: 0 5px;
 }
 
-.progress_meter_top {
-  width: 20%;
-}
-
-.progress_meter > span {
+.progress-span {
   min-width: 50px;
   display: block;
   height: 100%;
   background-color: $red;
-  position: relative;
   overflow: hidden;
   color: $white;
   text-align: right;
-  line-height: 24px;
-  width: 0px;
-  -webkit-transition: width 1s linear,background-color 200ms linear;
-  -moz-transition: width 1s linear,background-color 200ms linear;
-  -o-transition: width 1s linear,background-color 200ms linear;
-  -ms-transition: width 1s linear,background-color 200ms linear;
+  line-height: 2.6em;
+  width: 0;
   transition: width 1s linear,background-color 200ms linear;
-  margin: 0;
   padding: 0 5px;
 }

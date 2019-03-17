@@ -38,20 +38,6 @@
   margin-bottom: 0 !important;
 }
 
-.results_title_bar {
-  display: flex;
-  flex-direction: row;
-  height: 34px;
-  padding: 0 3.5em;
-  border-bottom: 2px solid #89b1dd;
-}
-
-.flex_vertical_center {
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
 .download_text a{
   line-height: 32px;
 }
@@ -59,16 +45,6 @@
 .logo {
   display: flex;
   flex-grow: 1;
-}
-
-.title_text {
-  display: flex;
-  flex-grow: 5;
-}
-
-.header_text_links {
-  display: flex;
-  margin-left: 20px;
 }
 
 #content {
@@ -87,18 +63,6 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-}
-
-#results-logo-img {
-  display: block;
-  margin: 0 auto;
-  background: transparent asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
-  height: 30px;
-  width: 90px;
-
-  @include hidpi {
-    background-image: asset-url('markus_logo_small@2x.png');
-  }
 }
 
 .expanded_view .page {
@@ -155,6 +119,36 @@
   content: asset_url('icons/pencil.png');
   padding-left: 5px;
   vertical-align: text-top;
+}
+
+.button.previous::before {
+  content: asset_url('icons/arrow_left.png');
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+.button.next::after {
+  content: asset_url('icons/arrow_right.png');
+  padding-left: 5px;
+  vertical-align: top;
+}
+
+.set-complete::before {
+  content: asset_url('icons/accept.png');
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+.set-incomplete::before {
+  content: asset_url('icons/pencil.png');
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+.release::before {
+  content: asset_url('icons/email_go.png');
+  padding-right: 5px;
+  vertical-align: top;
 }
 
 .fullscreen-enter::before {

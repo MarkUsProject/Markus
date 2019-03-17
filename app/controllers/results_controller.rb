@@ -131,12 +131,13 @@ class ResultsController < ApplicationController
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
+          data[:group_name] = submission.grouping.get_group_name
         elsif current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
+          data[:group_name] = I18n.t('assignment.review')
         end
-
 
         # Marks
         common_fields = [:id, :name, :position, :max_mark, 'marks.mark']

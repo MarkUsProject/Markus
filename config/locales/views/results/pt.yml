@@ -1,8 +1,5 @@
 pt:
   results:
-    edit:
-      title: "Projeto %{assignment_name}: %{group_name}"
-
     cant_display_image: "Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo"
     collapse_all: "Agrupar todos"
     criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
@@ -11,10 +8,10 @@ pt:
     expand_unmarked: "Expandir não-selecionados"
     late_submission_warning_html: "O <a href=\"%{url}\">submissão</a> desse grupo está depois do prazo."
     marks_released: "As notas foram liberadas. Você não pode alterá-las."
-    next_submission: "Próxima submissão"
+    next_submission: "Próxima"
     no_feedback_files: "[No arquivo de feedback disponíveis]"
     no_result: "Nenhuma nota está disponível."
-    previous_submission: "Submissão anterior"
+    previous_submission: "Anterior"
     results_for: "Resultados para"
     review_for: "Revisão para"
     set_to_incomplete: "Reverter para incompleta"

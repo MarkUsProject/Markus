@@ -5,12 +5,12 @@ Mousetrap.bind('?', function() {
 
 // Go to the previous submission with <
 Mousetrap.bind('shift+left', function() {
-  $('#submission-selector>.left>a')[0].click();
+  $('.button.previous')[0].click();
 });
 
 // Go to next submission with >
 Mousetrap.bind('shift+right', function() {
-  $('#submission-selector>.right>a')[0].click();
+  $('.button.next')[0].click();
 });
 
 // Go to the previous criterion with shift + up
@@ -93,7 +93,7 @@ Mousetrap(aside).bind('mod+enter', function(e) {
   }
 });
 
-// When alt+enter is pressed, toggle compact mode
+// When alt+enter is pressed, toggle fullscreen mode
 Mousetrap.bind('alt+enter', function(e) {
-    compact_view_toggle();
+    resultComponent.toggleFullscreen();
 });

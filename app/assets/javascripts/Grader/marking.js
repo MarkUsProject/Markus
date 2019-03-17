@@ -1,10 +1,4 @@
 $(document).ready(function() {
-  // Maintain compact view if toggled on
-  if (typeof(Storage) !== 'undefined' &&
-    localStorage.getItem('compact_view') === 'on') {
-    compact_view_toggle(true);
-  }
-
   // Handle indenting in the new annotation textarea (2 spaces)
   $('#new_annotation_content').keydown(function(e) {
     var keyCode = e.keyCode || e.which;
@@ -88,25 +82,4 @@ function prevCriterion() {
     $prev_criterion = $('.marks-list > li:not(.unassigned)').last();
   }
   activeCriterion($prev_criterion);
-}
-
-function compact_view_toggle(init) {
-  var toggle_elements = [
-    $('#menus'),
-    $('.top_bar'),
-    $('.title_bar'),
-    $('#footer_wrapper')
-  ];
-  $.each(toggle_elements, function(idx, element){
-    element.toggle();
-  });
-  $('#content').toggleClass('expanded_view');
-  if (!init) {
-    if (typeof(Storage) !== 'undefined') {
-      var compact_view = localStorage.getItem('compact_view');
-      if (compact_view) localStorage.removeItem('compact_view');
-      else localStorage.setItem('compact_view', 'on');
-    }
-    fix_panes();
-  }
 }

@@ -44,28 +44,53 @@
 
 /* Top toolbars: student selector/file selector/download buttons */
 #submission-selector-container {
+  background-color: $lighter-blue;
+  border: $dark-grey 1px solid;
+  padding: 0.25em 0;
   width: 100%;
 }
 
 #submission-selector {
+  align-items: center;
   display: flex;
+  justify-content: space-evenly;
   margin: 0;
+  padding: 0.3em 0;
   width: 100%;
 
-  .left {
-    text-align: left;
-    flex-basis: 20%;
+  .button {
+    display: inline-block;
+    height: 3em;
+    margin: 0;
+    min-width: 90px;
+    padding: 0.7em 0.5em 0.5em;
   }
 
-  .middle {
+  button {
+    height: 3em;
+    margin: 0;
+    min-width: 100px;
+    padding: 0.4em;
+  }
+
+  .group-name {
+    display: inline-block;
+    max-width: 200px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .total {
+    background: $light-blue;
+    border: 1px solid $grey;
+    border-radius: $radius;
+    display: inline-block;
+    flex-basis: auto;
+    margin: 0 5px;
+    min-width: 130px;
+    padding: 0 5px;
     text-align: center;
-    flex-basis: 60%;
-  }
-
-  .right {
-    text-align: right;
-    flex-basis: 20%;
-    float: none;
   }
 }
 

@@ -8,10 +8,27 @@ import { SubmissionSelector } from './submission_selector';
 class Result extends React.Component {
   constructor(props) {
     super(props);
+    let fullscreen;
+    if (typeof(Storage) !== 'undefined') {
+      fullscreen = localStorage.getItem('fullscreen') === 'on';
+    }
+
+    if (fullscreen) {
+      let toggle_elements = [
+        $('#menus'),
+        $('.top_bar'),
+        $('.title_bar'),
+        $('#footer_wrapper')
+      ];
+      $.each(toggle_elements, (idx, element) => element.toggle());
+      $('#content').toggleClass('expanded_view');
+    }
+
     this.state = {
       loading: true,
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
+      fullscreen,
     };
 
     this.leftPane = React.createRef();
@@ -41,7 +58,6 @@ class Result extends React.Component {
         initializePanes();
         fix_panes();
         this.updateContextMenu();
-        this.updateProgressBar();
       });
     });
   };
@@ -136,19 +152,21 @@ class Result extends React.Component {
     window.annotation_context_menu.set_common_annotations(common_annotations);
   };
 
-  updateProgressBar = () => {
-    if (this.props.role !== 'Student') {
-      const score = this.state.num_marked;
-      const outof = this.state.num_assigned;
-      const width = outof <= 0 ? 100 : (score/outof) * 100;
-      const $bar = $('.progress_span');
-      $bar.text(`${score}/${outof} ${I18n.t('results.state.complete')}`);
-      $bar.css('width', width + '%');
-      if (width > 75) {
-        $bar.css('background-color', 'green')
-      } else if (width > 35) {
-        $bar.css('background-color', '#FBC02D')
-      }
+  toggleFullscreen = () => {
+    let toggle_elements = [
+      $('#menus'),
+      $('.top_bar'),
+      $('.title_bar'),
+      $('#footer_wrapper')
+    ];
+    $.each(toggle_elements, (idx, element) => element.toggle());
+    $('#content').toggleClass('expanded_view');
+
+    this.setState({fullscreen: !this.state.fullscreen}, fix_panes);
+    if (typeof(Storage) !== 'undefined') {
+      let compact_view = localStorage.getItem('fullscreen');
+      if (compact_view) localStorage.removeItem('fullscreen');
+      else localStorage.setItem('fullscreen', 'on');
     }
   };
 
@@ -316,13 +334,12 @@ class Result extends React.Component {
         }
       });
       let stateUpdate = { marks };
-      if (data.num_marked !== undefined) {
+      if (data.num_marked !== undefined && data.num_marked !== null) {
         stateUpdate['num_marked'] = data.num_marked;
       }
       this.setState(stateUpdate, () => {
         const newData = this.processMarks(this.state);
         this.setState({...newData});
-        this.updateProgressBar();
       });
     });
   };
@@ -434,21 +451,24 @@ class Result extends React.Component {
 
     return (
       <div>
-        <div id='submission-selector-container'>
-          <SubmissionSelector
-            {...this.props}
-            assignment_max_mark={this.state.assignment_max_mark}
-            is_reviewer={this.state.is_reviewer}
-            marks={this.state.marks || []}
-            marking_state={this.state.marking_state}
-            notes_count={this.state.notes_count}
-            released_to_students={this.state.released_to_students}
-            total={this.state.total}
-            newNote={this.newNote}
-            toggleMarkingState={this.toggleMarkingState}
-            setReleasedToStudents={this.setReleasedToStudents}
-          />
-        </div>
+        <SubmissionSelector
+          {...this.props}
+          assignment_max_mark={this.state.assignment_max_mark}
+          fullscreen={this.state.fullscreen}
+          group_name={this.state.group_name}
+          is_reviewer={this.state.is_reviewer}
+          marks={this.state.marks || []}
+          marking_state={this.state.marking_state}
+          notes_count={this.state.notes_count}
+          num_assigned={this.state.num_assigned}
+          num_marked={this.state.num_marked}
+          released_to_students={this.state.released_to_students}
+          total={this.state.total}
+          newNote={this.newNote}
+          toggleFullscreen={this.toggleFullscreen}
+          toggleMarkingState={this.toggleMarkingState}
+          setReleasedToStudents={this.setReleasedToStudents}
+        />
         <div id='panes-content'>
           <div id='panes'>
             <div id='left-pane'>
