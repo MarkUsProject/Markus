@@ -38,7 +38,9 @@ class GitRepository < Repository::AbstractRepository
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
       rescue StandardError # TODO this shouldn't be necessary. It catches the case when a local repo is corrupted,
                            #      we need to prevent the corruption instead/as well
-        FileUtils.mv(connect_string, "#{connect_string}.bad")
+        bad_repo_path = "#{connect_string}.bad"
+        FileUtils.rm_rf(bad_repo_path)
+        FileUtils.mv(connect_string, bad_repo_path)
         repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
         bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
         @repos = Rugged::Repository.clone_at(bare_path, connect_string)
