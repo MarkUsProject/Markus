@@ -115,15 +115,7 @@ export class SubmissionSelector extends React.Component {
             </span>
           </div>
 
-          {!this.props.is_reviewer &&
-           <div>
-             <a onClick={this.props.newNote}>
-               {I18n.t('activerecord.models.note.other')} ({this.props.notes_count})
-             </a>
-           &nbsp;&nbsp;&nbsp;
-           </div>
-          }
-
+          <div style={{flexGrow: 1}} />
           <h2 className='total'>{this.props.total} / {this.props.assignment_max_mark}</h2>
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}

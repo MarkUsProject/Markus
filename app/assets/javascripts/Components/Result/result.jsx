@@ -404,7 +404,6 @@ class Result extends React.Component {
     }).then(this.fetchData);
   };
 
-  /* Callbacks for SubmissionSelector */
   newNote = () => {
     $.ajax({
       url: Routes.notes_dialog_note_path({
@@ -423,6 +422,7 @@ class Result extends React.Component {
     });
   };
 
+  /* Callbacks for SubmissionSelector */
   toggleMarkingState = () => {
     $.ajax({
       url: Routes.toggle_marking_state_assignment_submission_result_path(
@@ -458,12 +458,10 @@ class Result extends React.Component {
           is_reviewer={this.state.is_reviewer}
           marks={this.state.marks || []}
           marking_state={this.state.marking_state}
-          notes_count={this.state.notes_count}
           num_assigned={this.state.num_assigned}
           num_marked={this.state.num_marked}
           released_to_students={this.state.released_to_students}
           total={this.state.total}
-          newNote={this.newNote}
           toggleFullscreen={this.toggleFullscreen}
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
@@ -522,6 +520,7 @@ class Result extends React.Component {
                 grace_token_deductions={this.state.grace_token_deductions}
                 is_reviewer={this.state.is_reviewer}
                 marks={this.state.marks}
+                notes_count={this.state.notes_count}
                 old_marks={this.state.old_marks}
                 old_total={this.state.old_total}
                 released_to_students={this.state.released_to_students}
@@ -534,6 +533,7 @@ class Result extends React.Component {
                 deleteGraceTokenDeduction={this.deleteGraceTokenDeduction}
                 addTag={this.addTag}
                 removeTag={this.removeTag}
+                newNote={this.newNote}
               />
             </div>
           </div>
