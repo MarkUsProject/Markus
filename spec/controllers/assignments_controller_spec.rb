@@ -208,7 +208,6 @@ describe AssignmentsController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      byebug
       get :download_assignment_list, params: { file_format: 'yml' }
     end
 
