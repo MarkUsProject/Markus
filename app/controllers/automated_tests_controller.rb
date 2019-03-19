@@ -9,12 +9,27 @@ class AutomatedTestsController < ApplicationController
   # Update is called when files are added to the assignment
   def update
     assignment = Assignment.find(params[:assignment_id])
-    # extract criterion_id and criterion_type (there is no automatic support for polymorphic html select)
-    form_params = assignment_params
-    form_params[:test_groups_attributes].each do |_, p|
-      next if p[:criterion_id].blank?
-      p[:criterion_id], p[:criterion_type] = p[:criterion_id].split('_')
+    #TODO use a transaction for both assignment_params and test_groups
+    test_specs_path = File.join(TestRun::ASSIGNMENTS_DIR, assignment.short_identifier, TestRun::SPECS_FILE)
+    test_specs = JSON.parse(File.read(test_specs_path))
+    test_specs['testers'].each do |tester_specs|
+      tester_specs['test_data'].each do |test_group_specs|
+        extra_data_specs = test_group_specs['extra_data']
+        #TODO handle deletion too with _destroy flag similarly to rails
+        criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
+        #TODO remove run_by_* from TestGroup
+        test_group = TestGroup.create(
+          assignment: assignment,
+          name: SecureRandom.hex, #TODO use hint from tester to generate unique name
+          display_output: extra_data_specs['display_output'],
+          criterion_id: criterion_id,
+          criterion_type: criterion_type,
+        )
+        extra_data_specs['test_group_id'] = test_group.id
+      end
     end
+    File.write(test_specs_path, JSON.generate(test_specs))
+    form_params = assignment_params
     if assignment.update form_params
       AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
       flash_message(:success, t('assignment.update_success'))
@@ -141,9 +156,7 @@ class AutomatedTestsController < ApplicationController
   def assignment_params
     params.require(:assignment).permit(
       :enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
-      :non_regenerating_tokens, :unlimited_tokens,
-      test_groups_attributes:
-        [:id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id, :criterion_type, :_destroy]
+      :non_regenerating_tokens, :unlimited_tokens
     )
   end
 end
