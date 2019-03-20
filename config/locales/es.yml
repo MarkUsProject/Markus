@@ -295,10 +295,6 @@ es:
       test_group_option:
         remove:                           "Remover"
         remove_help:                      "UPDATE ME"
-        run_by_instructors:               "Ejecutable por los Instructores"
-        run_by_instructors_help:          "UPDATE ME"
-        run_by_students:                  "Ejecutable por los Estudiantes"
-        run_by_students_help:             "UPDATE ME"
         associated_criterion:             "Criterio de Calificación Asociado"
         display_output:                   "Resultado Obtenido"
         display_output_help:              "UPDATE ME"
@@ -326,7 +322,6 @@ es:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_group: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

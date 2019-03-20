@@ -257,10 +257,6 @@ pt:
       test_group_option:
         remove: "UPDATE ME"
         remove_help: "UPDATE ME"
-        run_by_instructors: "UPDATE ME"
-        run_by_instructors_help: "UPDATE ME"
-        run_by_students: "UPDATE ME"
-        run_by_students_help: "UPDATE ME"
         associated_criterion: "UPDATE ME"
         display_output: "UPDATE ME"
         display_output_help: "UPDATE ME"
@@ -288,7 +284,6 @@ pt:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_group: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

@@ -58,7 +58,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result(test_group, time: 0, extra_info: nil)
     unless test_group.respond_to?(:display_output) # the ActiveRecord object can be passed directly
-      test_group = TestGroup.find_by(assignment: grouping.assignment, name: test_group)
+      test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
       # test group can be nil if it's deleted while running
     end
     test_group_results.create(
@@ -147,9 +147,6 @@ class TestRun < ApplicationRecord
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
-      json_root['test_groups'].each do |j|
-        j['test_group_id'] = test_groups[j['test_group_id']].name
-      end
     rescue StandardError => e
       error = { name: I18n.t('automated_tests.results.all_tests'),
                 message: I18n.t('automated_tests.results.bad_results', error: e.message) }
@@ -184,14 +181,6 @@ class TestRun < ApplicationRecord
       test_group_id = json_test_group['test_group_id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
       new_test_group_results[test_group_id] = new_test_group_result
-    end
-    # handle missing test groups (could be added while running)
-    test_groups.each do |test_group|
-      next if new_test_group_results.key?(test_group.name)
-      new_test_group_result = create_test_group_result(test_group)
-      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
-                                                output: I18n.t('automated_tests.results.missing_test_group'))
-      new_test_group_results[test_group.name] = new_test_group_result
     end
     # set the marks assigned by the test run
     self.submission&.set_autotest_marks

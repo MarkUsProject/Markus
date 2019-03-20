@@ -263,10 +263,6 @@ fr:
       test_group_option:
         remove: "Supprimer ce groupe"
         remove_help: "Cocher pour supprimer ce groupe"
-        run_by_instructors: "Les instructeurs peuvent lancer les tests"
-        run_by_instructors_help: "Cocher pour permettre aux instructeurs de lancer les tests"
-        run_by_students: "Les étudiants peuvent lancer les tests"
-        run_by_students_help: "Cocher pour permettre aux étudiants de lancer les tests"
         associated_criterion: "Le critère associé"
         display_output: "Montrer les donées de sortie aux étudiants"
         display_output_help: "Cocher pour montrer les donées de sortie pour chaque test aux étudiants"
@@ -294,7 +290,6 @@ fr:
       results:
         all_tests: "Tous les tests"
         unknown_test: "Test inconnu"
-        missing_test_group: "Ce groupe a disparu"
         no_source_files: "Il n'y a aucun fichiers pour lancer un test"
         bad_server: "Serveur '%{hostname}' erreur: %{error}"
         bad_results: "Resultats mal formés '%{error}'"

@@ -91,12 +91,6 @@
     <fieldset>
       <legend><span><%= t("automated_tests.specs") %></span></legend>
       <p><%= raw t("required_fields") %> <span class='required_field'>*</span></p>
-
-      <div>
-        <% @assignment.test_groups.each do |tg| %>
-            <%= render partial: 'test_group_upload', locals: { test_group: tg, form: f } %>
-        <% end %>
-      </div>
     </fieldset>
 
     <%= f.submit t(:submit), disable_with: I18n.t('working'), onclick: 'set_onbeforeunload(false);' %>
