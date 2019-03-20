@@ -10,10 +10,6 @@ describe TestGroup do
 
   it { is_expected.to validate_presence_of :name }
   it { is_expected.to validate_presence_of :display_output }
-  it { is_expected.to allow_value(true).for(:run_by_instructors) }
-  it { is_expected.to allow_value(false).for(:run_by_instructors) }
-  it { is_expected.to allow_value(true).for(:run_by_students) }
-  it { is_expected.to allow_value(false).for(:run_by_students) }
   it { is_expected.to define_enum_for(:display_output).with(TestGroup.display_outputs.keys) }
 
   # create
@@ -23,10 +19,7 @@ describe TestGroup do
                      section_due_dates_type: false,
                      due_date: 2.days.from_now)
 
-      @test_group = TestGroup.create(assignment_id:      @asst.id,
-                                     name:               'test_group',
-                                     run_by_instructors: true,
-                                     run_by_students:    true)
+      @test_group = TestGroup.create(assignment_id: @asst.id, name: 'test_group')
     end
 
     it 'return true when a valid test group is created' do
@@ -43,14 +36,10 @@ describe TestGroup do
 
       @valid_test_group = TestGroup.create(assignment_id:        @asst.id,
                                            name:                 'valid_test_group',
-                                           run_by_instructors:   true,
-                                           run_by_students:      true,
                                            display_output:       :instructors_and_students)
 
       @invalid_test_group = TestGroup.create(assignment_id:      @asst.id,
                                              name:               'invalid_test_group',
-                                             run_by_instructors: true,
-                                             run_by_students:    true,
                                              display_output:     :instructors)
     end
 

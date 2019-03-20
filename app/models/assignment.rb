@@ -1077,19 +1077,6 @@ class Assignment < ApplicationRecord
     required
   end
 
-  # Selects the appropriate test scripts for this assignment, based on the user requesting them.
-  def select_test_groups(user)
-    if user.admin?
-      condition = { run_by_instructors: true }
-    elsif user.student?
-      condition = { run_by_students: true }
-    else
-      return none # empty chainable ActiveRecord::Relation
-    end
-
-    self.test_groups.where(condition)
-  end
-
   def autotest_path
     File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
   end

@@ -15,7 +15,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def test_groups_exist?
-    record.select_test_groups(user).exists?
+    record.test_groups.exists?
   end
 
   def tokens_released?

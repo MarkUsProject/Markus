@@ -7,7 +7,6 @@ class AutomatedTestsController < ApplicationController
                             :get_test_runs_students]
 
   def update
-    #TODO remove run_by_* from TestGroup
     assignment = Assignment.find(params[:assignment_id])
     test_specs_path = File.join(TestRun::ASSIGNMENTS_DIR, assignment.short_identifier, TestRun::SPECS_FILE)
     test_specs = JSON.parse(File.read(test_specs_path))

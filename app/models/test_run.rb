@@ -57,7 +57,7 @@ class TestRun < ApplicationRecord
   end
 
   def create_test_group_result(test_group, time: 0, extra_info: nil)
-    unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
+    unless test_group.respond_to?(:display_output) # the ActiveRecord object can be passed directly
       test_group = TestGroup.find_by(assignment: grouping.assignment, name: test_group)
       # test group can be nil if it's deleted while running
     end
@@ -143,7 +143,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_results_from_json(test_output)
     # check that the output is well-formed
-    test_groups = grouping.assignment.select_test_groups(user).to_a
+    test_groups = grouping.assignment.test_groups.to_a
     json_root = nil
     begin
       json_root = JSON.parse(test_output)

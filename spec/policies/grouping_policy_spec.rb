@@ -13,7 +13,7 @@ describe GroupingPolicy do
       end
 
       context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_instructor_tests) }
+        let(:assignment) { create(:assignment_for_tests) }
         let(:grouping) { build_stubbed(:grouping, assignment: assignment) }
         it { is_expected.to pass :run_tests? }
       end
