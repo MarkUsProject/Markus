@@ -6,35 +6,51 @@ class AutomatedTestsController < ApplicationController
                      only: [:student_interface,
                             :get_test_runs_students]
 
-  # Update is called when files are added to the assignment
   def update
+    #TODO remove run_by_* from TestGroup
     assignment = Assignment.find(params[:assignment_id])
-    #TODO use a transaction for both assignment_params and test_groups
     test_specs_path = File.join(TestRun::ASSIGNMENTS_DIR, assignment.short_identifier, TestRun::SPECS_FILE)
     test_specs = JSON.parse(File.read(test_specs_path))
-    test_specs['testers'].each do |tester_specs|
-      tester_specs['test_data'].each do |test_group_specs|
-        extra_data_specs = test_group_specs['extra_data']
-        #TODO handle deletion too with _destroy flag similarly to rails
-        criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
-        #TODO remove run_by_* from TestGroup
-        test_group = TestGroup.create(
-          assignment: assignment,
-          name: SecureRandom.hex, #TODO use hint from tester to generate unique name
-          display_output: extra_data_specs['display_output'],
-          criterion_id: criterion_id,
-          criterion_type: criterion_type,
-        )
-        extra_data_specs['test_group_id'] = test_group.id
+    begin
+      Assignment.transaction do
+        # update assignment autotest parameters
+        assignment.update! assignment_params
+        # create/modify test groups based on the autotest specs
+        test_group_ids = []
+        test_specs['testers'].each do |tester_specs|
+          tester_specs['test_data'].each do |test_group_specs|
+            extra_data_specs = test_group_specs['extra_data']
+            next if extra_data_specs.nil?
+            test_group_name = test_group_specs['name']
+            test_group_id = extra_data_specs['test_group_id']
+            display_output = extra_data_specs['display_output']
+            criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
+            fields = { assignment: assignment, name: test_group_name, display_output: display_output,
+                       criterion_id: criterion_id, criterion_type: criterion_type }
+            if test_group_id.nil?
+              test_group = TestGroup.create!(fields)
+              test_group_id = test_group.id
+              extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
+            else
+              test_group = TestGroup.find(test_group_id)
+              test_group.update!(fields)
+            end
+            test_group_ids << test_group_id
+          end
+        end
+        # delete test groups that are not in the autotest specs
+        deleted_test_groups = TestGroup.where(assignment: assignment)
+        unless test_group_ids.empty?
+          deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
+        end
+        deleted_test_groups.delete_all
+        # save modified specs and send them to the autotesting server in the background
+        File.write(test_specs_path, JSON.generate(test_specs))
+        AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
+        flash_message(:success, t('assignment.update_success'))
+      rescue StandardError => e
+        flash_message(:error, e.message)
       end
-    end
-    File.write(test_specs_path, JSON.generate(test_specs))
-    form_params = assignment_params
-    if assignment.update form_params
-      AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
-      flash_message(:success, t('assignment.update_success'))
-    else
-      flash_message(:error, assignment.errors.full_messages)
     end
     # TODO: the page is not correctly drawn when using render
     redirect_to action: 'manage', assignment_id: params[:assignment_id]
