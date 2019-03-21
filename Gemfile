@@ -100,6 +100,7 @@ group :development do
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'rails-erd'
+  gem 'puma'
 end
 
 group :test do
