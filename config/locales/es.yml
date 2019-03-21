@@ -291,17 +291,6 @@ es:
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       files:                              "UPDATE ME"
       specs:                              "UPDATE ME"
-      new_test_group:                     "UPDATE ME"
-      test_group_option:
-        remove:                           "Remover"
-        remove_help:                      "UPDATE ME"
-        associated_criterion:             "Criterio de Calificación Asociado"
-        display_output:                   "Resultado Obtenido"
-        display_output_help:              "UPDATE ME"
-        display_to:
-          instructors:           "No mostrar"
-          instructors_and_students: "Mostrar después de realizar la entrega"
-          instructors_and_student_tests: "Mostrar después de realizar la recolección"
       token:
         start_date: "Las fichas disponibles empiezan en:"
         available: "Fichas disponibles:"

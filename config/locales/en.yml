@@ -268,17 +268,6 @@ en:
       tokens_available_on: "Tokens available starting on"
       files: "Test Files"
       specs: "Test Specifications"
-      new_test_group: "New Test Group"
-      test_group_option:
-        remove: "Remove this group"
-        remove_help: "Check this box and press submit at the bottom to delete the group"
-        associated_criterion: "Associated Criterion"
-        display_output: "Display test Output"
-        display_output_help: "Choose when to show the test 'OUTPUT' column to the students (the instructors will always see it regardless of this setting)"
-        display_to:
-          instructors: "To instructors only"
-          instructors_and_students: "To instructors and students"
-          instructors_and_student_tests: "To instructors, and student tests to students"
       token:
         start_date: "Tokens available starting on:"
         available: "Tokens available:"
