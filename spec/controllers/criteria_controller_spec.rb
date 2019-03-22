@@ -969,7 +969,7 @@ RSpec.describe CriteriaController, type: :controller do
                                                yml_upload: { rubric: @round_max_mark_file } }
 
         expect(@assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
-        pending('It return the maximum mark is 0.44e1, but it should be 4.6')
+        pending("It return the maximum mark is 0.44e1, but it should be 4.6")
         expect(@assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
       end
       it 'does not create criteria with format errors in entries' do
