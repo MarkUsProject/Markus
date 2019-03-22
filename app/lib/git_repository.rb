@@ -36,20 +36,31 @@ class GitRepository < Repository::AbstractRepository
         rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
         end
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
-      rescue StandardError # TODO this shouldn't be necessary. It catches the case when a local repo is corrupted,
-                           #      we need to prevent the corruption instead/as well
-        bad_repo_path = "#{connect_string}.bad"
-        FileUtils.rm_rf(bad_repo_path)
-        FileUtils.mv(connect_string, bad_repo_path)
-        repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
-        bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-        @repos = Rugged::Repository.clone_at(bare_path, connect_string)
-        m_logger = MarkusLogger.instance
-        m_logger.log "Recloned corrupted git repo: #{connect_string}"
+      rescue Rugged::IndexError, Rugged::OSError
+        reclone_repo
       end
     else
-      raise "Repository does not exist at path \"#{@repos_path}\""
+      reclone_repo
     end
+  end
+
+  def reclone_repo
+    repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
+    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+    raise 'Repository does not exist' unless Dir.exist?(bare_path)
+    if Dir.exist?(@repos_path)
+      bad_repo_path = "#{@repos_path}.bad"
+      FileUtils.rm_rf(bad_repo_path)
+      FileUtils.mv(@repos_path, bad_repo_path)
+    end
+    @repos = Rugged::Repository.clone_at(bare_path, @repos_path)
+    m_logger = MarkusLogger.instance
+    m_logger.log "Recloned corrupted or missing git repo: #{@repos_path}"
+  rescue StandardError
+    msg = "Failed to clone corrupted or missing git repo: #{@repos_path}"
+    m_logger = MarkusLogger.instance
+    m_logger.log msg
+    raise
   end
 
   def self.do_commit(repo, author, message)
