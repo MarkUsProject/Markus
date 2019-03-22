@@ -57,6 +57,9 @@ class SubversionRepository < Repository::AbstractRepository
   # Static method: Opens an existing Subversion repository
   # at location 'connect_string'
   def self.open(connect_string)
+    unless SubversionRepository.repository_exists?(location)
+      raise "Could not open repository at location #{location}"
+    end
     return SubversionRepository.new(connect_string)
   end
 
