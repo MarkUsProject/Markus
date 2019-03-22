@@ -57,19 +57,17 @@ class SubversionRepository < Repository::AbstractRepository
   # Static method: Opens an existing Subversion repository
   # at location 'connect_string'
   def self.open(connect_string)
-    raise 'Respository does not exist' unless SubversionRepository.repository_exists? connect_string
+    raise 'Repository does not exist' unless SubversionRepository.repository_exists? connect_string
     SubversionRepository.new(connect_string)
   end
 
   # Static method: Yields an existing Subversion repository and closes it afterwards
   def self.access(connect_string)
-    raise 'Respository does not exist' unless SubversionRepository.repository_exists? connect_string
-    begin
-      repository = self.open(connect_string)
-      yield repository
-    ensure
-      repository&.close
-    end
+    repository = nil
+    repository = self.open(connect_string)
+    yield repository
+  ensure
+    repository&.close
   end
 
   # Static method: Deletes an existing Subversion repository

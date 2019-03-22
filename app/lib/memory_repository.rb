@@ -41,7 +41,7 @@ class MemoryRepository < Repository::AbstractRepository
 
   # Open repository at specified location
   def self.open(location)
-    raise 'Respository does not exist' unless MemoryRepository.repository_exists? location
+    raise 'Repository does not exist' unless MemoryRepository.repository_exists? location
     return @@repositories[location] # return reference in question
   end
 
@@ -190,13 +190,11 @@ class MemoryRepository < Repository::AbstractRepository
 
   # Static method: Yields an existing Memory repository and closes it afterwards
   def self.access(connect_string)
-    raise 'Respository does not exist' unless MemoryRepository.repository_exists? connect_string
-    begin
-      repository = self.open(connect_string)
-      yield repository
-    ensure
-      repository&.close
-    end
+    repository = nil
+    repository = self.open(connect_string)
+    yield repository
+  ensure
+    repository&.close
   end
 
   # Closes the repository.

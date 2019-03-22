@@ -48,7 +48,7 @@ class GitRepository < Repository::AbstractRepository
   def self.reclone_repo(connect_string)
     repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
     bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    raise "Cannot reclone from non-existant bare repository #{bare_path}" unless Dir.exist?(bare_path)
+    raise 'Repository does not exist' unless Dir.exist?(bare_path)
     if Dir.exist?(connect_string)
       bad_repo_path = "#{connect_string}.bad"
       FileUtils.rm_rf(bad_repo_path)
@@ -140,6 +140,7 @@ class GitRepository < Repository::AbstractRepository
 
   # static method that should yield to a git repo and then close it
   def self.access(connect_string)
+    repo = nil
     repo = GitRepository.open(connect_string)
     yield repo
   ensure
