@@ -46,22 +46,22 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.reclone_repo(connect_string)
-    begin
-      if File.exist? connect_string
-        bad_repo_path = "#{connect_string}.bad"
-        FileUtils.rm_rf(bad_repo_path)
-        FileUtils.mv(connect_string, bad_repo_path)
-      end
-      repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
-      bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-      @repos = Rugged::Repository.clone_at(bare_path, connect_string)
-      m_logger = MarkusLogger.instance
-      m_logger.log "Recloned corrupted or missing git repo: #{connect_string}"
-    rescue StandardError
-      msg = "Failed to clone corrupted or missing git repo: #{connect_string}"
-      m_logger.log msg
-      raise msg
+    repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
+    raise "Cannot reclone from non-existant bare repository #{bare_path}" unless Dir.exist?(bare_path)
+    if Dir.exist?(connect_string)
+      bad_repo_path = "#{connect_string}.bad"
+      FileUtils.rm_rf(bad_repo_path)
+      FileUtils.mv(connect_string, bad_repo_path)
     end
+    @repos = Rugged::Repository.clone_at(bare_path, connect_string)
+    m_logger = MarkusLogger.instance
+    m_logger.log "Recloned corrupted or missing git repo: #{connect_string}"
+  rescue StandardError
+    msg = "Failed to clone corrupted or missing git repo: #{connect_string}"
+    m_logger = MarkusLogger.instance
+    m_logger.log msg
+    raise
   end
 
   def self.do_commit(repo, author, message)
@@ -140,10 +140,12 @@ class GitRepository < Repository::AbstractRepository
 
   # static method that should yield to a git repo and then close it
   def self.access(connect_string)
-    repo = GitRepository.open(connect_string)
-    yield repo
-  ensure
-    repo&.close
+    begin
+      repo = GitRepository.open(connect_string)
+      yield repo
+    ensure
+      repo&.close
+    end
   end
 
   # static method that deletes the git repo
