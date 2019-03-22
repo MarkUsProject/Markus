@@ -140,12 +140,10 @@ class GitRepository < Repository::AbstractRepository
 
   # static method that should yield to a git repo and then close it
   def self.access(connect_string)
-    begin
-      repo = GitRepository.open(connect_string)
-      yield repo
-    ensure
-      repo&.close
-    end
+    repo = GitRepository.open(connect_string)
+    yield repo
+  ensure
+    repo&.close
   end
 
   # static method that deletes the git repo
