@@ -192,10 +192,13 @@ class MemoryRepository < Repository::AbstractRepository
 
   # Static method: Yields an existing Memory repository and closes it afterwards
   def self.access(connect_string)
-    repository = MemoryRepository.open(connect_string)
-    yield repository
-  ensure
-    repository.close
+    raise 'Respository does not exist' unless MemoryRepository.repository_exists? connect_string
+    begin
+      repository = self.open(connect_string)
+      yield repository
+    ensure
+      repository.close
+    end
   end
 
   # Closes the repository.
