@@ -956,6 +956,7 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id,
                                                yml_upload: { rubric: @round_max_mark_file } }
@@ -964,6 +965,8 @@ RSpec.describe CriteriaController, type: :controller do
         pending("It return the maximum mark is 0.44e1, but it should be 4.6")
         expect(@assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
       end
+=======
+>>>>>>> parent of f78654416... Added test cases for uploading YML files of marking critereia. Added template files for upload/download functions for criteria-controller
 =======
 >>>>>>> parent of f78654416... Added test cases for uploading YML files of marking critereia. Added template files for upload/download functions for criteria-controller
       it 'does not create criteria with format errors in entries' do
