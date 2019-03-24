@@ -834,8 +834,8 @@ RSpec.describe CriteriaController, type: :controller do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @invalid_file } }
 
         expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' \
-                    'There is an error in the file you uploaded: (<unknown>): ' \
+          .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
+                    'There is an error in the file you uploaded: (<unknown>): ' +
                     'invalid trailing UTF-8 octet at line 1 column 1'].map { |f| extract_text f })
       end
 
