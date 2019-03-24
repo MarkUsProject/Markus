@@ -7,9 +7,11 @@ es:
       collection_job_started_for_groups: "La recolección de las entregas para las agrupaciones seleccionadas del
                                           proyecto %{assignment_identifier} ha iniciado. El proceso puede demorar,
                                           pero usted puede acceder las entregas tan pronto como se vuelvan disponibles."
-      could_not_collect_some: "No se pudo recolectar las entregas para algunas agrupaciones del proyecto
+      could_not_collect_some_due: "No se pudo recolectar las entregas para algunas agrupaciones del proyecto
                                %{assignment_identifier} -  la fecha de recolección para estas
                                agrupaciones no ha llegado."
+      could_not_collect_some_released: "No se pudo recolectar las entregas para algunas agrupaciones del proyecto
+                               %{assignment_identifier}."
       overwrite_warning: "Recolectar y calificar esta revisión reescribirá toda
                           recolección/calificación realizada anteriormente para este grupo en el
                           proyecto. ¿Está seguro/a de querer hacer esto?"
