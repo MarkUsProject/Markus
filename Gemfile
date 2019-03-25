@@ -11,7 +11,7 @@ source 'https://rubygems.org'
 # Bundler requires these gems in all environments
 gem 'rails'
 gem 'sprockets'
-gem 'thin'
+gem 'puma'
 
 # Models and database interactions
 gem 'activerecord-import'
@@ -100,7 +100,6 @@ group :development do
   gem 'brakeman', require: false
   gem 'bullet'
   gem 'rails-erd'
-  gem 'puma'
 end
 
 group :test do
