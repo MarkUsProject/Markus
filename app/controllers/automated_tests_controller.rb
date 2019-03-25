@@ -23,7 +23,11 @@ class AutomatedTestsController < ApplicationController
             test_group_name = test_group_specs['name']
             test_group_id = extra_data_specs['test_group_id']
             display_output = extra_data_specs['display_output']
-            criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
+            criterion_id = nil
+            criterion_type = nil
+            if !extra_data_specs['criterion'].nil? && extra_data_specs['criterion'].include?('_')
+              criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
+            end
             fields = { assignment: assignment, name: test_group_name, display_output: display_output,
                        criterion_id: criterion_id, criterion_type: criterion_type }
             if test_group_id.nil?
