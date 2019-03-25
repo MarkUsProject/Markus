@@ -80,7 +80,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
     # create test script result
-    test_group_id = json_test_group['test_group_id']
+    test_group_id = json_test_group['extra_data']['test_group_id']
     time = json_test_group.fetch('time', 0)
     stderr = json_test_group['stderr']
     malformed = json_test_group['malformed']
@@ -178,7 +178,7 @@ class TestRun < ApplicationRecord
     # process results
     new_test_group_results = {}
     json_root.fetch('test_groups', []).each do |json_test_group|
-      test_group_id = json_test_group['test_group_id']
+      test_group_id = json_test_group['extra_data']['test_group_id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
       new_test_group_results[test_group_id] = new_test_group_result
     end
