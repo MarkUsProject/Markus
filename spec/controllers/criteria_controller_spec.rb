@@ -196,9 +196,9 @@ RSpec.describe CriteriaController, type: :controller do
         context 'with errors' do
           before(:each) do
             expect_any_instance_of(FlexibleCriterion)
-              .to receive(:save).and_return(false)
+                .to receive(:save).and_return(false)
             expect_any_instance_of(FlexibleCriterion)
-              .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
+                .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
 
             get_as @admin,
                    :update,
@@ -280,9 +280,9 @@ RSpec.describe CriteriaController, type: :controller do
         context 'with save error' do
           before(:each) do
             expect_any_instance_of(FlexibleCriterion)
-              .to receive(:update).and_return(false)
+                .to receive(:update).and_return(false)
             expect_any_instance_of(FlexibleCriterion)
-              .to receive(:errors).and_return(ActiveModel::Errors.new(self))
+                .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
                     params: { assignment_id: @assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
@@ -398,7 +398,7 @@ RSpec.describe CriteriaController, type: :controller do
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(@criterion.id) }
-          .to raise_error(ActiveRecord::RecordNotFound)
+            .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end # Tests using Flexible Criteria only
@@ -596,9 +596,9 @@ RSpec.describe CriteriaController, type: :controller do
         context 'with errors' do
           before(:each) do
             expect_any_instance_of(RubricCriterion)
-              .to receive(:save).and_return(false)
+                .to receive(:save).and_return(false)
             expect_any_instance_of(RubricCriterion)
-              .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
+                .to receive(:errors).and_return(ActiveModel::Errors.new(@criterion))
 
             get_as @admin,
                    :update,
@@ -677,9 +677,9 @@ RSpec.describe CriteriaController, type: :controller do
         context 'with save error' do
           before(:each) do
             expect_any_instance_of(RubricCriterion)
-              .to receive(:update).and_return(false)
+                .to receive(:update).and_return(false)
             expect_any_instance_of(RubricCriterion)
-              .to receive(:errors).and_return(ActiveModel::Errors.new(self))
+                .to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as @admin,
                     :create,
                     params: { assignment_id: @assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
@@ -834,9 +834,9 @@ RSpec.describe CriteriaController, type: :controller do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @invalid_file } }
 
         expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' \
-                    'There is an error in the file you uploaded: (<unknown>): ' \
-                    'invalid trailing UTF-8 octet at line 1 column 1'].map { |f| extract_text f })
+            .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
+                    'There is an error in the file you uploaded: (<unknown>): ' +
+                      'invalid trailing UTF-8 octet at line 1 column 1'].map { |f| extract_text f })
       end
 
       it 'raises an error if the file does not include any criteria' do
@@ -844,7 +844,7 @@ RSpec.describe CriteriaController, type: :controller do
 
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.upload.error.invalid_format') +
-                    '  ' + I18n.t('criteria.upload.empty_error')].map { |f| extract_text f })
+                  '  ' + I18n.t('criteria.upload.empty_error')].map { |f| extract_text f })
       end
 
       it 'deletes all criteria previously created' do
@@ -857,8 +857,8 @@ RSpec.describe CriteriaController, type: :controller do
       it 'maintains the order between entries and positions for criteria' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
-        expect(@assignment.get_criteria.map { |cr| [cr.name, cr.position] })
-          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5], ['cr90', 6]])
+        expect(@assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
+          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5]])
       end
 
       it 'creates all criteria with properly formatted entries' do
@@ -978,7 +978,8 @@ RSpec.describe CriteriaController, type: :controller do
       it 'does not create criteria with format errors in entries' do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
-        expect(@assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50', 'cr70')
+        expect(@assignment.get_criteria.map(&:name))
+          .not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.upload.error.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
       end
