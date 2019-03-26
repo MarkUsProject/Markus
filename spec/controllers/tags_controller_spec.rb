@@ -70,8 +70,8 @@ describe TagsController do
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to @redirect
 
-      expect(Tag.where(name: 'tag').take['description']).to eq('desc')
-      expect(Tag.where(name: 'tag1').take['description']).to eq('desc1')
+      expect(Tag.where({name: 'tag'}).take['description']).to eq('desc')
+      expect(Tag.where({name: 'tag1'}).take['description']).to eq('desc1')
     end
 
     it 'does not accept files with invalid columns' do

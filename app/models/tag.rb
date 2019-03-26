@@ -41,6 +41,7 @@ class Tag < ApplicationRecord
 
   def self.create_or_update_from_yml_key(key)
     # Get the name and description for the tag.
+    byebug
     tag_name = key[1]['name']
     tag_description = key[1]['description']
 
