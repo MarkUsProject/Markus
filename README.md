@@ -45,7 +45,7 @@ trouble installing MarkUs---we'd be happy to help you out.
 - School of Computer Science, University of Waterloo, Canada
 - École Centrale de Nantes, France
 
-## 8. Credits
+## 4. Credits
 
 MarkUs grew out of OLM, which was built using the TurboGears framework. We are
 grateful to everyone who worked on or funded both projects, and to the creators
