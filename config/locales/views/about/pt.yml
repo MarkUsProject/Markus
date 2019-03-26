@@ -4,10 +4,8 @@ pt:
     credits: "Créditos"
     credits_thanks: "Obrigado a todos que contribuiram para tornar MarkUs possível. Em particular para:"
     email_more_info_html: "
-      E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou
-      <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br>
-      Por favor visite: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a>
-      para mais informações.<br>Para enviar um problema ou por favor visite visit
+      E-mail: <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a>
+      <br>Para enviar um problema ou por favor visite visit
       <a href=\"https://github.com/MarkUsProject/Markus/issues\">https://github.com/MarkUsProject/Markus/issues</a>"
     license: "Licença"
     license_text_html: "

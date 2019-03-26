@@ -5,8 +5,6 @@
  * separated by a line feed ('\n'). See README for
  * installation instructions.
  *
- * See also:
- * http://www.markusproject.org.
  *
  * This code has been hugely inspired by
  *   1. shadow-pkg:
@@ -17,7 +15,7 @@
  *        In particular by libpam_misc/misc_conv.c
  *
  ******************************************************
- * License (see http://www.markusproject.org/#license):
+ * License (see https://github.com/MarkUsProject/Markus/blob/master/LICENSE):
  ******************************************************
  * MarkUs and markus_pam is made available under the
  * OSI-approved MIT license.
