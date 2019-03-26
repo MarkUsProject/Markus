@@ -13,12 +13,19 @@ describe TagsController do
       # We need to mock the rack file to return its content when
       # the '.read' method is called to simulate the behaviour of
       # the http uploaded file
-      @file_good = fixture_file_upload(
+      @file_good_csv = fixture_file_upload(
         'files/tags/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
         File.read(fixture_file_upload(
                     'files/tags/form_good.csv',
                     'text/csv')))
+
+      @file_good_yml = fixture_file_upload(
+        'files/tags/form_good.yml', 'text/yaml'
+      )
+      allow(@file_good_yml).to receive(:read).and_return(
+        File.read(fixture_file_upload('files/tags/form_good.yml', 'text/yaml'))
+      )
 
       @file_invalid_column = fixture_file_upload(
         'files/tags/form_invalid_column.csv', 'text/csv')
@@ -43,13 +50,24 @@ describe TagsController do
       request.env['HTTP_REFERER'] = @redirect
     end
 
-    it 'accepts a valid file' do
-      post :csv_upload, params: { csv_tags: @file_good, assignment_id: assignment.id }
+    it 'accepts a valid CSV file' do
+      post :csv_upload, params: { csv_tags: @file_good_csv, assignment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
+      expect(response).to redirect_to @redirect
+
+      expect(Tag.where(name: 'tag').take['description']).to eq('desc')
+      expect(Tag.where(name: 'tag1').take['description']).to eq('desc1')
+    end
+
+    it 'accepts a valid YAML file' do
+      post :yml_upload, params: { yml_tags: @file_good_yml, assignment_id: assignment.id }
+
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
       expect(response).to redirect_to @redirect
 
       expect(Tag.where(name: 'tag').take['description']).to eq('desc')
