@@ -1247,7 +1247,7 @@ class Assignment < ApplicationRecord
     section_data = groupings
                    .joins(inviter: :section)
                    .pluck('groupings.id', 'sections.name')
-                   .group_by { |gid, _| gid }
+                   .to_h
 
     # This is the submission data that's actually returned
     data.map do |g|
