@@ -36,7 +36,7 @@ class GitRepository < Repository::AbstractRepository
         rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
         end
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
-      rescue Rugged::IndexError, Rugged::OSError
+      rescue Rugged::Error, Rugged::OSError
         reclone_repo
       end
     else
