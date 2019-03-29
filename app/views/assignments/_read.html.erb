@@ -24,11 +24,11 @@
     <div class ='sub_block'>
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
-        <span class='prop_label'>
-          <%= t('grace_period_submission_rules.deadline_html') %>
-        </span>
         <%# Relative remaining grace credits for the grouping %>
-        <% if !@grouping.nil? %>
+        <% unless @grouping.nil? %>
+          <span class='prop_label'>
+            <%= t('grace_period_submission_rules.deadline_html') %>
+          </span>
           <% remaining_credits = @grouping.available_grace_credits %>
           <% @enum_penalty.each do |p| %>
             <% unless remaining_credits <= 0 %>
@@ -36,14 +36,15 @@
               <% remaining_credits -= 1 %>
             <% end %>
           <% end %>
+          <%= I18n.l(@assignment.due_date + acc.hours) %>
         <% end %>
       <% else %>
         <span class='prop_label'>
           <%= t('penalty_period_submission_rules.deadline_html') %>
         </span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
+        <%= I18n.l(@assignment.due_date + acc.hours) %>
       <% end %>
-      <%= I18n.l(@assignment.due_date + acc.hours) %>
     </div>
 
     <div class='sub_block'>
