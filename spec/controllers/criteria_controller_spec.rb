@@ -858,7 +858,7 @@ RSpec.describe CriteriaController, type: :controller do
         post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
 
         expect(@assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
-          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5]])
+          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5], ['cr90', 6]])
       end
 
       it 'creates all criteria with properly formatted entries' do
