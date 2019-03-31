@@ -95,9 +95,8 @@ export class SubmissionFilePanel extends React.Component {
       submission_file_id = this.state.selectedFile[1];
       visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
     }
-    return (
-      <div>
-        <div id='sel_box'/>
+    return [
+        <div id='sel_box'/>,
         <div id='annotation_menu'>
           <FileSelector
             fileData={this.props.fileData}
@@ -117,8 +116,8 @@ export class SubmissionFilePanel extends React.Component {
              />
             }
           </div>
-        </div>
-        <div id='codeviewer' className='flex-col'>
+        </div>,
+        <div id='codeviewer'>
           <FileViewer
             ref={this.submissionFileViewer}
             assignment_id={this.props.assignment_id}
@@ -130,8 +129,7 @@ export class SubmissionFilePanel extends React.Component {
             released_to_students={this.props.released_to_students}
           />
         </div>
-      </div>
-    );
+    ];
   }
 }
 

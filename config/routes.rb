@@ -184,7 +184,6 @@ Rails.application.routes.draw do
 
         resources :results do
           collection do
-            post 'update_mark'
             get 'edit'
             get 'download'
           end
@@ -205,7 +204,7 @@ Rails.application.routes.draw do
             post 'toggle_marking_state'
             patch 'update_remark_request'
             get 'update_positions'
-            post 'update_mark'
+            patch 'update_mark'
             get 'view_marks'
             post 'add_tag'
             post 'remove_tag'
@@ -220,14 +219,13 @@ Rails.application.routes.draw do
       resources :results, only: [:edit], path: '/peer_reviews' do
         collection do
           get 'download'
-          post 'update_mark'
         end
 
         member do
           get 'view_marks'
           get 'next_grouping'
           post 'toggle_marking_state'
-          post 'update_mark'
+          patch 'update_mark'
           post 'update_overall_comment'
           patch 'update_remark_request'
         end

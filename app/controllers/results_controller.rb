@@ -129,6 +129,14 @@ class ResultsController < ApplicationController
             }
           end
           data[:notes_count] = submission.grouping.notes.count
+          data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
+          data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
+          data[:group_name] = submission.grouping.get_group_name
+        elsif current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+          reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
+          data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
+          data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
+          data[:group_name] = I18n.t('assignment.review')
         end
 
         # Marks
@@ -365,7 +373,7 @@ class ResultsController < ApplicationController
     if @result.save
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
       @result.submission.assignment.update_results_stats
-      render 'results/toggle_marking_state'
+      head :ok
     else # Failed to pass validations
       # Show error message
       render 'results/marker/show_result_error'
@@ -400,7 +408,7 @@ class ResultsController < ApplicationController
         file_contents = file.retrieve_file
       end
     rescue Exception => e
-      flash[:file_download_error] = e.message
+      flash_message(:error, e.message)
       redirect_to action: 'edit',
                   assignment_id: params[:assignment_id],
                   submission_id: file.submission,
@@ -515,18 +523,14 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if @current_user.admin?
-        num_marked = assignment.get_num_marked
-        num_assigned = assignment.get_num_assigned
-      elsif @current_user.ta?
+      if assignment.assign_graders_to_criteria && @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
-        num_assigned = assignment.get_num_assigned(@current_user.id)
-      elsif @current_user.is_a_reviewer?(assignment.pr_assignment)
-        reviewer_group = @current_user.grouping_for(assignment.pr_assignment.id)
-        num_marked = PeerReview.get_num_marked(reviewer_group)
-        num_assigned = PeerReview.get_num_assigned(reviewer_group)
+      else
+        num_marked = nil
       end
-      render plain: "#{result_mark.id},#{result.get_subtotal},#{result.total_mark},#{num_marked},#{num_assigned}"
+      render json: {
+        num_marked: num_marked
+      }
     else
       m_logger.log("Error while trying to update mark of submission. " +
                    "User: #{current_user.user_name}, " +
@@ -534,7 +538,7 @@ class ResultsController < ApplicationController
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
-      render plain: result_mark.errors.full_messages.join, status: :bad_request
+      render json: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 

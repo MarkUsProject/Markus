@@ -1,8 +1,5 @@
 fr:
   results:
-    edit:
-      title: "Projet %{assignment_name} : %{group_name}"
-
     cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
     collapse_all: "Cacher toutes"
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
@@ -11,10 +8,10 @@ fr:
     expand_unmarked: "Montrer non évaluées"
     late_submission_warning_html: "La date du <a href=\"%{url}\">envoi</a> de ce groupe est postérieure à la date de retour."
     marks_released: "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
-    next_submission: "Envoi suivant"
+    next_submission: "Suivant"
     no_feedback_files: "[Aucun fichier de support disponible]"
     no_result: "Les notes ne sont pas encore disponibles."
-    previous_submission: "Envoi précédent"
+    previous_submission: "Précédent"
     results_for: "Résultats pour"
     review_for: "Avis pour"
     set_to_incomplete: "Revenir à incomplet"

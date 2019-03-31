@@ -586,11 +586,11 @@ describe 'An Assignment' do
       let(:res_ctrl) { 'results' }
 
       context 'collection' do
-        it 'routes GET update_mark properly' do
-          expect(get: res_path + '/update_mark').to route_to(
+        it 'routes PATCH update_mark properly' do
+          expect(patch: res_path + '/1/update_mark').to route_to(
             controller: res_ctrl,
-            action: 'show',
-            id: 'update_mark',
+            action: 'update_mark',
+            id: '1',
             assignment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
