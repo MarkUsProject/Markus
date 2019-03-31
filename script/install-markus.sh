@@ -113,6 +113,8 @@ export HOST="0.0.0.0"
 
 # Install Python libraries for exam scanner
 echo "- - - Installing Python Libraries - - -"
-sudo pip3 install -r /home/vagrant/Markus/lib/scanner/requirements.txt
-
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.7
+python3.7 -m pip install --user --no-cache-dir -r lib/scanner/requirements.txt
 EOL
