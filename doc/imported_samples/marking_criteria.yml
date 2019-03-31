@@ -1,5 +1,4 @@
 Quality of Writing:
-    type: Rubric
     max_mark: 24.0
     level_0:
         name: Beginner
@@ -10,11 +9,10 @@ Quality of Writing:
     level_2:
         name: Accomplished
         description: The essay is well-structure and conveys new information clearly.    
-    ta_visible: True
-    peer_visible: False
+    ta_visible: False
+    peer_visible: True
 
 Grammar usage:
-    type: Rubric
     max_mark: 16.0
     level_0:
         name: Beginner
