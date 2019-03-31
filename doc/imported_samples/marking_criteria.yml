@@ -1,4 +1,5 @@
 Quality of Writing:
+    type: Rubric
     max_mark: 24.0
     level_0:
         name: Beginner
@@ -8,15 +9,34 @@ Quality of Writing:
         description: The essay is poorly organized but gives new information.
     level_2:
         name: Accomplished
-        description: The essay is well-structure and conveys new information clearly.    
-    ta_visible: False
-    peer_visible: True
+        description: The essay is well-structure and conveys new information clearly.
+    level_3:
+        name: level 3 criterion
+        description: level 3 description
+    level_4:
+        name: level 4 criterion
+        description: level 4 description
+    ta_visible: True
+    peer_visible: False
 
 Grammar usage:
+    type: Rubric
     max_mark: 16.0
     level_0:
         name: Beginner
         description: There are more than 5 grammar mistakes in this entire essay.
+    level_1:
+        name: Intermediate
+        description: Intermediate.
+    level_2:
+        name: Accomplished
+        description: Accomplished.
+    level_3:
+      name: level 3 criterion
+      description: level 3 description
+    level_4:
+      name: level 4 criterion
+      description: level 4 description
     ta_visible: True
     peer_visible: False
 
