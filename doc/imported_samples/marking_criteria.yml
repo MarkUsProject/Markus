@@ -32,11 +32,11 @@ Grammar usage:
         name: Accomplished
         description: Accomplished.
     level_3:
-      name: level 3 criterion
-      description: level 3 description
+        name: level 3 criterion
+        description: level 3 description
     level_4:
-      name: level 4 criterion
-      description: level 4 description
+        name: level 4 criterion
+        description: level 4 description
     ta_visible: True
     peer_visible: False
 
