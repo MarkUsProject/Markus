@@ -1,9 +1,7 @@
-![MarkUs logo](http://markusproject.org/img/markus_logo_big.png)
+![MarkUs logo](app/assets/images/markus_logo_small.png)
 
 Welcome to MarkUs! Online Marking Made Easy
 ===========================================
-
-http://markusproject.org/
 
 MarkUs is a web application for the submission and grading of student programming assignments. The primary purpose of MarkUs is to provide TAs with simple tools that will help them to give high quality feedback to students. MarkUs also provides a straight-forward interface for students to submit their work, form groups, and receive feedback. The administrative interface allows instructors to manage groups, organize the grading, and release grades to students.
 
@@ -29,24 +27,7 @@ MarkUs is written using Ruby on Rails, and uses Subversion (with a Git back-end 
 
 Please see the INSTALL file for installation instructions.
 
-
-## 2. Links
-
-- Email a security alert: <security@markusproject.org>
-- Email a general inquiry: <info@markusproject.org>
-- Blog: http://blog.markusproject.org/
-- Sandbox: http://www.markusproject.org/admin-demo
-- Source Code: http://github.com/MarkUsProject/Markus
-- IRC Channel: irc://irc.freenode.net/#markus ([Logs](http://www.markusproject.org/irc/))
-- Mailing list: <markus-users@cs.toronto.edu>
-
-
-## 3. Sandbox
-
-If you are interested in MarkUs and would like to try it out, there is a MarkUs sandbox installation available (http://www.markusproject.org/admin-demo). For information as to how to use the demo instance please see our "How to use the demo server" (http://blog.markusproject.org/?p=219) blog post. We hope you will enjoy it and please let us know how you liked it: info@markusproject.org.
-
-
-## 4. System Requirements
+## 2. System Requirements
 
 - Rails 3.0/Ruby 1.9.3+ (2.1.2 recommended)
 - Unicorn/Passenger
@@ -58,28 +39,13 @@ deployment/configuration documentation. Please send us email if you have any
 trouble installing MarkUs---we'd be happy to help you out.
 
 
-## 5. Who is Using MarkUs?
+## 3. Who is Using MarkUs?
 
 - Department of Computer Science, University of Toronto, Canada
 - School of Computer Science, University of Waterloo, Canada
 - École Centrale de Nantes, France
 
-
-## 6. Staying in Touch
-
-Want the latest MarkUs news? It's available several ways:
-
-* General queries can be sent to <info@markusproject.org>.
-* The development team has a blog at http://blog.markusproject.org.
-* There is a mailing list for MarkUs users. You can also find us on IRC in the #markus channel on FreeNode.
-
-
-## 7. Helping Out
-
-Found a bug? Want a feature? Please email <info@markusproject.org>.
-
-
-## 8. Credits
+## 4. Credits
 
 MarkUs grew out of OLM, which was built using the TurboGears framework. We are
 grateful to everyone who worked on or funded both projects, and to the creators

@@ -7,7 +7,6 @@ class TestGroup < ApplicationRecord
   has_many :test_group_results, dependent: :delete_all
 
   validates :name, presence: true, uniqueness: { scope: :assignment_id }
-  validates :run_by_instructors, :run_by_students, inclusion: { in: [true, false] }
   validates :display_output, presence: true
 
 end

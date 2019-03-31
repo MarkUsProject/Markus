@@ -40,8 +40,6 @@ function make_draggable() {
       // Calculate offset and resize
       offset = (ui.offset.left - panes_offset.left) / panes_width;
       resize_col();
-      $drag.css('height', ($drag.parent().height() -
-        2 * parseInt($drag.css('margin-top'))) + 'px');
     }
   });
 }
@@ -75,8 +73,6 @@ function initializePanes() {
 
   // Initialize the drag bar and resize the columns
   make_draggable();
-  $drag.css('height', ($drag.parent().height() -
-                       2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   resize_col();
   window.addEventListener('resize', fix_panes);
@@ -96,7 +92,6 @@ function fix_panes(){
   make_draggable();
 
   // Make sure the drag bar stays in the right place
-  $drag.css('height', ($drag.parent().height() -
-    2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
+  $drag.css('position', 'inherit');
 }

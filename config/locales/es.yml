@@ -73,6 +73,7 @@ es:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
+            problems: "UPDATE ME"
     peer_review:
         assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"
@@ -291,21 +292,6 @@ es:
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       files:                              "UPDATE ME"
       specs:                              "UPDATE ME"
-      new_test_group:                     "UPDATE ME"
-      test_group_option:
-        remove:                           "Remover"
-        remove_help:                      "UPDATE ME"
-        run_by_instructors:               "Ejecutable por los Instructores"
-        run_by_instructors_help:          "UPDATE ME"
-        run_by_students:                  "Ejecutable por los Estudiantes"
-        run_by_students_help:             "UPDATE ME"
-        associated_criterion:             "Criterio de Calificación Asociado"
-        display_output:                   "Resultado Obtenido"
-        display_output_help:              "UPDATE ME"
-        display_to:
-          instructors:           "No mostrar"
-          instructors_and_students: "Mostrar después de realizar la entrega"
-          instructors_and_student_tests: "Mostrar después de realizar la recolección"
       token:
         start_date: "Las fichas disponibles empiezan en:"
         available: "Fichas disponibles:"
@@ -326,7 +312,6 @@ es:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_group: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

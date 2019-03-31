@@ -8,10 +8,27 @@ import { SubmissionSelector } from './submission_selector';
 class Result extends React.Component {
   constructor(props) {
     super(props);
+    let fullscreen;
+    if (typeof(Storage) !== 'undefined') {
+      fullscreen = localStorage.getItem('fullscreen') === 'on';
+    }
+
+    if (fullscreen) {
+      let toggle_elements = [
+        $('#menus'),
+        $('.top_bar'),
+        $('.title_bar'),
+        $('#footer_wrapper')
+      ];
+      $.each(toggle_elements, (idx, element) => element.toggle());
+      $('#content').toggleClass('expanded_view');
+    }
+
     this.state = {
       loading: true,
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
+      fullscreen,
     };
 
     this.leftPane = React.createRef();
@@ -91,7 +108,7 @@ class Result extends React.Component {
         extraMarkSubtotal += data.extra_mark * result_data.assignment_max_mark / 100;
       }
     });
-    return {criterionSummaryData, subtotal, extraMarkSubtotal};
+    return {criterionSummaryData, subtotal, extraMarkSubtotal, total: subtotal + extraMarkSubtotal};
   };
 
   /* Interaction with external components/libraries */
@@ -133,6 +150,24 @@ class Result extends React.Component {
     });
 
     window.annotation_context_menu.set_common_annotations(common_annotations);
+  };
+
+  toggleFullscreen = () => {
+    let toggle_elements = [
+      $('#menus'),
+      $('.top_bar'),
+      $('.title_bar'),
+      $('#footer_wrapper')
+    ];
+    $.each(toggle_elements, (idx, element) => element.toggle());
+    $('#content').toggleClass('expanded_view');
+
+    this.setState({fullscreen: !this.state.fullscreen}, fix_panes);
+    if (typeof(Storage) !== 'undefined') {
+      let compact_view = localStorage.getItem('fullscreen');
+      if (compact_view) localStorage.removeItem('fullscreen');
+      else localStorage.setItem('fullscreen', 'on');
+    }
   };
 
   /* Callbacks for annotations */
@@ -280,13 +315,13 @@ class Result extends React.Component {
       url: Routes.update_mark_assignment_submission_result_path(
         this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
-      method: 'POST',
+      method: 'PATCH',
       data: {
         markable_type: criterion_type,
         markable_id: criterion_id,
         mark: mark
       },
-      dataType: 'text'
+      dataType: 'json'
     }).then(data => {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
@@ -298,16 +333,14 @@ class Result extends React.Component {
           return markData;
         }
       });
-      let items = data.split(',');
-      let total = items[2];
-      let marked = items[3];
-      let assigned = items[4];
-
-      this.setState({ marks, total }, () => {
+      let stateUpdate = { marks };
+      if (data.num_marked !== undefined && data.num_marked !== null) {
+        stateUpdate['num_marked'] = data.num_marked;
+      }
+      this.setState(stateUpdate, () => {
         const newData = this.processMarks(this.state);
         this.setState({...newData});
       });
-      update_bar(marked, assigned);
     });
   };
 
@@ -371,7 +404,6 @@ class Result extends React.Component {
     }).then(this.fetchData);
   };
 
-  /* Callbacks for SubmissionSelector */
   newNote = () => {
     $.ajax({
       url: Routes.notes_dialog_note_path({
@@ -390,6 +422,7 @@ class Result extends React.Component {
     });
   };
 
+  /* Callbacks for SubmissionSelector */
   toggleMarkingState = () => {
     $.ajax({
       url: Routes.toggle_marking_state_assignment_submission_result_path(
@@ -416,23 +449,23 @@ class Result extends React.Component {
       return I18n.t('working');
     }
 
-    return (
-      <div>
-        <div id='submission-selector-container'>
-          <SubmissionSelector
-            {...this.props}
-            assignment_max_mark={this.state.assignment_max_mark}
-            is_reviewer={this.state.is_reviewer}
-            marks={this.state.marks || []}
-            marking_state={this.state.marking_state}
-            notes_count={this.state.notes_count}
-            released_to_students={this.state.released_to_students}
-            total={this.state.total}
-            newNote={this.newNote}
-            toggleMarkingState={this.toggleMarkingState}
-            setReleasedToStudents={this.setReleasedToStudents}
-          />
-        </div>
+    return [
+        <SubmissionSelector
+          {...this.props}
+          assignment_max_mark={this.state.assignment_max_mark}
+          fullscreen={this.state.fullscreen}
+          group_name={this.state.group_name}
+          is_reviewer={this.state.is_reviewer}
+          marks={this.state.marks || []}
+          marking_state={this.state.marking_state}
+          num_assigned={this.state.num_assigned}
+          num_marked={this.state.num_marked}
+          released_to_students={this.state.released_to_students}
+          total={this.state.total}
+          toggleFullscreen={this.toggleFullscreen}
+          toggleMarkingState={this.toggleMarkingState}
+          setReleasedToStudents={this.setReleasedToStudents}
+        />,
         <div id='panes-content'>
           <div id='panes'>
             <div id='left-pane'>
@@ -487,6 +520,7 @@ class Result extends React.Component {
                 grace_token_deductions={this.state.grace_token_deductions}
                 is_reviewer={this.state.is_reviewer}
                 marks={this.state.marks}
+                notes_count={this.state.notes_count}
                 old_marks={this.state.old_marks}
                 old_total={this.state.old_total}
                 released_to_students={this.state.released_to_students}
@@ -499,12 +533,12 @@ class Result extends React.Component {
                 deleteGraceTokenDeduction={this.deleteGraceTokenDeduction}
                 addTag={this.addTag}
                 removeTag={this.removeTag}
+                newNote={this.newNote}
               />
             </div>
           </div>
         </div>
-      </div>
-    )
+    ];
   }
 }
 

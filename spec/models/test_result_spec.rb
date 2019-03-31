@@ -18,9 +18,7 @@ describe TestResult do
       @user = create(:admin)
       @test_group = TestGroup.create(
         assignment_id: @asst.id,
-        name: 'test_group',
-        run_by_instructors: true,
-        run_by_students: true
+        name: 'test_group'
       )
       @test_run = TestRun.create(
         grouping: @grouping,

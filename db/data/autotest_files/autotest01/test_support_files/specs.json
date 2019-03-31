@@ -1,30 +1,42 @@
-[
-  {
-    "tester_type": "custom",
-    "tester_name": "autotest01",
-    "executable_scripts": true,
-    "test_data": [
-      {
-        "id": 1,
-        "script_file_path": "autotest_01.sh",
-        "script_timeout": 10,
-        "enable_feedback_file_hook": false,
-        "feedback_file": null
-      },
-      {
-        "id": 2,
-        "script_file_path": "autotest_02.sh",
-        "script_timeout": 10,
-        "enable_feedback_file_hook": false,
-        "feedback_file": null
-      },
-      {
-        "id": 3,
-        "script_file_path": "autotest_student_run_only.sh",
-        "script_timeout": 10,
-        "enable_feedback_file_hook": false,
-        "feedback_file": null
-      }
-    ]
-  }
-]
+{
+  "testers": [
+    {
+      "tester_type": "custom",
+      "test_data": [
+        {
+          "script_files": ["autotest_01.sh"],
+          "category": ["admin"],
+          "timeout": 30,
+          "name": "autotest_01.sh",
+          "extra_data": {
+            "test_group_id": 1,
+            "display_output": 1,
+            "criterion": "16_RubricCriterion"
+          }
+        },
+        {
+          "script_files": ["autotest_02.sh"],
+          "category": ["admin"],
+          "timeout": 30,
+          "name": "autotest_02.sh",
+          "extra_data": {
+            "test_group_id": 2,
+            "display_output": 1,
+            "criterion": "16_FlexibleCriterion"
+          }
+        },
+        {
+          "script_files": ["autotest_student_run_only.sh"],
+          "category": ["student"],
+          "timeout": 30,
+          "name": "autotest_student_run_only.sh",
+          "extra_data": {
+            "test_group_id": 3,
+            "display_output": 1,
+            "criterion": null
+          }
+        }
+      ]
+    }
+  ]
+}

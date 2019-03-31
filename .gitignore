@@ -63,6 +63,7 @@
 
 # Ignore redis dump file
 .dump.rdb
+dump.rdb
 
 # Yarn-related files
 /public/packs

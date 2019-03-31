@@ -52,7 +52,6 @@ export class LeftPane extends React.Component {
           </Tab>
         </TabList>
         <TabPanel forceRender={true}>
-          <div>
             <SubmissionFilePanel
               ref={this.submissionFilePanel}
               result_id={this.props.result_id}
@@ -69,7 +68,6 @@ export class LeftPane extends React.Component {
               addExistingAnnotation={this.props.addExistingAnnotation}
               released_to_students={this.props.released_to_students}
             />
-          </div>
         </TabPanel>
         <TabPanel forceRender={true}>
           <div id='annotations_summary'>

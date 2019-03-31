@@ -8,7 +8,7 @@ import { TagsPanel } from './tags_panel';
 
 export class RightPane extends React.Component {
   canShowTagsPanel = () => {
-    return !this.props.released_to_students && !this.props.is_reviewer;
+    return this.props.role !== 'Student' && !this.props.is_reviewer;
   };
 
   render() {
@@ -18,7 +18,7 @@ export class RightPane extends React.Component {
           <Tab>{I18n.t('activerecord.models.mark.other')}</Tab>
           <Tab>{I18n.t('results.summary')}</Tab>
           {this.canShowTagsPanel() &&
-           <Tab>{I18n.t('activerecord.models.tag.other')}</Tab>
+           <Tab>{I18n.t('activerecord.models.tag.other')}/{I18n.t('activerecord.models.note.other')}</Tab>
           }
         </TabList>
         <TabPanel>
@@ -55,9 +55,11 @@ export class RightPane extends React.Component {
            <TagsPanel
              currentTags={this.props.current_tags}
              availableTags={this.props.available_tags}
+             notes_count={this.props.notes_count}
              remark_submitted={this.props.remark_submitted}
              addTag={this.props.addTag}
              removeTag={this.props.removeTag}
+             newNote={this.props.newNote}
              role={this.props.role}
            />
          </TabPanel>

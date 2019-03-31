@@ -207,15 +207,6 @@
     }
   }
 
-  function rotate() {
-    annotation_manager.hideSelectionBox();
-
-    if (annotation_type === ANNOTATION_TYPES.PDF) {
-      annotation_manager.rotateClockwise90();
-      PDFView.rotatePages(90);
-    }
-  }
-
   function get_text_annotation_data() {
     positions = get_mouse_positions();
     if (syntax_highlighter_adapter === null || !positions) return false;

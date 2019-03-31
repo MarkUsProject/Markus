@@ -1,8 +1,5 @@
 es:
   results:
-    edit:
-      title: "Proyecto %{assignment_name}: %{group_name}"
-
     cant_display_image: "La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf,
                          por favor asegurese de habilitar el soporte para pdf. De click en el botón de
                          descargas para descargar el archivo."
@@ -15,10 +12,10 @@ es:
     expand_unmarked: "Expandir no calificados"
     late_submission_warning_html: "El <a href=\"%{url}\">submitted work</a> de este grupo se ha realizado después de la fecha límite de entrega."
     marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
-    next_submission: "Siguiente Entrega"
+    next_submission: "Siguiente"
     no_feedback_files: "[El archivo de retroalimentación no está disponible]"
     no_result: "No existen notas disponibles."
-    previous_submission: "Entrega Anterior"
+    previous_submission: "Anterior"
     results_for: "Resultados para"
     review_for: "Revisión para"
     set_to_incomplete: "Marcar como Incompleto"

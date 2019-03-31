@@ -69,6 +69,7 @@ en:
             complete: "complete"
             in_progress: "in progress"
             cancelled: "cancelled"
+            problems: "error"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
@@ -268,21 +269,6 @@ en:
       tokens_available_on: "Tokens available starting on"
       files: "Test Files"
       specs: "Test Specifications"
-      new_test_group: "New Test Group"
-      test_group_option:
-        remove: "Remove this group"
-        remove_help: "Check this box and press submit at the bottom to delete the group"
-        run_by_instructors: "Runnable by Instructors"
-        run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
-        run_by_students: "Runnable by Students"
-        run_by_students_help: "Check to allow students to run this script (student tests, requires explicitly enabling them at the top of the page)"
-        associated_criterion: "Associated Criterion"
-        display_output: "Display test Output"
-        display_output_help: "Choose when to show the test 'OUTPUT' column to the students (the instructors will always see it regardless of this setting)"
-        display_to:
-          instructors: "To instructors only"
-          instructors_and_students: "To instructors and students"
-          instructors_and_student_tests: "To instructors, and student tests to students"
       token:
         start_date: "Tokens available starting on:"
         available: "Tokens available:"
@@ -303,7 +289,6 @@ en:
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"
-        missing_test_group: "This test group is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
         bad_results: "Test results are malformed: %{error}"

@@ -97,7 +97,7 @@ describe ResultsController do
           end
           it { expect(response).to have_http_status(:redirect) }
           it 'should display a flash error' do
-            expect(flash[:file_download_error]).to eq SAMPLE_ERROR_MESSAGE
+            expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
           end
         end
         context 'and with a supported image file shown in browser' do
@@ -146,7 +146,6 @@ describe ResultsController do
                                                 id: complete_result.id }, xhr: true
         end
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to render_template('results/toggle_marking_state') }
         # TODO: test that the grade distribution is refreshed
       end
     end
@@ -242,21 +241,21 @@ describe ResultsController do
     end
     context 'accessing update_mark' do
       it 'should report an updated mark' do
-        post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                     id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                     markable_type: rubric_mark.markable_type,
-                                     mark: 1 }, xhr: true
-        expect(response.body.parse_csv.first.to_f).to eq 1
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: 1 }, xhr: true
+        expect(JSON.parse(response.body)[:num_marked]).to be_nil
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
         before :each do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
-          post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                       markable_type: rubric_mark.markable_type,
-                                       mark: 1 }, xhr: true
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                        markable_type: rubric_mark.markable_type,
+                                        mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
         it 'should report the correct error message' do
@@ -328,7 +327,7 @@ describe ResultsController do
     end
   end
 
-  ROUTES = { update_mark: :post,
+  ROUTES = { update_mark: :patch,
              edit: :get,
              download: :post,
              get_annotations: :get,

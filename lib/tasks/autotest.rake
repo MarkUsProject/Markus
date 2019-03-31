@@ -163,8 +163,6 @@ class AutotestSetup
       TestGroup.create(
         assignment: @assignment,
         name: File.basename(test_script),
-        run_by_instructors: instructor_run,
-        run_by_students: true,
         display_output: :instructors_and_student_tests,
         criterion: instructor_run ? criterion : nil
       )

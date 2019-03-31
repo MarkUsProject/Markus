@@ -1,20 +1,19 @@
 en:
   results:
-    edit:
-      title: "Assignment %{assignment_name}: %{group_name}"
-
     cant_display_image: "Image cannot be displayed. Click on the Download button to download the file instead."
     collapse_all: "Collapse All"
     criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
     delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
     expand_all: "Expand All"
     expand_unmarked: "Expand Unmarked"
+    fullscreen_enter: "Fullscreen"
+    fullscreen_exit: "Leave fullscreen"
     late_submission_warning_html: "This group <a href=\"%{url}\">submitted work</a> after the due date."
     marks_released: "The marks have been released. You cannot change the grades."
-    next_submission: "Next Submission"
+    next_submission: "Next"
     no_feedback_files: "[No feedback files available]"
     no_result: "No marks are available yet."
-    previous_submission: "Previous Submission"
+    previous_submission: "Previous"
     results_for: "Results for"
     review_for: "Peer reviews for"
     set_to_incomplete: "Set to Incomplete"
@@ -74,5 +73,5 @@ en:
       open_annotation: "Open annotation modal"
       previous_criterion: "Select previous criterion"
       previous_level: "Select previous level"
-      toggle_compact: "Toggle compact view"
+      toggle_compact: "Toggle fullscreen"
       when_rubric: "(When on rubric) "
