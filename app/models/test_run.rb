@@ -11,7 +11,6 @@ class TestRun < ApplicationRecord
 
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments').freeze
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students').freeze
-  HOOKS_FILE = 'hooks.py'.freeze
   SPECS_FILE = 'specs.json'.freeze
   STATUSES = {
     complete: 'complete',
@@ -53,8 +52,12 @@ class TestRun < ApplicationRecord
     end
   end
 
+  def test_categories
+    [self.user.type.downcase]
+  end
+
   def create_test_group_result(test_group, time: 0, extra_info: nil)
-    unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
+    unless test_group.respond_to?(:display_output) # the ActiveRecord object can be passed directly
       test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
       # test group can be nil if it's deleted while running
     end
@@ -77,7 +80,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
     # create test script result
-    test_group_id = json_test_group['test_group_id']
+    test_group_id = json_test_group['extra_data']['test_group_id']
     time = json_test_group.fetch('time', 0)
     stderr = json_test_group['stderr']
     malformed = json_test_group['malformed']
@@ -140,7 +143,7 @@ class TestRun < ApplicationRecord
 
   def create_test_group_results_from_json(test_output)
     # check that the output is well-formed
-    test_groups = grouping.assignment.select_test_groups(user).to_a
+    test_groups = grouping.assignment.test_groups.to_a
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
@@ -153,11 +156,11 @@ class TestRun < ApplicationRecord
     end
     # save statistics
     self.time_to_service = json_root['time_to_service']
-    self.save
+    save
     # update estimated time to service for other runs in batch
-    if test_batch && time_to_service_estimate && time_to_service
-      time_delta = time_to_service_estimate - time_to_service
-      test_batch.adjust_time_to_service_estimate(time_delta)
+    if self.test_batch && self.time_to_service_estimate && self.time_to_service
+      time_delta = self.time_to_service_estimate - self.time_to_service
+      self.test_batch.adjust_time_to_service_estimate(time_delta)
     end
     # TODO: Create a better interface to display global errors (server)
     # check for server errors
@@ -175,19 +178,11 @@ class TestRun < ApplicationRecord
     # process results
     new_test_group_results = {}
     json_root.fetch('test_groups', []).each do |json_test_group|
-      test_group_id = json_test_group['test_group_id']
+      test_group_id = json_test_group['extra_data']['test_group_id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
       new_test_group_results[test_group_id] = new_test_group_result
     end
-    # handle missing test groups (could be added while running)
-    test_groups.each do |test_group|
-      next if new_test_group_results.key?(test_group.id)
-      new_test_group_result = create_test_group_result(test_group)
-      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
-                                                output: I18n.t('automated_tests.results.missing_test_group'))
-      new_test_group_results[test_group.id] = new_test_group_result
-    end
     # set the marks assigned by the test run
-    submission&.set_autotest_marks
+    self.submission&.set_autotest_marks
   end
 end

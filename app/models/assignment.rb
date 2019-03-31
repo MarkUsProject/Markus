@@ -1077,39 +1077,12 @@ class Assignment < ApplicationRecord
     required
   end
 
-  # Selects the appropriate test scripts for this assignment, based on the user requesting them.
-  def select_test_groups(user)
-    if user.admin?
-      condition = { run_by_instructors: true }
-    elsif user.student?
-      condition = { run_by_students: true }
-    else
-      return none # empty chainable ActiveRecord::Relation
-    end
-
-    self.test_groups.where(condition)
-  end
-
   def autotest_path
     File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
   end
 
   def autotest_files
     Dir.entries(autotest_path) - ['.', '..']
-  end
-
-  # Selects the hooks script from the test files.
-  def get_hooks_script_name
-    # TODO: Adjust the hooks mechanism when we create a new user interface
-    hooks_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::HOOKS_FILE)
-    File.exist?(hooks_path) ? File.basename(hooks_path) : nil
-  end
-
-  # Selects the test specs from the test files.
-  def get_test_specs_name
-    # TODO: Adjust the specs mechanism when we create a new user interface
-    specs_path = File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier, TestRun::SPECS_FILE)
-    File.exist?(specs_path) ? File.basename(specs_path) : nil
   end
 
   # Retrieve current grader data.

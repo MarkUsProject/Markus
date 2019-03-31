@@ -1,6 +1,6 @@
 class TestGroupResult < ApplicationRecord
   has_many :test_results, dependent: :destroy
-  belongs_to :test_group
+  belongs_to :test_group, optional: true
   belongs_to :test_run
 
   validates :marks_earned, :marks_total, presence: true, numericality: { greater_than_or_equal_to: 0 }

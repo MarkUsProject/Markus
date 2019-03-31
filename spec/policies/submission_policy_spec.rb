@@ -13,7 +13,7 @@ describe SubmissionPolicy do
       end
 
       context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_instructor_tests) }
+        let(:assignment) { create(:assignment_for_tests) }
         let(:grouping) { create(:grouping, assignment: assignment) }
         let(:submission) { create(:submission, grouping: grouping) }
 

@@ -8,7 +8,7 @@ class AutotestTestersJob < ApplicationJob
     begin
       if server_username.nil?
         # local fetch testers with no authentication
-        testers_command = [server_command, 'testers']
+        testers_command = [server_command, 'schema']
         output, status = Open3.capture2e(*testers_command)
         if status.exitstatus != 0
           raise output
@@ -17,7 +17,7 @@ class AutotestTestersJob < ApplicationJob
         # local or remote fetch testers with authentication
         server_host = MarkusConfigurator.autotest_server_host
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-          testers_command = "#{server_command} testers"
+          testers_command = "#{server_command} schema"
           output = ssh.exec!(testers_command)
           if output.exitstatus != 0
             raise output
