@@ -28,6 +28,7 @@ export class RightPane extends React.Component {
             assigned_criteria={this.props.assigned_criteria}
             released_to_students={this.props.released_to_students}
             updateMark={this.props.updateMark}
+            destroyMark={this.props.destroyMark}
           />
         </TabPanel>
         <TabPanel>

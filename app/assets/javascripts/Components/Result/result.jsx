@@ -333,15 +333,19 @@ class Result extends React.Component {
           return markData;
         }
       });
-      let stateUpdate = { marks };
-      if (data.num_marked !== undefined && data.num_marked !== null) {
-        stateUpdate['num_marked'] = data.num_marked;
+      let stateUpdate = { marks, num_marked: data.num_marked };
+      if (mark === null) {
+        stateUpdate['marking_state'] = 'incomplete';
       }
       this.setState(stateUpdate, () => {
         const newData = this.processMarks(this.state);
         this.setState({...newData});
       });
     });
+  };
+
+  destroyMark = (criterion_type, criterion_id) => {
+    this.updateMark(criterion_type, criterion_id, null);
   };
 
   createExtraMark = (description, extra_mark) => {
@@ -528,6 +532,7 @@ class Result extends React.Component {
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}
+                destroyMark={this.destroyMark}
                 createExtraMark={this.createExtraMark}
                 destroyExtraMark={this.destroyExtraMark}
                 deleteGraceTokenDeduction={this.deleteGraceTokenDeduction}

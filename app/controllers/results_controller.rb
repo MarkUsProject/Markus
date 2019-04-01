@@ -504,7 +504,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].to_f
+    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
     result_mark = result.marks.find_or_create_by(
       markable_id: params[:markable_id],
@@ -522,7 +522,7 @@ class ResultsController < ApplicationController
       if assignment.assign_graders_to_criteria && @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
       else
-        num_marked = nil
+        num_marked = assignment.get_num_marked(nil)
       end
       render json: {
         num_marked: num_marked

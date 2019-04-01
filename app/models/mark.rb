@@ -3,7 +3,7 @@ class Mark < ApplicationRecord
   # Result has not been released to students
   before_save :ensure_not_released_to_students
 
-  after_save :update_result_mark
+  after_save :update_result
 
   belongs_to :result
   validates_presence_of :markable_type
@@ -41,9 +41,12 @@ class Mark < ApplicationRecord
     throw(:abort) if result.released_to_students
   end
 
-  def update_result_mark
+  def update_result
     if !mark.nil? || mark_changed?
       result.update_total_mark
+    end
+    if mark.nil?
+      result.update(marking_state: Result::MARKING_STATES[:incomplete])
     end
   end
 end

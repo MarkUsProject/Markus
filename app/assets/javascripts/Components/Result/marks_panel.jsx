@@ -68,6 +68,11 @@ export class MarksPanel extends React.Component {
     }
   };
 
+  destroyMark = (e, criterion_type, criterion_id) => {
+    e.stopPropagation();
+    this.props.destroyMark(criterion_type, criterion_id);
+  };
+
   renderMarkComponent = (markData) => {
     const key = `${markData.criterion_type}-${markData.id}`;
     const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
@@ -77,6 +82,7 @@ export class MarksPanel extends React.Component {
       released_to_students: this.props.released_to_students,
       unassigned: unassigned,
       updateMark: this.updateMark,
+      destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[`criterion_${markData.criterion_type}_${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
@@ -149,6 +155,16 @@ class CheckboxCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <div>
             {!this.props.released_to_students &&
@@ -220,7 +236,7 @@ class FlexibleCriterionInput extends React.Component {
 
   componentDidUpdate(oldProps) {
     if (oldProps.mark !== this.props.mark) {
-      this.setState({ rawText: String(this.props.mark) })
+      this.setState({ rawText: this.props.mark === null ? '' : String(this.props.mark) })
     }
   }
 
@@ -254,6 +270,16 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <div className='criterion-description'>
             {this.props.description}
@@ -336,6 +362,16 @@ class RubricCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <table className='rubric-levels'>
             <tbody>
