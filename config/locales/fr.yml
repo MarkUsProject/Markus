@@ -157,6 +157,7 @@ fr:
       review_title: "Avis %{assignment_name} : %{group_name}"
       successfully_changed: "Les %{changed} résultats ont été mis à jour."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
+      no_files: "Il n'y a aucun fichiers"
 
     #Sutdent's View (student)
     student:

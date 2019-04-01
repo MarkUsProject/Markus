@@ -157,6 +157,7 @@ pt:
       review_title: "Revisão %{assignment_name} : %{group_name}"
       successfully_changed: "%{changed} resultados atualizados"
       could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
+      no_files: "UPDATE ME"
 
     #Sutdent's View (student)
     student:

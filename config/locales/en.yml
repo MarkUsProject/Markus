@@ -159,6 +159,7 @@ en:
       review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
       successfully_changed: "Successfully updated %{changed} results"
       could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
+      no_files: "There are no student files."
 
     #Sutdent's View (student)
     student:
