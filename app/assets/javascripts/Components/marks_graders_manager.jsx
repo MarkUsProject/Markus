@@ -286,7 +286,7 @@ class GradersActionBox extends React.Component {
           className='assign-all-button'
           onClick={this.props.assignAll}
         >
-          {I18n.t('graders.action.assign_grader')}
+          {I18n.t('graders.actions.assign_grader')}
         </button>
         <button
           className='assign-randomly-button'
@@ -298,7 +298,7 @@ class GradersActionBox extends React.Component {
           className='unassign-all-button'
           onClick={this.props.unassignAll}
         >
-          {I18n.t('graders.action.unassign_grader')}
+          {I18n.t('graders.actions.unassign_grader')}
         </button>
       </div>
     )
