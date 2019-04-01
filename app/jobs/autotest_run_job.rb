@@ -61,20 +61,16 @@ class AutotestRunJob < ApplicationJob
     grouping = test_run.grouping
     assignment = grouping.assignment
     group = grouping.group
-    error_no_files = { name: I18n.t('automated_tests.results.all_tests'),
-                       message: I18n.t('automated_tests.results.no_source_files') }
     # no commits in the submission, or no commits after starter code initialization
     if test_run.revision_identifier.nil? || test_run.revision_identifier == grouping.starter_code_revision_identifier
-      test_run.create_error_for_all_test_groups(test_group_ids, error_no_files)
-      return
+      raise I18n.t('automated_tests.results.no_source_files')
     end
     export_group_repo(test_run)
     submission_path = File.join(TestRun::STUDENTS_DIR, group.repo_name, assignment.repository_folder)
     # no assignment directory, or no files
     if !File.exist?(submission_path) ||
          (Dir.entries(submission_path) - ['.', '..'] - Repository.get_class.internal_file_names).size <= 0
-      test_run.create_error_for_all_test_groups(test_group_ids, error_no_files)
-      return
+      raise I18n.t('automated_tests.results.no_source_files')
     end
 
     if Rails.application.config.action_controller.relative_url_root.nil?
@@ -82,6 +78,7 @@ class AutotestRunJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
+    server_host = MarkusConfigurator.autotest_server_host
     server_path = MarkusConfigurator.autotest_server_dir
     server_command = MarkusConfigurator.autotest_server_command
     server_api_key = get_server_api_key
@@ -100,14 +97,13 @@ class AutotestRunJob < ApplicationJob
       run_command = [server_command, 'run', '-f', "#{server_path}/#{File.basename(params_file.path)}"]
       output, status = Open3.capture2e(*run_command)
       if status.exitstatus != 0
-        raise output
+        raise I18n.t('automated_tests.results.bad_server', hostname: server_host, error: output)
       end
     else
       # tests executed locally or remotely with authentication
       mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
       server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
       # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-      server_host = MarkusConfigurator.autotest_server_host
       server_username = MarkusConfigurator.autotest_server_username
       scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
                      "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
@@ -115,7 +111,7 @@ class AutotestRunJob < ApplicationJob
       run_command = "#{server_command} run -f '#{server_path}/#{File.basename(params_file.path)}'"
       output = ssh.exec!(run_command)
       if output.exitstatus != 0
-        raise output
+        raise I18n.t('automated_tests.results.bad_server', hostname: server_host, error: output)
       end
     end
     test_run.time_to_service_estimate = output.to_i
@@ -160,9 +156,7 @@ class AutotestRunJob < ApplicationJob
         enqueue_test_run(test_run, host_with_port, ssh)
       rescue StandardError => e
         unless test_run.nil?
-          #TODO handle test run errors this way
-          #TODO display problems in the table
-          test_run.problems = I18n.t('automated_tests.results.bad_server', hostname: server_host, error: e.message)
+          test_run.problems = e.message
           test_run.save
         end
       end

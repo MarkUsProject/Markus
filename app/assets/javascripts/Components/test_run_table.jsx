@@ -174,6 +174,11 @@ class TestGroupResultTable extends React.Component {
   ];
 
   render() {
+    const problems = this.props.data[0]['test_runs.problems'];
+    if (problems) {
+      return (<div>{problems}</div>);
+    }
+
     const extraInfo = this.props.data[0]['test_group_results.extra_info'];
     let extraInfoDisplay;
     if (extraInfo) {
