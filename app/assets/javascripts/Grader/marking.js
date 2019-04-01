@@ -35,7 +35,7 @@ function activeCriterion($next_criteria) {
     // Remove any active rubrics
     $('.active-rubric').removeClass('active-rubric');
     if ($next_criteria.hasClass('flexible_criterion')) {
-      var $input = $next_criteria.find('.mark_grade_input');
+      var $input = $next_criteria.find('input[type="text"]');
       // This step is necessary for focusing the cursor at the end of input
       $input.focus().val($input.val());
     } else if ($next_criteria.hasClass('rubric_criterion')) {
