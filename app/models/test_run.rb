@@ -134,7 +134,6 @@ class TestRun < ApplicationRecord
 
   def create_test_group_results_from_json(test_output)
     # check that the output is well-formed
-    test_groups = self.grouping.assignment.test_groups.to_a
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
@@ -156,8 +155,8 @@ class TestRun < ApplicationRecord
     server_error = json_root['error']
     hooks_error_all = json_root['hooks_error'] || ''
     unless server_error.blank?
-      self.problems = I18n.t('automated_tests.results.bad_server', hostname: MarkusConfigurator.autotest_server_host,
-                             error: server_error) +
+      self.problems = I18n.t('automated_tests.results.bad_server',
+                             hostname: MarkusConfigurator.autotest_server_host, error: server_error) +
                       I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
       save
       return
