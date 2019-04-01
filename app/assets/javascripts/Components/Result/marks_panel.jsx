@@ -217,27 +217,34 @@ class FlexibleCriterionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rawText: this.props.mark === null ? '' : String(this.props.mark)
+      rawText: this.props.mark === null ? '' : String(this.props.mark),
+      invalid: false
     };
   }
 
   handleChange = (event) => {
     const mark = parseFloat(event.target.value);
-    if (isNaN(mark)) {
-      return;
+    if (event.target.value !== '' && isNaN(mark)) {
+      this.setState({rawText: event.target.value, invalid: true});
     } else if (mark === this.props.mark) {
       // This can happen if the user types a decimal point at the end of the input.
-      this.setState({rawText: event.target.value})
+      this.setState({rawText: event.target.value, invalid: false});
+    } else if (mark > this.props.max_mark) {
+      this.setState({rawText: event.target.value, invalid: true});
     } else {
+      this.setState({rawText: event.target.value, invalid: false});
       this.props.updateMark(
-        this.props.criterion_type, this.props.id, mark
+        this.props.criterion_type, this.props.id, isNaN(mark) ? null : mark
       );
     }
   };
 
   componentDidUpdate(oldProps) {
     if (oldProps.mark !== this.props.mark) {
-      this.setState({ rawText: this.props.mark === null ? '' : String(this.props.mark) })
+      this.setState({
+        rawText: this.props.mark === null ? '' : String(this.props.mark),
+        invalid: false
+      });
     }
   }
 
@@ -251,6 +258,7 @@ class FlexibleCriterionInput extends React.Component {
     } else {
       markElement = (
         <input
+          className={this.state.invalid ? 'invalid' : ''}
           type='text'
           size={4}
           value={this.state.rawText}

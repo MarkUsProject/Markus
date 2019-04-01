@@ -498,6 +498,10 @@ ul.annotation_text_list {
     font-weight: bold;
     padding-right: 0.5em;
     text-align: right;
+
+    &.invalid {
+      background-color: $light-red;
+    }
   }
 }
 
