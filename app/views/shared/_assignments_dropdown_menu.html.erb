@@ -23,15 +23,11 @@
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
 <% if @current_user.student? %>
-  <% assignments = Assignment.where(is_hidden: false, parent_assignment_id: nil)
-                             .includes(:pr_assignment)
-                             .order(short_identifier: :asc) %>
-  <% grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(id: :asc) %>
+  <% assignments = Assignment.where(is_hidden: false) %>
+  <% grade_entry_forms = GradeEntryForm.where(is_hidden: false) %>
 <% else %>
-  <% assignments = Assignment.where(is_hidden: false, parent_assignment_id: nil)
-                             .includes(:pr_assignment)
-                             .order(short_identifier: :asc) %>
-  <% grade_entry_forms = GradeEntryForm.all.order(id: :asc) %>
+  <% assignments = Assignment.all %>
+  <% grade_entry_forms = GradeEntryForm.all %>
 <% end %>
 
 <%= render partial: 'shared/assignment_dropdown_link',

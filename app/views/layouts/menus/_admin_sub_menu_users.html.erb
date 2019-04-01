@@ -1,0 +1,14 @@
+<ul class='sub'>
+  <li class='<%= "active" if controller.controller_name == 'students' %>'>
+    <%= link_to Student.model_name.human.pluralize, controller: 'students' %>
+  </li>
+  <li class='<%= "active" if controller.controller_name == 'sections' %>'>
+    <%= link_to Section.model_name.human.pluralize, controller: 'sections' %>
+  </li>
+  <li class='<%= "active" if controller.controller_name == 'tas' %>'>
+    <%= link_to Ta.model_name.human.pluralize, controller: 'tas' %>
+  </li>
+  <li class='<%= "active" if controller.controller_name == 'admins' %>'>
+    <%= link_to Admin.model_name.human.pluralize, controller: 'admins' %>
+  </li>
+</ul>

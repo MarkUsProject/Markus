@@ -1,0 +1,83 @@
+<% if controller.controller_name != 'main' %>
+  <ul class='sub'>
+    <li id='dropdown'>
+        <span class='dropdown'>
+          <% if @assignment.nil? && @grade_entry_form.nil? %>
+            <%= t(:choose) %>
+          <% elsif !@assignment.nil? %>
+            <% # Display the assignment's short identifier %>
+            <%= @assignment.is_peer_review? ?
+                  @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                  @assignment.short_identifier %>
+          <% elsif !@grade_entry_form.nil? %>
+            <% # Display the grade entry form's short identifier %>
+            <%= @grade_entry_form.short_identifier %>
+          <% end %>
+          <ul>
+            <%= render partial: 'shared/assignments_dropdown_menu'%>
+          </ul>
+        </span>
+    </li>
+
+    <% if !@grade_entry_form.nil? %>
+      <li class='<%= "active" if controller.controller_name == 'grade_entry_forms' %>'>
+        <%= link_to GradeEntryForm.human_attribute_name(:grades),
+                    controller: 'grade_entry_forms',
+                    action: 'student_interface',
+                    id: @grade_entry_form.id %>
+      </li>
+    <% end %>
+
+    <% if !@assignment.nil? &&
+      @current_user.has_accepted_grouping_for?(@assignment) %>
+      <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
+        <%= link_to Assignment.model_name.human.pluralize,
+                    controller: 'assignments',
+                    action: 'student_interface',
+                    id: @assignment.id %>
+      </li>
+
+
+      <% if !@assignment.scanned_exam? && !@assignment.is_peer_review? %>
+        <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
+          <%= link_to Submission.model_name.human.pluralize,
+                      file_manager_assignment_submissions_path(@assignment) %>
+        </li>
+      <% end %>
+
+      <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
+        @assignment.tokens_per_period > 0) %>
+        <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+          <%= link_to t('automated_tests.title'),
+                      controller: 'automated_tests',
+                      action:'student_interface',
+                      id: @assignment.id %>
+        </li>
+      <% end %>
+
+      <% @grouping = @current_user.accepted_grouping_for(@assignment.id) %>
+      <% @submission = @grouping.nil? ? nil : @grouping.current_submission_used %>
+      <% @result = @submission.nil? ? nil : @submission.get_original_result %>
+      <% if !@grouping.nil? && !@submission.nil? && !@result.nil? %>
+        <li class='<%= "active" if controller.controller_name == 'results' &&
+          !@result.is_a_review? %>'>
+          <%= link_to Result.model_name.human.pluralize,
+                      view_marks_assignment_submission_result_path(@assignment.is_peer_review? ?
+                                                                     @assignment.parent_assignment :
+                                                                     @assignment,
+                                                                   submission_id: @submission.id,
+                                                                   id: @result.id) %>
+        </li>
+      <% end %>
+
+      <% if @assignment.has_peer_review? && !@assignment.pr_assignment.is_hidden %>
+        <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
+          <%= link_to t('assignment.start_peer_review'),
+                      controller: 'assignments',
+                      action: 'peer_review',
+                      id: @assignment.id %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>
