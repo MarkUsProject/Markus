@@ -1,5 +1,5 @@
 Quality of Writing:
-    type: Rubric
+    type: rubric
     max_mark: 24.0
     level_0:
         name: Beginner
@@ -16,11 +16,11 @@ Quality of Writing:
     level_4:
         name: level 4 criterion
         description: level 4 description
-    ta_visible: True
-    peer_visible: False
+    ta_visible: true
+    peer_visible: false
 
 Grammar usage:
-    type: Rubric
+    type: rubric
     max_mark: 16.0
     level_0:
         name: Beginner
@@ -37,20 +37,20 @@ Grammar usage:
     level_4:
         name: level 4 criterion
         description: level 4 description
-    ta_visible: True
-    peer_visible: False
+    ta_visible: true
+    peer_visible: false
 
 Definition translation:
     type: flexible
     max_mark: 5.0
     description: This is a flexible criterion and you can put either "Flexible" or "flexible".
-    ta_visible: True
-    peer_visible: False
+    ta_visible: true
+    peer_visible: false
 
 Proof header:
-    type: Checkbox
+    type: checkbox
     max_mark: 2.0
     description: This is one is a checkbox criterion and students either get full marks or 0 for this criterion.
-    ta_visible: True
-    peer_visible: False
+    ta_visible: true
+    peer_visible: false
 
