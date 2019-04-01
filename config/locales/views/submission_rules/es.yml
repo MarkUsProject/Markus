@@ -20,6 +20,7 @@ es:
       other: "%{count} créditos"
     deadline_html: "Fecha límite utilizando todos los <br> aplazamientos de gracia restantes <br>"
     group_credits_html: "Su grupo tiene <strong>%{available_grace_credits}</strong> créditos de gracia disponibles."
+    no_group_yet: "UPDATE ME"
     overtime_message_with_credits_left:
       "El último plazo para este proyecto ha pasado. Sin embargo, usted tiene
        %{grace_credits_remaining} crédito(s) de aplazamiento de gracia restantes.

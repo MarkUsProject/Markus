@@ -25,10 +25,12 @@
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
         <%# Relative remaining grace credits for the grouping %>
-        <% unless @grouping.nil? %>
-          <span class='prop_label'>
+        <span class='prop_label'>
             <%= t('grace_period_submission_rules.deadline_html') %>
-          </span>
+        </span>
+        <% if @grouping.nil? %>
+          <%= t('grace_period_submission_rules.no_group_yet') %>
+        <% else %>
           <% remaining_credits = @grouping.available_grace_credits %>
           <% @enum_penalty.each do |p| %>
             <% unless remaining_credits <= 0 %>

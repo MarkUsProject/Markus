@@ -19,6 +19,7 @@ pt:
       other: "%{count} créditos"
     deadline_html: "Prazo usando todos <br> os restantes fichas <br> de carência"
     group_credits_html: "O seu grupo tem disponível <strong>%{available_grace_credits}</strong> créditos de tolerância."
+    no_group_yet: "UPDATE ME"
     overtime_message_with_credits_left: "A data de entrega para este projeto já passou. No entanto, você tem %{grace_credits_remaining} crédito (s) créditos de tolerância. Se você enviar arquivos, ou fazer alterações durante este período, vai ser gasto %{grace_credits_to_use} desses créditos."
     overtime_message_without_credits_left: "A data de entrega para este projeto já passou, e você já não são capazes de usar os dias de tolerância."
 
