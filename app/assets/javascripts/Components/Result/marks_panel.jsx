@@ -15,9 +15,10 @@ export class MarksPanel extends React.Component {
       // TODO: Convert this to pure React
       // Capture the mouse event to add "active-criterion" to the clicked element
       $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', (e) => {
-        if (!$(this).hasClass('unassigned')) {
+        let criterion = $(e.target).closest('.rubric_criterion, .flexible_criterion, .checkbox_criterion');
+        if (!criterion.hasClass('unassigned')) {
           e.preventDefault();
-          activeCriterion($(this));
+          activeCriterion(criterion);
         }
       });
     }
