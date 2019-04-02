@@ -778,9 +778,12 @@ class SubmissionsController < ApplicationController
     entries = revision.tree_at_path(full_path)
                       .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
                       .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
-      data = get_file_info(file_name, file_obj, grouping.assignment.id, revision.revision_identifier, path, grouping.id)
+      dirname, basename = File.split(file_name)
+      dirname = '' if dirname == '.'
+      data = get_file_info(basename, file_obj, grouping.assignment.id,
+                           revision.revision_identifier, dirname, grouping.id)
       next if data.nil?
-      data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
+      data[:key] = file_name
       data[:modified] = data[:last_revised_date]
       data[:size] = 1 # Dummy value
       data
