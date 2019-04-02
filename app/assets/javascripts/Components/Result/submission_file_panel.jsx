@@ -214,7 +214,7 @@ export class FileSelector extends React.Component {
       expand = [];
     }
     let selectorLabel;
-    if (this.props.fileData.files.length === 0 && this.props.fileData.directories.length === 0) {
+    if (!this.props.fileData.files.length && !this.props.fileData.directories.length) {
       selectorLabel = I18n.t('submissions.no_files_available');
     } else if (this.props.selectedFile !== null) {
       selectorLabel = this.props.selectedFile[0];
