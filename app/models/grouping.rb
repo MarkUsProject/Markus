@@ -803,7 +803,8 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_groups.name']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name',
+                     'test_groups.name']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
