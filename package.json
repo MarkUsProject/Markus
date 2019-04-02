@@ -10,7 +10,7 @@
     "mousetrap": "^1.6.3",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
-    "rails-ujs": "^5.2.2",
+    "rails-ujs": "^5.2.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-keyed-file-browser": "^1.4.3",
