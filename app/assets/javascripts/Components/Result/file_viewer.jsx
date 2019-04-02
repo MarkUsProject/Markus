@@ -20,7 +20,7 @@ export class FileViewer extends React.Component {
     if (this.props.selectedFile !== null) {
       this.set_submission_file(this.props.selectedFile);
     } else {
-      this.setState({loading: false, type: null})
+      this.setState({loading: false})
     }
   }
 
@@ -88,8 +88,6 @@ export class FileViewer extends React.Component {
     };
     if (this.state.loading) {
       return I18n.t('working');
-    } else if (this.state.type === null) {
-      return I18n.t('results.no_files')
     } else if (this.state.type === 'image') {
       return <ImageViewer
         url={this.state.url}

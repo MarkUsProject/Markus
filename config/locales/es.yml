@@ -172,7 +172,6 @@ es:
                                         revisado por %{reviewer_name}"
       successfully_changed:            "%{changed} resultados han sido actualizados exitosamente"
       could_not_find_file:             "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
-      no_files:                        "UPDATE ME"
 
     #Sutdent's View (student)
     student:
