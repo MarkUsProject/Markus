@@ -64,11 +64,10 @@ describe TagsController do
     end
 
     it 'accepts a valid YAML file' do
-      byebug
       post :yml_upload, params: { yml_tags: @file_good_yml, assignment_id: assignment.id }
 
       expect(response.status).to eq(302)
-      # expect(flash[:error]).to be_nil
+      expect(flash[:error]).to be_nil
       expect(response).to redirect_to @redirect
 
       expect(Tag.where({name: 'tag'}).take['description']).to eq('desc')
