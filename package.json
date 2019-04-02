@@ -2,7 +2,7 @@
   "dependencies": {
     "@rails/webpacker": "3.5",
     "babel-preset-react": "^6.24.1",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.8.0",
     "i18n-js": "^3.2.1",
     "jquery": "^3.3.1",
     "marked": "^0.6.1",
