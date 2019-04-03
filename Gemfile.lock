@@ -6,15 +6,10 @@ GIT
       activejob (>= 4.2)
       activesupport (>= 4.2)
 
-GIT
-  remote: https://github.com/palkan/action_policy.git
-  revision: 913b6623ec467b0d5b107a7b543d21c59724ae76
-  specs:
-    action_policy (0.2.4)
-
 GEM
   remote: https://rubygems.org/
   specs:
+    action_policy (0.3.0)
     actioncable (5.2.3)
       actionpack (= 5.2.3)
       nio4r (~> 2.0)
@@ -366,7 +361,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  action_policy!
+  action_policy
   activejob-status!
   activemodel-serializers-xml
   activerecord-import
