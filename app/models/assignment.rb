@@ -1321,7 +1321,7 @@ class Assignment < ApplicationRecord
       result
     when 'yml'
       begin
-        map = YAML::load(assignment_data).deep_symbolize_keys
+        map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?

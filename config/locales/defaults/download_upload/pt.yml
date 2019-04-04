@@ -15,7 +15,6 @@ pt:
 
   upload: "Carregar"
   upload_the: "Carregar %{item}"
-  upload_with_format: "Carregar em formato %{file}"
   upload_prompt_csv: "Selecione um arquivo CSV para carregar"
   upload_errors:
     invalid_csv_row_format: "Formato de linha inválida"

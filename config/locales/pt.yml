@@ -33,7 +33,6 @@ pt:
     shortened_date:     "Data<span class='required_field'>*</span>"
     remove_date:        "Remover data"
     manage_course_work: "Gerenciar trabalho do curso"
-    incorrect_format:   "Formato incorreto"
     required_fields: "Campos exigidos"
     assignment:
         hidden: "%{assignment_text} (oculto)"
@@ -117,8 +116,6 @@ pt:
     help:               "Ajuda"
     preview:            "Prever"
     encoding:           "Codificação"
-    select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
-    all_csv_file:       "Todos os campos: "
 
     copy: "Copy"
 

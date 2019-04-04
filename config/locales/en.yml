@@ -32,7 +32,6 @@ en:
     shortened_date:     "Date"
     remove_date:        "Remove Date"
     manage_course_work: "Manage Course Work"
-    incorrect_format:   "Incorrect format"
     required_fields: "Required Fields"
     assignment:
         hidden: "%{assignment_text} (hidden)"
@@ -117,8 +116,6 @@ en:
     help:               "Help"
     preview:            "Preview"
     encoding:           "Encoding"
-    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
-    all_csv_file:       "All fields: "
 
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
 
