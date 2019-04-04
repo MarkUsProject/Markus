@@ -157,7 +157,7 @@ class ResultsController < ApplicationController
                .where(
                  assignment_id: assignment.id,
                  ta_visible: true,
-                 'marks.result_id': result.id
+                 'marks.result_id': [nil, result.id]
                ).pluck_to_hash(*fields)
                .map { |h| h.merge(criterion_type: klass.name) }
         end
