@@ -1,6 +1,4 @@
 class CriteriaController < ApplicationController
-  include CriteriaHelper
-
   before_action :authorize_only_for_admin
 
   layout 'assignment_content'
@@ -125,53 +123,73 @@ class CriteriaController < ApplicationController
     end
   end
 
-  def download_yml
+  def download
     assignment = Assignment.find(params[:assignment_id])
-    yml_criteria = {}
-    assignment.get_criteria.each{ |criterion| yml_criteria = yml_criteria.merge(criterion.class.to_yml(criterion)) }
-    send_data(yml_criteria.to_yaml.gsub("---\n", ''),
-              type: 'text/plain',
+    criteria = assignment.get_criteria.sort_by(&:position)
+    yml_criteria = criteria.reduce({}) { |a, b| a.merge b.to_yml }
+    send_data yml_criteria.ya2yaml(hash_order: criteria.map(&:name)),
               filename: "#{assignment.short_identifier}_criteria.yml",
-              disposition: 'inline')
+              disposition: 'attachment'
   end
 
-  def upload_yml
+  def upload
     assignment = Assignment.find(params[:assignment_id])
     if assignment.released_marks.any?
       flash_message(:error, t('criteria.errors.messages.released_marks'))
       redirect_to action: 'index', id: assignment.id
       return
     end
-    # Check for errors in the request or in the file uploaded.
-    unless request.post?
-      redirect_to action: 'index', id: assignment.id
-      return
-    end
 
-    file = params[:yml_upload][:rubric]
-    unless file.blank?
-      begin
-        encoding = params[:encoding]
-        # Note: this parsing does not output entries with repeated names.
-        criteria = YAML::load(file.utf8_encode(encoding))
-      rescue Psych::SyntaxError => e
-        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') + '  ' +
-                      I18n.t('upload_errors.syntax_error', error: "#{e}"))
-        redirect_to action: 'index', id: assignment.id
-        return
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
+    else
+      if data[:type] == '.yml'
+        assignment.get_criteria.each(&:destroy)
+
+        # Create criteria based on the parsed data.
+        successes = 0
+        pos = 1
+        crit_format_errors = []
+        data[:contents].each do |criterion_yml|
+          type = criterion_yml[1]['type']
+          begin
+            if type.casecmp('rubric') == 0
+              criterion = RubricCriterion.load_from_yml(criterion_yml)
+            elsif type.casecmp('flexible') == 0
+              criterion = FlexibleCriterion.load_from_yml(criterion_yml)
+            elsif type.casecmp('checkbox') == 0
+              criterion = CheckboxCriterion.load_from_yml(criterion_yml)
+            else
+              raise RuntimeError
+            end
+
+            criterion.assignment_id = assignment.id
+            criterion.position = pos
+
+            if criterion.save
+              pos += 1
+              successes += 1
+            else # An error occurred. E.g., both visibility options are false.
+              raise RuntimeError
+            end
+          rescue RuntimeError
+            crit_format_errors << criterion_yml[0]
+          end
+        end
+        unless crit_format_errors.empty?
+          flash_message(:error,
+                        I18n.t('criteria.upload.error.invalid_format') + ' ' +
+                          crit_format_errors.join(', '))
+        end
+        if successes > 0
+          flash_message(:success,
+                        I18n.t('upload_success', count: successes))
+        end
       end
-      unless criteria
-        flash_message(:error, I18n.t('criteria.upload.error.invalid_format') +
-                      '  ' + I18n.t('criteria.upload.empty_error'))
-        redirect_to action: 'index', id: assignment.id
-        return
-      end
-
-      # Delete all current criteria for this assignment.
-      assignment.get_criteria.each(&:destroy)
-
-      # Create criteria based on the parsed data.
-      load_criteria(criteria, assignment)
     end
     redirect_to action: 'index', assignment_id: assignment.id
   end

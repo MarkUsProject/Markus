@@ -247,7 +247,6 @@ es:
       upload:
         error:
           invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
-          names_taken:    "Otros criterios ya tienen los siguientes nombres:"
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
       errors:
         messages:

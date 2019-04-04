@@ -3,39 +3,6 @@ fr:
     new:
       button: "Ajouter Critère"
 
-    upload:
-      yml_instructions_html: "
-        <ul>
-          <li><p>Le fichier doit avoir le format suivant pour un critère rubrique: <br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>Les options de visibilité sont en option.</p>
-          </p></li>
-          <li><p>Ci-dessous un critère souple:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>La description et la visibilité options sont facultatives.</p></li>
-          <li><p>Pour un critère de case à cocher et ce qui suit:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br>
-            &nbsp;&nbsp;ta_visible: true<br>
-            &nbsp;&nbsp;peer_visible: false<br></code>
-          <p>La description et la visibilité options sont facultatives.</p></li>
-        </ul>"
-
     # Short type names
     checkbox: "Checkbox"
     flexible: "Flexible"

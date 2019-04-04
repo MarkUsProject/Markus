@@ -145,18 +145,18 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_yml properly' do
-        expect(get: criteria_path + '/download_yml').to route_to(
+      it 'routes GET download properly' do
+        expect(get: criteria_path + '/download').to route_to(
           controller: criteria_ctrl,
-          action: 'download_yml',
+          action: 'download',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes POST yml_upload properly' do
-        expect(post: criteria_path + '/upload_yml').to route_to(
+      it 'routes POST upload properly' do
+        expect(post: criteria_path + '/upload').to route_to(
           controller: criteria_ctrl,
-          action: 'upload_yml',
+          action: 'upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
