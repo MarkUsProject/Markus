@@ -10,8 +10,7 @@
       <%= t('download_yml') %>
     </div>
     <%= link_to '',
-                { action: 'download_yml',
-                  id: @criteria },
+                { action: 'download' },
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>

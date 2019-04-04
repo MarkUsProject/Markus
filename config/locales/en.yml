@@ -227,11 +227,10 @@ en:
       upload:
         error:
           invalid_format: "The following criteria had invalid format:"
-          names_taken:    "The following criteria names are already taken:"
         empty_error:     "No criteria were found in the provided file."
       errors:
         messages:
-          released_marks:         "Cannot update criteria for an assignment with released marks"
+          released_marks:         "Cannot update criteria for an assignment with released marks."
 
     section:
       help:

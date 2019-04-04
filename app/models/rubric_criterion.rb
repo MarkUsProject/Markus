@@ -137,7 +137,7 @@ class RubricCriterion < Criterion
   # criterion_yml:: Information corresponding to a single RubricCriterion
   #                 in the following format:
   #                 criterion_name:
-  #                   weight: #
+  #                   max_mark: #
   #                   level_0:
   #                     name: level_name
   #                     description: level_description
@@ -174,21 +174,22 @@ class RubricCriterion < Criterion
   end
 
   # Returns a hash containing the information of a single rubric criterion.
-  def self.to_yml(criterion)
-    { "#{criterion.name}" =>
-      { 'max_mark'     => criterion.max_mark.to_f,
-        'level_0'      => { 'name'        => criterion.level_0_name,
-                            'description' => criterion.level_0_description },
-        'level_1'      => { 'name'        => criterion.level_1_name,
-                            'description' => criterion.level_1_description },
-        'level_2'      => { 'name'        => criterion.level_2_name,
-                            'description' => criterion.level_2_description },
-        'level_3'      => { 'name'        => criterion.level_3_name,
-                            'description' => criterion.level_3_description },
-        'level_4'      => { 'name'        => criterion.level_4_name,
-                            'description' => criterion.level_4_description },
-        'ta_visible'   => criterion.ta_visible,
-        'peer_visible' => criterion.peer_visible }
+  def to_yml
+    { self.name =>
+      { 'type'         => 'rubric',
+        'max_mark'     => self.max_mark.to_f,
+        'level_0'      => { 'name'        => self.level_0_name,
+                            'description' => self.level_0_description },
+        'level_1'      => { 'name'        => self.level_1_name,
+                            'description' => self.level_1_description },
+        'level_2'      => { 'name'        => self.level_2_name,
+                            'description' => self.level_2_description },
+        'level_3'      => { 'name'        => self.level_3_name,
+                            'description' => self.level_3_description },
+        'level_4'      => { 'name'        => self.level_4_name,
+                            'description' => self.level_4_description },
+        'ta_visible'   => self.ta_visible,
+        'peer_visible' => self.peer_visible }
     }
   end
 

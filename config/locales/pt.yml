@@ -224,7 +224,6 @@ pt:
       upload:
         error:
           invalid_format: "Os seguintes critérios deveriam formato inválido:"
-          names_taken:    "Os seguintes nomes de critérios são já tomada:"
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
       errors:
         messages:

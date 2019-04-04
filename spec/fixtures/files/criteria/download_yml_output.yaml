@@ -1,43 +1,45 @@
+---
 cr30:
-  max_mark: 5.0
   level_0:
-    name: What?
     description: Fail
+    name: What?
   level_1:
+    description: "Almost fail"
     name: Hmm
-    description: Almost fail
   level_2:
+    description: "Not bad"
     name: Average
-    description: Not bad
   level_3:
-    name: Good
     description: Alright
+    name: Good
   level_4:
-    name: Excellent
     description: Impressive
-  ta_visible: false
-  peer_visible: true
-cr20:
-  type: flexible
-  max_mark: 2.0
-  description: I am flexible
-  ta_visible: true
-  peer_visible: true
-cr100:
-  type: checkbox
+    name: Excellent
   max_mark: 5.0
-  description: I am checkbox
-  ta_visible: true
-  peer_visible: false
-cr80:
-  type: flexible
-  max_mark: 10.0
-  description: ''
-  ta_visible: true
   peer_visible: true
-cr60:
-  type: flexible
-  max_mark: 10.0
-  description: ''
+  ta_visible: false
+  type: rubric
+cr20:
+  description: "I am flexible"
+  max_mark: 2.0
+  peer_visible: true
   ta_visible: true
+  type: flexible
+cr100:
+  description: "I am checkbox"
+  max_mark: 5.0
   peer_visible: false
+  ta_visible: true
+  type: checkbox
+cr80:
+  description: ""
+  max_mark: 10.0
+  peer_visible: true
+  ta_visible: true
+  type: flexible
+cr60: 
+  description: ""
+  max_mark: 10.0
+  peer_visible: false
+  ta_visible: true
+  type: flexible
