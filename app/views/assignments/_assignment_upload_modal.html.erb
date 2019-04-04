@@ -7,39 +7,25 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'assignment_list',
-                             button_id: 'yml_upload csv_upload' %>
-  <p>
-    <%= t(:select_csv_file,
-          code: @default_fields[0..3].join(', ')).html_safe %>
-  </p>
-  <p>
-    <%= t(:all_csv_file) %>
-    <%= link_to '[...]', '#', onclick: 'document.getElementById("hide").classList.toggle("hidden")' %>
-    <span id='hide' class="hidden">
-      <code><%= @default_fields.join(', ') %></code>
-    </span>
-  </p>
+                             upload_id: 'upload_file',
+                             button_id: 'submit_upload' %>
 
-  <%= form_tag upload_assignment_list_assignments_path,
+  <%= t('upload_help_html', section_id: Assignment.name.pluralize.underscore.dasherize) %>
+
+  <%= form_tag upload_assignments_path,
                { multipart: true } do %>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
 
-    <%= file_field_tag 'assignment_list' %>
+    <%= file_field_tag 'upload_file', required: true %>
 
     <section class='dialog-actions'>
-      <%= hidden_field_tag :file_format, '', id: 'file_format' %>
-      <%= submit_tag t(:upload_with_format, file: 'YML'),
+      <%= submit_tag t(:upload),
                      disabled: true,
-                     id: 'yml_upload',
-                     onclick: 'document.getElementById("file_format").value = "yml"' %>
-      <%= submit_tag t(:upload_with_format, file: 'CSV'),
-                     disabled: true,
-                     id: 'csv_upload',
-                     onclick: 'document.getElementById("file_format").value = "csv"' %>
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'submit_upload' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>

@@ -177,7 +177,6 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    @default_fields = Assignment::DEFAULT_FIELDS
     if current_user.student?
       @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
       @assignments = Assignment.where(is_hidden: false).order(:id)
@@ -425,45 +424,45 @@ class AssignmentsController < ApplicationController
     @tas = @assignment.tas unless @assignment.nil?
   end
 
-  def download_assignment_list
-    output = Assignment.get_assignment_list(params[:file_format])
-    file_format = params[:file_format]
-    if %w(csv yml).include? file_format
+  def download
+    format = params[:format]
+    case format
+    when 'csv'
+      output = Assignment.get_assignment_list(format)
       send_data(output,
-                filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.#{file_format}",
-                type: "text/#{file_format}")
+                filename: 'assignments.csv',
+                type: 'text/csv',
+                disposition: 'attachment')
+    when 'yml'
+      output = Assignment.get_assignment_list(format)
+      send_data(output,
+                filename: 'assignments.yml',
+                type: 'text/yml',
+                disposition: 'attachment')
     else
-      flash_message(:error, t(:incorrect_format))
-      redirect_to action: 'index'
+      flash[:error] = t('download_errors.unrecognized_format', format: format)
+      redirect_to action: 'index', id: params[:id]
     end
   end
 
-  def upload_assignment_list
-    assignment_list = params[:assignment_list]
-    file_format = params[:file_format]
-    if assignment_list.blank?
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
-      redirect_to action: 'index'
-      return
-    end
-    encoding = params[:encoding]
-    assignment_list = assignment_list.utf8_encode(encoding)
-    case file_format
-    when 'csv'
-      result = Assignment.upload_assignment_list('csv', assignment_list)
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
-    when 'yml'
-      result = Assignment.upload_assignment_list('yml', assignment_list)
-      if result.is_a?(StandardError)
-        flash_message(:error, result.message)
-      end
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      flash_message(:error, t(:incorrect_format))
+      if data[:type] == '.csv'
+        result = Assignment.upload_assignment_list('csv', data[:file].read)
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      elsif data[:type] == '.yml'
+        result = Assignment.upload_assignment_list('yml', data[:contents])
+        if result.is_a?(StandardError)
+          flash_message(:error, result.message)
+        end
+      end
     end
     redirect_to action: 'index'
   end

@@ -18,7 +18,6 @@ en:
     For information about the file format(s) supported, please visit
     <a href=\"https://github.com/MarkUsProject/Markus/wiki/Importing-and-Exporting-Data#%{section_id}\">this page</a>."
   upload_the: "Upload %{item}"
-  upload_with_format: "Upload in %{file} format"
   upload_prompt_csv: "Select a CSV file to upload"
   upload_prompt_yml: "Select a YML file to upload"
   upload_errors:

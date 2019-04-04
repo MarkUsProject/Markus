@@ -19,7 +19,11 @@ describe AssignmentsController do
 
   let(:annotation_category) { FactoryBot.create(:annotation_category) }
 
-  context 'upload_assignment_list' do
+  context '#upload' do
+    include_examples 'a controller supporting upload' do
+      let(:params) { {} }
+    end
+
     before :each do
       # We need to mock the rack file to return its content when
       # the '.read' method is called to simulate the behaviour of
@@ -38,23 +42,13 @@ describe AssignmentsController do
         File.read(fixture_file_upload('files/assignments/form_invalid_column.csv', 'text/csv'))
       )
 
-      @file_bad_csv = fixture_file_upload('files/bad_csv.csv', 'text/xls')
-      allow(@file_bad_csv).to receive(:read).and_return(
-        File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv'))
-      )
-
-      @file_wrong_format = fixture_file_upload('files/wrong_csv_format.xls', 'text/xls')
-      allow(@file_wrong_format).to receive(:read).and_return(
-        File.read(fixture_file_upload('files/wrong_csv_format.xls', 'text/csv'))
-      )
-
       # This must line up with the second entry in the file_good
       @test_asn1 = 'ATest1'
       @test_asn2 = 'ATest2'
     end
 
     it 'accepts a valid file' do
-      post :upload_assignment_list, params: { assignment_list: @file_good, file_format: 'csv' }
+      post :upload, params: { upload_file: @file_good }
 
       expect(response.status).to eq(302)
       test1 = Assignment.find_by(short_identifier: @test_asn1)
@@ -69,7 +63,7 @@ describe AssignmentsController do
     end
 
     it 'accepts a valid YAML file' do
-      post :upload_assignment_list, params: { assignment_list: @file_good_yml, file_format: 'yml' }
+      post :upload, params: { upload_file: @file_good_yml }
 
       expect(response.status).to eq(302)
       test1 = Assignment.find_by_short_identifier(@test_asn1)
@@ -81,7 +75,7 @@ describe AssignmentsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload_assignment_list, params: { assignment_list: @file_invalid_column, file_format: 'csv' }
+      post :upload, params: { upload_file: @file_invalid_column }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -90,51 +84,22 @@ describe AssignmentsController do
       expect(response).to redirect_to(action: 'index',
                                       controller: 'assignments')
     end
-
-    it 'does not accept fileless submission' do
-      post :upload_assignment_list, params: { file_format: 'csv' }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'assignments')
-    end
-
-    it 'does not accept a non-csv file with .csv extension' do
-      post :upload_assignment_list, params: { assignment_list: @file_bad_csv, file_format: 'csv' }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'assignments')
-    end
-
-    it 'does not accept a .xls file' do
-      post :upload_assignment_list, params: { assignment_list: @file_wrong_format, file_format: 'csv' }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(flash[:error].map { |f| extract_text f })
-        .to eq([I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f })
-      expect(response).to redirect_to(action: 'index',
-                                      controller: 'assignments')
-    end
   end
 
   context 'CSV_Downloads' do
     let(:csv_options) do
-      { type: 'text/csv', filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv" }
+      { type: 'text/csv', filename: 'assignments.csv', disposition: 'attachment' }
     end
     let!(:assignment) { create(:assignment) }
 
     it 'responds with appropriate status' do
-      get :download_assignment_list, params: { file_format: 'csv' }
+      get :download, params: { format: 'csv' }
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download_assignment_list, params: { file_format: 'csv' }
+      get :download, params: { format: 'csv' }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -150,37 +115,37 @@ describe AssignmentsController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get :download_assignment_list, params: { file_format: 'csv' }
+      get :download, params: { format: 'csv' }
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :download_assignment_list, params: { file_format: 'csv' }
+      get :download, params: { format: 'csv' }
       expect(response.content_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get :download_assignment_list, params: { file_format: 'csv' }
+      get :download, params: { format: 'csv' }
       filename = response.header['Content-Disposition'].split.last.split('"').second
-      expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.csv"
+      expect(filename).to eq 'assignments.csv'
     end
   end
 
   context 'YML_Downloads' do
     let(:yml_options) do
-      { type: 'text/yml', filename: "assignments_list_#{Time.now.strftime('%Y%m%d')}.yml" }
+      { type: 'text/yml', filename: 'assignments.yml', disposition: 'attachment' }
     end
     let!(:assignment) { create(:assignment) }
 
     it 'responds with appropriate status' do
-      get :download_assignment_list, params: { file_format: 'yml' }
+      get :download, params: { format: 'yml' }
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download_assignment_list, params: { file_format: 'yml' }
+      get :download, params: { format: 'yml' }
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -201,20 +166,20 @@ describe AssignmentsController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get :download_assignment_list, params: { file_format: 'yml' }
+      get :download, params: { format: 'yml' }
     end
 
     # parse header object to check for the right content type
     it 'returns text/yml type' do
-      get :download_assignment_list, params: { file_format: 'yml' }
+      get :download, params: { format: 'yml' }
       expect(response.content_type).to eq 'text/yml'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get :download_assignment_list, params: { file_format: 'yml' }
+      get :download, params: { format: 'yml' }
       filename = response.header['Content-Disposition'].split.last.split('"').second
-      expect(filename).to eq "assignments_list_#{Time.now.strftime('%Y%m%d')}.yml"
+      expect(filename).to eq 'assignments.yml'
     end
   end
 end

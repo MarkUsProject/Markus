@@ -15,7 +15,6 @@ es:
 
   upload: "Subir"
   upload_the: "Subir %{item}"
-  upload_with_format: "Subir en formato %{file}"
   upload_prompt_csv: "Seleccione el archivo con formato CSV que desea subir"
   upload_errors:
     invalid_csv_row_format: "El formato de la fila es inválido"

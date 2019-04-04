@@ -15,7 +15,6 @@ fr:
 
   upload: "Envoyer"
   upload_the: "Envoyer %{item}"
-  upload_with_format: "Envoi au format %{file}"
   upload_prompt_csv: "Sélectionner un fichier CSV à envoyer"
   upload_errors:
     invalid_csv_row_format: "Invalid format de ligne"
