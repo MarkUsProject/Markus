@@ -12,8 +12,12 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event) => {
     event.preventDefault();
-    // TODO: remove the reference to a global variable here.
-    window.modal_addnew.open();
+    if (typeof this.props.uploadFileModalRef === 'undefined') {
+      // TODO: remove the reference to a global variable here.
+      window.modal_addnew.open();
+    } else {
+      this.props.uploadFileModalRef.current.open();
+    }
   };
 
   renderActionBar(selectedItem) {
