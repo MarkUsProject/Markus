@@ -14,10 +14,9 @@ class AutotestSetup
     # setup instance variables (mostly paths to directories)
     @assg_short_id = short_id
     root_dir = File.join('db', 'data', 'autotest_files', @assg_short_id)
-    script_dir = File.join(root_dir, 'test_scripts')
+    script_dir = File.join(root_dir, 'files')
     @test_scripts = Dir.glob(File.join(script_dir, '*'))
-    support_dir = File.join(root_dir, 'test_support_files')
-    @test_support_files = Dir.glob(File.join(support_dir, '*'))
+    @script_file = File.join(root_dir, 'specs.json')
     student_dir = File.join(root_dir, 'student_files')
     @student_paths = Dir.glob(File.join(student_dir, '*')).select {|d| File.directory?(d)}
     @req_files = required_files
@@ -46,12 +45,12 @@ class AutotestSetup
 
   def move_test_script_files
     # create new directories to put new autotest files into
-    test_file_destination = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
+    test_file_destination = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id, TestRun::FILES_DIR)
     FileUtils.makedirs test_file_destination
 
     # copy test scripts and support files into the destination directory
     FileUtils.cp @test_scripts, test_file_destination
-    FileUtils.cp @test_support_files, test_file_destination
+    FileUtils.cp @script_file, File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
   end
 
   def create_marking_scheme
