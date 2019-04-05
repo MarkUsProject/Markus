@@ -263,6 +263,7 @@ en:
       need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
       tokens_available_on: "Tokens available starting on"
+      loading_specs: "Tester settings are being loaded, please refresh the page in a minute."
       files: "Test Files"
       specs: "Test Specifications"
       token:

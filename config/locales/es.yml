@@ -286,6 +286,7 @@ es:
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
       tokens_available_on:                "Las fichas disponibles iniciaron en"
+      loading_specs:                      "UPDATE ME"
       files:                              "UPDATE ME"
       specs:                              "UPDATE ME"
       token:
