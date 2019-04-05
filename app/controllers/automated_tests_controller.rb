@@ -8,8 +8,9 @@ class AutomatedTestsController < ApplicationController
 
   def update
     assignment = Assignment.find(params[:assignment_id])
-    test_specs_path = File.join(TestRun::ASSIGNMENTS_DIR, assignment.short_identifier, TestRun::SPECS_FILE)
-    test_specs = JSON.parse(File.read(test_specs_path))
+    test_specs_path = assignment.autotest_settings_file
+    test_specs = JSON.parse(params[:schema_form_data])
+    File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
     begin
       Assignment.transaction do
         # update assignment autotest parameters
@@ -66,7 +67,6 @@ class AutomatedTestsController < ApplicationController
       FileUtils.mkdir_p @assignment.autotest_path
     end
     @assignment.test_groups.build
-    @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
 
   def student_interface
@@ -120,12 +120,32 @@ class AutomatedTestsController < ApplicationController
     head :no_content
   end
 
-  def populate_file_manager
+  def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    data = assignment.autotest_files.map do |file|
+    testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    files_data = assignment.autotest_files.map do |file|
       { key: file, size: 1,
         url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
     end
+    if File.exist? testers_schema_path
+      schema_data = JSON.parse(File.open(testers_schema_path, 'r') { |f| f.read })
+      schema_data['definitions']['files_list']['enum'] = files_data.map { |data| data[:key] }
+      schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
+      schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
+    else
+      flash_now(:notice, I18n.t('automated_tests.loading_specs'))
+      AutotestTestersJob.perform_later
+      schema_data = {}
+    end
+    test_specs_path = assignment.autotest_settings_file
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, 'r') { |f| f.read }) : Hash.new
+    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s)).transform_keys(&:to_sym)
+    if assignment_data[:token_start_date].nil?
+      assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
+    else
+      assignment_data[:token_start_date] = assignment_data[:token_start_date].strftime('%Y-%m-%d %l:%M %p')
+    end
+    data = {schema: schema_data, files: files_data, formData: test_specs}.merge(assignment_data)
     render json: data
   end
 
@@ -146,11 +166,11 @@ class AutomatedTestsController < ApplicationController
 
     new_files.each do |f|
       if f.size > MarkusConfigurator.markus_config_max_file_size
-        flash_message(:error, t('student.submission.file_too_large', file_name: f.original_filename,
+        flash_now(:error, t('student.submission.file_too_large', file_name: f.original_filename,
                                 max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)))
         next
       elsif f.size == 0
-        flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+        flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
       file_path = File.join(assignment.autotest_path, f.original_filename)
       file_content = f.read
@@ -161,21 +181,35 @@ class AutomatedTestsController < ApplicationController
       file_path = File.join(assignment.autotest_path, f)
       File.delete(file_path)
     end
-
-    flash_message(:success, t('update_files.success'))
-    if new_files
-      redirect_back(fallback_location: root_path)
-    else
-      head :ok
-    end
+    head :ok
   end
 
   private
 
+  def extra_test_group_schema(assignment)
+    criterion_names, criterion_disambig = assignment.get_criteria.map do |c|
+      [c.name, "#{c.id}_#{c.class.name}"]
+    end.transpose
+    { type: :object,
+      properties: {
+      display_output: {
+        type: :string,
+        enum: TestGroup.display_outputs.keys
+      },
+      criterion: {
+        type: :string,
+        enum: criterion_disambig || [],
+        enumNames: criterion_names || []
+      }
+    }}
+  end
+
+  def required_params
+    [:enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
+     :non_regenerating_tokens, :unlimited_tokens]
+  end
+
   def assignment_params
-    params.require(:assignment).permit(
-      :enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
-      :non_regenerating_tokens, :unlimited_tokens
-    )
+    params.require(:assignment).permit(*required_params)
   end
 end

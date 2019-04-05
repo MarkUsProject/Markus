@@ -12,6 +12,7 @@ class TestRun < ApplicationRecord
   ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments').freeze
   STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students').freeze
   SPECS_FILE = 'specs.json'.freeze
+  FILES_DIR = 'files'.freeze
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
@@ -53,6 +54,10 @@ class TestRun < ApplicationRecord
 
   def test_categories
     [self.user.type.downcase]
+  end
+
+  def self.all_test_categories
+    [Admin.name.downcase, Student.name.downcase]
   end
 
   def create_test_group_result(test_group, time: 0, extra_info: nil)
