@@ -61,7 +61,7 @@ div#autotest-manager {
     fieldset.field>legend {
       font: 600 1.5em $fonts;
     }
-    fieldset>div.form-group>label.control-label {
+    fieldset>div.form-group>.control-label {
       font: 600 1.25em $fonts;
     }
     fieldset {
@@ -104,7 +104,7 @@ div#autotest-manager {
     input[type="checkbox"] {
       margin-right: 0.25em;
     }
-    .student_test_options>label.inline_label {
+    .student_test_options>.inline_label {
       margin-right: 1em;
       input {
         margin-left: 0.25em;

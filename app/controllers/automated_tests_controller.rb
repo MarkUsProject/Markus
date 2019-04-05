@@ -128,7 +128,7 @@ class AutomatedTestsController < ApplicationController
         url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
     end
     if File.exist? testers_schema_path
-      schema_data = JSON.parse(File.open(testers_schema_path, 'r') { |f| f.read })
+      schema_data = JSON.parse(File.open(testers_schema_path, &:read))
       schema_data['definitions']['files_list']['enum'] = files_data.map { |data| data[:key] }
       schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
       schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
@@ -138,14 +138,14 @@ class AutomatedTestsController < ApplicationController
       schema_data = {}
     end
     test_specs_path = assignment.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, 'r') { |f| f.read }) : Hash.new
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
     assignment_data = assignment.attributes.slice(*required_params.map(&:to_s)).transform_keys(&:to_sym)
     if assignment_data[:token_start_date].nil?
       assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
     else
       assignment_data[:token_start_date] = assignment_data[:token_start_date].strftime('%Y-%m-%d %l:%M %p')
     end
-    data = {schema: schema_data, files: files_data, formData: test_specs}.merge(assignment_data)
+    data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
   end
 
@@ -192,16 +192,16 @@ class AutomatedTestsController < ApplicationController
     end.transpose
     { type: :object,
       properties: {
-      display_output: {
-        type: :string,
-        enum: TestGroup.display_outputs.keys
-      },
-      criterion: {
-        type: :string,
-        enum: criterion_disambig || [],
-        enumNames: criterion_names || []
-      }
-    }}
+        display_output: {
+          type: :string,
+          enum: TestGroup.display_outputs.keys
+        },
+        criterion: {
+          type: :string,
+          enum: criterion_disambig || [],
+          enumNames: criterion_names || []
+        }
+      } }
   end
 
   def required_params
