@@ -279,7 +279,6 @@ es:
       run_tests:                          "Lanzar pruebas"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
-      fetch_testers:                      "UPDATE ME"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
                                            pruebas."
@@ -288,7 +287,6 @@ es:
       tokens_available_on:                "Las fichas disponibles iniciaron en"
       loading_specs:                      "UPDATE ME"
       files:                              "UPDATE ME"
-      specs:                              "UPDATE ME"
       token:
         start_date: "Las fichas disponibles empiezan en:"
         available: "Fichas disponibles:"
