@@ -1075,8 +1075,18 @@ class Assignment < ApplicationRecord
     File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
   end
 
+  def autotest_files_dir
+    File.join(autotest_path, TestRun::FILES_DIR)
+  end
+
   def autotest_files
-    Dir.entries(autotest_path) - ['.', '..']
+    files_dir = autotest_files_dir
+    return [] unless Dir.exist? files_dir
+    Dir.entries(files_dir) - ['.', '..']
+  end
+
+  def autotest_settings_file
+    File.join(autotest_path, TestRun::SPECS_FILE)
   end
 
   # Retrieve current grader data.
