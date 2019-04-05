@@ -248,6 +248,8 @@ pt:
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
+      tokens_available_on: "UPDATE ME"
+      loading_specs: "UPDATE ME"
       files: "UPDATE ME"
       specs: "UPDATE ME"
       token:

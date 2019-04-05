@@ -254,6 +254,8 @@ fr:
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
       need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté."
+      tokens_available_on: "UPDATE ME"
+      loading_specs: "UPDATE ME"
       files: "UPDATE ME"
       specs: "UPDATE ME"
       token:
