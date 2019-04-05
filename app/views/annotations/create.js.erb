@@ -4,7 +4,7 @@ resultComponent.addAnnotation({
   filename: '<%= @annotation.submission_file.filename %>',
   path: '<%= @annotation.submission_file.path.split('/', 2)[1] %>',
   submission_file_id: <%= @annotation.submission_file_id %>,
-  content: '<%= @annotation.annotation_text.escape_newlines %>',
+  content: '<%= @annotation.annotation_text.escape_content %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
   annotation_text_id: <%= @annotation.annotation_text_id %>,
   type: '<%= @annotation.class.name %>',

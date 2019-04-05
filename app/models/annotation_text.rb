@@ -24,7 +24,8 @@ class AnnotationText < ApplicationRecord
     content.gsub(/\n/, '<br/>').html_safe
   end
 
-  def escape_newlines
-    content.gsub(/\r?\n/, '\\n')
+  def escape_content
+    content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
+           .gsub(/\r?\n/, '\\n')
   end
 end
