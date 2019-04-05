@@ -37,6 +37,13 @@ class Result extends React.Component {
   componentDidMount() {
     this.fetchData();
     window.modal = new ModalMarkus('#annotation_dialog');
+    // When mod+enter is pressed and the annotation modal is open, submit it
+    Mousetrap(document.getElementById('annotation_dialog')).bind('mod+enter', function(e) {
+      if ($('#annotation_dialog:visible').length) {
+        e.preventDefault();
+        $('#submit_annotation').click();
+      }
+    });
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_create_new_tag = new ModalMarkus('#create_new_tag');
   }

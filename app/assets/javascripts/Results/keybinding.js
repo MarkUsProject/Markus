@@ -84,15 +84,6 @@ Mousetrap.bind('shift+n', function(e) {
   }
 });
 
-// When mod+enter is pressed and the annotation modal is open, submit it
-var aside = document.getElementById('annotation_dialog');
-Mousetrap(aside).bind('mod+enter', function(e) {
-  if ($('#annotation_dialog:visible').length) {
-    e.preventDefault();
-    $('#submit_annotation').click();
-  }
-});
-
 // When alt+enter is pressed, toggle fullscreen mode
 Mousetrap.bind('alt+enter', function(e) {
     resultComponent.toggleFullscreen();
