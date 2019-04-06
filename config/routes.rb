@@ -24,6 +24,7 @@ Rails.application.routes.draw do
           member do
             get 'annotations'
             post 'add_annotations'
+            post 'add_members'
             put 'update_marks'
             put 'update_marking_state'
           end

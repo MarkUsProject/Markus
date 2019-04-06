@@ -75,17 +75,11 @@ class Group < ApplicationRecord
 
   # Return a repository object, if possible
   def repo
-    unless Repository.get_class.repository_exists?(repo_path)
-      raise 'Repository not found'
-    end
     Repository.get_class.open(repo_path)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
-    unless Repository.get_class.repository_exists?(repo_path)
-      raise 'Repository not found'
-    end
     Repository.get_class.access(repo_path, &block)
   end
 
