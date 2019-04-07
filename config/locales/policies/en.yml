@@ -5,7 +5,7 @@ en:
         before_due_date?: "You cannot run tests because the due date for this assignment has passed."
         enabled?: "You cannot run tests because they are not enabled for this assignment."
         not_a_ta?: "You cannot run tests because graders are not allowed to."
-        test_scripts_uploaded?: "You cannot run tests because there are no test scripts configured."
+        test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
       grouping:
         member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
