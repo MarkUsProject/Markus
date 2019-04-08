@@ -6,6 +6,7 @@ import { SubmissionFileManager } from './submission_file_manager'
 class RepoBrowser extends React.Component {
   constructor(props) {
     super(props);
+    this.submissionFileManagerRef = React.createRef();
     this.state = {
       revision_identifier: props.collected_revision_id,
       revisions: []
@@ -14,6 +15,7 @@ class RepoBrowser extends React.Component {
 
   componentDidMount() {
     this.fetchRevisions();
+    this.submissionFileManagerRef.current.fetchData();
   }
 
   // Update the list of revisions and set the currently-viewed revision to the most recent one.
@@ -76,10 +78,12 @@ class RepoBrowser extends React.Component {
           </select>
         </h3>
         <SubmissionFileManager
+          ref={this.submissionFileManagerRef}
           assignment_id={this.props.assignment_id}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
           onChange={this.fetchRevisions}
+          fetchOnMount={false}
         />
         <ManualCollectionForm
           assignment_id={this.props.assignment_id}
