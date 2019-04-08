@@ -77,14 +77,6 @@ describe Group do
     end
   end
 
-  describe '#repo' do
-    let(:group) { create(:group) }
-
-    it 'returns a repository object' do
-      expect(group.repo).to be_truthy
-    end
-  end
-
   describe '#access_repo' do
     context 'when repository exists' do
       let(:group) { create(:group) }

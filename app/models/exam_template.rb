@@ -176,71 +176,72 @@ class ExamTemplate < ApplicationRecord
         )
 
         # add assignment files based on template divisions
-        repo = group.repo
-        revision = repo.get_latest_revision
-        assignment_folder = self.assignment.repository_folder
-        txn = repo.get_transaction(Admin.first.user_name)
-        self.template_divisions.each do |template_division|
-          if template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
-            submission_file = CombinePDF.new
-            (template_division.start..template_division.end).each do |i|
-              path = File.join(incomplete_dir, "#{i}.pdf")
-              if File.exists? path
-                pdf = CombinePDF.load path
-                submission_file << pdf.pages[0]
+        group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          assignment_folder = self.assignment.repository_folder
+          txn = repo.get_transaction(Admin.first.user_name)
+          self.template_divisions.each do |template_division|
+            if template_division.start <= page_num.to_i && page_num.to_i <= template_division.end
+              submission_file = CombinePDF.new
+              (template_division.start..template_division.end).each do |i|
+                path = File.join(incomplete_dir, "#{i}.pdf")
+                if File.exists? path
+                  pdf = CombinePDF.load path
+                  submission_file << pdf.pages[0]
+                end
+              end
+              target_path = File.join(assignment_folder, "#{template_division.label}.pdf")
+              if revision.path_exists? target_path
+                txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
+                            'application/pdf', revision.revision_identifier)
+              else
+                txn.add(target_path, submission_file.to_pdf)
               end
             end
-            target_path = File.join(assignment_folder, "#{template_division.label}.pdf")
-            if revision.path_exists? target_path
-              txn.replace(File.join(assignment_folder, "#{template_division.label}.pdf"), submission_file.to_pdf,
-                          'application/pdf', revision.revision_identifier)
-            else
-              txn.add(target_path, submission_file.to_pdf)
-            end
           end
-        end
 
-        # update COVER.pdf if error page given is first page of exam template
-        if page_num.to_i == 1
-          path = File.join(incomplete_dir, "#{page_num}.pdf")
-          if File.exists? path
-            cover_pdf = CombinePDF.new
-            pdf = CombinePDF.load path
-            cover_pdf << pdf.pages[0]
-            target_path = File.join(assignment_folder, 'COVER.pdf')
-            if revision.path_exists? target_path
-              txn.replace(target_path, cover_pdf.to_pdf,
-                          'application/pdf', revision.revision_identifier)
-            else
-              txn.add(target_path, cover_pdf.to_pdf)
-            end
-          end
-        end
-
-        # update EXTRA.pdf
-        extra_pdf = CombinePDF.new
-        if Dir.exists?(incomplete_dir)
-          Dir.entries(incomplete_dir).sort.each do |filename|
-            path = File.join(incomplete_dir, filename)
-            basename = File.basename filename # For example, 3 from 3.pdf
-            page_number = basename.to_i
-            # if it is an extra page, add it to extra_pdf
-            if File.exists?(path) && !filename.start_with?('.') &&
-              template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
+          # update COVER.pdf if error page given is first page of exam template
+          if page_num.to_i == 1
+            path = File.join(incomplete_dir, "#{page_num}.pdf")
+            if File.exists? path
+              cover_pdf = CombinePDF.new
               pdf = CombinePDF.load path
-              extra_pdf << pdf.pages[0]
+              cover_pdf << pdf.pages[0]
+              target_path = File.join(assignment_folder, 'COVER.pdf')
+              if revision.path_exists? target_path
+                txn.replace(target_path, cover_pdf.to_pdf,
+                            'application/pdf', revision.revision_identifier)
+              else
+                txn.add(target_path, cover_pdf.to_pdf)
+              end
             end
           end
-          target_path = File.join(assignment_folder, 'EXTRA.pdf')
-          if revision.path_exists? target_path
-            txn.replace(target_path, extra_pdf.to_pdf,
-                        'application/pdf', revision.revision_identifier)
-          else
-            txn.add(target_path, extra_pdf.to_pdf)
-          end
-        end
 
-        repo.commit(txn)
+          # update EXTRA.pdf
+          extra_pdf = CombinePDF.new
+          if Dir.exists?(incomplete_dir)
+            Dir.entries(incomplete_dir).sort.each do |filename|
+              path = File.join(incomplete_dir, filename)
+              basename = File.basename filename # For example, 3 from 3.pdf
+              page_number = basename.to_i
+              # if it is an extra page, add it to extra_pdf
+              if File.exists?(path) && !filename.start_with?('.') &&
+                template_divisions.all? { |division| division.start > page_number || division.end < page_number } && page_number != 1
+                pdf = CombinePDF.load path
+                extra_pdf << pdf.pages[0]
+              end
+            end
+            target_path = File.join(assignment_folder, 'EXTRA.pdf')
+            if revision.path_exists? target_path
+              txn.replace(target_path, extra_pdf.to_pdf,
+                          'application/pdf', revision.revision_identifier)
+            else
+              txn.add(target_path, extra_pdf.to_pdf)
+            end
+          end
+
+          repo.commit(txn)
+        end
       end
     end
   end

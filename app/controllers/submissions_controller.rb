@@ -51,65 +51,60 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @collected_revision = nil
     @revision = nil
-    repo = @grouping.group.repo
-    collected_submission = @grouping.current_submission_used
+    @grouping.group.access_repo do |repo|
+      collected_submission = @grouping.current_submission_used
 
-    # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
-    assignment_path = @grouping.assignment.repository_folder
-    assignment_revisions = []
-    all_revisions = repo.get_all_revisions
-    all_revisions.each do |revision|
-      # store the assignment-relevant revisions
-      next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
-      assignment_revisions << revision
-      # store the collected revision
-      if @collected_revision.nil? && collected_submission&.revision_identifier == revision.revision_identifier.to_s
-        @collected_revision = revision
-      end
-      # store the displayed revision
-      if @revision.nil?
-        if (params[:revision_identifier] &&
-             params[:revision_identifier] == revision.revision_identifier.to_s) ||
-           (params[:revision_timestamp] &&
-             Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
-          @revision = revision
+      # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
+      assignment_path = @grouping.assignment.repository_folder
+      assignment_revisions = []
+      all_revisions = repo.get_all_revisions
+      all_revisions.each do |revision|
+        # store the assignment-relevant revisions
+        next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
+        assignment_revisions << revision
+        # store the collected revision
+        if @collected_revision.nil? && collected_submission&.revision_identifier == revision.revision_identifier.to_s
+          @collected_revision = revision
+        end
+        # store the displayed revision
+        if @revision.nil?
+          if (params[:revision_identifier] &&
+            params[:revision_identifier] == revision.revision_identifier.to_s) ||
+            (params[:revision_timestamp] &&
+              Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
+            @revision = revision
+          end
         end
       end
+      # find another relevant revision to display if @revision.nil?
+      # 1) the latest assignment revision, or 2) the first repo revision
+      @revision ||= assignment_revisions[0] || all_revisions[-1]
     end
-    # find another relevant revision to display if @revision.nil?
-    # 1) the latest assignment revision, or 2) the first repo revision
-    @revision ||= assignment_revisions[0] || all_revisions[-1]
-
-    repo.close
-
     render layout: 'assignment_content'
   end
 
   def revisions
     grouping = Grouping.find(params[:grouping_id])
-    repo = grouping.group.repo
-
-    # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
-    assignment_path = grouping.assignment.repository_folder
-    assignment_revisions = []
-    all_revisions = repo.get_all_revisions
-    all_revisions.each do |revision|
-      # store the assignment-relevant revisions
-      next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
-      assignment_revisions << revision
+    grouping.group.access_repo do |repo|
+      # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
+      assignment_path = grouping.assignment.repository_folder
+      assignment_revisions = []
+      all_revisions = repo.get_all_revisions
+      all_revisions.each do |revision|
+        # store the assignment-relevant revisions
+        next if !revision.path_exists?(assignment_path) || !revision.changes_at_path?(assignment_path)
+        assignment_revisions << revision
+      end
+      revisions_history = assignment_revisions.map do |revision|
+        {
+          id: revision.revision_identifier.to_s,
+          id_ui: revision.revision_identifier_ui,
+          timestamp: l(revision.timestamp),
+          server_timestamp: l(revision.server_timestamp)
+        }
+      end
+      render json: revisions_history
     end
-    revisions_history = assignment_revisions.map do |revision|
-      {
-        id: revision.revision_identifier.to_s,
-        id_ui: revision.revision_identifier_ui,
-        timestamp: l(revision.timestamp),
-        server_timestamp: l(revision.server_timestamp)
-      }
-    end
-
-    repo.close
-
-    render json: revisions_history
   end
 
   def file_manager

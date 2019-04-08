@@ -574,16 +574,19 @@ class Grouping < ApplicationRecord
   # Returns a list of missing assignment (required) files.
   # A repo revision can be passed directly if the caller already opened the repo.
   def missing_assignment_files(revision = nil)
-    repo = nil
+    get_missing_assignment_files = lambda do |open_revision|
+      assignment.assignment_files.reject do |assignment_file|
+        open_revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
+      end
+    end
     if revision.nil?
-      repo = group.repo
-      revision = repo.get_latest_revision
+      group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        get_missing_assignment_files.call revision
+      end
+    else
+      get_missing_assignment_files.call revision
     end
-    missing_assignment_files = assignment.assignment_files.reject do |assignment_file|
-      revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
-    end
-    repo&.close
-    missing_assignment_files
   end
 
   # Finds the correct due date (section or not) and checks if the last commit is after it.

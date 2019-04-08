@@ -969,11 +969,6 @@ class Assignment < ApplicationRecord
     File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
   end
 
-  # Return a repository object, if possible
-  def starter_code_repo
-    Repository.get_class.open(starter_code_repo_path)
-  end
-
   #Yields a repository object, if possible, and closes it after it is finished
   def access_starter_code_repo(&block)
     Repository.get_class.access(starter_code_repo_path, &block)
