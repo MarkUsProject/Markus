@@ -123,8 +123,8 @@ class SubmissionFile < ApplicationRecord
     end
 
     if repo.nil?
-      retrieved_file = student_group.access_repo do |repo|
-        get_retrieved_file.call(repo)
+      retrieved_file = student_group.access_repo do |open_repo|
+        get_retrieved_file.call(open_repo)
       end
     else
       retrieved_file = get_retrieved_file.call(repo)

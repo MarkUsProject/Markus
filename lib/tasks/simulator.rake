@@ -164,7 +164,6 @@ namespace :markus do
             assignment.save!
 
             grouping.group.access_repo do |assignment_repo|
-
               txn = assignment_repo.get_transaction(student_user_name)
               file_data = %|class assignment {
         // This method should sum only positive values
@@ -180,7 +179,7 @@ namespace :markus do
           System.out.println("The sum of the positive values is: " + sum);
         }
       }|
-              folder_name = assignment_short_identifier + "/" + assignment_short_identifier + ".java"
+              folder_name = assignment_short_identifier + '/' + assignment_short_identifier + '.java'
               puts folder_name
               txn.add(folder_name, file_data, 'text/java')
               assignment_repo.commit(txn)

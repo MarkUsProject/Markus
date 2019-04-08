@@ -169,9 +169,8 @@ describe ResultsController do
                                              annotation_text: create(:annotation_text, user: admin),
                                              result: complete_result,
                                              creator: admin
-        grouping.group.access_repo do |repo|
-          file_name_snippet = "#{assignment.short_identifier}_#{grouping.group.group_name}" +
-            "_r#{repo.get_latest_revision.revision_identifier}"
+        file_name_snippet = grouping.group.access_repo do |repo|
+          "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
         end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
