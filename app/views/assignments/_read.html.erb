@@ -26,7 +26,7 @@
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
         <%# Relative remaining grace credits for the grouping %>
         <span class='prop_label'>
-            <%= t('grace_period_submission_rules.deadline_html') %>
+          <%= t('grace_period_submission_rules.deadline_html') %>
         </span>
         <% if @grouping.nil? %>
           <%= t('grace_period_submission_rules.no_group_yet') %>
