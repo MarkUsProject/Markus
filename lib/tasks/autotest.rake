@@ -39,18 +39,18 @@ class AutotestSetup
   def clear_old_files
     # remove existing files to create room for new ones
     # remove test scripts
-    autotest_dir = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
+    autotest_dir = @assignment.autotest_path
     FileUtils.remove_dir(autotest_dir, force: true)
   end
 
   def move_test_script_files
     # create new directories to put new autotest files into
-    test_file_destination = File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id, TestRun::FILES_DIR)
+    test_file_destination = @assignment.autotest_files_dir
     FileUtils.makedirs test_file_destination
 
     # copy test scripts and support files into the destination directory
     FileUtils.cp @test_scripts, test_file_destination
-    FileUtils.cp @script_file, File.join(TestRun::ASSIGNMENTS_DIR, @assg_short_id)
+    FileUtils.cp @script_file, @assignment.autotest_path
   end
 
   def create_marking_scheme

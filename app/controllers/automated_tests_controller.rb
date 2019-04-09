@@ -9,7 +9,7 @@ class AutomatedTestsController < ApplicationController
   def update
     assignment = Assignment.find(params[:assignment_id])
     test_specs_path = assignment.autotest_settings_file
-    test_specs = JSON.parse(params[:schema_form_data])
+    test_specs = params[:schema_form_data]
     File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
     begin
       Assignment.transaction do
@@ -139,7 +139,7 @@ class AutomatedTestsController < ApplicationController
     end
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
-    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s)).transform_keys(&:to_sym)
+    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s))
     if assignment_data[:token_start_date].nil?
       assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
     else
@@ -172,22 +172,22 @@ class AutomatedTestsController < ApplicationController
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
-      file_path = File.join(assignment.autotest_path, f.original_filename)
+      file_path = File.join(assignment.autotest_files_dir, f.original_filename)
       file_content = f.read
       mode = SubmissionFile.is_binary?(file_content) ? 'wb' : 'w'
       File.write(file_path, file_content, mode: mode)
     end
     delete_files.each do |f|
-      file_path = File.join(assignment.autotest_path, f)
+      file_path = File.join(assignment.autotest_files_dir, f)
       File.delete(file_path)
     end
-    head :ok
+    render partial: 'update_files'
   end
 
   private
 
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_disambig = assignment.get_criteria.map do |c|
+    criterion_names, criterion_disambig = assignment.get_criteria(:ta).map do |c|
       [c.name, "#{c.id}_#{c.class.name}"]
     end.transpose
     { type: :object,
