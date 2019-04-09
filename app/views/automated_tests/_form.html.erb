@@ -6,18 +6,26 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeAutotestManager(document.getElementById('autotest-manager'),
-                                { assignment_id: <%= @assignment.id %>,
-                                  authenticity_token: '<%= form_authenticity_token(
-                                    form_options: {action: manage_assignment_automated_tests_path, method: 'post'}) %>'
-                                });
-
+      window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),
+        { assignment_id: <%= @assignment.id %>});
     });
   </script>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 <% end %>
+
+<aside class='dialog' id='addnew_dialog'>
+  <h2><%= t('add_new') %></h2>
+  <%= form_with url: upload_files_assignment_automated_tests_path(assignment_id: @assignment.id),
+               multipart: true, id: 'file_form', remote: true do |f| %>
+    <%= f.file_field :new_files, name: 'new_files[]', multiple: true %>
+    <section class='dialog-actions'>
+      <%= f.submit t(:submit), onclick: 'modal_addnew.close();' %>
+      <%= f.button t(:close), onclick: 'modal_addnew.close(); return false;' %>
+    </section>
+  <% end %>
+</aside>
 
 <div class="wrapLeft">
   <%= render partial: 'shared/flash_message' %>

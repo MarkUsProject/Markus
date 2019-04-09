@@ -4,56 +4,49 @@ import React from 'react';
 
 class Datepicker extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      date: props.initial_date,
-      disabled: props.disabled || false,
-      warn_before_now: props.warn_before_now || false
-    }
+  static defaultProps = {
+    controlType: 'select',
+    showTime: false,
+    numberOfMonths: 2,
+    secondMax: 0,
+    showTimezone: false,
   };
 
-  onChange = (date) => {
-    this.setState({date: date});
-    if (typeof this.props.onChange === "function") {
-      this.props.onChange(date)
-    }
-  };
-
-  setDate = (date) => {
-    this.onChange(date)
-  };
-
-  checkStartDate = () => {
-    if (this.props.warn_before_now && moment(this.state.date, I18n.t('time.format_string.js')).isBefore(moment())) {
+  handleClose = () => {
+    if (this.props.warn_before_now && moment(this.props.date, I18n.t('time.format_string.js')).isBefore(moment())) {
       alert(I18n.t('past_start_date_edit_warning'));
     }
+    if (typeof this.props.onClose === 'function') {
+      this.props.onClose();
+    }
   };
 
-  setDisabled = (disabled) => {
-    this.setState({disabled: disabled})
+  handleSelect = () => {
+    if (typeof this.props.onChange === 'function') {
+      this.props.onChange();
+    }
   };
 
   componentDidMount() {
     $('.datepicker').datetimepicker({
-      controlType:      this.props.controlType || 'select',
-      showTime:         this.props.showTime || false,
-      numberOfMonths:   this.props.numberOfMonths || 2,
-      secondMax:        this.props.secondMax || 0,
-      onSelect:         this.onChange,
-      onClose:          this.props.onClose || this.checkStartDate,
-      dateFormat:       this.props.dateFormat || I18n.t('date.format_string.datetimepicker'),
-      timeFormat:       this.props.timeFormat || I18n.t('time.format_string.time_only'),
-      showTimezone:     this.props.showTimezone || false,
-      monthNames:       this.props.monthNames || I18n.t('date.month_names').slice(1), // Drop first null element
-      dayNames:         this.props.dayNames || I18n.t('date.day_names'),
-      dayNamesMin:      this.props.dayNamesMin || I18n.t('date.abbr_day_names'),
-      hourText:         this.props.hourText || I18n.t('datetime.prompts.hour'),
-      minuteText:       this.props.minuteText || I18n.t('datetime.prompts.minute'),
-      timeText:         this.props.timeText || I18n.t('datetime.prompts.time'),
-      prevText:         this.props.prevText || I18n.t('time.prev'),
-      nextText:         this.props.nextText || I18n.t('time.next'),
-      closeText:        this.props.closeText || I18n.t('close')
+      controlType:      this.props.controlType,
+      showTime:         this.props.showTime,
+      numberOfMonths:   this.props.numberOfMonths,
+      secondMax:        this.props.secondMax,
+      onSelect:         this.handleSelect,
+      onClose:          this.handleClose,
+      showTimezone:     this.props.showTimezone,
+      dateFormat: typeof this.props.dateFormat === 'undefined' ? I18n.t('date.format_string.datetimepicker') : this.props.dateFormat,
+      timeFormat: typeof this.props.timeFormat === 'undefined' ? I18n.t('time.format_string.time_only') : this.props.timeFormat,
+      monthNames: typeof this.props.monthNames === 'undefined' ? I18n.t('date.month_names').slice(1) : this.props.monthNames,
+      dayNames: typeof this.props.dayNames === 'undefined' ? I18n.t('date.day_names') : this.props.dayNames,
+      dayNamesMin: typeof this.props.dayNamesMin === 'undefined' ? I18n.t('date.abbr_day_names') : this.props.dayNamesMin,
+      hourText: typeof this.props.hourText === 'undefined' ? I18n.t('datetime.prompts.hour') : this.props.hourText,
+      minuteText: typeof this.props.minuteText === 'undefined' ? I18n.t('datetime.prompts.minute') : this.props.minuteText,
+      timeText: typeof this.props.timeText === 'undefined' ? I18n.t('datetime.prompts.time') : this.props.timeText,
+      prevText: typeof this.props.prevText === 'undefined' ? I18n.t('time.prev') : this.props.prevText,
+      nextText: typeof this.props.nextText === 'undefined' ? I18n.t('time.next') : this.props.nextText,
+      closeText: typeof this.props.closeText === 'undefined' ? I18n.t('close') : this.props.closeText
     });
   }
 
@@ -62,10 +55,10 @@ class Datepicker extends React.Component {
       <input
         type='text'
         className='datepicker'
-        value={this.state.date}
+        value={this.props.date}
         onChange={function () {}} //dummy function to make input writeable
                                   // (onchange is handled by the datepickers onSelect method)
-        disabled={this.state.disabled}
+        disabled={this.props.disabled}
       />
     )
   }
