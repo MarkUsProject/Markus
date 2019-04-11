@@ -700,7 +700,7 @@ class SubmissionsController < ApplicationController
       return
     end
     assignment = Assignment.find(params[:assignment_id])
-    groupings = assignment.groupings.find(params[:groupings])
+    groupings = assignment.groupings.where(id: params[:groupings])
     release = params[:release_results]
 
     begin
