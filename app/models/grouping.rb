@@ -918,13 +918,13 @@ class Grouping < ApplicationRecord
 
     revision = repo.get_latest_revision
     assignment_path = Pathname.new(assignment.repository_folder)
-    current_path = assignment_path.join(path.gsub(/^\//, '')) # remove leading '/' to make relative path
+    current_path = assignment_path.join(path.gsub(%r{^/}, '')) # remove leading '/' to make relative path
     new_files = []
     files.each do |f|
       if f.size > MarkusConfigurator.markus_config_max_file_size
         messages << [:error, I18n.t('student.submission.file_too_large',
-                             file_name: f.original_filename,
-                             max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))]
+                                    file_name: f.original_filename,
+                                    max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))]
       elsif f.size == 0
         messages << [:warning, I18n.t('student.submission.empty_file_warning', file_name: f.original_filename)]
       end
@@ -999,7 +999,7 @@ class Grouping < ApplicationRecord
     end
 
     assignment_path = Pathname.new(assignment.repository_folder)
-    current_path = assignment_path.join(path.gsub(/^\//, ''))
+    current_path = assignment_path.join(path.gsub(%r{^/}, ''))
 
     current_revision = repo.get_latest_revision.revision_identifier
 
@@ -1027,13 +1027,9 @@ class Grouping < ApplicationRecord
   #
   # Does not attempt to commit the transaction if there are no jobs present to commit.
   def commit_transaction(repo, txn)
-    if txn.has_jobs?
-      if repo.commit(txn)
-        return true, []
-      else
-        return false, [:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts }]
-      end
-    end
-    [false, [:warning, I18n.t('student.submission.no_action_detected')]]
+    return [false, [:warning, I18n.t('student.submission.no_action_detected')]] unless txn.has_jobs?
+    return [true, []] if repo.commit(txn)
+
+    [false, [:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts }]]
   end
-end # end class Grouping
+end

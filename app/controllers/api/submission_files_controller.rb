@@ -138,37 +138,37 @@ module Api
     def remove_file
       grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
       if grouping.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group with that id exists for the given assignment'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group with that id exists for the given assignment' }, status: 404
         return
       end
 
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
 
       begin
         success, messages = grouping.remove_files([params[:filename]], @current_user)
       rescue Repository::FileDoesNotExist
-        render 'shared/http_status', locals: {code: '404', message:
-          'No file exists at that path.'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message:
+          'No file exists at that path.' }, status: 404
         return
       end
 
-      message_string = messages.map { |type, *msg| "#{type}: #{msg}"}.join("\n")
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
 
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
-        render 'shared/http_status', locals: {code: '200', message: message}, status: 200
+        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
       else
         # Some other error occurred
         message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '500', message: message}, status: 500
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
       end
     end
-  end # end SubmissionFilesController
+  end
 end
