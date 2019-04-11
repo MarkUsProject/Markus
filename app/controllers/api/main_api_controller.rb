@@ -34,7 +34,6 @@ module Api
     end
 
     def destroy
-      byebug
       render 'shared/http_status', locals: {code: '404', message:
         HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404
     end
