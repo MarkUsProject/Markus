@@ -292,19 +292,17 @@ module Repository
     # root of the current MarkUs instance.
     def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 1000, interval: 100)
       redis = Redis::Namespace.new(namespace)
+      return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
+
       redis.lpush(resource_id, Thread.current.object_id) # assume thread ids are unique accross processes as well
       elapsed_time = 0
       begin
         loop do
-          if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
-            yield
-            return true
-          elsif elapsed_time >= timeout
-            return false
-          else
-            sleep(interval / 1000.0) # interval is in milliseconds but sleep arg is in seconds
-            elapsed_time += interval
-          end
+          return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
+          raise Timeout::Error("waited #{timeout} ms to access resource: #{resource_id}") if elapsed_time >= timeout
+
+          sleep(interval / 1000.0) # interval is in milliseconds but sleep arg is in seconds
+          elapsed_time += interval
         end
       ensure
         redis.lrem(resource_id, -1, Thread.current.object_id)
