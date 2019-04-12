@@ -7,7 +7,7 @@ class RepoBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      revision_identifier: props.collected_revision_id,
+      revision_identifier: undefined,
       revisions: []
     };
   }
@@ -80,6 +80,7 @@ class RepoBrowser extends React.Component {
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
           onChange={this.fetchRevisions}
+          fetchOnMount={false}
         />
         <ManualCollectionForm
           assignment_id={this.props.assignment_id}
