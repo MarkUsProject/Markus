@@ -63,10 +63,12 @@ class SubversionRepository < Repository::AbstractRepository
 
   # Static method: Yields an existing Subversion repository and closes it afterwards
   def self.access(connect_string)
-    repository = SubversionRepository.open(connect_string)
-    yield repository
-  ensure
-    repository&.close
+    self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
+      repository = SubversionRepository.open(connect_string)
+      yield repository
+    ensure
+      repository&.close
+    end
   end
 
   # Static method: Deletes an existing Subversion repository
