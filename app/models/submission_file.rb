@@ -110,21 +110,24 @@ class SubmissionFile < ApplicationRecord
   def retrieve_file(include_annotations = false, repo = nil)
     student_group = self.submission.grouping.group
     revision_identifier = self.submission.revision_identifier
-    close_repo = false
+
+    get_retrieved_file = lambda do |open_repo|
+      revision = open_repo.get_revision(revision_identifier)
+      revision_file = revision.files_at_path(self.path, with_attrs: false)[self.filename]
+      if revision_file.nil?
+        raise I18n.t('results.could_not_find_file',
+                     filename: self.filename,
+                     repository_name: student_group.repository_name)
+      end
+      open_repo.download_as_string(revision_file)
+    end
+
     if repo.nil?
-      repo = student_group.repo
-      close_repo = true
-    end
-    revision = repo.get_revision(revision_identifier)
-    revision_file = revision.files_at_path(self.path, with_attrs: false)[self.filename]
-    if revision_file.nil?
-      raise I18n.t('results.could_not_find_file',
-                   filename: self.filename,
-                   repository_name: student_group.repository_name)
-    end
-    retrieved_file = repo.download_as_string(revision_file)
-    if close_repo
-      repo.close
+      retrieved_file = student_group.access_repo do |open_repo|
+        get_retrieved_file.call(open_repo)
+      end
+    else
+      retrieved_file = get_retrieved_file.call(repo)
     end
     if include_annotations
       retrieved_file = add_annotations(retrieved_file)

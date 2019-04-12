@@ -28,7 +28,9 @@ describe CreateGroupsJob do
     if groups_diff.positive?
       it 'should create a new repo' do
         CreateGroupsJob.perform_now(assignment, @data)
-        expect(Group.find_by_group_name('group1').repo).to be_an_instance_of(MemoryRepository)
+        Group.find_by_group_name('group1').access_repo do |repo|
+          expect(repo).to be_an_instance_of(MemoryRepository)
+        end
       end
     end
   end

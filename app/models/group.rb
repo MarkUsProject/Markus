@@ -73,11 +73,6 @@ class Group < ApplicationRecord
     File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
   end
 
-  # Return a repository object, if possible
-  def repo
-    Repository.get_class.open(repo_path)
-  end
-
   #Yields a repository object, if possible, and closes it after it is finished
   def access_repo(&block)
     Repository.get_class.access(repo_path, &block)

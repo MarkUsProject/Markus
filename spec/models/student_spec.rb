@@ -72,7 +72,7 @@ describe Student do
       mock_repo = class_double('Repository::AbstractRepository')
       allow_any_instance_of(mock_repo).to receive(:close).and_return(true)
       allow_any_instance_of(mock_repo).to receive(:remove_user).and_return(Repository::UserNotFound)
-      allow_any_instance_of(Group).to receive(:repo).and_return(mock_repo)
+      allow_any_instance_of(Group).to receive(:access_repo).and_yield(mock_repo)
 
       Student.hide_students(@student_id_list)
     end
@@ -118,7 +118,7 @@ describe Student do
       mock_repo = class_double('Repository::AbstractRepository')
       allow_any_instance_of(mock_repo).to receive(:close).and_return(true)
       allow_any_instance_of(mock_repo).to receive(:add_user).and_return(Repository::UserAlreadyExistent)
-      allow_any_instance_of(Group).to receive(:repo).and_return(mock_repo)
+      allow_any_instance_of(Group).to receive(:access_repo).and_yield(mock_repo)
 
       Student.unhide_students(@student_id_list)
     end
