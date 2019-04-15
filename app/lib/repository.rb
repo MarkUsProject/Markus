@@ -294,6 +294,19 @@ module Repository
       redis = Redis::Namespace.new(namespace)
       return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
 
+      # clear any threads that are no longer alive from the queue
+      redis.lrange(resource_id, 0, -1).each do |thread_id|
+        begin
+          thread_obj = ObjectSpace._id2ref(thread_id.to_i)
+        rescue TypeError, RangeError
+          redis.lrem(resource_id, 0, thread_id)
+          next
+        end
+        unless thread_obj.is_a?(Thread) && thread_obj.alive?
+          redis.lrem(resource_id, 0, thread_id)
+        end
+      end
+
       redis.lpush(resource_id, Thread.current.object_id) # assume thread ids are unique accross processes as well
       elapsed_time = 0
       begin
