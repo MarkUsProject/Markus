@@ -45,6 +45,12 @@ class RawMarksSpreadsheet extends React.Component {
       dataType: 'json',
     }).then(response => {
       this.props.resetSelection();
+
+      if (this.props.show_total) {
+        response.data.forEach(row => {
+          this[`total-${row.id}`] |= React.createRef();
+        });
+      }
       this.setState({
         data: response.data,
         loading: false,
@@ -125,7 +131,7 @@ class RawMarksSpreadsheet extends React.Component {
       student_id={row.original.id}
       default_value={row.value}
       updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
-                    this.updateTotal(row.index, gradeEntryItemId, newGrade, newTotal)}
+                    this.updateTotal(row.index, row.original.id, gradeEntryItemId, newGrade, newTotal)}
     />;
   };
 
@@ -134,6 +140,9 @@ class RawMarksSpreadsheet extends React.Component {
     Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.out_of_total})`,
     minWidth: 50,
     className: 'grade-total',
+    Cell: row => {
+      return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original.id}`] = node} />;
+    },
     defaultSortDesc: true,
     sortMethod: (a, b, desc) => {
       a = a === null || a === undefined || a === 'N/A' ? -Infinity : a;
@@ -159,14 +168,22 @@ class RawMarksSpreadsheet extends React.Component {
     minWidth: 50,
   };
 
-  updateTotal = (index, gradeEntryItemId, newGrade, newTotal) => {
-    // state should never be modified directly, we copy the relevant data using the spread syntax and modify the copy
-    let newData = [...this.state.data];
-    newData[index] = {...newData[index]};
-    newData[index]['total_marks'] = newTotal;
-    newData[index][gradeEntryItemId] = newGrade;
-    this.setState({data: newData});
+  updateTotal = (index, id, gradeEntryItemId, newGrade, newTotal) => {
+    this[`total-${id}`].setState({value: newTotal});
+    this.setState((prevState) => {
+      // State should never be modified directly, we copy the relevant data using the spread syntax and modify the copy.
+      let newData = [...prevState.data];
+      newData[index] = {...newData[index]};
+      newData[index]['total_marks'] = newTotal;
+      newData[index][gradeEntryItemId] = newGrade;
+      return {data: newData};
+    });
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (nextState.grade_columns.length !== this.state.grade_columns.length) ||
+           (nextState.data.length !== this.state.data.length);
+  }
 
   getColumns = () => {
     let columns = this.nameColumns().concat(this.state.grade_columns);
@@ -217,6 +234,9 @@ class RawMarksSpreadsheet extends React.Component {
 
           filterable
           defaultFilterMethod={stringFilter}
+          /* Need to force update when rearranging table rows */
+          onFilteredChange={() => this.forceUpdate()}
+          onSortedChange={() => this.forceUpdate()}
           loading={loading}
           {...this.props.getCheckboxProps()}
         />
@@ -289,6 +309,26 @@ class GradeEntryCell extends React.Component {
       <input id={this.props.grade_id} type="number" step="any" size={4} value={this.state.value} min={0}
              onChange={this.handleChange} />
     );
+  }
+}
+
+
+class GradeEntryTotal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.initial_value
+    };
+  }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.initial_value !== this.props.initial_value) {
+      this.setState({value: this.props.initial_value});
+    }
+  }
+
+  render() {
+    return <span>{this.state.value}</span>;
   }
 }
 
