@@ -49,7 +49,7 @@
                           @g_id_entries[grade_entry_form.id]).to_s) + '%') %>
                     <% end %>
                     <%= "(#{t(:class_average)}: "\
-                        "#{number_to_percentage(grade_entry_form.calculate_released_average, precision: 1)})" %>
+                        "#{number_to_percentage(grade_entry_form.calculate_average, precision: 1)})" %>
                   <% else %>
                     <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
                   <% end %>

@@ -8,35 +8,36 @@
   <tr>
     <td><%= t(:average) %></td>
     <td>
-      <%= number_to_percentage(grade_entry_form.calculate_released_average || 0, precision: 1) %>
+      <%= number_to_percentage(grade_entry_form.calculate_average || 0, precision: 1) %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:median) %></td>
     <td>
-      <%= number_to_percentage(grade_entry_form.calculate_released_median || 0, precision: 1) %>
+      <%= number_to_percentage(grade_entry_form.calculate_median || 0, precision: 1) %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:num_entries) %></td>
     <td>
-      <%= "#{grade_entry_form.grade_entry_forms_submitted}/#{grade_entry_form.grade_entry_students.size}" %>
+      <%= "#{grade_entry_form.count_non_nil}/" +
+          grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:num_failed) %></td>
     <td>
-      <%= "#{grade_entry_form.calculate_released_failed}" %>
+      <%= "#{grade_entry_form.calculate_failed}" %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:num_zeros) %></td>
     <td>
-      <%= "#{grade_entry_form.calculate_released_zeros}" %>
+      <%= "#{grade_entry_form.calculate_zeros}" %>
     </td>
   </tr>
 </table>
