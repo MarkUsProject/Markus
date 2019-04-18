@@ -7,7 +7,6 @@ describe TasController do
   end
 
   context 'CSV_Uploads' do
-
     it 'accepts a valid file' do
       @file_good = fixture_file_upload('files/tas/form_good.csv', 'text/csv')
       post :upload_ta_list, params: { userlist: @file_good }
@@ -73,7 +72,6 @@ describe TasController do
       expect(ta1.take['email']).to be_nil
       ta2 = Ta.where(user_name: 'user124')
       expect(ta2.take['email']).to be_nil
-
     end
 
     it 'does not accept a non-csv file with .csv extension' do
