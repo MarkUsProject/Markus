@@ -140,8 +140,8 @@ describe TasController do
       end
     end
 
-    #In MarkUs, users are able to download a list of graders in YML format but not XML format
-    #'Download in YML format' gives back a XML file
+    # In MarkUs, users are able to download a list of graders in YML format but not XML format
+    # 'Download in YML format' gives back a XML file
     context 'xml' do
       let(:xml_options) do
         {
@@ -152,7 +152,7 @@ describe TasController do
       end
 
       before :each do
-        (0..4).each do
+        4.times do
           create(:ta)
         end
         @tas = Ta.order(:user_name)
