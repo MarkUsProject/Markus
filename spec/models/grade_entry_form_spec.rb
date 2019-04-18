@@ -84,6 +84,7 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.find_by(user: student)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
+      grade_entry_student_with_some_grades.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_some_grades).round(2)).to eq 33.33
     end
 
@@ -93,12 +94,14 @@ describe GradeEntryForm do
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[0], grade: 3)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[1], grade: 7)
       grade_entry_student_with_some_grades.grades.create(grade_entry_item: @grade_entry_items[2], grade: 8)
+      grade_entry_student_with_some_grades.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_some_grades)).to eq 60.00
     end
 
     it 'verify the correct percentage is returned when the student has grades for none of the questions' do
       student1 = create(:student)
       grade_entry_student_with_no_grades = @grade_entry_form.grade_entry_students.find_by(user: student1)
+      grade_entry_student_with_no_grades.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_no_grades)).to eq ''
     end
 
@@ -108,6 +111,7 @@ describe GradeEntryForm do
       @grade_entry_items.each do |grade_entry_item|
         grade_entry_student_with_all_zeros.grades.create(grade_entry_item: grade_entry_item, grade: 0.0)
       end
+      grade_entry_student_with_all_zeros.save
       expect(@grade_entry_form.calculate_total_percent(grade_entry_student_with_all_zeros)).to eq 0.0
     end
   end
@@ -143,14 +147,13 @@ describe GradeEntryForm do
     end
   end
 
-  # Tests for calculate_released_average
-  context 'Calculate the average of the released marks: ' do
+  # Tests for calculate_average
+  describe '#calculate_average' do
     before(:each) do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
-      @grade_entry_form_none_released = make_grade_entry_form_with_multiple_grade_entry_items
       @grade_entry_items = @grade_entry_form.grade_entry_items
-      # Set up 5 GradeEntryStudents
-      (0..4).each do |i|
+      # Set up 6 GradeEntryStudents
+      (0..5).each do |i|
         student = create(:student)
         grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: student)
         # Give the student a grade for all three questions for the grade entry form
@@ -158,22 +161,22 @@ describe GradeEntryForm do
           grade_entry_student.grades.create(grade_entry_item: @grade_entry_items[j],
                                             grade: 5 + i + j)
         end
-        # The marks will be released for 3 out of the 5 students
+        # The marks will be released for 3 out of the 6 students
         if i <= 2
           grade_entry_student.released_to_student = true
         else
           grade_entry_student.released_to_student = false
         end
         grade_entry_student.save
+        # The last student is inactive.
+        if i == 5
+          student.update(hidden: true)
+        end
       end
     end
 
-    it 'verify the correct value is returned when there are no marks released' do
-      expect(@grade_entry_form_none_released.calculate_released_average).to eq 0
-    end
-
     it 'verify the correct value is returned when multiple marks have been released and there are no blank marks' do
-      expect(@grade_entry_form.calculate_released_average).to eq 70.00
+      expect(@grade_entry_form.calculate_average).to eq 80.00
     end
 
     it 'verify the correct value is returned when the student has grades for none of the questions' do
@@ -182,7 +185,7 @@ describe GradeEntryForm do
         student = create(:student)
         @grade_entry_form.grade_entry_students.find_by(user: student).update(released_to_student: true)
       end
-      expect(@grade_entry_form.calculate_released_average).to eq 70.00
+      expect(@grade_entry_form.calculate_average).to eq 80.00
     end
   end
 
