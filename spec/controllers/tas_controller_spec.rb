@@ -46,7 +46,7 @@ describe TasController do
 
     it 'does not check the validity of an username' do
       @invalid_user_name = fixture_file_upload('files/tas/grader_with_invalid_username.csv', 'text/csv')
-      post :upload_ta_list, params: { userlist: @invalid_user_name}
+      post :upload_ta_list, params: { userlist: @invalid_user_name }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -64,7 +64,7 @@ describe TasController do
 
     it "does not upload grader's email address" do
       @with_emails = fixture_file_upload('files/tas/grader_with_email.csv', 'text/csv')
-      post :upload_ta_list, params: { userlist: @with_emails}
+      post :upload_ta_list, params: { userlist: @with_emails }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
