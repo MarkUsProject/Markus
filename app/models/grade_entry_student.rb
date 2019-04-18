@@ -1,8 +1,6 @@
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ApplicationRecord
-  attr_accessor :total_grade
-
   belongs_to :user
   validates_associated :user, on: :create
 
@@ -15,6 +13,8 @@ class GradeEntryStudent < ApplicationRecord
 
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
+
+  before_save :refresh_total_grade
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
@@ -196,11 +196,6 @@ class GradeEntryStudent < ApplicationRecord
     self.save
   end
 
-  def save(*)
-    refresh_total_grade # make sure the latest total grade is always saved
-    super
-  end
-
   # Return whether or not the given student's grades are all blank
   # (Needed because ActiveRecord's "sum" method returns 0 even if
   #  all the grade.grade values are nil and we need to distinguish
@@ -223,9 +218,6 @@ class GradeEntryStudent < ApplicationRecord
       total = nil
     end
 
-    # write_attribute(:total_grade, total)
     self.total_grade = total
-
-    total
   end
 end

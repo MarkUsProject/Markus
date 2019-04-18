@@ -144,12 +144,6 @@ class GradeEntryFormsController < ApplicationController
                              .where(grade_entry_form: grade_entry_form)
     end
 
-    # TODO: Remove this hack by putting a computed column for the total_grade attribute
-    totals = Grade.where(grade_entry_student_id:
-                           students.pluck(:id))
-                  .group(:grade_entry_student_id)
-                  .sum(:grade)
-
     student_grades = students.map do |student_grade_entry|
       student = student_grade_entry.user
       s = student.attributes
@@ -166,7 +160,7 @@ class GradeEntryFormsController < ApplicationController
         end
         # Populate grade total
         if grade_entry_form.show_total
-          total = totals[student_grade_entry.id]
+          total = student_grade_entry.total_grade
           if !total.nil?
             s[:total_marks] = total
           else

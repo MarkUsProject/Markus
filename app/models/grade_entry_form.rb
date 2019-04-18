@@ -67,7 +67,9 @@ class GradeEntryForm < ApplicationRecord
       return @ges_total_grades
     end
 
-    total_grades = grade_entry_students.joins(:grades).group(:grade_entry_student_id).sum(:grade)
+    total_grades = Hash[
+      grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade)
+    ]
     @ges_total_grades = total_grades
     total_grades
   end
