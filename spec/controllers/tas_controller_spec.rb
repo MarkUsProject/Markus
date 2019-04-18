@@ -139,5 +139,40 @@ describe TasController do
         expect(response.content_type).to eq 'text/csv'
       end
     end
+
+    #In MarkUs, users are able to download a list of graders in YML format but not XML format
+    #'Download in YML format' gives back a XML file
+    context 'xml' do
+      let(:xml_options) do
+        {
+          type: 'text/xml',
+          filename: 'ta_list.xml',
+          disposition: 'attachment'
+        }
+      end
+
+      before :each do
+        (0..4).each do
+          create(:ta)
+        end
+        @tas = Ta.order(:user_name)
+      end
+
+      it 'responds with appropriate status' do
+        get :download_ta_list, format: 'xml'
+        expect(response.status).to eq(200)
+      end
+
+      it 'sets disposition as attachment' do
+        get :download_ta_list, format: 'xml'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+
+      it 'returns text/xml type' do
+        get :download_ta_list, format: 'xml'
+        expect(response.content_type).to eq 'text/xml'
+      end
+    end
   end
 end
