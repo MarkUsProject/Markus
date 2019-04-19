@@ -55,7 +55,7 @@ class RawMarksSpreadsheet extends React.Component {
         data: response.data,
         loading: false,
         sections: response.sections
-      });
+      }, () => this.forceUpdate());
     });
   };
 
@@ -182,7 +182,8 @@ class RawMarksSpreadsheet extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (nextState.grade_columns.length !== this.state.grade_columns.length) ||
-           (nextState.data.length !== this.state.data.length);
+           (nextState.data.length !== this.state.data.length) ||
+           (nextProps.selection !== this.props.selection);
   }
 
   getColumns = () => {
