@@ -81,12 +81,6 @@
              if @student.has_pending_groupings_for?(@assignment.id) %>
             <h3><%= t('groups.members.invitations') %></h3>
 
-            <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
-              <div class='notice'>
-                <%= flash[:fail_notice] %>
-              </div>
-            <% end %>
-
             <% @pending_grouping.each do |grouping|%>
               <div class='sub_block'>
                 <p><%= t('groups.members.invited_by',
@@ -157,20 +151,6 @@
             <p class='information'>
               <%= t('groups.student_interface.modification_limited') %>
             </p>
-          <% end %>
-
-          <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
-            <div class='notice'>
-              <% if flash[:fail_notice].is_a?(Array) %>
-                <ul>
-                  <% flash[:fail_notice].each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              <% else %>
-                <%= flash[:fail_notice] %>
-              <% end %>
-            </div>
           <% end %>
 
           <% # If the group does not have the right amount of members yet, display

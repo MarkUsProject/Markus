@@ -248,28 +248,22 @@ class Grouping < ApplicationRecord
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
+    all_errors = []
     members.each do |m|
-      next if m.blank? # ignore blank users
       m = m.strip
-      user = User.where(user_name: m).first
-      m_logger = MarkusLogger.instance
-      if user
-        if invoked_by_admin || self.can_invite?(user)
-          member = self.add_member(user, set_membership_status)
-          if member
-            m_logger.log("Student invited '#{user.user_name}'.")
-          else
-            errors.add(:base, I18n.t('invite_student.fail.error',
-                                     user_name: user.user_name))
-            m_logger.log("Student failed to invite '#{user.user_name}'",
-                         MarkusLogger::ERROR)
-          end
+      user = Student.where(hidden: false).find_by(user_name: m)
+      begin
+        if user.nil?
+          raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
         end
-      else
-        errors.add(:base, I18n.t('invite_student.fail.dne',
-                                 user_name: m))
+        if invoked_by_admin || self.can_invite?(user)
+          self.add_member(user, set_membership_status)
+        end
+      rescue StandardError => e
+        all_errors << e.message
       end
     end
+    all_errors
   end
 
   # Add a new member to base
@@ -296,68 +290,16 @@ class Grouping < ApplicationRecord
 
   # define whether user can be invited in this grouping
   def can_invite?(user)
-    m_logger = MarkusLogger.instance
-    if user && user.student?
-      if user.hidden
-        errors.add(:base, I18n.t('invite_student.fail.hidden',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
-                     'disabled).', MarkusLogger::ERROR)
-
-        return false
-      end
-      if self.inviter == user
-        errors.add(:base, I18n.t('invite_student.fail.inviting_self',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
-                     'himself.', MarkusLogger::ERROR)
-
-
-      end
-      if self.assignment.past_collection_date?(self.inviter.section)
-        errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
-                     'collection date.', MarkusLogger::ERROR)
-
-        return false
-      end
-      if self.student_membership_number >= self.assignment.group_max
-        errors.add(:base, I18n.t('invite_student.fail.group_max_reached',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
-                     ' reached.', MarkusLogger::ERROR)
-        return false
-      end
-      if self.assignment.section_groups_only &&
-        user.section != self.inviter.section
-        errors.add(:base, I18n.t('invite_student.fail.not_same_section',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
-                     ' same section.', MarkusLogger::ERROR)
-
-        return false
-      end
-      if user.has_accepted_grouping_for?(self.assignment.id)
-        errors.add(:base, I18n.t('invite_student.fail.already_grouped',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
-                     ' of another group.', MarkusLogger::ERROR)
-        return false
-      end
-      if self.pending?(user)
-        errors.add(:base, I18n.t('invite_student.fail.already_pending',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
-                     ' pending member of this group.', MarkusLogger::ERROR)
-        return false
-      end
-    else
-      errors.add(:base, I18n.t('invite_student.fail.dne',
-                                user_name: user.user_name))
-      m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
-                   ' exist.', MarkusLogger::ERROR)
-      return false
+    if self.inviter == user
+      raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif self.student_membership_number >= self.assignment.group_max
+      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
+    elsif self.assignment.section_groups_only && user.section != self.inviter.section
+      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
+    elsif user.has_accepted_grouping_for?(self.assignment.id)
+      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
+    elsif self.pending?(user)
+      raise I18n.t('groups.invite_member.errors.already_pending', user_name: user.user_name)
     end
     true
   end

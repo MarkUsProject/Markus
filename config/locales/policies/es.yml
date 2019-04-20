@@ -8,6 +8,8 @@ es:
         test_scripts_uploaded?: "No hay un script para lanzar la prueba."
         tokens_released?: "No se han dado fichas todavía."
       grouping:
+        before_due_date?: "El último plazo para este proyecto ha pasado y."
+        delete_rejected?: "Sólo el invitador puede declinar una invitación."
         member?: "UPDATE ME."
         not_in_progress?: "UPDATE ME."
         tokens_available?: "No se encontraron fichas para este estudiante y para este proyecto."

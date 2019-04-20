@@ -8,6 +8,8 @@ fr:
         test_scripts_uploaded?: "Aucun scripts de test trouvés."
         tokens_released?: "Aucun jetons disponible."
       grouping:
+        before_due_date?: "La date de retour pour ce devoir est passée."
+        delete_rejected?: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée."
         member?: "Votre groupe n'éxiste pas, où il n'est pas valide."
         not_in_progress?: "Il y a déjà un test mis en file d'attente, attendez les résultats s'il vous plait."
         tokens_available?: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet."

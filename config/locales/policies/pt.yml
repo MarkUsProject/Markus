@@ -8,6 +8,8 @@ pt:
         test_scripts_uploaded?: "UPDATE ME."
         tokens_released?: "Nenhum tokens dado."
       grouping:
+        before_due_date?: "A data de entrega para este projeto já passou."
+        delete_rejected?: "Apenas o anfitrião pode excluir um convite recusado."
         member?: "UPDATE ME."
         not_in_progress?: "UPDATE ME."
         tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."

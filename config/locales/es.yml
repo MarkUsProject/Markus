@@ -188,13 +188,6 @@ es:
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "El estudiante %{user_name} ha sido añadido."
-      fail:
-        general:         "Un error ha ocurrido. No se pudo añadir %{user_name}."
-        hidden:          "No se pudo añadir %{user_name} - la cuenta de este estudiante ha sido desabilitada."
-        already_grouped: "No se pudo añadir %{user_name} - el estudiante ya es miembro de otro grupo."
-
     create_group:
       fail:
         due_date_passed:          "No se pudo crear el grupo - el último plazo para este proyecto ha pasado y, o no se
@@ -206,22 +199,6 @@ es:
                                    grupo es %{group_min}"
         do_not_have_a_group:      "Usted no tiene un grupo por el momento"
 
-    invite_student:
-      success: "Las invitaciones han sido exitosas"
-      fail:
-        only_inviter:         "Sólo el invitador puede declinar una invitación"
-        due_date_passed:      "No se pudo invitar %{user_name} - el último plazo para este proyecto ha pasado y, o no se
-                               permiten períodos de aplazamiento de gracia o el período de aplazamiento de gracia
-                               para este proyecto también ha pasado."
-        dne:                  "No se pudo invitar %{user_name} - este estudiante no existe."
-        hidden:               "No se pudo invitar %{user_name} - la cuenta de este estudiante ha sido desabilitada."
-        already_pending:      "No se pudo invitar %{user_name} - el estudiante es un miembro pendiente de este grupo."
-        group_max_reached:    "No se pudo invitar %{user_name} - el número máximo de miembros ha sido alcanzado."
-        inviting_self:        "Usted no se puede invitar a su propio grupo."
-        already_grouped:      "No se pudo invitar %{user_name} - este estudiante ya es miembro de otro grupo."
-        need_to_create_group: "Usted debe crear un grupo antes poder invitar usuarios"
-        not_same_section:     "El estudiante %{user_name} no está en su sección."
-        error:                "No se pudo invitar al estudiante %{user_name}."
     update_files:
       success: "Sus cambios han sido realizados."
 

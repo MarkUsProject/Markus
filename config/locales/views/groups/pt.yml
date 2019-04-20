@@ -68,3 +68,14 @@ pt:
         inviter: "inviter"
         pending: "convidado"
         rejected: "recusado"
+
+    invite_member:
+      errors:
+        already_pending: "Não foi possível convidar  %{user_name}: esse aluno já é um membro pendente deste grupo."
+        already_grouped: "Não foi possível convidar %{user_name}: este aluno já é um membro de outro grupo."
+        group_max_reached: "Não foi possível convidar %{user_name}: o grupo já possui o tamanho máximo."
+        inviting_self: "Você não pode convidar-se para o seu próprio grupo."
+        need_to_create_group: "Você deve criar um grupo antes de poder convidar usuários"
+        not_found: "Não foi possível convidar %{user_name}: esse estudante não existe."
+        not_same_section: "Aluno %{user_name} está fora de sua sessão."
+      success: "Convites enviados com sucesso."

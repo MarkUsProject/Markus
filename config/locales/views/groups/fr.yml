@@ -68,3 +68,14 @@ fr:
         inviter: "créateur du groupe"
         pending: "invité"
         rejected: "déclinée"
+
+    invite_member:
+      errors:
+        already_grouped: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
+        already_pending: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà en attente pour ce groupe."
+        group_max_reached: "%{user_name} ne peut pas être invité(e) : la limite maximale pour ce groupe est déjà atteinte."
+        inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
+        need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
+        not_found: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
+        not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
+      success: "L'étudiant(e) a été invité(e)."

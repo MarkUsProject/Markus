@@ -170,13 +170,6 @@ pt:
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "Aluno %{user_name} adicionado."
-      fail:
-        general: "Algo saiu errado. Não foi possível inserir %{user_name}."
-        hidden:  "Não foi possível inserir %{user_name} - a conta desse aluno foi desabilitada."
-        already_grouped: "Não foi possível inserir %{user_name} - esse aluno já é membro de outro grupo."
-
     create_group:
       fail:
         due_date_passed: "Não foi possível criar grupo - a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
@@ -185,20 +178,6 @@ pt:
         can_not_work_alone: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}"
         do_not_have_a_group: "Você não possúi um grupo"
 
-    invite_student:
-      success: "Convites enviados com sucesso"
-      fail:
-        only_inviter: "Apenas o anfitrião pode excluir um convite recusado"
-        due_date_passed: "Não foi possível convidar %{user_name} - a data de entrega para este projeto já passou e, ou não há períodos de carência permitido, ou o período de tolerância para este projeto já acabou."
-        dne:  "Não foi possível convidar %{user_name} - esse estudante não existe."
-        hidden:  "Não foi possível convidar %{user_name} - conta deste aluno foi desabilitada."
-        already_pending: "Não foi possível convidar  %{user_name} - esse aluno já é um membro pendente deste grupo."
-        group_max_reached: "Não foi possível convidar %{user_name} - o grupo já possui o tamanho máximo."
-        inviting_self: "Você não pode convidar-se para o seu próprio grupo."
-        already_grouped: "Não foi possível convidar %{user_name} - este aluno já é um membro de outro grupo."
-        need_to_create_group: "Você deve criar um grupo antes de poder convidar usuários"
-        not_same_section: "Aluno %{user_name} está fora de sua sessão."
-        error: "Não foi possível convidar estudante %{user_name}."
     update_files:
       success:  "As alterações foram feitas."
 
