@@ -20,7 +20,7 @@
   <div>
     <% if !grade_entry_item.nil? && !grade_entry_item.new_record? %>
       <%= form.label :_destroy,
-                     t('remove') %>
+                     t('delete') %>
       <%= form.check_box :_destroy %>
     <% else %>
       <%= link_to t(:delete), '#', onclick:

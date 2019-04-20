@@ -15,7 +15,7 @@ export class AnnotationTable extends React.Component {
           remove_button = <a
             href="#"
             className="remove-icon"
-            title={I18n.t('remove')}
+            title={I18n.t('delete')}
             onClick={() => this.props.removeAnnotation(row.original.id)}
           />;
         }

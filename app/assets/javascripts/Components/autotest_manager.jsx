@@ -222,7 +222,7 @@ class AutotestManager extends React.Component {
         {this.studentTestsField()}
         <input type='submit'
                disabled={!this.state.enable_test}
-               value={I18n.t('submit')}
+               value={I18n.t('save')}
                onClick={this.onSubmit}
         >
         </input>

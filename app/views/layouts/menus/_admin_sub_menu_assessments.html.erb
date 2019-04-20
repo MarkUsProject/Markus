@@ -5,7 +5,7 @@
     <div class='dropdown'>
       <%# Display an appropriate message in the dropdown menu %>
       <% if assessment.nil? %>
-        <%= t(:choose) %>
+        <%= t('menu.choose') %>
       <% elsif assessment.new_record? %>
         <%= t('helpers.submit.create', model: assessment.class.model_name.human) %>
       <% else %>
@@ -26,7 +26,7 @@
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
     <li class='<%= "active" if controller.action_name == 'edit' %>'>
-      <%= link_to t(:properties),
+      <%= link_to t('menu.properties'),
                   edit_grade_entry_form_path(assessment) %>
     </li>
     <li class='<%= "active" if controller.action_name == 'grades' %>'>
@@ -49,7 +49,7 @@
         class='active'
         <% end %>
     >
-      <%= link_to t('settings'),
+      <%= link_to t('menu.settings'),
                   edit_assignment_path(target_id) %>
     </li>
     <li class='<%= "active" if controller.controller_name == 'groups' %>'>

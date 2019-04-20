@@ -1,23 +1,6 @@
 en:
     answer_yes:         "Yes"
     answer_no:          "No"
-    markus:             "MarkUs"
-    close:              "Close"
-    all:                "All"
-    actions:            "Actions"
-    continue:           "Continue"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Loading"
-    please_wait:        "Please wait…"
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Dashboard"
-    home:               "Home"
-    settings:           "Settings"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Quick links"
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "There are currently no assignments."
@@ -26,7 +9,6 @@ en:
     name: "Name"
     filename:  "Filename"
     message:  "Message"
-    remove:  "Remove"
     days_left:          "(%{days} day(s) left)"
     description:        "Description"
     shortened_date:     "Date"
@@ -99,27 +81,12 @@ en:
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
     add_new:            "Add New File"
-    edit:               "Edit"
-    save:               "Save"
-    save_changes:       "Save Changes"
-    skip:               "Skip"
-    apply:              "Apply"
-    delete:             "Delete"
-    submit:             "Submit"
-    cancel:             "Cancel"
-    all:                "All"
     active:             "Active"
     not_active:         "Not active"
-    choose:             "Choose..."
-    properties:         "Properties"
     peer_reviews:       "Peer reviews"
-    help:               "Help"
     preview:            "Preview"
-    encoding:           "Encoding"
 
     past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"

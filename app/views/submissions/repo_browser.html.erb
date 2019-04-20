@@ -28,8 +28,8 @@
     <%= hidden_field_tag :grouping_id, @grouping.id %>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:submit) %>
-      <%= button_tag t(:close),
+      <%= submit_tag t(:upload) %>
+      <%= button_tag t(:cancel),
                      type: 'button',
                      onclick: 'modal_addnew.close(); return false;'
       %>

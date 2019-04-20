@@ -64,7 +64,7 @@
       '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
-      I18n.t('remove') + '</a></p>';
+      I18n.t('delete') + '</a></p>';
     $('#assignment_files').append($(assignment_file));
 
     $('#only_required_files_option').removeClass('disable');

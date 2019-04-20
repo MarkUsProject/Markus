@@ -21,7 +21,7 @@
   <%# Assignment properties %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.properties') %></span>
+      <span><%= t('menu.properties') %></span>
     </legend>
 
     <div class='help assignment_properties_help'>
@@ -204,7 +204,7 @@
   <%# Group properties %>
   <fieldset>
     <legend>
-      <span><%= t('assignment.group.properties') %></span>
+      <span><%= t('assignments.form.group_properties') %></span>
     </legend>
 
     <div class='help assignment_assignment_type_help'>
@@ -231,10 +231,6 @@
                     Assignment.human_attribute_name(:allow_groups) %>
     </p>
     <fieldset class='group_properties'>
-      <legend>
-        <span><%= t('assignments.form.group_properties') %></span>
-      </legend>
-
       <div id='group_properties'>
         <p id='student_form_groups_style'>
           <%= f.check_box :student_form_groups,
@@ -302,7 +298,7 @@
             <th><%= t('submission_rules.after').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:remove) %></th>
+            <th><%= t(:delete) %></th>
           </tr>
           </thead>
           <tbody>
@@ -346,7 +342,7 @@
             <th><%= t('submission_rules.for').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:remove) %></th>
+            <th><%= t(:delete) %></th>
           </tr>
           </thead>
           <tbody>
@@ -387,7 +383,7 @@
             <th><%= t('submission_rules.deduct').capitalize %></th>
             <th><%= t('submission_rules.from').capitalize %></th>
             <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:remove) %></th>
+            <th><%= t(:delete) %></th>
           </tr>
           </thead>
           <tbody>
@@ -456,7 +452,7 @@
     </div>
   </fieldset>
 
-  <%= f.submit t(:submit),
+  <%= f.submit t(:save),
                data: { disable_with: t('working') },
                onclick: 'set_onbeforeunload(false);' %>
 <% end %>

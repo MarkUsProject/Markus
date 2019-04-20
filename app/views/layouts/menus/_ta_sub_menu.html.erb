@@ -2,7 +2,7 @@
   <li id='dropdown'>
       <span class='dropdown'>
         <% if @assignment.nil? && @grade_entry_form.nil? %>
-          <%= t(:choose) %>
+          <%= t('menu.choose') %>
         <% else %>
           <%= @assignment.is_peer_review? ?
                 @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :

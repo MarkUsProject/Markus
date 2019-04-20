@@ -16,7 +16,7 @@
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
           <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
-            <%= link_to t(:properties), edit_assignment_path(@assignment) %>
+            <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'tags' %>'>
             <%= link_to Tag.model_name.human.pluralize,
