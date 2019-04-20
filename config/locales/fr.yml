@@ -170,14 +170,6 @@ fr:
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         empty_file_warning: "UPDATE ME"
 
-    create_group:
-      fail:
-        due_date_passed: "Impossible de créer le groupe — la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        not_allow_to_form_groups: "Ce projet n'autorise pas les étudiants à former des groupes."
-        already_have_a_group: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
-        can_not_work_alone: "Vous ne pouvez pas travailler seul sur ce projet. Il faut au minimum %{group_min} étudiants pour former un groupe."
-        do_not_have_a_group: "Vous n'appartenez pas à un groupe."
-
     update_files:
       success:  "Les changements ont été enregistrés."
 

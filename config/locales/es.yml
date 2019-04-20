@@ -188,17 +188,6 @@ es:
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
 
-    create_group:
-      fail:
-        due_date_passed:          "No se pudo crear el grupo - el último plazo para este proyecto ha pasado y, o no se
-                                   permiten períodos de aplazamiento de gracia o el período de aplazamiento de gracia
-                                   para este proyecto también ha pasado."
-        not_allow_to_form_groups: "El proyecto no les permite a los estudiantes formar grupos"
-        already_have_a_group:     "Usted ya tiene un grupo, y no puede crear otro"
-        can_not_work_alone:       "Usted no puede trabajar sólo en este proyecto - el número mínimo de estudiantes por
-                                   grupo es %{group_min}"
-        do_not_have_a_group:      "Usted no tiene un grupo por el momento"
-
     update_files:
       success: "Sus cambios han sido realizados."
 

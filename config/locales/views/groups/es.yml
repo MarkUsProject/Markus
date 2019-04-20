@@ -4,8 +4,6 @@ es:
     another_assignment_group: "Usar los grupos de otro proyecto"
     assigned_students: "Asignados"
     assignment_to_use: "¿Qué grupos le gustaría usar?"
-    cant_delete: "Usted no tiene permiso para eliminar el grupo."
-    cant_delete_already_submitted: "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
     could_not_delete: "No se pudieron eliminar los siguientes grupos - notese que los grupos no pueden
                       ser eliminados para este proyecto si una entrega ya ha sido enviada para los
                       mismos."
@@ -62,6 +60,10 @@ es:
       working_alone: "Usted ha solicitado trabajar sólo/a en este proyecto. Si cambia de opinión y
                       desea formar o unirse a un grupo primero elimine su grupo."
       your_group: "Su grupo"
+
+    destroy:
+      errors:
+        do_not_have_a_group: "Usted no tiene un grupo por el momento."
 
     members:
       cancel_invitation: "Cancelar invitación"

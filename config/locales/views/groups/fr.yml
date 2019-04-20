@@ -4,8 +4,6 @@ fr:
     another_assignment_group: "Utiliser les groupes d'un autre projet"
     assignment_to_use: "Les groupes de quel projet souhaitez-vous réutiliser ?"
     assigned_students: "Assigné(s)"
-    cant_delete: "Vous ne pouvez pas supprimer ce groupe."
-    cant_delete_already_submitted: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
     could_not_delete: "Vous ne pouvez pas supprimer les groupes suivants — un groupe ne peut être supprimé si un envoi a déja été créé pour le groupe."
     delete: "Supprimer ce groupe"
     delete_confirm: "Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?"
@@ -52,6 +50,10 @@ fr:
       working_alone: "Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former
                       ou rejoindre un groupe, d'abord supprimer votre groupe."
       your_group: "Votre groupe"
+
+    destroy:
+      errors:
+        do_not_have_a_group: "Vous n'appartenez pas à un groupe."
 
     members:
       cancel_invitation: "Annuler l'invitation"
