@@ -6,7 +6,7 @@
                    method: 'delete',
                    id: 'delete_annotation_category',
                    remote: true do |f| %>
-        <%= submit_tag t(:remove),
+        <%= submit_tag t(:delete),
                        data: { confirm: t('annotation_categories.destroy.warning') },
                        class: 'delete'
         %>

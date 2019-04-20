@@ -1,23 +1,6 @@
 es:
     answer_yes:         "Sí"
     answer_no:          "No"
-    markus:             "MarkUs"
-    close:              "Cerrar"
-    all:                "Todos"
-    actions:            "Acciones"
-    continue:           "Continuar"
-
-    # app/views/layouts/_header.html.erb
-    working:                        "Cargando"
-    please_wait:                    "Por favor espere..."
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Panel"
-    home:               "Inicio"
-    settings:           "Configuración"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Enlaces rápidos"
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "No existen proyectos por el momento."
@@ -26,7 +9,6 @@ es:
     name:                      "Nombre"
     filename:                  "Nombre del archivo"
     message:                   "Mensaje"
-    remove:                    "Remover"
     days_left:                 "(%{days} días(s) restantes)"
     description:               "Descripción"
     shortened_date:            "Fecha"
@@ -104,26 +86,12 @@ es:
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
 
     add_new:                     "Añadir Nuevo Archivo"
-    edit:                        "Editar"
-    save:                        "Guardar"
-    save_changes:                "Guardar cambios"
-    apply:                       "Aplicar"
-    delete:                      "Eliminar"
-    submit:                      "Enviar"
-    cancel:                      "Cancelar"
-    all:                         "Todos/as"
     active:                      "Activo"
     not_active:                  "Inactivo"
-    choose:                      "Escoger..."
-    properties:                  "Propiedades"
     peer_reviews:                "Revisiones de Compañeros"
-    help:                        "Ayuda"
     preview:                     "Vista previa"
-    encoding:                    "Codificación"
 
     past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
-
-    copy:                         "Copy"
 
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de

@@ -45,9 +45,9 @@
     <%= hidden_field_tag :path, @path %>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:submit),
+      <%= submit_tag t(:upload),
                      disabled: !@grouping.is_valid? %>
-      <%= button_tag t(:close),
+      <%= button_tag t(:cancel),
                      type: 'button',
                      onclick: 'modal_addnew.close(); return false;' %>
     </section>

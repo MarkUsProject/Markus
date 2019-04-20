@@ -117,7 +117,7 @@ export class SummaryPanel extends React.Component {
             <button
               onClick={() => this.props.destroyExtraMark(row.original.id)}
               className='inline-button'>
-              {I18n.t('remove')}
+              {I18n.t('delete')}
             </button>
           );
         }
@@ -209,7 +209,7 @@ export class SummaryPanel extends React.Component {
                  className='inline-button'
                  onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
                >
-                 {I18n.t('remove')}
+                 {I18n.t('delete')}
                </button>
               }
             </td>

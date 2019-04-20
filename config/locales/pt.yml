@@ -1,24 +1,6 @@
 pt:
     answer_yes:         "Sim"
     answer_no:          "Não"
-    markus:             "MarkUs"
-    close:              "Fechar"
-    all:                "Todos"
-    actions:            "Ações"
-    continue:           "Continuar"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Carregando"
-    please_wait:        "Aguarde por favor..."
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Painel"
-    sections:           "Sessões"
-    home:               "Home"
-    settings:           "Configurações"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Links rápidos"
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Não existem projetos atualmente."
@@ -27,7 +9,6 @@ pt:
     name: "Nome"
     filename:  "Nome do Arquivo"
     message:  "Mensagem"
-    remove:  "Remover"
     days_left:          "(%{days} dia(s) restante(s))"
     description:        "Descrição"
     shortened_date:     "Data<span class='required_field'>*</span>"
@@ -100,24 +81,10 @@ pt:
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
 
     add_new:            "Adicionar novo"
-    edit:               "Editar"
-    save:               "Salvar"
-    save_changes:       "Saval mudanças"
-    apply:              "Aplicar"
-    delete:             "Apagar"
-    submit:             "Enviar"
-    cancel:             "Cancelar"
-    all:                "Todos"
     active:             "Ativo"
     not_active:         "Não ativo"
-    choose:             "Escolher..."
-    properties:         "Propriedades"
     peer_reviews:       "Avaliações pelos pares"
-    help:               "Ajuda"
     preview:            "Prever"
-    encoding:           "Codificação"
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"

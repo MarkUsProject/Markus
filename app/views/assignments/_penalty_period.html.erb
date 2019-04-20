@@ -32,7 +32,7 @@
       <% if !f.object.nil? && !f.object.new_record? %>
         <%= f.check_box :_destroy, {class: 'remove_rule'} %>
       <% else %>
-        <%= link_to t(:remove),
+        <%= link_to t(:delete),
                     '#',
                     class: 'remove_rule',
                     onclick: 'remove_period(this, penalty_periods); return false;' %>

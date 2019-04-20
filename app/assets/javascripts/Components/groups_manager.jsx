@@ -225,7 +225,7 @@ class RawGroupsTable extends React.Component {
               <a href='#'
                  className="remove-icon"
                  onClick={() => this.props.unassign(row.original._id, member[0])}
-                 title={I18n.t('remove')}
+                 title={I18n.t('delete')}
               />
             </div>;
           });

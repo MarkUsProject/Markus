@@ -1,5 +1,5 @@
 <% if @current_user.admin? %>
-  <li class='section'><%= t('quick_links') %></li>
+  <li class='section'><%= t('menu.quick_links') %></li>
   <li>
     <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
                 controller: 'assignments',

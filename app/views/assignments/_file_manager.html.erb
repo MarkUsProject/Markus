@@ -26,8 +26,8 @@
       <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
 
       <section class='dialog-actions'>
-        <%= submit_tag t(:submit) %>
-        <%= button_tag t(:close), onclick: 'modal_addnew.close(); return false;' %>
+        <%= submit_tag t(:upload) %>
+        <%= button_tag t(:cancel), onclick: 'modal_addnew.close(); return false;' %>
       </section>
   <% end %>
 </aside>

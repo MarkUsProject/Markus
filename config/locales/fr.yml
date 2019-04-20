@@ -1,23 +1,6 @@
 fr:
     answer_yes:         "Oui"
     answer_no:          "Non"
-    markus:             "MarkUs"
-    close:              "Fermer"
-    all:                "Tous"
-    actions:            "Actes"
-    continue:           "Continuer"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Chargement"
-    please_wait:        "Merci de patienter…"
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Tableau de bord"
-    home:               "Accueil"
-    settings:           "Paramètres"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Liens rapides"
 
     # app/views/assignments/_list_manage.html.erb
     no_assignments:            "Aucun devoir pour le moment."
@@ -26,7 +9,6 @@ fr:
     name: "Nom "
     filename:  "Fichier"
     message:  "Informations "
-    remove:  "Enlever"
     days_left:          "(%{days} jour(s) restant(s))"
     description:        "Description "
     shortened_date:     "Date<span class='required_field'>*</span>"
@@ -99,24 +81,10 @@ fr:
             description: "Format de fichier CSV: Portugais<code>result_id,group_name</code> Objet"
 
     add_new:            "Nouveau"
-    edit:               "Éditer"
-    save:               "Sauvegarder"
-    save_changes:       "Sauvegarder les modifications"
-    apply:              "Appliquer"
-    delete:             "Supprimer"
-    submit:             "Envoyer"
-    cancel:             "Annuler"
-    all:                "Tous"
     active:             "Actif"
     not_active:         "Inactif"
-    choose:             "Choix du projet…"
-    properties:         "Propriétés"
     peer_reviews:       "Examens par le pairs"
-    help:               "Aide"
     preview:            "Prévisualisation"
-    encoding:           "Codage"
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
