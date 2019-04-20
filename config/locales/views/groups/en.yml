@@ -5,8 +5,6 @@ en:
     another_assignment_group: "Use another assignment's groups"
     assigned_students: "Assigned"
     assignment_to_use: "Which assignments groups would you like to use?"
-    cant_delete: "You are not allowed to delete the group."
-    cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
     could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
     delete: "Delete group(s)"
     delete_confirm: "This will remove all members in the group and delete all information associated with this group. Continue?"
@@ -54,6 +52,10 @@ en:
                       If you change your mind and want to create or join a group,
                       first delete your group using the button below."
       your_group: "Your group"
+
+    destroy:
+      errors:
+        do_not_have_a_group: "You do not currently have a group."
 
     members:
       cancel_invitation: "Cancel invitation"

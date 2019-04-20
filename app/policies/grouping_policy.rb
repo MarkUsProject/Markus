@@ -35,4 +35,16 @@ class GroupingPolicy < ApplicationPolicy
   def delete_rejected?
     user.user_name == record.inviter.user_name
   end
+
+  def destroy?
+    check?(:deletable_by?) && check?(:no_submission?)
+  end
+
+  def deletable_by?
+    record.deletable_by?(user)
+  end
+
+  def no_submission?
+    !record.has_submission?
+  end
 end

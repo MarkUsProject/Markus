@@ -173,14 +173,6 @@ en:
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
-    create_group:
-      fail:
-        due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
-        not_allow_to_form_groups: "Assignment does not allow students to form groups"
-        already_have_a_group: "You already have a group, and cannot create another"
-        can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is %{group_min}"
-        do_not_have_a_group: "You do not currently have a group"
-
     update_files:
       success:  "Your changes have been made."
 

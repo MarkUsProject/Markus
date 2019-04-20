@@ -4,8 +4,6 @@ pt:
     another_assignment_group: "Use grupos de outro projeto"
     assigned_students: "Atribuíds"
     assignment_to_use: "Quais atribuições de grupos você gostaria de usar?"
-    cant_delete: "Você não tem permissão para deletar este grupo."
-    cant_delete_already_submitted: "Você já enviou algo. Não pode deletar seu grupo."
     could_not_delete: "Não foi possível deletar os seguintes grupos - grupos não podem ser deletados para este projeto se já existir algum envio."
     delete: "Deletar este grupo"
     delete_confirm: 'Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?'
@@ -52,6 +50,10 @@ pt:
       working_alone: "Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou
                       participar de um grupo, primeiro exclua o seu grupo."
       your_group: "Seu grupo"
+
+    destroy:
+      errors:
+        do_not_have_a_group: "Você não possúi um grupo."
 
     members:
       cancel_invitation: "Cancelar o convite"

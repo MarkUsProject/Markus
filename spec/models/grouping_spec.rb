@@ -773,8 +773,8 @@ describe Grouping do
           expect(@grouping.can_invite?(@student_can_invite)).to be true
         end
 
-        it 'returns false for students of different section' do
-          expect(@grouping.can_invite?(@student_cannot_invite)).to be false
+        it 'raises an error for students of different section' do
+          expect { @grouping.can_invite?(@student_cannot_invite) }.to raise_error(RuntimeError)
         end
       end
     end
