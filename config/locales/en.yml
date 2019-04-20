@@ -173,13 +173,6 @@ en:
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
-    add_student:
-      success: "Student %{user_name} added."
-      fail:
-        general: "Something went wrong. Could not add %{user_name}."
-        hidden:  "Could not add %{user_name} - this student's account has been disabled."
-        already_grouped: "Could not add %{user_name} - this student is already a member of another group."
-
     create_group:
       fail:
         due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
@@ -188,20 +181,6 @@ en:
         can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is %{group_min}"
         do_not_have_a_group: "You do not currently have a group"
 
-    invite_student:
-      success: "Invitations successful"
-      fail:
-        only_inviter: "Only the inviter can delete a declined invitation"
-        due_date_passed: "Could not invite %{user_name} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
-        dne:  "Could not invite %{user_name} - this student does not exist."
-        hidden:  "Could not invite %{user_name} - this student's account has been disabled."
-        already_pending: "Could not invite %{user_name} - this student is already a pending member of this group."
-        group_max_reached: "Could not invite %{user_name} - group maximum has been reached."
-        inviting_self: "You cannot invite yourself to your own group."
-        already_grouped: "Could not invite %{user_name} - this student is already a member of another group."
-        need_to_create_group: "You must create a group before you can invite users"
-        not_same_section: "Student %{user_name} is outside of your section."
-        error: "Failed to invite student %{user_name}."
     update_files:
       success:  "Your changes have been made."
 

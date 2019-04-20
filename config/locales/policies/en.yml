@@ -8,6 +8,8 @@ en:
         test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
       grouping:
+        before_due_date?: "The due date for this assignment has passed."
+        delete_rejected?: "Only the inviter can delete a declined invitation."
         member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
         not_in_progress?: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results."
         tokens_available?: "You cannot run tests because you or your group do not have tokens available."

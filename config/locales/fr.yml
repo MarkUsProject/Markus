@@ -170,13 +170,6 @@ fr:
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "L'étudiant(e) %{user_name} a été ajouté(e)."
-      fail:
-        general: "Erreur inconnue. Impossible d'ajouter %{user_name}."
-        hidden:  "%{user_name} n'a pas été ajouté(e) : le compte de cet(te) étudiant(e) a été désactivé(e)."
-        already_grouped: "%{user_name} n'a pas été ajouté(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
-
     create_group:
       fail:
         due_date_passed: "Impossible de créer le groupe — la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
@@ -185,20 +178,6 @@ fr:
         can_not_work_alone: "Vous ne pouvez pas travailler seul sur ce projet. Il faut au minimum %{group_min} étudiants pour former un groupe."
         do_not_have_a_group: "Vous n'appartenez pas à un groupe."
 
-    invite_student:
-      success: "L'étudiant(e) a été invité(e)."
-      fail:
-        only_inviter: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée"
-        due_date_passed: "%{user_name} ne peut pas être invité(e) : la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        dne:  "%{user_name}ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
-        hidden:  "%{user_name} ne peut pas être invité(e) : le compte de cet(te) étudiant(e) a été désactivé."
-        already_pending: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà en attente pour ce groupe."
-        group_max_reached: "%{user_name} ne peut pas être invité(e) : la limite maximale pour ce groupe est déjà atteinte."
-        inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
-        already_grouped: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
-        need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
-        not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
-        error: "Erreur. Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
 

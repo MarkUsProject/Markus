@@ -70,3 +70,14 @@ en:
         inviter: "inviter"
         pending: "invited"
         rejected: "declined"
+
+    invite_member:
+      errors:
+        already_grouped: "Could not invite %{user_name}: this student is already a member of a group."
+        already_pending: "Could not invite %{user_name}: this student already has a pending invitation for this group."
+        group_max_reached: "Could not invite %{user_name}: group maximum has been reached."
+        inviting_self: "You cannot invite yourself to your own group."
+        need_to_create_group: "You must create a group before you can invite members."
+        not_found: "No student '%{user_name}' could be found."
+        not_same_section: "Could not invite %{user_name}: this student is not in your section."
+      success: "Invitation(s) successful."

@@ -371,7 +371,7 @@ class GroupsController < ApplicationController
       m_logger.log("Student '#{@student.user_name}' created group.",
                    MarkusLogger::INFO)
     rescue RuntimeError => e
-      flash[:fail_notice] = e.message
+      flash_message(:error, e.message)
       m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
     redirect_to student_interface_assignment_path(@assignment.id)
@@ -419,36 +419,38 @@ class GroupsController < ApplicationController
   end
 
   def invite_member
-    return unless request.post?
     @assignment = Assignment.find(params[:assignment_id])
-    # if instructor formed group return
-    return if @assignment.invalid_override
 
-    @student = @current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
-      raise I18n.t('invite_student.fail.need_to_create_group')
+      flash_message(:error,
+                    I18n.t('groups.invite_member.errors.need_to_create_group'))
+      redirect_to student_interface_assignment_path(@assignment.id)
+      return
     end
-
-    to_invite = params[:invite_member].split(',')
-    flash[:fail_notice] = []
-    MarkusLogger.instance
-    @grouping.invite(to_invite)
-    flash[:fail_notice] = @grouping.errors['base']
-    if flash[:fail_notice].blank?
-      flash_message(:success, I18n.t('invite_student.success'))
+    begin
+      authorize! @grouping, to: :invite_member?
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error,
+                    e.result.reasons.full_messages.join(' '))
+    else
+      to_invite = params[:invite_member].split(',')
+      errors = @grouping.invite(to_invite)
+      if errors.blank?
+        flash_message(:success, I18n.t('groups.invite_member.success'))
+      else
+        flash_message(:error, errors.join(' '))
+      end
     end
     redirect_to student_interface_assignment_path(@assignment.id)
   end
 
-  # Called by clicking the cancel link in the student's interface
-  # i.e. cancels invitations
+  # Deletes pending invitations
   def disinvite_member
     assignment = Assignment.find(params[:assignment_id])
     membership = StudentMembership.find(params[:membership])
     disinvited_student = membership.user
-    membership.delete
-    membership.save
+    membership.destroy
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
     flash_message(:success, I18n.t('groups.members.member_disinvited'))
@@ -460,11 +462,13 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     membership = StudentMembership.find(params[:membership])
     grouping = membership.grouping
-    if current_user != grouping.inviter
-      raise I18n.t('invite_student.fail.only_inviter')
+    begin
+      authorize! grouping, to: :delete_rejected?
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.result.message)
+    else
+      membership.destroy
     end
-    membership.delete
-    membership.save
     redirect_to student_interface_assignment_path(params[:assignment_id])
   end
 
@@ -593,24 +597,19 @@ class GroupsController < ApplicationController
     set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :
           StudentMembership::STATUSES[:accepted]
-    @messages = []
     @bad_user_names = []
 
     if student.hidden
-      raise I18n.t('add_student.fail.hidden', user_name: student.user_name)
+      raise I18n.t('groups.invite_member.errors.not_found', user_name: student.user_name)
     end
     if student.has_accepted_grouping_for?(assignment.id)
-      raise I18n.t('add_student.fail.already_grouped', user_name: student.user_name)
+      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: student.user_name)
     end
-    membership_count = grouping.student_memberships.length
-    grouping.invite(student.user_name, set_membership_status, true)
+    errors = grouping.invite(student.user_name, set_membership_status, true)
     grouping.reload
 
-    # Report success only if # of memberships increased
-    if membership_count < grouping.student_memberships.length
-      @messages.push(I18n.t('add_student.success', user_name: student.user_name))
-    else # something clearly went wrong
-      raise I18n.t('add_student.fail.general', user_name: student.user_name)
+    unless errors.blank?
+      raise errors.join(' ')
     end
 
     # Only the first student should be the "inviter"
