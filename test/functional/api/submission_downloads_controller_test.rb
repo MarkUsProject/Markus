@@ -6,7 +6,7 @@ require 'shoulda'
 require 'base64'
 require 'stringio'
 
-class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
+class Api::SubmissionFilesControllerTest < ActionController::TestCase
 
   # Testing unauthenticated requests
   context 'An unauthenticated request to submission_downloads' do

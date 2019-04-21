@@ -1,7 +1,7 @@
 module Api
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
-  class SubmissionDownloadsController < MainApiController
+  class SubmissionFilesController < MainApiController
 
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
@@ -92,5 +92,83 @@ module Api
       end
     end
 
-  end # end SubmissionDownloadsController
+    def create
+      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      if grouping.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group with that id exists for the given assignment' }, status: 404
+        return
+      end
+
+      if has_missing_params?([:filename, :mime_type, :file_content])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+
+      tmpfile = Tempfile.new
+      begin
+        if params[:file_content].respond_to? :read # binary data
+          content = params[:file_content].read
+        else
+          content = params[:file_content]
+        end
+        tmpfile.write(content)
+        tmpfile.rewind
+        file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
+                                                      filename: params[:filename],
+                                                      type: params[:mime_type])
+        success, messages = grouping.add_files([file], @current_user)
+      ensure
+        tmpfile.close!
+      end
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+      if success
+        # It worked, render success
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '201', message: message }, status: 201
+      else
+        # Some other error occurred
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      end
+    end
+
+    def remove_file
+      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      if grouping.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group with that id exists for the given assignment' }, status: 404
+        return
+      end
+
+      if has_missing_params?([:filename])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+
+      begin
+        success, messages = grouping.remove_files([params[:filename]], @current_user)
+      rescue Repository::FileDoesNotExist
+        render 'shared/http_status', locals: { code: '404', message:
+          'No file exists at that path.' }, status: 404
+        return
+      end
+
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+
+      if success
+        # It worked, render success
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
+      else
+        # Some other error occurred
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      end
+    end
+  end
 end

@@ -16,7 +16,11 @@ Rails.application.routes.draw do
             get 'annotations'
             get 'group_ids_by_name'
           end
-          resources :submission_downloads, except: [:new, :edit]
+          resources :submission_files, except: [:new, :edit] do
+            collection do
+              delete 'remove_file'
+            end
+          end
           resources :feedback_files, except: [:new, :edit]
           resources :test_group_results, except: [:new, :edit] do
             resources :test_results, except: [:new, :edit]
