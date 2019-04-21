@@ -35,6 +35,10 @@ pt:
     description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
     max_mark_short: "Nota"
 
+  checkbox_criteria:
+    answer_no: "Não"
+    answer_yes: "Sim"
+
   rubric_criteria:
     level:
       level_index: "Nível %{index}"

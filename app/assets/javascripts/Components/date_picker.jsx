@@ -14,7 +14,7 @@ class Datepicker extends React.Component {
 
   handleClose = () => {
     if (this.props.warn_before_now && moment(this.props.date, I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('past_start_date_edit_warning'));
+      alert(I18n.t('date.before_now'));
     }
     if (typeof this.props.onClose === 'function') {
       this.props.onClose();

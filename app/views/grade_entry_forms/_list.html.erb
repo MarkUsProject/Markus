@@ -28,13 +28,6 @@
               <td>
                 <% unless grade_entry_form.date.nil? %>
                   <%= l(grade_entry_form.date, format: :long) %>
-                  <% if grade_entry_form.date > Time.zone.now.to_date %>
-                    <p>
-                      <%= t(:days_left,
-                            days: (grade_entry_form.date - Time.zone.now.to_date).to_i)
-                    %>
-                    </p>
-                  <% end %>
                 <% end %>
               </td>
               <td class="grade_entry_form_result">

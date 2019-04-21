@@ -1,5 +1,6 @@
 fr:
   optional: "optionnel"
+  required_fields: "Champs obligatoires"
 
   helpers:
     confirm:

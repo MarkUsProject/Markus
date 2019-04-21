@@ -6,6 +6,8 @@ pt:
       short: "YYYY-DD-MM"
       datetimepicker: "yy-dd-mm"
 
+    before_now_warning: "O data selecionada está no passado."
+
   time:
     formats:
       default: "%A, %d de %B de %Y %H:%M:%S"

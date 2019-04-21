@@ -6,6 +6,7 @@ en:
     new: "Add an Admin"
 
   students:
+    active: "Active"
     admin_actions:
       add_section: "Add to section"
       give_grace_credits: "Give grace credits"
@@ -14,6 +15,7 @@ en:
     edit: "Edit a Student"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."
+    inactive: "Inactive"
     new: "Add a Student"
     no_students_selected: "No students were selected, so no changes were made."
     not_successfully_added_message_1: "The following students have not been successfully added:"

@@ -51,7 +51,8 @@ class AutomatedTestsController < ApplicationController
         # save modified specs and send them to the autotesting server in the background
         File.write(test_specs_path, JSON.generate(test_specs))
         AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
-        flash_message(:success, t('assignment.update_success'))
+        flash_message(:success,
+                      t('flash.actions.update.success', resource_name: Assignment.model_name.human))
       rescue StandardError => e
         flash_message(:error, e.message)
       end

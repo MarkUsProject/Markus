@@ -36,6 +36,10 @@ en:
     description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
     max_mark_short: "Max Mark"
 
+  checkbox_criteria:
+    answer_no: "No"
+    answer_yes: "Yes"
+
   rubric_criteria:
     level:
       level_index: "Level %{index}"

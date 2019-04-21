@@ -130,9 +130,9 @@ class RawStudentTable extends React.Component {
               minWidth: 90
             },
             {
-              Header: I18n.t('active') + '?',
+              Header: I18n.t('students.active') + '?',
               accessor: 'hidden',
-              Cell: ({ value }) => value ? I18n.t('not_active') : I18n.t('active'),
+              Cell: ({ value }) => value ? I18n.t('students.inactive') : I18n.t('students.active'),
               filterMethod: (filter, row) => {
                 if (filter.value === 'all') {
                   return true;
@@ -150,8 +150,8 @@ class RawStudentTable extends React.Component {
                   value={filter ? filter.value : 'all'}
                 >
                   <option value='all'>{I18n.t('all')}</option>
-                  <option value='active'>{I18n.t('active')}</option>
-                  <option value='inactive'>{I18n.t('not_active')}</option>
+                  <option value='active'>{I18n.t('students.active')}</option>
+                  <option value='inactive'>{I18n.t('students.inactive')}</option>
                 </select>,
             },
             {

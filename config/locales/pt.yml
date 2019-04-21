@@ -1,25 +1,6 @@
 pt:
-    answer_yes:         "Sim"
-    answer_no:          "Não"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "Não existem projetos atualmente."
-
     # app/views/assignments/
-    name: "Nome"
-    filename:  "Nome do Arquivo"
-    message:  "Mensagem"
-    days_left:          "(%{days} dia(s) restante(s))"
-    description:        "Descrição"
-    shortened_date:     "Data<span class='required_field'>*</span>"
-    remove_date:        "Remover data"
-    manage_course_work: "Gerenciar trabalho do curso"
-    required_fields: "Campos exigidos"
     assignment:
-        hidden: "%{assignment_text} (oculto)"
-        update_success:        "Projeto atualizado com sucesso"
-        no_required_files_read:  "Não há arquivos exigidos para esse projeto."
-        upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         group:
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
             grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
@@ -81,10 +62,7 @@ pt:
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
 
     add_new:            "Adicionar novo"
-    active:             "Ativo"
-    not_active:         "Não ativo"
     peer_reviews:       "Avaliações pelos pares"
-    preview:            "Prever"
 
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
@@ -106,8 +84,6 @@ pt:
 
     browse_submissions:
       review_state:         "Estado de revisão"
-
-    no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
 
     groups:
       upload:
@@ -163,9 +139,6 @@ pt:
       errors:
         messages:
           released_marks:         "TODO"
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Informações Adicionais"
 
     #lib/validators/
     date_validator:

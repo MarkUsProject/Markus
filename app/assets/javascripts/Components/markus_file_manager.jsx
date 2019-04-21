@@ -201,7 +201,7 @@ class FileManagerHeader extends Headers.TableHeader {
           selected: this.props.isSelected,
         })}
       >
-        <th>{I18n.t('filename')}</th>
+        <th>{I18n.t('attributes.filename')}</th>
         <th className="modified">{I18n.t('submissions.repo_browser.submitted_at')}</th>
         <th className="modified">{I18n.t('submissions.repo_browser.revised_by')}</th>
       </tr>

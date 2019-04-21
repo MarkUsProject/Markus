@@ -1,25 +1,6 @@
 en:
-    answer_yes:         "Yes"
-    answer_no:          "No"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "There are currently no assignments."
-
     # app/views/assignments/
-    name: "Name"
-    filename:  "Filename"
-    message:  "Message"
-    days_left:          "(%{days} day(s) left)"
-    description:        "Description"
-    shortened_date:     "Date"
-    remove_date:        "Remove Date"
-    manage_course_work: "Manage Course Work"
-    required_fields: "Required Fields"
     assignment:
-        hidden: "%{assignment_text} (hidden)"
-        update_success:        "Successfully updated the assignment"
-        no_required_files_read:  "There are no required files for this assignment."
-        upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         group:
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
@@ -81,12 +62,7 @@ en:
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
     add_new:            "Add New File"
-    active:             "Active"
-    not_active:         "Not active"
     peer_reviews:       "Peer reviews"
-    preview:            "Preview"
-
-    past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
@@ -108,8 +84,6 @@ en:
 
     browse_submissions:
       review_state:         "Review State"
-
-    no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
 
     groups:
       upload:
@@ -166,13 +140,6 @@ en:
       errors:
         messages:
           released_marks:         "Cannot update criteria for an assignment with released marks."
-
-    section:
-      help:
-        manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Additional Information"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

@@ -897,7 +897,7 @@ class Grouping < ApplicationRecord
     # check if only required files are allowed for a submission
     required_files = assignment.assignment_files.pluck(:filename)
     if required_files.present? && assignment.only_required_files && (new_files - required_files).present?
-      messages << [:error, I18n.t('assignment.upload_file_requirement')]
+      messages << [:error, I18n.t('assignments.upload_file_requirement')]
       return false, messages
     end
 
