@@ -36,7 +36,7 @@ class ExamScanLogTable extends React.Component {
           accessor: 'exam_template',
         },
         {
-          Header: I18n.t('shortened_date'),
+          Header: I18n.t('attributes.date'),
           accessor: 'date',
           minWidth: 150
         },

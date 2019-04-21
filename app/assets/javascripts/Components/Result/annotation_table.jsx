@@ -30,7 +30,7 @@ export class AnnotationTable extends React.Component {
       }
     },
     {
-      Header: I18n.t('filename'),
+      Header: I18n.t('attributes.filename'),
       id: 'filename',
       Cell: row => {
         let full_path = row.original.path ? row.original.path + '/' + row.original.filename : row.original.filename;

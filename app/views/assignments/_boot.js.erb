@@ -60,7 +60,7 @@
     var input_id = 'assignment_assignment_files_attributes_' + new_id +
                    '_filename';
     var assignment_file = '<p id="' + input_id + '_holder">' +
-      '<label class="required" for="' + input_id + '">' + I18n.t('filename') + '</label>' +
+      '<label class="required" for="' + input_id + '">' + I18n.t('attributes.filename') + '</label>' +
       '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
       '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
@@ -111,7 +111,7 @@
 
   function check_due_date(new_due_date) {
     if (moment(new_due_date, I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('assignments.form.past_due_date_edit_warning'));
+      alert(I18n.t('date.before_now_warning'));
     }
   }
 

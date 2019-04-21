@@ -178,7 +178,7 @@ class CheckboxCriterionInput extends React.Component {
                   checked={this.props.mark === this.props.max_mark}
                   disabled={this.props.released_to_students || this.props.unassigned}
                 />
-                {I18n.t('answer_yes')}
+                {I18n.t('checkbox_criteria.answer_yes')}
               </label>
               <label>
               <input
@@ -188,7 +188,7 @@ class CheckboxCriterionInput extends React.Component {
                 checked={this.props.mark === 0}
                 disabled={this.props.released_to_students || this.props.unassigned}
               />
-                {I18n.t('answer_no')}
+                {I18n.t('checkbox_criteria.answer_no')}
               </label>
             </span>
             }

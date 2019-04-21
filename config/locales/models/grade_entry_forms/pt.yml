@@ -5,7 +5,6 @@ pt:
         one: "Notas nas planilha"
     attributes:
       grade_entry_form:
-        date: "Data"
         description: "Descrição"
         grades: "Notas"
         is_hidden: "Ocultar Planilha"

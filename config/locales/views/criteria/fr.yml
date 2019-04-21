@@ -39,6 +39,10 @@ fr:
       Pour un aperçu, sauvegardez."
     max_mark_short: "Note"
 
+  checkbox_criteria:
+    answer_no: "Non"
+    answer_yes: "Oui"
+
   rubric_criteria:
     level:
       level_index: "Niveau %{index}"

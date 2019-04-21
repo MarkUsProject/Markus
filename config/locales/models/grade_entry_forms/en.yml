@@ -5,7 +5,6 @@ en:
         one: "Marks Spreadsheet"
     attributes:
       grade_entry_form:
-        date: "Date"
         description: "Description"
         grades: "Grades"
         is_hidden: "Hide Spreadsheet"

@@ -19,7 +19,7 @@
             <tr>
               <td>
                 <% if grade_entry_form.is_hidden %>
-                    <%= link_to t('assignment.hidden',
+                    <%= link_to t('assignments.hidden',
                                   assignment_text:
                                           "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" ),
                                 { controller: 'grade_entry_forms',

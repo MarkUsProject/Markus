@@ -36,6 +36,10 @@ es:
       Guarde los cambios para ver una vista preliminar."
     max_mark_short: "Nota Máxima"
 
+  checkbox_criteria:
+    answer_no: "No"
+    answer_yes: "Sí"
+
   rubric_criteria:
     level:
       level_index: "Nivel %{index}"

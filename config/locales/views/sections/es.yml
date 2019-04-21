@@ -18,4 +18,7 @@ es:
       success: "La sección %{name} fue actualizada exitosamente."
 
     # Miscellaneous
+    help: "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
+           en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
+           a una sección, use the la vista de Usuarios."
     none: "No hay secciones todavía."

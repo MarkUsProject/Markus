@@ -1,25 +1,6 @@
 fr:
-    answer_yes:         "Oui"
-    answer_no:          "Non"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "Aucun devoir pour le moment."
-
     # app/views/assignments/
-    name: "Nom "
-    filename:  "Fichier"
-    message:  "Informations "
-    days_left:          "(%{days} jour(s) restant(s))"
-    description:        "Description "
-    shortened_date:     "Date<span class='required_field'>*</span>"
-    remove_date:        "Enlever date"
-    manage_course_work: "Gestion du cours"
-    required_fields: "Champs obligatoires "
     assignment:
-        hidden: "%{assignment_text} (masqué)"
-        update_success: "Projet mis à jour"
-        no_required_files_read:  "Aucun fichier n'est requis pour ce projet."
-        upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         group:
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
@@ -81,10 +62,7 @@ fr:
             description: "Format de fichier CSV: Portugais<code>result_id,group_name</code> Objet"
 
     add_new:            "Nouveau"
-    active:             "Actif"
-    not_active:         "Inactif"
     peer_reviews:       "Examens par le pairs"
-    preview:            "Prévisualisation"
 
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
@@ -106,8 +84,6 @@ fr:
 
     browse_submissions:
       review_state:         "Avis Etat"
-
-    no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
 
     groups:
       upload:
@@ -164,9 +140,6 @@ fr:
       errors:
         messages:
           released_marks:         "TODO"
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

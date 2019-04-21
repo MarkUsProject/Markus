@@ -1,14 +1,7 @@
 <div class='section'>
-  <% if @grade_entry_forms.empty? && @assignments.empty? %>
-      <p><%= t(:no_assignments_and_grade_entry_forms_message) %></p>
-  <% else %>
+  <% unless @grade_entry_forms.empty? && @assignments.empty? %>
     <div class="table">
       <table>
-        <thead>
-        <tr>
-          <th><%= t(:name) %></th>
-        </tr>
-        </thead>
         <tbody>
           <tr>
             <td>

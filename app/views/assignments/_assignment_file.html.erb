@@ -1,7 +1,7 @@
 <div class='assignment_file'>
 <%= form.fields_for :assignment_files, assignment_file do |f| %>
   <p>
-    <%= f.label :filename, t(:filename), class: 'required' %>
+    <%= f.label :filename, t('attributes.filename'), class: 'required' %>
     <%= f.text_field :filename %>
     (<%= t(:delete) %> <%= f.check_box :_destroy %>)
   </p>

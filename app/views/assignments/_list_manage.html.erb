@@ -1,6 +1,6 @@
 <div class='section'>
   <% if @assignments.empty? %>
-    <p><%= t(:no_assignments) %></p>
+    <p><%= t('assignments.none') %></p>
   <% else %>
     <h3><%= Assignment.model_name.human.pluralize %></h3>
 
@@ -20,7 +20,7 @@
                 <td>
                   <% if controller == 'assignments' %>
                     <% if assignment.is_hidden %>
-                      <%= link_to t('assignment.hidden',
+                      <%= link_to t('assignments.hidden',
                                     assignment_text:
                                       "#{h(assignment.short_identifier)}: #{h(assignment.description)}"),
                                   { controller: controller,
@@ -36,7 +36,7 @@
                     <% end %>
                   <% else %>
                     <% if assignment.is_hidden %>
-                      <%= link_to t('assignment.hidden',
+                      <%= link_to t('assignments.hidden',
                                        assignment_text:
                                            "#{h(assignment.short_identifier)}: #{h(assignment.description)}"),
                                   { controller: controller,
@@ -55,7 +55,7 @@
                       <!--temporary conditional until submissions_controller.browse() is updated to handle pr_assignments-->
                       <% if @current_user.admin? %>
                         <% if assignment.pr_assignment.is_hidden %>
-                          <%= link_to t('assignment.hidden',
+                          <%= link_to t('assignments.hidden',
                                         assignment_text: t('results.review_for') + assignment.short_identifier),
                                       { controller: controller,
                                         action: action,
@@ -70,7 +70,7 @@
                         <% end %>
                       <% else %>
                           <% if assignment.pr_assignment.is_hidden %>
-                              <%= link_to t('assignment.hidden',
+                              <%= link_to t('assignments.hidden',
                                             assignment_text: t('results.review_for') + assignment.short_identifier),
                                           { },
                                           class: 'pr_assignment_list' %>

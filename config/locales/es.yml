@@ -1,26 +1,6 @@
 es:
-    answer_yes:         "Sí"
-    answer_no:          "No"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "No existen proyectos por el momento."
-
     # app/views/assignments/
-    name:                      "Nombre"
-    filename:                  "Nombre del archivo"
-    message:                   "Mensaje"
-    days_left:                 "(%{days} días(s) restantes)"
-    description:               "Descripción"
-    shortened_date:            "Fecha"
-    remove_date:               "Remover Fecha"
-    manage_course_work:        "Administrar trabajos del curso"
-    required_fields:           "Campos requeridos."
     assignment:
-        hidden:                    "%{assignment_text} (oculto)"
-        update_success:            "El proyecto ha sido actualizado exitosamente"
-        no_required_files_read:    "No hay archivos requeridos para este proyecto."
-        upload_file_requirement:   "La lista de archivos entregados no coincide con los archivos necesarios para este
-                                    proyecto."
         group:
             assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
                                            %{group}"
@@ -86,12 +66,7 @@ es:
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
 
     add_new:                     "Añadir Nuevo Archivo"
-    active:                      "Activo"
-    not_active:                  "Inactivo"
     peer_reviews:                "Revisiones de Compañeros"
-    preview:                     "Vista previa"
-
-    past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
 
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
@@ -121,8 +96,6 @@ es:
 
     browse_submissions:
       review_state:                         "Estado de la Revisión"
-
-    no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
     groups:
       upload:
@@ -182,15 +155,6 @@ es:
       errors:
         messages:
           released_marks:         "TODO"
-
-    section:
-      help:
-        manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
-                            en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
-                            a una sección, use the la vista de Usuarios."
-
-    #app/views/assignments/_read.html.erb
-    additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

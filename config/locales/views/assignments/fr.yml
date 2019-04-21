@@ -7,7 +7,6 @@ fr:
     form:
       add_required_file: "Ajouter un fichier requis"
       group_properties: "Propriétés du groupe"
-      past_due_date_edit_warning: "La date de retour que vous avez choisie est antérieure à la date actuelle."
       persist_groups_from: "Garder les groupes et les propriétés de"
       remarks: "Règles de révisions"
       required_files_by_student: "Ajouter le(s) fichier(s) que les étudiants devront envoyer :"
@@ -28,5 +27,10 @@ fr:
 
     # Miscellaneous
     average_annotations: "%{average_annotations} annotations par soumission marquée"
+    hidden: "%{assignment_text} (masqué)"
     information: "Règles du projet"
+    manage_course_work: "Gestion du cours"
     marking_scheme: "Barème: %{identifier}"
+    no_required_files: "Aucun fichier n'est requis pour ce projet."
+    none: "Aucun devoir pour le moment."
+    upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"

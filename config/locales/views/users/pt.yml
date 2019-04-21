@@ -6,6 +6,7 @@ pt:
     new: "Criar novo Administrador"
 
   students:
+    active: "Ativo"
     admin_actions:
       add_section: "Adicionar a sessão"
       give_grace_credits: "Dar créditos de tolerância"
@@ -14,6 +15,7 @@ pt:
     edit: "Editar um Aluno"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."
+    inactive: "Não ativo"
     new: "Criar um novo aluno"
     no_students_selected: "Nenhum aluno foi selecionado, portanto nenhuma mudança foi salva."
     not_successfully_added_message_1: "Os seguintes alunos não foram adicionados com êxito:"
