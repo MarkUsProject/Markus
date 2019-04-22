@@ -113,6 +113,7 @@ echo "- - - Update .profile - - -"
 cat >> /home/vagrant/.profile << 'EOL'
 export PATH="${PATH}:/home/vagrant/Markus/bin"
 export HOST="0.0.0.0"
+EOL
 
 # Install Python libraries for exam scanner
 echo "- - - Installing Python Libraries - - -"
@@ -121,5 +122,4 @@ sudo apt-get update
 sudo apt-get install python3.7
 sudo apt install python3-pip
 python3.7 -m pip install pip
-python3.7 -m pip install --user --no-cache-dir -r lib/scanner/requirements.txt
-EOL
+python3.7 -m pip install --user --no-cache-dir -r $MARKUS_ROOT/lib/scanner/requirements.txt
