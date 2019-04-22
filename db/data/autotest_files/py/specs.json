@@ -1,0 +1,27 @@
+{
+  "testers": [
+    {
+      "tester_type": "py",
+      "env_data": {
+        "python_version": "3.7",
+        "pip_requirements": "hypothesis pytest-timeout"
+      },
+      "test_data": [
+        {
+          "script_files": ["test.py"],
+          "category": ["admin"],
+          "timeout": 30,
+          "tester": "unittest",
+          "output_verbosity": 2
+        },
+        {
+          "script_files": ["test2.py"],
+          "category": ["admin"],
+          "timeout": 30,
+          "tester": "pytest",
+          "output_verbosity": "short"
+        }
+      ]
+    }
+  ]
+}

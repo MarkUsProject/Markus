@@ -1,0 +1,19 @@
+{
+  "testers": [
+    {
+      "tester_type": "java",
+      "test_data": [
+        {
+          "script_files": ["Test1.java"],
+          "category": ["admin"],
+          "timeout": 30
+        },
+        {
+          "script_files": ["Test2.java"],
+          "category": ["admin"],
+          "timeout": 30
+        }
+      ]
+    }
+  ]
+}
