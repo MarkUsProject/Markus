@@ -1,9 +1,9 @@
 namespace :db do
-  include AutomatedTestsHelper
   desc 'Sets up environment to test the autotester'
   task :autotest => :environment do
+    include AutomatedTestsHelper
+    Rake::Task['markus:setup_autotest'].invoke
     puts 'Set up testing environment for autotest'
-    #AutotestSetup.new('autotest01')
     AutotestTestersJob.perform_now
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
@@ -22,8 +22,8 @@ class AutotestSetup
     script_dir = File.join(root_dir, 'script_files')
     @test_scripts = Dir.glob(File.join(script_dir, '*'))
     @script_file = File.join(root_dir, 'specs.json')
-    student_dir = File.join(root_dir, 'student_files')
-    @student_files = Dir.glob(File.join(student_dir, '*'))
+    @student_dir = File.join(root_dir, 'student_files')
+    @student_files = Dir.glob(File.join(@student_dir, '*'))
 
     @assignment = create_new_assignment
 
@@ -67,6 +67,7 @@ class AutotestSetup
       enable_student_tests: true,
       unlimited_tokens: true
     )
+    Assignment.find_by_short_identifier(@assg_short_id)
   end
 
   def clear_old_files
@@ -116,7 +117,8 @@ class AutotestSetup
       transaction = repo.get_transaction(student.user_name)
       @student_files.each do |file_path|
         File.open(file_path, 'r') do |file|
-          repo_path = File.join(@assignment.repository_folder, filename)
+          file_rel_path = Pathname.new(file_path).relative_path_from(@student_dir)
+          repo_path = File.join(@assignment.repository_folder, file_rel_path)
           transaction.add(repo_path, file.read, '')
         end
       end
