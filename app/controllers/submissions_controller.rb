@@ -418,7 +418,7 @@ class SubmissionsController < ApplicationController
                                  file_name: file.filename)
         else
           file_contents = repo.download_as_string(raw_file)
-          file_contents.force_encoding('UTF-8')
+          file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
         end
 
         if SubmissionFile.is_binary?(file_contents)
