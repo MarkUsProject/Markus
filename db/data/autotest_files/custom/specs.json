@@ -1,0 +1,18 @@
+{
+  "testers": [
+    {
+      "tester_type": "custom",
+      "test_data": [
+        {
+          "script_files": [
+            "autotest_01.sh"
+          ],
+          "category": [
+            "admin"
+          ],
+          "timeout": 30
+        }
+      ]
+    }
+  ]
+}

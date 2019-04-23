@@ -1,4 +1,5 @@
 class AutomatedTestsController < ApplicationController
+  include AutomatedTestsHelper
 
   before_action      :authorize_only_for_admin,
                      only: [:manage, :update]
@@ -130,9 +131,8 @@ class AutomatedTestsController < ApplicationController
     end
     if File.exist? testers_schema_path
       schema_data = JSON.parse(File.open(testers_schema_path, &:read))
-      schema_data['definitions']['files_list']['enum'] = files_data.map { |data| data[:key] }
-      schema_data['definitions']['test_data_categories']['enum'] = TestRun.all_test_categories
-      schema_data['definitions']['extra_group_data'] = extra_test_group_schema(assignment)
+      file_keys = files_data.map { |data| data[:key] }
+      fill_in_schema_data!(schema_data, file_keys, assignment)
     else
       flash_now(:notice, I18n.t('automated_tests.loading_specs'))
       AutotestTestersJob.perform_later
@@ -186,24 +186,6 @@ class AutomatedTestsController < ApplicationController
   end
 
   private
-
-  def extra_test_group_schema(assignment)
-    criterion_names, criterion_disambig = assignment.get_criteria(:ta).map do |c|
-      [c.name, "#{c.id}_#{c.class.name}"]
-    end.transpose
-    { type: :object,
-      properties: {
-        display_output: {
-          type: :string,
-          enum: TestGroup.display_outputs.keys
-        },
-        criterion: {
-          type: :string,
-          enum: criterion_disambig || [],
-          enumNames: criterion_names || []
-        }
-      } }
-  end
 
   def required_params
     [:enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
