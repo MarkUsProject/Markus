@@ -134,8 +134,6 @@ module SubmissionsHelper
       nil
     elsif grouping.is_collected?
       'submission_collected'
-    elsif grouping.error_collecting
-      'submission_error'
     else
       nil
     end

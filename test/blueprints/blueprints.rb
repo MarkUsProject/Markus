@@ -155,7 +155,6 @@ Group.blueprint do
 end
 
 Grouping.blueprint do
-  grouping_queue { nil }
   group {Group.make}
   assignment {Assignment.make}
   criteria_coverage_count {0}
