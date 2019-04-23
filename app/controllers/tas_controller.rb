@@ -1,3 +1,4 @@
+require 'yaml'
 class TasController < ApplicationController
   before_action do |_|
     authorize! with: UserPolicy
@@ -51,13 +52,20 @@ class TasController < ApplicationController
         [ta.user_name,ta.last_name,ta.first_name,ta.email]
       end
       format = 'text/csv'
-    when 'xml'
-      output = tas.to_xml
-      format = 'text/xml'
+    when 'yml'
+      output = []
+      count = 0
+      tas.all.each do |ta|
+        count += 1
+        output.push([{"TA_#{count}" => [[{"Username" => [ta.user_name]}], [{"Last Name" => [ta.last_name]}],
+                                        [{"First Name" => ta.first_name}], [{"Email" => ta.email}]]}])
+      end
+      output = output.to_yaml
+      format = 'text/yaml'
     else
       # Raise exception?
-      output = tas.to_xml
-      format = 'text/xml'
+      output = tas.to_yaml
+      format = 'text/yaml'
     end
     send_data(output,
               type: format,
