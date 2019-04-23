@@ -8,8 +8,6 @@ class Grouping < ApplicationRecord
   after_create_commit :create_grouping_repository_folder
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
-  belongs_to :grouping_queue, optional: true
-
   has_many :memberships, dependent: :destroy
   has_many :student_memberships, -> { order('id') }
   has_many :non_rejected_student_memberships,
@@ -215,8 +213,6 @@ class Grouping < ApplicationRecord
     ta_memberships.count > 0
   end
 
-  #Returns whether or not the submission_collector is pending to collect this
-  #grouping's newest submission
   def is_collected?
     is_collected
   end
