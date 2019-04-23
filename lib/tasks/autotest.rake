@@ -1,6 +1,6 @@
 namespace :db do
   desc 'Sets up environment to test the autotester'
-  task :autotest => :environment do
+  task autotest: :environment do
     include AutomatedTestsHelper
     Rake::Task['markus:setup_autotest'].invoke
     puts 'Set up testing environment for autotest'
@@ -13,7 +13,6 @@ namespace :db do
 end
 
 class AutotestSetup
-
   def initialize(root_dir)
     testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
 
@@ -45,7 +44,7 @@ class AutotestSetup
     assignment_stat = AssignmentStat.new
     Assignment.create(
       short_identifier: @assg_short_id,
-      description: "Assignment for testing the autotester",
+      description: 'Assignment for testing the autotester',
       message: '',
       group_min: 1,
       group_max: 1,
@@ -94,22 +93,23 @@ class AutotestSetup
     marking_weight = MarkingWeight.find_or_create_by(
       gradable_item_id: @assignment.id,
       weight: 1,
-      is_assignment: true)
+      is_assignment: true
+    )
     marking_scheme.marking_weights << marking_weight
   end
 
   def create_criteria
     FlexibleCriterion.find_or_create_by(
-      name:                   'criteria',
-      assignment_id:          @assignment.id,
-      position:               1,
-      max_mark:               5,
-      assigned_groups_count:  nil
+      name: 'criteria',
+      assignment_id: @assignment.id,
+      position: 1,
+      max_mark: 5,
+      assigned_groups_count: nil
     )
   end
 
   def create_student
-    student = User.add_user(Student, %w'aaaautotest Test Otto')
+    student = User.add_user(Student, %w[aaaautotest Test Otto])
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
 
@@ -117,7 +117,7 @@ class AutotestSetup
       transaction = repo.get_transaction(student.user_name)
       @student_files.each do |file_path|
         File.open(file_path, 'r') do |file|
-          file_rel_path = Pathname.new(file_path).relative_path_from Pathname.new (@student_dir)
+          file_rel_path = Pathname.new(file_path).relative_path_from Pathname.new(@student_dir)
           repo_path = File.join(@assignment.repository_folder, file_rel_path)
           transaction.add(repo_path, file.read, '')
         end
