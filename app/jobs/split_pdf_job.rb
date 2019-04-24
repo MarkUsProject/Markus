@@ -240,9 +240,13 @@ class SplitPDFJob < ApplicationJob
         repo.commit(txn)
 
         # convert PDF to an image
-        imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
-          self.quality = 100
-          self.density = '300'
+        begin
+          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
+            self.quality = 100
+            self.density = '300'
+          end
+        rescue Exception
+          next
         end
 
         img = imglist.first
