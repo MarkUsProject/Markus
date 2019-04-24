@@ -48,7 +48,7 @@ export class LeftPane extends React.Component {
             {I18n.t('activerecord.attributes.submission.feedback_files')}
           </Tab>
           <Tab disabled={this.disableRemarkPanel()}>
-            {I18n.t('activerecord.attributes.submission.remark_result')}
+            {I18n.t('activerecord.attributes.submission.submitted_remark')}
           </Tab>
         </TabList>
         <TabPanel forceRender={true}>

@@ -8,4 +8,4 @@ fr:
       submission:
         feedback_files: "Fichiers de support"
         submission_files: "Code source"
-        remark_result: "Demande de retour"
+        submitted_remark: "Demande de retour"

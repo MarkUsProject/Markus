@@ -8,4 +8,4 @@ en:
       submission:
         feedback_files: "Feedback files"
         submission_files: "Submission files"
-        remark_result: "Remark request"
+        submitted_remark: "Remark request"

@@ -11,7 +11,7 @@ class MarkingScheme < ApplicationRecord
 
     course_information
     all_students = Student.includes(:memberships,
-                                    groupings: { current_submission_used: [:remark_result, :non_pr_results] },
+                                    groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
                                     grade_entry_students: :grades)
     student_list = all_students.all.map do |student|
       get_student_information(student)

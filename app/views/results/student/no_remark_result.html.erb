@@ -6,7 +6,7 @@
   <div id="remark_request">
     <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
     <%= @assignment.remark_message %>
-    <h3><%= Submission.human_attribute_name(:remark_result) %></h3>
+    <h3><%= Submission.human_attribute_name(:submitted_remark) %></h3>
     <div id="remark_request_text">
       <%= markdown(@submission.remark_request) %>
     </div>

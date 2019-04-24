@@ -8,4 +8,4 @@ pt:
       submission:
         feedback_files: "Arquivos de comentários"
         submission_files: "código fonte"
-        remark_result: "Pedido de revisão"
+        submitted_remark: "Pedido de revisão"

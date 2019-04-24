@@ -91,7 +91,7 @@ export class RemarkPanel extends React.Component {
         <p>{this.props.assignmentRemarkMessage}</p>
         <p>{remarkDueDate}</p>
         {this.props.studentView && extraInstructions}
-        <h3>{I18n.t('activerecord.attributes.submission.remark_result')}</h3>
+        <h3>{I18n.t('activerecord.attributes.submission.submitted_remark')}</h3>
         {remarkRequestElement}
         {(!this.props.studentView || this.props.remarkSubmitted) &&
           <h3>{I18n.t('activerecord.attributes.result.overall_comment')}</h3>}

@@ -327,11 +327,32 @@ class Assignment < ApplicationRecord
     current_assignment
   end
 
+  # Updates outstanding_remark_request_count in a single query.
+  # Remark requests are counted per grouping based on whether the groupings
+  # current_submission_used has multiple non_pr_results and a non-nil
+  # remark_request_timestamp. Outstanding remark request are those remark
+  # requests with an incomplete marking state.
+  #
+  # This is intended to be equivalent to the following but is more efficient
+  # since it makes a single database query:
+  #
+  #   self.outstanding_remark_request_count = groupings.count do |grouping|
+  #     grouping.current_submission_used&.remark_result&.marking_state ==
+  #       Result::MARKING_STATES[:incomplete]
+  #   end
+  #   self.save
   def update_remark_request_count
-    self.outstanding_remark_request_count = groupings.joins(current_submission_used: :remark_result)
-                                                     .where('results.marking_state': :incomplete)
-                                                     .count
-
+    self.outstanding_remark_request_count = Grouping.where(
+      id: Grouping.where(assignment_id: 2)
+                  .joins(current_submission_used: :non_pr_results)
+                  .group(:id)
+                  .having('count(*) > 1')
+    ).joins(current_submission_used: :non_pr_results)
+     .where.not('submissions.remark_request_timestamp': nil)
+     .pluck_to_hash('results.created_at', 'results.marking_state', 'groupings.id')
+     .group_by { |h| h['groupings.id'] }
+     .transform_values { |v| v.max_by { |h2| h2['results.created_at'] } }
+     .count { |_, v| v['results.marking_state'] == Result::MARKING_STATES[:incomplete] }
     self.save
   end
 
@@ -780,7 +801,7 @@ class Assignment < ApplicationRecord
   end
 
   def get_num_valid
-    groupings.includes(:non_rejected_student_memberships, current_submission_used: :remark_result)
+    groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
              .select(&:is_valid?)
              .size
   end
