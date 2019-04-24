@@ -74,6 +74,14 @@ bundle install --without mysql sqlite unicorn --path vendor/bundle
 echo "- - - Install JavaScript dependencies - - -"
 yarn install
 
+# Install Python libraries for exam scanner
+echo "- - - Installing Python dependencies - - -"
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install -y python3.7 python3-pip
+python3.7 -m pip install pip
+python3.7 -m pip install --user --no-cache-dir -r $MARKUS_ROOT/lib/scanner/requirements.txt
+
 # Setup the postgres database.
 echo "- - - Setup Postgres Database, Step 1 - - -"
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password 'postgres';"
@@ -114,12 +122,3 @@ cat >> /home/vagrant/.profile << 'EOL'
 export PATH="${PATH}:/home/vagrant/Markus/bin"
 export HOST="0.0.0.0"
 EOL
-
-# Install Python libraries for exam scanner
-echo "- - - Installing Python Libraries - - -"
-sudo add-apt-repository -y ppa:deadsnakes/ppa
-sudo apt-get update
-sudo apt-get install python3.7
-sudo apt install python3-pip
-python3.7 -m pip install pip
-python3.7 -m pip install --user --no-cache-dir -r $MARKUS_ROOT/lib/scanner/requirements.txt

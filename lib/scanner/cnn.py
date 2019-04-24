@@ -48,7 +48,10 @@ def char_model():
 
 def get_num(spaces):
     model = numeric_model()
-    test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/nums', transform=TRANSFORM)
+    try:
+        test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/nums', transform=TRANSFORM)
+    except RuntimeError:
+        return
 
     out = ""
     for images, labels in test_data:
@@ -62,7 +65,10 @@ def get_num(spaces):
 
 def get_name(spaces):
     model = char_model()
-    test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/names', transform=TRANSFORM)
+    try:
+        test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/names', transform=TRANSFORM)
+    except RuntimeError:
+        return
 
     out = ""
     for images, labels in test_data:
