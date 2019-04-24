@@ -350,9 +350,9 @@ class Assignment < ApplicationRecord
     ).joins(current_submission_used: :non_pr_results)
      .where.not('submissions.remark_request_timestamp': nil)
      .pluck_to_hash('results.created_at', 'results.marking_state', 'groupings.id')
-     .group_by { |h| h['groupings.id']}
-     .transform_values{ |v| v.max_by { |h2| h2['results.created_at'] } }
-     .count { |_,v| v['results.marking_state'] == Result::MARKING_STATES[:incomplete] }
+     .group_by { |h| h['groupings.id'] }
+     .transform_values { |v| v.max_by { |h2| h2['results.created_at'] } }
+     .count { |_, v| v['results.marking_state'] == Result::MARKING_STATES[:incomplete] }
     self.save
   end
 
