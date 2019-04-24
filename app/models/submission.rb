@@ -21,7 +21,7 @@ class Submission < ApplicationRecord
   has_one    :current_result, -> { where(peer_review_id: nil).order(created_at: :desc) },
              class_name: 'Result'
 
-  has_one    :submitted_remark, -> { where.not remark_request_submitted_at: nil },
+  has_one    :remark_result, -> { where.not remark_request_submitted_at: nil },
              class_name: 'Result'
 
   has_many   :submission_files, dependent: :destroy
@@ -75,21 +75,13 @@ class Submission < ApplicationRecord
     non_pr_results.first
   end
 
-  def remark_result
-    if remark_request_timestamp.nil? || non_pr_results.length < 2
-      nil
-    else
-      non_pr_results.last
-    end
-  end
-
   def remark_result_id
     remark_result.try(:id)
   end
 
   # Returns the latest result.
   def get_latest_result
-    if !submitted_remark.nil?
+    if !remark_result.nil?
       remark_result
     else
       get_original_result
@@ -230,7 +222,7 @@ class Submission < ApplicationRecord
   # Returns whether this submission has a remark request that has been
   # submitted to instructors or TAs.
   def remark_submitted?
-    !submitted_remark.nil?
+    !remark_result.nil?
   end
 
   # Helper methods

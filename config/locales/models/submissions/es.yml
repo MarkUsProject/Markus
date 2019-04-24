@@ -8,4 +8,4 @@ es:
       submission:
         feedback_files: "Archivos de Retroalimentación"
         submission_files: "Código Inicial"
-        submitted_remark: "Solicitud de recalificación"
+        remark_result: "Solicitud de recalificación"

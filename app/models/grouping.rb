@@ -557,7 +557,7 @@ class Grouping < ApplicationRecord
                                                     :grace_period_deductions,
                                                     current_submission_used:
                                                       [:submission_files,
-                                                       :submitted_remark,
+                                                       :remark_result,
                                                        :results,
                                                        grouping: :group],
                                                     accepted_student_memberships:
@@ -583,7 +583,7 @@ class Grouping < ApplicationRecord
                     :peer_reviews_to_others,
                     { current_submission_used: [:results,
                                                 :submission_files,
-                                                :submitted_remark,
+                                                :remark_result,
                                                 grouping: :group] },
                     { accepted_student_memberships: :user },
                     { inviter: :section }

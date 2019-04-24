@@ -4,7 +4,7 @@ module CourseSummariesHelper
   # Get JSON data for the table
   def get_table_json_data
     course_information
-    all_students = Student.includes(accepted_groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
+    all_students = Student.includes(accepted_groupings: { current_submission_used: [:remark_result, :non_pr_results] },
                                     grade_entry_students: :grades)
     student_list = all_students.all.map do |student|
       get_student_information(student)
