@@ -7,14 +7,17 @@ module AutomatedTestsHelper
       properties: {
         display_output: {
           type: :string,
-          enum: TestGroup.display_outputs.keys
+          enum: TestGroup.display_outputs.keys,
+          default: TestGroup.display_outputs.keys.first
         },
         criterion: {
           type: :string,
           enum: criterion_disambig || [],
           enumNames: criterion_names || []
         }
-      } }
+      },
+      required: %w[display_output]
+    }
   end
 
   def fill_in_schema_data!(schema_data, files, assignment)
