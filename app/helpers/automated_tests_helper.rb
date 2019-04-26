@@ -16,8 +16,7 @@ module AutomatedTestsHelper
           enumNames: criterion_names || []
         }
       },
-      required: %w[display_output]
-    }
+      required: %w[display_output] }
   end
 
   def fill_in_schema_data!(schema_data, files, assignment)
