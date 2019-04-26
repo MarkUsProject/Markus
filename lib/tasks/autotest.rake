@@ -62,7 +62,7 @@ class AutotestSetup
       tokens_per_period: 0,
       token_start_date: DateTime.now,
       token_period: 1,
-      only_required_files: true,
+      only_required_files: false,
       enable_student_tests: true,
       unlimited_tokens: true
     )
