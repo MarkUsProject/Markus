@@ -103,6 +103,56 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
+  def show_cover
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
+    cover = pdf.pages[0]
+    cover_page = CombinePDF.new
+    cover_page << cover
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
+      self.quality = 100
+      self.density = '300'
+    end
+
+    imglist.first.write(File.join(exam_template.base_path, "cover.jpg"))
+    send_file File.join(exam_template.base_path, "cover.jpg"), disposition: 'inline', filename: 'cover.jpg'
+  end
+
+  def add_fields
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    if params["exam-cover-checkbox-" + exam_template.id.to_s]
+      exam_template.automatic_parsing = true
+      cover_field1 = params[:field1]
+      cover_field2 = params[:field2]
+      cover_field3 = params[:field3]
+      cover_field4 = params[:field4]
+      exam_template.crop_x = params[:x].to_f
+      exam_template.crop_y = params[:y].to_f
+      exam_template.crop_width = params[:width].to_f
+      exam_template.crop_height = params[:height].to_f
+
+      exam_template.cover_fields = cover_field1 != ' ' ? cover_field1 + ',' : ''
+      exam_template.cover_fields += cover_field2 != ' ' ? cover_field2 + ',' : ''
+      exam_template.cover_fields += cover_field3 != ' ' ? cover_field3 + ',' : ''
+      exam_template.cover_fields += cover_field4 != ' ' ? cover_field4 + ',' : ''
+    else
+      exam_template.automatic_parsing = false
+      exam_template.cover_fields = ''
+      exam_template.crop_x = nil
+      exam_template.crop_y = nil
+      exam_template.crop_width = nil
+      exam_template.crop_height = nil
+    end
+    p exam_template.crop_x, exam_template.crop_y, exam_template.crop_width
+    exam_template.save
+
+    respond_to do |format|
+      format.js {render inline: "location.reload();" }
+    end
+  end
+
   def split
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
