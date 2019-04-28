@@ -160,6 +160,12 @@ ActiveRecord::Schema.define(version: 2019_04_23_155205) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", null: false
+    t.string "cover_fields", default: ""
+    t.boolean "automatic_parsing", default: false
+    t.decimal "crop_x"
+    t.decimal "crop_y"
+    t.decimal "crop_width"
+    t.decimal "crop_height"
     t.index ["assignment_id"], name: "index_exam_templates_on_assignment_id"
   end
 

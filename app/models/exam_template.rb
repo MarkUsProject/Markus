@@ -253,6 +253,18 @@ class ExamTemplate < ApplicationRecord
               assignment.short_identifier, self.name
   end
 
+  def num_cover_fields
+    self.cover_fields.split(",").length
+  end
+
+  def get_cover_field(i)
+    if self.num_cover_fields > i
+      self.cover_fields.split(",")[i]
+    else
+      " "
+    end
+  end
+
   private
 
   # name and filename shouldn't include whitespace
