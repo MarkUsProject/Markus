@@ -26,3 +26,15 @@ function add_template_division(id) {
     `;
   $('.template-division-section-' + id + ' .add_template').before(new_division_row);
 }
+
+function toggle_cover_page(id, fields) {
+  if ($('#exam-cover-checkbox-' + id).is(":checked")) {
+    $('#exam-cover-display-' + id).css('display', 'flex');
+    var i;
+    for (i=0; i<fields.length; i++) {
+      $('.field' + (i+1)).val(fields[i]);
+    }
+  } else {
+    $('#exam-cover-display-' + id).css('display', 'none');
+  }
+}

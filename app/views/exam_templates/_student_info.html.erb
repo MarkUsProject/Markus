@@ -1,0 +1,78 @@
+<%= form_for [@assignment, exam_template],
+             url: add_fields_assignment_exam_template_path(id: exam_template.id),
+             remote: true do |f| %>
+
+  <p>
+    <%= check_box_tag("exam-cover-checkbox-#{exam_template.id}", 1, exam_template.automatic_parsing, :onclick => "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;") %> Automatically parse student information<br>
+  </p>
+
+  <div id="exam-cover-display-<%= exam_template.id %>" style="display: <% if exam_template.automatic_parsing %>flex<% else %>none<% end %>;">
+    <div id="exam_cover-<%= exam_template.id %>">
+      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" style="max-width: 400px; border: 1px solid black;">
+    </div>
+
+    <script src="https://unpkg.com/jcrop"></script>
+    <script>
+      var jcp;
+      Jcrop.load('crop-target').then(img => {
+        jcp = Jcrop.attach(img);
+        const rect = Jcrop.Rect.sizeOf(jcp.el);
+        const widget = jcp.newWidget(rect.scale(.9,.3).center(rect.w,rect.h));
+        jcp.focus();
+        jcp.listen('crop.change',(widget,e) => {
+          const stageHeight = $('#crop-target').height();
+          const stageWidth = $('#crop-target').width();
+          const { x, y, w, h } = widget.pos;
+          // find the input element for width
+          // set the width value for that form element
+          $('#x').val(x/stageWidth);
+          $('#y').val(y/stageHeight);
+          $('#width').val(w/stageWidth);
+          $('#height').val(h/stageHeight);
+        });
+        document.getElementsByClassName('jcrop-stage')[0].removeClass('jcrop-image-stage');
+
+        // Initialize form values for initial widget
+        const stageHeight = $('#crop-target').height();
+        const stageWidth = $('#crop-target').width();
+        const { x, y, w, h } = widget.pos;
+        // find the input element for width
+        // set the width value for that form element
+        $('#x').val(x/stageWidth);
+        $('#y').val(y/stageHeight);
+        $('#width').val(w/stageWidth);
+        $('#height').val(h/stageHeight);
+      });
+
+    </script>
+
+    <div class="division-table" style="padding:50px;">
+      <header>
+        <span class="label"><%= "Field" %></span>
+        <span class="start"><%= "Value" %></span>
+      </header>
+      <ul id="cover-fields-<%= exam_template.id %>">
+        <% for i in 1..4 do %>
+          <li>
+            <span><%= i %></span>
+            <%= select_tag("field#{i}", options_for_select({" " => " ",
+                                                            "Full Name" => "full_name",
+                                                            "First Name" => "first_name",
+                                                            "Last Name" => "last_name",
+                                                            "Student Number/ID" => "student_id",
+                                                            "Username" => "username"},
+                                                           exam_template.get_cover_field(i-1))) %>
+          </li>
+        <% end %>
+        <li>
+          <input id="x" type="hidden" name="x" min="1" max="400" style="display:inline">
+          <input id="y" type="hidden" name="y" min="1" max="400" style="display:inline">
+          <input id="width" type="hidden" name="width" min="1" max="400" style="display:inline">
+          <input id="height" type="hidden" name="height" min="1" max="400" style="display:inline">
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <p><%= submit_tag "Save" %></p>
+<% end %>

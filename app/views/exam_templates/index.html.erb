@@ -4,6 +4,7 @@
   <script>
     <%= render partial: 'boot.js' %>
   </script>
+  <link rel="stylesheet" href="https://unpkg.com/jcrop/dist/jcrop.css">
 <% end %>
 
 <% @heading_buttons = [
@@ -22,6 +23,14 @@
   <fieldset>
     <%= render partial: 'form',
                locals: { exam_template: exam_template } %>
+    <hr>
+    <div class="student-info">
+      <h3>Student Information Selection</h3>
+      <p>
+        <%= render partial: 'student_info',
+                   locals: { exam_template: exam_template } %>
+      </p>
+    </div>
     <hr>
     <div class="generate-section">
       <h3><%= t('exam_templates.generate.title') %></h3>
