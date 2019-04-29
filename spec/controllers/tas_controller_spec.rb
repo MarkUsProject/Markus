@@ -171,10 +171,7 @@ describe TasController do
         output = []
 
         @tas.all.each do |ta|
-          output.push({ user_name: ta.user_name,
-                        last_name: ta.last_name,
-                        first_name: ta.first_name,
-                        email: ta.email })
+          output.push(user_name: ta.user_name, last_name: ta.last_name, first_name: ta.first_name, email: ta.email)
         end
         output = output.to_yaml
         expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
