@@ -115,14 +115,14 @@ class ExamTemplatesController < ApplicationController
       self.density = '300'
     end
 
-    imglist.first.write(File.join(exam_template.base_path, "cover.jpg"))
-    send_file File.join(exam_template.base_path, "cover.jpg"), disposition: 'inline', filename: 'cover.jpg'
+    imglist.first.write(File.join(exam_template.base_path, 'cover.jpg'))
+    send_file File.join(exam_template.base_path, 'cover.jpg'), disposition: 'inline', filename: 'cover.jpg'
   end
 
   def add_fields
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    if params["exam-cover-checkbox-" + exam_template.id.to_s]
+    if params['exam-cover-checkbox-' + exam_template.id.to_s]
       exam_template.automatic_parsing = true
       cover_field1 = params[:field1]
       cover_field2 = params[:field2]
@@ -149,7 +149,7 @@ class ExamTemplatesController < ApplicationController
     exam_template.save
 
     respond_to do |format|
-      format.js {render inline: "location.reload();" }
+      format.js { render inline: 'location.reload();' }
     end
   end
 

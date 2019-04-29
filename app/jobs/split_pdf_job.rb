@@ -250,7 +250,8 @@ class SplitPDFJob < ApplicationJob
 
             img = imglist.first
             # Snip out the middle of PDF that contains the student information
-            student_info = img.crop exam_template.crop_x * img.columns, exam_template.crop_y * img.rows, exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
+            student_info = img.crop exam_template.crop_x * img.columns, exam_template.crop_y * img.rows,
+                                    exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
             student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
             student_info.write(student_info_file)
 
@@ -267,7 +268,7 @@ class SplitPDFJob < ApplicationJob
             student_id = nil
             username = nil
 
-            cover_fields = exam_template.cover_fields.split(",");
+            cover_fields = exam_template.cover_fields.split(',')
             cover_fields.each_with_index do |field, i|
               case field
               when 'full_name'

@@ -254,14 +254,14 @@ class ExamTemplate < ApplicationRecord
   end
 
   def num_cover_fields
-    self.cover_fields.split(",").length
+    self.cover_fields.split(',').length
   end
 
-  def get_cover_field(i)
-    if self.num_cover_fields > i
-      self.cover_fields.split(",")[i]
+  def get_cover_field(idx)
+    if self.num_cover_fields > idx
+      self.cover_fields.split(',')[idx]
     else
-      " "
+      ' '
     end
   end
 
