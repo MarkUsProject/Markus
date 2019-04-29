@@ -328,17 +328,9 @@ class Assignment < ApplicationRecord
   end
 
   def update_remark_request_count
-    outstanding_count = 0
-    groupings.each do |grouping|
-      submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_remark?
-        if submission.remark_result.marking_state ==
-            Result::MARKING_STATES[:incomplete]
-          outstanding_count += 1
-        end
-      end
-    end
-    self.outstanding_remark_request_count = outstanding_count
+    self.outstanding_remark_request_count = groupings.joins(current_submission_used: :submitted_remark)
+                                                     .where('results.marking_state': :incomplete)
+                                                     .count
     self.save
   end
 

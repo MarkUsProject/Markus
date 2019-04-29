@@ -631,6 +631,7 @@ class SubmissionsController < ApplicationController
 
       if changed > 0
         assignment.update_results_stats
+        assignment.update_remark_request_count
 
         # These flashes don't get rendered. Find another way to display?
         flash_now(:success, I18n.t('results.successfully_changed',
