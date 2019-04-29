@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 
 import cv2
 import glob
@@ -27,7 +27,7 @@ def gap_left(hist, x, th, K=10):
     for i in range(K):
         if x - i < 0:
             break
-        gap = gap and hist[x-i] <= th
+        gap = gap and (i > x or hist[x-i] <= th)
     return gap
 
 
@@ -41,8 +41,10 @@ def gap_right(hist, x, th, W, K=10):
     :return: whether this x-coordinate marks the end of a word/block.
     """
     gap = hist[x-1] > th
-    for i in range(min(K, W - x, len(hist) - x)):
-        gap = gap and hist[x+i] <= th
+    for i in range(K):
+        if x + i > W:
+            break
+        gap = gap and (x+i >= len(hist) or hist[x+i] <= th)
     return gap
 
 
