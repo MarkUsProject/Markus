@@ -28,7 +28,7 @@ function add_template_division(id) {
 }
 
 function toggle_cover_page(id, fields) {
-  if ($('#exam-cover-checkbox-' + id).is(":checked")) {
+  if ($('#exam-cover-checkbox-' + id).is(':checked')) {
     $('#exam-cover-display-' + id).css('display', 'flex');
     var i;
     for (i=0; i<fields.length; i++) {
@@ -47,9 +47,9 @@ function attach_crop_box() {
     Jcrop.load('crop-target').then(img => {
       jcp = Jcrop.attach(img);
       const rect = Jcrop.Rect.sizeOf(jcp.el);
-      const widget = jcp.newWidget(rect.scale(.9,.3).center(rect.w,rect.h));
+      const widget = jcp.newWidget(rect.scale(0.9,0.3).center(rect.w,rect.h));
       jcp.focus();
-      jcp.listen('crop.change',(widget,e) => {
+      jcp.listen('crop.change',(widget,_) => {
         const stageHeight = $('#crop-target').height();
         const stageWidth = $('#crop-target').width();
         const { x, y, w, h } = widget.pos;

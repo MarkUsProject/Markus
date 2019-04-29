@@ -258,7 +258,7 @@ class SplitPDFJob < ApplicationJob
             tokens = out.split("\n")
 
             # check if python script correctly parsed out the student info
-            if tokens.length != 2*exam_template.num_cover_fields
+            if tokens.length != 2 * exam_template.num_cover_fields
               next
             end
 
@@ -270,18 +270,18 @@ class SplitPDFJob < ApplicationJob
             cover_fields = exam_template.cover_fields.split(",");
             cover_fields.each_with_index do |field, i|
               case field
-              when'full_name'
-                name_tokens = tokens[2*i].split
+              when 'full_name'
+                name_tokens = tokens[2 * i].split
                 first_name = name_tokens[0]
-                last_name = name_tokens[1..-1].join(" ")
-              when'first_name'
-                first_name = tokens[2*i]
+                last_name = name_tokens[1..-1].join(' ')
+              when 'first_name'
+                first_name = tokens[2 * i]
               when 'last_name'
-                last_name = tokens[2*i]
+                last_name = tokens[2 * i]
               when 'student_id'
-                student_id = tokens[2*i+1]
+                student_id = tokens[2 * i + 1]
               when 'username'
-                username = tokens[2*i]
+                username = tokens[2 * i]
               end
             end
 
