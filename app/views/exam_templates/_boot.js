@@ -34,7 +34,44 @@ function toggle_cover_page(id, fields) {
     for (i=0; i<fields.length; i++) {
       $('.field' + (i+1)).val(fields[i]);
     }
+    attach_crop_box();
   } else {
     $('#exam-cover-display-' + id).css('display', 'none');
   }
+}
+
+function attach_crop_box() {
+  $.getScript('https://unpkg.com/jcrop', function()
+  {
+    var jcp;
+    Jcrop.load('crop-target').then(img => {
+      jcp = Jcrop.attach(img);
+      const rect = Jcrop.Rect.sizeOf(jcp.el);
+      const widget = jcp.newWidget(rect.scale(.9,.3).center(rect.w,rect.h));
+      jcp.focus();
+      jcp.listen('crop.change',(widget,e) => {
+        const stageHeight = $('#crop-target').height();
+        const stageWidth = $('#crop-target').width();
+        const { x, y, w, h } = widget.pos;
+        // find the input element for width
+        // set the width value for that form element
+        $('#x').val(x/stageWidth);
+        $('#y').val(y/stageHeight);
+        $('#width').val(w/stageWidth);
+        $('#height').val(h/stageHeight);
+      });
+      document.getElementsByClassName('jcrop-stage')[0].removeClass('jcrop-image-stage');
+
+      // Initialize form values for initial widget
+      const stageHeight = $('#crop-target').height();
+      const stageWidth = $('#crop-target').width();
+      const { x, y, w, h } = widget.pos;
+      // find the input element for width
+      // set the width value for that form element
+      $('#x').val(x/stageWidth);
+      $('#y').val(y/stageHeight);
+      $('#width').val(w/stageWidth);
+      $('#height').val(h/stageHeight);
+    });
+  });
 }
