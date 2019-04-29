@@ -75,6 +75,9 @@ class Submission < ApplicationRecord
     non_pr_results.first
   end
 
+  # Returns a remark result that may or may not have been submitted.
+  # If you want the submitted remark result then the submitted_remark
+  # association should be used instead.
   def remark_result
     if remark_request_timestamp.nil? || non_pr_results.length < 2
       nil
