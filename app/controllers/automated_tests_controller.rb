@@ -152,7 +152,7 @@ class AutomatedTestsController < ApplicationController
 
   def download_file
     assignment = Assignment.find(params[:assignment_id])
-    file_path = File.join(assignment.autotest_path, params[:file_name])
+    file_path = File.join(assignment.autotest_files_dir, params[:file_name])
     if File.exist?(file_path)
       send_file file_path, filename: params[:file_name]
     else
