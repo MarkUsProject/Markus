@@ -43,10 +43,7 @@ class SubmissionsJob < ApplicationJob
             new_submission)
         end
 
-        unless grouping.error_collecting
-          grouping.is_collected = true
-        end
-
+        grouping.is_collected = true
         grouping.save
       rescue => e
         Rails.logger.error e.message

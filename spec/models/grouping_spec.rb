@@ -1,6 +1,5 @@
 describe Grouping do
   describe 'associations' do
-    it { is_expected.to belong_to(:grouping_queue) }
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }

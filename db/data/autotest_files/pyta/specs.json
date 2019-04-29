@@ -1,0 +1,24 @@
+{
+  "testers": [
+    {
+      "tester_type": "pyta",
+      "test_data": [
+        {
+          "student_files": [
+            {
+              "max_points": 10,
+              "file_path": "submission.py"
+            }
+          ],
+          "category": [
+            "admin"
+          ],
+          "timeout": 30
+        }
+      ],
+      "env_data": {
+        "python_version": "3.7"
+      }
+    }
+  ]
+}

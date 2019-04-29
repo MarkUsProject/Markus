@@ -15,11 +15,6 @@ class UncollectSubmissions < ApplicationJob
   end
 
   def perform(assignment)
-    begin
-      submissions_collector = SubmissionCollector.instance
-      submissions_collector.uncollect_submissions(assignment)
-    rescue => e
-      Rails.logger.error e.message
-    end
+    # TODO: implement this.
   end
 end
