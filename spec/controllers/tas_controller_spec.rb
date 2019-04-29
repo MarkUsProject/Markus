@@ -173,13 +173,13 @@ describe TasController do
 
         @tas.all.each do |ta|
           count += 1
-          output.push([{"TA_#{count}" => [[{"Username" => [ta.user_name]}], [{"Last Name" => [ta.last_name]}],
-                                          [{"First Name" => ta.first_name}], [{"Email" => ta.email}]]}])
+          output.push([{ "TA_#{count}" => [[{ 'Username' => [ta.user_name] }], [{ 'Last Name' => [ta.last_name] }],
+                                           [{ 'First Name' => ta.first_name }],
+                                           [{ 'Email' => ta.email }]] }])
         end
         output = output.to_yaml
-        expect(@controller).to receive(:send_data).with(output, yml_options) {@controller.head :ok}
+        expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
         get :download_ta_list, format: 'yaml'
-
       end
 
       it 'returns text/yaml type' do
