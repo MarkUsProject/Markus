@@ -54,13 +54,11 @@ class TasController < ApplicationController
       format = 'text/csv'
     when 'yml'
       output = []
-      count = 0
       tas.all.each do |ta|
-        count += 1
-        output.push([{ "TA_#{count}" => [[{ 'Username' => [ta.user_name] }],
-                                         [{ 'Last Name' => [ta.last_name] }],
-                                         [{ 'First Name' => ta.first_name }],
-                                         [{ 'Email' => ta.email }]] }])
+        output.push({ user_name: ta.user_name,
+                      last_name: ta.last_name,
+                      first_name: ta.first_name,
+                      email: ta.email })
       end
       output = output.to_yaml
       format = 'text/yaml'
