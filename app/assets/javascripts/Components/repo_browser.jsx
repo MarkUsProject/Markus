@@ -94,6 +94,11 @@ class RepoBrowser extends React.Component {
 
 
 class ManualCollectionForm extends React.Component {
+
+  static defaultProps = {
+    revision_identifier: '' //set initial value so that the input (in render) remains controlled
+  };
+
   render() {
     const action = Routes.manually_collect_and_begin_grading_assignment_submission_path(
       this.props.assignment_id,

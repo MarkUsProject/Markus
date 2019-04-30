@@ -91,6 +91,21 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
+  handleCreateFolder = (folderKey) => {
+    $.post({
+      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      data: {
+        delete_folders: [folderKey],
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
+  handleDeleteFolder = (folderKey) => {
+
+  };
+
   handleActionBarDeleteClick = (event) => {
     event.preventDefault();
     if (this.state.selection) {
@@ -114,6 +129,8 @@ class SubmissionFileManager extends React.Component {
         readOnly={this.props.readOnly}
         onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
         onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
+        onCreateFolder={this.props.readOnly ? undefined : this.handleCreateFolder}
+        onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
         downloadAllURL={this.getDownloadAllURL()}
       />
     );

@@ -341,7 +341,13 @@ class SubmissionsController < ApplicationController
       # The files that will be added
       new_files = params[:new_files].nil? ? {} : params[:new_files]
 
-      if delete_files.empty? && new_files.empty?
+      # The folders that will be added
+      new_folders = params[:new_folders].nil? ? [] : params[:new_folders]
+
+      # The folders that will be deleted
+      delete_folders = params[:delete_folders].nil? ? [] : params[:delete_folders]
+
+      if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       else
         messages = []
@@ -362,6 +368,12 @@ class SubmissionsController < ApplicationController
                                       path: path, txn: txn, check_size: true, required_files: required_files)
             should_commit &&= success
             messages.concat msgs
+          end
+          if new_folders.present?
+            success, msgs = @grouping.add_folders(new_folders, current_user,
+                                                  path: @path, repo: repo, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
           end
           if should_commit
             commit_success, commit_msg = commit_transaction(repo, txn)
