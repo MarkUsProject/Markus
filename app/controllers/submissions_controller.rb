@@ -1,5 +1,6 @@
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
+  include RepositoryHelper
 
   before_action :authorize_only_for_admin,
                 except: [:index,
@@ -358,31 +359,27 @@ class SubmissionsController < ApplicationController
           # Create transaction, setting the author.  Timestamp is implicit.
           txn = repo.get_transaction(current_user.user_name)
           should_commit = true
+          path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
+          only_required = @grouping.assignment.only_required_files
+          required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
           if delete_files.present?
-            success, msgs = @grouping.remove_files(file_revisions.slice(*delete_files), current_user,
-                                                   path: @path, repo: repo, txn: txn)
+            success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
             should_commit &&= success
             messages = messages.concat msgs
           end
           if new_files.present?
-            success, msgs = @grouping.add_files(new_files, current_user,
-                                                path: @path, repo: repo, txn: txn)
+            success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true,
+                                      required_files: required_files)
             should_commit &&= success
             messages = messages.concat msgs
           end
           if should_commit
-            if txn.has_jobs?
-              if repo.commit(txn)
-                messages << [:success, I18n.t('update_files.success')]
-              else
-                messages << [:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts }]
-              end
-            else
-              messages << [:warning, I18n.t('student.submission.no_action_detected')]
-            end
+            commit_success, commit_msg = commit_transaction(repo, txn)
+            flash_message(:success, I18n.t('update_files.success')) if commit_success
+            messages = messages << commit_msg
           end
         end
-        messages.each { |flash_args| flash_message(*flash_args) }
+        flash_repository_messages messages
         set_filebrowser_vars(@grouping)
       end
     ensure

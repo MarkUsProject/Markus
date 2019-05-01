@@ -2,6 +2,7 @@ require 'base64'
 
 
 class AssignmentsController < ApplicationController
+  include RepositoryHelper
   responders :flash
 
   before_action      :authorize_only_for_admin,
@@ -474,6 +475,7 @@ class AssignmentsController < ApplicationController
       revision = repo.get_latest_revision
       entries = get_all_file_data(revision, assignment, '')
     end
+    entries.reject! { |f| Repository.get_class.internal_file_names.include? f[:raw_name] }
     render json: entries
   end
 
@@ -483,86 +485,56 @@ class AssignmentsController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:id])
-    students_filename = []
     path = params[:path] || '/'
-    assignment_folder = File.join(@assignment.repository_folder, path)
+    path = Pathname.new(@assignment.repository_folder).join(path.gsub(%r{^/}, ''))
     file_revisions = params[:file_revisions] || {}
     delete_files = params[:delete_files] || []   # The files that will be deleted
     new_files = params[:new_files] || []         # The files that will be added
 
-    new_files.each do |f|
-      if f.size > MarkusConfigurator.markus_config_max_file_size
-        flash_message(
-          :error,
-          t('student.submission.file_too_large',
-            file_name: f.original_filename,
-            max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))
-        )
-        head :bad_request
-        return
-      elsif f.size == 0
-        flash_message(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+
+    if delete_files.empty? && new_files.empty?
+      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+      redirect_back(fallback_location: root_path)
+    else
+      messages = []
+      @assignment.access_starter_code_repo do |repo|
+        # Create transaction, setting the author.
+        txn = repo.get_transaction(current_user.user_name, I18n.t('repo.commits.starter_code',
+                                                                  assignment: @assignment.short_identifier))
+        should_commit = true
+        if delete_files.present?
+          success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if new_files.present?
+          success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if should_commit
+          commit_success, commit_msg = commit_transaction(repo, txn)
+          flash_message(:success, I18n.t('update_files.success')) if commit_success
+          messages = messages << commit_msg
+        else
+          commit_success = should_commit
+        end
+
+        flash_repository_messages messages
+
+        if should_commit && commit_success
+          if new_files.present?
+            UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
+            flash_message(:success, t('assignment.starter_code.enqueued'))
+            redirect_back(fallback_location: root_path)
+          else
+            head :ok
+          end
+        else
+          head :bad_request
+        end
       end
     end
-
-    @assignment.access_starter_code_repo do |repo|
-      # Create transaction, setting the author.
-      txn = repo.get_transaction(current_user.user_name, I18n.t('repo.commits.starter_code',
-                                                                assignment: @assignment.short_identifier))
-
-      # delete files marked for deletion
-      delete_files.each do |filename|
-        txn.remove(File.join(assignment_folder, filename),
-                   file_revisions[filename])
-      end
-
-      # Add new files and replace existing files
-      revision = repo.get_latest_revision
-      files = revision.files_at_path(File.join(@assignment.repository_folder, path))
-
-      new_files.each do |file_object|
-        filename = file_object.original_filename
-        if filename.blank?
-          raise I18n.t('student.submission.invalid_file_name')
-        end
-
-        # Branch on whether the file is new or a replacement
-        if files.key? filename
-          file_object.rewind
-          txn.replace(File.join(assignment_folder, filename), file_object.read,
-                      file_object.content_type, revision.revision_identifier)
-        else
-          students_filename << filename
-          # Sometimes the file pointer of file_object is at the end of the file.
-          # In order to avoid empty uploaded files, rewind it to be save.
-          file_object.rewind
-          txn.add(File.join(assignment_folder,
-                            sanitize_file_name(filename)),
-                  file_object.read, file_object.content_type)
-        end
-      end
-
-      if !txn.has_jobs?
-        flash_message(:error, I18n.t('student.submission.no_action_detected'))
-        head :bad_request
-      elsif repo.commit(txn)
-        flash_message(:success, t('update_files.success'))
-        if new_files
-          redirect_back(fallback_location: root_path)
-        else
-          head :ok
-        end
-      else
-        flash_message(:error, txn.conflicts.to_s)
-        head :bad_request
-      end
-    end
-  end
-
-  def update_starter_code
-    UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
-    flash_message(:success, t('assignment.starter_code.enqueued'))
-    redirect_back(fallback_location: root_path)
   end
 
   def download_starter_code

@@ -1,7 +1,6 @@
 require 'csv'
 
 class Assignment < ApplicationRecord
-  include RepositoryHelper
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
