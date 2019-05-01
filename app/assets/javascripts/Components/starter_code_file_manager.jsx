@@ -78,7 +78,6 @@ class StarterCodeFileManager extends React.Component {
   render() {
     return (
       <div>
-        <p>{I18n.t('assignment.starter_code.repo_url')}: {this.props.repo_url}</p>
         <p>{I18n.t('assignment.starter_code.description')}</p>
         <FileManager
           files={this.state.files}
