@@ -1,7 +1,5 @@
 tag_id:
   - name: tag
     description: desc
-    user: admin
-  - name: tag1
-    description: desc
-    user: admin
+    user:
+      id: id
