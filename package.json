@@ -19,6 +19,6 @@
     "react-tabs": "^3.0.0"
   },
   "devDependencies": {
-    "webpack-dev-server": "3.2.1"
+    "webpack-dev-server": "3.3.1"
   }
 }
