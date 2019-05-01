@@ -11,11 +11,8 @@ pt:
         starter_code:
             description: "UPDATE ME."
             enqueued: "UPDATE ME."
-            groups_exist: "UPDATE ME."
             overwrite: "UPDATE ME"
-            repo_url: "UPDATE ME"
             title: "UPDATE ME"
-            update: "UPDATE ME"
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"

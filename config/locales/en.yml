@@ -11,11 +11,8 @@ en:
         starter_code:
             description: "Starter code files you upload will be automatically added to every new group's repositories."
             enqueued: "Starter code files will be uploaded to existing group repositories in the background."
-            groups_exist: "Some groups already exist. To update starter code files for existing groups, select whether to overwrite their files (including previous starter code files) and press the button."
             overwrite: "Overwrite group files"
-            repo_url: "Repository URL"
             title: "Starter Code"
-            update: "Update"
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
