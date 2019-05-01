@@ -368,8 +368,8 @@ class SubmissionsController < ApplicationController
             messages = messages.concat msgs
           end
           if new_files.present?
-            success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true,
-                                      required_files: required_files)
+            success, msgs = add_files(new_files, current_user, repo,
+                                      path: path, txn: txn, check_size: true, required_files: required_files)
             should_commit &&= success
             messages = messages.concat msgs
           end
