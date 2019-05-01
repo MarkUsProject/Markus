@@ -24,6 +24,7 @@ class StarterCodeFileManager extends React.Component {
   };
 
   handleCreateFiles = (files, prefix) => {
+    console.log('here')
     let data = new FormData();
     files.forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
@@ -75,17 +76,6 @@ class StarterCodeFileManager extends React.Component {
   };
 
   render() {
-    let update = null;
-    if (this.props.groupsExist) {
-      update =
-        <form method="post" action={Routes.update_starter_code_assignment_path(this.props.assignment_id)}>
-          <p>{I18n.t('assignment.starter_code.groups_exist')}</p>
-          <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
-          <input id="starter_code_overwrite" type="checkbox" name="overwrite" value="true"/>
-          <label htmlFor="starter_code_overwrite">{I18n.t('assignment.starter_code.overwrite')}</label>
-          <input type="submit" value={I18n.t('assignment.starter_code.update')}/>
-        </form>
-    }
     return (
       <div>
         <p>{I18n.t('assignment.starter_code.repo_url')}: {this.props.repo_url}</p>
@@ -99,7 +89,6 @@ class StarterCodeFileManager extends React.Component {
           onCreateFiles={this.handleCreateFiles}
           downloadAllURL={this.getDownloadAllURL()}
         />
-        {update}
       </div>
     );
   }

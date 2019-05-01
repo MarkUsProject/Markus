@@ -7,9 +7,6 @@
           repo_url: '<%= File.join(MarkusConfigurator.markus_config_repository_external_base_url,
                                    Assignment::STARTER_CODE_REPO_NAME) %>',
           groupsExist: <%= @assignment.groups.size == 0 ? 'false' : 'true' %>,
-          authenticity_token:
-            '<%= form_authenticity_token(form_options: { action: update_starter_code_assignment_url(locale: nil),
-                                                         method: 'post' }) %>'
         }
       );
     });
@@ -24,7 +21,12 @@
   <%= form_tag upload_starter_code_assignment_path(id: @assignment.id),
                { multipart: true, id: 'file_form' } do %>
       <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
-
+      <section>
+        <input id="starter_code_overwrite" type="checkbox" name="overwrite" value="true" checked/>
+        <label for="starter_code_overwrite">
+          <%= I18n.t('assignment.starter_code.overwrite') %>
+        </label>
+      </section>
       <section class='dialog-actions'>
         <%= submit_tag t(:upload) %>
         <%= button_tag t(:cancel), onclick: 'modal_addnew.close(); return false;' %>
