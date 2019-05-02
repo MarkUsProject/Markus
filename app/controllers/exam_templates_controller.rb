@@ -33,6 +33,7 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.create.failure'))
       end
     end
+    save_cover(new_template)
     redirect_to action: 'index'
   end
 
@@ -62,6 +63,7 @@ class ExamTemplatesController < ApplicationController
                                             old_filename: old_template_filename,
                                             new_filename: new_template_filename)
         old_exam_template.update(exam_template_params)
+        save_cover(old_exam_template)
         respond_with(old_exam_template, location: assignment_exam_templates_url)
         return
       end
@@ -103,9 +105,7 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
-  def show_cover
-    assignment = Assignment.find(params[:assignment_id])
-    exam_template = assignment.exam_templates.find(params[:id])
+  def save_cover(exam_template)
     pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
@@ -114,8 +114,12 @@ class ExamTemplatesController < ApplicationController
       self.quality = 100
       self.density = '300'
     end
-
     imglist.first.write(File.join(exam_template.base_path, 'cover.jpg'))
+  end
+
+  def show_cover
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
     send_file File.join(exam_template.base_path, 'cover.jpg'), disposition: 'inline', filename: 'cover.jpg'
   end
 
