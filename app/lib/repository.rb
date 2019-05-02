@@ -62,9 +62,6 @@ module Repository
 
   class AbstractRepository
 
-    @@permission_thread_mutex = Mutex.new
-    @@permission_thread = nil
-
     # Initializes Object, and verifies connection to the repository back end.
     # This should throw a ConnectionError if we're unable to connect.
     def initialize(connect_string)
@@ -202,14 +199,13 @@ module Repository
         return if Thread.current[:permissions_lock].owned?
       end
       # indicate that this thread is trying to update permissions
-      @@permission_thread_mutex.synchronize do
-        @@permission_thread = Thread.current.object_id
-      end
+      redis = Redis::Namespace.new(Rails.root.to_s)
+      redis.set('repo_permissions', Thread.current.object_id)
       # get permissions from the database
       permissions = self.get_all_permissions
       full_access_users = self.get_full_access_users
       # only continue if this was the last thread to get permissions from the database
-      if @@permission_thread == Thread.current.object_id
+      if redis.get('repo_permissions')&.to_i == Thread.current.object_id
         __update_permissions(permissions, full_access_users)
       end
       nil
@@ -281,8 +277,8 @@ module Repository
     # Exclusive blocking lock using a redis list to ensure that all threads and all processes respect
     # the lock.  If the resource defined by +resource_id+ is locked, the calling thread will wait +timeout+
     # milliseconds, while trying to acquire the lock every +interval+ milliseconds. If the calling thread
-    # is able to acquire the lock it will yield and return true, otherwise the passed block will not be executed
-    # and it will return false.
+    # is able to acquire the lock it will yield, otherwise the passed block will not be executed
+    # and a Timeout::Error will be raised.
     #
     # Access to the resource will be given in request order. So if threads a, b, and c all request access to the
     # same resource (in that order), access is guaranteed to be given to a then b then c (in that order).
