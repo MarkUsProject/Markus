@@ -9,9 +9,9 @@
 source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem 'puma'
 gem 'rails'
 gem 'sprockets'
-gem 'thin'
 
 # Models and database interactions
 gem 'activerecord-import'
@@ -32,7 +32,7 @@ gem 'resque'
 gem 'redis-rails'
 
 # Authorization
-gem 'action_policy', git: 'https://github.com/palkan/action_policy.git'
+gem 'action_policy'
 
 # Statistics
 gem 'descriptive_statistics', require: 'descriptive_statistics/safe'
@@ -138,6 +138,7 @@ group :offline do
   gem 'rdoc'
   gem 'rubocop'
   gem 'rubocop-git'
+  gem 'rubocop-performance'
 end
 
 # If you  plan to use unicorn servers for production

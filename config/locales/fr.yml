@@ -1,44 +1,6 @@
 fr:
-    answer_yes:         "Oui"
-    answer_no:          "Non"
-    markus:             "MarkUs"
-    close:              "Fermer"
-    all:                "Tous"
-    actions:            "Actes"
-    continue:           "Continuer"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Chargement"
-    please_wait:        "Merci de patienter…"
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Tableau de bord"
-    home:               "Accueil"
-    settings:           "Paramètres"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Liens rapides"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "Aucun devoir pour le moment."
-
     # app/views/assignments/
-    name: "Nom "
-    filename:  "Fichier"
-    message:  "Informations "
-    remove:  "Enlever"
-    days_left:          "(%{days} jour(s) restant(s))"
-    description:        "Description "
-    shortened_date:     "Date<span class='required_field'>*</span>"
-    remove_date:        "Enlever date"
-    manage_course_work: "Gestion du cours"
-    incorrect_format:   "Le format est incorrect"
-    required_fields: "Champs obligatoires "
     assignment:
-        hidden: "%{assignment_text} (masqué)"
-        update_success: "Projet mis à jour"
-        no_required_files_read:  "Aucun fichier n'est requis pour ce projet."
-        upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
         group:
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
@@ -69,6 +31,7 @@ fr:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
+            problems: "UPDATE ME"
     peer_review:
         assign: "Attribuer examen par les pairs"
         review: "Avis "
@@ -99,30 +62,10 @@ fr:
             description: "Format de fichier CSV: Portugais<code>result_id,group_name</code> Objet"
 
     add_new:            "Nouveau"
-    edit:               "Éditer"
-    save:               "Sauvegarder"
-    save_changes:       "Sauvegarder les modifications"
-    apply:              "Appliquer"
-    delete:             "Supprimer"
-    submit:             "Envoyer"
-    cancel:             "Annuler"
-    all:                "Tous"
-    active:             "Actif"
-    not_active:         "Inactif"
-    choose:             "Choix du projet…"
-    properties:         "Propriétés"
     peer_reviews:       "Examens par le pairs"
-    help:               "Aide"
-    preview:            "Prévisualisation"
-    encoding:           "Codage"
-    select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
-    all_csv_file:       "Tous les champs : "
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
-    still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
       repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
@@ -141,8 +84,6 @@ fr:
 
     browse_submissions:
       review_state:         "Avis Etat"
-
-    no_assignments_and_grade_entry_forms_message: "Il n'y a actuellement pas de feuilles de calcul de tâches et de notes."
 
     groups:
       upload:
@@ -173,35 +114,6 @@ fr:
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "L'étudiant(e) %{user_name} a été ajouté(e)."
-      fail:
-        general: "Erreur inconnue. Impossible d'ajouter %{user_name}."
-        hidden:  "%{user_name} n'a pas été ajouté(e) : le compte de cet(te) étudiant(e) a été désactivé(e)."
-        already_grouped: "%{user_name} n'a pas été ajouté(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
-
-    create_group:
-      fail:
-        due_date_passed: "Impossible de créer le groupe — la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        not_allow_to_form_groups: "Ce projet n'autorise pas les étudiants à former des groupes."
-        already_have_a_group: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
-        can_not_work_alone: "Vous ne pouvez pas travailler seul sur ce projet. Il faut au minimum %{group_min} étudiants pour former un groupe."
-        do_not_have_a_group: "Vous n'appartenez pas à un groupe."
-
-    invite_student:
-      success: "L'étudiant(e) a été invité(e)."
-      fail:
-        only_inviter: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée"
-        due_date_passed: "%{user_name} ne peut pas être invité(e) : la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        dne:  "%{user_name}ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
-        hidden:  "%{user_name} ne peut pas être invité(e) : le compte de cet(te) étudiant(e) a été désactivé."
-        already_pending: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà en attente pour ce groupe."
-        group_max_reached: "%{user_name} ne peut pas être invité(e) : la limite maximale pour ce groupe est déjà atteinte."
-        inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
-        already_grouped: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
-        need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
-        not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
-        error: "Erreur. Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
 
@@ -224,14 +136,10 @@ fr:
       upload:
         error:
           invalid_format: "Les critères suivants a un format non valide:"
-          names_taken:    "Les noms des critères suivants sont déjà prises:"
         empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
       errors:
         messages:
           released_marks:         "TODO"
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Informations Complémentaires"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
@@ -254,34 +162,12 @@ fr:
       run_tests: "Exécuter les tests."
       stop_test: "Arrêter ce test"
       stop_batch: "Arrêter ce lot de tests"
-      fetch_testers: "UPDATE ME"
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
       need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté."
-      new_test_script_file: "Nouvelle script de test"
-      new_test_support_file: "Nouveau fichier additionel"
-      assignment_test_script_files: "Scripts de test"
-      assignment_test_support_files: "Fichiers additionels"
-      duplicate_filename: "Attempted to upload the following filename more than once: "
-      download_wrong_place_or_unreadable: "Le fichier ne peut pas être trouvé où ne peut pas être lu"
-      test_group_option:
-        upload_required: "Envoyer<span class='required_field'>*</span>"
-        upload_help: "Il existe déjà un fichier avec le même nom"
-        replace: "Remplacer"
-        replace_help: "Vous pouvez télécharger un fichier avec le même nom"
-        remove_file: "Supprimer ce fichier"
-        remove_file_help: "Cocher pour supprimer ce fichier"
-        run_by_instructors: "Les instructeurs peuvent lancer les tests"
-        run_by_instructors_help: "Cocher pour permettre aux instructeurs de lancer les tests"
-        run_by_students: "Les étudiants peuvent lancer les tests"
-        run_by_students_help: "Cocher pour permettre aux étudiants de lancer les tests"
-        associated_criterion: "Le critère associé"
-        display_output: "Montrer les donées de sortie aux étudiants"
-        display_output_help: "Cocher pour montrer les donées de sortie pour chaque test aux étudiants"
-        display_to:
-          instructors: "Ne montre jamais"
-          instructors_and_students: "Montrer toujours"
-          instructors_and_student_tests: "Montrer seulement les tests lancés par les étudiants"
+      tokens_available_on: "UPDATE ME"
+      loading_specs: "UPDATE ME"
+      files: "UPDATE ME"
       token:
         start_date: "Jetons sont disponible depuis:"
         available: "Jetons disponibles:"
@@ -302,7 +188,6 @@ fr:
       results:
         all_tests: "Tous les tests"
         unknown_test: "Test inconnu"
-        missing_test_group: "Ce groupe a disparu"
         no_source_files: "Il n'y a aucun fichiers pour lancer un test"
         bad_server: "Serveur '%{hostname}' erreur: %{error}"
         bad_results: "Resultats mal formés '%{error}'"

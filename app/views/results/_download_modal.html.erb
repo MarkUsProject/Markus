@@ -4,9 +4,7 @@
 
 <%= content_for :modal_content do %>
 
-  <%= render partial: 'results/common/download_file_selector',
-             locals: { files: @files,
-                       can_download: true } %>
+  <section id="download_dialog_body"></section>
   <section class='dialog-actions'>
     <input type='reset' id="download" value='<%= t(:cancel) %>'/>
   </section>

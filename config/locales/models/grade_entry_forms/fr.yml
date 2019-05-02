@@ -6,7 +6,6 @@ fr:
         other: "Feuilles de notes"
     attributes:
       grade_entry_form:
-        date: "Date"
         description: "Description"
         grades: "Notes"
         is_hidden: "Masquer Spreadsheet"

@@ -47,3 +47,76 @@ h2.test_runs_header > form {
   display: inline;
   float: right;
 }
+
+//schema manager styles
+
+div#autotest-manager {
+  * {
+    fieldset#root>legend {
+      font: 400 1.5em $fonts;
+    }
+    fieldset>legend[id$='extra_info__title']{
+      display: none;
+    }
+    fieldset.field>legend {
+      font: 600 1.5em $fonts;
+    }
+    fieldset>div.form-group>.control-label {
+      font: 600 1.25em $fonts;
+    }
+    fieldset {
+      background: $white;
+      border-radius: $radius;
+      padding: 0.25em 1.5em 1.5em;
+      position: relative;
+      border: 1px solid #8d8d8d;
+      legend {
+        width: initial;
+        padding: 0.25em;
+        span.required {
+          display: inline-block;
+          top: initial;
+          padding: 0;
+          font-size: 1em;
+        }
+      }
+    }
+    div.btn-group {
+      max-width: 50%;
+    }
+    .btn {
+      i {
+        display: none;
+      }
+    }
+    .btn-danger::after {
+      content: asset-url('icons/cross.png');
+    }
+    .btn-add::after {
+      content: asset-url('icons/add.png');
+    }
+    .array-item-move-up::after {
+      content: asset-url('icons/arrow_up.png');
+    }
+    .array-item-move-down::after {
+      content: asset-url('icons/arrow_down.png');
+    }
+    input[type="checkbox"] {
+      margin-right: 0.25em;
+    }
+    .student_test_options>.inline_label {
+      margin-right: 1em;
+      input {
+        margin-left: 0.25em;
+      }
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+  }
+}

@@ -1,45 +1,6 @@
 es:
-    answer_yes:         "Sí"
-    answer_no:          "No"
-    markus:             "MarkUs"
-    close:              "Cerrar"
-    all:                "Todos"
-    actions:            "Acciones"
-    continue:           "Continuar"
-
-    # app/views/layouts/_header.html.erb
-    working:                        "Cargando"
-    please_wait:                    "Por favor espere..."
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Panel"
-    home:               "Inicio"
-    settings:           "Configuración"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Enlaces rápidos"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "No existen proyectos por el momento."
-
     # app/views/assignments/
-    name:                      "Nombre"
-    filename:                  "Nombre del archivo"
-    message:                   "Mensaje"
-    remove:                    "Remover"
-    days_left:                 "(%{days} días(s) restantes)"
-    description:               "Descripción"
-    shortened_date:            "Fecha"
-    remove_date:               "Remover Fecha"
-    manage_course_work:        "Administrar trabajos del curso"
-    incorrect_format:          "Formato incorrecto"
-    required_fields:           "Campos requeridos."
     assignment:
-        hidden:                    "%{assignment_text} (oculto)"
-        update_success:            "El proyecto ha sido actualizado exitosamente"
-        no_required_files_read:    "No hay archivos requeridos para este proyecto."
-        upload_file_requirement:   "La lista de archivos entregados no coincide con los archivos necesarios para este
-                                    proyecto."
         group:
             assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
                                            %{group}"
@@ -73,6 +34,7 @@ es:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
+            problems: "UPDATE ME"
     peer_review:
         assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"
@@ -92,7 +54,6 @@ es:
         cannot_allow_reviewer_to_be_reviewee: "Un estudiante no puede ser un revisor y un revisado a la vez"
         number_per_group:                     "Número de Revisiones de Compañeros por grupo"
         number_assigned_reviewers:            "Número de Revisores Asignados"
-        peer_review:                          "Revisión de pares"
         action:
             assign:                           "Asignar Revisor (es) Peer"
             unassign:                         "Desasignar Revisor (es) Peer"
@@ -105,34 +66,11 @@ es:
             description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
 
     add_new:                     "Añadir Nuevo Archivo"
-    edit:                        "Editar"
-    save:                        "Guardar"
-    save_changes:                "Guardar cambios"
-    apply:                       "Aplicar"
-    delete:                      "Eliminar"
-    submit:                      "Enviar"
-    cancel:                      "Cancelar"
-    all:                         "Todos/as"
-    active:                      "Activo"
-    not_active:                  "Inactivo"
-    choose:                      "Escoger..."
-    properties:                  "Propiedades"
     peer_reviews:                "Revisiones de Compañeros"
-    help:                        "Ayuda"
-    preview:                     "Vista previa"
-    encoding:                    "Codificación"
-    select_csv_file:             "Seleccionar un archivo en formato CSV de la siguiente forma: <code>%{code}</code>"
-    all_csv_file:                "Todos los campos: "
-
-    past_start_date_edit_warning:      "PRECAUCIÓN:  La fecha de inicio seleccionada está en el pasado."
-
-    copy:                         "Copy"
 
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
     uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
                                           esta página?"
-    still_working_warning:               "Existen procesos sin finalizar. Estos no se guardarán si abandona la sesión en
-                                          este momento."
 
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
@@ -158,8 +96,6 @@ es:
 
     browse_submissions:
       review_state:                         "Estado de la Revisión"
-
-    no_assignments_and_grade_entry_forms_message: "Actualmente no hay asignaciones ni marcas en hojas de cálculo."
 
     groups:
       upload:
@@ -193,40 +129,6 @@ es:
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "El estudiante %{user_name} ha sido añadido."
-      fail:
-        general:         "Un error ha ocurrido. No se pudo añadir %{user_name}."
-        hidden:          "No se pudo añadir %{user_name} - la cuenta de este estudiante ha sido desabilitada."
-        already_grouped: "No se pudo añadir %{user_name} - el estudiante ya es miembro de otro grupo."
-
-    create_group:
-      fail:
-        due_date_passed:          "No se pudo crear el grupo - el último plazo para este proyecto ha pasado y, o no se
-                                   permiten períodos de aplazamiento de gracia o el período de aplazamiento de gracia
-                                   para este proyecto también ha pasado."
-        not_allow_to_form_groups: "El proyecto no les permite a los estudiantes formar grupos"
-        already_have_a_group:     "Usted ya tiene un grupo, y no puede crear otro"
-        can_not_work_alone:       "Usted no puede trabajar sólo en este proyecto - el número mínimo de estudiantes por
-                                   grupo es %{group_min}"
-        do_not_have_a_group:      "Usted no tiene un grupo por el momento"
-
-    invite_student:
-      success: "Las invitaciones han sido exitosas"
-      fail:
-        only_inviter:         "Sólo el invitador puede declinar una invitación"
-        due_date_passed:      "No se pudo invitar %{user_name} - el último plazo para este proyecto ha pasado y, o no se
-                               permiten períodos de aplazamiento de gracia o el período de aplazamiento de gracia
-                               para este proyecto también ha pasado."
-        dne:                  "No se pudo invitar %{user_name} - este estudiante no existe."
-        hidden:               "No se pudo invitar %{user_name} - la cuenta de este estudiante ha sido desabilitada."
-        already_pending:      "No se pudo invitar %{user_name} - el estudiante es un miembro pendiente de este grupo."
-        group_max_reached:    "No se pudo invitar %{user_name} - el número máximo de miembros ha sido alcanzado."
-        inviting_self:        "Usted no se puede invitar a su propio grupo."
-        already_grouped:      "No se pudo invitar %{user_name} - este estudiante ya es miembro de otro grupo."
-        need_to_create_group: "Usted debe crear un grupo antes poder invitar usuarios"
-        not_same_section:     "El estudiante %{user_name} no está en su sección."
-        error:                "No se pudo invitar al estudiante %{user_name}."
     update_files:
       success: "Sus cambios han sido realizados."
 
@@ -249,20 +151,10 @@ es:
       upload:
         error:
           invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
-          names_taken:    "Otros criterios ya tienen los siguientes nombres:"
         empty_error:     "No se encontró ningún criterio en el archivo provisto."
       errors:
         messages:
           released_marks:         "TODO"
-
-    section:
-      help:
-        manage_users:      "Usted puede crear nuevas secciones o eliminar secciones que están vacías (los números
-                            en paréntesis representan el número de estudiantes en cada sección). Para añadir estudiantes
-                            a una sección, use the la vista de Usuarios."
-
-    #app/views/assignments/_read.html.erb
-    additional_information:                "Información Adicional"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
@@ -285,38 +177,14 @@ es:
       run_tests:                          "Lanzar pruebas"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
-      fetch_testers:                      "UPDATE ME"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
       need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
                                            pruebas."
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
-      new_test_script_file:               "Nuevo archivo del script de la prueba"
-      new_test_support_file:              "Nuevo Archivo de Soporte de Prueba"
-      assignment_test_script_files:       "Archivos del Script de la Prueba"
-      assignment_test_support_files:      "Archivos de Soporte de la Prueba"
-      duplicate_filename:                 "Se intentó subir el siguiente nombre de archivo más de una vez: "
       tokens_available_on:                "Las fichas disponibles iniciaron en"
-      download_wrong_place_or_unreadable: "El archivo solicitado no se encuentra en el directorio esperado o no pudo ser
-                                           leído."
-      test_group_option:
-        upload_required:                  "Subir<span class='required_field'>*</span>"
-        upload_help:                      "UPDATE ME"
-        replace:                          "Actualizar"
-        replace_help:                     "UPDATE ME"
-        remove_file:                      "Remover"
-        remove_file_help:                 "UPDATE ME"
-        run_by_instructors:               "Ejecutable por los Instructores"
-        run_by_instructors_help:          "UPDATE ME"
-        run_by_students:                  "Ejecutable por los Estudiantes"
-        run_by_students_help:             "UPDATE ME"
-        associated_criterion:             "Criterio de Calificación Asociado"
-        display_output:                   "Resultado Obtenido"
-        display_output_help:              "UPDATE ME"
-        display_to:
-          instructors:           "No mostrar"
-          instructors_and_students: "Mostrar después de realizar la entrega"
-          instructors_and_student_tests: "Mostrar después de realizar la recolección"
+      loading_specs:                      "UPDATE ME"
+      files:                              "UPDATE ME"
       token:
         start_date: "Las fichas disponibles empiezan en:"
         available: "Fichas disponibles:"
@@ -337,7 +205,6 @@ es:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_group: "UPDATE ME"
         no_source_files: "No se encontró ningún archivo para probar"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

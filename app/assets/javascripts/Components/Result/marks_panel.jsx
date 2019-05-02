@@ -6,99 +6,39 @@ export class MarksPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      old_marks: {},
-      marks: [],
       expanded: new Set(),
-      assigned_criteria: null,
-      released: true
     }
   }
 
   componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = () => {
-    $.get({
-      url: Routes.assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id)
-    }).then(res => {
-      let released = res.released_to_students;
-      let assigned_criteria = res.assigned_criteria;
-      let old_marks = res.old_marks;
-      let marks = res.marks;
-      let expanded = new Set();
-      marks.forEach(data => {
-        data.max_mark = parseFloat(data.max_mark);
-        data.mark = data['marks.mark'];
-        // Expand by default if:
-        //   1) The result has been released, or
-        //   2) A mark has not yet been given, and the current user can give the mark.
-        const key = `${data.criterion_type}-${data.id}`;
-        if ((data.mark === null || data.mark === undefined) &&
-            (assigned_criteria === null || assigned_criteria.includes(key))) {
-          expanded.add(key);
+    if (!this.props.released_to_students) {
+      // TODO: Convert this to pure React
+      // Capture the mouse event to add "active-criterion" to the clicked element
+      $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', (e) => {
+        let criterion = $(e.target).closest('.rubric_criterion, .flexible_criterion, .checkbox_criterion');
+        if (!criterion.hasClass('unassigned')) {
+          e.preventDefault();
+          activeCriterion(criterion);
         }
       });
-      this.setState({ marks, expanded, assigned_criteria, released, old_marks }, () => {
-        if (released) return;
-
-        // TODO: Convert this to pure React
-        // Capture the mouse event to add "active-criterion" to the clicked element
-        $(document).on('click', '.rubric_criterion, .flexible_criterion, .checkbox_criterion', (e) => {
-          if (!$(this).hasClass('unassigned')) {
-            e.preventDefault();
-            activeCriterion($(this));
-          }
-        });
-      });
-    });
-  };
-
-  updateMark = (criterion_type, criterion_id, mark) => {
-    if (this.state.released ||
-        (this.state.assigned_criteria !== null &&
-          !this.state.assigned_criteria.includes(`${criterion_type}-${criterion_id}`))) {
-      return;
     }
 
-    $.ajax({
-      url: Routes.update_mark_assignment_result_path(
-        this.props.assignment_id, this.props.result_id
-      ),
-      method: 'POST',
-      data: {
-        markable_type: criterion_type,
-        markable_id: criterion_id,
-        mark: mark
-      },
-      dataType: 'text'
-    }).then(data => {
-      let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
-          let newMark = {...markData};
-          newMark.mark = mark;
-          return newMark;
-        } else {
-          return markData;
-        }
-      });
-      this.state.expanded.delete(`${criterion_type}-${criterion_id}`);
-      this.setState({ marks, expanded: this.state.expanded });
-      let items = data.split(',');
-      let total = items[2];
-      let marked = items[3];
-      let assigned = items[4];
-      document.getElementById('current_mark_div').innerText = total;
-
-      window.summaryPanel.fetchData();
-      update_bar(marked, assigned);
+    // Expand by default if:
+    //   1) The result has been released, or
+    //   2) A mark has not yet been given, and the current user can give the mark.
+    let expanded = new Set();
+    this.props.marks.forEach(data => {
+      const key = `${data.criterion_type}-${data.id}`;
+      if ((data.mark === null || data.mark === undefined) &&
+          (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
+        expanded.add(key);
+      }
     });
-  };
+  }
 
   expandAll = (onlyUnmarked) => {
     let expanded = new Set();
-    this.state.marks.forEach(markData => {
+    this.props.marks.forEach(markData => {
       if (!onlyUnmarked || markData.mark === null || markData.mark === undefined) {
         expanded.add(`${markData.criterion_type}-${markData.id}`);
       }
@@ -119,17 +59,33 @@ export class MarksPanel extends React.Component {
     this.setState({ expanded: this.state.expanded })
   };
 
+  updateMark = (criterion_type, criterion_id, mark) => {
+    let result = this.props.updateMark(criterion_type, criterion_id, mark);
+    if (result !== undefined) {
+      result.then(() => {
+        this.state.expanded.delete(`${criterion_type}-${criterion_id}`);
+        this.setState({ expanded: this.state.expanded });
+      })
+    }
+  };
+
+  destroyMark = (e, criterion_type, criterion_id) => {
+    e.stopPropagation();
+    this.props.destroyMark(criterion_type, criterion_id);
+  };
+
   renderMarkComponent = (markData) => {
     const key = `${markData.criterion_type}-${markData.id}`;
-    const unassigned = this.state.assigned_criteria !== null && !this.state.assigned_criteria.includes(key);
+    const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
       key: key,
-      released: this.state.released,
+      released_to_students: this.props.released_to_students,
       unassigned: unassigned,
       updateMark: this.updateMark,
+      destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
-      oldMark: this.state.old_marks[`criterion_${markData.criterion_type}_${markData.id}`],
+      oldMark: this.props.old_marks[`criterion_${markData.criterion_type}_${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       ... markData
     };
@@ -145,11 +101,11 @@ export class MarksPanel extends React.Component {
   };
 
   render() {
-    const markComponents = this.state.marks.map(this.renderMarkComponent);
+    const markComponents = this.props.marks.map(this.renderMarkComponent);
 
     return (
       <div id='mark_viewer' className='flex-col'>
-        {!this.state.released &&
+        {!this.props.released_to_students &&
          <div className='mark_tools'>
            <button className='inline-button' onClick={() => this.expandAll()}>
              {I18n.t('results.expand_all')}
@@ -200,9 +156,19 @@ class CheckboxCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <div>
-            {!this.props.released &&
+            {!this.props.released_to_students &&
              <span className='checkbox-criterion-inputs'>
               <label>
                 <input
@@ -210,9 +176,9 @@ class CheckboxCriterionInput extends React.Component {
                   value='yes'
                   onChange={this.handleChange}
                   checked={this.props.mark === this.props.max_mark}
-                  disabled={this.props.released || this.props.unassigned}
+                  disabled={this.props.released_to_students || this.props.unassigned}
                 />
-                {I18n.t('answer_yes')}
+                {I18n.t('checkbox_criteria.answer_yes')}
               </label>
               <label>
               <input
@@ -220,9 +186,9 @@ class CheckboxCriterionInput extends React.Component {
                 value='no'
                 onChange={this.handleChange}
                 checked={this.props.mark === 0}
-                disabled={this.props.released || this.props.unassigned}
+                disabled={this.props.released_to_students || this.props.unassigned}
               />
-                {I18n.t('answer_no')}
+                {I18n.t('checkbox_criteria.answer_no')}
               </label>
             </span>
             }
@@ -251,27 +217,34 @@ class FlexibleCriterionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rawText: this.props.mark === null ? '' : String(this.props.mark)
+      rawText: this.props.mark === null ? '' : String(this.props.mark),
+      invalid: false
     };
   }
 
   handleChange = (event) => {
     const mark = parseFloat(event.target.value);
-    if (isNaN(mark)) {
-      return;
+    if (event.target.value !== '' && isNaN(mark)) {
+      this.setState({rawText: event.target.value, invalid: true});
     } else if (mark === this.props.mark) {
       // This can happen if the user types a decimal point at the end of the input.
-      this.setState({rawText: event.target.value})
+      this.setState({rawText: event.target.value, invalid: false});
+    } else if (mark > this.props.max_mark) {
+      this.setState({rawText: event.target.value, invalid: true});
     } else {
+      this.setState({rawText: event.target.value, invalid: false});
       this.props.updateMark(
-        this.props.criterion_type, this.props.id, mark
+        this.props.criterion_type, this.props.id, isNaN(mark) ? null : mark
       );
     }
   };
 
   componentDidUpdate(oldProps) {
     if (oldProps.mark !== this.props.mark) {
-      this.setState({ rawText: String(this.props.mark) })
+      this.setState({
+        rawText: this.props.mark === null ? '' : String(this.props.mark),
+        invalid: false
+      });
     }
   }
 
@@ -280,11 +253,12 @@ class FlexibleCriterionInput extends React.Component {
     const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
 
     let markElement;
-    if (this.props.released) { // Student view
+    if (this.props.released_to_students) { // Student view
       markElement = this.props.mark;
     } else {
       markElement = (
         <input
+          className={this.state.invalid ? 'invalid' : ''}
           type='text'
           size={4}
           value={this.state.rawText}
@@ -305,6 +279,16 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <div className='criterion-description'>
             {this.props.description}
@@ -387,6 +371,16 @@ class RubricCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {!this.props.released_to_students &&
+             !this.props.unassigned &&
+             this.props.mark !== null &&
+             <a href="#"
+                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                style={{float: 'right'}}
+             >
+               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+             </a>
+            }
           </div>
           <table className='rubric-levels'>
             <tbody>
@@ -397,9 +391,4 @@ class RubricCriterionInput extends React.Component {
       </li>
     );
   }
-}
-
-
-export function makeMarksPanel(elem, props) {
-  return render(<MarksPanel {...props} />, elem);
 }

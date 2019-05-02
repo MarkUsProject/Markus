@@ -31,25 +31,18 @@ FactoryBot.define do
     end
   end
 
-  factory :assignment_for_instructor_tests, parent: :assignment do
+  factory :assignment_for_tests, parent: :assignment do
     enable_test { true }
     after(:build) do |assignment| # called by both create and build
-      create(:test_group, assignment: assignment, run_by_instructors: true)
+      create(:test_group, assignment: assignment)
     end
     after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_group, assignment: assignment, run_by_instructors: true)
+      build_stubbed(:test_group, assignment: assignment)
     end
   end
 
-  factory :assignment_for_student_tests, parent: :assignment do
-    enable_test { true }
+  factory :assignment_for_student_tests, parent: :assignment_for_tests do
     enable_student_tests { true }
     token_start_date { Time.current }
-    after(:build) do |assignment| # called by both create and build
-      create(:test_group, assignment: assignment, run_by_students: true)
-    end
-    after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_group, assignment: assignment, run_by_students: true)
-    end
   end
 end

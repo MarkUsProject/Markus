@@ -6,7 +6,6 @@ es:
         other: "Hojas de notas"
     attributes:
       grade_entry_form:
-        date: "Fecha"
         description: "Descripción"
         grades: "Evaluadores"
         is_hidden: "Ocultar Hoja de Notas"

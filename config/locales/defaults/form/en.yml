@@ -1,5 +1,6 @@
 en:
   optional: "Optional"
+  required_fields: "Required Fields"
 
   helpers:
     confirm:

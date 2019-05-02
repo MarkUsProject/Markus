@@ -19,6 +19,7 @@ fr:
       other: "%{count} crédits"
     deadline_html: "Date limite en <br> utilisant tous les <br> jetons de grâce <br> restants"
     group_credits_html: "Votre groupe a <strong>%{available_grace_credits}</strong> crédit(s) de grâce disponible(s)."
+    no_group_yet: "Formez un groupe pour déterminer le nombre de jetons de grâce disponible pour ce projet."
     overtime_message_with_credits_left: "La date de retour pour ce projet est passée. Cependant, il vous reste %{grace_credits_remaining} crédit(s) de grâce.  Si vous envoyez un (des) fichier(s) ou faites des changements durant cette période, vous utiliserez %{grace_credits_to_use} de ces crédits."
     overtime_message_without_credits_left: "La date de retour pour ce projet est passée et vous ne pouvez plus utiliser de jours de grâce."
 

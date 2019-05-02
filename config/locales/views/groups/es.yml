@@ -4,8 +4,6 @@ es:
     another_assignment_group: "Usar los grupos de otro proyecto"
     assigned_students: "Asignados"
     assignment_to_use: "¿Qué grupos le gustaría usar?"
-    cant_delete: "Usted no tiene permiso para eliminar el grupo."
-    cant_delete_already_submitted: "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
     could_not_delete: "No se pudieron eliminar los siguientes grupos - notese que los grupos no pueden
                       ser eliminados para este proyecto si una entrega ya ha sido enviada para los
                       mismos."
@@ -63,6 +61,10 @@ es:
                       desea formar o unirse a un grupo primero elimine su grupo."
       your_group: "Su grupo"
 
+    destroy:
+      errors:
+        do_not_have_a_group: "Usted no tiene un grupo por el momento."
+
     members:
       cancel_invitation: "Cancelar invitación"
       cancel_invitation_confirm: "¿Está seguro/a de querer cancelar esta invitación?"
@@ -78,3 +80,14 @@ es:
         inviter: "invitador"
         pending: "invitado/a"
         rejected: "declinado"
+
+    invite_member:
+      errors:
+        already_grouped: "No se pudo invitar %{user_name}: este estudiante ya es miembro de otro grupo."
+        already_pending: "No se pudo invitar %{user_name}: el estudiante es un miembro pendiente de este grupo."
+        group_max_reached: "No se pudo invitar %{user_name}: el número máximo de miembros ha sido alcanzado."
+        inviting_self: "Usted no se puede invitar a su propio grupo."
+        need_to_create_group: "Usted debe crear un grupo antes poder invitar usuarios."
+        not_found: "No se pudo invitar %{user_name}: este estudiante no existe."
+        not_same_section: "El estudiante %{user_name} no está en su sección."
+      success: "Las invitaciones han sido exitosas."

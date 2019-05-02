@@ -10,27 +10,13 @@
   <%= javascript_pack_tag 'result' %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
+      window.resultComponent = makeResult(document.getElementById('result-main'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      makeMarksPanel(document.getElementById('mark_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
         }
       );
     });
@@ -43,12 +29,6 @@
 <%= render partial: 'layouts/mathjax_config', formats: [:js] %>
 <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
 <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-
-<% # VIEWING MARKS FUNCTIONS %>
-<%= javascript_include_tag 'Grader/file_selector.js' %>
-
-<% # BOOT SCRIPTS %>
-<%= javascript_include_tag 'Grader/tabs_boot.js' %>
 
 <% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
 <%= render partial: 'results/common/syntax_highlighter_brushes',
@@ -83,17 +63,6 @@
 </div>
 
 <div class='wrapLeft'>
-  <%= render partial: 'results/common/errors' %>
-
-  <% if @result.is_a_review? && !@current_user.student? %>
-    <%= render partial: 'results/common/submission_selector',
-               locals: { group: @group,
-                         result: @result,
-                         assignment: @assignment,
-                         previous_grouping: @previous_grouping,
-                         next_grouping: @next_grouping } %>
-  <% end %>
-
   <% if @result.is_review_for?(@current_user, @assignment) ||
       (@result.is_a_review? && !@current_user.student?) %>
     <%= render partial: 'results/common/peer_reviews',
@@ -108,9 +77,8 @@
                          current_pr: @current_pr} %>
   <% end %>
 
-  <%= render partial: 'results/student/student_panes',
-             locals: { result: @result,
-                       assignment: @assignment,
-                       submission: @submission,
-                       old_result: @old_result } %>
+  <div id='result-main'></div>
+
+  <!-- Annotation pane-->
+  <div id='annotation_holder'></div>
 </div>

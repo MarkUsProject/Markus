@@ -7,7 +7,6 @@ pt:
     form:
       add_required_file: "Inserir arquivo exigido"
       group_properties: "Propriedades do Grupo"
-      past_due_date_edit_warning: "O data selecionada está no passado."
       persist_groups_from: "Guardar grupos e propriedades de"
       remarks: "Regras de revisão"
       required_files_by_student: "Inserir nome dos arquivos(s) exigidos para submissão:"
@@ -27,5 +26,10 @@ pt:
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"
+    hidden: "%{assignment_text} (oculto)"
     information: "Regras do projeto"
+    manage_course_work: "Gerenciar trabalho do curso"
     marking_scheme: "Esquema de avalição: %{identifier}"
+    no_required_files: "Não há arquivos exigidos para esse projeto."
+    none: "Não existem projetos atualmente."
+    upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"

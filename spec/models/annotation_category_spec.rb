@@ -63,5 +63,17 @@ describe AnnotationCategory do
         expect(@initial_size + 2).to eq(AnnotationText.all.size)
       end
     end
+
+    context 'when the annotation category has no associated texts' do
+      before do
+        @row = ['annotation category name 4']
+        @initial_size = AnnotationText.all.size
+      end
+
+      it 'creates an annotation category' do
+        AnnotationCategory.add_by_row(@row, assignment, admin)
+        expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
+      end
+    end
   end
 end

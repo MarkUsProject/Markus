@@ -3,7 +3,7 @@ class UncollectSubmissions < ApplicationJob
   queue_as MarkusConfigurator.markus_job_uncollect_submissions_queue_name
 
   def self.on_complete_js(status)
-    'window.location.reload.bind(window.location)'
+    'window.submissionTable.wrapped.fetchData'
   end
 
   def self.show_status(status)
@@ -15,11 +15,6 @@ class UncollectSubmissions < ApplicationJob
   end
 
   def perform(assignment)
-    begin
-      submissions_collector = SubmissionCollector.instance
-      submissions_collector.uncollect_submissions(assignment)
-    rescue => e
-      Rails.logger.error e.message
-    end
+    # TODO: implement this.
   end
 end

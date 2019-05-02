@@ -155,7 +155,6 @@ Group.blueprint do
 end
 
 Grouping.blueprint do
-  grouping_queue { nil }
   group {Group.make}
   assignment {Assignment.make}
   criteria_coverage_count {0}
@@ -297,12 +296,10 @@ end
 TestGroup.blueprint do
   assignment {Assignment.make}
   name {Sham.filename}
-  run_by_instructors {true}
-  run_by_students {false}
 end
 
 TestGroupResult.blueprint do
-  test_script {TestGroup.make}
+  test_group {TestGroup.make}
   marks_earned {1}
   marks_total {1}
 end

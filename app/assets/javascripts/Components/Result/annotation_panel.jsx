@@ -58,7 +58,7 @@ export class AnnotationPanel extends React.Component {
               onChange={this.updateOverallComment}
               rows={5}
             />
-            <input type="submit" value={I18n.t('save_changes')}
+            <input type="submit" value={I18n.t('save')}
                    data-disable-with={I18n.t('working')}
                    ref={this.submitOverallCommentButton}
                    disabled={!this.state.unsavedChanges}

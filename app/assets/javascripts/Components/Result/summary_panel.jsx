@@ -7,74 +7,9 @@ export class SummaryPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      old_marks: {},
-      marks: [],
-      released: true,
-      remark_submitted: false,
-      assignment_max_mark: 0,
-      old_total: 0,
-      total: 0,
-      subtotal: 0,
-      extraMarkSubtotal: 0,
-      extraMarks: [],
-      criterionSummaryData: [],
       showNewExtraMark: false,
-      graceTokenDeductions: [],
-      is_reviewer: false
     }
   }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = () => {
-    $.get({
-      url: Routes.assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id)
-    }).then(res => {
-      let released = res.released_to_students;
-      let remark_submitted = res.remark_submitted;
-      let old_marks = res.old_marks;
-      let marks = res.marks;
-      let extraMarks = res.extra_marks;
-      let criterionSummaryData = [];
-      let subtotal = 0;
-      let extraMarkSubtotal = 0;
-      marks.forEach(data => {
-        data.max_mark = parseFloat(data.max_mark);
-        data.mark = data['marks.mark'];
-        criterionSummaryData.push({
-          criterion: data.name,
-          mark: data.mark,
-          old_mark: old_marks[`criterion_${data.criterion_type}_${data.id}`],
-          max_mark: data.max_mark
-        });
-        subtotal += data.mark || 0;
-      });
-      extraMarks.forEach(data => {
-        if (data.unit === 'points') {
-          extraMarkSubtotal += data.extra_mark;
-        } else { // Percentage
-          extraMarkSubtotal += data.extra_mark * res.assignment_max_mark / 100;
-        }
-      });
-      this.setState({
-        marks, released, old_marks,
-        remark_submitted,
-        criterionSummaryData,
-        subtotal,
-        extraMarkSubtotal,
-        extraMarks,
-        total: res.total,
-        old_total: res.old_total,
-        assignment_max_mark: res.assignment_max_mark,
-        showNewExtraMark: false,
-        graceTokenDeductions: res.grace_token_deductions,
-        is_reviewer: res.is_reviewer
-      });
-    });
-  };
 
   criterionColumns = () => [
     {
@@ -86,7 +21,7 @@ export class SummaryPanel extends React.Component {
       Header: 'Old Mark',
       accessor: 'old_mark',
       className: 'number',
-      show: this.state.remark_submitted
+      show: this.props.remark_submitted
     },
     {
       Header: I18n.t('activerecord.models.mark.one'),
@@ -104,16 +39,16 @@ export class SummaryPanel extends React.Component {
 
   renderTotalMark = () => {
     let oldTotal = '';
-    if (this.state.remark_submitted) {
+    if (this.props.remark_submitted) {
       oldTotal = (
         <div className='mark_total'>
           <span>
             {I18n.t('results.remark.old_total')}
           </span>
           <span className='final_mark'>
-            <span>{this.state.old_total}</span>
+            <span>{this.props.old_total}</span>
             &nbsp;/&nbsp;
-            {this.state.assignment_max_mark}
+            {this.props.assignment_max_mark}
           </span>
         </div>
       );
@@ -124,9 +59,9 @@ export class SummaryPanel extends React.Component {
           {I18n.t('activerecord.attributes.result.total_mark')}
         </span>
         <span className='final_mark'>
-          <span>{this.state.total}</span>
+          <span>{this.props.total}</span>
           &nbsp;/&nbsp;
-          {this.state.assignment_max_mark}
+          {this.props.assignment_max_mark}
         </span>
       </div>
     );
@@ -159,7 +94,7 @@ export class SummaryPanel extends React.Component {
           return row.value;
         } else {
           // Percentage
-          let mark_value = (row.value * this.state.assignment_max_mark / 100).toFixed(2);
+          let mark_value = (row.value * this.props.assignment_max_mark / 100).toFixed(2);
           return `${mark_value} (${row.value}%)`;
         }
       }
@@ -167,7 +102,7 @@ export class SummaryPanel extends React.Component {
     {
       Header: '',
       id: 'action',
-      show: !this.state.released,
+      show: !this.props.released_to_students,
       Cell: (row) => {
         if (row.original._new) {
           return (
@@ -180,33 +115,15 @@ export class SummaryPanel extends React.Component {
         } else {
           return (
             <button
-              onClick={() => this.destroyExtraMark(row.original.id)}
+              onClick={() => this.props.destroyExtraMark(row.original.id)}
               className='inline-button'>
-              {I18n.t('remove')}
+              {I18n.t('delete')}
             </button>
           );
         }
       }
     }
   ];
-
-  destroyExtraMark = (id) => {
-    if (!confirm(I18n.t('results.delete_extra_mark_confirm'))) {
-      return;
-    }
-
-    $.ajax({
-      url: Routes.remove_extra_mark_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id,
-        // TODO: Fix this route so that the id refers to a Result rather than ExtraMark.
-        id
-      ),
-      method: 'POST',
-    }).then(() => {
-      // TODO: Optimize this so not everything is fetched again.
-      this.fetchData();
-    })
-  };
 
   newExtraMark = () => {
     this.setState({showNewExtraMark: true});
@@ -216,32 +133,21 @@ export class SummaryPanel extends React.Component {
     let row = event.target.parentElement.parentElement;
     let description = row.children[0].children[0].value;
     let extra_mark = row.children[1].children[0].value;
-    $.ajax({
-      url: Routes.add_extra_mark_assignment_result_path(
-        this.props.assignment_id, this.props.result_id
-      ),
-      method: 'POST',
-      data: {
-        extra_mark: {
-          description: description,
-          extra_mark: extra_mark
-        }
-      }
-    }).then(() => {
-      this.fetchData()
-    })
+    this.props.createExtraMark(description, extra_mark).then(() =>
+      this.setState({showNewExtraMark: false})
+    );
   };
 
   renderExtraMarks = () => {
     // If there are no extra marks and this result is released, display nothing.
-    if (this.state.is_reviewer ||
-        (this.state.released && this.state.extraMarks.length === 0)) {
+    if (this.props.is_reviewer ||
+        (this.props.released_to_students && this.props.extra_marks.length === 0)) {
       return '';
     }
 
     let data;
     if (this.state.showNewExtraMark) {
-      data = this.state.extraMarks.concat([
+      data = this.props.extra_marks.concat([
         {
           _new: true,
           extra_mark: 0,
@@ -250,7 +156,7 @@ export class SummaryPanel extends React.Component {
         }
       ]);
     } else {
-      data = this.state.extraMarks;
+      data = this.props.extra_marks;
     }
 
     return (
@@ -263,7 +169,7 @@ export class SummaryPanel extends React.Component {
            columns={this.extraMarksColumns()}
            data={data} />
         }
-        {!this.state.released &&
+        {!this.props.released_to_students &&
          <div>
            <button onClick={this.newExtraMark}>
              {I18n.t('helpers.submit.create',
@@ -274,7 +180,7 @@ export class SummaryPanel extends React.Component {
         <div className='mark_total'>
           {I18n.t('results.total_extra_marks')}
           <span className='final_mark'>
-            {this.state.extraMarkSubtotal.toFixed(2)}
+            {this.props.extraMarkSubtotal.toFixed(2)}
           </span>
         </div>
       </div>
@@ -282,28 +188,28 @@ export class SummaryPanel extends React.Component {
   };
 
   renderGraceTokenDeductions = () => {
-    if (this.state.graceTokenDeductions.length === 0) {
+    if (this.props.graceTokenDeductions.length === 0) {
       return '';
     } else {
-      let rows = this.state.graceTokenDeductions.flatMap(d => {
+      let rows = this.props.graceTokenDeductions.flatMap(d => {
         return [
-          <tr>
+          <tr key={d['users.user_name']}>
             <th colSpan={2}>
               {`${d['users.user_name']} - (${d['users.first_name']} ${d['users.last_name']})`}
             </th>
           </tr>,
-          <tr>
+          <tr key={d['users.user_name'] + '-deduction'}>
             <td>
               {I18n.t('grace_period_submission_rules.credit',
                       {count: d.deduction})}
             </td>
             <td>
-              {!this.state.released &&
+              {!this.props.released_to_students &&
                <button
                  className='inline-button'
-                 onClick={() => this.deleteGraceTokenDeduction(d.id)}
+                 onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
                >
-                 {I18n.t('remove')}
+                 {I18n.t('delete')}
                </button>
               }
             </td>
@@ -324,32 +230,18 @@ export class SummaryPanel extends React.Component {
     }
   };
 
-  deleteGraceTokenDeduction = (id) => {
-    if (!confirm(I18n.t('grace_period_submission_rules.confirm_remove_deduction'))) {
-      return;
-    }
-
-    $.ajax({
-      url: Routes.delete_grace_period_deduction_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
-      ),
-      method: 'POST',
-      data: {deduction_id: id}
-    }).then(this.fetchData)
-  };
-
   render() {
     return (
-      <div>
+      <div className={'marks-summary-pane'}>
         <ReactTable
           columns={this.criterionColumns()}
-          data={this.state.criterionSummaryData} />
+          data={this.props.criterionSummaryData} />
         <div className='mark_total'>
           {I18n.t('results.subtotal')}
           <span className='final_mark'>
-            {this.state.subtotal}
+            {this.props.subtotal}
             &nbsp;/&nbsp;
-            {this.state.assignment_max_mark}
+            {this.props.assignment_max_mark}
           </span>
         </div>
         {this.renderGraceTokenDeductions()}
@@ -358,9 +250,4 @@ export class SummaryPanel extends React.Component {
       </div>
     );
   }
-}
-
-
-export function makeSummaryPanel(elem, props) {
-  return render(<SummaryPanel {...props} />, elem);
 }

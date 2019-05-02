@@ -19,12 +19,14 @@ export class FileViewer extends React.Component {
   componentDidMount() {
     if (this.props.selectedFile !== null) {
       this.set_submission_file(this.props.selectedFile);
+    } else {
+      this.setState({loading: false})
     }
   }
 
   // Manually manage a change of selectedFile, as this requires fetching new file data.
   shouldComponentUpdate(nextProps) {
-    if (this.props.selectedFile === null || this.props.selectedFile !== nextProps.selectedFile) {
+    if (this.props.selectedFile !== nextProps.selectedFile) {
       this.set_submission_file(nextProps.selectedFile);
       return false;
     } else {
@@ -79,7 +81,11 @@ export class FileViewer extends React.Component {
   };
 
   render() {
-    const commonProps = {submission_file_id: this.props.selectedFile, annotations: this.props.annotations};
+    const commonProps = {
+      submission_file_id: this.props.selectedFile,
+      annotations: this.props.annotations,
+      released_to_students: this.props.released_to_students
+    };
     if (this.state.loading) {
       return I18n.t('working');
     } else if (this.state.type === 'image') {

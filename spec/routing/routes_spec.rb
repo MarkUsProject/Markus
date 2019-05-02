@@ -145,18 +145,18 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET download_yml properly' do
-        expect(get: criteria_path + '/download_yml').to route_to(
+      it 'routes GET download properly' do
+        expect(get: criteria_path + '/download').to route_to(
           controller: criteria_ctrl,
-          action: 'download_yml',
+          action: 'download',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes POST yml_upload properly' do
-        expect(post: criteria_path + '/upload_yml').to route_to(
+      it 'routes POST upload properly' do
+        expect(post: criteria_path + '/upload').to route_to(
           controller: criteria_ctrl,
-          action: 'upload_yml',
+          action: 'upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -586,11 +586,11 @@ describe 'An Assignment' do
       let(:res_ctrl) { 'results' }
 
       context 'collection' do
-        it 'routes GET update_mark properly' do
-          expect(get: res_path + '/update_mark').to route_to(
+        it 'routes PATCH update_mark properly' do
+          expect(patch: res_path + '/1/update_mark').to route_to(
             controller: res_ctrl,
-            action: 'show',
-            id: 'update_mark',
+            action: 'update_mark',
+            id: '1',
             assignment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
@@ -960,10 +960,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST csv_upload properly' do
-        expect(post: annot_path + '/csv_upload').to route_to(
+      it 'routes POST upload properly' do
+        expect(post: annot_path + '/upload').to route_to(
           controller: annot_ctrl,
-          action: 'csv_upload',
+          action: 'upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -972,14 +972,6 @@ describe 'An Assignment' do
         expect(get: annot_path + '/download').to route_to(
           controller: annot_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST yml_upload properly' do
-        expect(post: annot_path + '/yml_upload').to route_to(
-          controller: annot_ctrl,
-          action: 'yml_upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

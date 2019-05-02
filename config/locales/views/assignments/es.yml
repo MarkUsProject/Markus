@@ -7,7 +7,6 @@ es:
     form:
       add_required_file: "Añadir un archivo requerido"
       group_properties: "Propiedades del Grupo"
-      past_due_date_edit_warning: "El último plazo de entrega seleccionado está en el pasado."
       persist_groups_from: "Mantener los grupos de"
       remarks: "Reglas para solicitudes de recalificación"
       required_files_by_student: "Añadir nombre(s) de (el/los) archivo(s) que los estudiantes deberán presentar:"
@@ -67,5 +66,10 @@ es:
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"
+    hidden: "%{assignment_text} (oculto)"
     information: "Reglas del Proyecto"
+    manage_course_work: "Administrar trabajos del curso"
     marking_scheme: "Esquema de Calificación: %{identifier}"
+    no_required_files: "No hay archivos requeridos para este proyecto."
+    none: "No existen proyectos por el momento."
+    upload_file_requirement: "La lista de archivos entregados no coincide con los archivos necesarios para este proyecto."

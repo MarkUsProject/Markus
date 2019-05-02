@@ -163,9 +163,9 @@ namespace :markus do
             assignment.groupings << grouping
             assignment.save!
 
-            assignment_repo = grouping.group.repo
-            txn = assignment_repo.get_transaction(student_user_name)
-            file_data = %|class assignment {
+            grouping.group.access_repo do |assignment_repo|
+              txn = assignment_repo.get_transaction(student_user_name)
+              file_data = %|class assignment {
         // This method should sum only positive values
         public static void main(String args[]) {
           // First, I create an array
@@ -179,10 +179,11 @@ namespace :markus do
           System.out.println("The sum of the positive values is: " + sum);
         }
       }|
-            folder_name = assignment_short_identifier + "/" + assignment_short_identifier + ".java"
-            puts folder_name
-            txn.add(folder_name, file_data, 'text/java')
-            assignment_repo.commit(txn)
+              folder_name = assignment_short_identifier + '/' + assignment_short_identifier + '.java'
+              puts folder_name
+              txn.add(folder_name, file_data, 'text/java')
+              assignment_repo.commit(txn)
+            end
             assignment.save!
 
             num_of_submissions = rand(4)

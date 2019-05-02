@@ -5,8 +5,6 @@ en:
     another_assignment_group: "Use another assignment's groups"
     assigned_students: "Assigned"
     assignment_to_use: "Which assignments groups would you like to use?"
-    cant_delete: "You are not allowed to delete the group."
-    cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
     could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
     delete: "Delete group(s)"
     delete_confirm: "This will remove all members in the group and delete all information associated with this group. Continue?"
@@ -55,6 +53,10 @@ en:
                       first delete your group using the button below."
       your_group: "Your group"
 
+    destroy:
+      errors:
+        do_not_have_a_group: "You do not currently have a group."
+
     members:
       cancel_invitation: "Cancel invitation"
       cancel_invitation_confirm: "Are you sure you want to cancel this invitation?"
@@ -70,3 +72,14 @@ en:
         inviter: "inviter"
         pending: "invited"
         rejected: "declined"
+
+    invite_member:
+      errors:
+        already_grouped: "Could not invite %{user_name}: this student is already a member of a group."
+        already_pending: "Could not invite %{user_name}: this student already has a pending invitation for this group."
+        group_max_reached: "Could not invite %{user_name}: group maximum has been reached."
+        inviting_self: "You cannot invite yourself to your own group."
+        need_to_create_group: "You must create a group before you can invite members."
+        not_found: "No student '%{user_name}' could be found."
+        not_same_section: "Could not invite %{user_name}: this student is not in your section."
+      success: "Invitation(s) successful."

@@ -3,7 +3,7 @@ class SubmissionsJob < ApplicationJob
   queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
 
   def self.on_complete_js(status)
-    'window.location.reload.bind(window.location)'
+    'window.submissionTable.wrapped.fetchData'
   end
 
   def self.show_status(status)
@@ -43,10 +43,7 @@ class SubmissionsJob < ApplicationJob
             new_submission)
         end
 
-        unless grouping.error_collecting
-          grouping.is_collected = true
-        end
-
+        grouping.is_collected = true
         grouping.save
       rescue => e
         Rails.logger.error e.message

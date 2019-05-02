@@ -102,14 +102,11 @@ class RawSubmissionTable extends React.Component {
       id: 'section',
       show: this.props.show_sections,
       minWidth: 70,
-      Cell: ({ value }) => {
-        return this.state.sections[value] || ''
-      },
       filterMethod: (filter, row) => {
         if (filter.value === 'all') {
           return true;
         } else {
-          return this.state.sections[row[filter.id]] === filter.value;
+          return filter.value === row[filter.id];
         }
       },
       Filter: ({ filter, onChange }) =>
@@ -397,5 +394,5 @@ class SubmissionsActionBox extends React.Component {
 }
 
 export function makeSubmissionTable(elem, props) {
-  render(<SubmissionTable {...props} />, elem);
+  return render(<SubmissionTable {...props} />, elem);
 }

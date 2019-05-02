@@ -3,39 +3,6 @@ en:
     new:
       button: "New Criterion"
 
-    upload:
-      yml_instructions_html: "
-        <ul>
-          <li><p>The file should have the following format for a rubric criterion:<br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>The visibility options are optional.</p>
-          </p></li>
-          <li><p>The following for a flexible criterion:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>The description and visibility options are optional.</p></li>
-          <li><p>And the following for a checkbox criterion:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br>
-            &nbsp;&nbsp;ta_visible: true<br>
-            &nbsp;&nbsp;peer_visible: false<br></code>
-          <p>The description and visibility options are optional.</p></li>
-        </ul>"
-
     # Short type names
     checkbox: "Checkbox"
     flexible: "Flexible"
@@ -68,6 +35,10 @@ en:
     # Miscellaneous
     description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
     max_mark_short: "Max Mark"
+
+  checkbox_criteria:
+    answer_no: "No"
+    answer_yes: "Yes"
 
   rubric_criteria:
     level:

@@ -21,7 +21,7 @@ class Assignment < ApplicationRecord
        dependent: :destroy
 
   has_many :test_groups, dependent: :destroy
-  accepts_nested_attributes_for :test_groups, allow_destroy: true
+  accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
            -> { order(:position) },
@@ -328,17 +328,9 @@ class Assignment < ApplicationRecord
   end
 
   def update_remark_request_count
-    outstanding_count = 0
-    groupings.each do |grouping|
-      submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_remark?
-        if submission.remark_result.marking_state ==
-            Result::MARKING_STATES[:incomplete]
-          outstanding_count += 1
-        end
-      end
-    end
-    self.outstanding_remark_request_count = outstanding_count
+    self.outstanding_remark_request_count = groupings.joins(current_submission_used: :submitted_remark)
+                                                     .where('results.marking_state': :incomplete)
+                                                     .count
     self.save
   end
 
@@ -969,19 +961,8 @@ class Assignment < ApplicationRecord
     File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
   end
 
-  # Return a repository object, if possible
-  def starter_code_repo
-    unless Repository.get_class.repository_exists?(starter_code_repo_path)
-      raise 'Repository not found'
-    end
-    Repository.get_class.open(starter_code_repo_path)
-  end
-
   #Yields a repository object, if possible, and closes it after it is finished
   def access_starter_code_repo(&block)
-    unless Repository.get_class.repository_exists?(starter_code_repo_path)
-      raise 'Repository not found'
-    end
     Repository.get_class.access(starter_code_repo_path, &block)
   end
 
@@ -1077,33 +1058,22 @@ class Assignment < ApplicationRecord
     required
   end
 
-  # Selects the appropriate test scripts for this assignment, based on the user requesting them.
-  def select_test_groups(user)
-    if user.admin?
-      condition = { run_by_instructors: true }
-    elsif user.student?
-      condition = { run_by_students: true }
-    else
-      return none # empty chainable ActiveRecord::Relation
-    end
-
-    self.test_groups.where(condition)
+  def autotest_path
+    File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
   end
 
-  # Selects the hooks script from the test files.
-  def get_hooks_script_name
-    # TODO: Adjust the hooks mechanism when we create a new user interface
-    hooks_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
-                           AutomatedTestsClientHelper::HOOKS_FILE)
-    File.exist?(hooks_path) ? File.basename(hooks_path) : nil
+  def autotest_files_dir
+    File.join(autotest_path, TestRun::FILES_DIR)
   end
 
-  # Selects the test specs from the test files.
-  def get_test_specs_name
-    # TODO: Adjust the specs mechanism when we create a new user interface
-    specs_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, self.short_identifier,
-                           AutomatedTestsClientHelper::SPECS_FILE)
-    File.exist?(specs_path) ? File.basename(specs_path) : nil
+  def autotest_files
+    files_dir = autotest_files_dir
+    return [] unless Dir.exist? files_dir
+    Dir.entries(files_dir) - ['.', '..']
+  end
+
+  def autotest_settings_file
+    File.join(autotest_path, TestRun::SPECS_FILE)
   end
 
   # Retrieve current grader data.
@@ -1241,7 +1211,7 @@ class Assignment < ApplicationRecord
     section_data = groupings
                    .joins(inviter: :section)
                    .pluck('groupings.id', 'sections.name')
-                   .group_by { |gid, _| gid }
+                   .to_h
 
     # This is the submission data that's actually returned
     data.map do |g|
@@ -1342,13 +1312,20 @@ class Assignment < ApplicationRecord
       result
     when 'yml'
       begin
-        map = YAML::load(assignment_data)
+        map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
-          row[:submission_rule] = NoLateSubmissionRule.new
-          row[:assignment_stat] = AssignmentStat.new
-          row[:token_period] = 1
-          row[:unlimited_tokens] = false
-          update_assignment!(row)
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
+          if assignment.new_record?
+            row[:submission_rule] = NoLateSubmissionRule.new
+            row[:assignment_stat] = AssignmentStat.new
+            row[:token_period] = 1
+            row[:unlimited_tokens] = false
+          end
+          assignment.update(row)
+          unless assignment.id
+            assignment[:display_median_to_students] = false
+            assignment[:display_grader_names_to_students] = false
+          end
         end
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e

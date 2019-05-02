@@ -278,6 +278,50 @@ module Repository
       []
     end
 
+    # Exclusive blocking lock using a redis list to ensure that all threads and all processes respect
+    # the lock.  If the resource defined by +resource_id+ is locked, the calling thread will wait +timeout+
+    # milliseconds, while trying to acquire the lock every +interval+ milliseconds. If the calling thread
+    # is able to acquire the lock it will yield and return true, otherwise the passed block will not be executed
+    # and it will return false.
+    #
+    # Access to the resource will be given in request order. So if threads a, b, and c all request access to the
+    # same resource (in that order), access is guaranteed to be given to a then b then c (in that order).
+    #
+    # The +namespace+ argument can be given to ensure that two resources with the same resource_id can be treated
+    # as separate resources as long as the +namespace+ value is distinct. By default the +namespace+ is the relative
+    # root of the current MarkUs instance.
+    def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 1000, interval: 100)
+      redis = Redis::Namespace.new(namespace)
+      return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
+
+      # clear any threads that are no longer alive from the queue
+      redis.lrange(resource_id, 0, -1).each do |thread_id|
+        begin
+          thread_obj = ObjectSpace._id2ref(thread_id.to_i)
+        rescue TypeError, RangeError
+          redis.lrem(resource_id, 0, thread_id)
+          next
+        end
+        unless thread_obj.is_a?(Thread) && thread_obj.alive?
+          redis.lrem(resource_id, 0, thread_id)
+        end
+      end
+
+      redis.lpush(resource_id, Thread.current.object_id) # assume thread ids are unique accross processes as well
+      elapsed_time = 0
+      begin
+        loop do
+          return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
+          raise Timeout::Error("waited #{timeout} ms to access resource: #{resource_id}") if elapsed_time >= timeout
+
+          sleep(interval / 1000.0) # interval is in milliseconds but sleep arg is in seconds
+          elapsed_time += interval
+        end
+      ensure
+        redis.lrem(resource_id, -1, Thread.current.object_id)
+      end
+    end
+
     private_class_method :__update_permissions
   end
 

@@ -9,6 +9,10 @@ class TestRun < ApplicationRecord
                                                        allow_nil: true }
   validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
 
+  ASSIGNMENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'assignments').freeze
+  STUDENTS_DIR = File.join(MarkusConfigurator.autotest_client_dir, 'students').freeze
+  SPECS_FILE = 'specs.json'.freeze
+  FILES_DIR = 'files'.freeze
   STATUSES = {
     complete: 'complete',
     in_progress: 'in_progress',
@@ -17,10 +21,9 @@ class TestRun < ApplicationRecord
   }.freeze
 
   def status
-    if test_group_results.exists?
-      return STATUSES[:complete]
-    end
-    return STATUSES[:cancelled] if time_to_service&.negative?
+    return STATUSES[:problems] unless self.problems.nil?
+    return STATUSES[:complete] if self.test_group_results.exists?
+    return STATUSES[:cancelled] if self.time_to_service&.negative?
     STATUSES[:in_progress]
   end
 
@@ -30,10 +33,10 @@ class TestRun < ApplicationRecord
            .where(id: test_run_ids)
            .pluck(:id, :problems, 'test_group_results.id', :time_to_service)
            .map do |id, problems, test_group_results_id, time_to_service|
-      if test_group_results_id
-        status_hash[id] = STATUSES[:complete]
-      elsif !problems.nil?
+      if !problems.nil?
         status_hash[id] = STATUSES[:problems]
+      elsif test_group_results_id
+        status_hash[id] = STATUSES[:complete]
       elsif time_to_service&.negative?
         status_hash[id] = STATUSES[:cancelled]
       else
@@ -49,8 +52,16 @@ class TestRun < ApplicationRecord
     end
   end
 
+  def test_categories
+    [self.user.type.downcase]
+  end
+
+  def self.all_test_categories
+    [Admin.name.downcase, Student.name.downcase]
+  end
+
   def create_test_group_result(test_group, time: 0, extra_info: nil)
-    unless test_group.respond_to?(:run_by_instructors) # the ActiveRecord object can be passed directly
+    unless test_group.respond_to?(:display_output) # the ActiveRecord object can be passed directly
       test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
       # test group can be nil if it's deleted while running
     end
@@ -63,17 +74,9 @@ class TestRun < ApplicationRecord
     )
   end
 
-  def create_error_for_all_test_groups(test_groups, error, extra_info: nil)
-    test_groups.each do |test_group|
-      test_script_result = create_test_group_result(test_group, extra_info: extra_info)
-      test_script_result.test_results.create(name: error[:name], status: 'error', output: error[:message])
-    end
-    submission&.set_autotest_marks
-  end
-
   def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
     # create test script result
-    test_group_id = json_test_group['test_group_id']
+    test_group_id = json_test_group['extra_data']['test_group_id']
     time = json_test_group.fetch('time', 0)
     stderr = json_test_group['stderr']
     malformed = json_test_group['malformed']
@@ -136,54 +139,42 @@ class TestRun < ApplicationRecord
 
   def create_test_group_results_from_json(test_output)
     # check that the output is well-formed
-    test_groups = grouping.assignment.select_test_groups(user).to_a
     json_root = nil
     begin
       json_root = JSON.parse(test_output)
     rescue StandardError => e
-      error = { name: I18n.t('automated_tests.results.all_tests'),
-                message: I18n.t('automated_tests.results.bad_results', error: e.message) }
-      extra = I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
-      create_error_for_all_test_groups(test_groups, error, extra_info: extra)
+      self.problems = I18n.t('automated_tests.results.bad_results', error: e.message) +
+                      I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
+      save
       return
     end
     # save statistics
     self.time_to_service = json_root['time_to_service']
-    self.save
+    save
     # update estimated time to service for other runs in batch
-    if test_batch && time_to_service_estimate && time_to_service
-      time_delta = time_to_service_estimate - time_to_service
-      test_batch.adjust_time_to_service_estimate(time_delta)
+    if self.test_batch && self.time_to_service_estimate && self.time_to_service
+      time_delta = self.time_to_service_estimate - self.time_to_service
+      self.test_batch.adjust_time_to_service_estimate(time_delta)
     end
-    # TODO: Create a better interface to display global errors (server)
     # check for server errors
     server_error = json_root['error']
     hooks_error_all = json_root['hooks_error'] || ''
     unless server_error.blank?
-      error = { name: I18n.t('automated_tests.results.all_tests'),
-                message: I18n.t('automated_tests.results.bad_server', hostname: MarkusConfigurator.autotest_server_host,
-                                                                      error: "#{server_error}") }
-      extra = I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
-      create_error_for_all_test_groups(test_groups, error, extra_info: extra)
+      self.problems = I18n.t('automated_tests.results.bad_server',
+                             hostname: MarkusConfigurator.autotest_server_host, error: server_error) +
+                      I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
+      save
       return
     end
 
     # process results
     new_test_group_results = {}
     json_root.fetch('test_groups', []).each do |json_test_group|
-      test_group_id = json_test_group['test_group_id']
+      test_group_id = json_test_group['extra_data']['test_group_id']
       new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
       new_test_group_results[test_group_id] = new_test_group_result
     end
-    # handle missing test groups (could be added while running)
-    test_groups.each do |test_group|
-      next if new_test_group_results.key?(test_group.id)
-      new_test_group_result = create_test_group_result(test_group)
-      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
-                                                output: I18n.t('automated_tests.results.missing_test_group'))
-      new_test_group_results[test_group.id] = new_test_group_result
-    end
     # set the marks assigned by the test run
-    submission&.set_autotest_marks
+    self.submission&.set_autotest_marks
   end
 end

@@ -1,5 +1,6 @@
 pt:
   optional: "opcional"
+  required_fields: "Campos exigidos"
 
   helpers:
     confirm:

@@ -1,5 +1,4 @@
 module SubmissionsHelper
-  include AutomatedTestsClientHelper
 
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
@@ -10,48 +9,34 @@ module SubmissionsHelper
   end
 
   def set_pr_release_on_results(groupings, release)
-    changed = 0
     Result.transaction do
-      groupings.each do |grouping|
-        name = grouping.group.group_name
-
-        result_prs = grouping.peer_reviews_to_others
-        results = result_prs.map &:result
-        results.each do |result|
-          result.released_to_students = release
-          result.save
-          changed += 1
-        end
-      end
+      Result.where(id: groupings.joins(peer_reviews_to_others: :result).pluck('results.id'))
+            .update_all(released_to_students: release)
     end
-    changed
   end
 
   # Release or unrelease the submissions of a set of groupings.
   def set_release_on_results(groupings, release)
-    changed = 0
     Result.transaction do
-      groupings.each do |grouping|
-        name = grouping.group.group_name
+      without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
 
-        unless grouping.has_submission?
-          raise t('submissions.errors.no_submission', group_name: name)
-        end
-
-        unless grouping.marking_completed?
-          if release
-            raise t('submissions.errors.not_complete', group_name: name)
-          else
-            raise t('submissions.errors.not_complete_unrelease', group_name: name)
-          end
-        end
-
-        result = grouping.current_submission_used.get_latest_result
-        result.released_to_students = release
-        result.save
-        changed += 1
+      if without_submissions.present?
+        group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
+        raise I18n.t('submissions.errors.no_submission', group_name: group_names)
       end
-      changed
+
+      without_complete_result = groupings.joins(:current_result)
+                                         .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+
+      if without_complete_result.present?
+        group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+        raise t('submissions.errors.not_complete', group_name: group_names) if release
+
+        raise t('submissions.errors.not_complete_unrelease', group_name: group_names)
+      end
+
+      Result.where(id: groupings.joins(:current_result).pluck('results.id'))
+            .update_all(released_to_students: release)
     end
   end
 
@@ -149,8 +134,6 @@ module SubmissionsHelper
       nil
     elsif grouping.is_collected?
       'submission_collected'
-    elsif grouping.error_collecting
-      'submission_error'
     else
       nil
     end

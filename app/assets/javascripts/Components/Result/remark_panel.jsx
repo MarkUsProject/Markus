@@ -146,7 +146,7 @@ class TextForm extends React.Component {
             onChange={this.updateValue}
             rows={5}
           />
-          <input type='submit' value={I18n.t('save_changes')}
+          <input type='submit' value={I18n.t('save')}
                  data-disable-with={I18n.t('working')}
                  ref={this.button}
                  disabled={!this.state.unsavedChanges}
@@ -198,7 +198,7 @@ class RemarkRequestForm extends React.Component {
             rows={10}
           />
           <div>
-            <input type='submit' value={I18n.t('save_changes')}
+            <input type='submit' value={I18n.t('save')}
                    name='save'
                    data-disable-with={I18n.t('working')}
                    ref={this.button}

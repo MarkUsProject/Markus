@@ -40,8 +40,6 @@ function make_draggable() {
       // Calculate offset and resize
       offset = (ui.offset.left - panes_offset.left) / panes_width;
       resize_col();
-      $drag.css('height', ($drag.parent().height() -
-        2 * parseInt($drag.css('margin-top'))) + 'px');
     }
   });
 }
@@ -58,12 +56,12 @@ function calculate_bounds() {
 
 /* On page load: get DOM elements, calculate some stuff,
    and initialize the drag bar/columns.  */
-$(window).on('load', function() {
-  left   = document.getElementById('left-pane');
-  right  = document.getElementById('right-pane');
+function initializePanes() {
+  left = document.getElementById('left-pane');
+  right = document.getElementById('right-pane');
   $panes = $('#panes');
-  $drag  = $('#drag');
-  panes_width  = $panes.width();
+  $drag = $('#drag');
+  panes_width = $panes.width();
   panes_offset = $panes.offset();
 
   // Bounding box, taking the limit into account
@@ -71,17 +69,14 @@ $(window).on('load', function() {
 
   // Make sure the constants given are valid/positive
   offset = Math.abs(offset);
-  limit  = Math.abs(limit);
+  limit = Math.abs(limit);
 
   // Initialize the drag bar and resize the columns
   make_draggable();
-  $drag.css('height', ($drag.parent().height() -
-                       2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   resize_col();
-  $("*[role='tab']").on('click', fix_panes);
   window.addEventListener('resize', fix_panes);
-});
+}
 
 /* Handle window resizing */
 // NOTE: Don't manually override window.onresize. This will conflict with
@@ -97,7 +92,6 @@ function fix_panes(){
   make_draggable();
 
   // Make sure the drag bar stays in the right place
-  $drag.css('height', ($drag.parent().height() -
-    2 * parseInt($drag.css('margin-top'))) + 'px');
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
+  $drag.css('position', 'inherit');
 }

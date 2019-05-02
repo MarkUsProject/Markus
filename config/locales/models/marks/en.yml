@@ -3,3 +3,4 @@ en:
     models:
       mark:
         one: "Mark"
+        other: "Marks"

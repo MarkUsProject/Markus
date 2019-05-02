@@ -1,0 +1,21 @@
+{
+  "testers": [
+    {
+      "tester_type": "racket",
+      "test_data": [
+        {
+          "script_files": [
+            {
+              "test_suite_name": "all-tests",
+              "script_file": "test.rkt"
+            }
+          ],
+          "category": [
+            "admin"
+          ],
+          "timeout": 30
+        }
+      ]
+    }
+  ]
+}

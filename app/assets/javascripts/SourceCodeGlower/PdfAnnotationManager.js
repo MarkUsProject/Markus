@@ -18,9 +18,7 @@
    * @param {PDFView} pdfView      PDF Viewer
    * @param {String}  pageParentId The ID of the parent container of the pages.
    */
-  function PdfAnnotationManager(pdfView, pageParentId) {
-    var self = this;
-
+  function PdfAnnotationManager(pdfView, pageParentId, enableAnnotations) {
     // Members
     this.pdfView = pdfView;
     this.annotationTextManager = new AnnotationTextManager();
@@ -43,7 +41,9 @@
 
     // Event Handlers
     this.pdfView.onPageRendered = this.onPageRendered.bind(this);
-    this.bindPageEvents();
+    if (enableAnnotations) {
+      this.bindPageEvents();
+    }
   }
 
   /**

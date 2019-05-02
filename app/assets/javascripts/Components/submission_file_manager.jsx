@@ -12,9 +12,15 @@ class SubmissionFileManager extends React.Component {
     };
   }
 
+  static defaultProps = {
+    fetchOnMount: true
+  };
+
   componentDidMount() {
     window.modal_addnew = new ModalMarkus('#addnew_dialog');
-    this.fetchData();
+    if (this.props.fetchOnMount) {
+      this.fetchData();
+    }
   }
 
   fetchData = () => {

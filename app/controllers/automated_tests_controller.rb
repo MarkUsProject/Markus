@@ -1,51 +1,74 @@
 class AutomatedTestsController < ApplicationController
-  include AutomatedTestsClientHelper
+  include AutomatedTestsHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update, :download]
+                     only: [:manage, :update]
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
 
-  # Update is called when files are added to the assignment
   def update
-    @assignment = Assignment.find(params[:assignment_id])
-    create_test_repo(@assignment)
-
+    assignment = Assignment.find(params[:assignment_id])
+    test_specs_path = assignment.autotest_settings_file
+    test_specs = params[:schema_form_data]
+    File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
     begin
-      @assignment.transaction do
-        new_files = process_test_form(@assignment, params, assignment_params)
-        run_job = !new_files.empty? || @assignment.test_groups.any?(&:marked_for_destruction?)
-        if @assignment.save
-          # write the uploaded files
-          new_files.each do |file|
-            File.open(file[:path], 'wb') { |f| f.write(file[:upload].read) }
-            # delete a replaced file if it was renamed
-            if file.key?(:delete) && File.exist?(file[:delete])
-              File.delete(file[:delete])
+      Assignment.transaction do
+        # update assignment autotest parameters
+        assignment.update! assignment_params
+        # create/modify test groups based on the autotest specs
+        test_group_ids = []
+        test_specs['testers'].each do |tester_specs|
+          tester_specs['test_data'].each do |test_group_specs|
+            extra_data_specs = test_group_specs['extra_data']
+            next if extra_data_specs.nil?
+            test_group_name = test_group_specs['name']
+            test_group_id = extra_data_specs['test_group_id']
+            display_output = extra_data_specs['display_output']
+            criterion_id = nil
+            criterion_type = nil
+            if !extra_data_specs['criterion'].nil? && extra_data_specs['criterion'].include?('_')
+              criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
             end
+            fields = { assignment: assignment, name: test_group_name, display_output: display_output,
+                       criterion_id: criterion_id, criterion_type: criterion_type }
+            if test_group_id.nil?
+              test_group = TestGroup.create!(fields)
+              test_group_id = test_group.id
+              extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
+            else
+              test_group = TestGroup.find(test_group_id)
+              test_group.update!(fields)
+            end
+            test_group_ids << test_group_id
           end
-          if run_job
-            AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, @assignment.id)
-          end
-          flash_message(:success, t('assignment.update_success'))
-        else
-          flash_message(:error, @assignment.errors.full_messages)
         end
+        # delete test groups that are not in the autotest specs
+        deleted_test_groups = TestGroup.where(assignment: assignment)
+        unless test_group_ids.empty?
+          deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
+        end
+        deleted_test_groups.delete_all
+        # save modified specs and send them to the autotesting server in the background
+        File.write(test_specs_path, JSON.generate(test_specs))
+        AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment.id)
+        flash_message(:success,
+                      t('flash.actions.update.success', resource_name: Assignment.model_name.human))
+      rescue StandardError => e
+        flash_message(:error, e.message)
       end
-    rescue => e
-      flash_message(:error, e.message)
-    ensure
-      # TODO the page is not correctly drawn when using render
-      redirect_to action: 'manage', assignment_id: params[:assignment_id]
     end
+    # TODO: the page is not correctly drawn when using render
+    redirect_to action: 'manage', assignment_id: params[:assignment_id]
   end
 
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
+    unless File.exist? @assignment.autotest_path
+      FileUtils.mkdir_p @assignment.autotest_path
+    end
     @assignment.test_groups.build
-    @student_tests_on = MarkusConfigurator.autotest_student_tests_on?
   end
 
   def student_interface
@@ -77,12 +100,8 @@ class AutomatedTestsController < ApplicationController
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
-      test_group_ids = assignment.select_test_groups(current_user).pluck(:id)
-      test_specs_name = assignment.get_test_specs_name
-      hooks_script_name = assignment.get_hooks_script_name
       test_run = grouping.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_group_ids,
-                                   test_specs_name, hooks_script_name, [{ id: test_run.id }])
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -91,48 +110,89 @@ class AutomatedTestsController < ApplicationController
     redirect_to action: :student_interface, id: params[:id]
   end
 
-  # Download is called when an admin wants to download a test file
-  def download
-    assignment = Assignment.find(params[:assignment_id])
-    file_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier, params[:filename])
-    if File.exist?(file_path)
-      file_contents = IO.read(file_path)
-      send_file file_path,
-                type: (SubmissionFile.is_binary?(file_contents) ? 'application/octet-stream' : 'text/plain'),
-                x_sendfile: true
-    else
-      flash_message(:error, I18n.t('automated_tests.download_wrong_place_or_unreadable'))
-      redirect_to action: 'manage'
-    end
-  end
-
   def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
+  # TODO: use authorizations from here on
   def fetch_testers
     AutotestTestersJob.perform_later
     head :no_content
   end
 
+  def populate_autotest_manager
+    assignment = Assignment.find(params[:assignment_id])
+    testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    files_data = assignment.autotest_files.map do |file|
+      { key: file, size: 1,
+        url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+    end
+    if File.exist? testers_schema_path
+      schema_data = JSON.parse(File.open(testers_schema_path, &:read))
+      file_keys = files_data.map { |data| data[:key] }
+      fill_in_schema_data!(schema_data, file_keys, assignment)
+    else
+      flash_now(:notice, I18n.t('automated_tests.loading_specs'))
+      AutotestTestersJob.perform_later
+      schema_data = {}
+    end
+    test_specs_path = assignment.autotest_settings_file
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s))
+    if assignment_data[:token_start_date].nil?
+      assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
+    else
+      assignment_data[:token_start_date] = assignment_data[:token_start_date].strftime('%Y-%m-%d %l:%M %p')
+    end
+    data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
+    render json: data
+  end
+
+  def download_file
+    assignment = Assignment.find(params[:assignment_id])
+    file_path = File.join(assignment.autotest_path, params[:file_name])
+    if File.exist?(file_path)
+      send_file file_path, filename: params[:file_name]
+    else
+      render plain: t('student.submission.missing_file', file_name: params[:file_name])
+    end
+  end
+
+  def upload_files
+    assignment = Assignment.find(params[:assignment_id])
+    delete_files = params[:delete_files] || []
+    new_files = params[:new_files] || []
+
+    new_files.each do |f|
+      if f.size > MarkusConfigurator.markus_config_max_file_size
+        flash_now(:error, t('student.submission.file_too_large', file_name: f.original_filename,
+                                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)))
+        next
+      elsif f.size == 0
+        flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+      end
+      file_path = File.join(assignment.autotest_files_dir, f.original_filename)
+      file_content = f.read
+      mode = SubmissionFile.is_binary?(file_content) ? 'wb' : 'w'
+      File.write(file_path, file_content, mode: mode)
+    end
+    delete_files.each do |f|
+      file_path = File.join(assignment.autotest_files_dir, f)
+      File.delete(file_path)
+    end
+    render partial: 'update_files'
+  end
+
   private
 
+  def required_params
+    [:enable_test, :enable_student_tests, :tokens_per_period, :token_period, :token_start_date,
+     :non_regenerating_tokens, :unlimited_tokens]
+  end
+
   def assignment_params
-    params.require(:assignment)
-      .permit(:enable_test,
-              :enable_student_tests,
-              :assignment_id,
-              :tokens_per_period,
-              :token_period,
-              :token_start_date,
-              :non_regenerating_tokens,
-              :unlimited_tokens,
-              test_groups_attributes:
-                [:id, :assignment_id, :name, :run_by_instructors, :run_by_students, :display_output, :criterion_id,
-                 :_destroy])
-              # test_support_files_attributes:
-              #   [:id, :file_name, :assignment_id, :description, :_destroy])
+    params.require(:assignment).permit(*required_params)
   end
 end

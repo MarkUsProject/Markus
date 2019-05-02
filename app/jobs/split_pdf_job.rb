@@ -123,6 +123,7 @@ class SplitPDFJob < ApplicationJob
     complete_dir = File.join(exam_template.base_path, 'complete')
     incomplete_dir = File.join(exam_template.base_path, 'incomplete')
     error_dir = File.join(exam_template.base_path, 'error')
+    raw_dir = File.join(exam_template.base_path, 'raw')
 
     groupings = []
     num_complete = 0
@@ -135,10 +136,11 @@ class SplitPDFJob < ApplicationJob
         repo_name: group_name_for(exam_template, exam_num)
       )
 
-      groupings << Grouping.find_or_create_by(
+      grouping = Grouping.find_or_create_by(
         group: group,
         assignment: exam_template.assignment
       )
+      groupings << grouping
 
       # Save raw pages
       if pages.length == exam_template.num_pages
@@ -236,9 +238,52 @@ class SplitPDFJob < ApplicationJob
                 'application/pdf')
         end
         repo.commit(txn)
+
+        # convert PDF to an image
+        begin
+          imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
+            self.quality = 100
+            self.density = '300'
+          end
+        rescue Exception
+          next
+        end
+
+        img = imglist.first
+        # Snip out the middle of PDF that contains the student information
+        # TODO: store coordinates in exam template instead of hardcoding
+        student_info = img.crop 50, 1100, img.columns, img.rows / 6.0
+        student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
+        student_info.write(student_info_file)
+
+        out = `./lib/scanner/read_chars.py #{student_info_file}`
+        tokens = out.split("\n")
+
+        # check if python script correctly parsed out the student info
+        if tokens.length != 6
+          next
+        end
+
+        # parse out name and student number for matching
+        first_name = tokens[0]
+        last_name = tokens[2]
+        student_id = tokens[-1]
+
+        student = match_student(first_name, last_name, student_id, exam_template.assignment)
+
+        unless student.nil?
+          StudentMembership.find_or_create_by(user: student,
+                                              grouping: grouping,
+                                              membership_status: StudentMembership::STATUSES[:inviter])
+        end
       end
     end
     num_complete
+  end
+
+  # TODO: add in matching using name
+  def match_student(_first_name, _last_name, student_id, _exam)
+    Student.find_by(id_number: student_id)
   end
 
   def group_name_for(exam_template, exam_num)

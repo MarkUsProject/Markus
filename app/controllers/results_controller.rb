@@ -49,6 +49,7 @@ class ResultsController < ApplicationController
 
         data = {
           grouping_id: submission.grouping_id,
+          marking_state: result.marking_state,
           released_to_students: result.released_to_students,
           detailed_annotations:
             @current_user.admin? || @current_user.ta? ||
@@ -127,6 +128,15 @@ class ResultsController < ApplicationController
               end
             }
           end
+          data[:notes_count] = submission.grouping.notes.count
+          data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
+          data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
+          data[:group_name] = submission.grouping.get_group_name
+        elsif current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+          reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
+          data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
+          data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
+          data[:group_name] = I18n.t('assignment.review')
         end
 
         # Marks
@@ -147,7 +157,7 @@ class ResultsController < ApplicationController
                .where(
                  assignment_id: assignment.id,
                  ta_visible: true,
-                 'marks.result_id': result.id
+                 'marks.result_id': [nil, result.id]
                ).pluck_to_hash(*fields)
                .map { |h| h.merge(criterion_type: klass.name) }
         end
@@ -192,6 +202,15 @@ class ResultsController < ApplicationController
         data[:total] = result.total_mark
         data[:old_total] = original_result&.total_mark
 
+        # Tags
+        data[:current_tags] = Tag.left_outer_joins(:groupings)
+                                 .where('groupings_tags.grouping_id': submission.grouping_id)
+                                 .pluck_to_hash(:id, :name)
+        data[:available_tags] = Tag.left_outer_joins(:groupings)
+                                   .where.not('groupings_tags.grouping_id': submission.grouping_id)
+                                   .or(Tag.left_outer_joins(:groupings).where('groupings.id': nil))
+                                   .pluck_to_hash(:id, :name)
+
         render json: data
       end
     end
@@ -200,41 +219,9 @@ class ResultsController < ApplicationController
   def edit
     @host = Rails.application.config.action_controller.relative_url_root
     @result = Result.find(params[:id])
-    @pr = PeerReview.find_by(result_id: @result.id)
     @submission = @result.submission
     @grouping = @submission.grouping
-    @group = @grouping.group
     @assignment = @grouping.assignment
-    assignment = @assignment  # TODO: figure out this logic to give this variable a better name.
-    @old_result = @submission.remark_submitted? ? @submission.get_original_result : nil
-    filtered = @submission.submission_files.where.not(filename: Repository.get_class.internal_file_names)
-    @files = filtered.sort do |a, b|
-      File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
-    end
-
-    if @result.is_a_review?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        assignment = @assignment.pr_assignment
-      end
-    end
-
-    if current_user.ta?
-      assigned_groupings = current_user.groupings
-                             .where(assignment: assignment)
-                             .joins(:group)
-                             .order('group_name')
-      @next_grouping = assigned_groupings.where('group_name > ?', @group.group_name).first
-      @previous_grouping = assigned_groupings.where('group_name < ?', @group.group_name).last
-    elsif @result.is_a_review? && @current_user.is_reviewer_for?(assignment, @result)
-      user_group = @current_user.grouping_for(assignment.id)
-      assigned_prs = user_group.peer_reviews_to_others
-      @next_grouping = assigned_prs.where('peer_reviews.id < ?', @result.peer_review_id).last
-      @previous_grouping = assigned_prs.where('peer_reviews.id > ?', @result.peer_review_id).first
-    else
-      all_groupings = assignment.groupings.joins(:group).order('group_name')
-      @next_grouping = all_groupings.where('group_name > ?', @group.group_name).first
-      @previous_grouping = all_groupings.where('group_name < ?', @group.group_name).last
-    end
 
     # authorization
     begin
@@ -251,22 +238,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
-                 "#{@group.group_name}'")
-
-    # Sets up the tags for the tag pane.
-    # Creates a variable for all the tags not used
-    # and all the tags that are used by the assignment.
-    @all_tags = Tag.all
-    @grouping_tags = get_tags_for_grouping(@grouping.id)
-    @not_grouping_tags = get_tags_not_associated_with_grouping(@grouping.id)
-    @not_associated_tags = get_tags_not_associated_with_grouping(@grouping.id)
-
-    # Gets the top tags and their usage.
-    @top_tags = get_top_tags
-    @top_tags_num = Hash.new
-    @top_tags.each do |current|
-      @top_tags_num[current.id] = get_num_groupings_for_tag(current)
-    end
+                 "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
     if @grouping.past_due_date?
@@ -280,28 +252,7 @@ class ResultsController < ApplicationController
       flash_message(:notice, t('results.marks_released'))
     end
 
-    # Respond to AJAX request.
-    respond_to do |format|
-      format.html do
-        render layout: 'result_content'
-      end
-      format.json do
-        @request_type = params[:type]
-
-        # Checks the operation requested.
-        if @request_type.eql? 'add'
-          create_grouping_tag_association_from_existing_tag(
-              params[:grouping_id],
-              params[:tag_id])
-        else
-          delete_grouping_tag_association(params[:tag_id],
-                                          Grouping.find(params[:grouping_id]))
-        end
-
-        # Renders nothing.
-        head :ok
-      end
-    end
+    render layout: 'result_content'
   end
 
   def run_tests
@@ -310,12 +261,8 @@ class ResultsController < ApplicationController
       assignment = submission.assignment
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! submission, to: :run_tests?
-      test_group_ids = assignment.select_test_groups(current_user).pluck(:id)
-      test_specs_name = assignment.get_test_specs_name
-      hooks_script_name = assignment.get_hooks_script_name
       test_run = submission.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_group_ids,
-                                   test_specs_name, hooks_script_name, [{ id: test_run.id }])
+      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -331,71 +278,81 @@ class ResultsController < ApplicationController
   end
 
   ##  Tag Methods  ##
-
   def add_tag
-    create_grouping_tag_association_from_existing_tag(params[:grouping_id],
+    result = Result.find(params[:id])
+    create_grouping_tag_association_from_existing_tag(result.submission.grouping_id,
                                                       params[:tag_id])
-    respond_to do |format|
-      format.html do
-        redirect_back(fallback_location: root_path)
-      end
-    end
+    head :ok
   end
 
   def remove_tag
+    result = Result.find(params[:id])
+    grouping = result.submission.grouping
     delete_grouping_tag_association(params[:tag_id],
-                                    Grouping.find(params[:grouping_id]))
-    respond_to do |format|
-      format.html do
-        redirect_back(fallback_location: root_path)
-      end
-    end
+                                    grouping)
+    head :ok
   end
 
   def next_grouping
     assignment = Assignment.find(params[:assignment_id])
     result = Result.find(params[:id])
+    grouping = result.submission.grouping
 
-    if @current_user.is_reviewer_for?(assignment.pr_assignment, result)
-      next_pr = PeerReview.find(params[:grouping_id])
-      next_result = Result.find(next_pr.result_id)
-
-      redirect_to action: 'edit',
-                  id: next_result.id
-    else
-      grouping = Grouping.find(params[:grouping_id])
-      if grouping.has_submission? && grouping.is_collected?
-        redirect_to action: 'edit',
-                    id: grouping.current_submission_used.get_latest_result.id
+    if current_user.ta?
+      groupings = current_user.groupings
+                              .where(assignment: assignment)
+                              .joins(:group)
+                              .order('group_name')
+      if params[:direction] == '1'
+        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
       else
-        redirect_to controller: 'submissions',
-                    action: 'browse'
+        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+    elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+      assigned_prs = current_user.grouping_for(assignment.id).peer_reviews_to_others
+      if params[:direction] == '1'
+        next_pr = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+      else
+        next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+      end
+      next_result = Result.find(next_pr.result_id)
+      redirect_to action: 'edit', id: next_result.id
+      return
+    else
+      groupings = assignment.groupings.joins(:group).order('group_name')
+      if params[:direction] == '1'
+        next_grouping = groupings.where('group_name > ?', grouping.group.group_name).first
+      else
+        next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
+      end
+    end
+
+    next_result = next_grouping&.current_result
+    if next_result.nil?
+      redirect_to controller: 'submissions', action: 'browse'
+    else
+      redirect_to action: 'edit', id: next_result.id
     end
   end
 
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = !@result.released_to_students
-    if params[:old_id]
-      @old_result = Result.find(params[:old_id])
-      @old_result.released_to_students = released_to_students
-      @old_result.save
-    end
     @result.released_to_students = released_to_students
     if @result.save
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
       @result.submission.assignment.update_results_stats
+      m_logger = MarkusLogger.instance
+      assignment = @result.submission.assignment
+      if released_to_students
+        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '"\
+                     "#{assignment.id}' (for 1 group).")
+      else
+        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '"\
+                     "#{assignment.id}' (for 1 group).")
+      end
     end
-    m_logger = MarkusLogger.instance
-    assignment = @result.submission.assignment
-    if params[:value] == 'true'
-      m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
-    else
-      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
-    end
+    head :ok
   end
 
   # Toggles the marking state
@@ -412,7 +369,7 @@ class ResultsController < ApplicationController
     if @result.save
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
       @result.submission.assignment.update_results_stats
-      render 'results/toggle_marking_state'
+      head :ok
     else # Failed to pass validations
       # Show error message
       render 'results/marker/show_result_error'
@@ -447,7 +404,7 @@ class ResultsController < ApplicationController
         file_contents = file.retrieve_file
       end
     rescue Exception => e
-      flash[:file_download_error] = e.message
+      flash_message(:error, e.message)
       redirect_to action: 'edit',
                   assignment_id: params[:assignment_id],
                   submission_id: file.submission,
@@ -547,7 +504,7 @@ class ResultsController < ApplicationController
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
-    mark_value = params[:mark].to_f
+    mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
     result_mark = result.marks.find_or_create_by(
       markable_id: params[:markable_id],
@@ -562,18 +519,14 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if @current_user.admin?
-        num_marked = assignment.get_num_marked
-        num_assigned = assignment.get_num_assigned
-      elsif @current_user.ta?
+      if assignment.assign_graders_to_criteria && @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
-        num_assigned = assignment.get_num_assigned(@current_user.id)
-      elsif @current_user.is_a_reviewer?(assignment.pr_assignment)
-        reviewer_group = @current_user.grouping_for(assignment.pr_assignment.id)
-        num_marked = PeerReview.get_num_marked(reviewer_group)
-        num_assigned = PeerReview.get_num_assigned(reviewer_group)
+      else
+        num_marked = assignment.get_num_marked(nil)
       end
-      render plain: "#{result_mark.id},#{result.get_subtotal},#{result.total_mark},#{num_marked},#{num_assigned}"
+      render json: {
+        num_marked: num_marked
+      }
     else
       m_logger.log("Error while trying to update mark of submission. " +
                    "User: #{current_user.user_name}, " +
@@ -581,7 +534,7 @@ class ResultsController < ApplicationController
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
-      render plain: result_mark.errors.full_messages.join, status: :bad_request
+      render json: result_mark.errors.full_messages.join, status: :bad_request
     end
   end
 

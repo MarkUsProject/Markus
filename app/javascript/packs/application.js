@@ -98,3 +98,5 @@ import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_t
 window.makeMarkingSchemeTable = makeMarkingSchemeTable;
 import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
 window.makeStarterCodeFileManager = makeStarterCodeFileManager;
+import { makeAutotestManager } from 'javascripts/Components/autotest_manager';
+window.makeAutotestManager = makeAutotestManager;

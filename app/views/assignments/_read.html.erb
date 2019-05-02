@@ -2,21 +2,21 @@
 
 <div class='block_content'>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('name') %></span>
+    <span class='prop_label'><%= Assignment.human_attribute_name(:short_identifier) %></span>
     <span class="prop_paragraph">
       <%= @assignment.is_peer_review? ? t('results.review_for') + @assignment.parent_assignment.short_identifier :
                                         @assignment.short_identifier %></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('description') %></span>
+    <span class='prop_label'><%= Assignment.human_attribute_name(:description) %></span>
     <span class="prop_paragraph"><%= @assignment.description %></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('message') %></span>
+    <span class='prop_label'><%= Assignment.human_attribute_name(:message) %></span>
     <span class="prop_paragraph"><%= @assignment.message %><br></span>
   </div>
   <div class='sub_block'>
-    <span class='prop_label'><%= t('due_date') %></span>
+    <span class='prop_label'><%= Assignment.human_attribute_name(:due_date) %></span>
     <span class="prop_paragraph"><%= l(@due_date) %></span>
   </div>
 
@@ -24,11 +24,13 @@
     <div class ='sub_block'>
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>
+        <%# Relative remaining grace credits for the grouping %>
         <span class='prop_label'>
           <%= t('grace_period_submission_rules.deadline_html') %>
         </span>
-        <%# Relative remaining grace credits for the grouping %>
-        <% if !@grouping.nil? %>
+        <% if @grouping.nil? %>
+          <%= t('grace_period_submission_rules.no_group_yet') %>
+        <% else %>
           <% remaining_credits = @grouping.available_grace_credits %>
           <% @enum_penalty.each do |p| %>
             <% unless remaining_credits <= 0 %>
@@ -36,14 +38,15 @@
               <% remaining_credits -= 1 %>
             <% end %>
           <% end %>
+          <%= I18n.l(@assignment.due_date + acc.hours) %>
         <% end %>
       <% else %>
         <span class='prop_label'>
           <%= t('penalty_period_submission_rules.deadline_html') %>
         </span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
+        <%= I18n.l(@assignment.due_date + acc.hours) %>
       <% end %>
-      <%= I18n.l(@assignment.due_date + acc.hours) %>
     </div>
 
     <div class='sub_block'>
@@ -54,7 +57,7 @@
     <%#Cannot assign Grace Period without first assigning a group.%>
     <% unless @grouping.nil? && @penalty.type == "GracePeriodSubmissionRule" %>
       <div class='sub_block'>
-        <span class='prop_label'><%= t('additional_information') %></span>
+        <span class='prop_label'><%= User.human_attribute_name(:grace_credits) %></span>
         <% if @penalty.type == "GracePeriodSubmissionRule" %>
           <% unless @grouping.nil? %>
             <%= t('grace_period_submission_rules.group_credits_html',
@@ -106,7 +109,7 @@
   <% unless peer_review %>
     <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
     <% if @assignment.assignment_files.length == 0 %>
-      <p class='notice'> <%= t('assignment.no_required_files_read') %> </p>
+      <p class='notice'> <%= t('assignments.no_required_files') %> </p>
     <% else %>
       <ul>
         <% @assignment.assignment_files.each do |assignment_file| %>

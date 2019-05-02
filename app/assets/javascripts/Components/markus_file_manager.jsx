@@ -12,7 +12,6 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event) => {
     event.preventDefault();
-    // TODO: remove the reference to a global variable here.
     window.modal_addnew.open();
   };
 
@@ -202,7 +201,7 @@ class FileManagerHeader extends Headers.TableHeader {
           selected: this.props.isSelected,
         })}
       >
-        <th>{I18n.t('filename')}</th>
+        <th>{I18n.t('attributes.filename')}</th>
         <th className="modified">{I18n.t('submissions.repo_browser.submitted_at')}</th>
         <th className="modified">{I18n.t('submissions.repo_browser.revised_by')}</th>
       </tr>

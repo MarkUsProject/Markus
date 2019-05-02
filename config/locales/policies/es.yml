@@ -3,12 +3,20 @@ es:
     policy:
       assignment:
         before_due_date?: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado."
+        due_date_passed?: "No se pudo crear el grupo: el último plazo para este proyecto ha pasado."
         enabled?: "UPDATE ME."
         not_a_ta?: "UPDATE ME."
+        not_yet_in_group?: "Usted ya tiene un grupo, y no puede crear otro."
+        students_form_groups?: "El proyecto no les permite a los estudiantes formar grupos."
         test_scripts_uploaded?: "No hay un script para lanzar la prueba."
         tokens_released?: "No se han dado fichas todavía."
+        work_alone?: "Usted no puede trabajar sólo en este proyecto. El número mínimo de estudiantes por grupo es %{group_min}."
       grouping:
+        before_due_date?: "El último plazo para este proyecto ha pasado y."
+        deletable_by?: "Usted no tiene permiso para eliminar el grupo."
+        delete_rejected?: "Sólo el invitador puede declinar una invitación."
         member?: "UPDATE ME."
+        no_submission?: "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
         not_in_progress?: "UPDATE ME."
         tokens_available?: "No se encontraron fichas para este estudiante y para este proyecto."
       submission:

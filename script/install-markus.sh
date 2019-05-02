@@ -17,6 +17,9 @@ DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -
 echo "- - - Installing Dependencies - - -"
 sudo apt-get install -y build-essential libv8-dev imagemagick libmagickwand-dev redis-server cmake libssh2-1-dev ghostscript libaprutil1-dev swig graphviz
 
+# update imagemagick policy file to read PDFs
+sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
+
 # Install Ruby
 sudo apt-get install software-properties-common -y
 sudo add-apt-repository ppa:brightbox/ruby-ng
@@ -71,6 +74,14 @@ bundle install --without mysql sqlite unicorn --path vendor/bundle
 echo "- - - Install JavaScript dependencies - - -"
 yarn install
 
+# Install Python libraries for exam scanner
+echo "- - - Installing Python dependencies - - -"
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install -y python3.7 python3-pip
+python3.7 -m pip install pip
+python3.7 -m pip install --user --no-cache-dir -r $MARKUS_ROOT/lib/scanner/requirements.txt
+
 # Setup the postgres database.
 echo "- - - Setup Postgres Database, Step 1 - - -"
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password 'postgres';"
@@ -110,5 +121,4 @@ echo "- - - Update .profile - - -"
 cat >> /home/vagrant/.profile << 'EOL'
 export PATH="${PATH}:/home/vagrant/Markus/bin"
 export HOST="0.0.0.0"
-
 EOL

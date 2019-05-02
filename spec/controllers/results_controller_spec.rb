@@ -97,7 +97,7 @@ describe ResultsController do
           end
           it { expect(response).to have_http_status(:redirect) }
           it 'should display a flash error' do
-            expect(flash[:file_download_error]).to eq SAMPLE_ERROR_MESSAGE
+            expect(extract_text(flash[:error][0])).to eq SAMPLE_ERROR_MESSAGE
           end
         end
         context 'and with a supported image file shown in browser' do
@@ -146,7 +146,6 @@ describe ResultsController do
                                                 id: complete_result.id }, xhr: true
         end
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to render_template('results/toggle_marking_state') }
         # TODO: test that the grade distribution is refreshed
       end
     end
@@ -170,8 +169,9 @@ describe ResultsController do
                                              annotation_text: create(:annotation_text, user: admin),
                                              result: complete_result,
                                              creator: admin
-        file_name_snippet = "#{assignment.short_identifier}_#{grouping.group.group_name}" +
-          "_r#{grouping.group.repo.get_latest_revision.revision_identifier}"
+        file_name_snippet = grouping.group.access_repo do |repo|
+          "#{assignment.short_identifier}_#{grouping.group.group_name}_r#{repo.get_latest_revision.revision_identifier}"
+        end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
         submission_file_dir = "#{assignment.repository_folder}-#{grouping.group.repo_name}"
@@ -242,21 +242,21 @@ describe ResultsController do
     end
     context 'accessing update_mark' do
       it 'should report an updated mark' do
-        post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                     id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                     markable_type: rubric_mark.markable_type,
-                                     mark: 1 }, xhr: true
-        expect(response.body.parse_csv.first.to_f).to eq 1
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: 1 }, xhr: true
+        expect(JSON.parse(response.body)[:num_marked]).to be_nil
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
         before :each do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
-          post :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                       markable_type: rubric_mark.markable_type,
-                                       mark: 1 }, xhr: true
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                        markable_type: rubric_mark.markable_type,
+                                        mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
         it 'should report the correct error message' do
@@ -328,7 +328,7 @@ describe ResultsController do
     end
   end
 
-  ROUTES = { update_mark: :post,
+  ROUTES = { update_mark: :patch,
              edit: :get,
              download: :post,
              get_annotations: :get,
@@ -468,63 +468,6 @@ describe ResultsController do
             path = "/en/assignments/#{assignment.id}/submissions/#{released_result.submission.id}/results/#{released_result.id}/update_overall_comment"
             assert_select '.overall-comment textarea'
           end
-        end
-        context 'while viewing the first submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.first.id,
-                                 id: results.first.id }
-          end
-          test_assigns_not_nil :next_grouping
-          test_assigns_nil :previous_grouping
-          it 'the next grouping should have a submisison' do
-            expect(assigns(:next_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct next result' do
-            expect(assigns(:next_grouping).current_submission_used.get_latest_result).to eq results.second
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
-        end
-        context 'while viewing the middle submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.second.id,
-                                 id: results.second.id }
-          end
-          test_assigns_not_nil :next_grouping
-          test_assigns_not_nil :previous_grouping
-          it 'the previous grouping should have a submission' do
-            expect(assigns(:previous_grouping).has_submission?).to be_truthy
-          end
-          it 'the next grouping should have a submisison' do
-            expect(assigns(:next_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct previous result' do
-            expect(assigns(:previous_grouping).current_submission_used.get_latest_result).to eq results.first
-          end
-          it 'should show the correct next result' do
-            expect(assigns(:next_grouping).current_submission_used.get_latest_result).to eq results.third
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
-        end
-        context 'while viewing the last submission' do
-          before :each do
-            get :edit, params: { assignment_id: assignment.id,
-                                 submission_id: submissions.last.id,
-                                 id: results.last.id }
-          end
-          test_assigns_nil :next_grouping
-          test_assigns_not_nil :previous_grouping
-          it 'the previous grouping should have a submisison' do
-            expect(assigns(:previous_grouping).has_submission?).to be_truthy
-          end
-          it 'should show the correct previous result' do
-            expect(assigns(:previous_grouping).current_submission_used.get_latest_result).to eq results.second
-          end
-          test_no_flash
-          it { expect(response).to have_http_status(:success) }
         end
       end
     end

@@ -218,19 +218,21 @@ describe SubmissionsController do
                               grouping: @grouping)
     end
     it 'should be able to access the repository browser.' do
+      revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as @ta_membership.user,
              :repo_browser,
              params: { assignment_id: @assignment.id, id: Grouping.last.id,
-                       revision_identifier: Grouping.last.group.repo.get_latest_revision.revision_identifier,
+                       revision_identifier: revision_identifier,
                        path: '/' }
       is_expected.to respond_with(:success)
     end
 
     it 'should render with the assignment_content layout' do
+      revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as @ta_membership.user,
              :repo_browser,
              params: { assignment_id: @assignment.id, id: Grouping.last.id,
-                       revision_identifier: Grouping.last.group.repo.get_latest_revision.revision_identifier,
+                       revision_identifier: revision_identifier,
                        path: '/' }
       expect(response).to render_template('layouts/assignment_content')
     end
@@ -423,9 +425,9 @@ describe SubmissionsController do
 
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
+      revision_identifier = @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       zip_path = "tmp/#{@assignment.short_identifier}_" +
-                 "#{@grouping.group.group_name}_#{@grouping.group.repo
-                     .get_latest_revision.revision_identifier}.zip"
+                 "#{@grouping.group.group_name}_#{revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.short_identifier}-" +
                                    "#{@grouping.group.group_name}",

@@ -3,7 +3,7 @@ class AutotestSpecsJob < ApplicationJob
 
   def perform(host_with_port, assignment_id)
     assignment = Assignment.find(assignment_id)
-    assignment_tests_path = File.join(AutomatedTestsClientHelper::ASSIGNMENTS_DIR, assignment.short_identifier)
+    assignment_tests_path = assignment.autotest_files_dir
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
     else
@@ -12,7 +12,9 @@ class AutotestSpecsJob < ApplicationJob
     server_path = MarkusConfigurator.autotest_server_dir
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
-    server_params = { markus_address: markus_address, assignment_id: assignment_id }
+    test_specs_path = assignment.autotest_settings_file
+    test_specs = JSON.parse(File.read(test_specs_path))
+    server_params = { markus_address: markus_address, assignment_id: assignment_id, test_specs: test_specs }
 
     begin
       if server_username.nil?
@@ -31,10 +33,10 @@ class AutotestSpecsJob < ApplicationJob
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
           mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
           server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
-          # copy all files using passwordless scp (natively, the net-scp gem has poor performance)
-          scp_command = ['scp', '-o', 'PasswordAuthentication=no', '-o', 'ChallengeResponseAuthentication=no', '-rq',
-                         "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
-          Open3.capture3(*scp_command)
+          # copy all files using rsync
+          rsync_command = ['rsync', '-a',
+                           "#{assignment_tests_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
+          Open3.capture3(*rsync_command)
           server_params[:files_path] = server_path
           scripts_command = "#{server_command} specs -j '#{JSON.generate(server_params)}'"
           output = ssh.exec!(scripts_command)

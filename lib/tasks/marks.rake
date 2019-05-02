@@ -87,6 +87,8 @@ namespace :db do
       end
     end
 
+    # Refresh total grade
+    grade_entry_form.grade_entry_students.each(&:save)
     # Release spreadsheet grades
     grade_entry_form.grade_entry_students.update_all(released_to_student: true)
   end

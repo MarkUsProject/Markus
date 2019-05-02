@@ -1,45 +1,6 @@
 pt:
-    answer_yes:         "Sim"
-    answer_no:          "Não"
-    markus:             "MarkUs"
-    close:              "Fechar"
-    all:                "Todos"
-    actions:            "Ações"
-    continue:           "Continuar"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Carregando"
-    please_wait:        "Aguarde por favor..."
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Painel"
-    sections:           "Sessões"
-    home:               "Home"
-    settings:           "Configurações"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Links rápidos"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "Não existem projetos atualmente."
-
     # app/views/assignments/
-    name: "Nome"
-    filename:  "Nome do Arquivo"
-    message:  "Mensagem"
-    remove:  "Remover"
-    days_left:          "(%{days} dia(s) restante(s))"
-    description:        "Descrição"
-    shortened_date:     "Data<span class='required_field'>*</span>"
-    remove_date:        "Remover data"
-    manage_course_work: "Gerenciar trabalho do curso"
-    incorrect_format:   "Formato incorreto"
-    required_fields: "Campos exigidos"
     assignment:
-        hidden: "%{assignment_text} (oculto)"
-        update_success:        "Projeto atualizado com sucesso"
-        no_required_files_read:  "Não há arquivos exigidos para esse projeto."
-        upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
         group:
             assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
             grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
@@ -70,6 +31,7 @@ pt:
             complete: "UPDATE ME"
             in_progress: "UPDATE ME"
             cancelled: "UPDATE ME"
+            problems: "UPDATE ME"
     peer_review:
         assign: "Atribuir avaliações pelos pares"
         review: "Revisão "
@@ -100,30 +62,10 @@ pt:
             description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
 
     add_new:            "Adicionar novo"
-    edit:               "Editar"
-    save:               "Salvar"
-    save_changes:       "Saval mudanças"
-    apply:              "Aplicar"
-    delete:             "Apagar"
-    submit:             "Enviar"
-    cancel:             "Cancelar"
-    all:                "Todos"
-    active:             "Ativo"
-    not_active:         "Não ativo"
-    choose:             "Escolher..."
-    properties:         "Propriedades"
     peer_reviews:       "Avaliações pelos pares"
-    help:               "Ajuda"
-    preview:            "Prever"
-    encoding:           "Codificação"
-    select_csv_file:    "Selecionar um arquivo CSV na seguinte forma: <code>%{code}</code>"
-    all_csv_file:       "Todos os campos: "
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
     uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-    still_working_warning: "Existem trabalhos não terminados sendo processados. Eles podem não ser salvos se você sair agora."
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
@@ -142,8 +84,6 @@ pt:
 
     browse_submissions:
       review_state:         "Estado de revisão"
-
-    no_assignments_and_grade_entry_forms_message: "Atualmente, não há planilhas de atribuições e marcas."
 
     groups:
       upload:
@@ -173,35 +113,6 @@ pt:
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         empty_file_warning: "UPDATE ME"
 
-    add_student:
-      success: "Aluno %{user_name} adicionado."
-      fail:
-        general: "Algo saiu errado. Não foi possível inserir %{user_name}."
-        hidden:  "Não foi possível inserir %{user_name} - a conta desse aluno foi desabilitada."
-        already_grouped: "Não foi possível inserir %{user_name} - esse aluno já é membro de outro grupo."
-
-    create_group:
-      fail:
-        due_date_passed: "Não foi possível criar grupo - a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
-        not_allow_to_form_groups: "Atribuição não permite que os alunos formem grupos"
-        already_have_a_group: "Você já tem um grupo, e não pode criar outro"
-        can_not_work_alone: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}"
-        do_not_have_a_group: "Você não possúi um grupo"
-
-    invite_student:
-      success: "Convites enviados com sucesso"
-      fail:
-        only_inviter: "Apenas o anfitrião pode excluir um convite recusado"
-        due_date_passed: "Não foi possível convidar %{user_name} - a data de entrega para este projeto já passou e, ou não há períodos de carência permitido, ou o período de tolerância para este projeto já acabou."
-        dne:  "Não foi possível convidar %{user_name} - esse estudante não existe."
-        hidden:  "Não foi possível convidar %{user_name} - conta deste aluno foi desabilitada."
-        already_pending: "Não foi possível convidar  %{user_name} - esse aluno já é um membro pendente deste grupo."
-        group_max_reached: "Não foi possível convidar %{user_name} - o grupo já possui o tamanho máximo."
-        inviting_self: "Você não pode convidar-se para o seu próprio grupo."
-        already_grouped: "Não foi possível convidar %{user_name} - este aluno já é um membro de outro grupo."
-        need_to_create_group: "Você deve criar um grupo antes de poder convidar usuários"
-        not_same_section: "Aluno %{user_name} está fora de sua sessão."
-        error: "Não foi possível convidar estudante %{user_name}."
     update_files:
       success:  "As alterações foram feitas."
 
@@ -224,14 +135,10 @@ pt:
       upload:
         error:
           invalid_format: "Os seguintes critérios deveriam formato inválido:"
-          names_taken:    "Os seguintes nomes de critérios são já tomada:"
         empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
       errors:
         messages:
           released_marks:         "TODO"
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Informações Adicionais"
 
     #lib/validators/
     date_validator:
@@ -248,31 +155,12 @@ pt:
       run_tests: "Executar testes"
       stop_test: "UPDATE ME"
       stop_batch: "UPDATE ME"
-      fetch_testers: "UPDATE ME"
       tests_running: "UPDATE ME"
       need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
       need_submission: "As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados."
-      new_test_script_file: "UPDATE ME"
-      new_test_support_file: "UPDATE ME"
-      duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
-      test_group_option:
-        upload_required: "UPDATE ME <span class='required_field'>*</span>"
-        upload_help: "UPDATE ME"
-        replace: "Substituir"
-        replace_help: "UPDATE ME"
-        remove_file: "UPDATE ME"
-        remove_file_help: "UPDATE ME"
-        run_by_instructors: "UPDATE ME"
-        run_by_instructors_help: "UPDATE ME"
-        run_by_students: "UPDATE ME"
-        run_by_students_help: "UPDATE ME"
-        associated_criterion: "UPDATE ME"
-        display_output: "UPDATE ME"
-        display_output_help: "UPDATE ME"
-        display_to:
-          instructors: "UPDATE ME"
-          instructors_and_students: "UPDATE ME"
-          instructors_and_student_tests: "UPDATE ME"
+      tokens_available_on: "UPDATE ME"
+      loading_specs: "UPDATE ME"
+      files: "UPDATE ME"
       token:
         start_date: "UPDATE ME:"
         available: "Tokens disponíveis:"
@@ -293,7 +181,6 @@ pt:
       results:
         all_tests: "UPDATE ME"
         unknown_test: "UPDATE ME"
-        missing_test_group: "UPDATE ME"
         no_source_files: "UPDATE ME"
         bad_server: "UPDATE ME"
         bad_results: "UPDATE ME '%{error}'"

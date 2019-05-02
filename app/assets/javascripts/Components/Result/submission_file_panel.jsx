@@ -1,7 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import { AnnotationManager } from './annotation_manager';
 import { FileViewer } from './file_viewer';
+import { DownloadSubmissionModal } from './download_submission_modal';
 
 
 export class SubmissionFilePanel extends React.Component {
@@ -27,6 +29,29 @@ export class SubmissionFilePanel extends React.Component {
       localStorage.removeItem('file_id');
     }
     localStorage.setItem('assignment_id', this.props.assignment_id);
+
+    // TODO: Incorporate DownloadSubmissionModal as true child of this component.
+    ReactDOM.render(
+      <DownloadSubmissionModal
+        fileData={this.props.fileData}
+        initialFile={this.state.selectedFile}
+        downloadURL={Routes.download_assignment_submission_result_url(
+          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+      />,
+      document.getElementById('download_dialog_body')
+    );
+  }
+
+  componentDidUpdate() {
+    ReactDOM.render(
+      <DownloadSubmissionModal
+        fileData={this.props.fileData}
+        initialFile={this.state.selectedFile}
+        downloadURL={Routes.download_assignment_submission_result_url(
+          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+      />,
+      document.getElementById('download_dialog_body')
+    );
   }
 
   getFirstFile = (fileData) => {
@@ -70,9 +95,8 @@ export class SubmissionFilePanel extends React.Component {
       submission_file_id = this.state.selectedFile[1];
       visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
     }
-    return (
-      <div>
-        <div id='sel_box'/>
+    return [
+        <div id='sel_box'/>,
         <div id='annotation_menu'>
           <FileSelector
             fileData={this.props.fileData}
@@ -92,8 +116,8 @@ export class SubmissionFilePanel extends React.Component {
              />
             }
           </div>
-        </div>
-        <div id='codeviewer' className='flex-col'>
+        </div>,
+        <div id='codeviewer'>
           <FileViewer
             ref={this.submissionFileViewer}
             assignment_id={this.props.assignment_id}
@@ -102,16 +126,16 @@ export class SubmissionFilePanel extends React.Component {
             selectedFile={submission_file_id}
             annotations={visibleAnnotations}
             focusLine={this.state.focusLine}
+            released_to_students={this.props.released_to_students}
           />
         </div>
-      </div>
-    );
+    ];
   }
 }
 
 
 // Component for the file selector.
-class FileSelector extends React.Component {
+export class FileSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -190,7 +214,7 @@ class FileSelector extends React.Component {
       expand = [];
     }
     let selectorLabel;
-    if (this.props.fileData.files.length === 0 && this.props.fileData.directories.length === 0) {
+    if (!this.props.fileData.files.length && !this.props.fileData.directories.length) {
       selectorLabel = I18n.t('submissions.no_files_available');
     } else if (this.props.selectedFile !== null) {
       selectorLabel = this.props.selectedFile[0];

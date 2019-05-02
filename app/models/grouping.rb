@@ -3,11 +3,10 @@ require 'set'
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ApplicationRecord
   include ActiveRecordCreator
+  include SubmissionsHelper
 
   after_create_commit :create_grouping_repository_folder
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
-
-  belongs_to :grouping_queue, optional: true
 
   has_many :memberships, dependent: :destroy
   has_many :student_memberships, -> { order('id') }
@@ -214,8 +213,6 @@ class Grouping < ApplicationRecord
     ta_memberships.count > 0
   end
 
-  #Returns whether or not the submission_collector is pending to collect this
-  #grouping's newest submission
   def is_collected?
     is_collected
   end
@@ -248,28 +245,22 @@ class Grouping < ApplicationRecord
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
+    all_errors = []
     members.each do |m|
-      next if m.blank? # ignore blank users
       m = m.strip
-      user = User.where(user_name: m).first
-      m_logger = MarkusLogger.instance
-      if user
-        if invoked_by_admin || self.can_invite?(user)
-          member = self.add_member(user, set_membership_status)
-          if member
-            m_logger.log("Student invited '#{user.user_name}'.")
-          else
-            errors.add(:base, I18n.t('invite_student.fail.error',
-                                     user_name: user.user_name))
-            m_logger.log("Student failed to invite '#{user.user_name}'",
-                         MarkusLogger::ERROR)
-          end
+      user = Student.where(hidden: false).find_by(user_name: m)
+      begin
+        if user.nil?
+          raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
         end
-      else
-        errors.add(:base, I18n.t('invite_student.fail.dne',
-                                 user_name: m))
+        if invoked_by_admin || self.can_invite?(user)
+          self.add_member(user, set_membership_status)
+        end
+      rescue StandardError => e
+        all_errors << e.message
       end
     end
+    all_errors
   end
 
   # Add a new member to base
@@ -296,68 +287,16 @@ class Grouping < ApplicationRecord
 
   # define whether user can be invited in this grouping
   def can_invite?(user)
-    m_logger = MarkusLogger.instance
-    if user && user.student?
-      if user.hidden
-        errors.add(:base, I18n.t('invite_student.fail.hidden',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
-                     'disabled).', MarkusLogger::ERROR)
-
-        return false
-      end
-      if self.inviter == user
-        errors.add(:base, I18n.t('invite_student.fail.inviting_self',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
-                     'himself.', MarkusLogger::ERROR)
-
-
-      end
-      if self.assignment.past_collection_date?(self.inviter.section)
-        errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
-                     'collection date.', MarkusLogger::ERROR)
-
-        return false
-      end
-      if self.student_membership_number >= self.assignment.group_max
-        errors.add(:base, I18n.t('invite_student.fail.group_max_reached',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
-                     ' reached.', MarkusLogger::ERROR)
-        return false
-      end
-      if self.assignment.section_groups_only &&
-        user.section != self.inviter.section
-        errors.add(:base, I18n.t('invite_student.fail.not_same_section',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
-                     ' same section.', MarkusLogger::ERROR)
-
-        return false
-      end
-      if user.has_accepted_grouping_for?(self.assignment.id)
-        errors.add(:base, I18n.t('invite_student.fail.already_grouped',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
-                     ' of another group.', MarkusLogger::ERROR)
-        return false
-      end
-      if self.pending?(user)
-        errors.add(:base, I18n.t('invite_student.fail.already_pending',
-                                  user_name: user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
-                     ' pending member of this group.', MarkusLogger::ERROR)
-        return false
-      end
-    else
-      errors.add(:base, I18n.t('invite_student.fail.dne',
-                                user_name: user.user_name))
-      m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
-                   ' exist.', MarkusLogger::ERROR)
-      return false
+    if self.inviter == user
+      raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif self.student_membership_number >= self.assignment.group_max
+      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
+    elsif self.assignment.section_groups_only && user.section != self.inviter.section
+      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
+    elsif user.has_accepted_grouping_for?(self.assignment.id)
+      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
+    elsif self.pending?(user)
+      raise I18n.t('groups.invite_member.errors.already_pending', user_name: user.user_name)
     end
     true
   end
@@ -574,16 +513,19 @@ class Grouping < ApplicationRecord
   # Returns a list of missing assignment (required) files.
   # A repo revision can be passed directly if the caller already opened the repo.
   def missing_assignment_files(revision = nil)
-    repo = nil
+    get_missing_assignment_files = lambda do |open_revision|
+      assignment.assignment_files.reject do |assignment_file|
+        open_revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
+      end
+    end
     if revision.nil?
-      repo = group.repo
-      revision = repo.get_latest_revision
+      group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        get_missing_assignment_files.call revision
+      end
+    else
+      get_missing_assignment_files.call revision
     end
-    missing_assignment_files = assignment.assignment_files.reject do |assignment_file|
-      revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
-    end
-    repo&.close
-    missing_assignment_files
   end
 
   # Finds the correct due date (section or not) and checks if the last commit is after it.
@@ -803,7 +745,8 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'users.user_name', 'test_groups.name']
+    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name',
+                     'test_groups.name']
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -880,4 +823,154 @@ class Grouping < ApplicationRecord
       true
     end
   end
-end # end class Grouping
+
+  # Add new files or overwrite existing files in this group's repo. +files+ should be a list
+  # of ActionDispatch::Http::UploadedFile objects, +user+ is the user that is responsible for
+  # the repository transaction, +path+ is the relative path from the root of the repository
+  # to prepend to each filename.
+  #
+  # If files should be added to a repo that is already open, the open repo object can be passed
+  # as the +repo+ keyword argument, otherwise the repo for this group will be used.
+  #
+  # If files should be added as part of an existent transaction, the transaction object can be
+  # passed as the +txn+ keyword argument, otherwise a new transaction will be created. If the +txn+
+  # argument is not nil, the transaction will be commited before returning, otherwise the transaction
+  # object will not be commited and so should be commited later on by the caller.
+  #
+  # Returns a tuple containing a boolean and an array. If the +txn+ argument was nil, the boolean
+  # indicates whether the transaction was completed without errors. If the +txn+ argument was not
+  # nil, the boolean indicates whether any errors were encountered which mean the caller should not
+  # commit the transaction. The array contains any error or warning messages as arrays of arguments
+  # (each of which can be passed directly to flash_message from a controller).
+  def add_files(files, user, path: '/', repo: nil, txn: nil)
+    messages = []
+    if repo.nil?
+      group.access_repo do |open_repo|
+        return add_files(files, user, path: path, repo: open_repo, txn: txn)
+      end
+    end
+
+    if txn.nil?
+      txn = repo.get_transaction(user.user_name)
+      commit_txn = true
+    else
+      commit_txn = false
+    end
+
+    revision = repo.get_latest_revision
+    assignment_path = Pathname.new(assignment.repository_folder)
+    current_path = assignment_path.join(path.gsub(%r{^/}, '')) # remove leading '/' to make relative path
+    new_files = []
+    files.each do |f|
+      if f.size > MarkusConfigurator.markus_config_max_file_size
+        messages << [:error, I18n.t('student.submission.file_too_large',
+                                    file_name: f.original_filename,
+                                    max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2))]
+      elsif f.size == 0
+        messages << [:warning, I18n.t('student.submission.empty_file_warning', file_name: f.original_filename)]
+      end
+      filename = f.original_filename
+      if filename.nil?
+        messages << [:error, I18n.t('student.submission.invalid_file_name')]
+        return false, messages
+      end
+      subdir_path, filename = File.split(filename)
+      filename = sanitize_file_name(filename)
+      file_path = current_path.join(subdir_path).join(filename)
+      file_path_relative = file_path.relative_path_from(assignment_path).to_s
+      file_path = file_path.to_s
+      # Sometimes the file pointer of file_object is at the end of the file.
+      # In order to avoid empty uploaded files, rewind it to be safe.
+      f.rewind
+      # Branch on whether the file is new or a replacement
+      if revision.path_exists?(file_path)
+        txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
+      else
+        new_files << file_path_relative
+        txn.add(file_path, f.read, f.content_type)
+      end
+    end
+    # check if only required files are allowed for a submission
+    required_files = assignment.assignment_files.pluck(:filename)
+    if required_files.present? && assignment.only_required_files && (new_files - required_files).present?
+      messages << [:error, I18n.t('assignments.upload_file_requirement')]
+      return false, messages
+    end
+
+    if commit_txn
+      success, txn_messages = commit_transaction repo, txn
+      [success, messages + txn_messages]
+    else
+      [true, messages]
+    end
+  end
+
+  # Delete files in this group's repo. +file_revisions+ should be a Hash mapping file names to
+  # the expected revision that contains the file to be deleted. +file_revisions+ can also be an
+  # array and if so, the expected revision that contains the file will default to the most recent
+  # revision. +user+ is the user that is responsible for the repository transaction, and
+  # +path+ is the relative path from the root of the repository to prepend to each filename.
+  #
+  # If files should be added to a repo that is already open, the open repo object can be passed
+  # as the +repo+ keyword argument, otherwise the repo for this group will be used.
+  #
+  # If files should be added as part of an existent transaction, the transaction object can be
+  # passed as the +txn+ keyword argument, otherwise a new transaction will be created. If the +txn+
+  # argument is not nil, the transaction will be commited before returning, otherwise the transaction
+  # object will not be commited and so should be commited later on by the caller.
+  #
+  # Returns a tuple containing a boolean and an array. If the +txn+ argument was nil, the boolean
+  # indicates whether the transaction was completed without errors. If the +txn+ argument was not
+  # nil, the boolean indicates whether any errors were encountered which mean the caller should not
+  # commit the transaction. The array contains any error or warning messages as arrays of arguments
+  # (each of which can be passed directly to flash_message from a controller).
+  def remove_files(file_revisions, user, path: '/', repo: nil, txn: nil)
+    messages = []
+    if repo.nil?
+      group.access_repo do |open_repo|
+        return remove_files(file_revisions, user, path: path, repo: open_repo, txn: txn)
+      end
+    end
+
+    if txn.nil?
+      txn = repo.get_transaction(user.user_name)
+      commit_txn = true
+    else
+      commit_txn = false
+    end
+
+    assignment_path = Pathname.new(assignment.repository_folder)
+    current_path = assignment_path.join(path.gsub(%r{^/}, ''))
+
+    current_revision = repo.get_latest_revision.revision_identifier
+
+    file_revisions.each do |file_path, revision|
+      subdir_path, basename = File.split(file_path)
+      basename = sanitize_file_name(basename)
+      file_path = current_path.join(subdir_path).join(basename)
+      file_path = file_path.to_s
+      txn.remove(file_path, revision || current_revision)
+    end
+
+    if commit_txn
+      success, txn_messages = commit_transaction repo, txn
+      [success, messages + txn_messages]
+    else
+      [true, messages]
+    end
+  end
+
+  private
+
+  # Helper method that commits a transaction +txn+ in repo +repo+. Returns a boolean and an array
+  # where the boolean indicates whether the transaction was commited successfully and an array
+  # containing any error or warning messages.
+  #
+  # Does not attempt to commit the transaction if there are no jobs present to commit.
+  def commit_transaction(repo, txn)
+    return [false, [:warning, I18n.t('student.submission.no_action_detected')]] unless txn.has_jobs?
+    return [true, []] if repo.commit(txn)
+
+    [false, [:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: txn.conflicts }]]
+  end
+end

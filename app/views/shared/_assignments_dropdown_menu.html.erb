@@ -1,5 +1,5 @@
 <% if @current_user.admin? %>
-  <li class='section'><%= t('quick_links') %></li>
+  <li class='section'><%= t('menu.quick_links') %></li>
   <li>
     <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
                 controller: 'assignments',
@@ -20,221 +20,24 @@
   </li>
 <% end %>
 
+<li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
-<% @assignments = Assignment.includes(:pr_assignment).order(short_identifier: :asc) %>
-
-<% @assignments.each do |assignment| %>
-  <% if assignment == @assignments.first %>
-    <li class='section'><%= Assignment.model_name.human.pluralize %></li>
-  <% end %>
-
-  <% if assignment.is_peer_review? %>
-
-  <% elsif assignment != @assignment
-    if (controller.controller_name == 'assignments' &&
-        (controller.action_name == 'index' ||
-         controller.action_name == 'new') ||
-       controller.controller_name == 'results' ||
-       controller.controller_name == 'grade_entry_forms' ||
-       controller.controller_name == 'marks_graders' ||
-       controller.controller_name == 'automated_tests' )
-      if @current_user.student? %>
-        <li>
-          <% # Don't show hidden assignments to students
-            if !assignment.is_hidden %>
-
-            <%= render partial: 'shared/pr_dropdown_menu_li',
-                       locals: { assignment: assignment,
-                                 current_user: @current_user} %>
-
-            <%= link_to h(assignment.short_identifier),
-                        { controller: 'assignments',
-                          action: 'student_interface',
-                          id: assignment.id },
-                        title: assignment.description %>
-          <% end %>
-        </li>
-      <% elsif @current_user.ta? %>
-        <li>
-          <%= render partial: 'shared/pr_dropdown_menu_li',
-                     locals: { assignment: assignment,
-                               current_user: @current_user} %>
-
-          <% if assignment.is_hidden %>
-            <%= link_to t('assignment.hidden',
-                          assignment_text: h(assignment.short_identifier)),
-                        browse_assignment_submissions_path(assignment),
-                        title: assignment.description %>
-          <% else %>
-            <%= link_to h(assignment.short_identifier),
-                        browse_assignment_submissions_path(assignment),
-                        title: assignment.description %>
-          <% end %>
-        </li>
-      <% else %>
-        <li>
-          <%= render partial: 'shared/pr_dropdown_menu_li',
-                     locals: { assignment: assignment,
-                               current_user: @current_user} %>
-
-          <% if assignment.is_hidden %>
-            <%= link_to t('assignment.hidden',
-                          assignment_text: h(assignment.short_identifier)),
-                        { controller: 'assignments',
-                          action: 'edit',
-                          id: assignment.id },
-                        title: assignment.description %>
-          <% else %>
-            <%= link_to h(assignment.short_identifier),
-                        { controller: 'assignments',
-                          action: 'edit',
-                          id: assignment.id },
-                        title: assignment.description %>
-          <% end %>
-        </li>
-      <% end %>
-    <% else %>
-      <li>
-        <% # If the current controller is criteria, we have to stay in the same
-           # controller.
-           if controller.controller_name == 'criteria'
-          target_controller = 'criteria'
-        elsif controller.controller_name == 'exam_templates'
-          if assignment.scanned_exam
-            target_controller = controller.controller_name
-            target_action = nil
-          else
-            target_controller = nil
-            target_action = 'edit'
-          end
-        else
-          target_controller = controller.controller_name == 'assignments' ||
-                  controller.controller_name == 'automated_tests' ? nil :
-                  controller.controller_name
-          target_action = controller.action_name == 'index' ||
-                  controller.action_name == 'manage' ? nil :
-                  controller.action_name
-        end %>
-        <% # If the current controller action is repo_browser, the drop down
-           # menu for assignments should go to browse, and not repo_browser
-           if target_action == 'repo_browser'
-          target_action = 'browse'
-           elsif target_action == 'update'
-             target_action = 'edit'
-           elsif target_action == 'create'
-             target_action = 'new'
-        end %>
-        <% # Don't show hidden assignments in the dropdown menu for students
-           # either. Append '(hidden)' for TAs and Admins.
-           if !@current_user.student? %>
-
-            <%= render partial: 'shared/pr_dropdown_menu_li',
-                       locals: { assignment: assignment,
-                                 current_user: @current_user} %>
-
-            <% if assignment.is_hidden %>
-            <%= link_to t('assignment.hidden',
-                          assignment_text: h(assignment.short_identifier)),
-                        polymorphic_url([assignment, target_controller],
-                                        action: target_action),
-                        title: assignment.description %>
-          <% else %>
-            <%= link_to h(assignment.short_identifier),
-                        polymorphic_url([assignment, target_controller],
-                                        action: target_action),
-                        title: assignment.description %>
-          <% end %>
-        <% # student user, so show only non-hidden assignments
-           else %>
-          <% if !assignment.is_hidden %>
-            <%= render partial: 'shared/pr_dropdown_menu_li',
-                       locals: { assignment: assignment,
-                                 current_user: @current_user} %>
-
-            <%= link_to h(assignment.short_identifier),
-                        { controller: 'assignments',
-                          action: 'student_interface',
-                          id: assignment.id },
-                        title: assignment.description %>
-          <% end %>
-        <% end %>
-      </li>
-    <% end %>
-  <% else %>
-    <li class='active'>
-      <%= render partial: 'shared/pr_dropdown_menu_li',
-                 locals: { assignment: assignment,
-                           current_user: @current_user} %>
-
-      <span class='title' title='<%= assignment.description %>'>
-        <% # Appends hidden to the active link, if hidden.
-           if assignment.is_hidden %>
-          <%= t('assignment.hidden',
-                assignment_text: h(assignment.short_identifier)) %>
-        <% else %>
-          <%= assignment.short_identifier %>
-        <% end %>
-      </span>
-    </li>
-  <% end %>
+<% if @current_user.student? %>
+  <% assignments = Assignment.where(is_hidden: false) %>
+  <% grade_entry_forms = GradeEntryForm.where(is_hidden: false) %>
+<% else %>
+  <% assignments = Assignment.all %>
+  <% grade_entry_forms = GradeEntryForm.all %>
 <% end %>
 
+<%= render partial: 'shared/assignment_dropdown_link',
+           collection: assignments,
+           as: :assignment,
+           locals: { active_id: @assignment&.id } %>
 
-<% # Display grade entry forms in the dropdown menu %>
-<% @grade_entry_forms = GradeEntryForm.order('id ASC') %>
+<li class='section'><%= GradeEntryForm.model_name.human.pluralize %></li>
 
-<% @grade_entry_forms.each do |grade_entry_form| %>
-  <% if grade_entry_form == @grade_entry_forms.first %>
-    <li class='section'><%= GradeEntryForm.model_name.human.pluralize %></li>
-  <% end %>
-
-  <% if grade_entry_form != @grade_entry_form %>
-    <% if @current_user.admin? %>
-      <li>
-        <% if grade_entry_form.is_hidden %>
-            <%= link_to t('assignment.hidden',
-                          assignment_text: h(grade_entry_form.short_identifier)),
-                        edit_grade_entry_form_path(grade_entry_form),
-                        title: grade_entry_form.description %>
-        <% else %>
-            <%= link_to h(grade_entry_form.short_identifier),
-                        edit_grade_entry_form_path(grade_entry_form),
-                        title: grade_entry_form.description %>
-        <% end %>
-      </li>
-    <% elsif @current_user.ta? %>
-      <li>
-        <% if grade_entry_form.is_hidden %>
-            <%= link_to t('assignment.hidden',
-                          assignment_text: h(grade_entry_form.short_identifier)),
-                        edit_grade_entry_form_path(grade_entry_form),
-                        title: grade_entry_form.description %>
-        <% else %>
-            <%= link_to h(grade_entry_form.short_identifier),
-                        edit_grade_entry_form_path(grade_entry_form),
-                        title: grade_entry_form.description %>
-        <% end %>
-      </li>
-    <% elsif @current_user.student? %>
-      <li>
-        <% if !grade_entry_form.is_hidden %>
-            <%= link_to h(grade_entry_form.short_identifier),
-                        student_interface_grade_entry_form_path(grade_entry_form),
-                        title: grade_entry_form.description %>
-        <% end %>
-      </li>
-    <% end %>
-  <% else %>
-    <li class='active'>
-      <span title='<%= grade_entry_form.description %>'>
-        <% # Appends hidden to the active link, if hidden.
-           if grade_entry_form.is_hidden %>
-            <%= t('assignment.hidden',
-                assignment_text: h(grade_entry_form.short_identifier)) %>
-        <% else %>
-          <%= grade_entry_form.short_identifier %>
-        <% end %>
-      </span>
-    </li>
-  <% end %>
-<% end %>
+<%= render partial: 'shared/grade_entry_form_dropdown_link',
+           collection: grade_entry_forms,
+           as: :grade_entry_form,
+           locals: { active_id: @grade_entry_form&.id } %>

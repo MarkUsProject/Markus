@@ -1,0 +1,17 @@
+<li class="<%= active_id == grade_entry_form.id ? 'active' : '' %>">
+  <% link_text = grade_entry_form.short_identifier %>
+  <% if grade_entry_form.is_hidden %>
+    <% link_text = t('assignments.hidden', assignment_text: link_text) %>
+  <% end %>
+  <% if @current_user.admin? %>
+    <% link_target = edit_grade_entry_form_path(grade_entry_form.id) %>
+  <% elsif @current_user.ta? %>
+    <% link_target = grades_grade_entry_form_path(grade_entry_form.id) %>
+  <% else %>
+    <% link_target = student_interface_grade_entry_form_path(grade_entry_form.id) %>
+  <% end %>
+
+  <%= link_to link_text,
+              link_target,
+              title: grade_entry_form.description %>
+</li>

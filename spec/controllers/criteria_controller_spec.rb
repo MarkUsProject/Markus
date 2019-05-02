@@ -1,4 +1,4 @@
-RSpec.describe CriteriaController, type: :controller do
+describe CriteriaController do
 
   describe 'Using Flexible Criteria' do
 
@@ -65,9 +65,9 @@ RSpec.describe CriteriaController, type: :controller do
         end
       end
 
-      context '#download_yml' do
+      context '#download' do
         it 'should respond with redirect' do
-          get :download_yml, params: { assignment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -468,9 +468,9 @@ RSpec.describe CriteriaController, type: :controller do
         end
       end
 
-      context '#download_yml' do
+      context '#download' do
         it 'should respond with redirect' do
-          get :download_yml, params: { assignment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -801,6 +801,14 @@ RSpec.describe CriteriaController, type: :controller do
   end # Tests using Rubric Criteria only
 
   describe 'An authenticated and authorized admin performing yml actions' do
+    before :all do
+      @empty_file = fixture_file_upload('files/empty_file', 'text/yaml')
+      @test_download_file = fixture_file_upload('files/criteria/criteria_upload_download.yaml', 'text/yaml')
+      @download_expected_output = fixture_file_upload('files/criteria/download_yml_output.yaml', 'text/yaml')
+      @round_max_mark_file = fixture_file_upload('spec/fixtures/files/criteria/round_max_mark.yaml', 'text/yaml')
+      @partially_valid_file = fixture_file_upload('spec/fixtures/files/criteria/partially_valid_file.yaml', 'text/yaml')
+    end
+
     context 'When a file containing a mixture of entries is uploaded' do
       before :each do
         @admin              = create(:admin)
@@ -818,79 +826,50 @@ RSpec.describe CriteriaController, type: :controller do
                                      position: 3,
                                      name: 'Checkbox criterion')
 
-        @invalid_file = fixture_file_upload(
-            'files/bad_csv.csv', 'text/xls')
-        allow(@invalid_file).to receive(:read).and_return(
-            File.read(fixture_file_upload(
-                          'files/bad_csv.csv', 'text/csv')))
-
-        @empty_file = fixture_file_upload(
-          'files/empty_file', 'text/yaml')
-        allow(@empty_file).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-            'files/empty_file', 'text/yaml')))
-
-        @uploaded_file = fixture_file_upload(
-          'files/criteria/upload_yml_mixed.yaml', 'text/yaml')
-        allow(@uploaded_file).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-          'files/criteria/upload_yml_mixed.yaml', 'text/yaml')))
-
-        @download_expected_output = fixture_file_upload(
-          'files/criteria/download_yml_output.yaml', 'text/yaml')
-        allow(@download_expected_output).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-          'files/criteria/download_yml_output.yaml', 'text/yaml')))
-      end
-
-      it 'raises an error if the file does not have properly formatted entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @invalid_file } }
-
-        expect(flash[:error].map { |f| extract_text f })
-            .to eq([I18n.t('criteria.upload.error.invalid_format') + '  ' +
-                    'There is an error in the file you uploaded: (<unknown>): ' +
-                      'invalid trailing UTF-8 octet at line 1 column 1'].map { |f| extract_text f })
+        @uploaded_file = fixture_file_upload('files/criteria/upload_yml_mixed.yaml', 'text/yaml')
       end
 
       it 'raises an error if the file does not include any criteria' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @empty_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @empty_file }
 
         expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.upload.error.invalid_format') +
-                  '  ' + I18n.t('criteria.upload.empty_error')].map { |f| extract_text f })
+          .to eq([I18n.t('upload_errors.blank')].map { |f| extract_text f })
       end
 
       it 'deletes all criteria previously created' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
         expect(@assignment.get_criteria.map(&:id))
           .not_to include(@rubric_criterion.id, @flexible_criterion.id, @checkbox_criterion.id)
       end
 
       it 'maintains the order between entries and positions for criteria' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
         expect(@assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
-          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5]])
+          .to match_array([['cr30', 1], ['cr20', 2], ['cr100', 3], ['cr80', 4], ['cr60', 5], ['cr90', 6]])
       end
 
       it 'creates all criteria with properly formatted entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria.map(&:name))
-            .to contain_exactly('cr30', 'cr20', 'cr100', 'cr80', 'cr60')
+        expect(@assignment.get_criteria.map(&:name)).to contain_exactly('cr30',
+                                                                        'cr20',
+                                                                        'cr100',
+                                                                        'cr80',
+                                                                        'cr60',
+                                                                        'cr90')
         expect(flash[:success].map { |f| extract_text f })
-          .to eq([I18n.t('upload_success', count: 5)].map { |f| extract_text f })
+          .to eq([I18n.t('upload_success', count: 6)].map { |f| extract_text f })
       end
 
       it 'creates rubric criteria with properly formatted entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria(:all, :rubric).pluck(:name))
-          .to include('cr30')
-        @assignment.reload
+        expect(@assignment.get_criteria(:all, :rubric).pluck(:name)).to contain_exactly('cr30', 'cr90')
+
         cr1 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr30')
-        expect(@assignment.get_criteria(:all, :rubric).size).to eq(1)
+        expect(cr1.max_mark).to eq(5.0)
         expect(cr1.level_0_name).to eq('What?')
         expect(cr1.level_0_description).to eq('Fail')
         expect(cr1.level_1_name).to eq('Hmm')
@@ -903,60 +882,90 @@ RSpec.describe CriteriaController, type: :controller do
         expect(cr1.level_4_description).to eq('Impressive')
         expect(cr1.ta_visible).to be false
         expect(cr1.peer_visible).to be true
+
+        cr2 = @assignment.get_criteria(:all, :rubric).find_by(name: 'cr90')
+        expect(cr2.max_mark).to eq(4.6)
+        expect(cr2.level_0_name).to be_nil
+        expect(cr2.level_0_description).to be_nil
+        expect(cr2.level_1_name).to be_nil
+        expect(cr2.level_1_description).to be_nil
+        expect(cr2.level_2_name).to be_nil
+        expect(cr2.level_2_description).to be_nil
+        expect(cr2.level_3_name).to be_nil
+        expect(cr2.level_3_description).to be_nil
+        expect(cr2.level_4_name).to be_nil
+        expect(cr2.level_4_description).to be_nil
+        expect(cr2.ta_visible).to be true
+        expect(cr2.peer_visible).to be false
       end
 
       it 'creates flexible criteria with properly formatted entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
-          .to include('cr20', 'cr80', 'cr60')
-        cr1 = @assignment.get_criteria(:all, :flexible).find_by(name: 'cr80')
-        expect(@assignment.get_criteria(:all, :flexible).size).to eq(3)
-        expect(cr1.max_mark).to eq(10.0)
-        expect(cr1.description).to eq('')
-        expect(cr1.ta_visible).to be true
-        expect(cr1.peer_visible).to be true
+        expect(@assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60')
+
+        cr80 = @assignment.get_criteria(:all, :flexible).find_by(name: 'cr80')
+        expect(cr80.max_mark).to eq(10.0)
+        expect(cr80.description).to eq('')
+        expect(cr80.ta_visible).to be true
+        expect(cr80.peer_visible).to be true
+
+        cr20 = @assignment.get_criteria(:all, :flexible).find_by(name: 'cr20')
+        expect(cr20.max_mark).to eq(2.0)
+        expect(cr20.description).to eq('I am flexible')
+        expect(cr20.ta_visible).to be true
+        expect(cr20.peer_visible).to be true
+
+        cr60 = @assignment.get_criteria(:all, :flexible).find_by(name: 'cr60')
+        expect(cr60.max_mark).to eq(10.0)
+        expect(cr60.description).to eq('')
+        expect(cr60.ta_visible).to be true
+        expect(cr60.peer_visible).to be false
       end
 
       it 'creates checkbox criteria with properly formatted entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria(:all, :checkbox).pluck(:name))
-          .to include('cr100')
+        expect(@assignment.get_criteria(:all, :checkbox).pluck(:name)).to contain_exactly('cr100')
         cr1 = @assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100')
-        expect(@assignment.get_criteria(:all, :checkbox).size).to eq(1)
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.description).to eq('I am checkbox')
         expect(cr1.ta_visible).to be true
         expect(cr1.peer_visible).to be false
       end
 
-      it 'creates criteria; being case insensitive with the type given' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+      it 'creates criteria being case insensitive with the type given' do
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria(:all, :flexible).pluck(:name))
-          .to include('cr20', 'cr80')
+        expect(@assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60')
       end
 
       it 'creates criteria that lack a description' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
         expect(@assignment.get_criteria(:all, :flexible).map(&:name)).to include('cr80')
-        expect(FlexibleCriterion.find_by(name: 'cr80').description).to eq('')
+        expect(@assignment.get_criteria(:all, :flexible).find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
-
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
         expect(@assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
-        expect(CheckboxCriterion.find_by(name: 'cr100').ta_visible).to be true
-        expect(CheckboxCriterion.find_by(name: 'cr100').peer_visible).to be false
-        expect(FlexibleCriterion.find_by(name: 'cr60').ta_visible).to be true
-        expect(FlexibleCriterion.find_by(name: 'cr60').peer_visible).to be false
+        expect(@assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').ta_visible).to be true
+        expect(@assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').peer_visible).to be false
+        expect(@assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').ta_visible).to be true
+        expect(@assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').peer_visible).to be false
       end
 
+      it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
+        post_as @admin, :upload, params: { assignment_id: @assignment.id,
+                                           upload_file: @round_max_mark_file }
+
+        expect(@assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
+
+        expect(@assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
+      end
       it 'does not create criteria with format errors in entries' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr40', 'cr50', 'cr70')
@@ -965,37 +974,58 @@ RSpec.describe CriteriaController, type: :controller do
       end
 
       it 'does not create criteria with an invalid mark' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria.map(&:name))
-          .not_to include('cr40', 'cr50')
+        expect(@assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
-        post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria.map(&:name))
-          .not_to include('cr70')
+        expect(@assignment.get_criteria.map(&:name)).not_to include('cr70')
+      end
+
+      it 'does not create criteria that have unmatched keys / more keys than required' do
+        post_as @admin, :upload, params: { assignment_id: @assignment.id,
+                                           upload_file: @partially_valid_file }
+
+        criteria = @assignment.get_criteria(:all, :rubric).first
+        expect(criteria.name).to eq('Quality of Writing')
+        expect(criteria.level_4_name).to be_nil
+        expect(criteria.level_4_description).to be_nil
+        expect(flash[:success].size).to eq(1)
+
+        expect(@assignment.get_criteria.map(&:name)).not_to include('Level 5')
+
+        pending('We should report there is an invalid key in the file')
+        expect(flash[:error]).not_to be_nil
       end
 
       context 'When some criteria have been previously uploaded and and admin performs a download' do
         it 'responds with appropriate status' do
-          post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+          post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-          get :download_yml, params: { assignment_id: @assignment.id }
+          get :download, params: { assignment_id: @assignment.id }
 
           expect(response.status).to eq(200)
         end
 
         it 'sends the correct information' do
-          post_as @admin, :upload_yml, params: { assignment_id: @assignment.id, yml_upload: { rubric: @uploaded_file } }
+          post_as @admin, :upload, params: { assignment_id: @assignment.id,
+                                             upload_file: @test_download_file }
 
-          get :download_yml, params: { assignment_id: @assignment.id }
+          get :download, params: { assignment_id: @assignment.id }
 
-          expect(response.body).to eq(@download_expected_output.read)
+          expect(response.body.lines.map(&:strip)).to eq(@download_expected_output.read.lines.map(&:strip))
         end
       end
     end
   end
-end
 
+  let(:assignment) { FactoryBot.create(:assignment) }
+  context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
+    include_examples 'a controller supporting upload' do
+      let(:params) { { assignment_id: assignment.id } }
+    end
+  end
+end

@@ -3,39 +3,6 @@ es:
     new:
       button: "Añadir criterio de calificación"
 
-    upload:
-      yml_instructions_html: "
-        <ul>
-          <li><p>El archivo debe tener el siguiente formato para criterios de tipo rúbrica:<br>
-             <code>criterion_name:<br>
-               &nbsp;&nbsp;max_mark: max_mark<br>
-               &nbsp;&nbsp;level_0:<br>
-               &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-               &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-               &nbsp;&nbsp;level_1:<br>
-               &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-               &nbsp;&nbsp;ta_visible: true<br>
-               &nbsp;&nbsp;peer_visible: false<br></code>
-               <p>Las opciones de visibilidad son opcionales.</p>
-             </p></li>
-          <li><p>El siguiente formato para criterios de tipo flexible:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
-          <li><p>Y el siguiente formato para criterios de tipo caja de selección:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: checkbox<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>La descripción y las opciones de visibilidad son opcionales.</p></li>
-        </ul>"
-
     # Short type names
     checkbox: "Caja de Selección"
     flexible: "Flexible"
@@ -68,6 +35,10 @@ es:
     description_hint: "Usted puede usar etiquetas HTML simples en este campo.
       Guarde los cambios para ver una vista preliminar."
     max_mark_short: "Nota Máxima"
+
+  checkbox_criteria:
+    answer_no: "No"
+    answer_yes: "Sí"
 
   rubric_criteria:
     level:

@@ -55,6 +55,7 @@ export class TestRunTable extends React.Component {
             'test_runs.created_at': test_data[0]['test_runs.created_at'],
             'users.user_name': test_data[0]['users.user_name'],
             'test_runs.status': test_data[0]['test_runs.status'],
+            'test_runs.problems': test_data[0]['test_runs.problems'],
             'test_results': [],
           };
           test_data.forEach(data => {
@@ -93,9 +94,9 @@ export class TestRunTable extends React.Component {
             }
           ]}
           SubComponent={ row => (
-            <TestGroupResultTable
-              data={row.original['test_results']}
-            />
+            row.original['test_runs.problems'] ?
+              row.original['test_runs.problems'] :
+              <TestGroupResultTable data={row.original['test_results']}/>
           )}
           noDataText={I18n.t('automated_tests.no_results')}
           getTheadThProps={ () => {

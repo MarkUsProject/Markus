@@ -3,38 +3,6 @@ pt:
     new:
       button: "Adicionar Critério"
 
-    upload:
-      yml_instructions_html: "
-        <ul>
-          <li><p>O arquivo deve ter o seguinte formato para um critério Rubrica:<br>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;level_0:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br>
-              &nbsp;&nbsp;level_1:<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-              <p>As opções de visibilidade são opcionais.</p>
-          </p></li>
-          <li><p>A seguir um critério flexível:</p>
-            <code>criterion_name:<br>
-              &nbsp;&nbsp;type: flexible<br>
-              &nbsp;&nbsp;max_mark: max_mark<br>
-              &nbsp;&nbsp;description: description<br>
-              &nbsp;&nbsp;ta_visible: true<br>
-              &nbsp;&nbsp;peer_visible: false<br></code>
-            <p>As opções de descrição e visibilidade são opcionais.</p></li>
-          <li><p>E o seguinte para um critério de seleção:</p>
-            <code>criterion_name:<br>
-            &nbsp;&nbsp;type: checkbox<br>
-            &nbsp;&nbsp;max_mark: max_mark<br>
-            &nbsp;&nbsp;description: description<br>
-            &nbsp;&nbsp;ta_visible: true<br>
-            &nbsp;&nbsp;peer_visible: false<br></code>
-          <p>As opções de descrição e visibilidade são opcionais.</p></li>
-        </ul>"
     # Short type names
     checkbox: "Caixa de seleção"
     flexible: "Flexível"
@@ -66,6 +34,10 @@ pt:
     # Miscellaneous
     description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
     max_mark_short: "Nota"
+
+  checkbox_criteria:
+    answer_no: "Não"
+    answer_yes: "Sim"
 
   rubric_criteria:
     level:

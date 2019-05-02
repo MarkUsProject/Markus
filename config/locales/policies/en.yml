@@ -2,13 +2,22 @@ en:
   action_policy:
     policy:
       assignment:
+        autogenerate_group_name?: "This assignment does automatically generate group names."
         before_due_date?: "You cannot run tests because the due date for this assignment has passed."
+        due_date_passed?: "Could not create group: the due date for this assignment has passed."
         enabled?: "You cannot run tests because they are not enabled for this assignment."
         not_a_ta?: "You cannot run tests because graders are not allowed to."
-        test_scripts_uploaded?: "You cannot run tests because there are no test scripts configured."
+        not_yet_in_group?: "You already have a group, and cannot create another."
+        students_form_groups?: "This assignment does not allow students to form their own groups."
+        test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
+        work_alone?: "You cannot work alone for this assignment. The minimum group size is %{group_min}."
       grouping:
+        before_due_date?: "The due date for this assignment has passed."
+        deletable_by?: "You are not allowed to delete the group."
+        delete_rejected?: "Only the inviter can delete a declined invitation."
         member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
+        no_submission?: "You already submitted something. You cannot delete your group."
         not_in_progress?: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results."
         tokens_available?: "You cannot run tests because you or your group do not have tokens available."
       submission:

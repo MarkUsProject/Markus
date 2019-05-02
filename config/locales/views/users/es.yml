@@ -7,6 +7,7 @@ es:
     new: "Crear un nuevo Administrador"
 
   students:
+    active: "Activo"
     admin_actions:
       add_section: "Añadir sección"
       give_grace_credits: "Dar créditos de gracia:"
@@ -15,6 +16,7 @@ es:
     edit: "Editar un Estudiante"
     help:
       manage_students: "Markar estudiantes como activos o inactivos, darles créditos de gracia."
+    inactive: "Inactivo"
     new: "Crear un nuevo Estudiante"
     no_students_selected: "No se ha seleccionado ningún estudiante, por lo tanto, no se han realizado cambios."
     not_successfully_added_message_1: "Los siguientes estudiantes no han podido ser añadidos:"

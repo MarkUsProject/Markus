@@ -1,0 +1,10 @@
+<li class="<%= active_id == assignment.id ? 'active' : '' %>">
+  <% link_text = assignment.short_identifier %>
+  <% if assignment.is_hidden %>
+    <% link_text = t('assignments.hidden', assignment_text: link_text) %>
+  <% end %>
+
+  <%= link_to link_text,
+              switch_assignment_assignment_path(assignment.id),
+              title: assignment.description %>
+</li>

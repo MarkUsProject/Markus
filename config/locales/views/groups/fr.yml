@@ -4,8 +4,6 @@ fr:
     another_assignment_group: "Utiliser les groupes d'un autre projet"
     assignment_to_use: "Les groupes de quel projet souhaitez-vous réutiliser ?"
     assigned_students: "Assigné(s)"
-    cant_delete: "Vous ne pouvez pas supprimer ce groupe."
-    cant_delete_already_submitted: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
     could_not_delete: "Vous ne pouvez pas supprimer les groupes suivants — un groupe ne peut être supprimé si un envoi a déja été créé pour le groupe."
     delete: "Supprimer ce groupe"
     delete_confirm: "Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?"
@@ -53,6 +51,10 @@ fr:
                       ou rejoindre un groupe, d'abord supprimer votre groupe."
       your_group: "Votre groupe"
 
+    destroy:
+      errors:
+        do_not_have_a_group: "Vous n'appartenez pas à un groupe."
+
     members:
       cancel_invitation: "Annuler l'invitation"
       cancel_invitation_confirm: "Êtes-vous sûr de vouloir annuler l'invitation ?"
@@ -68,3 +70,14 @@ fr:
         inviter: "créateur du groupe"
         pending: "invité"
         rejected: "déclinée"
+
+    invite_member:
+      errors:
+        already_grouped: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
+        already_pending: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà en attente pour ce groupe."
+        group_max_reached: "%{user_name} ne peut pas être invité(e) : la limite maximale pour ce groupe est déjà atteinte."
+        inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
+        need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
+        not_found: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
+        not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
+      success: "L'étudiant(e) a été invité(e)."

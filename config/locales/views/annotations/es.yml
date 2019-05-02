@@ -1,17 +1,4 @@
 es:
   annotations:
-    upload:
-      csv_instructions_html: "
-        <p>
-          Seleccionar un archivo en formato CSV de la siguiente forma:<br>
-          <code>category_name,annotation_text,annotation_text ... </code>
-        </p>"
-      yml_instructions_html: "
-        <p>
-          Seleccionar un archivo en formato YAML de la siguiente forma:<br>
-          <code>category_name: <br>- category_text<br>- category_text</code>
-        </p>"
-
-    # Miscellaneous
     help_message: "De click en una categoría de anotación para añadir anotaciones."
     last_edited_by: "Editado por última vez por:"

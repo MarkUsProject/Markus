@@ -16,7 +16,11 @@ Rails.application.routes.draw do
             get 'annotations'
             get 'group_ids_by_name'
           end
-          resources :submission_downloads, except: [:new, :edit]
+          resources :submission_files, except: [:new, :edit] do
+            collection do
+              delete 'remove_file'
+            end
+          end
           resources :feedback_files, except: [:new, :edit]
           resources :test_group_results, except: [:new, :edit] do
             resources :test_results, except: [:new, :edit]
@@ -24,6 +28,7 @@ Rails.application.routes.draw do
           member do
             get 'annotations'
             post 'add_annotations'
+            post 'add_members'
             put 'update_marks'
             put 'update_marking_state'
           end
@@ -39,8 +44,8 @@ Rails.application.routes.draw do
       collection do
         get 'delete_rejected'
         post 'update_collected_submissions'
-        get 'download_assignment_list'
-        post 'upload_assignment_list'
+        get 'download'
+        post 'upload'
         get 'batch_runs'
       end
 
@@ -59,6 +64,7 @@ Rails.application.routes.draw do
         get 'batch_runs'
         get 'stop_test'
         get 'stop_batch_tests'
+        get 'switch_assignment'
       end
 
       resources :tags do
@@ -76,8 +82,8 @@ Rails.application.routes.draw do
       resources :criteria do
         collection do
           post 'update_positions'
-          post 'upload_yml'
-          get  'download_yml'
+          post 'upload'
+          get  'download'
         end
       end
 
@@ -90,6 +96,9 @@ Rails.application.routes.draw do
           post 'upload'
           get 'download'
           get 'get_test_runs_students'
+          get 'populate_autotest_manager'
+          get 'download_file'
+          post 'upload_files'
         end
       end
 
@@ -180,7 +189,6 @@ Rails.application.routes.draw do
 
         resources :results do
           collection do
-            post 'update_mark'
             get 'edit'
             get 'download'
           end
@@ -201,7 +209,7 @@ Rails.application.routes.draw do
             post 'toggle_marking_state'
             patch 'update_remark_request'
             get 'update_positions'
-            post 'update_mark'
+            patch 'update_mark'
             get 'view_marks'
             post 'add_tag'
             post 'remove_tag'
@@ -216,14 +224,13 @@ Rails.application.routes.draw do
       resources :results, only: [:edit], path: '/peer_reviews' do
         collection do
           get 'download'
-          post 'update_mark'
         end
 
         member do
           get 'view_marks'
           get 'next_grouping'
           post 'toggle_marking_state'
-          post 'update_mark'
+          patch 'update_mark'
           post 'update_overall_comment'
           patch 'update_remark_request'
         end
@@ -269,9 +276,8 @@ Rails.application.routes.draw do
 
         collection do
           post 'update_positions'
-          post 'csv_upload'
+          post 'upload'
           get 'download'
-          post 'yml_upload'
           get 'add_annotation_text'
           post 'delete_annotation_text'
           post 'update_annotation'

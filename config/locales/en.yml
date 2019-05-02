@@ -1,44 +1,6 @@
 en:
-    answer_yes:         "Yes"
-    answer_no:          "No"
-    markus:             "MarkUs"
-    close:              "Close"
-    all:                "All"
-    actions:            "Actions"
-    continue:           "Continue"
-
-    # app/views/layouts/_header.html.erb
-    working:            "Loading"
-    please_wait:        "Please wait…"
-
-    # app/views/layouts/_menu.html.erb
-    dashboard:          "Dashboard"
-    home:               "Home"
-    settings:           "Settings"
-
-    # app/views/shared/_assignments_dropdown.html.erb
-    quick_links:  "Quick links"
-
-    # app/views/assignments/_list_manage.html.erb
-    no_assignments:            "There are currently no assignments."
-
     # app/views/assignments/
-    name: "Name"
-    filename:  "Filename"
-    message:  "Message"
-    remove:  "Remove"
-    days_left:          "(%{days} day(s) left)"
-    description:        "Description"
-    shortened_date:     "Date"
-    remove_date:        "Remove Date"
-    manage_course_work: "Manage Course Work"
-    incorrect_format:   "Incorrect format"
-    required_fields: "Required Fields"
     assignment:
-        hidden: "%{assignment_text} (hidden)"
-        update_success:        "Successfully updated the assignment"
-        no_required_files_read:  "There are no required files for this assignment."
-        upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
         group:
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
@@ -69,6 +31,7 @@ en:
             complete: "complete"
             in_progress: "in progress"
             cancelled: "cancelled"
+            problems: "error"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
@@ -87,7 +50,6 @@ en:
         cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
         number_per_group: "Number of peer reviews per group"
         number_assigned_reviewers: "Num Assigned Reviewers"
-        peer_review: "Peer Review"
         action:
             assign: "Assign Peer Reviewer(s)"
             unassign: "Unassign Peer Reviewer(s)"
@@ -100,33 +62,10 @@ en:
             description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
     add_new:            "Add New File"
-    edit:               "Edit"
-    save:               "Save"
-    save_changes:       "Save Changes"
-    skip:               "Skip"
-    apply:              "Apply"
-    delete:             "Delete"
-    submit:             "Submit"
-    cancel:             "Cancel"
-    all:                "All"
-    active:             "Active"
-    not_active:         "Not active"
-    choose:             "Choose..."
-    properties:         "Properties"
     peer_reviews:       "Peer reviews"
-    help:               "Help"
-    preview:            "Preview"
-    encoding:           "Encoding"
-    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
-    all_csv_file:       "All fields: "
-
-    past_start_date_edit_warning:  "WARNING:  The start date you have selected is in the past."
-
-    copy: "Copy"
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
-    still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
       bad_cell: "Error: the csv contains the following invalid cells: %{bad_cells}"
@@ -145,8 +84,6 @@ en:
 
     browse_submissions:
       review_state:         "Review State"
-
-    no_assignments_and_grade_entry_forms_message: "There are currently no assignments and marks spreadsheets."
 
     groups:
       upload:
@@ -177,35 +114,6 @@ en:
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
-    add_student:
-      success: "Student %{user_name} added."
-      fail:
-        general: "Something went wrong. Could not add %{user_name}."
-        hidden:  "Could not add %{user_name} - this student's account has been disabled."
-        already_grouped: "Could not add %{user_name} - this student is already a member of another group."
-
-    create_group:
-      fail:
-        due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
-        not_allow_to_form_groups: "Assignment does not allow students to form groups"
-        already_have_a_group: "You already have a group, and cannot create another"
-        can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is %{group_min}"
-        do_not_have_a_group: "You do not currently have a group"
-
-    invite_student:
-      success: "Invitations successful"
-      fail:
-        only_inviter: "Only the inviter can delete a declined invitation"
-        due_date_passed: "Could not invite %{user_name} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
-        dne:  "Could not invite %{user_name} - this student does not exist."
-        hidden:  "Could not invite %{user_name} - this student's account has been disabled."
-        already_pending: "Could not invite %{user_name} - this student is already a pending member of this group."
-        group_max_reached: "Could not invite %{user_name} - group maximum has been reached."
-        inviting_self: "You cannot invite yourself to your own group."
-        already_grouped: "Could not invite %{user_name} - this student is already a member of another group."
-        need_to_create_group: "You must create a group before you can invite users"
-        not_same_section: "Student %{user_name} is outside of your section."
-        error: "Failed to invite student %{user_name}."
     update_files:
       success:  "Your changes have been made."
 
@@ -228,18 +136,10 @@ en:
       upload:
         error:
           invalid_format: "The following criteria had invalid format:"
-          names_taken:    "The following criteria names are already taken:"
         empty_error:     "No criteria were found in the provided file."
       errors:
         messages:
-          released_marks:         "Cannot update criteria for an assignment with released marks"
-
-    section:
-      help:
-        manage_users: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
-
-    #app/views/assignments/_read.html.erb
-    additional_information: "Additional Information"
+          released_marks:         "Cannot update criteria for an assignment with released marks."
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
@@ -263,35 +163,12 @@ en:
       run_tests: "Run tests"
       stop_test: "Stop test"
       stop_batch: "Stop batch"
-      fetch_testers: "Fetch testers list"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
       need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      new_test_script_file: "New Test Script File"
-      new_test_support_file: "New Test Support File"
-      assignment_test_script_files: "Test Script Files"
-      assignment_test_support_files: "Test Support Files"
-      duplicate_filename: "Attempted to upload the following filename more than once: "
       tokens_available_on: "Tokens available starting on"
-      download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
-      test_group_option:
-        upload_required: "Upload <span class='required_field'>*</span>"
-        upload_help: "The new file name must not exist already"
-        replace: "Update"
-        replace_help: "The updated file name can be the same as the current one"
-        remove_file: "Remove this file"
-        remove_file_help: "Check this box and press submit at the bottom to delete the file"
-        run_by_instructors: "Runnable by Instructors"
-        run_by_instructors_help: "Check to allow instructors to run this script (instructor tests, visible to students only after releasing marks)"
-        run_by_students: "Runnable by Students"
-        run_by_students_help: "Check to allow students to run this script (student tests, requires explicitly enabling them at the top of the page)"
-        associated_criterion: "Associated Criterion"
-        display_output: "Display test Output"
-        display_output_help: "Choose when to show the test 'OUTPUT' column to the students (the instructors will always see it regardless of this setting)"
-        display_to:
-          instructors: "To instructors only"
-          instructors_and_students: "To instructors and students"
-          instructors_and_student_tests: "To instructors, then only student tests to students"
+      loading_specs: "Tester settings are being loaded, please refresh the page in a minute."
+      files: "Test Files"
       token:
         start_date: "Tokens available starting on:"
         available: "Tokens available:"
@@ -312,7 +189,6 @@ en:
       results:
         all_tests: "All tests"
         unknown_test: "Unknown test"
-        missing_test_group: "This test group is missing from the test run"
         no_source_files: "There are no student files to run the tests"
         bad_server: "Server '%{hostname}' error: %{error}"
         bad_results: "Test results are malformed: %{error}"

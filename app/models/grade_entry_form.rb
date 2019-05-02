@@ -67,53 +67,30 @@ class GradeEntryForm < ApplicationRecord
       return @ges_total_grades
     end
 
-    total_grades = grade_entry_students.joins(:grades).group(:grade_entry_student_id).sum(:grade)
+    total_grades = Hash[
+      grade_entry_students.where.not(total_grade: nil).pluck(:id, :total_grade)
+    ]
     @ges_total_grades = total_grades
     total_grades
   end
 
-
-  # An array of all grade_entry_students' released percentage total grades that are not nil
-  def released_percentage_grades_array
-    if defined? @released_grades_array
-      return @released_grades_array
-    end
-
-    total_grades = grade_entry_student_total_grades
-    grades = Array.new
-    out_of = out_of_total
-
-    grade_entry_students.where(released_to_student: true).find_each do |grade_entry_student|
-      ges_total_grade = total_grades[grade_entry_student.id]
-      if !ges_total_grade.nil? && out_of != 0
-        grades.push((ges_total_grade / out_of) * 100 )
-      end
-    end
-
-    @released_grades_array = grades
-
-    grades
-  end
-
-  # An array of all grade_entry_students' percentage total grades that are not nil
+  # An array of all active grade_entry_students' percentage total grades that are not nil
   def percentage_grades_array
     if defined? @grades_array
       return @grades_array
     end
 
-    total_grades = grade_entry_student_total_grades
     grades = Array.new
     out_of = out_of_total
 
-    grade_entry_students.find_each do |grade_entry_student|
-      ges_total_grade = total_grades[grade_entry_student.id]
+    grade_entry_students.joins(:user).where('users.hidden': false).find_each do |grade_entry_student|
+      ges_total_grade = grade_entry_student.total_grade
       if !ges_total_grade.nil? && out_of != 0
         grades.push((ges_total_grade / out_of) * 100 )
       end
     end
 
     @grades_array = grades
-
     grades
   end
 
@@ -129,34 +106,31 @@ class GradeEntryForm < ApplicationRecord
     return distribution
   end
 
-  # Determine the average of all of the students' marks that have been
-  # released so far (return a percentage).
-  def calculate_released_average
-    percentage_grades = released_percentage_grades_array
+  # Returns the average of all active student marks.
+  def calculate_average
+    percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : DescriptiveStatistics.mean(percentage_grades)
   end
 
-  # Determine the median of all of the students' marks that have been
-  # released so far (return a percentage).
-  def calculate_released_median
-    percentage_grades = released_percentage_grades_array
+  # Returns the median of all active student marks.
+  def calculate_median
+    percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : DescriptiveStatistics.median(percentage_grades)
   end
 
-  # Determine the number of grade_entry_students that have submitted
-  # the grade_entry_form
-  def grade_entry_forms_submitted
+  # Determine the number of active grade_entry_students that have been given a mark.
+  def count_non_nil
     percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : percentage_grades.size
   end
 
-  def calculate_released_failed
-    percentage_grades = released_percentage_grades_array
+  def calculate_failed
+    percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : percentage_grades.count { |mark| mark < 50 }
   end
 
-  def calculate_released_zeros
-    percentage_grades = released_percentage_grades_array
+  def calculate_zeros
+    percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : percentage_grades.count(&:zero?)
   end
 

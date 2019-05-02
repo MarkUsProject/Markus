@@ -1,4 +1,5 @@
 cr30:
+  type: rubric
   max_mark: 5.0
   level_0:
     name: What?
@@ -49,3 +50,23 @@ cr50:
 cr60:
   type: flexible
   max_mark: 10.0
+cr90:
+  type: rubric
+  max_mark: 4.55
+  level0:
+    name: 0
+    description: 0
+  level1:
+    name: 1
+    description: 1
+  level2:
+    name: 2
+    description: 2
+  level3:
+    name: 3
+    description: 3
+  level4:
+    name: 4
+    description: 4
+  ta_visible: true
+  peer_visible: false

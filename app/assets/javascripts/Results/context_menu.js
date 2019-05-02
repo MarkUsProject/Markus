@@ -19,13 +19,13 @@ var annotation_context_menu = {
         title: I18n.t('helpers.submit.create',
                       {model: I18n.t('activerecord.models.annotation.one')}),
         cmd: 'new_annotation',
-        action: () => leftPane.newAnnotation(),
+        action: () => resultComponent.newAnnotation(),
         disabled: true
       },
       common_annotations: {
         title: `${I18n.t('results.annotation.common')} <kbd>></kbd>`,
         cmd: 'common_annotations',
-        disabled: true
+        disabled: false
       },
       edit_annotation: {
         title: I18n.t('edit'),
@@ -34,7 +34,7 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            leftPane.editAnnotation(annot_id);
+            resultComponent.editAnnotation(annot_id);
           }
         },
         disabled: true
@@ -46,7 +46,7 @@ var annotation_context_menu = {
           var clicked_element = $(ui.target);
           var annot_id = get_annotation_id(clicked_element);
           if (annot_id !== null && annot_id.length !== 0) {
-            leftPane.removeAnnotation(annot_id);
+            resultComponent.removeAnnotation(annot_id);
           }
         },
         disabled: true
@@ -133,9 +133,9 @@ var annotation_context_menu = {
         var annotation_selected = (function() {
           var clicked_element = $(ui.target);
           if (annotation_type === ANNOTATION_TYPES.CODE) {
-            return clicked_element.closest('.source-code-glowing-1');
+            return clicked_element.closest('.source-code-glowing-1').length > 0;
           } else {
-            return clicked_element.closest('.annotation_holder');
+            return clicked_element.closest('.annotation_holder').length > 0;
           }
         })();
         $(document).contextmenu('enableEntry', 'edit_annotation',
@@ -153,7 +153,7 @@ var annotation_context_menu = {
         addClass: 'has_common_annotations',
         action: function(event, ui){ return false; },
         children: common_annotations_menu_children,
-        disabled: true
+        disabled: false
       });
     }
   }

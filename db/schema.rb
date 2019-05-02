@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_29_131200) do
+ActiveRecord::Schema.define(version: 2019_04_23_155205) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -253,22 +253,15 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
     t.index ["grade_entry_item_id", "grade_entry_student_id"], name: "index_grades_on_grade_entry_item_id_and_grade_entry_student_id", unique: true
   end
 
-  create_table "grouping_queues", id: :serial, force: :cascade do |t|
-    t.integer "submission_collector_id"
-    t.boolean "priority_queue", default: false
-  end
-
   create_table "groupings", id: :serial, force: :cascade do |t|
     t.integer "group_id", null: false
     t.integer "assignment_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "admin_approved", default: false, null: false
-    t.integer "grouping_queue_id"
     t.boolean "is_collected", default: false
     t.integer "notes_count", default: 0
     t.integer "criteria_coverage_count", default: 0
-    t.boolean "error_collecting", default: false
     t.integer "test_tokens", default: 0, null: false
     t.text "starter_code_revision_identifier"
     t.index ["assignment_id", "group_id"], name: "groupings_u1", unique: true
@@ -458,12 +451,6 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
     t.index ["user_id"], name: "index_split_pdf_logs_on_user_id"
   end
 
-  create_table "submission_collectors", id: :serial, force: :cascade do |t|
-    t.integer "child_pid"
-    t.boolean "stop_child", default: false
-    t.boolean "safely_stop_child_exited", default: false
-  end
-
   create_table "submission_files", id: :serial, force: :cascade do |t|
     t.integer "submission_id"
     t.string "filename"
@@ -531,8 +518,6 @@ ActiveRecord::Schema.define(version: 2019_01_29_131200) do
 
   create_table "test_groups", id: :serial, force: :cascade do |t|
     t.text "name", null: false
-    t.boolean "run_by_instructors", default: true, null: false
-    t.boolean "run_by_students", default: false, null: false
     t.integer "display_output", default: 0, null: false
     t.bigint "assignment_id", null: false
     t.string "criterion_type"

@@ -6,6 +6,8 @@ fr:
       short: "YYYY-DD-MM"
       datetimepicker: "yy-dd-mm"
 
+    before_now_warning: "La date que vous avez choisie est antérieure à la date actuelle."
+
   time:
     formats:
       default: "%A %d %B %Y %H:%M:%S"

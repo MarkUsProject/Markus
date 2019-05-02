@@ -1,80 +1,27 @@
 <% content_for :head do %>
-  <%# TODO: merge 'grader.scss' into 'results.scss' %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
-    <script>
+  <%= javascript_include_tag 'Results/main' %>
+  <script>
+    let PDFJS_PATH = '<%= asset_path("pdfjs.js") %>';
+    let PDFJS_WORKER_PATH = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
+
     document.addEventListener('DOMContentLoaded', () => {
-      window.leftPane = makeLeftPane(document.getElementById('left-pane'),
+      window.resultComponent = makeResult(document.getElementById('result-main'),
         {
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
+          grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          role: '<%= @current_user.class.name %>',
         }
       );
 
-      makeMarksPanel(document.getElementById('mark_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
-
-      window.summaryPanel = makeSummaryPanel(document.getElementById('summary_viewer'),
-        {
-          result_id: <%= @result.id %>,
-          submission_id: <%= @result.submission_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
-        }
-      );
+      window.modal_help = new ModalMarkus('#help_dialog');
     });
   </script>
 <% end %>
-
-<script>
-  var modalNotesGroup = null;
-
-  $(document).ready(function() {
-    window.modalNotesGroup = new ModalMarkus('#notes_dialog');
-    window.modal_help = new ModalMarkus('#help_dialog');
-
-    // Set up the 'working' notices
-    $('#working').ajaxStart(function() {
-      this.style.display = '';
-      window.onbeforeunload = check_working;
-    }).ajaxStop(function() {
-      this.style.display = 'none';
-      window.onbeforeunload = null;
-    });
-
-    <%
-      if @current_user.admin?
-        num_marked = @assignment.get_num_marked
-        num_assigned = @assignment.get_num_assigned
-      elsif @current_user.ta?
-        num_marked = @assignment.get_num_marked(@current_user.id)
-        num_assigned = @assignment.get_num_assigned(@current_user.id)
-      elsif @current_user.is_reviewer_for?(@assignment.pr_assignment, @result)
-        reviewer_group = @current_user.grouping_for(@assignment.pr_assignment.id)
-        num_marked = PeerReview.get_num_marked(reviewer_group)
-        num_assigned = PeerReview.get_num_assigned(reviewer_group)
-      end
-    %>
-    update_bar(<%= num_marked %>, <%= num_assigned %>);
-
-    <%= render partial: 'results/marker/keybinding',
-               formats: [:js] %>
-  });
-
-  function check_working() {
-    return '<%= t(:still_working_warning) %>';
-  }
-</script>
-
-<% # Javascript for progress bar %>
-<%= render partial: 'results/marker/update_progress_bar',
-           formats: [:js] %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],
@@ -82,9 +29,6 @@
              result_id: @result.id,
              assignment_id: @result.submission.grouping.assignment.id
            } %>
-
-<%= render partial: 'results/marker/boot',
-           formats: [:js] %>
 
 <!-- Dialogs -->
 <aside class='dialog' id='notes_dialog' style='display:none'></aside>
@@ -159,57 +103,21 @@
         </div>
         <section class='dialog-actions'>
           <%= hidden_field_tag 'grouping_id', @grouping.id %>
-          <%= f.submit t(:submit) %>
+          <%= f.submit t(:save) %>
           <input type='reset'
                  value='<%= t(:cancel) %>'
-                 onclick='modal_create_new.close();'>
+                 onclick='modal_create_new_tag.close();'>
         </section>
     <% end %>
   </aside>
 <% end %>
 
-<% content_for :title do %>
-  <%= t('results.edit.title',
-        { assignment_name: @assignment.short_identifier,
-          group_name: @current_user.student? ? t('assignment.review') : @grouping.get_group_name }) %>
-<% end %>
-<% content_for :additional_headings do %>
-  <div class="progress_meter">
-    <span class="progress_span">
-    </span>
-  </div>
-  <a onclick="compact_view_toggle()" style="margin: 0px 15px">Compact View</a>
-<% end %>
+<div id='criterion_incomplete_error' class='error hidden'></div>
 
-<div class='wrapLeft'>
-  <%= render partial: 'results/common/submission_selector',
-             locals: { group: @group,
-                       result: @result,
-                       assignment: @assignment,
-                       previous_grouping: @previous_grouping,
-                       next_grouping: @next_grouping } %>
+<div id='result-main'></div>
 
-  <%= render partial: 'results/common/errors' %>
+<!-- Annotation pane-->
+<div id='annotation_holder'></div>
 
-  <% if !@result.released_to_students %>
-    <%= render partial: 'results/marker/marker_panes',
-               locals: { result: @result,
-                         assignment: @assignment,
-                         submission: @submission,
-                         old_result: @old_result } %>
-  <% else %>
-    <%= render partial: 'results/result_summary',
-               formats: [:html],
-               handlers: [:erb] %>
-  <% end %>
-</div>
-
-<%# Javascript files %>
-<%= javascript_include_tag 'Results/main' %>
-
-<%= render partial: 'results/common/context_menu',
-           formats: [:js],
-           locals: {
-               result: @result,
-               annotation_categories: @assignment.annotation_categories.includes(:annotation_texts)
-           } %>
+<!-- Modal element -->
+<aside class='dialog' id='annotation_dialog'></aside>

@@ -10,8 +10,7 @@
       <%= t('download_csv') %>
     </div>
     <%= link_to '',
-                download_assignment_list_assignments_path(
-                  file_format: 'csv'),
+                download_assignments_path(format: 'csv'),
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <div class='clickable_links'>
@@ -20,8 +19,7 @@
       <%= t('download_yml') %>
     </div>
     <%= link_to '',
-                download_assignment_list_assignments_path(
-                  file_format: 'yml'),
+                download_assignments_path(format: 'yml'),
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>
   <section class='dialog-actions'>

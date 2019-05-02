@@ -43,41 +43,54 @@
 
 
 /* Top toolbars: student selector/file selector/download buttons */
+#submission-selector-container {
+  background-color: $lighter-blue;
+  border: $dark-grey 1px solid;
+  padding: 0.25em 0;
+  width: 100%;
+}
 
-#student_selector {
-  display: table;
+#submission-selector {
+  align-items: center;
+  display: flex;
+  justify-content: space-evenly;
   margin: 0;
-  padding: 2px 10px;
+  padding: 0.3em 0;
   width: 100%;
 
-  #criterion_incomplete_error {
-    display: table-row;
+  .button {
+    display: inline-block;
+    height: 3em;
+    margin: 0 5px;
+    min-width: 90px;
+    padding: 0.7em 0.5em 0.5em;
   }
 
-  #student_selector_controls {
-    display: table-row;
+  button {
+    height: 3em;
+    margin: 0 5px;
+    min-width: 100px;
+    padding: 0.4em;
   }
 
-  .left,
-  .middle,
-  .right {
-    display: table-cell;
+  .group-name {
+    display: inline-block;
+    max-width: 200px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .left {
-    text-align: left;
-    width: 20%;
-  }
-
-  .middle {
+  .total {
+    background: $light-blue;
+    border: 1px solid $grey;
+    border-radius: $radius;
+    display: inline-block;
+    flex-basis: auto;
+    margin: 0 5px;
+    min-width: 130px;
+    padding: 0 5px;
     text-align: center;
-    width: 60%;
-  }
-
-  .right {
-    text-align: right;
-    width: 20%;
-    float: none;
   }
 }
 
@@ -107,34 +120,14 @@
 
 #download_file_selector {
   border-radius: $radius;
-  display: inline-block;
   text-align: center;
   margin-bottom: 10px;
   margin-top: 10px;
   line-height: 16.25px;
 }
 
-#download_button {
-  display: inline-block;
-  float: right;
-  margin-top: 8px;
-  margin-left: 10px;
-}
-
-#download_all_files_button {
-  display: block;
-  margin: auto;
-}
-
-.download_file {
-  .inline_label {
-    margin-left: 0.5em;
-  }
-}
-
-#include_annotations {
-  margin-right: 0.5em;
-  float: left;
+.inline_label {
+  margin-left: 0.5em;
 }
 
 #annotations_options {
@@ -142,10 +135,6 @@
   padding-top: 10px;
   padding-bottom: 5px;
   margin-left: 110px;
-}
-
-#download_files_dialog {
-  top: 17% !important;
 }
 
 
@@ -168,7 +157,9 @@
 #annotations_summary,
 #remark_request_tab,
 #feedback_file_content {
-  height: 650px;
+  flex-basis: 600px;
+  flex-grow: 1;
+  width: 100%;
 }
 
 #annotations_summary {
@@ -177,11 +168,6 @@
 
 
 /* Source code pane */
-
-// Adjusted height for users that also see the annotation menu
-#annotation_menu + #codeviewer {
-  height: 600px;
-}
 
 .image_container {
   overflow: auto;
@@ -512,6 +498,10 @@ ul.annotation_text_list {
     font-weight: bold;
     padding-right: 0.5em;
     text-align: right;
+
+    &.invalid {
+      background-color: $light-red;
+    }
   }
 }
 
@@ -619,32 +609,11 @@ ul.annotation_text_list {
   }
 }
 
-.tag_summary {
-  font-weight: 600;
-  padding-bottom: 10px;
-
-  .top_tag_list {
-    line-height: 2;
-    padding-top: 5px;
-    text-align: center;
-
-    .tag_line:nth-child(odd) {
-      background-color: $light-grey;
-    }
-  }
-}
-
 .tag_admin {
   text-align: center;
 }
 
 /* Resizable column panes */
-
-.flex-pane {
-  display: flex;
-  flex-direction: column;
-  height: 100%
-}
 
 .flex-col {
   display: flex;
@@ -670,6 +639,9 @@ ul.annotation_text_list {
   #left-pane,
   #drag,
   #right-pane {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     margin: 0;
     padding: 0;
     vertical-align: top;
@@ -708,10 +680,7 @@ ul.annotation_text_list {
   #drag {
     background: #ccc;
     cursor: col-resize;
-    height: 50%;
-    overflow: hidden;
-    position: absolute;
-    margin: 5px 1px;
+    position: inherit;
     width: 4px;
 
     @include breakpoint(small) {
@@ -722,4 +691,25 @@ ul.annotation_text_list {
 
 .react-tabs__tab--disabled {
   display: none;
+}
+
+.react-tabs {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.react-tabs__tab-panel {
+  flex-grow: 1;
+}
+
+.react-tabs__tab-panel--selected {
+  display: flex;
+  flex-direction: column;
+}
+
+#result-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
