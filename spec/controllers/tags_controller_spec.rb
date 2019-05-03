@@ -75,7 +75,7 @@ describe TagsController do
     end
 
     it 'accepts a valid YAML file' do
-      pending('currently downloading YML files does not work due to expected, got id which is an instance of String error')
+      pending('downloading YML files does not work due to expected, got id which is an instance of String error')
       post :yml_upload, params: { yml_tags: @file_good_yml, assignment_id: assignment.id }
 
       expect(response.status).to eq(302)
