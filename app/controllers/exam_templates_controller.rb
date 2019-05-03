@@ -126,7 +126,7 @@ class ExamTemplatesController < ApplicationController
   def add_fields
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    if params['exam-cover-checkbox-' + exam_template.id.to_s]
+    if params[:automatic_parsing] == 'true'
       exam_template.automatic_parsing = true
       cover_field1 = params[:field1]
       cover_field2 = params[:field2]
@@ -149,12 +149,8 @@ class ExamTemplatesController < ApplicationController
       exam_template.crop_width = nil
       exam_template.crop_height = nil
     end
-    p exam_template.crop_x, exam_template.crop_y, exam_template.crop_width
     exam_template.save
-
-    respond_to do |format|
-      format.js { render inline: 'location.reload();' }
-    end
+    redirect_to action: 'index'
   end
 
   def split

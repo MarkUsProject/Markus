@@ -28,7 +28,7 @@ function add_template_division(id) {
 }
 
 function toggle_cover_page(id, fields) {
-  if ($('#exam-cover-checkbox-' + id).is(':checked')) {
+  if ($('#automatic_parsing').is(':checked')) {
     $('#exam-cover-display-' + id).css('display', 'flex');
     var i;
     for (i=0; i<fields.length; i++) {
@@ -61,17 +61,6 @@ function attach_crop_box() {
         $('#height').val(h/stageHeight);
       });
       document.getElementsByClassName('jcrop-stage')[0].removeClass('jcrop-image-stage');
-
-      // Initialize form values for initial widget
-      const stageHeight = $('#crop-target').height();
-      const stageWidth = $('#crop-target').width();
-      const { x, y, w, h } = widget.pos;
-      // find the input element for width
-      // set the width value for that form element
-      $('#x').val(x/stageWidth);
-      $('#y').val(y/stageHeight);
-      $('#width').val(w/stageWidth);
-      $('#height').val(h/stageHeight);
     });
   });
 }

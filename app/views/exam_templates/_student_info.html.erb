@@ -1,9 +1,11 @@
 <%= form_for [@assignment, exam_template],
-             url: add_fields_assignment_exam_template_path(id: exam_template.id),
-             remote: true do |f| %>
+             url: add_fields_assignment_exam_template_path(id: exam_template.id) do |f| %>
 
   <p>
-    <%= check_box_tag("exam-cover-checkbox-#{exam_template.id}", 1, exam_template.automatic_parsing, :onclick => "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;") %> Automatically parse student information<br>
+    <%= check_box_tag :automatic_parsing, true,
+                      exam_template.automatic_parsing,
+                      onchange: "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;" %>
+    Automatically parse student information<br>
   </p>
 
   <div id="exam-cover-display-<%= exam_template.id %>" style="display: <% if exam_template.automatic_parsing %>flex<% else %>none<% end %>;">
@@ -34,10 +36,10 @@
           </li>
         <% end %>
         <li>
-          <input id="x" type="hidden" name="x" min="1" max="400" style="display:inline">
-          <input id="y" type="hidden" name="y" min="1" max="400" style="display:inline">
-          <input id="width" type="hidden" name="width" min="1" max="400" style="display:inline">
-          <input id="height" type="hidden" name="height" min="1" max="400" style="display:inline">
+          <%= hidden_field_tag 'x', exam_template.crop_x %>
+          <%= hidden_field_tag 'y', exam_template.crop_y %>
+          <%= hidden_field_tag 'width', exam_template.crop_width %>
+          <%= hidden_field_tag 'height', exam_template.crop_height %>
         </li>
       </ul>
     </div>
