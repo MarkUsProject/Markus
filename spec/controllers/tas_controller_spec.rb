@@ -179,7 +179,7 @@ describe TasController do
       end
 
       it 'returns text/yaml type' do
-        get :download_ta_list, format: 'yaml'
+        get :download_ta_list, format: 'yml'
         expect(response.content_type).to eq 'text/yaml'
       end
     end
