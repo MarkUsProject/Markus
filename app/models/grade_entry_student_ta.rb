@@ -28,4 +28,32 @@ class GradeEntryStudentTa < ApplicationRecord
     # then remove the activerecord-import gem.
     import(columns, values, validate: false)
   end
+
+  def self.from_csv(grade_entry_form, csv_data, remove_existing)
+    if remove_existing
+      self.joins(:grade_entry_student)
+          .where('grade_entry_students.grade_entry_form_id': grade_entry_form.id)
+          .delete_all
+    end
+
+    new_mappings = []
+    tas = Hash[Ta.pluck(:user_name, :id)]
+    grade_entry_students = Hash[
+      grade_entry_form.grade_entry_students.joins(:user).pluck('users.user_name', :id)
+    ]
+
+    result = MarkusCSV.parse(csv_data.read) do |row|
+      raise CSVInvalidLineError if row.empty?
+      grade_entry_student_id = grade_entry_students[row.first]
+      raise CSVInvalidLineError if grade_entry_student_id.nil?
+      row.drop(1).each do |ta_user_name|
+        next if ta_user_name.blank?
+        ta_id = tas[ta_user_name]
+        raise CSVInvalidLineError if ta_id.nil?
+        new_mappings << { grade_entry_student_id: grade_entry_student_id, ta_id: ta_id }
+      end
+    end
+    GradeEntryStudentTa.import new_mappings, validate: false, on_duplicate_key_ignore: true
+    result
+  end
 end

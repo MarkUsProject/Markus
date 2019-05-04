@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('upload_the', item: t('graders.download.grader_groups')) %>
+<%= content_for :modal_title, t('upload_the', item: t('graders.grader_maps')) %>
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
@@ -7,19 +7,18 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'grader_mapping',
+                             upload_id: 'upload_file',
                              button_id: 'upload' %>
 
-  <p><%= t('graders.upload.instructions_grader_groups_html') %></p>
+  <%= t('upload_help_html', section_id: 'graders') %>
 
-  <%= form_tag({controller:'graders',
-                action: 'csv_upload_grader_groups_mapping',id: @assignment.id},
-               {multipart: true}) do %>
+  <%= form_tag upload_assignment_graders_path(assignment_id: @assignment.id),
+               { multipart: true } do %>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
-    <%= file_field_tag :grader_mapping, size: 2 %>
+    <%= file_field_tag :upload_file, size: 2 %>
 
     <p>
       <%= label_tag :remove_existing_mappings,
@@ -28,30 +27,20 @@
     </p>
 
     <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
+      <%= submit_tag t('upload_the', item: t('graders.download.grader_groups')),
                      data: { disable_with: t(:uploading_please_wait) },
-                     disabled: true,
-                     id: 'upload'  %>
+                     name: 'groupings',
+                     id: 'upload-groupings'  %>
+      <br>
+      <% if @assignment.assign_graders_to_criteria %>
+        <%= submit_tag t('upload_the', item: t('graders.download.grader_criteria')),
+                       data: { disable_with: t(:uploading_please_wait) },
+                       id: 'upload-criteria',
+                       name: 'criteria'
+        %>
+        <br>
+      <% end %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
-  <% end %>
-
-  <% if @assignment.assign_graders_to_criteria %>
-    <h2><%= t('upload_the', item: t('graders.download.grader_criteria')) %></h2>
-    <%= t('graders.upload.instructions_grader_criteria_html') %>
-    <%= form_tag({controller:'graders',
-                  action: 'csv_upload_grader_criteria_mapping',id: @assignment.id},
-                 {multipart: true}) do %>
-      <p>
-        <%= label_tag t('encoding') %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      </p>
-      <%= file_field_tag :grader_criteria_mapping, size: 2 %>
-
-      <section class='dialog-actions'>
-        <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
-        <input type='reset' value='<%= t(:cancel) %>'/>
-      </section>
-    <% end %>
   <% end %>
 <% end %>

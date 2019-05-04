@@ -252,15 +252,11 @@ Rails.application.routes.draw do
 
       resources :graders do
         collection do
-          post 'csv_upload_grader_groups_mapping'
-          post 'csv_upload_grader_criteria_mapping'
-          get 'download_grader_groupings_mapping'
-          get 'download_grader_criteria_mapping'
-          get 'download_dialog'
-          get 'download_grouplist'
+          post 'upload'
+          get 'grader_groupings_mapping'
+          get 'grader_criteria_mapping'
           get 'global_actions'
           post 'set_assign_criteria'
-          get 'upload_dialog'
           post 'global_actions'
           get 'grader_summary'
         end
@@ -305,8 +301,8 @@ Rails.application.routes.draw do
 
       resources :marks_graders, only: [:index] do
         collection do
-          post 'csv_upload_grader_groups_mapping'
-          get 'download_grader_students_mapping'
+          post 'upload'
+          get 'grader_mapping'
           post 'assign_all'
           post 'unassign_all'
           post 'unassign_single'

@@ -10,7 +10,7 @@
       <%= t('graders.download.grader_students') %>
     </div>
     <%= link_to '',
-                { action: 'download_grader_students_mapping',
+                { action: 'grader_mapping',
                   id: @grade_entry_form.id },
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>

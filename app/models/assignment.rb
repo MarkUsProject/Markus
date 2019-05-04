@@ -861,22 +861,6 @@ class Assignment < ApplicationRecord
     avg.round(2)
   end
 
-  # Assign graders to a criterion for this assignment.
-  # Raise a CSVInvalidLineError if the criterion or a grader doesn't exist.
-  def add_graders_to_criterion(criterion_name, graders)
-    criterion = get_criteria.find{ |crit| crit.name == criterion_name }
-
-    if criterion.nil?
-      raise CSVInvalidLineError
-    end
-
-    unless graders.all? { |g| Ta.exists?(user_name: g) }
-      raise CSVInvalidLineError
-    end
-
-    criterion.add_tas_by_user_name_array(graders)
-  end
-
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
     groupings.select do |grouping|

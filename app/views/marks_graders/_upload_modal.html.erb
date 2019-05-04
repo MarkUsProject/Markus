@@ -6,14 +6,13 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'grader_mapping',
+                             upload_id: 'upload_file',
                              button_id: 'upload' %>
 
-  <p><%= t('graders.upload.instructions_grader_students_html') %></p>
+  <%= t('upload_help_html', section_id: 'graders') %>
 
   <%= form_tag({ controller: 'marks_graders',
-                 action: 'csv_upload_grader_groups_mapping',
-                 id: @grade_entry_form.id },
+                 action: 'upload' },
                { multipart: true }) do %>
     <p>
       <%= label_tag t('encoding') %>
@@ -21,7 +20,13 @@
     </p>
 
     <p>
-      <%= file_field_tag :grader_mapping, size: 2 %>
+      <%= file_field_tag :upload_file, size: 2 %>
+    </p>
+
+    <p>
+      <%= label_tag :remove_existing_mappings,
+                    t('graders.upload.remove_existing_mappings') %>
+      <%= check_box_tag :remove_existing_mappings %>
     </p>
 
     <section class='dialog-actions'>

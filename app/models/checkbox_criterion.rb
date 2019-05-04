@@ -68,13 +68,6 @@ class CheckboxCriterion < Criterion
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 
-  def add_tas_by_user_name_array(ta_user_name_array)
-    result = ta_user_name_array.map do |ta_user_name|
-      Ta.where(user_name: ta_user_name).first
-    end.compact
-    add_tas(result)
-  end
-
   # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following

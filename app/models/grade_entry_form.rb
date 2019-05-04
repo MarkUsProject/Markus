@@ -142,7 +142,7 @@ class GradeEntryForm < ApplicationRecord
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
       [student.id, id, false]
     end
-    GradeEntryStudent.import columns, values, validate: false
+    GradeEntryStudent.import columns, values, validate: false, on_duplicate_key_ignore: true
   end
 
   def export_as_csv

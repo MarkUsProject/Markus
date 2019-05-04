@@ -68,6 +68,10 @@ shared_examples 'a controller supporting upload' do
   private
 
   def model_count
-    controller.controller_name.classify.constantize.count
+    if params[:model]
+      params[:model].count
+    else
+      controller.controller_name.classify.constantize.count
+    end
   end
 end
