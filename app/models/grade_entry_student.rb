@@ -156,21 +156,6 @@ class GradeEntryStudent < ApplicationRecord
     grade_entry_student.total_grade
   end
 
-  def add_tas_by_user_name_array(ta_user_name_array)
-    grade_entry_tas = []
-    ta_user_name_array.each do |ta_user_name|
-      ta = Ta.where(user_name: ta_user_name).first
-      if !ta.nil?
-        if !self.tas.include?(ta)
-          self.tas << ta
-        end
-      end
-      grade_entry_tas += Array(ta)
-    end
-    self.save
-  end
-
-
   def add_tas(tas)
     return unless self.valid?
     grade_entry_student_tas = self.tas

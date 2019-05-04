@@ -23,15 +23,6 @@ es:
       grader_students: "Estudiante / Evaluador (CSV)"
 
     upload:
-      instructions_grader_criteria_html: "
-        Archivo en formato CSV:<br>
-        <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_groups_html: "
-        Archivo en formato CSV:<br>
-        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_students_html: "
-        Formato del archivo CSV:<br>
-        <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
       remove_existing_mappings: "Remove existing grader assignments"
 
     help: "Asignar evaluadores a grupos de estudiantes y criterios de calificación específicos.

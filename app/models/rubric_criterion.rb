@@ -247,11 +247,4 @@ class RubricCriterion < Criterion
     end
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
-
-  def add_tas_by_user_name_array(ta_user_name_array)
-    result = ta_user_name_array.map do |ta_user_name|
-      Ta.find_by(user_name: ta_user_name)
-    end.compact
-    add_tas(result)
-  end
 end

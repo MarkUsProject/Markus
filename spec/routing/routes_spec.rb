@@ -775,56 +775,31 @@ describe 'An Assignment' do
     let(:grader_ctrl) { 'graders' }
 
     context 'collection' do
-      it 'routes POST csv_upload_grader_groups_mapping properly' do
-        expect(post: grader_path + '/csv_upload_grader_groups_mapping')
+      it 'routes POST upload properly' do
+        expect(post: grader_path + '/upload')
           .to route_to(
             controller: grader_ctrl,
-            action: 'csv_upload_grader_groups_mapping',
+            action: 'upload',
             assignment_id: assignment.id.to_s,
             locale: 'en')
       end
 
-      it 'routes POST csv_upload_grader_criteria_mapping properly' do
-        expect(post: grader_path + '/csv_upload_grader_criteria_mapping')
+      it 'routes GET grader_groupings_mapping properly' do
+        expect(get: grader_path + '/grader_groupings_mapping')
           .to route_to(
             controller: grader_ctrl,
-            action: 'csv_upload_grader_criteria_mapping',
+            action: 'grader_groupings_mapping',
             assignment_id: assignment.id.to_s,
             locale: 'en')
       end
 
-      it 'routes GET download_grader_groupings_mapping properly' do
-        expect(get: grader_path + '/download_grader_groupings_mapping')
+      it 'routes GET grader_criteria_mapping properly' do
+        expect(get: grader_path + '/grader_criteria_mapping')
           .to route_to(
             controller: grader_ctrl,
-            action: 'download_grader_groupings_mapping',
+            action: 'grader_criteria_mapping',
             assignment_id: assignment.id.to_s,
             locale: 'en')
-      end
-
-      it 'routes GET download_grader_criteria_mapping properly' do
-        expect(get: grader_path + '/download_grader_criteria_mapping')
-          .to route_to(
-            controller: grader_ctrl,
-            action: 'download_grader_criteria_mapping',
-            assignment_id: assignment.id.to_s,
-            locale: 'en')
-      end
-
-      it 'routes GET download_dialog properly' do
-        expect(get: grader_path + '/download_dialog').to route_to(
-          controller: grader_ctrl,
-          action: 'download_dialog',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET download_grouplist properly' do
-        expect(get: grader_path + '/download_grouplist').to route_to(
-          controller: grader_ctrl,
-          action: 'download_grouplist',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
       end
 
       it 'routes GET global_actions properly' do
@@ -839,14 +814,6 @@ describe 'An Assignment' do
         expect(post: grader_path + '/set_assign_criteria').to route_to(
           controller: grader_ctrl,
           action: 'set_assign_criteria',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET upload_dialog properly' do
-        expect(get: grader_path + '/upload_dialog').to route_to(
-          controller: grader_ctrl,
-          action: 'upload_dialog',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end

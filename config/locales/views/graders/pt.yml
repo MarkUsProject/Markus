@@ -21,15 +21,6 @@ pt:
       grader_students: "Alunos / Mapa avaliador (CSV)"
 
     upload:
-      instructions_grader_criteria_html: "
-        Formato do arquivo CSV:<br>
-        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_groups_html: "
-        Formato do arquivo CSV:<br>
-        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_students_html: "
-        Formato arquivo CSV:<br>
-        <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
       remove_existing_mappings: "Remover mapeamentos existentes"
 
     help: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."

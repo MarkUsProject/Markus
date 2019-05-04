@@ -21,15 +21,6 @@ fr:
       grader_students: "Étudiants / attribution des correcteurs (CSV)"
 
     upload:
-      instructions_grader_criteria_html: "
-        Format du fichier CSV : <br>
-        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_groups_html: "
-        Format du fichier CSV : <br>
-        <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_students_html: "
-        Format du fichier CSV : <br>
-        <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
       remove_existing_mappings: "Supprimer les attributions existants"
 
     help: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."

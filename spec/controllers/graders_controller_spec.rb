@@ -15,8 +15,8 @@ describe GradersController do
       expect(response.status).to eq(404)
     end
 
-    it 'GET on :csv_upload_grader_groups_mapping' do
-      get_as @student, :csv_upload_grader_groups_mapping, params: { assignment_id: 1 }
+    it 'GET on :upload' do
+      get_as @student, :upload, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
     end
 
@@ -30,8 +30,8 @@ describe GradersController do
       expect(response.status).to eq(404)
     end
 
-    it 'POST on :csv_upload_grader_groups_mapping' do
-      post_as @student, :csv_upload_grader_groups_mapping, params: { assignment_id: 1 }
+    it 'POST on :upload' do
+      post_as @student, :upload, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
     end
 
@@ -71,7 +71,10 @@ describe GradersController do
       end
     end
 
-    context 'doing a POST on :csv_upload_grader_groups_mapping' do
+    context 'doing a POST on :upload' do
+      include_examples 'a controller supporting upload' do
+        let(:params) { { assignment_id: @assignment.id, model: TaMembership, groupings: true } }
+      end
 
       before :each do
         # Contents: test_group,g9browni,g9younas
@@ -91,8 +94,8 @@ describe GradersController do
         @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
         @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
         post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: @group_grader_map_file }
+                :upload,
+                params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
 
         expect(response).to be_redirect
         expect(@grouping1.tas.count).to eq 2
@@ -102,10 +105,10 @@ describe GradersController do
         expect(@grouping2.tas).to include(@ta1)
         expect(@grouping3.tas.count).to eq 1
         expect(@grouping3.tas).to include(@ta3)
-        expect(:post => 'assignments/1/graders/csv_upload_grader_groups_mapping')
+        expect(:post => 'assignments/1/graders/upload')
           .to route_to(
             :controller => 'graders',
-            :action     => 'csv_upload_grader_groups_mapping',
+            :action     => 'upload',
             :assignment_id => '1'
           )
       end
@@ -113,8 +116,8 @@ describe GradersController do
       it 'and a successful call updates repository permissions exactly once' do
         expect(Repository.get_class).to receive(:__update_permissions)
         post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: @group_grader_map_file }
+                :upload,
+                params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
       end
 
       it 'and some graders are invalid' do
@@ -125,8 +128,8 @@ describe GradersController do
         @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
         @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
         post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: @group_grader_map_file }
+                :upload,
+                params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
 
         expect(response).to be_redirect
         assert @grouping1.tas.count == 2
@@ -145,8 +148,8 @@ describe GradersController do
         @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
         @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
         post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: @group_grader_map_file }
+                :upload,
+                params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
 
         expect(response).to be_redirect
         expect(@grouping1.tas.count).to eq 0
@@ -155,31 +158,12 @@ describe GradersController do
         expect(@grouping3.tas.count).to eq 1
         expect(@grouping3.tas).to include(@ta3)
       end
-
-      it 'gracefully handle malformed csv files' do
-        tempfile = fixture_file_upload('files/malformed.csv')
-        post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: tempfile }
-
-        expect(response).to be_redirect
-        i18t_string = [I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f }
-        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
-      end
-
-      it 'gracefully handle a non csv file with a csv extension' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :csv_upload_grader_groups_mapping,
-                params: { assignment_id: @assignment.id, grader_mapping: tempfile, encoding: 'UTF-8' }
-
-        expect(response).to be_redirect
-        i18t_string = [I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f }
-        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
-      end
     end #groups csv upload
 
-    context 'doing a POST on :csv_upload_grader_criteria_mapping' do
+    context 'doing a POST on :upload' do
+      include_examples 'a controller supporting upload' do
+        let(:params) { { assignment_id: @assignment.id, model: TaMembership, criteria: true } }
+      end
 
       before :each do
         # Contents: correctness,g9browni,g9younas
@@ -203,8 +187,8 @@ describe GradersController do
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 2
@@ -214,10 +198,10 @@ describe GradersController do
           expect(@criterion2.tas).to include(@ta1)
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
-          expect(:post => 'assignments/1/graders/csv_upload_grader_criteria_mapping')
+          expect(:post => 'assignments/1/graders/upload')
             .to route_to(
                   :controller => 'graders',
-                  :action     => 'csv_upload_grader_criteria_mapping',
+                  :action     => 'upload',
                   :assignment_id => '1'
                 )
         end
@@ -230,8 +214,8 @@ describe GradersController do
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 0 # entire row is ignored
@@ -249,8 +233,8 @@ describe GradersController do
           @criterion2 = create(:rubric_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:rubric_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 2
@@ -274,8 +258,8 @@ describe GradersController do
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 2
@@ -295,8 +279,8 @@ describe GradersController do
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: 'style')
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 0 # entire row is ignored
@@ -314,8 +298,8 @@ describe GradersController do
           @criterion2 = create(:flexible_criterion, assignment: @assignment, name: "professor's whim")
           @criterion3 = create(:flexible_criterion, assignment: @assignment, name: 'class design')
           post_as @admin,
-                  :csv_upload_grader_criteria_mapping,
-                  params: { assignment_id: @assignment.id, grader_criteria_mapping: @criteria_grader_map_file }
+                  :upload,
+                  params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
           expect(@criterion1.tas.count).to eq 2
@@ -325,59 +309,37 @@ describe GradersController do
           expect(@criterion3.tas).to include(@ta3)
         end
       end # flexible criteria
-
-      it 'gracefully handle malformed csv files' do
-        tempfile = fixture_file_upload('files/malformed.csv')
-        post_as @admin,
-                :csv_upload_grader_criteria_mapping,
-                params: { assignment_id: @assignment.id, grader_criteria_mapping: tempfile, encoding: 'UTF-8' }
-
-        expect(response).to be_redirect
-        i18t_string = [I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f }
-        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
-      end
-
-      it 'gracefully handle a non csv file with a csv extension' do
-        tempfile = fixture_file_upload('files/pdf_with_csv_extension.csv')
-        post_as @admin,
-                :csv_upload_grader_criteria_mapping,
-                params: { assignment_id: @assignment.id, grader_criteria_mapping: tempfile, encoding: 'UTF-8' }
-
-        expect(response).to be_redirect
-        i18t_string = [I18n.t('upload_errors.unparseable_csv')].map { |f| extract_text f }
-        expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
-      end
     end # criteria csv upload
 
-    context 'doing a GET on :download_grader_groupings_mapping' do
+    context 'doing a GET on :grader_groupings_mapping' do
       before :each do
         @assignment = create(:assignment, assign_graders_to_criteria: true)
       end
 
       it 'routing properly' do
-        post_as @admin, :download_grader_groupings_mapping, params: { assignment_id: @assignment.id }
+        post_as @admin, :grader_groupings_mapping, params: { assignment_id: @assignment.id }
         expect(response.status).to eq(200)
-        expect(:get => 'assignments/1/graders/download_grader_groupings_mapping')
+        expect(:get => 'assignments/1/graders/grader_groupings_mapping')
           .to route_to(
                 :controller => 'graders',
-                :action     => 'download_grader_groupings_mapping',
+                :action     => 'grader_groupings_mapping',
                 :assignment_id => '1'
               )
       end
     end
 
-    context 'doing a GET on :download_grader_criteria_mapping' do
+    context 'doing a GET on :grader_criteria_mapping' do
       before :each do
         @assignment = create(:assignment, assign_graders_to_criteria: true)
       end
 
       it 'routing properly' do
-        post_as @admin, :download_grader_criteria_mapping, params: { assignment_id: @assignment.id }
+        post_as @admin, :grader_criteria_mapping, params: { assignment_id: @assignment.id }
         expect(response.status).to eq(200)
-        expect(:get => 'assignments/1/graders/download_grader_criteria_mapping')
+        expect(:get => 'assignments/1/graders/grader_criteria_mapping')
           .to route_to(
                 :controller => 'graders',
-                :action     => 'download_grader_criteria_mapping',
+                :action     => 'grader_criteria_mapping',
                 :assignment_id => '1'
               )
       end

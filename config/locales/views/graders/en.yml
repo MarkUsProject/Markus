@@ -21,15 +21,6 @@ en:
       grader_students: "Graders to students (CSV)"
 
     upload:
-      instructions_grader_criteria_html: "
-        CSV file format:<br>
-        <code>criterion_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_groups_html: "
-        CSV file format:<br>
-        <code>group_name,grader_user_name,grader_user_name,... </code><br>"
-      instructions_grader_students_html: "
-        CSV file format:<br>
-        <code>student_user_name,grader_user_name,grader_user_name,... </code><br>"
       remove_existing_mappings: "Remove existing grader assignments"
 
     help: "Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria."

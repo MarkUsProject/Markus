@@ -63,23 +63,16 @@ class MarksGradersController < ApplicationController
   end
 
   # Assign TAs to Students via a csv file
-  def csv_upload_grader_groups_mapping
-    if params[:grader_mapping].nil?
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      result = MarkusCSV.parse(
-          params[:grader_mapping].read,
-          encoding: params[:encoding]) do |row|
-        raise CSVInvalidLineError if row.empty?
-        grade_entry_student =
-            GradeEntryStudent.joins(:user)
-                             .find_by(
-                               users: { user_name: row.first },
-                               grade_entry_form_id:
-                                 params[:grade_entry_form_id])
-        raise CSVInvalidLineError if grade_entry_student.nil?
-        grade_entry_student.add_tas_by_user_name_array(row.drop(1))
-      end
+      grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
+      result = GradeEntryStudentTa.from_csv(grade_entry_form, data[:file], params[:remove_existing_mappings])
       unless result[:invalid_lines].empty?
         flash_message(:error, result[:invalid_lines])
       end
@@ -91,23 +84,24 @@ class MarksGradersController < ApplicationController
   end
 
   # Download grader/student mappings in CSV format.
-  def download_grader_students_mapping
+  def grader_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    students = students_with_assoc
 
-    file_out = MarkusCSV.generate(students) do |student|
-      # csv format is student_name, ta1_name, ta2_name, ... etc
-      student_array = [student.user_name]
-      grade_entry_student = student.grade_entry_students.find_by(
-        grade_entry_form_id: grade_entry_form.id)
-      unless grade_entry_student.nil?
-        student_array.concat(grade_entry_student
-                               .tas.order(:user_name).pluck(:user_name))
-      end
-      student_array
+    students = Student.left_outer_joins(grade_entry_students: :tas)
+                      .where('grade_entry_students.grade_entry_form_id': 1)
+                      .order('users.user_name', 'tas_grade_entry_students.user_name')
+                      .pluck('users.user_name', 'tas_grade_entry_students.user_name')
+                      .group_by { |x| x[0] }
+                      .to_a
+
+    file_out = MarkusCSV.generate(students) do |student, graders|
+      [student] + graders.map { |x| x[1] }
     end
 
-    send_data(file_out, type: 'text/csv', disposition: 'attachment')
+    send_data file_out,
+              type: 'text/csv',
+              disposition: 'attachment',
+              filename: "#{grade_entry_form.short_identifier}_grader_mapping.csv"
   end
 
   # These actions act on all currently selected graders & students
@@ -194,14 +188,5 @@ class MarksGradersController < ApplicationController
 
     GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, @grade_entry_form)
     head :ok
-  end
-
-  private
-
-  def students_with_assoc
-    Student.includes(
-      :section,
-      grade_entry_students: { grade_entry_student_tas: 'ta' }
-    )
   end
 end
