@@ -46,12 +46,15 @@ Metrics/LineLength:
   Max: 120
 
 Metrics/MethodLength:
-  Max: 20
+  Max: 50
 
 Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Style/Next:
   Enabled: false
 
 Style/NumericPredicate:
