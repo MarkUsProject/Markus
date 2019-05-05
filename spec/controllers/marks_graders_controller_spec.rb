@@ -17,15 +17,12 @@ describe MarksGradersController do
     before :each do
       # initialize students and a TA (these users must exist in order
       # to align with grader_student_form_good.csv)
-      @student_user_names = %w(c8shosta c5bennet)
+      grade_entry_form_with_data
+      @student_user_names = %w[c8shosta c5bennet]
       @student_user_names.each do |name|
-        create(:user, user_name: name, type: 'Student')
+        create(:student, user_name: name)
       end
-      @ta_user_name = 'c6conley'
-      user = create(:user, user_name: @ta_user_name, type: 'Ta')
-      create(:grade_entry_student,
-             user: user,
-             grade_entry_form: grade_entry_form_with_data)
+      @ta = create(:ta, user_name: 'c6conley')
 
       # We need to mock the rack file to return its content when
       # the '.read' method is called to simulate the behaviour of
@@ -37,9 +34,15 @@ describe MarksGradersController do
           'files/marks_graders/form_good.csv', 'text/csv')))
     end
 
-    it 'accepts a valid file' do
+    it 'accepts a valid file and can preserve existing TA mappings' do
+      create(:student, user_name: 'c5granad')
+      ges = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c5granad')
+      create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
       post :upload,
-           params: { grade_entry_form_id: grade_entry_form_with_data.id, upload_file: @file_good }
+           params: {
+             grade_entry_form_id: grade_entry_form_with_data.id,
+             upload_file: @file_good
+           }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -49,10 +52,41 @@ describe MarksGradersController do
 
       # check that the ta was assigned to each student
       @student_user_names.each do |name|
-        expect(@ta_user_name).to eq(GradeEntryStudent.joins(:user)
-                                        .find_by(users: { user_name: name })
-                                        .tas.first.user_name)
+        expect(
+          GradeEntryStudentTa.joins(grade_entry_student: :user)
+                             .where(grade_entry_student: { users: { user_name: name } } )
+                             .exists?
+        ).to be true
       end
+      expect(ges.tas.count).to eq 1
+    end
+
+    it 'accepts a valid file and can remove existing TA mappings' do
+      create(:student, user_name: 'c5granad')
+      ges = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c5granad')
+      create(:grade_entry_student_ta, grade_entry_student: ges, ta: @ta)
+      post :upload,
+           params: {
+             grade_entry_form_id: grade_entry_form_with_data.id,
+             upload_file: @file_good,
+             remove_existing_mappings: true
+           }
+
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(action: 'index',
+                                      grade_entry_form_id:
+                                        grade_entry_form_with_data.id)
+
+      # check that the ta was assigned to each student
+      @student_user_names.each do |name|
+        expect(
+          GradeEntryStudentTa.joins(grade_entry_student: :user)
+            .where(grade_entry_student: { users: { user_name: name } })
+            .exists?
+        ).to be true
+      end
+      expect(ges.tas.count).to eq 0
     end
   end
 
@@ -73,14 +107,12 @@ describe MarksGradersController do
       student = create(:student)
       grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user: student)
       grade_entry_student_ta = create(:grade_entry_student_ta, grade_entry_student: grade_entry_student)
-      csv_data =  "#{student.user_name},#{grade_entry_student_ta.ta.user_name}\n"
+      csv_data = "#{student.user_name},#{grade_entry_student_ta.ta.user_name}\n"
       expect(@controller).to receive(:send_data).with(
         csv_data,
-        {
-          type: 'text/csv',
-          disposition: 'attachment',
-          filename: "#{grade_entry_form.short_identifier}_grader_mapping.csv"
-        }
+        type: 'text/csv',
+        disposition: 'attachment',
+        filename: "#{grade_entry_form.short_identifier}_grader_mapping.csv"
       ) {
         # to prevent a 'missing template' error
         @controller.head :ok

@@ -93,6 +93,8 @@ describe GradersController do
         @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'test_group'))
         @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
         @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
+        @grouping4 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 4'))
+        @grouping4.tas << @ta1
         post_as @admin,
                 :upload,
                 params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
@@ -105,12 +107,7 @@ describe GradersController do
         expect(@grouping2.tas).to include(@ta1)
         expect(@grouping3.tas.count).to eq 1
         expect(@grouping3.tas).to include(@ta3)
-        expect(:post => 'assignments/1/graders/upload')
-          .to route_to(
-            :controller => 'graders',
-            :action     => 'upload',
-            :assignment_id => '1'
-          )
+        expect(@grouping4.tas.count).to eq 1 # Didn't delete existing mappings
       end
 
       it 'and a successful call updates repository permissions exactly once' do
@@ -158,6 +155,24 @@ describe GradersController do
         expect(@grouping3.tas.count).to eq 1
         expect(@grouping3.tas).to include(@ta3)
       end
+
+      it 'and the request removes existing mappings' do
+        @ta1 = create(:ta, user_name: 'g9browni')
+        @ta2 = create(:ta, user_name: 'g9younas')
+        @ta3 = create(:ta, user_name: 'c7benjam')
+        @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'test_group'))
+        @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
+        @grouping4 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 4'))
+        @grouping4.tas << @ta1
+        post_as @admin,
+                :upload,
+                params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true,
+                          remove_existing_mappings: false }
+
+        expect(response).to be_redirect
+        expect(@grouping4.tas.count).to eq 0
+      end
     end #groups csv upload
 
     context 'doing a POST on :upload' do
@@ -198,12 +213,6 @@ describe GradersController do
           expect(@criterion2.tas).to include(@ta1)
           expect(@criterion3.tas.count).to eq 1
           expect(@criterion3.tas).to include(@ta3)
-          expect(:post => 'assignments/1/graders/upload')
-            .to route_to(
-                  :controller => 'graders',
-                  :action     => 'upload',
-                  :assignment_id => '1'
-                )
         end
 
         it 'and some graders are invalid' do
@@ -311,42 +320,7 @@ describe GradersController do
       end # flexible criteria
     end # criteria csv upload
 
-    context 'doing a GET on :grader_groupings_mapping' do
-      before :each do
-        @assignment = create(:assignment, assign_graders_to_criteria: true)
-      end
-
-      it 'routing properly' do
-        post_as @admin, :grader_groupings_mapping, params: { assignment_id: @assignment.id }
-        expect(response.status).to eq(200)
-        expect(:get => 'assignments/1/graders/grader_groupings_mapping')
-          .to route_to(
-                :controller => 'graders',
-                :action     => 'grader_groupings_mapping',
-                :assignment_id => '1'
-              )
-      end
-    end
-
-    context 'doing a GET on :grader_criteria_mapping' do
-      before :each do
-        @assignment = create(:assignment, assign_graders_to_criteria: true)
-      end
-
-      it 'routing properly' do
-        post_as @admin, :grader_criteria_mapping, params: { assignment_id: @assignment.id }
-        expect(response.status).to eq(200)
-        expect(:get => 'assignments/1/graders/grader_criteria_mapping')
-          .to route_to(
-                :controller => 'graders',
-                :action     => 'grader_criteria_mapping',
-                :assignment_id => '1'
-              )
-      end
-    end
-
     context 'with groups table selected doing a' do
-
       context 'POST on :global_actions on random_assign' do
         before :each do
           @grouping1 = create(:grouping, assignment: @assignment)
