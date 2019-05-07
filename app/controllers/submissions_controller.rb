@@ -365,18 +365,18 @@ class SubmissionsController < ApplicationController
           if delete_files.present?
             success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
             should_commit &&= success
-            messages = messages.concat msgs
+            messages.concat msgs
           end
           if new_files.present?
             success, msgs = add_files(new_files, current_user, repo,
                                       path: path, txn: txn, check_size: true, required_files: required_files)
             should_commit &&= success
-            messages = messages.concat msgs
+            messages.concat msgs
           end
           if should_commit
             commit_success, commit_msg = commit_transaction(repo, txn)
             flash_message(:success, I18n.t('update_files.success')) if commit_success
-            messages = messages << commit_msg
+            messages << commit_msg
           end
         end
         flash_repository_messages messages

@@ -505,17 +505,17 @@ class AssignmentsController < ApplicationController
         if delete_files.present?
           success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
           should_commit &&= success
-          messages = messages.concat msgs
+          messages.concat msgs
         end
         if new_files.present?
           success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true)
           should_commit &&= success
-          messages = messages.concat msgs
+          messages.concat msgs
         end
         if should_commit
           commit_success, commit_msg = commit_transaction(repo, txn)
           flash_message(:success, I18n.t('update_files.success')) if commit_success
-          messages = messages << commit_msg
+          messages << commit_msg
         else
           commit_success = should_commit
         end
@@ -524,7 +524,7 @@ class AssignmentsController < ApplicationController
 
         if should_commit && commit_success
           if new_files.present?
-            UpdateStarterCodeJob.perform_later(params[:id], params.fetch(:overwrite, 'false') == 'true')
+            UpdateStarterCodeJob.perform_later(@assignment.id, params.fetch(:overwrite, 'false') == 'true')
             flash_message(:success, t('assignment.starter_code.enqueued'))
             redirect_back(fallback_location: root_path)
           else

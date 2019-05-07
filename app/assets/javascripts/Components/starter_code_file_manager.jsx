@@ -24,7 +24,6 @@ class StarterCodeFileManager extends React.Component {
   };
 
   handleCreateFiles = (files, prefix) => {
-    console.log('here')
     let data = new FormData();
     files.forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)

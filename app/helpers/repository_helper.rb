@@ -64,7 +64,7 @@ module RepositoryHelper
     # check if only required files are allowed for a submission
     # required_files = assignment.assignment_files.pluck(:filename)
     if required_files.present? && (new_files - required_files).present?
-      messages << [:extra_files, (new_files - required_files)]
+      messages << [:extra_files, new_files - required_files]
       return false, messages
     end
 
@@ -154,8 +154,6 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
-      else
-        next
       end
     end
   end
