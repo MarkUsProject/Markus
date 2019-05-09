@@ -11,6 +11,7 @@ Alex Clarke
 Alex Grenier
 Alex Inman
 Alex Krassikov
+Alex Shih
 Alysha Kwok
 Amanda Manarin
 Andrew Hernandez
@@ -72,6 +73,7 @@ Gaëtan Girin
 Geoffrey Flores
 Ghislain Guiot
 Gillian Chesnais
+Hannah Li
 Hanson Wu
 Haohan David Jiang
 Horatiu Halmaghi
@@ -135,6 +137,7 @@ Nicholas Maraston
 Nick Lee
 Nicolas Bouillon
 Nicolas Carougeau
+Nikhi Bhambra
 Noé Bedetti
 Oloruntobi Ogunbiyi
 Ope Akanji
@@ -174,5 +177,6 @@ William Roy
 Wilson Chiang
 Xiang Yu
 Yansong Zang
+Yiqi Zhu
 Yusi Fan
 Zachary Munro-Cape
