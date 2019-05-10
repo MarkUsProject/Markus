@@ -38,14 +38,14 @@
               <% remaining_credits -= 1 %>
             <% end %>
           <% end %>
-          <%= I18n.l(@assignment.due_date + acc.hours) %>
+          <%= I18n.l(@grouping.due_date + acc.hours) %>
         <% end %>
       <% else %>
         <span class='prop_label'>
           <%= t('penalty_period_submission_rules.deadline_html') %>
         </span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
-        <%= I18n.l(@assignment.due_date + acc.hours) %>
+        <%= I18n.l(@grouping.due_date + acc.hours) %>
       <% end %>
     </div>
 
