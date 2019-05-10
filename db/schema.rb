@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_23_155205) do
+ActiveRecord::Schema.define(version: 2019_05_08_132638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,6 +167,16 @@ ActiveRecord::Schema.define(version: 2019_04_23_155205) do
     t.decimal "crop_width"
     t.decimal "crop_height"
     t.index ["assignment_id"], name: "index_exam_templates_on_assignment_id"
+  end
+
+  create_table "extensions", force: :cascade do |t|
+    t.integer "time_delta", null: false
+    t.boolean "apply_penalty", default: false, null: false
+    t.bigint "grouping_id"
+    t.string "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["grouping_id"], name: "index_extensions_on_grouping_id", unique: true
   end
 
   create_table "extra_marks", id: :serial, force: :cascade do |t|
@@ -591,6 +601,7 @@ ActiveRecord::Schema.define(version: 2019_04_23_155205) do
   add_foreign_key "checkbox_criteria", "assignments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assignments"
+  add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assignments", name: "fk_groupings_assignments"

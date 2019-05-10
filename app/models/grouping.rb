@@ -18,14 +18,17 @@ class Grouping < ApplicationRecord
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'StudentMembership'
 
+  has_many :pending_student_memberships,
+           -> { where 'memberships.membership_status': StudentMembership::STATUSES[:pending]},
+           class_name: 'StudentMembership'
+
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :ta_memberships, class_name: 'TaMembership'
   has_many :tas, through: :ta_memberships, source: :user
   has_many :students, through: :student_memberships, source: :user
   has_many :pending_students,
-           -> { where 'memberships.membership_status' => StudentMembership::STATUSES[:pending] },
            class_name: 'Student',
-           through: :student_memberships,
+           through: :pending_student_memberships,
            source: :user
   has_many :accepted_students,
            class_name: 'Student',
@@ -75,6 +78,8 @@ class Grouping < ApplicationRecord
 
   validates_presence_of :test_tokens
   validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
+
+  has_one :extension
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -289,6 +294,8 @@ class Grouping < ApplicationRecord
   def can_invite?(user)
     if self.inviter == user
       raise I18n.t('groups.invite_member.errors.inviting_self')
+    elsif extension&.time_delta.present?
+      raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
       raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
     elsif self.assignment.section_groups_only && user.section != self.inviter.section
@@ -528,25 +535,41 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def due_date
+    if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
+      assignment_due_date = assignment.due_date
+    else
+      assignment_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+    end
+    return assignment_due_date + extension.time_delta if extension.present?
+
+    assignment_due_date
+  end
+
   # Finds the correct due date (section or not) and checks if the last commit is after it.
   def past_due_date?
-    if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
-      due_date = assignment.due_date
-    else
-      due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
-    end
+    grouping_due_date = due_date
     revision = nil
     group.access_repo do |repo|
       # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
       # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
-      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, due_date)
+      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, grouping_due_date)
     end
-    if revision.nil? || revision.server_timestamp <= due_date
+    if revision.nil? || revision.server_timestamp <= grouping_due_date
       false
     else
       true
     end
   end
+
+  def collection_date
+    assignment.submission_rule.calculate_grouping_collection_time(self)
+  end
+
+  def past_collection_date?
+    collection_date > Time.current
+  end
+
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?
