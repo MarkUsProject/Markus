@@ -80,4 +80,5 @@ fr:
         need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
         not_found: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
         not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
+        extension_exists: "Vous ne pouvez pas éditer un groupe avec une extension à la date d'échéance. Veuillez contacter votre instructeur si vous souhaitez apporter des modifications."
       success: "L'étudiant(e) a été invité(e)."

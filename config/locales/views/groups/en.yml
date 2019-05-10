@@ -82,4 +82,5 @@ en:
         need_to_create_group: "You must create a group before you can invite members."
         not_found: "No student '%{user_name}' could be found."
         not_same_section: "Could not invite %{user_name}: this student is not in your section."
+        extension_exists: "You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes."
       success: "Invitation(s) successful."

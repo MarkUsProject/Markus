@@ -90,4 +90,5 @@ es:
         need_to_create_group: "Usted debe crear un grupo antes poder invitar usuarios."
         not_found: "No se pudo invitar %{user_name}: este estudiante no existe."
         not_same_section: "El estudiante %{user_name} no está en su sección."
+        extension_exists: "UPDATE ME"
       success: "Las invitaciones han sido exitosas."

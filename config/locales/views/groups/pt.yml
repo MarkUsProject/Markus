@@ -80,4 +80,5 @@ pt:
         need_to_create_group: "Você deve criar um grupo antes de poder convidar usuários"
         not_found: "Não foi possível convidar %{user_name}: esse estudante não existe."
         not_same_section: "Aluno %{user_name} está fora de sua sessão."
+        extension_exists: "UPDATE ME"
       success: "Convites enviados com sucesso."
