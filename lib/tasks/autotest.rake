@@ -20,8 +20,8 @@ class AutotestSetup
     @assg_short_id = "autotest_#{File.basename(root_dir)}"
     script_dir = File.join(root_dir, 'script_files')
     @test_scripts = Dir.glob(File.join(script_dir, '*'))
-    @script_file = File.join(root_dir, 'specs.json')
-    @script_data = JSON.parse(File.open(@script_file, &:read))
+    @specs_file = File.join(root_dir, 'specs.json')
+    @specs_data = JSON.parse(File.open(@specs_file, &:read))
 
     @student_dir = File.join(root_dir, 'student_files')
     @student_files = Dir.glob(File.join(@student_dir, '*'))
@@ -83,9 +83,9 @@ class AutotestSetup
     test_file_destination = @assignment.autotest_files_dir
     FileUtils.makedirs test_file_destination
 
-    # copy test scripts and support files into the destination directory
+    # copy test scripts and specs files into the destination directory
     FileUtils.cp @test_scripts, test_file_destination
-    FileUtils.cp @script_file, @assignment.autotest_path
+    FileUtils.cp @specs_file, @assignment.autotest_path
   end
 
   def create_marking_scheme
@@ -137,7 +137,7 @@ class AutotestSetup
 
   def process_schema_data
     Assignment.transaction do
-      update_test_groups_from_specs(@assignment, @script_data)
+      update_test_groups_from_specs(@assignment, @specs_data)
       upload_test_files
     end
   end
