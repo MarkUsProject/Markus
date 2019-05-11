@@ -21,6 +21,8 @@ class AutotestSetup
     script_dir = File.join(root_dir, 'script_files')
     @test_scripts = Dir.glob(File.join(script_dir, '*'))
     @script_file = File.join(root_dir, 'specs.json')
+    @script_data = JSON.parse(File.open(@script_file, &:read))
+
     @student_dir = File.join(root_dir, 'student_files')
     @student_files = Dir.glob(File.join(@student_dir, '*'))
 
@@ -36,7 +38,7 @@ class AutotestSetup
     create_marking_scheme
     create_criteria
     create_student
-    create_test_files
+    process_schema_data
   end
 
   def create_new_assignment
@@ -133,11 +135,18 @@ class AutotestSetup
     grouping.save
   end
 
-  def create_test_files
+  def process_schema_data
+    Assignment.transaction do
+      update_test_groups_from_specs(@assignment, @script_data)
+      upload_test_files
+    end
+  end
+
+  def upload_test_files
     # send files for all hostnames because the
     # autotester uses the names as part of a hash key
-    AutotestSpecsJob.perform_now('http://localhost:3000', @assignment.id)
-    AutotestSpecsJob.perform_now('http://127.0.0.1:3000', @assignment.id)
-    AutotestSpecsJob.perform_now('http://0.0.0.0:3000', @assignment.id)
+    AutotestSpecsJob.perform_now('http://localhost:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://127.0.0.1:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://0.0.0.0:3000', @assignment)
   end
 end

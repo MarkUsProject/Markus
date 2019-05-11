@@ -2,8 +2,7 @@ class AutotestSpecsJob < ApplicationJob
   include AutomatedTestsHelper
   queue_as MarkusConfigurator.autotest_specs_queue
 
-  def perform(host_with_port, assignment_id)
-    assignment = Assignment.find(assignment_id)
+  def perform(host_with_port, assignment)
     assignment_tests_path = assignment.autotest_files_dir
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
@@ -15,7 +14,7 @@ class AutotestSpecsJob < ApplicationJob
     server_command = MarkusConfigurator.autotest_server_command
     test_specs_path = assignment.autotest_settings_file
     test_specs = JSON.parse(File.read(test_specs_path))
-    server_params = { markus_address: markus_address, assignment_id: assignment_id, test_specs: test_specs }
+    server_params = { markus_address: markus_address, assignment_id: assignment.id, test_specs: test_specs }
 
     schema_file = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
     if File.exist? schema_file
