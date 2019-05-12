@@ -1,11 +1,4 @@
 es:
-  csv_special_characters_html: "
-    <p>Si desea usar una coma (,) en un campo CSV, usted debe rodear el campo completo con comillas dobles (\").
-    Si desea usar comillas dobles en un campo CSV, usted debe rodear el campo completo con comillas dobles y<br>
-    duplicar cada una de sus comillas dobles (\"\").</p>
-    <p>Este es un ejemplo de un campo CSV que contiene comas y comillas dobles:</p>
-    <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
-
   download: "Descargar"
   download_csv: "Descargar en formato CSV"
   download_the: "Descargar %{item}"

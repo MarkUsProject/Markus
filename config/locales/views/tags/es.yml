@@ -11,33 +11,4 @@ es:
       no_current_tags: "No hay más etiquetas por asignar."
       no_available_tags: "No se han asignado etiquetas."
 
-    upload:
-      csv_instructions_html: "
-        <p>
-          El archivo debería tener el siguiente formato:<br>
-          <ul>
-            <li>Sólo un registro por línea.
-            <li>Cada línea debería ser terminada en un carriage-return o un line-feed.</li>
-            <li>El nombre y la descripción de la etiqueta son los únicos usados. Cualquier otra información en la
-                línea es ignorada.</li>
-          </ul>
-          <code>tag_name,tag_description, ...</code><br><br>
-        </p>"
-      yml_instructions_html: "
-        <p>
-          El archivo debería tener el siguiente formato:<br>
-          <ul>
-            <li>Sólo un registro por línea.
-            <li>Cada línea debería ser terminada en un carriage-return o un line-feed.
-            <li>Cualquier otra información en la línea es ignorada.
-          </ul>
-          <code>tag_id:<br>
-            &nbsp;&nbsp;name: name<br>
-            &nbsp;&nbsp;description: description<br>
-            &nbsp;&nbsp;user:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;id: id<br>
-            [...]</code><br><br>
-          <i>id</i> representa el id del usuario asociado con la etiqueta.<br>
-        </p>"
-
     use: "Uso"

@@ -69,9 +69,8 @@ Rails.application.routes.draw do
 
       resources :tags do
         collection do
-          get 'download_tag_list'
-          post 'csv_upload'
-          post 'yml_upload'
+          get 'download'
+          post 'upload'
         end
 
         member do
