@@ -27,7 +27,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def create_group?
-    check?(:due_date_passed?) &&
+    check?(:collection_date_passed?) &&
       check?(:students_form_groups?) &&
       check?(:not_yet_in_group?)
   end
@@ -37,7 +37,7 @@ class AssignmentPolicy < ApplicationPolicy
     record.group_min == 1
   end
 
-  def due_date_passed?
+  def collection_date_passed?
     !record.past_collection_date?(user.section)
   end
 

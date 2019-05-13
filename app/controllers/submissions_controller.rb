@@ -203,11 +203,12 @@ class SubmissionsController < ApplicationController
                             .where('results.released_to_students': true)
                             .where(id: groupings)
                             .pluck(:id).to_set
+    collection_dates = assignment.all_grouping_collection_dates
     groupings.each do |grouping|
-      section = grouping.inviter.present? ? grouping.inviter.section : nil
-      collect_now = assignment.submission_rule.can_collect_now?(section)
+      collect_now = collection_dates[grouping.id] <= Time.current
       some_before_due = true unless collect_now
       next if !collect_now || some_released.include?(grouping.id)
+
       collectable << grouping
     end
     success = ''

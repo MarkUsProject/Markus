@@ -189,7 +189,7 @@ class Submission < ApplicationRecord
       f.user = user
       f.filename = file.original_filename
       f.submitted_at = submission_time
-      f.submission_file_status = 'late' if assignment.due_date < submission_time
+      f.submission_file_status = 'late' if grouping.due_date < submission_time
     end
 
     # upload file contents to file system

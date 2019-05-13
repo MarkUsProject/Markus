@@ -226,7 +226,41 @@ class Assignment < ApplicationRecord
     due_dates.compact.max
   end
 
-  def past_collection_date?(section=nil)
+  def all_grouping_collection_dates
+    submission_rule_max_hours = Assignment.where(id: self)
+                                          .joins(:groupings)
+                                          .joins(submission_rule: :periods)
+                                          .reorder(nil)
+                                          .group('groupings.id')
+                                          .sum(:hours)
+    all_grouping_due_dates.map do |grouping_id, due_date|
+      max_hours = submission_rule_max_hours[grouping_id] || 0
+      [grouping_id, due_date + max_hours.hours]
+    end.to_h
+  end
+
+  def all_grouping_due_dates
+    section_due_dates = Assignment.where(id: self)
+                                  .joins(groupings: [inviter: :section])
+                                  .joins(:section_due_dates)
+                                  .where('section_due_dates.section_id = users.section_id')
+                                  .pluck('groupings.id', 'section_due_dates.due_date')
+                                  .to_h
+
+    grouping_extensions = groupings.left_outer_joins(:extension)
+                                   .pluck(:id, :time_delta)
+                                   .to_h
+
+    grouping_extensions.map do |grouping_id, ext|
+      grouping_due_date = section_due_dates[grouping_id] || due_date
+      extension = ActiveSupport::Duration.build(ext)
+      [grouping_id, grouping_due_date + extension]
+    end.to_h
+  end
+
+  # checks if the due date for +section+ has passed for this assignment
+  # or if the main due date has passed if +section+ is nil.
+  def past_collection_date?(section = nil)
     Time.zone.now > submission_rule.calculate_collection_time(section)
   end
 
@@ -1198,6 +1232,8 @@ class Assignment < ApplicationRecord
                    .pluck('groupings.id', 'sections.name')
                    .to_h
 
+    collection_dates = all_grouping_collection_dates
+
     # This is the submission data that's actually returned
     data.map do |g|
       base = {
@@ -1220,8 +1256,10 @@ class Assignment < ApplicationRecord
         else
           base[:marking_state] = result[2]
         end
-      else
+      elsif collection_dates[g[0]] < Time.current
         base[:marking_state] = 'not_collected'
+      else
+        base[:marking_state] = 'before_due_date'
       end
 
       base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]

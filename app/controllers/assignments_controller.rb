@@ -67,15 +67,7 @@ class AssignmentsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
     @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-
-    if @student.section &&
-       !@student.section.section_due_date_for(@assignment.id).nil?
-      @due_date =
-        @student.section.section_due_date_for(@assignment.id).due_date
-    end
-    if @due_date.nil?
-      @due_date = @assignment.due_date
-    end
+    @due_date = @student.due_date_for_assignment(@assignment)
     if @student.has_pending_groupings_for?(@assignment.id)
       @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
@@ -126,21 +118,13 @@ class AssignmentsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @penalty = @assignment.submission_rule
     @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-
+    @due_date = @student.due_date_for_assignment(@assignment)
     @prs = @student.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
     end
 
-    if @student.section &&
-        !@student.section.section_due_date_for(@assignment.id).nil?
-      @due_date =
-          @student.section.section_due_date_for(@assignment.id).due_date
-    end
-    if @due_date.nil?
-      @due_date = @assignment.due_date
-    end
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
     else
