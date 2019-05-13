@@ -1,7 +1,7 @@
 class Extension < ApplicationRecord
   belongs_to :grouping
 
-  attribute :time_delta, :time_interval
+  attribute :time_delta, :duration
 
   after_create :remove_pending_memberships
 

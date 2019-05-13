@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_132638) do
   end
 
   create_table "extensions", force: :cascade do |t|
-    t.integer "time_delta", null: false
+    t.string "time_delta", null: false
     t.boolean "apply_penalty", default: false, null: false
     t.bigint "grouping_id"
     t.string "note"
