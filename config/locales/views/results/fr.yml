@@ -22,6 +22,7 @@ fr:
       complete: "Terminé"
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
+      before_due_date: "Avant la date d'échéance"
     subtotal: "Sous-total"
     summary: "Récapitulatif"
     total_extra_marks: "Total Notes Supplémentaires"

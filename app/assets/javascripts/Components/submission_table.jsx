@@ -155,6 +155,9 @@ class RawSubmissionTable extends React.Component {
           case 'remark':
             marking_state = I18n.t('results.state.remark_requested');
             break;
+          case 'before_due_date':
+            marking_state = I18n.t('results.state.before_due_date');
+            break;
           default:
             // should not get here
             marking_state = row.original.marking_state
@@ -176,6 +179,7 @@ class RawSubmissionTable extends React.Component {
         >
           <option value='all'>{I18n.t('all')}</option>
           <option value='not_collected'>{I18n.t('results.state.not_collected')}</option>
+          <option value='before_due_date'>{I18n.t('results.state.before_due_date')}</option>
           <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
           <option value='complete'>{I18n.t('results.state.complete')}</option>
           <option value='released'>{I18n.t('results.state.released')}</option>
@@ -213,7 +217,8 @@ class RawSubmissionTable extends React.Component {
   // Custom getTrProps function to highlight submissions that have been collected.
   getTrProps = (state, ri, ci, instance) => {
     if (ri.original.marking_state === undefined ||
-        ri.original.marking_state === 'not_collected') {
+        ri.original.marking_state === 'not_collected' ||
+      ri.original.marking_state === 'before_due_date') {
       return {ri};
     } else {
       return {ri, className: 'submission_collected'};

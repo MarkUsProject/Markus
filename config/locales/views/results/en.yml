@@ -21,11 +21,11 @@ en:
     state:
       complete: "Complete"
       incomplete: "Incomplete"
-      released: "released"
       not_collected: "Not Collected"
       in_progress: "In Progress"
       released: "Released"
       remark_requested: "Remark Requested"
+      before_due_date: "Before Due Date"
     subtotal: "Subtotal"
     summary: "Summary"
     total_extra_marks: "Total Extra Marks"

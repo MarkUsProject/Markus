@@ -22,6 +22,7 @@ pt:
       not_collected: "Não coletado"
       released: "Liberado"
       remark_requested: "Pedido de revisão"
+      before_due_date: "UPDATE ME"
     subtotal: "Subtotal"
     summary: "Resumo"
     total_extra_marks: "Nota extra total"
