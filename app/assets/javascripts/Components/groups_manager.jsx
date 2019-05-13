@@ -291,6 +291,37 @@ class RawGroupsTable extends React.Component {
       minWidth: 30,
       sortable: false
     },
+    {
+      Header: I18n.t('groups.extension'),
+      accessor: 'extension',
+      Cell: row => {
+        if (row.original.extension) {
+          let extension = Object.keys(row.original.extension).map(
+            (key) => {
+              if (row.original.extension[key]) {
+                return I18n.t('extensions.' + key, {count: row.original.extension[key]})
+              }
+            }
+          ).filter(Boolean).join(', ');
+          return <div>
+            <a href={'#'} onClick={() => {}}>
+            {extension}
+            </a>
+            <a href='#'
+               className="remove-icon"
+               onClick={() => {}}
+               title={I18n.t('delete')}
+            />
+          </div>
+        } else {
+          return <a href='#'
+                    className="add-icon"
+                    onClick={() => {}}
+                    title={I18n.t('delete')}
+          />
+        }
+      }
+    }
   ];
 
   render() {

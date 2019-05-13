@@ -23,6 +23,7 @@ pt:
     unassigned_students: "Não-atribuíd"
     validate_confirm: "Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?"
     valid: "Válido?"
+    extension: "UPDATE ME"
 
     # Student interface
     student_interface:

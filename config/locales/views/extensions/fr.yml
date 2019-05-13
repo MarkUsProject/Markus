@@ -1,0 +1,11 @@
+fr:
+  extensions:
+    hours:
+      one: 1 heur
+      other: "%{count} heurs"
+    days:
+      one: 1 jour
+      other: "%{count} days"
+    weeks:
+      one: 1 semaine
+      other: "%{count} semaines"

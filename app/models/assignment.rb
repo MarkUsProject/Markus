@@ -379,18 +379,22 @@ class Assignment < ApplicationRecord
     grouping_data = self
                     .groupings
                     .joins(:group)
+                    .left_outer_joins(:extension)
                     .left_outer_joins(non_rejected_student_memberships: :user)
                     .pluck('groupings.id',
                            'groupings.admin_approved',
                            'groups.group_name',
                            'users.user_name',
-                           'memberships.membership_status')
+                           'memberships.membership_status',
+                           'extensions.time_delta')
 
     groupings = Hash.new { |h, k| h[k] = [] }
-    grouping_data.each do |gid, approved, name, user_name, status|
-      groupings[[gid, approved, name]]
+    grouping_data.each do |data|
+      gid, approved, name, user_name, status, extension = data
+      extension = extension.nil? ? nil : ActiveSupport::Duration.parse(extension)
+      groupings[[gid, approved, name, extension]]
       if user_name
-        groupings[[gid, approved, name]] << [user_name, status]
+        groupings[[gid, approved, name, extension]] << [user_name, status]
         students[user_name][:assigned] = true
       end
     end
@@ -399,6 +403,7 @@ class Assignment < ApplicationRecord
         _id: k[0],
         admin_approved: k[1],
         group_name: k[2],
+        extension: k[3].nil? ? k[3] : Extension.to_parts(k[3]),
         members: v
       }
     end

@@ -1,0 +1,11 @@
+pt:
+  extensions:
+    hours:
+      one: 1 hora
+      other: "%{count} horas"
+    days:
+      one: 1 dia
+      other: "%{count} dias"
+    weeks:
+      one: 1 semana
+      other: "%{count} semanas"

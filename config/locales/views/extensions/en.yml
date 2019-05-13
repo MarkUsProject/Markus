@@ -1,0 +1,11 @@
+en:
+  extensions:
+    hours:
+      one: 1 hour
+      other: "%{count} hours"
+    days:
+      one: 1 day
+      other: "%{count} days"
+    weeks:
+      one: 1 week
+      other: "%{count} weeks"
