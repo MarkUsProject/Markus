@@ -8,13 +8,13 @@ class GradeEntryFormsController < ApplicationController
                          :populate_grades_table,
                          :get_mark_columns,
                          :grades,
-                         :csv_download,
+                         :download,
                          :csv_upload,
                          :update_grade]
   before_action :authorize_for_ta_and_admin,
                 only: [:grades,
                        :populate_grades_table,
-                       :csv_download,
+                       :download,
                        :csv_upload,
                        :update_grade]
   before_action :authorize_for_student,
@@ -228,7 +228,7 @@ class GradeEntryFormsController < ApplicationController
   end
 
   # Download the grades for this grade entry form as a CSV file
-  def csv_download
+  def download
     grade_entry_form = GradeEntryForm.find(params[:id])
     send_data grade_entry_form.export_as_csv,
               disposition: 'attachment',
