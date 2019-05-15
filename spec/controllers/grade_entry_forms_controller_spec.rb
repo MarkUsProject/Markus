@@ -11,6 +11,7 @@ describe GradeEntryFormsController do
 
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
+  let(:grade_entry_form_with_data_and_total) { create(:grade_entry_form_with_data_and_total) }
 
   context 'CSV_Uploads' do
     before :each do
@@ -130,11 +131,9 @@ describe GradeEntryFormsController do
     end
   end
 
-  context 'CSV_Downloads' do
+  describe '#download' do
     let(:csv_options) do
       {
-        filename:
-          "#{grade_entry_form_with_data.short_identifier}_grades_report.csv",
         disposition: 'attachment',
         type: 'text/csv'
       }
@@ -144,56 +143,62 @@ describe GradeEntryFormsController do
       @user = User.where(user_name: 'c8shosta').first
     end
 
-    it 'tests that action csv_downloads returns OK' do
-      get :csv_download, params: { id: grade_entry_form }
+    it 'returns a 200 status code' do
+      get :download, params: { id: grade_entry_form }
       expect(response.status).to eq(200)
     end
 
     it 'expects a call to send_data' do
-
-      if grade_entry_form.show_total
-        csv_array = [
-          ['', grade_entry_form_with_data.grade_entry_items[0].name, GradeEntryForm.human_attribute_name(:total)],
-          [GradeEntryItem.human_attribute_name(:out_of), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-          [@user.user_name, '', ''],
-        ]
-      else
-        csv_array = [
-          ['', grade_entry_form_with_data.grade_entry_items[0].name],
-          [GradeEntryItem.human_attribute_name(:out_of), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-          [@user.user_name, ''],
-        ]
-      end
+      csv_array = [
+        ['', grade_entry_form_with_data.grade_entry_items[0].name],
+        [GradeEntryItem.human_attribute_name(:out_of), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
+        [@user.user_name, '']
+      ]
       csv_data = MarkusCSV.generate(csv_array) do |data|
         data
       end
-      expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+      expect(@controller).to receive(:send_data).with(
+        csv_data,
+        filename: "#{grade_entry_form_with_data.short_identifier}_grades_report.csv",
+        **csv_options
+      ) {
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get :csv_download, params: { id: grade_entry_form_with_data }
+      get :download, params: { id: grade_entry_form_with_data }
     end
 
-    # parse header object to check for the right disposition
-    it 'sets disposition as attachment' do
-      get :csv_download, params: { id: grade_entry_form }
-      d = response.header['Content-Disposition'].split.first
-      expect(d).to eq 'attachment;'
+    it 'sets Content-Disposition correctly' do
+      get :download, params: { id: grade_entry_form }
+      filename = "attachment; filename=\"#{grade_entry_form.short_identifier}_grades_report.csv\""
+      expect(response.header['Content-Disposition']).to eq filename
     end
 
     # parse header object to check for the right content type
-    it 'returns text/csv type' do
-      get :csv_download, params: { id: grade_entry_form }
+    it 'sets the content type to text/csv' do
+      get :download, params: { id: grade_entry_form }
       expect(response.content_type).to eq 'text/csv'
     end
 
-    # parse header object to check for the right file naming convention
-    it 'filename passes naming conventions' do
-      get :csv_download, params: { id: grade_entry_form }
-      filename = response.header['Content-Disposition']
-                 .split.last.split('"').second
-      expect(filename).to eq "#{grade_entry_form.short_identifier}" +
-        '_grades_report.csv'
+    it 'shows Total column when show_total is true' do
+      csv_array = [
+        ['',
+         grade_entry_form_with_data_and_total.grade_entry_items[0].name,
+         GradeEntryForm.human_attribute_name(:total)],
+        [GradeEntryItem.human_attribute_name(:out_of),
+         String(grade_entry_form_with_data_and_total.grade_entry_items[0].out_of),
+         grade_entry_form_with_data_and_total.out_of_total],
+        [@user.user_name, '', '']
+      ]
+      csv_data = MarkusCSV.generate(csv_array) do |data|
+        data
+      end
+      expect(@controller).to receive(:send_data).with(
+        csv_data,
+        filename: "#{grade_entry_form_with_data_and_total.short_identifier}_grades_report.csv",
+        **csv_options
+      ) { @controller.head :ok }
+      get :download, params: { id: grade_entry_form_with_data_and_total }
     end
   end
 end

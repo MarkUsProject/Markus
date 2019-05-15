@@ -146,60 +146,39 @@ class GradeEntryForm < ApplicationRecord
   end
 
   def export_as_csv
-    students = Student.where(hidden: false).order(:user_name)
-    csv_rows = []
-    # prepare first two csv rows
-    # The first row in the CSV file will contain the question names
-    row = ['']
-    self.grade_entry_items.each do |grade_entry_item|
-      row.push(grade_entry_item.name)
-    end
-    if self.show_total
-      row.push(GradeEntryForm.human_attribute_name(:total))
-    end
-    csv_rows.push(row)
-    # The second row in the CSV file will contain the question totals
-    row = [GradeEntryItem.human_attribute_name(:out_of)]
-    self.grade_entry_items.each do |grade_entry_item|
-      row.push(grade_entry_item.out_of)
-    end
-    if self.show_total
-      row.concat([self.out_of_total])
-    end
-    csv_rows.push(row)
-    # The rest of the rows in the CSV file will contain the students' grades
-    MarkusCSV.generate(students, csv_rows) do |student|
-      row = []
-      row.push(student.user_name)
-      grade_entry_student = self.grade_entry_students.where(user_id: student.id).first
-      # Check whether or not we have grades recorded for this student
-      if grade_entry_student.nil?
-        self.grade_entry_items.each do |grade_entry_item|
-          # Blank marks for each question
-          row.push('')
-        end
-        # Blank total percent
-        row.push('')
+    students = Student.left_outer_joins(:grade_entry_students)
+                      .where(hidden: false, 'grade_entry_students.grade_entry_form_id': self.id)
+                      .order(:user_name)
+                      .pluck(:user_name, 'grade_entry_students.total_grade')
+    headers = []
+    # The first row in the CSV file will contain the column names
+    titles = [''] + self.grade_entry_items.pluck(:name)
+    titles << GradeEntryForm.human_attribute_name(:total) if self.show_total
+    headers << titles
+
+    # The second row in the CSV file will contain the column totals
+    totals = [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
+    totals << self.out_of_total if self.show_total
+    headers << totals
+
+    grade_data = self.grades
+                     .joins(:grade_entry_item, grade_entry_student: :user)
+                     .pluck('users.user_name', 'grade_entry_items.position', :grade)
+                     .group_by { |x| x[0] }
+    num_items = self.grade_entry_items.count
+    MarkusCSV.generate(students, headers) do |user_name, total_grade|
+      row = [user_name]
+      if grade_data.key? user_name
+        # Take grades sorted by position.
+        student_grades = grade_data[user_name].sort_by { |x| x[1] }
+                                              .map { |x| x[2].nil? ? '' : x[2] }
+        row.concat(student_grades)
+        row << (total_grade.nil? ? '' : total_grade) if self.show_total
       else
-        self.grade_entry_items.each do |grade_entry_item|
-          grade = grade_entry_student
-                    .grades
-                    .where(grade_entry_item_id: grade_entry_item.id)
-                    .first
-          if grade.nil?
-            row.push('')
-          else
-            row.push(grade.grade || '')
-          end
-        end
-        if self.show_total
-          total_grades = grade_entry_student_total_grades
-          ges_total_grade = total_grades[grade_entry_student.id]
-          row.push(ges_total_grade)
-        end
+        row.concat(Array.new(num_items, ''))
+        row << '' if self.show_total
       end
       row
     end
   end
-
 end

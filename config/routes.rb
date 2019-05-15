@@ -291,7 +291,7 @@ Rails.application.routes.draw do
         get 'get_mark_columns'
         get 'view_summary'
         get 'grades'
-        get 'csv_download'
+        get 'download'
         post 'csv_upload'
         post 'update_grade'
         post 'update_grade_entry_students'
