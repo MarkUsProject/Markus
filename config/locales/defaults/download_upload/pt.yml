@@ -8,7 +8,6 @@ pt:
 
   upload: "Carregar"
   upload_the: "Carregar %{item}"
-  upload_prompt_csv: "Selecione um arquivo CSV para carregar"
   upload_errors:
     invalid_csv_row_format: "Formato de linha inválida"
     invalid_rows: "As seguintes linhas do arquivo CSV são inválidas: "

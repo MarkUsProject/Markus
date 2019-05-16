@@ -181,4 +181,93 @@ class GradeEntryForm < ApplicationRecord
       row
     end
   end
+
+  def from_csv(grades_data, overwrite)
+    grade_entry_students = Hash[
+      self.grade_entry_students.joins(:user).pluck('users.user_name', :id)
+    ]
+    all_grades = Set.new(
+      self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)
+    )
+
+    names = []
+    totals = []
+    updated_columns = []
+    updated_grades = []
+
+    # Parse the grades
+    result = MarkusCSV.parse(grades_data, header_count: 2) do |row|
+      next unless row.any?
+      # grab names and totals from the first two rows
+      if names.empty?
+        names = row.drop(1)
+        next
+      elsif totals.empty?
+        totals = row.drop(1)
+        self.update_grade_entry_items(names, totals, overwrite)
+        updated_columns = self.grade_entry_items.reload.pluck(:id)
+        next
+      end
+
+      s_id = grade_entry_students[row[0]]
+      raise CSVInvalidLineError if s_id.nil?
+
+      row.drop(1).zip(updated_columns).take([row.size - 1, updated_columns.size].min).each do |grade, item_id|
+        begin
+          new_grade = grade.blank? ? nil : Float(grade)
+        rescue ArgumentError
+          raise CSVInvalidLineError
+        end
+        if overwrite || !all_grades.member?([s_id, item_id])
+          updated_grades << {
+            grade_entry_student_id: s_id,
+            grade_entry_item_id: item_id,
+            grade: new_grade
+          }
+        end
+      end
+    end
+    Grade.import updated_grades,
+                 on_duplicate_key_update: { conflict_target: [:grade_entry_item_id, :grade_entry_student_id],
+                                            columns: [:grade] }
+    result
+  end
+
+  def update_grade_entry_items(names, totals, overwrite)
+    if names.size != totals.size || names.empty? || totals.empty?
+      raise "Invalid header rows: '#{names}' and '#{totals}'."
+    end
+
+    updated_items = []
+    names.size.times do |i|
+      updated_items << {
+        name: names[i],
+        out_of: totals[i],
+        position: i + 1,
+        grade_entry_form_id: self.id
+      }
+    end
+
+    # Delete old questions if we want to overwrite them
+    missing_items = self.grade_entry_items.where.not(name: names)
+    if overwrite
+      missing_items.destroy_all
+    else
+      i = names.size
+      missing_items.each do |item|
+        updated_items << {
+          name: item.name,
+          out_of: item.out_of,
+          position: i + 1,
+          grade_entry_form_id: item.grade_entry_form_id
+        }
+        i += 1
+      end
+    end
+
+    GradeEntryItem.import updated_items,
+                          on_duplicate_key_update: { conflict_target: [:name, :grade_entry_form_id],
+                                                     columns: [:out_of, :position] }
+    self.grade_entry_items.reload
+  end
 end

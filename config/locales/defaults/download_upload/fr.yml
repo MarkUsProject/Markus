@@ -8,7 +8,6 @@ fr:
 
   upload: "Envoyer"
   upload_the: "Envoyer %{item}"
-  upload_prompt_csv: "Sélectionner un fichier CSV à envoyer"
   upload_errors:
     invalid_csv_row_format: "Invalid format de ligne"
     invalid_rows: "Les lignes suivantes du fichier CSV sont invalides : "

@@ -292,7 +292,7 @@ Rails.application.routes.draw do
         get 'view_summary'
         get 'grades'
         get 'download'
-        post 'csv_upload'
+        post 'upload'
         post 'update_grade'
         post 'update_grade_entry_students'
         get 'student_interface'

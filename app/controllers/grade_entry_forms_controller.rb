@@ -9,13 +9,13 @@ class GradeEntryFormsController < ApplicationController
                          :get_mark_columns,
                          :grades,
                          :download,
-                         :csv_upload,
+                         :upload,
                          :update_grade]
   before_action :authorize_for_ta_and_admin,
                 only: [:grades,
                        :populate_grades_table,
                        :download,
-                       :csv_upload,
+                       :upload,
                        :update_grade]
   before_action :authorize_for_student,
                 only: [:student_interface]
@@ -237,80 +237,22 @@ class GradeEntryFormsController < ApplicationController
   end
 
   # Upload the grades for this grade entry form using a CSV file
-  def csv_upload
-    @grade_entry_form = GradeEntryForm.includes(grade_entry_students: [:grades, :user])
-                                      .find(params[:id])
-
-    # If the request is a post type and the abort flag is down
-    # (operation can continue)
-    if request.post? && params[:upload] && params[:upload][:grades_file]
-      grades_file = params[:upload][:grades_file]
-      encoding = params[:encoding]
-      overwrite = params[:overwrite]
-      names = ''
-      totals = ''
-      columns = []
-
-      grades = []
-      to_upsert = []
-      grade_entry_students = {}
-      @grade_entry_form.grade_entry_students.includes(:user).find_each do |s|
-        grade_entry_students[s.user.user_name] = s
-      end
-      # Parse the grades
-      result = MarkusCSV.parse(grades_file.read,encoding: encoding, header_count: 2) do |row|
-        next unless row.any?
-        # grab names and totals from the first two rows
-        if names.empty?
-          names = row
-          next
-        end
-        if totals.empty?
-          totals = row
-          # Create/update the grade entry items
-          grades = GradeEntryItem.create_or_update_from_csv_rows(
-            names,
-            totals,
-            @grade_entry_form,
-            overwrite)
-          GradeEntryItem.import grades,
-                                on_duplicate_key_update: { conflict_target: :id, columns: [:out_of, :position] }
-          columns = @grade_entry_form.grade_entry_items.reload
-          next
-        end
-        grade_list = @grade_entry_form.grades.map do |g|
-          [[g.grade_entry_student_id, g.grade_entry_item_id], g.grade]
-        end
-        all_grades = Hash[grade_list]
-        s = grade_entry_students[row[0].encode('UTF-8')]
-        raise CSVInvalidLineError if s.nil?
-
-        row.shift
-        row.zip(columns).take([row.size, columns.size].min).each do |grade, c|
-          new_grade = grade.blank? ? nil : Float(grade)
-          selector = { grade_entry_student_id: s.id,
-                       grade_entry_item_id: c.id }
-          if s.nil? || overwrite
-            setter = { grade: new_grade }
-          else
-            setter = { grade: all_grades[[s.id, c.id]] || new_grade }
-          end
-          to_upsert.append([selector, setter])
-        end
-      end
-      Upsert.batch(ApplicationRecord.connection, Grade.table_name) do |upsert|
-        to_upsert.each do |selector, setter|
-          upsert.row(selector, setter)
-        end
-      end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
-      end
+  def upload
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
+      if data[:type] == '.csv'
+        overwrite = params[:overwrite]
+        grades_file = data[:file]
+        result = @grade_entry_form.from_csv(grades_file.read, overwrite)
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
   end

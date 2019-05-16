@@ -3,27 +3,23 @@
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>
+  <%= t('upload_help_html', section_id: 'marks-spreadsheet-grades') %>
 
-  <p><%= t('upload_prompt_csv') %></p>
+  <%= form_tag upload_grade_entry_form_path(@grade_entry_form),
+               { multipart: true, size: 1 } do %>
 
-  <%= form_for :upload, url: { controller:'grade_entry_forms',
-                               action: 'csv_upload',
-                               id: @grade_entry_form.id },
-               html: { multipart: true, size: 1 } do |f| %>
-
-    <p><%= f.file_field :grades_file %></p>
-      <%= t('grade_entry_forms.csv.upload_format_html') %>
+    <p><%= file_field_tag 'upload_file', required: true %></p>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
     <span>
-      <%= t('grade_entry_forms.csv.overwrite') %>
-      <%= check_box_tag(:overwrite)%>
+      <%= label_tag(:overwrite, t('grade_entry_forms.csv.overwrite')) %>
+      <%= check_box_tag(:overwrite) %>
     </span>
 
     <section class='dialog-actions'>
-      <%= f.submit t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
+      <%= submit_tag t(:upload), data: { disable_with: t(:uploading_please_wait) } %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
