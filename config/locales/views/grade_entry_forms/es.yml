@@ -3,15 +3,6 @@ es:
     add_column: "Añadir una columna"
     csv:
       overwrite: "¿Está seguro/a de reescribir las notas existentes?"
-      upload_format_html: "<p>El archivo debería tener el siguiente formato:</p>
-                           <ul><li>dos líneas en la parte superior, las cuales especifican los nombres y totales de
-                           las preguntas;</li>
-                           <li>el primer elemento para las primeras dos líneas es ignorado;</li>
-                           <li>una línea para el registro de cada estudiante;</li>
-                           <li>cada línea debe terminar en un carriage-return o en un line-feed.</li></ul>
-                           <code>\"\",q1_name,q2_name,q3_name</code><br>
-                           <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                           <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
     grades:
       marking_state: "Estado"
       no_mark: "N/A"

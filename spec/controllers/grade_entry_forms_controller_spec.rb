@@ -6,128 +6,144 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
 
     # initialize student DB entries
-    create(:user, user_name: 'c8shosta', type: 'Student')
+    create(:student, user_name: 'c8shosta')
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:grade_entry_form_with_data_and_total) { create(:grade_entry_form_with_data_and_total) }
 
-  context 'CSV_Uploads' do
+  describe '#upload' do
     before :each do
-      @file_without_extension =
-        fixture_file_upload('files/empty_file', 'text/xml')
-      @file_wrong_format =
-        fixture_file_upload(
-          'files/wrong_csv_format.xls', 'text/xls')
-      @file_bad_csv =
-        fixture_file_upload(
-          'files/bad_csv.csv', 'text/xls')
-      @file_bad_endofline =
-        fixture_file_upload(
-          'files/grade_entry_upload_file_bad_endofline.csv',
-          'text/csv')
       @file_invalid_username =
-        fixture_file_upload(
-          'files/grade_entry_form_invalid_username.csv',
-          'text/csv')
+        fixture_file_upload('files/grade_entry_forms/invalid_username.csv',
+                            'text/csv')
       @file_extra_column =
-        fixture_file_upload(
-          'files/grade_entry_form_extra_column.csv',
-          'text/csv')
-      @file_different_column_name =
-        fixture_file_upload(
-          'files/grade_entry_form_different_column_name.csv',
-          'text/csv')
+        fixture_file_upload('files/grade_entry_forms/extra_column.csv',
+                            'text/csv')
       @file_different_total =
-        fixture_file_upload(
-          'files/grade_entry_form_different_total.csv',
-          'text/csv')
+        fixture_file_upload('files/grade_entry_forms/different_total.csv',
+                            'text/csv')
       @file_good =
-        fixture_file_upload(
-          'files/grade_entry_form_good.csv',
-          'text/csv')
+        fixture_file_upload('files/grade_entry_forms/good.csv',
+                            'text/csv')
+      @file_good_overwrite =
+        fixture_file_upload('files/grade_entry_forms/good_overwrite.csv',
+                            'text/csv')
+
+      @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
+      @original_item = grade_entry_form_with_data.grade_entry_items.first
+      @student.grades.find_or_create_by(grade_entry_item: @original_item).update(
+        grade: 50
+      )
     end
 
-    it 'accepts valid file' do
-      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_good } }
+    include_examples 'a controller supporting upload' do
+      let(:params) { { id: grade_entry_form.id, model: Grade } } # model: Grade checks the number of grades.
+    end
+
+    it 'can accept valid file without overriding existing columns, even if those columns do not appear in the file' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_good }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade still exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item).grade).to eq 50
     end
 
-    xit 'does not accept csv file with an invalid username' do
-      # TODO: currently pending: intermittently fails with ActiveRecord::RecordNotUnique error
-      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_invalid_username } }
+    it 'can accept valid file and override existing columns' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_good, overwrite: true }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
+
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')
+      expect(new_item.out_of).to eq 100
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 89
+
+      # Check that the existing column and grade no longer exist.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to be_nil
+      expect(@student.grades.find_by(grade_entry_item: @original_item)).to be_nil
+    end
+
+    it 'can accept valid file and override existing grades' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_good_overwrite, overwrite: true }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
+
+      # Check that the existing column still exists, and the student's grade has been changed.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(@student.grades.reload.find_by(grade_entry_item: @original_item).grade).to eq 89
+    end
+
+    it 'can accept valid file without overriding existing grades' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_good_overwrite }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
+
+      # Check that the existing column still exists, and the student's grade has not been changed.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: @original_item.name)).to_not be_nil
+      expect(@student.grades.reload.find_by(grade_entry_item: @original_item).grade).to eq 50
+    end
+
+    it 'reports rows with an invalid username, but still processes the rest of the file' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_invalid_username }
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
-      puts flash[:error]
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
+
+      # Check that the two columns were still created.
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test')).to_not be_nil
+      expect(grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test2')).to_not be_nil
     end
 
-    xit 'accepts files with additional columns' do
-      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_extra_column } }
+    it 'accepts files with additional columns, and can reorder existing columns' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_extra_column }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
-    end
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
 
-    it 'accepts files with a different column name' do
-      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_different_column_name } }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to be_nil
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+      # Check that the new column and grade are created
+      new_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test2')
+      expect(new_item.out_of).to eq 100
+      expect(new_item.position).to eq 1
+      expect(@student.grades.find_by(grade_entry_item: new_item).grade).to eq 64
+      original_item = grade_entry_form_with_data.grade_entry_items.find_by(name: 'Test1')
+      expect(original_item.position).to eq 2
     end
 
     it 'accepts files with a different grade total' do
-      post :csv_upload, params: { id: grade_entry_form_with_data, upload: { grades_file: @file_different_total } }
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_different_total }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
-    end
+        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+      )
 
-    it 'does not accept a csv file corrupt line endings' do
-      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_bad_endofline } }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    end
-
-    it 'does not break on a file with no extension' do
-      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_without_extension } }
-      expect(response.status).to eq(302)
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    end
-
-    it 'does not accept fileless submission' do
-      post :csv_upload, params: { id: grade_entry_form }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    end
-
-    it 'should gracefully fail on non-csv file with .csv extension' do
-      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_bad_csv } }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
-    end
-
-    it 'should gracefully fail on .xls file' do
-      post :csv_upload, params: { id: grade_entry_form, upload: { grades_file: @file_wrong_format } }
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form, locale: 'en'))
+      # Check that the original column's total has been updated.
+      expect(grade_entry_form_with_data.grade_entry_items.first.out_of).to eq 101
     end
   end
 

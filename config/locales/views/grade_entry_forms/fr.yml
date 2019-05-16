@@ -3,14 +3,6 @@ fr:
     add_column: "Ajouter une colonne"
     csv:
       overwrite: "Remplacer les notes existantes?"
-      upload_format_html: "<p>Le fichier devra être au format suivant : </p>
-                           <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
-                           <li>le premier objet pour les deux premières lignes est ignoré ;</li>
-                           <li>une ligne pour chaque étudiant(e) ;</li>
-                           <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
-                           <code>\"\",q1_name,q2_name,q3_name</code><br>
-                           <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br>
-                           <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
     grades:
       marking_state: "Affichage de la note aux étudiants"
       no_mark: "NC"
