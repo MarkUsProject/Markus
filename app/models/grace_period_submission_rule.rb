@@ -6,10 +6,8 @@ class GracePeriodSubmissionRule < SubmissionRule
 
     # We need to know how many grace credits this grouping has left...
     grace_credits_remaining = grouping.available_grace_credits
-    # We need to know the section, in case there is a section due date
-    section = grouping.inviter.section
     # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.zone.now, section)
+    overtime_hours = calculate_overtime_hours_from(Time.zone.now, grouping)
     grace_credits_to_use = calculate_deduction_amount(overtime_hours)
     if grace_credits_remaining < grace_credits_to_use
       # This grouping doesn't have enough grace credits.
@@ -34,14 +32,15 @@ class GracePeriodSubmissionRule < SubmissionRule
 
     # So we're overtime.  How far are we overtime?
     collection_time = submission.revision_timestamp
+    grouping = submission.grouping
 
-    overtime_hours = calculate_overtime_hours_from(collection_time, section)
+    overtime_hours = calculate_overtime_hours_from(collection_time, grouping)
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)
 
     #Get rid of any previous deductions for this assignment, so as not to
     #give duplicate deductions upon multiple calls to this method
-    remove_deductions(submission.grouping)
+    remove_deductions(grouping)
 
     # And how many grace credits are available to this grouping
     available_grace_credits = submission.grouping.available_grace_credits

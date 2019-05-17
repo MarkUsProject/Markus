@@ -84,8 +84,8 @@ class SubmissionRule < ApplicationRecord
   private
 
   # Over time hours could be a fraction. This is mostly used for testing
-  def calculate_overtime_hours_from(from_time, section)
-    overtime_hours = (from_time - assignment.section_due_date(section)) / 1.hour
+  def calculate_overtime_hours_from(from_time, grouping)
+    overtime_hours = (from_time - grouping.due_date) / 1.hour
     # If the overtime is less than 0, that means it was submitted early, so
     # just return 0 - otherwise, return overtime_hours.
     [0, overtime_hours].max
