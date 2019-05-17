@@ -3,6 +3,8 @@ class Extension < ApplicationRecord
 
   attribute :time_delta, :duration
 
+  validates :time_delta, numericality: { greater_than: 0 }
+
   after_create :remove_pending_memberships
 
   PARTS = [:weeks, :days, :hours].freeze
