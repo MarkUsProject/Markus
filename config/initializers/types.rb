@@ -1,5 +1,4 @@
 class DurationType < ActiveRecord::Type::String
-
   def cast(value)
     return value if value.blank? || value.is_a?(ActiveSupport::Duration)
 

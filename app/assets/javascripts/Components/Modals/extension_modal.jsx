@@ -78,13 +78,13 @@ class ExtensionModal extends React.Component {
   render() {
     return (
       <Modal
-        className="ReactModal"
+        className="react-modal"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
         <h2>{I18n.t("activerecord.models.extensions.one")}</h2>
         <form onSubmit={this.submitForm}>
-          <div className={'extension-container vertical'}>
+          <div className={'extension-container-vertical'}>
             <div className={'extension-container'}>
               <label>
                 <input

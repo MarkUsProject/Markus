@@ -19,7 +19,7 @@ class Grouping < ApplicationRecord
            class_name: 'StudentMembership'
 
   has_many :pending_student_memberships,
-           -> { where 'memberships.membership_status': StudentMembership::STATUSES[:pending]},
+           -> { where 'memberships.membership_status': StudentMembership::STATUSES[:pending] },
            class_name: 'StudentMembership'
 
   has_many :notes, as: :noteable, dependent: :destroy
@@ -569,7 +569,6 @@ class Grouping < ApplicationRecord
   def past_collection_date?
     collection_date > Time.current
   end
-
 
   def self.get_groupings_for_assignment(assignment, user)
     if user.ta?

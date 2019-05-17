@@ -128,13 +128,17 @@
   justify-content: space-evenly;
 }
 
-.extension-container.vertical {
+.extension-container-vertical {
+  display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
   padding: 5px;
+
   > * {
     margin: 5px;
   }
 }
+
 .extension-note {
-  width: 100%
+  width: 100%;
 }
