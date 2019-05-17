@@ -400,6 +400,13 @@ Rails.application.routes.draw do
         post 'fetch_testers'
       end
     end
+
+    resources :extensions do
+      collection do
+        post 'create_or_update'
+        delete 'delete_by_grouping'
+      end
+    end
   end
 
   resources :job_messages, only: %w(show), param: :job_id do
