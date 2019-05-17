@@ -4,6 +4,8 @@
 
 @import 'common/assignment_dropdown';
 
+@import 'common/modals';
+
 .col-left {
   width: 45%;
 }
@@ -119,4 +121,20 @@
 */
 * html .ui-autocomplete {
   height: 250px;
+}
+
+.extension-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.extension-container.vertical {
+  flex-direction: column;
+  padding: 5px;
+  > * {
+    margin: 5px;
+  }
+}
+.extension-note {
+  width: 100%
 }

@@ -381,30 +381,36 @@ class Assignment < ApplicationRecord
                     .joins(:group)
                     .left_outer_joins(:extension)
                     .left_outer_joins(non_rejected_student_memberships: :user)
-                    .pluck('groupings.id',
-                           'groupings.admin_approved',
-                           'groups.group_name',
-                           'users.user_name',
-                           'memberships.membership_status',
-                           'extensions.time_delta')
+                    .pluck_to_hash('groupings.id',
+                                   'groupings.admin_approved',
+                                   'groups.group_name',
+                                   'users.user_name',
+                                   'memberships.membership_status',
+                                   'extensions.time_delta',
+                                   'extensions.apply_penalty',
+                                   'extensions.note')
 
-    groupings = Hash.new { |h, k| h[k] = [] }
+    members = Hash.new { |h, k| h[k] = [] }
     grouping_data.each do |data|
-      gid, approved, name, user_name, status, extension = data
-      extension = extension.nil? ? nil : ActiveSupport::Duration.parse(extension)
-      groupings[[gid, approved, name, extension]]
-      if user_name
-        groupings[[gid, approved, name, extension]] << [user_name, status]
-        students[user_name][:assigned] = true
+      if data['users.user_name']
+        members[data['groupings.id']] << [data['users.user_name'], data['memberships.membership_status']]
+        students[data['users.user_name']][:assigned] = true
       end
     end
-    groupings = groupings.map do |k, v|
+    groupings = grouping_data.map do |data|
+      if data['extensions.time_delta'].nil?
+        data['extensions.time_delta'] = {}
+      else
+        data['extensions.time_delta'] = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
+      end
       {
-        _id: k[0],
-        admin_approved: k[1],
-        group_name: k[2],
-        extension: k[3].nil? ? k[3] : Extension.to_parts(k[3]),
-        members: v
+        _id: data['groupings.id'],
+        admin_approved: data['groupings.admin_approved'],
+        group_name: data['groups.group_name'],
+        extension: data['extensions.time_delta'],
+        apply_penalty: data['extensions.apply_penalty'] || false,
+        note: data['extensions.note'] || '',
+        members: members[data['groupings.id']]
       }
     end
 

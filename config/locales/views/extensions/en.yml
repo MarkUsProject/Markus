@@ -1,11 +1,16 @@
 en:
   extensions:
-    hours:
-      one: 1 hour
-      other: "%{count} hours"
-    days:
-      one: 1 day
-      other: "%{count} days"
-    weeks:
-      one: 1 week
-      other: "%{count} weeks"
+    hours: hours
+    days: days
+    weeks: weeks
+    apply_penalty: "Apply late submission policies when collecting this group's submissions"
+    durations:
+      hours:
+        one: 1 hour
+        other: "%{count} hours"
+      days:
+        one: 1 day
+        other: "%{count} days"
+      weeks:
+        one: 1 week
+        other: "%{count} weeks"

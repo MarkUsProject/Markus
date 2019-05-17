@@ -1,0 +1,8 @@
+es:
+  activerecord:
+    models:
+      extensions:
+        one: "Extensión"
+    attributes:
+      extensions:
+        note: "Nota"

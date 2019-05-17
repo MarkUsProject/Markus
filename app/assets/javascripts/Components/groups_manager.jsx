@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
-
+import ExtensionModal from "./Modals/extension_modal";
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -10,6 +10,11 @@ class GroupsManager extends React.Component {
     this.state = {
       graders: [],
       students: [],
+      show_modal: false,
+      selected_row_data: {
+        extension: {}
+      },
+      updating_extension: false,
       loading: true
     }
   }
@@ -148,6 +153,18 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
+  handleShowModal = (row_data, updating) => {
+    this.setState({show_modal: true, selected_row_data: row_data, updating_extension: updating})
+  };
+
+  handleCloseModal = (updated) => {
+    this.setState({show_modal: false}, () => {
+      if (updated) {
+        this.fetchData()
+      }
+    })
+  };
+
   render() {
     return (
       <div>
@@ -176,9 +193,22 @@ class GroupsManager extends React.Component {
               invalidate={this.invalidate}
               scanned_exam={this.props.scanned_exam}
               assignment_id={this.props.assignment_id}
+              onExtensionModal={this.handleShowModal}
             />
           </div>
         </div>
+        <ExtensionModal
+          isOpen={this.state.show_modal}
+          onRequestClose={this.handleCloseModal}
+          weeks={this.state.selected_row_data.extension.weeks}
+          days={this.state.selected_row_data.extension.days}
+          hours={this.state.selected_row_data.extension.hours}
+          note={this.state.selected_row_data.note}
+          penalty={this.state.selected_row_data.apply_penalty}
+          grouping_id={this.state.selected_row_data._id}
+          updating={this.state.updating_extension}
+          key={this.state.selected_row_data._id} // this causes the ExtensionModal to be recreated if this value changes
+        />
       </div>
     );
   }
@@ -295,29 +325,24 @@ class RawGroupsTable extends React.Component {
       Header: I18n.t('groups.extension'),
       accessor: 'extension',
       Cell: row => {
-        if (row.original.extension) {
+        if (row.original.extension !== null && Object.entries(row.original.extension).length) {
           let extension = Object.keys(row.original.extension).map(
             (key) => {
               if (row.original.extension[key]) {
-                return I18n.t('extensions.' + key, {count: row.original.extension[key]})
+                return I18n.t('extensions.durations.' + key, {count: row.original.extension[key]})
               }
             }
           ).filter(Boolean).join(', ');
           return <div>
-            <a href={'#'} onClick={() => {}}>
+            <a href={'#'} onClick={() => this.props.onExtensionModal(row.original, true)}>
             {extension}
             </a>
-            <a href='#'
-               className="remove-icon"
-               onClick={() => {}}
-               title={I18n.t('delete')}
-            />
           </div>
         } else {
           return <a href='#'
                     className="add-icon"
-                    onClick={() => {}}
-                    title={I18n.t('delete')}
+                    onClick={() => this.props.onExtensionModal(row.original, false)}
+                    title={I18n.t('add')}
           />
         }
       }

@@ -1,0 +1,11 @@
+.ReactModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #ccc;
+  background: #fff;
+  overflow: auto;
+  outline: none;
+  padding: 20px;
+}
