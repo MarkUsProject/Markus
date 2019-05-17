@@ -38,6 +38,8 @@ class SubmissionsJob < ApplicationJob
           assignment.submission_rule.remove_deductions(grouping)
         end
 
+        options[:apply_late_penalty] ||= grouping.extension&.apply_penalty
+
         if options[:apply_late_penalty].nil? || options[:apply_late_penalty]
           new_submission = assignment.submission_rule.apply_submission_rule(
             new_submission)
