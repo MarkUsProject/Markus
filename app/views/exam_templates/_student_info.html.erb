@@ -5,7 +5,7 @@
     <%= check_box_tag :automatic_parsing, true,
                       exam_template.automatic_parsing,
                       onchange: "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;" %>
-    Automatically parse student information<br>
+    <%= t('exam_templates.parsing.general') %><br>
   </p>
 
   <div id="exam-cover-display-<%= exam_template.id %>" style="display: <% if exam_template.automatic_parsing %>flex<% else %>none<% end %>;">
@@ -27,23 +27,21 @@
           <li>
             <span><%= i %></span>
             <%= select_tag("field#{i}", options_for_select({" " => " ",
-                                                            "Full Name" => "full_name",
-                                                            "First Name" => "first_name",
-                                                            "Last Name" => "last_name",
-                                                            "Student Number/ID" => "student_id",
-                                                            "Username" => "username"},
+                                                            t('exam_templates.parsing.full_name') => "full_name",
+                                                            t('exam_templates.parsing.first_name') => "first_name",
+                                                            t('exam_templates.parsing.last_name') => "last_name",
+                                                            t('exam_templates.parsing.student_id') => "student_id",
+                                                            t('exam_templates.parsing.username') => "username"},
                                                            exam_template.get_cover_field(i-1))) %>
           </li>
         <% end %>
-        <li>
-          <%= hidden_field_tag 'x', exam_template.crop_x %>
-          <%= hidden_field_tag 'y', exam_template.crop_y %>
-          <%= hidden_field_tag 'width', exam_template.crop_width %>
-          <%= hidden_field_tag 'height', exam_template.crop_height %>
-        </li>
       </ul>
+      <%= hidden_field_tag 'x', exam_template.crop_x %>
+      <%= hidden_field_tag 'y', exam_template.crop_y %>
+      <%= hidden_field_tag 'width', exam_template.crop_width %>
+      <%= hidden_field_tag 'height', exam_template.crop_height %>
     </div>
   </div>
 
-  <p><%= submit_tag "Save" %></p>
+  <p><%= submit_tag t('exam_templates.parsing.save') %></p>
 <% end %>
