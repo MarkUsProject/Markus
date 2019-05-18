@@ -105,22 +105,15 @@ class ExamTemplatesController < ApplicationController
               type: "application/pdf")
   end
 
-  def save_cover(exam_template)
-    pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
-    cover = pdf.pages[0]
-    cover_page = CombinePDF.new
-    cover_page << cover
-    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
-      self.quality = 100
-      self.density = '300'
-    end
-    imglist.first.write(File.join(exam_template.base_path, 'cover.jpg'))
-  end
-
   def show_cover
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    send_file File.join(exam_template.base_path, 'cover.jpg'), disposition: 'inline', filename: 'cover.jpg'
+    cover_file = File.join(exam_template.base_path, 'cover.jpg')
+    if File.file?(cover_file)
+      send_file cover_file, disposition: 'inline', filename: 'cover.jpg'
+    else
+      head :not_found
+    end
   end
 
   def add_fields
@@ -320,5 +313,20 @@ class ExamTemplatesController < ApplicationController
          :name,
          template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
        )
+  end
+
+  private
+
+  def save_cover(exam_template)
+    pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
+    return if pdf.pages.length < 1
+    cover = pdf.pages[0]
+    cover_page = CombinePDF.new
+    cover_page << cover
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
+      self.quality = 100
+      self.density = '300'
+    end
+    imglist.first.write(File.join(exam_template.base_path, 'cover.jpg'))
   end
 end
