@@ -47,11 +47,11 @@ def char_model():
     return model
 
 
-def get_num(spaces):
+def get_num(tmp_dir, img_dir, spaces):
     model = numeric_model()
-    if not len(os.listdir('/home/vagrant/Markus/lib/scanner/nums/1')):
+    if not len(os.listdir(img_dir)):
         return
-    test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/nums', transform=TRANSFORM)
+    test_data = datasets.ImageFolder(tmp_dir, transform=TRANSFORM)
 
     out = ""
     for images, labels in test_data:
@@ -63,11 +63,11 @@ def get_num(spaces):
     print(insert_spaces(out, spaces))
 
 
-def get_name(spaces):
+def get_name(tmp_dir, img_dir, spaces):
     model = char_model()
-    if not len(os.listdir('/home/vagrant/Markus/lib/scanner/names/1')):
+    if not len(os.listdir(img_dir)):
         return
-    test_data = datasets.ImageFolder('/home/vagrant/Markus/lib/scanner/names', transform=TRANSFORM)
+    test_data = datasets.ImageFolder(tmp_dir, transform=TRANSFORM)
 
     out = ""
     for images, labels in test_data:
