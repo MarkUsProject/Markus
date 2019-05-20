@@ -319,7 +319,7 @@ class ExamTemplatesController < ApplicationController
 
   def save_cover(exam_template)
     pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
-    return if pdf.pages.length < 1
+    return if pdf.pages.empty?
     cover = pdf.pages[0]
     cover_page = CombinePDF.new
     cover_page << cover
