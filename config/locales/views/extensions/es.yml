@@ -4,6 +4,12 @@ es:
     days: días
     weeks: semanas
     apply_penalty: "UPDATE ME"
+    create:
+      success: "UPDATE ME"
+      error: "UPDATE ME"
+    delete:
+      success: "UPDATE ME"
+      error: "UPDATE ME"
     durations:
       hours:
         one: 1 hora

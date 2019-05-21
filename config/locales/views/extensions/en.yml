@@ -4,6 +4,12 @@ en:
     days: days
     weeks: weeks
     apply_penalty: "Apply late submission policies when collecting this group's submissions"
+    create:
+      success: "Extension added"
+      error: "Failed to create extension"
+    delete:
+      success: "Extension removed"
+      error: "Failed to remove extension"
     durations:
       hours:
         one: 1 hour

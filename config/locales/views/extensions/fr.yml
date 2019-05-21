@@ -4,6 +4,12 @@ fr:
     days: jours
     weeks: semaines
     apply_penalty: "UPDATE ME"
+    create:
+      success: "Extension créée"
+      error: "Extension non créée"
+    delete:
+      success: "Extension supprimée"
+      error: "Extension non supprimée"
     durations:
       hours:
         one: 1 heur
