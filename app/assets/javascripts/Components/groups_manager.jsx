@@ -345,6 +345,18 @@ class RawGroupsTable extends React.Component {
                     title={I18n.t('add')}
           />
         }
+      },
+      filterable: false,
+      sortMethod: (a, b) =>  {
+        a = [a.weeks || -1, a.days || -1, a.hours || -1];
+        b = [b.weeks || -1, b.days || -1, b.hours || -1];
+        if (a < b) {
+          return 1
+        } else if (b < a) {
+          return -1
+        } else {
+          return 0
+        }
       }
     }
   ];
