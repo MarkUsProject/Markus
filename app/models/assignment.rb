@@ -155,7 +155,7 @@ class Assignment < ApplicationRecord
                     :is_hidden, :vcs_submit, :has_peer_review]
 
   # Set the default order of assignments: in ascending order of due_date
-  default_scope { order('due_date ASC', 'id ASC') }
+  default_scope { order(:due_date, :id) }
 
   def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min

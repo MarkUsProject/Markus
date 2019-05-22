@@ -239,8 +239,8 @@ Rails.application.routes.draw do
         collection do
           get 'populate'
           post 'assign_groups'
-          get 'download_reviewer_reviewee_mapping'
-          post 'csv_upload_handler'
+          get 'peer_review_mapping'
+          post 'upload'
           get 'show_reviews'
         end
 

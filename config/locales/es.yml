@@ -60,7 +60,6 @@ es:
             assigned_reviewers_csv:    "CSV que vincula el grupo del revisor y el revisado."
         upload:
             header:      "Subir la Revisión de Compañeros en formato CSV"
-            description: "Archivo en formato CSV:<br><code>result_id,group_name</code><br>"
 
     add_new:                     "Añadir Nuevo Archivo"
     peer_reviews:                "Revisiones de Compañeros"
