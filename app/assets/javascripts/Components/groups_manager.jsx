@@ -329,7 +329,16 @@ class RawGroupsTable extends React.Component {
           let extension = Object.keys(row.original.extension).map(
             (key) => {
               if (row.original.extension[key]) {
-                return I18n.t('extensions.durations.' + key, {count: row.original.extension[key]})
+                // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
+                if (key === 'weeks') {
+                  return I18n.t('extensions.durations.weeks', {count: row.original.extension[key]});
+                } else if (key === 'days') {
+                  return I18n.t('extensions.durations.days', {count: row.original.extension[key]});
+                } else if (key === 'hours') {
+                  return I18n.t('extensions.durations.hours', {count: row.original.extension[key]});
+                } else {
+                  return '';
+                }
               }
             }
           ).filter(Boolean).join(', ');
