@@ -6,6 +6,7 @@ class Result < ApplicationRecord
   }
 
   belongs_to :submission
+  has_one :grouping, through: :submission
   has_many :marks
   has_many :extra_marks
   has_many :annotations

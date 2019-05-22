@@ -1,5 +1,3 @@
-require 'set'
-
 describe PeerReviewsController do
   TEMP_CSV_FILE_PATH = 'files/_temp_peer_review.csv'
 
@@ -10,42 +8,37 @@ describe PeerReviewsController do
 
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
     @pr_id = @assignment_with_pr.pr_assignment.id
-    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.map(&:id)
-    @selected_reviewee_group_ids = @assignment_with_pr.groupings.map(&:id)
-
-
+    @selected_reviewer_group_ids = @assignment_with_pr.pr_assignment.groupings.pluck(:id)
+    @selected_reviewee_group_ids = @assignment_with_pr.groupings.pluck(:id)
   end
 
-  context 'download CSV' do
+  describe '#peer_review_mapping' do
     before :each do
-      post :assign_groups,
-           params: { actionString: 'random_assign',
-                     selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                     selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assignment_id: @pr_id,
-                     numGroupsToAssign: 1
-           }
-      @num_peer_reviews = PeerReview.all.count
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[2]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[2],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[0]).current_result.id)
+      @num_peer_reviews = @assignment_with_pr.peer_reviews.count
 
       # Remember who was assigned to who before comparing
       @pr_expected_lines = Set.new
       @assignment_with_pr.peer_reviews.each do |pr|
-        @pr_expected_lines.add("#{pr.reviewer.group.group_name},#{pr.reviewee.group.group_name}")
+        @pr_expected_lines.add("#{pr.reviewee.group.group_name},#{pr.reviewer.group.group_name}")
       end
 
-      # Perform downloading via GET
-      get :download_reviewer_reviewee_mapping, params: { assignment_id: @pr_id }
+      # Perform peer_review_mapping via GET
+      get :peer_review_mapping, params: { assignment_id: @pr_id }
       @downloaded_text = response.body
-      @found_filename = response.header['Content-Disposition'].include?('filename="peer_review_group_to_group_mapping.csv"')
+      @found_filename = response.header['Content-Disposition'].include?(
+        "filename=\"#{@assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\""
+      )
       @lines = @downloaded_text[0...-1].split("\n")
     end
 
     it 'has valid header' do
       expect(@found_filename).to be_truthy
-    end
-
-    it 'ends with \n' do
-      expect(@downloaded_text[-1, 1]).to eql("\n")
     end
 
     it 'has the correct number of lines' do
@@ -62,11 +55,15 @@ describe PeerReviewsController do
         uniqueness_test_set.add(line)
         expect(@pr_expected_lines.member?(line)).to be_truthy
       end
-      expect(uniqueness_test_set.count).to be @num_peer_reviews
+      expect(uniqueness_test_set.count).to eq @num_peer_reviews
     end
   end
 
-  context 'upload CSV' do
+  describe '#upload' do
+    include_examples 'a controller supporting upload' do
+      let(:params) { { assignment_id: @pr_id, model: PeerReview } }
+    end
+
     before :each do
       post :assign_groups,
            params: { actionString: 'random_assign',
@@ -75,7 +72,7 @@ describe PeerReviewsController do
                      assignment_id: @pr_id,
                      numGroupsToAssign: 1
            }
-      get :download_reviewer_reviewee_mapping, params: { assignment_id: @pr_id }
+      get :peer_review_mapping, params: { assignment_id: @pr_id }
       @downloaded_text = response.body
       PeerReview.all.destroy_all
       @path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
@@ -88,15 +85,11 @@ describe PeerReviewsController do
       fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
       allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
-      post :csv_upload_handler, params: { assignment_id: @pr_id, peer_review_mapping: csv_upload, encoding: 'UTF-8' }
-    end
-
-    it 'has the correct number of groups' do
-      expect(Grouping.all.size).to eq 6
+      post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
     end
 
     it 'has the correct number of peer reviews' do
-      expect(PeerReview.all.size).to eq 3
+      expect(@assignment_with_pr.peer_reviews.count).to eq 3
     end
 
     it 'temporary file is deleted' do
@@ -117,7 +110,7 @@ describe PeerReviewsController do
     end
 
     it 'creates the correct number of peer reviews' do
-      expect(PeerReview.all.size).to eq 3
+      expect(@assignment_with_pr.peer_reviews.count).to eq 3
     end
 
     it 'does not assign a reviewee group to review their own submission' do
@@ -148,7 +141,9 @@ describe PeerReviewsController do
     end
 
     it 'creates the correct number of peer reviews' do
-      expect(PeerReview.all.size).to eq (@selected_reviewee_group_ids.size * @selected_reviewer_group_ids.size)
+      expect(@assignment_with_pr.peer_reviews.count).to eq(
+        @selected_reviewee_group_ids.size * @selected_reviewer_group_ids.size
+      )
     end
 
     it 'does not assign a reviewee group to review their own submission' do
@@ -172,7 +167,7 @@ describe PeerReviewsController do
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                      assignment_id: @pr_id,
            }
-      @num_peer_reviews = PeerReview.all.count
+      @num_peer_reviews = @assignment_with_pr.peer_reviews.count
     end
 
     context 'all reviewers for selected reviewees' do
@@ -184,7 +179,7 @@ describe PeerReviewsController do
              }
       end
       it 'deletes the correct number of peer reviews' do
-        expect(PeerReview.all.count).to eq @num_peer_reviews - @selected_reviewer_group_ids.size
+        expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - @selected_reviewer_group_ids.size
       end
     end
 
@@ -204,7 +199,7 @@ describe PeerReviewsController do
       end
 
       it 'deletes the correct number of peer reviews' do
-        expect(PeerReview.all.count).to eq @num_peer_reviews - 1
+        expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - 1
       end
 
       it 'removes selected reviewer as reviewer for selected reviewee' do
