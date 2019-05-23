@@ -25,6 +25,11 @@ rm -rf "${MARKUS_ROOT}"/tmp/cache
 echo "[MARKUS] Removing old autotest files"
 rm -rf "${AUTOTEST_ROOT}"/server/workspace/scripts/*
 rm -rf "${AUTOTEST_ROOT}"/server/workspace/results/*
+for env_dir in "${AUTOTEST_ROOT}"/server/workspace/specs/*; do
+  if [[ "${env_dir}" != */defaultenv ]]; then
+    rm -rf "${env_dir}"
+  fi
+done
 
 echo "[MARKUS] Removing old redis entries"
 pushd "${AUTOTEST_ROOT}"/server > /dev/null

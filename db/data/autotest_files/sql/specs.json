@@ -1,0 +1,125 @@
+{
+  "testers": [
+    {
+      "tester_type": "sql",
+      "test_data": [
+        {
+          "query_files": [
+            {
+              "query_file": "correct_no_order.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "correct_with_order.sql",
+              "order_by": "word",
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_col_count.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_col_name.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_col_order.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_col_type.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_row_count.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_row_order.sql",
+              "order_by": "word",
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_row_content_no_order.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_row_content_with_order.sql",
+              "order_by": "word",
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "bad_query.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "compatible_column_type.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            },
+            {
+              "query_file": "missing.sql",
+              "order_by": null,
+              "data_files": [
+                "data1.sql",
+                "data2.sql"
+              ]
+            }
+          ],
+          "category": [
+            "admin"
+          ],
+          "timeout": 30
+        }
+      ],
+      "env_data": {
+        "schema_name": "autotest",
+        "schema_file_path": "schema.ddl"
+      }
+    }
+  ]
+}
