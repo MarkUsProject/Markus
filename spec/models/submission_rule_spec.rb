@@ -1,3 +1,66 @@
+shared_examples 'due_date_calculations' do |assignment_past, section_past, section_enabled: true|
+  assignment_due_date_str = 'assignment due date'
+  section_due_date_str = 'section_due_date'
+
+  let(:assignment_due_date) { assignment.due_date }
+  let(:section_due_date_due_date) { section_enabled ? section_due_date.due_date : assignment_due_date }
+
+  unless section_enabled
+    section_past = assignment_past
+    section_due_date_str = assignment_due_date_str
+  end
+
+  context '#can_collect_now?(section)' do
+    it "should return #{section_past}" do
+      expect(assignment.submission_rule.can_collect_now?(section)).to eq(section_past)
+    end
+  end
+
+  context '#can_collect_all_now?' do
+    it "should return #{assignment_past && section_past}" do
+      expect(assignment.submission_rule.can_collect_all_now?).to eq(assignment_past && section_past)
+    end
+  end
+
+  context '#can_collect_grouping_now?(grouping) with section' do
+    it "should return #{section_past}" do
+      expect(assignment.submission_rule.can_collect_grouping_now?(grouping_with_section)).to eq(section_past)
+    end
+  end
+
+  context '#can_collect_grouping_now?(grouping) without section' do
+    it "should return #{assignment_past}" do
+      expect(assignment.submission_rule.can_collect_grouping_now?(grouping_without_section)).to eq(assignment_past)
+    end
+  end
+
+  context '#get_collection_time(section)' do
+    it "should return #{section_due_date_str}" do
+      expect(assignment.submission_rule.get_collection_time(section)).to eq(section_due_date_due_date)
+    end
+  end
+
+  context '#get_collection_time(nil) (i.e. global due date)' do
+    it "should return #{assignment_due_date_str}" do
+      expect(assignment.submission_rule.get_collection_time).to eq(assignment_due_date)
+    end
+  end
+
+  context '#calculate_grouping_collection_time(grouping) with section' do
+    it "should return #{section_due_date_str}" do
+      time = assignment.submission_rule.calculate_grouping_collection_time(grouping_with_section)
+      expect(time).to eq(section_due_date_due_date)
+    end
+  end
+
+  context '#calculate_grouping_collection_time(grouping) w/o section' do
+    it "should return #{assignment_due_date_str}" do
+      time = assignment.submission_rule.calculate_grouping_collection_time(grouping_without_section)
+      expect(time).to eq(assignment_due_date)
+    end
+  end
+end
+
 describe SubmissionRule do
   context 'A newly initialized submission rule' do
     it 'belongs to an assignment' do
@@ -8,12 +71,8 @@ describe SubmissionRule do
   context '#calculate_collection_time' do
     let(:assignment) { create(:assignment) }
 
-    it 'should return something other than nil at the end' do
-      expect(assignment.submission_rule.calculate_collection_time).to_not be_nil
-    end
-
-    it 'should return some date value at the end' do
-      expect(assignment.submission_rule.calculate_collection_time.to_date).to be_kind_of(Date)
+    it 'should return a TimeWithZone object' do
+      expect(assignment.submission_rule.calculate_collection_time).to be_kind_of(ActiveSupport::TimeWithZone)
     end
   end
 
@@ -21,523 +80,102 @@ describe SubmissionRule do
     let(:assignment)            { create(:assignment) }
     let(:grouping_with_inviter) { create(:grouping_with_inviter) }
 
-    it 'should return something other than nil at the end' do
-      expect(assignment.submission_rule.calculate_grouping_collection_time(grouping_with_inviter)).to_not be_nil
-    end
-
-    it 'should return some date value at the end' do
-      expect(assignment.submission_rule.calculate_grouping_collection_time(grouping_with_inviter)
-               .to_date).to be_kind_of(Date)
-    end
-
-    # test that is triggered when grouping.inviter.section exists
-    it 'should return date value if grouping.inviter.section is not nil' do
+    it 'should return a TimeWithZone object if called with a grouping argument' do
       expect(assignment.submission_rule
-        .calculate_grouping_collection_time(grouping_with_inviter).to_date)
-        .to be_kind_of(Date)
+        .calculate_grouping_collection_time(grouping_with_inviter))
+        .to be_kind_of(ActiveSupport::TimeWithZone)
     end
   end
 
-  context 'when Section Due Dates are enabled' do
-    before :each do
-      @assignment = create(:assignment, section_due_dates_type: true)
-    end
+  context 'when Section Due Dates' do
+    let(:section) { create(:section) }
+    let(:section_due_date) { create(:section_due_date, section: section, assignment: assignment) }
+    let(:inviter_with_section) { create(:student, section: section) }
+    let(:inviter_without_section) { create(:student) }
+    let(:grouping_with_section) { create(:grouping, inviter: inviter_with_section, assignment: assignment) }
+    let(:grouping_without_section) { create(:grouping, inviter: inviter_without_section, assignment: assignment) }
+    context 'are enabled' do
+      let(:assignment) { create(:assignment, section_due_dates_type: true) }
 
-    context 'and Assignment Due Date is in the past' do
-      before :each do
-        @assignment.update_attributes(due_date: 1.day.ago)
-        @section = create(:section)
-      end
-
-      context 'and Section Due Date is in the past' do
+      context 'and Assignment Due Date is in the past' do
         before :each do
-          @section_due_date = create(:section_due_date, section: @section,
-                                                    assignment: @assignment,
-                                                    due_date: 2.days.ago)
-          @inviter_with_section = create(:student, section: @section)
-          @inviter_without_section = create(:student)
-          @grouping_with_section = create(:grouping, inviter: @inviter_with_section)
-          @grouping_without_section = create(:grouping, inviter: @inviter_without_section)
+          assignment.update_attributes!(due_date: 2.days.ago)
         end
 
-        context '#can_collect_now?(section)' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_now?(@section)).to eq true
+        context 'and Section Due Date is in the past' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.ago)
           end
+          include_examples 'due_date_calculations', true, true
         end
 
-        context '#can_collect_all_now?' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_all_now?).to eq true
+        context 'and Section Due Date is in the future' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.from_now)
           end
-        end
-
-        context '#can_collect_grouping_now?(grouping) with section' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_with_section)).to eq true
-          end
-        end
-
-        context '#can_collect_grouping_now?(grouping) without section' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_without_section)).to eq true
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(section)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule
-                                       .get_collection_time(@section)
-            time_difference = (2.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(nil) (i.e. global due date)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule
-                                       .get_collection_time
-            time_difference = (1.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) with section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(
-                              @grouping_with_section)
-            time_difference = (2.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) w/o section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(
-                              @grouping_without_section)
-            time_difference = (1.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
+          include_examples 'due_date_calculations', true, false
         end
       end
 
-      context 'and Section Due Date is in the future' do
+      context 'and Assignment Due Date is in the future' do
         before :each do
-          @section_due_date = SectionDueDate.create(section: @section,
-                                                    assignment: @assignment,
-                                                    due_date: 2.days.from_now)
-          @inviter_with_section = Student.create(section: @section)
-          @inviter_without_section = Student.create
-          @grouping_with_section = Grouping.create(
-            inviter: @inviter_with_section)
-          @grouping_without_section = Grouping.create(
-            inviter: @inviter_without_section)
+          assignment.update_attributes!(due_date: 2.days.from_now)
         end
 
-        context '#can_collect_now?(section)' do
-          it 'should return false' do
-            expect(@assignment.submission_rule
-              .can_collect_now?(@section))
-              .to eq false
+        context 'and Section Due Date is in the past' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.ago)
           end
+          include_examples 'due_date_calculations', false, true
         end
 
-        context '#can_collect_all_now?' do
-          it 'should return false' do
-            expect(@assignment.submission_rule
-              .can_collect_all_now?)
-              .to eq false
+        context 'and Section Due Date is in the future' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.from_now)
           end
-        end
-
-        context '#can_collect_grouping_now?(grouping) with section' do
-          it 'should return false' do
-            expect(@assignment.submission_rule
-              .can_collect_grouping_now?(@grouping_with_section))
-              .to eq false
-          end
-        end
-
-        context '#can_collect_grouping_now?(grouping) without section' do
-          it 'should return true' do
-            expect(@assignment.submission_rule
-              .can_collect_grouping_now?(@grouping_without_section))
-              .to eq true
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(section)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule.get_collection_time(@section)
-            time_difference = (2.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(nil) (i.e. global due date)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule
-                                       .get_collection_time
-            time_difference = (1.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) with section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
-            time_difference = (2.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) w/o section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
-            time_difference = (1.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
+          include_examples 'due_date_calculations', false, false
         end
       end
     end
-
-    context 'and Assignment Due Date is in the future' do
-      before :each do
-        @assignment.update_attributes(due_date: 1.days.from_now)
-        @section = create(:section)
-      end
-
-      context 'and Section Due Date is in the past' do
+    context 'are disabled' do
+      let(:assignment) { create(:assignment, section_due_dates_type: false) }
+      context 'and Assignment Due Date is in the past' do
         before :each do
-          @section_due_date = create(:section_due_date, section: @section,
-                                                    assignment: @assignment,
-                                                    due_date: 2.days.ago)
-          @inviter_with_section = create(:student, section: @section)
-          @inviter_without_section = create(:student)
-          @grouping_with_section = create(:grouping, inviter: @inviter_with_section)
-          @grouping_without_section = create(:grouping, inviter: @inviter_without_section)
+          assignment.update_attributes!(due_date: 2.days.ago)
         end
 
-        context '#can_collect_now?(section)' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_now?(@section)).to eq true
+        context 'and Section Due Date is in the past' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.ago)
           end
+          include_examples 'due_date_calculations', true, true, section_enabled: false
         end
 
-        context '#can_collect_all_now?' do
-          it 'should return false' do
-            expect(@assignment.submission_rule.can_collect_all_now?).to eq false
+        context 'and Section Due Date is in the future' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.from_now)
           end
-        end
-
-        context '#can_collect_grouping_now?(grouping) with section' do
-          it 'should return true' do
-            expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_with_section)).to eq true
-          end
-        end
-
-        context '#can_collect_grouping_now?(grouping) without section' do
-          it 'should return false' do
-            expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_without_section)).to eq false
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(section)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule
-                                       .get_collection_time(@section)
-            time_difference = (2.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(nil) (i.e. global due date)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule
-                                       .get_collection_time
-            time_difference = (1.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) with section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
-            time_difference = (2.days.ago - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) w/o section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
-            time_difference = (1.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
+          include_examples 'due_date_calculations', true, true, section_enabled: false
         end
       end
 
-      context 'and Section Due Date is in the future' do
+      context 'and Assignment Due Date is in the future' do
         before :each do
-          @section_due_date = create(:section_due_date, section: @section,
-                                     assignment: @assignment,
-                                     due_date: 2.days.from_now)
-          @inviter_with_section = create(:student, section: @section)
-          @inviter_without_section = create(:student)
-          @grouping_with_section = create(:grouping, inviter: @inviter_with_section)
-          @grouping_without_section = create(:grouping, inviter: @inviter_without_section)
+          assignment.update_attributes!(due_date: 2.days.from_now)
         end
 
-        context '#can_collect_now?(section)' do
-          it 'should return false' do
-            expect(@assignment.submission_rule.can_collect_now?(@section)).to eq false
+        context 'and Section Due Date is in the past' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.ago)
           end
+          include_examples 'due_date_calculations', false, false, section_enabled: false
         end
 
-        context '#can_collect_all_now?' do
-          it 'should return false' do
-            expect(@assignment.submission_rule.can_collect_all_now?).to eq false
+        context 'and Section Due Date is in the future' do
+          before :each do
+            section_due_date.update_attributes!(due_date: 1.day.from_now)
           end
-        end
-
-        context '#can_collect_grouping_now?(grouping) with section' do
-          it 'should return false' do
-            expect(@assignment.submission_rule
-              .can_collect_grouping_now?(@grouping_with_section))
-              .to eq false
-          end
-        end
-
-        context '#can_collect_grouping_now?(grouping) without section' do
-          it 'should return false' do
-            expect(@assignment.submission_rule
-              .can_collect_grouping_now?(@grouping_without_section))
-              .to eq false
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time(section)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule.get_collection_time(@section)
-            time_difference = (2.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#get_collection_time() (i.e. global due date)' do
-          it 'should return correct date value' do
-            time_returned = @assignment.submission_rule.get_collection_time
-            time_difference = (1.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) with section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_with_section)
-            time_difference = (2.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-
-        # in accuracy range of 10 minutes
-        context '#calculate_grouping_collection_time(grouping) w/o section' do
-          it 'should return correct date value' do
-            time_returned = @assignment
-                            .submission_rule
-                            .calculate_grouping_collection_time(@grouping_without_section)
-            time_difference = (1.days.from_now - time_returned).abs
-            expect(time_difference).to be < 600
-          end
-        end
-      end
-    end
-  end
-
-  context 'when Section Due Dates are disabled' do
-    before :each do
-      @assignment = create(:assignment, section_due_dates_type: false)
-    end
-
-    context 'and Assignment Due Date is in the past' do
-      before :each do
-        @assignment.update_attributes(due_date: 1.days.ago)
-        @section = create(:section)
-        @inviter_with_section = create(:student, section: @section)
-        @inviter_without_section = create(:student)
-        @grouping_with_section = create(:grouping, inviter: @inviter_with_section)
-        @grouping_without_section = create(:grouping, inviter: @inviter_without_section)
-      end
-
-      context '#can_collect_now?(section)' do
-        it 'should return true' do
-          expect(@assignment.submission_rule.can_collect_now?(@section)).to eq true
-        end
-      end
-
-      context '#can_collect_all_now?' do
-        it 'should return true' do
-          expect(@assignment.submission_rule.can_collect_all_now?).to eq true
-        end
-      end
-
-      context '#can_collect_grouping_now?(grouping) with section' do
-        it 'should return true' do
-          expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_with_section)).to eq true
-        end
-      end
-
-      context '#can_collect_grouping_now?(grouping) without section' do
-        it 'should return true' do
-          expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping_without_section)).to eq true
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#get_collection_time(section)' do
-        it 'should return correct date value' do
-          time_returned = @assignment.submission_rule.get_collection_time(@section)
-          time_difference = (1.days.ago - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#get_collection_time(nil) (i.e. global due date)' do
-        it 'should return correct date value' do
-          time_returned = @assignment.submission_rule.get_collection_time
-          time_difference = (1.days.ago - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#calculate_grouping_collection_time(grouping) with section' do
-        it 'should return correct date value' do
-          time_returned = @assignment
-                          .submission_rule
-                          .calculate_grouping_collection_time(@grouping_with_section)
-          time_difference = (1.days.ago - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#calculate_grouping_collection_time(grouping) without section' do
-        it 'should return correct date value' do
-          time_returned = @assignment
-                          .submission_rule
-                          .calculate_grouping_collection_time(@grouping_without_section)
-          time_difference = (1.days.ago - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-    end
-
-    context 'and Assignment Due Date is in the future' do
-      before :each do
-        @assignment.update_attributes(due_date: 1.days.from_now)
-        @section = create(:section)
-        @inviter_with_section = Student.create(section: @section)
-        @inviter_without_section = Student.create
-        @grouping_with_section = Grouping.create(inviter: @inviter_with_section)
-        @grouping_without_section = Grouping.create(inviter: @inviter_without_section)
-      end
-
-      context '#can_collect_now?(section)' do
-        it 'should return false' do
-          expect(@assignment.submission_rule.can_collect_now?(@section)).to eq false
-        end
-      end
-
-      context '#can_collect_all_now?' do
-        it 'should return false' do
-          expect(@assignment.submission_rule.can_collect_all_now?).to eq false
-        end
-      end
-
-      context '#can_collect_grouping_now?(grouping) with section' do
-        it 'should return false' do
-          expect(@assignment.submission_rule
-            .can_collect_grouping_now?(@grouping_with_section))
-            .to eq false
-        end
-      end
-
-      context '#can_collect_grouping_now?(grouping) without section' do
-        it 'should return false' do
-          expect(@assignment.submission_rule
-            .can_collect_grouping_now?(@grouping_without_section))
-            .to eq false
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#get_collection_time(section)' do
-        it 'should return correct date value' do
-          time_returned = @assignment.submission_rule.get_collection_time(@section)
-          time_difference = (1.days.from_now - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#get_collection_time(nil) (i.e. global due date)' do
-        it 'should return correct date value' do
-          time_returned = @assignment.submission_rule.get_collection_time
-          time_difference = (1.days.from_now - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#calculate_grouping_collection_time(grouping) with section' do
-        it 'should return correct date value' do
-          time_returned = @assignment
-                          .submission_rule
-                          .calculate_grouping_collection_time(@grouping_with_section)
-          time_difference = (1.days.from_now - time_returned).abs
-          expect(time_difference).to be < 600
-        end
-      end
-
-      # in accuracy range of 10 minutes
-      context '#calculate_grouping_collection_time(grouping) without section' do
-        it 'should return correct date value' do
-          time_returned = @assignment
-                          .submission_rule
-                          .calculate_grouping_collection_time(@grouping_without_section)
-          time_difference = (1.days.from_now - time_returned).abs
-          expect(time_difference).to be < 600
+          include_examples 'due_date_calculations', false, false, section_enabled: false
         end
       end
     end

@@ -40,18 +40,6 @@ describe GracePeriodSubmissionRule do
       destroy_repos
     end
 
-    describe '#calculate_collection_time' do
-      it 'is before the current time' do
-        expect(Time.now).to be > @rule.calculate_collection_time
-      end
-    end
-
-    describe '#calculate_grouping_collection_time' do
-      it 'is equal to the assignment due date' do
-        expect(@rule.calculate_grouping_collection_time(@membership.grouping).to_a).to eq @assignment.due_date.to_a
-      end
-    end
-
     describe '#apply_submission_rule' do
       before :each do
         # The Student submits their files before the due date

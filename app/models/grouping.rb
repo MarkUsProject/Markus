@@ -538,10 +538,10 @@ class Grouping < ApplicationRecord
   # Return the due date for this grouping. If this grouping has an extension, the time_delta
   # of the extension is added to the due date.
   def due_date
-    if inviter.blank? || inviter.section.blank? || assignment.section_due_dates.blank?
-      assignment_due_date = assignment.due_date
-    else
+    if use_section_due_date?
       assignment_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+    else
+      assignment_due_date = assignment.due_date
     end
     return assignment_due_date + extension.time_delta if extension.present?
 

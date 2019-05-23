@@ -326,15 +326,16 @@ describe SubmissionsController do
         context 'with a section' do
           before(:each) do
             @section = create(:section, name: 's1')
+            @section_due_date = create(:section_due_date, section: @section, assignment: @assignment)
             @student.section = @section
             @student.save
           end
 
           it 'should get an error if it is before the section due date' do
+            @section_due_date.update_attributes!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect(@assignment).to receive_message_chain(
-              :submission_rule, :can_collect_now?).with(@section) { false }
+            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -346,10 +347,10 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the section due date' do
+            @section_due_date.update_attributes!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect(@assignment).to receive_message_chain(
-              :submission_rule, :can_collect_now?).with(@section) { true }
+            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -368,11 +369,11 @@ describe SubmissionsController do
           end
 
           it 'should get an error if it is before the global due date' do
+            @assignment.update_attributes!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect(@assignment).to receive_message_chain(
-              :submission_rule, :can_collect_now?).with(nil) { false }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
+            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
             post_as @admin,
@@ -383,10 +384,10 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the global due date' do
+            @assignment.update_attributes!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect(@assignment).to receive_message_chain(
-              :submission_rule, :can_collect_now?).with(nil) { true }
+            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 

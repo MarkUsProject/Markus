@@ -41,7 +41,8 @@ describe PenaltyDecayPeriodSubmissionRule do
 
     it 'be able to calculate collection time for a grouping' do
       expect(Time.now).to be < @assignment.due_date
-      expect(@assignment.due_date.to_a).to eq @rule.calculate_grouping_collection_time(@membership.grouping).to_a
+      due_date_plus_period = @assignment.due_date + 2.days
+      expect(due_date_plus_period.to_a).to eq @rule.calculate_grouping_collection_time(@membership.grouping).to_a
     end
 
     it 'not apply decay period deductions for on-time submissions' do
