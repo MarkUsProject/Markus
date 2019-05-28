@@ -41,7 +41,7 @@ function toggle_cover_page(id, fields) {
 }
 
 function attach_crop_box() {
-  $.getScript('https://unpkg.com/jcrop', function()
+  $.getScript('javascripts/jquery.Jcrop', function()
   {
     var jcp;
     Jcrop.load('crop-target').then(img => {

@@ -17,6 +17,7 @@ window.ajax_events = ajax_events;
 
 // vendor libraries
 import 'javascripts/jquery.easyModal';
+import 'javascripts/jquery.Jcrop';
 
 // marked (markdown support)
 import marked from 'marked';
