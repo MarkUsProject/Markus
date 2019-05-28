@@ -954,7 +954,7 @@ describe Grouping do
     context 'with an assignment due date' do
 
       it 'should return the assigment due date' do
-        expect(grouping.due_date).to eq(assignment.due_date)
+        expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
       end
 
       context 'and a grouping extension' do
@@ -962,7 +962,7 @@ describe Grouping do
 
         it 'should return the assignment due date plus the extension' do
           expected_due_date = assignment.due_date + extension.time_delta
-          expect(grouping.due_date).to eq(expected_due_date)
+          expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
         end
       end
 
@@ -980,7 +980,7 @@ describe Grouping do
           end
 
           it 'should return the assignment due date' do
-            expect(grouping.due_date).to eq(assignment.due_date)
+            expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
           end
 
           context 'and a grouping extension' do
@@ -988,7 +988,7 @@ describe Grouping do
 
             it 'should return the assignment due date plus the extension' do
               expected_due_date = assignment.due_date + extension.time_delta
-              expect(grouping.due_date).to eq(expected_due_date)
+              expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
             end
           end
         end
@@ -999,7 +999,7 @@ describe Grouping do
 
           it 'should return the section due date' do
             expected_due_date = section_due_date.due_date
-            expect(grouping.due_date).to eq(expected_due_date)
+            expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
           end
 
           context 'and a grouping extension' do
@@ -1007,7 +1007,7 @@ describe Grouping do
 
             it 'should return the section due date plus the extension' do
               expected_due_date = section_due_date.due_date + extension.time_delta
-              expect(grouping.due_date).to eq(expected_due_date)
+              expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
             end
           end
         end

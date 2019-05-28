@@ -847,4 +847,13 @@ class Grouping < ApplicationRecord
       true
     end
   end
+
+  private
+
+  def use_section_due_date?
+    assignment.section_due_dates_type &&
+      inviter.present? &&
+      inviter.section.present? &&
+      assignment.section_due_dates.present?
+  end
 end

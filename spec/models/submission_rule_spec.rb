@@ -36,27 +36,28 @@ shared_examples 'due_date_calculations' do |assignment_past, section_past, secti
 
   context '#get_collection_time(section)' do
     it "should return #{section_due_date_str}" do
-      expect(assignment.submission_rule.get_collection_time(section)).to eq(section_due_date_due_date)
+      due_date = section_due_date_due_date
+      expect(assignment.submission_rule.get_collection_time(section)).to be_within(1.second).of(due_date)
     end
   end
 
   context '#get_collection_time(nil) (i.e. global due date)' do
     it "should return #{assignment_due_date_str}" do
-      expect(assignment.submission_rule.get_collection_time).to eq(assignment_due_date)
+      expect(assignment.submission_rule.get_collection_time).to be_within(1.second).of(assignment_due_date)
     end
   end
 
   context '#calculate_grouping_collection_time(grouping) with section' do
     it "should return #{section_due_date_str}" do
       time = assignment.submission_rule.calculate_grouping_collection_time(grouping_with_section)
-      expect(time).to eq(section_due_date_due_date)
+      expect(time).to be_within(1.second).of(section_due_date_due_date)
     end
   end
 
   context '#calculate_grouping_collection_time(grouping) w/o section' do
     it "should return #{assignment_due_date_str}" do
       time = assignment.submission_rule.calculate_grouping_collection_time(grouping_without_section)
-      expect(time).to eq(assignment_due_date)
+      expect(time).to be_within(1.second).of(assignment_due_date)
     end
   end
 end
