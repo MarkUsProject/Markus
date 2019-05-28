@@ -49,16 +49,6 @@ fr:
         "Sélection automatique d'analyse"
       general:
         "Analyser automatiquement les informations sur les étudiants"
-      full_name:
-        "Nom complet"
-      first_name:
-        "Prénom"
-      last_name:
-        "Nom de famille"
-      student_id:
-        "Numéro d'étudiant / ID"
-      username:
-        "Nom d'utilisateur"
       save:
         "sauvegarder"
 

@@ -49,16 +49,6 @@ es:
         "Selección automática de análisis"
       general:
         "Analizar automáticamente la información del estudiante"
-      full_name:
-        "Nombre completo"
-      first_name:
-        "Nombre de pila"
-      last_name:
-        "Apellido"
-      student_id:
-        "Número de estudiante / ID"
-      username:
-        "Nombre de usuario"
       save:
         "Salvar"
 

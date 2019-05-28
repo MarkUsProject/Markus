@@ -49,16 +49,6 @@ en:
         "Automatic Parsing Selection"
       general:
         "Automatically parse student information"
-      full_name:
-        "Full Name"
-      first_name:
-        "First Name"
-      last_name:
-        "Last Name"
-      student_id:
-        "Student Number/ID"
-      username:
-        "Username"
       save:
         "Save"
 
