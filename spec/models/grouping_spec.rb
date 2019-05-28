@@ -948,6 +948,72 @@ describe Grouping do
     end
   end
 
+  describe '#due_date' do
+    let(:assignment) { create :assignment }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    context 'with an assignment due date' do
+
+      it 'should return the assigment due date' do
+        expect(grouping.due_date).to eq(assignment.due_date)
+      end
+
+      context 'and a grouping extension' do
+        let(:extension) { create :extension, grouping: grouping }
+
+        it 'should return the assignment due date plus the extension' do
+          expected_due_date = assignment.due_date + extension.time_delta
+          expect(grouping.due_date).to eq(expected_due_date)
+        end
+      end
+
+      context 'and a section due date' do
+        let(:section) { create :section }
+        let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+
+        before :each do
+          grouping.inviter.update_attributes!(section: section)
+        end
+
+        context 'and section_due_dates_type is false' do
+          before :each do
+            assignment.update_attributes!(section_due_dates_type: false)
+          end
+
+          it 'should return the assignment due date' do
+            expect(grouping.due_date).to eq(assignment.due_date)
+          end
+
+          context 'and a grouping extension' do
+            let(:extension) { create :extension, grouping: grouping }
+
+            it 'should return the assignment due date plus the extension' do
+              expected_due_date = assignment.due_date + extension.time_delta
+              expect(grouping.due_date).to eq(expected_due_date)
+            end
+          end
+        end
+        context 'and section_due_dates_type is true' do
+          before :each do
+            assignment.update_attributes!(section_due_dates_type: true)
+          end
+
+          it 'should return the section due date' do
+            expected_due_date = section_due_date.due_date
+            expect(grouping.due_date).to eq(expected_due_date)
+          end
+
+          context 'and a grouping extension' do
+            let(:extension) { create :extension, grouping: grouping }
+
+            it 'should return the section due date plus the extension' do
+              expected_due_date = section_due_date.due_date + extension.time_delta
+              expect(grouping.due_date).to eq(expected_due_date)
+            end
+          end
+        end
+      end
+    end
+  end
   describe '#past_due_date?' do
     context 'with an assignment' do
       before :each do

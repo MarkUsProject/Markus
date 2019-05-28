@@ -5,9 +5,12 @@ class ExtensionsController < ApplicationController
   # Create a new extension object for the grouping with id=+params[:grouping_id]+ or
   # update the existing extension object for that grouping.
   def create_or_update
-    time_delta = params[:weeks].to_i.weeks + params[:days].to_i.days + params[:hours].to_i.hours
+    params = extension_params
     extension = Extension.find_or_initialize_by(grouping_id: params[:grouping_id])
-    if extension.update_attributes(time_delta: time_delta, apply_penalty: params[:penalty], note: params[:note])
+    if extension.update_attributes(grouping_id: params[:grouping_id],
+                                   time_delta: duration_from_params,
+                                   apply_penalty: params[:penalty],
+                                   note: params[:note])
       flash_now(:success, I18n.t('extensions.create.success'))
     else
       flash_now(:error, I18n.t('extensions.create.error'))
@@ -17,11 +20,23 @@ class ExtensionsController < ApplicationController
 
   # Delete an extension object for the grouping with id=+params[:grouping_id]+
   def delete_by_grouping
-    if Extension.find_by_grouping_id(params[:grouping_id]).destroy
+    params = extension_params
+    if Extension.find_by_grouping_id(params[:grouping_id])&.destroy
       flash_now(:success, I18n.t('extensions.delete.success'))
     else
       flash_now(:error, I18n.t('extensions.delete.error'))
     end
     head :ok
+  end
+
+  private
+
+  def duration_from_params
+    params = extension_params
+    Extension::PARTS.map { |part| params[part].to_i.send(part) }.sum
+  end
+
+  def extension_params
+    params.permit(*Extension::PARTS, :grouping_id, :penalty, :note)
   end
 end

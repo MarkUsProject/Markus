@@ -397,7 +397,11 @@ class Assignment < ApplicationRecord
         students[data['users.user_name']][:assigned] = true
       end
     end
+    ids = Set.new
     groupings = grouping_data.map do |data|
+      next if ids.include? data['groupings.id']  # distinct on the query doesn't seem to work
+
+      ids << data['groupings.id']
       if data['extensions.time_delta'].nil?
         data['extensions.time_delta'] = {}
       else
@@ -412,7 +416,7 @@ class Assignment < ApplicationRecord
         note: data['extensions.note'] || '',
         members: members[data['groupings.id']]
       }
-    end
+    end.compact
 
     {
       students: students.values,
