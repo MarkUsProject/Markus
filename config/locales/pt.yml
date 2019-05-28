@@ -56,7 +56,6 @@ pt:
             assigned_reviewers_csv: "Revisor grupo reviewee ao grupo CSV"
         upload:
             header: "Carregar CSV Peer Review"
-            description: "Formato de arquivo CSV: Vídeos <code>result_id,group_name</code><br>"
 
     add_new:            "Adicionar novo"
     peer_reviews:       "Avaliações pelos pares"

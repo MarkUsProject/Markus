@@ -3,14 +3,10 @@ require 'set'
 class PeerReview < ApplicationRecord
   belongs_to :result
   belongs_to :reviewer, class_name: 'Grouping'
-
+  has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
   validates_associated :result
   validate :no_students_should_be_reviewer_and_reviewee
-
-  def reviewee
-    result.submission.grouping
-  end
 
   def no_students_should_be_reviewer_and_reviewee
     if result and reviewer
@@ -91,6 +87,37 @@ class PeerReview < ApplicationRecord
   def self.get_num_marked(reviewer_group)
     self.includes(:result).where(reviewer_id: reviewer_group).count do |pr|
       pr.result.marking_state == Result::MARKING_STATES[:complete]
+    end
+  end
+
+  def self.get_mappings_for(assignment)
+    # NOTE: 'groups' is reviewer group table, 'groups_groupings' is reviewee group table.
+    mappings = assignment.pr_peer_reviews
+                         .joins(reviewer: :group, reviewee: :group)
+                         .order('groups_groupings.group_name', 'groups.group_name')
+                         .pluck('groups_groupings.group_name', 'groups.group_name')
+
+    # Group by reviewee group name, and map to just the reviewer group names.
+    mappings.group_by { |x| x[0] }.transform_values { |pairs| pairs.map { |p| p[1] } }
+  end
+
+  def self.from_csv(assignment, data)
+    reviewer_map = Hash[
+      assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }
+    ]
+    reviewee_map = Hash[
+      assignment.parent_assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }
+    ]
+    MarkusCSV.parse(data) do |row|
+      raise CSVInvalidLineError if row.size < 2
+      reviewee = reviewee_map[row.first]
+      next if reviewee.nil?
+      row.shift # Drop the reviewer, the rest are reviewees and makes iteration easier.
+      row.each do |reviewer_group_name|
+        reviewer = reviewer_map[reviewer_group_name]
+        next if reviewer.nil?
+        PeerReview.create_peer_review_between(reviewer, reviewee)
+      end
     end
   end
 end

@@ -1,6 +1,9 @@
 language: ruby
 rvm:
   - 2.5.3
+dist: trusty
+addons:
+  postgresql: "9.6"
 
 before_install:
   - sudo apt-get update
@@ -27,7 +30,8 @@ script:
   - bundle exec rspec
 
 services:
-  - redis-server
+  - postgresql
+- redis-server
 
 notifications:
   email: false

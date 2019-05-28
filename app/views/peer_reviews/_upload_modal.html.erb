@@ -7,18 +7,19 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'peer_review_mapping',
+                             upload_id: 'upload_file',
                              button_id: 'upload' %>
 
-  <%= raw(t('peer_review.upload.description')) %>
+  <%= t('upload_help_html', section_id: 'peer-reviews') %>
+
   <%= form_tag({ controller: 'peer_reviews',
-                 action: 'csv_upload_handler', id: @assignment.id},
+                 action: 'upload' },
                { multipart: true }) do %>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
-    <%= file_field_tag :peer_review_mapping, size: 2 %>
+    <%= file_field_tag :upload_file, size: 2 %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),

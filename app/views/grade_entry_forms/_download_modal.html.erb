@@ -9,7 +9,7 @@
       <%= t('download_csv') %>
     </div>
     <%= link_to '',
-                { action: 'csv_download',
+                { action: 'download',
                   id: @grade_entry_form },
                 class: 'make_div_clickable' if @current_user.admin? %>
   </div>

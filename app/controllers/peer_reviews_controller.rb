@@ -125,54 +125,36 @@ class PeerReviewsController < ApplicationController
     head :ok
   end
 
-  # Create a mapping of reviewer grouping -> set(reviewee groupings)
-  def generate_csv_naming_map(peer_reviews)
-    naming_map = Hash.new { |h, k| h[k] = Set.new }
-    peer_reviews.each do |peer_review|
-      naming_map[peer_review.reviewer].add(peer_review.reviewee)
-    end
-    naming_map
-  end
+  def peer_review_mapping
+    assignment = Assignment.find(params[:assignment_id])
+    naming_map = PeerReview.get_mappings_for assignment
 
-  def download_reviewer_reviewee_mapping
-    @assignment = Assignment.find(params[:assignment_id])
-    naming_map = generate_csv_naming_map(@assignment.pr_peer_reviews)
-
-    file_out = MarkusCSV.generate(naming_map) do |reviewer, reviewee_set|
-      data = reviewee_set.map { |reviewee| reviewee.group.group_name }
-      data.unshift(reviewer.group.group_name)
+    file_out = MarkusCSV.generate(naming_map) do |reviewee, reviewers|
+      [reviewee] + reviewers
     end
 
-    send_data(file_out, type: 'text/csv', disposition: 'inline', filename: 'peer_review_group_to_group_mapping.csv')
+    send_data file_out,
+              type: 'text/csv',
+              disposition: 'attachment',
+              filename: "#{assignment.short_identifier}_peer_review_mapping.csv"
   end
 
-  def csv_upload_handler
-    assignment_id = params[:assignment_id]
-    parent_assignment_id = Assignment.find(assignment_id).parent_assignment.id
-    pr_mapping = params[:peer_review_mapping]
-    encoding = params[:encoding]
-
-    if params[:peer_review_mapping].nil?
-      flash_message(flash[:error], I18n.t('upload_errors.missing_file'))
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      result = MarkusCSV.parse(pr_mapping.read, encoding: encoding) do |row|
-        raise CSVInvalidLineError if row.size < 2
-        reviewer = Group.find_by(group_name: row.first).grouping_for_assignment(assignment_id)
-        row.shift # Drop the reviewer, the rest are reviewees and makes iteration easier.
-        row.each do |reviewee_group_name|
-          reviewee = Group.find_by(group_name: reviewee_group_name).grouping_for_assignment(parent_assignment_id)
-          PeerReview.create_peer_review_between(reviewer, reviewee)
-        end
-      end
-      unless result[:invalid_lines].empty?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].empty?
-        flash_message(:success, result[:valid_lines])
+      if data[:type] == '.csv'
+        assignment = Assignment.find(params[:assignment_id])
+        result = PeerReview.from_csv(assignment, data[:file].read)
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       end
     end
-
-    redirect_to action: 'index', assignment_id: assignment_id
+    redirect_to action: 'index', assignment_id: params[:assignment_id]
   end
 
   private

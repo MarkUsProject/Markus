@@ -241,8 +241,8 @@ Rails.application.routes.draw do
         collection do
           get 'populate'
           post 'assign_groups'
-          get 'download_reviewer_reviewee_mapping'
-          post 'csv_upload_handler'
+          get 'peer_review_mapping'
+          post 'upload'
           get 'show_reviews'
         end
 
@@ -293,8 +293,8 @@ Rails.application.routes.draw do
         get 'get_mark_columns'
         get 'view_summary'
         get 'grades'
-        get 'csv_download'
-        post 'csv_upload'
+        get 'download'
+        post 'upload'
         post 'update_grade'
         post 'update_grade_entry_students'
         get 'student_interface'

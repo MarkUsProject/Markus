@@ -56,7 +56,6 @@ fr:
             assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"
         upload:
             header: "Télécharger Peer Review CSV"
-            description: "Format de fichier CSV: Portugais<code>result_id,group_name</code> Objet"
 
     add_new:            "Nouveau"
     peer_reviews:       "Examens par le pairs"

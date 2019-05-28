@@ -52,11 +52,10 @@ en:
             unassign: "Unassign Peer Reviewer(s)"
             random_assign: "Randomly Assign Reviewers"
         download:
-            assigned_reviewers_header: "Download Peer Review Assignments"
+            assigned_reviewers_header: "Download Peer Review Mapping"
             assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
         upload:
             header: "Upload Peer Review CSV"
-            description: "CSV file format:<br><code>result_id,group_name</code><br>"
 
     add_new:            "Add New File"
     peer_reviews:       "Peer reviews"

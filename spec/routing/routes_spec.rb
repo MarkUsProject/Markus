@@ -997,20 +997,20 @@ context 'grade_entry_forms' do
           locale: 'en')
     end
 
-    it 'routes GET csv_download properly' do
-      expect(get: path + '/' + grade_entry_form.id.to_s + '/csv_download')
+    it 'routes GET download properly' do
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/download')
         .to route_to(
           controller: ctrl,
-          action: 'csv_download',
+          action: 'download',
           id: grade_entry_form.id.to_s,
           locale: 'en')
     end
 
-    it 'routes POST csv_upload properly' do
-      expect(post: path + '/' + grade_entry_form.id.to_s + '/csv_upload')
+    it 'routes POST upload properly' do
+      expect(post: path + '/' + grade_entry_form.id.to_s + '/upload')
         .to route_to(
           controller: ctrl,
-          action: 'csv_upload',
+          action: 'upload',
           id: grade_entry_form.id.to_s,
           locale: 'en')
     end
