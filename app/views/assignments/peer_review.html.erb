@@ -1,7 +1,10 @@
 <%= content_for :head do %>
-  <%= javascript_include_tag 'react.min',
-                             'JSXTransformer' %>
-  <%= javascript_include_tag 'ReactComponents/table', 'ReactComponents/table_sorts' %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeStudentPeerReviewsTable(document.getElementById('peer_submissions_table'),
+                                  {assignment_id: <%= @assignment.parent_assignment.id %>});
+    })
+  </script>
 <% end %>
 
 <div class='title_bar'>
@@ -23,14 +26,7 @@
       <h2><%= Submission.model_name.human.pluralize %></h2>
 
       <div class='block_content'>
-        <% unless PeerReview.find_by(reviewer_id: @grouping.id).nil? %>
-          <%= render partial: 'peer_submissions_table',
-                     locals: { assignment_id: @assignment.id },
-                     formats: [:'js.jsx'], handlers: [:erb] %>
-          <div id='peer_submissions_table'></div>
-        <% else %>
-          <p class='notice'><%= t('student.no_peer_submission_yet') %></p>
-        <% end %>
+        <div id='peer_submissions_table'></div>
       </div>
     </div>
   </div>

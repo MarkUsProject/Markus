@@ -28,11 +28,9 @@ class SubmissionsController < ApplicationController
                        :repo_browser,
                        :download_groupings_files,
                        :check_collect_status,
-                       :update_submissions,
-                       :populate_submissions_table]
+                       :update_submissions]
   before_action :authorize_for_student,
-                only: [:file_manager,
-                       :populate_peer_submissions_table]
+                only: [:file_manager]
   before_action :authorize_for_user,
                 only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
 
@@ -308,15 +306,6 @@ class SubmissionsController < ApplicationController
       flash_now(:warning, t('submissions.grading_can_begin_after',
                             time: l(collection_time)))
     end
-  end
-
-  def populate_peer_submissions_table
-    assignment_in = Assignment.find(params[:assignment_id])
-    assignment = assignment_in.is_peer_review? ? assignment_in : assignment_in.pr_assignment
-    groupings = Grouping.get_groupings_for_assignment(assignment,
-                                                      current_user)
-
-    render json: get_submissions_table_info(assignment, groupings)
   end
 
   # update_files action handles transactional submission of files.
