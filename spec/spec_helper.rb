@@ -7,7 +7,6 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'action_policy/rspec'
 # Loads lib repo stuff.
-require 'database_cleaner'
 require 'time-warp'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -42,15 +41,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
-  config.before :each do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean_with(:truncation)
-  end
-  config.after :each do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
-  end
+  config.use_transactional_fixtures = true
 
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
@@ -74,7 +65,6 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    DatabaseCleaner.clean_with :truncation
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
