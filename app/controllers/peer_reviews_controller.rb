@@ -5,8 +5,8 @@ class PeerReviewsController < ApplicationController
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
 
-  before_action :authorize_only_for_admin, except: [:show_reviews, :show_result]
-  before_action :authorize_for_user, only: [:show_reviews, :show_result]
+  before_action :authorize_only_for_admin, except: [:list_reviews, :show_reviews, :show_result]
+  before_action :authorize_for_user, only: [:list_reviews, :show_reviews, :show_result]
 
   layout 'assignment_content'
 
@@ -46,6 +46,24 @@ class PeerReviewsController < ApplicationController
       num_reviews_map: num_reviews_map,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
+  end
+
+  # Get data for all reviews for a given reviewer.
+  def list_reviews
+    assignment = Assignment.find(params[:assignment_id]).pr_assignment
+    if current_user.is_a_reviewer?(assignment)
+      # grab only the groupings of reviewees that this reviewer
+      # is responsible for
+      grouping = current_user.grouping_for(assignment.id)
+      groupings = grouping.peer_reviews_to_others
+                          .joins(result: { grouping: :group })
+                          .pluck('results.id', 'groups.group_name', 'results.marking_state')
+                          .map { |id, name, state| { id: id, group_name: name, state: state } }
+    else
+      groupings = []
+    end
+
+    render json: groupings
   end
 
   def show_reviews
