@@ -74,17 +74,17 @@ describe ExtensionsController do
         it 'should delete the extension' do
           extension # make sure the object is created before the call
           expect do
-            post_as admin, :delete_by_grouping, params: {grouping_id: grouping.id}
+            post_as admin, :delete_by_grouping, params: { grouping_id: grouping.id }
           end.to change { Extension.count }.by(-1)
         end
         it 'should flash an success on success' do
           extension # make sure the object is created before the call
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)
-          post_as admin, :delete_by_grouping, params: {grouping_id: grouping.id}
+          post_as admin, :delete_by_grouping, params: { grouping_id: grouping.id }
         end
         it 'should flash an error on error' do
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
-          post_as admin, :delete_by_grouping, params: {grouping_id: grouping.id}
+          post_as admin, :delete_by_grouping, params: { grouping_id: grouping.id }
         end
       end
     end

@@ -399,7 +399,7 @@ class Assignment < ApplicationRecord
     end
     ids = Set.new
     groupings = grouping_data.map do |data|
-      next if ids.include? data['groupings.id']  # distinct on the query doesn't seem to work
+      next if ids.include? data['groupings.id'] # distinct on the query doesn't seem to work
 
       ids << data['groupings.id']
       if data['extensions.time_delta'].nil?

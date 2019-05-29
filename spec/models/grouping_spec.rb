@@ -952,7 +952,6 @@ describe Grouping do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     context 'with an assignment due date' do
-
       it 'should return the assigment due date' do
         expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
       end
