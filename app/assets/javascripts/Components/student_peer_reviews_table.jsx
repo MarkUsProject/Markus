@@ -53,6 +53,7 @@ class StudentPeerReviewsTable extends React.Component {
         data={this.state.peer_reviews}
         columns={this.columns()}
         defaultSorted={[{id: 'name'}]}
+        sortable={false}
         loading={this.state.loading}
         noDataText={I18n.t('student.no_peer_submission_yet')}
       />
