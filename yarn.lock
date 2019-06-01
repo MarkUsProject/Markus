@@ -6063,10 +6063,10 @@ react-jsonschema-form@^1.5.0:
     lodash.topath "^4.5.2"
     prop-types "^15.5.8"
 
-react-keyed-file-browser@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.4.3.tgz#c8f97ab90bc4fa1a7c5688192fd38103ceaf6577"
-  integrity sha512-kXR7/mcUJWUY2bspRTJvQmW1r+pu9lDk9o2O7y0Z94cZKHJQDXsTVKV3clR+57JzOEjFQcfbz6YwfMaUA0Rkyg==
+react-keyed-file-browser@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.5.0.tgz#1aed82ab9a206f365df7f6b53ec0368f4133f64e"
+  integrity sha512-zr4FY74o2fESfl8WI1K19n1gGSHErnAAk7Cjk3kynKYGagpXzcnaqeFcXqn7tAXDIILrmOPBZhvL4SvPkvyG/A==
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"
