@@ -12,25 +12,6 @@
   margin: 0 0 15px 0;
 }
 
-div.dragarrows {
-  float:left;
-  padding:0 10px;
-  font-weight:bold;
-}
-
-a.collapse {
-  font-style:normal;
-}
-
-div.settings_left_side {
-  margin-right:30px;
-  float:left;
-}
-
-span.file_name {
-  padding: 0;
-}
-
 .test-result > h3 {
   margin-bottom: 0;
 }
@@ -52,26 +33,30 @@ h2.test_runs_header > form {
 
 div#autotest-manager {
   * {
-    fieldset#root>legend {
-      font: 400 1.5em $fonts;
-    }
-    fieldset>legend[id$='extra_info__title']{
+
+    /* Hide specific legends. */
+    fieldset > legend[id$='extra_info__title'],
+    #root_testers__title {
       display: none;
     }
-    fieldset.field>legend {
-      font: 600 1.5em $fonts;
+
+    /* Sections */
+    .tester-item > fieldset > div > label {
+      font-size: 1.4em;
     }
-    fieldset>div.form-group>.control-label {
-      font: 600 1.25em $fonts;
+
+    .field > fieldset > legend {
+      font-size: 1.25em;
+      padding: 0.75em 0;
     }
+
+    .form-group fieldset {
+      border: none;
+      margin-top: 0;
+    }
+
     fieldset {
-      background: $white;
-      border-radius: $radius;
-      padding: 0.25em 1.5em 1.5em;
-      position: relative;
-      border: 1px solid #8d8d8d;
       legend {
-        width: initial;
         padding: 0.25em;
         span.required {
           display: inline-block;
@@ -80,11 +65,38 @@ div#autotest-manager {
           font-size: 1em;
         }
       }
+
+      div {
+        margin: 0;
+      }
     }
-    div.btn-group {
-      max-width: 50%;
+
+    .array-item-list > .array-item {
+      border: 1px solid $grey;
+      border-radius: $radius;
+      display: flex;
+      padding: 10px;
+
+      > .col-xs-9 {
+        flex: 0.8;
+      }
+
+      > .col-xs-3 {
+        flex: 0.2;
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 10px;
+      }
     }
-    .btn {
+
+    /* Buttons */
+    div.array-item-toolbox {
+      width: 25%;
+    }
+    button.btn {
+      min-width: 0;
+
       i {
         display: none;
       }
@@ -101,6 +113,31 @@ div#autotest-manager {
     .array-item-move-down::after {
       content: asset-url('icons/arrow_down.png');
     }
+
+    /* Form inputs. */
+    label,
+    .checkbox > label > span {
+      display: inline-block;
+      min-width: 150pt;
+    }
+
+    select.form-control {
+      min-width: 75pt;
+
+      &[multiple=""] {
+        vertical-align: top;
+      }
+    }
+
+    .checkbox input[type="checkbox"] {
+      float: right;
+    }
+
+    input,
+    textarea {
+      margin: 5px;
+    }
+
     input[type="checkbox"] {
       margin-right: 0.25em;
     }

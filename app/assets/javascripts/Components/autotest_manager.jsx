@@ -10,7 +10,13 @@ class AutotestManager extends React.Component {
     this.state = {
       files: [],
       schema: {},
-      uiSchema: {}, // not used yet
+      uiSchema: {
+        testers: {
+          items: {
+            classNames: 'tester-item'
+          }
+        }
+      },
       formData: {},
       enable_test: true,
       enable_student_tests: true,
@@ -209,16 +215,19 @@ class AutotestManager extends React.Component {
             onCreateFile={this.handleCreateFiles}
           />
         </fieldset>
-        <Form
-          disabled={!this.state.enable_test}
-          schema={this.state.schema}
-          uiSchema={this.state.uiSchema}
-          formData={this.state.formData}
-          onChange={this.handleFormChange}
-          noValidate={true}
-        >
-          <p/> {/*need something here so that the form doesn't render it's own submit button*/}
-        </Form>
+        <fieldset>
+          <legend><span>{'Testers'}</span></legend>
+          <Form
+            disabled={!this.state.enable_test}
+            schema={this.state.schema}
+            uiSchema={this.state.uiSchema}
+            formData={this.state.formData}
+            onChange={this.handleFormChange}
+            noValidate={true}
+          >
+            <p/> {/*need something here so that the form doesn't render its own submit button*/}
+          </Form>
+        </fieldset>
         {this.studentTestsField()}
         <input type='submit'
                disabled={!this.state.enable_test}
