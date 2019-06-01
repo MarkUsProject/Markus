@@ -693,7 +693,6 @@ class SubmissionsController < ApplicationController
       next if data.nil?
       data[:key] = file_name
       data[:modified] = data[:last_revised_date]
-      data[:size] = 1 # Dummy value
       data
     end.compact
     entries

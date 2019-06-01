@@ -230,9 +230,9 @@ class FileManagerFile extends FileRenderers.RawTableFile {
 
   render() {
     let icon;
-    if (this.isImage()) {
+    if (this.getFileType() === 'Image') {
       icon = <i className="fa fa-file-image-o" aria-hidden="true" />;
-    } else if (this.isPdf()) {
+    } else if (this.getFileType() === 'PDF') {
       icon = <i className="fa fa-file-pdf-o" aria-hidden="true" />;
     } else {
       icon = <i className="fa fa-file-o" aria-hidden="true" />;
