@@ -286,7 +286,7 @@ GEM
     ruby-graphviz (1.2.3)
     ruby-progressbar (1.10.1)
     ruby-rc4 (0.1.5)
-    rubyzip (1.2.2)
+    rubyzip (1.2.3)
     rugged (0.28.1)
     sass (3.5.6)
       sass-listen (~> 4.0.0)
