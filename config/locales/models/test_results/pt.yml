@@ -1,0 +1,6 @@
+pt:
+  activerecord:
+    models:
+      test_result:
+        one: "UPDATE ME"
+        other: "UPDATE ME"

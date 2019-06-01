@@ -8,12 +8,14 @@ module AutomatedTestsHelper
         display_output: {
           type: :string,
           enum: TestGroup.display_outputs.keys,
-          default: TestGroup.display_outputs.keys.first
+          default: TestGroup.display_outputs.keys.first,
+          title: TestGroup.human_attribute_name(:display_output)
         },
         criterion: {
           type: :string,
           enum: criterion_disambig || [],
-          enumNames: criterion_names || []
+          enumNames: criterion_names || [],
+          title: Criterion.model_name.human
         }
       },
       required: %w[display_output] }

@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    attributes:
+      grouping:
+        test_tokens: "Tokens available"

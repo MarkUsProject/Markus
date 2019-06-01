@@ -148,31 +148,10 @@ fr:
 
     #Test Framework
     automated_tests:
-      title: "Tests automatisés"
-      testing_disabled: "Les tests automatisés sont désactivés pour ce projet"
-      automated_tests: "Paramètres de test"
-      test_results: "Résultats de test"
-      no_results: "Aucun résultats"
-      student_tests: "Tests d'étudiants"
-      information: "Information"
-      run_tests: "Exécuter les tests."
       stop_test: "Arrêter ce test"
       stop_batch: "Arrêter ce lot de tests"
       tests_running: "Tests en cours. Actualiser la page pour afficher les résultats."
-      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
       need_submission: "Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté."
-      tokens_available_on: "UPDATE ME"
-      loading_specs: "UPDATE ME"
-      files: "UPDATE ME"
-      token:
-        start_date: "Jetons sont disponible depuis:"
-        available: "Jetons disponibles:"
-        unlimited: "Infinis"
-        per_period: "Jetons par %{period} heure(s):"
-        tokens_form: "Jetons disponibles par groupe"
-        tokens_regenerate: "et sont réinitialisés toutes les"
-        hours: "heures"
-        no_regeneration: "Pas de réinitialisation de jetons"
       test_results_table:
         test_name: "Nom du Test"
         output: "Sortie"

@@ -1,0 +1,6 @@
+fr:
+  activerecord:
+    models:
+      test_result:
+        one: "Résultat de test"
+        other: "Résultats de test"

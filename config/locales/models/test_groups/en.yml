@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    attributes:
+      test_group:
+        display_output: "Display output"

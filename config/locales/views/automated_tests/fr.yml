@@ -1,0 +1,14 @@
+fr:
+  automated_tests:
+    files: "UPDATE ME"
+    information: "Information"
+    loading_specs: "UPDATE ME"
+    need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
+    need_group_for_test: "UPDATE ME"
+    run_tests: "Exécuter les tests"
+    student_tests: "Tests d'étudiants"
+    testing_disabled: "Les tests automatisés sont désactivés pour ce projet."
+    title: "Tests automatisés"
+
+    # Test results
+    no_results: "Aucun résultats"

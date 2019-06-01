@@ -125,70 +125,90 @@ class AutotestManager extends React.Component {
     return (
       <fieldset>
         <legend><span>{I18n.t("automated_tests.student_tests")}</span></legend>
-        <label>
-          <input
-            type='checkbox'
-            checked={this.state.enable_student_tests}
-            onChange={this.toggleEnableStudentTest}
-            disabled={!this.state.enable_test}
-          />
+        <label className='inline_label' htmlFor='enable_student_tests'>
           {I18n.t('activerecord.attributes.assignment.enable_student_tests')}
         </label>
+        <input
+          id='enable_student_tests'
+          type='checkbox'
+          checked={this.state.enable_student_tests}
+          onChange={this.toggleEnableStudentTest}
+          disabled={!this.state.enable_test}
+        />
         <div className='student_test_options'>
-          <label className='inline_label'>
-            {I18n.t('automated_tests.token.tokens_form')}
-            <input type='number'
+          <p>
+            <label className='inline_label' htmlFor='tokens_per_period'>
+              {I18n.t('activerecord.attributes.assignment.tokens_per_period')}
+            </label>
+            <input id='tokens_per_period'
+                   type='number'
                    min='0'
                    value={this.state.tokens_per_period}
                    onChange={this.handleTokensPerPeriodChange}
                    disabled={this.state.unlimited_tokens ||
-                   !this.state.enable_test ||
-                   !this.state.enable_student_tests}
+                             !this.state.enable_test ||
+                             !this.state.enable_student_tests}
             />
-          </label>
-          <label className='inline_label'>
-            {I18n.t('automated_tests.tokens_available_on')}
+            <span style={{margin: '0 1em'}}>
+              (
+              <label className='inline_label' style={{minWidth: 0}} htmlFor='unlimited_tokens'>
+                {I18n.t('activerecord.attributes.assignment.unlimited_tokens')}
+                <input
+                  id='unlimited_tokens'
+                  type='checkbox'
+                  checked={this.state.unlimited_tokens}
+                  onChange={this.toggleUnlimitedTokens}
+                  disabled={!this.state.enable_test ||
+                            !this.state.enable_student_tests}
+                />
+              </label>
+              )
+            </span>
+          </p>
+
+          <p>
+            <label className='inline_label' htmlFor='token_start_date'>
+              {I18n.t('activerecord.attributes.assignment.token_start_date')}
+            </label>
             <Datepicker
+              id='token_start_date'
               warn_before_now={true}
               date={this.state.token_start_date}
               onChange={this.handleTokenStartDateChange}
               disabled={!this.state.enable_test || !this.state.enable_student_tests}
             />
-          </label>
-          <label className='inline_label'>
-            {I18n.t('automated_tests.token.tokens_regenerate')}
-            <input type='number'
+          </p>
+          <p>
+            <label className='inline_label' htmlFor='token_period'>
+              {I18n.t('activerecord.attributes.assignment.token_period')}
+            </label>
+            <input id='token_period'
+                   type='number'
                    min='0'
                    step='0.01'
                    value={this.state.token_period}
                    onChange={this.handleTokenPeriodChange}
                    disabled={this.state.unlimited_tokens ||
-                   this.state.non_regenerating_tokens ||
-                   !this.state.enable_test ||
-                   !this.state.enable_student_tests}
+                             this.state.non_regenerating_tokens ||
+                             !this.state.enable_test ||
+                             !this.state.enable_student_tests}
             />
-            {I18n.t("automated_tests.token.hours")}
-          </label>
-          <label className='inline_label'>
-            <input
-              type='checkbox'
-              checked={this.state.non_regenerating_tokens}
-              onChange={this.toggleNonRegeneratingTokens}
-              disabled={!this.state.enable_test ||
-              !this.state.enable_student_tests}
-            />
-            {I18n.t('automated_tests.token.no_regeneration')}
-          </label>
-          <label className='inline_label'>
-            <input
-              type='checkbox'
-              checked={this.state.unlimited_tokens}
-              onChange={this.toggleUnlimitedTokens}
-              disabled={!this.state.enable_test ||
-              !this.state.enable_student_tests}
-            />
-            {I18n.t('automated_tests.token.unlimited')}
-          </label>
+            {I18n.t('hours')}
+            <span style={{margin: '0 1em'}}>
+              <label className='inline_label'>
+                ({I18n.t('activerecord.attributes.assignment.non_regenerating_tokens')}
+                <input
+                  id='non_regenerating_tokens'
+                  type='checkbox'
+                  checked={this.state.non_regenerating_tokens}
+                  onChange={this.toggleNonRegeneratingTokens}
+                  disabled={!this.state.enable_test ||
+                  !this.state.enable_student_tests}
+                />
+                )
+              </label>
+            </span>
+          </p>
         </div>
       </fieldset>
     )
