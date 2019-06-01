@@ -163,33 +163,11 @@ es:
 
     #Test Framework
     automated_tests:
-      title:                              "Pruebas Automatizadas"
-      testing_disabled:                   "Las Pruebas Automatizadas no están habilitadas para este proyecto."
-      automated_tests:                    "Estructura de la prueba"
-      no_results:                         "UPDATE ME"
-      student_tests:                      "UPDATE ME"
-      need_group_for_test:                "Usted debe tener un grupo para lanzar la prueba"
-      information:                        "Información"
-      run_tests:                          "Lanzar pruebas"
       stop_test:                          "UPDATE ME"
       stop_batch:                         "UPDATE ME"
       tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
-      need_one_file:                      "Usted necesita al menos un archivo en la entrega para poder ejecutar las
-                                           pruebas."
       need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
                                            las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
-      tokens_available_on:                "Las fichas disponibles iniciaron en"
-      loading_specs:                      "UPDATE ME"
-      files:                              "UPDATE ME"
-      token:
-        start_date: "Las fichas disponibles empiezan en:"
-        available: "Fichas disponibles:"
-        unlimited: "Ilimitado"
-        per_period: "Fichas por %{period} hora(s):"
-        tokens_form: "Las fichas están disponibles por grupo"
-        tokens_regenerate: "Y regenera todo/a"
-        hours: "horas"
-        no_regeneration: "UPDATE ME"
       test_results_table:
         test_name:    "Nombre de la Prueba"
         output:       "Resultado"

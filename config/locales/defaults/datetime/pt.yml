@@ -18,3 +18,5 @@ pt:
 
     next:   "Seguinte"
     prev:   "Anterior"
+
+  hours: "hora(s)"

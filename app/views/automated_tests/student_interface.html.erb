@@ -6,32 +6,31 @@
       <h3><%= t('automated_tests.information') %></h3>
 
         <div class='sub_block'>
-          <span class="prop_label"><%= t('automated_tests.token.start_date') %></span>
+          <span class="prop_label"><%= Assignment.human_attribute_name(:token_start_date) %></span>
           <%= l(@assignment.token_start_date) %>
         </div>
 
         <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
           <div class='sub_block'>
             <span class="prop_label">
-              <%= t('automated_tests.token.per_period', period: @assignment.token_period) %>
+              <%= Assignment.human_attribute_name(:token_period) %>
             </span>
-            <%= @assignment.tokens_per_period %>
+            <%= "#{@assignment.token_period} #{t(:hours)}" %>
           </div>
         <% end %>
 
         <div class='sub_block'>
-          <span class="prop_label"><%= t('automated_tests.token.available') %></span>
+          <span class="prop_label"><%= Grouping.human_attribute_name(:test_tokens) %></span>
           <% if @assignment.unlimited_tokens %>
-            <%= t('automated_tests.token.unlimited') %>
+            <%= Assignment.human_attribute_name(:unlimited_tokens) %>
           <% else %>
-            <%= @grouping.test_tokens %>
+            <%= @grouping.test_tokens %> / <%= @assignment.tokens_per_period %>
           <% end %>
         </div>
 
         <div class='sub_block'>
           <%= t('automated_tests.need_one_file') %>
         </div>
-
     </div>
   </div>
 
@@ -51,4 +50,3 @@
     </div>
   </div>
 <% end %>
-

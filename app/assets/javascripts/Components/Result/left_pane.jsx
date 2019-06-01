@@ -42,7 +42,7 @@ export class LeftPane extends React.Component {
           <Tab>{I18n.t('activerecord.attributes.submission.submission_files')}</Tab>
           <Tab>{I18n.t('activerecord.models.annotation.other')}</Tab>
           <Tab disabled={this.props.is_reviewer || !this.props.enable_test}>
-            {I18n.t('automated_tests.test_results')}
+            {I18n.t('activerecord.models.test_result.other')}
           </Tab>
           <Tab disabled={this.props.is_reviewer || this.props.feedback_files.length === 0}>
             {I18n.t('activerecord.attributes.submission.feedback_files')}
@@ -89,7 +89,7 @@ export class LeftPane extends React.Component {
         <TabPanel>
           <div id='testviewer' className='block'>
             <h2 className='test_runs_header'>
-              {I18n.t('automated_tests.test_results')}
+              {I18n.t('activerecord.models.test_result.other')}
               {/* student results page (with instructor tests released) does not need the button */}
               {!this.props.student_view &&
                <form method='post' action={Routes.run_tests_assignment_submission_result_path(

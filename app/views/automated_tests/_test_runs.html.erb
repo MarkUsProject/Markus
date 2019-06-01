@@ -14,7 +14,7 @@
 <% end %>
 
 <h2 class="test_runs_header">
-  <%= t('automated_tests.test_results') %>
+  <%= TestResult.model_name.human.pluralize %>
   <%# student results page (with instructor tests released) does not need the button %>
   <% unless @current_user.student? && ran_by == 'instructor' %>
     <% route = @current_user.admin? ?

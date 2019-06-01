@@ -148,32 +148,10 @@ en:
 
     #Test Framework
     automated_tests:
-      title: "Automated Testing"
-      testing_disabled: "Automated testing is not enabled for this assignment"
-      automated_tests: "Test Framework"
-      test_results: "Test Results"
-      no_results: "No test results to display"
-      student_tests: "Student Tests"
-      need_group_for_test: "You must have a group to run a test"
-      information: "Information"
-      run_tests: "Run tests"
       stop_test: "Stop test"
       stop_batch: "Stop batch"
       tests_running: "Running tests. Please refresh this page in a bit to view the results."
-      need_one_file: "You need at least one file submitted in order to run tests."
       need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      tokens_available_on: "Tokens available starting on"
-      loading_specs: "Tester settings are being loaded, please refresh the page in a minute."
-      files: "Test Files"
-      token:
-        start_date: "Tokens available starting on:"
-        available: "Tokens available:"
-        unlimited: "Unlimited"
-        per_period: "Tokens per %{period} hour(s):"
-        tokens_form: "Tokens available per group"
-        tokens_regenerate: "and regenerate every"
-        hours: "hours"
-        no_regeneration: "No regeneration"
       test_results_table:
         test_name: "Test Name"
         output: "Output"

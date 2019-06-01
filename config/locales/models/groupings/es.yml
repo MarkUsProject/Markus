@@ -1,0 +1,5 @@
+es:
+  activerecord:
+    attributes:
+      grouping:
+        test_tokens: "Fichas disponibles"

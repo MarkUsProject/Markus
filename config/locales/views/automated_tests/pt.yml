@@ -1,0 +1,14 @@
+pt:
+  automated_tests:
+    files: "UPDATE ME"
+    information: "Informação"
+    loading_specs: "UPDATE ME"
+    need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
+    need_group_for_test: "Você precisa possuir um grupo para executar os testes."
+    run_tests: "Executar testes"
+    student_tests: "UPDATE ME"
+    testing_disabled: "UPDATE ME"
+    title: "UPDATE ME"
+
+    # Test results
+    no_results: "UPDATE ME"
