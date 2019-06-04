@@ -4,10 +4,11 @@ class ExtensionsController < ApplicationController
 
   def create
     params = extension_params
-    if Extension.create(grouping_id: params[:grouping_id],
-                        time_delta: duration_from_params,
-                        apply_penalty: params[:penalty],
-                        note: params[:note])
+    extension = Extension.new(grouping_id: params[:grouping_id],
+                              time_delta: duration_from_params,
+                              apply_penalty: params[:penalty],
+                              note: params[:note])
+    if extension.save
       flash_now(:success, I18n.t('extensions.create.success'))
     else
       flash_now(:error, I18n.t('extensions.create.error'))
@@ -30,7 +31,7 @@ class ExtensionsController < ApplicationController
   end
 
   def destroy
-    if Extension.find(params[:id])&.destroy
+    if Extension.find(params[:id])&.destroy&.destroyed?
       flash_now(:success, I18n.t('extensions.delete.success'))
     else
       flash_now(:error, I18n.t('extensions.delete.error'))
