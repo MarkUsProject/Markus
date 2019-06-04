@@ -21,7 +21,7 @@ class GroupingPolicy < ApplicationPolicy
   # Policies for group invitations.
   def invite_member?
     allowed_to?(:students_form_groups?) &&
-      !record.extension.exists? &&
+      allowed_to?(:no_extension?) &&
       allowed_to?(:before_due_date?)
   end
 
@@ -47,5 +47,9 @@ class GroupingPolicy < ApplicationPolicy
 
   def no_submission?
     !record.has_submission?
+  end
+
+  def no_extension?
+    !record.extension.exists?
   end
 end

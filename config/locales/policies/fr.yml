@@ -3,7 +3,7 @@ fr:
     policy:
       assignment:
         before_due_date?: "La date d'échéance est déjà pasée."
-        due_date_passed?: "Impossible de créer le groupe: la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
+        collection_date_passed?: "Impossible de créer le groupe: la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
         enabled?: "Les tests ne sont pas activés pour ce projet."
         not_a_ta?: "Les correcteurs ne sont pas autorisés à éxecuter des tests."
         not_yet_in_group?: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
@@ -16,6 +16,7 @@ fr:
         deletable_by?: "Vous ne pouvez pas supprimer ce groupe."
         delete_rejected?: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée."
         member?: "Votre groupe n'éxiste pas, où il n'est pas valide."
+        no_extension?: "Vous ne pouvez pas modifier un groupe avec une extension à la date d'échéance."
         no_submission?: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
         not_in_progress?: "Il y a déjà un test mis en file d'attente, attendez les résultats s'il vous plait."
         tokens_available?: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet."

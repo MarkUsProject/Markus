@@ -52,7 +52,11 @@ class SubmissionRule < ApplicationRecord
   end
 
   def calculate_grouping_collection_time(grouping)
-    grouping.due_date + hours_sum.hours
+    if grouping.extension.nil? || grouping.extension.apply_penalty
+      grouping.due_date + hours_sum.hours
+    else
+      grouping.due_date
+    end
   end
 
   # When we're past the due date, the File Manager for the students will display

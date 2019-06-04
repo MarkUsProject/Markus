@@ -3,7 +3,7 @@ pt:
     policy:
       assignment:
         before_due_date?: "Você não pode executar o teste pois a sua entrega está fora do prazo."
-        due_date_passed?: "Não foi possível criar grupo: a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
+        collection_date_passed?: "Não foi possível criar grupo: a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
         enabled?: "UPDATE ME."
         not_a_ta?: "UPDATE ME."
         not_yet_in_group?: "Você já tem um grupo, e não pode criar outro"
@@ -16,6 +16,7 @@ pt:
         deletable_by?: "Você não tem permissão para deletar este grupo."
         delete_rejected?: "Apenas o anfitrião pode excluir um convite recusado."
         member?: "UPDATE ME."
+        no_extension?: "UPDATE ME."
         no_submission?: "Você já enviou algo. Não pode deletar seu grupo."
         not_in_progress?: "UPDATE ME."
         tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."

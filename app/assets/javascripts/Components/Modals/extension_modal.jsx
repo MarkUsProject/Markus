@@ -21,7 +21,7 @@ class ExtensionModal extends React.Component {
       hours: props.hours,
       note: props.note,
       penalty: props.penalty
-    }
+    };
   }
 
   componentDidMount() {
@@ -40,17 +40,26 @@ class ExtensionModal extends React.Component {
   submitForm = (event) => {
     event.preventDefault();
     if (this.stateHasChanged()) {
-      $.post({
-        url: Routes.create_or_update_extensions_path(),
-        data: {
-          weeks: this.state.weeks,
-          days: this.state.days,
-          hours: this.state.hours,
-          note: this.state.note,
-          penalty: this.state.penalty,
-          grouping_id: this.props.grouping_id
-        }
-      }).then(this.props.onRequestClose(true));
+      let data = {
+        weeks: this.state.weeks,
+        days: this.state.days,
+        hours: this.state.hours,
+        note: this.state.note,
+        penalty: this.state.penalty,
+        grouping_id: this.props.grouping_id
+      };
+      if (!!this.props.extension_id) {
+        $.ajax({
+          type: "PUT",
+          url: Routes.extension_path(this.props.extension_id),
+          data: data
+        }).then(() => this.props.onRequestClose(true));
+      } else {
+        $.post({
+          url: Routes.extensions_path(),
+          data: data
+        }).then(() => this.props.onRequestClose(true));
+      }
     } else {
       this.props.onRequestClose(false)
     }
@@ -60,9 +69,8 @@ class ExtensionModal extends React.Component {
     event.preventDefault();
     $.ajax({
       type: "DELETE",
-      url: Routes.delete_by_grouping_extensions_path(),
-      data: {grouping_id: this.props.grouping_id}
-    }).then(this.props.onRequestClose(true))
+      url: Routes.extension_path(this.props.extension_id)
+    }).then(() => this.props.onRequestClose(true));
   };
 
   handleModalInputChange = (event) => {
@@ -147,7 +155,7 @@ class ExtensionModal extends React.Component {
                 disabled={!this.props.updating}
               >
                 {I18n.t("delete")}
-                </button>
+              </button>
             </div>
           </div>
         </form>

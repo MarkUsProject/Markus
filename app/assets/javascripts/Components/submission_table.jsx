@@ -218,7 +218,7 @@ class RawSubmissionTable extends React.Component {
   getTrProps = (state, ri, ci, instance) => {
     if (ri.original.marking_state === undefined ||
         ri.original.marking_state === 'not_collected' ||
-      ri.original.marking_state === 'before_due_date') {
+        ri.original.marking_state === 'before_due_date') {
       return {ri};
     } else {
       return {ri, className: 'submission_collected'};

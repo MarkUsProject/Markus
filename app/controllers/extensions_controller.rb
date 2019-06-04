@@ -2,15 +2,12 @@
 class ExtensionsController < ApplicationController
   before_action :authorize_only_for_admin
 
-  # Create a new extension object for the grouping with id=+params[:grouping_id]+ or
-  # update the existing extension object for that grouping.
-  def create_or_update
+  def create
     params = extension_params
-    extension = Extension.find_or_initialize_by(grouping_id: params[:grouping_id])
-    if extension.update_attributes(grouping_id: params[:grouping_id],
-                                   time_delta: duration_from_params,
-                                   apply_penalty: params[:penalty],
-                                   note: params[:note])
+    if Extension.create(grouping_id: params[:grouping_id],
+                        time_delta: duration_from_params,
+                        apply_penalty: params[:penalty],
+                        note: params[:note])
       flash_now(:success, I18n.t('extensions.create.success'))
     else
       flash_now(:error, I18n.t('extensions.create.error'))
@@ -18,10 +15,22 @@ class ExtensionsController < ApplicationController
     head :ok
   end
 
-  # Delete an extension object for the grouping with id=+params[:grouping_id]+
-  def delete_by_grouping
+  def update
     params = extension_params
-    if Extension.find_by_grouping_id(params[:grouping_id])&.destroy
+    extension = Extension.find(params[:id])
+    if extension&.update_attributes(grouping_id: params[:grouping_id],
+                                    time_delta: duration_from_params,
+                                    apply_penalty: params[:penalty],
+                                    note: params[:note])
+      flash_now(:success, I18n.t('extensions.create.success'))
+    else
+      flash_now(:error, I18n.t('extensions.create.error'))
+    end
+    head :ok
+  end
+
+  def destroy
+    if Extension.find(params[:id])&.destroy
       flash_now(:success, I18n.t('extensions.delete.success'))
     else
       flash_now(:error, I18n.t('extensions.delete.error'))
@@ -37,6 +46,6 @@ class ExtensionsController < ApplicationController
   end
 
   def extension_params
-    params.permit(*Extension::PARTS, :grouping_id, :penalty, :note)
+    params.permit(*Extension::PARTS, :grouping_id, :penalty, :note, :id)
   end
 end

@@ -172,7 +172,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_132638) do
   create_table "extensions", force: :cascade do |t|
     t.string "time_delta", null: false
     t.boolean "apply_penalty", default: false, null: false
-    t.bigint "grouping_id"
+    t.bigint "grouping_id", null: false
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

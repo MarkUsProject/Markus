@@ -226,36 +226,38 @@ class Assignment < ApplicationRecord
     due_dates.compact.max
   end
 
+  # Return collection date for all groupings as a hash mapping grouping_id to collection date.
   def all_grouping_collection_dates
-    submission_rule_max_hours = Assignment.where(id: self)
-                                          .joins(:groupings)
-                                          .joins(submission_rule: :periods)
-                                          .reorder(nil)
-                                          .group('groupings.id')
-                                          .sum(:hours)
-    all_grouping_due_dates.map do |grouping_id, due_date|
-      max_hours = submission_rule_max_hours[grouping_id] || 0
-      [grouping_id, due_date + max_hours.hours]
-    end.to_h
+    submission_rule_hours = submission_rule.periods.pluck('periods.hours').sum.hours
+    no_penalty = Set.new(groupings.joins(:extension).where('extensions.apply_penalty': false).pluck(:id))
+    collection_dates = Hash.new { |h, k| h[k] = due_date + submission_rule_hours }
+    all_grouping_due_dates.each do |grouping_id, grouping_due_date|
+      if no_penalty.include? grouping_id
+        collection_dates[grouping_id] = grouping_due_date
+      else
+        collection_dates[grouping_id] = grouping_due_date + submission_rule_hours
+      end
+    end
+    collection_dates
   end
 
+  # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = Assignment.where(id: self)
-                                  .joins(groupings: [inviter: :section])
-                                  .joins(:section_due_dates)
-                                  .where('section_due_dates.section_id = users.section_id')
-                                  .pluck('groupings.id', 'section_due_dates.due_date')
-                                  .to_h
+    section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
+                                 .where('section_due_dates.assignment_id': id)
+                                 .pluck('groupings.id', 'section_due_dates.due_date')
 
-    grouping_extensions = groupings.left_outer_joins(:extension)
+    grouping_extensions = groupings.joins(:extension)
                                    .pluck(:id, :time_delta)
-                                   .to_h
 
-    grouping_extensions.map do |grouping_id, ext|
-      grouping_due_date = section_due_dates[grouping_id] || due_date
-      extension = ActiveSupport::Duration.build(ext)
-      [grouping_id, grouping_due_date + extension]
-    end.to_h
+    due_dates = Hash.new { |h, k| h[k] = due_date }
+    section_due_dates.each do |grouping_id, sec_due_date|
+      due_dates[grouping_id] = sec_due_date
+    end
+    grouping_extensions.each do |grouping_id, ext|
+      due_dates[grouping_id] += ActiveSupport::Duration.parse(ext)
+    end
+    due_dates
   end
 
   # checks if the due date for +section+ has passed for this assignment
@@ -386,6 +388,7 @@ class Assignment < ApplicationRecord
                                    'groups.group_name',
                                    'users.user_name',
                                    'memberships.membership_status',
+                                   'extensions.id',
                                    'extensions.time_delta',
                                    'extensions.apply_penalty',
                                    'extensions.note')
@@ -403,17 +406,19 @@ class Assignment < ApplicationRecord
 
       ids << data['groupings.id']
       if data['extensions.time_delta'].nil?
-        data['extensions.time_delta'] = {}
+        extension_data = {}
       else
-        data['extensions.time_delta'] = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        extension_data = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
       end
+      extension_data[:note] = data['extensions.note'] || ''
+      extension_data[:apply_penalty] = data['extensions.apply_penalty'] || false
+      extension_data[:id] = data['extensions.id']
+      extension_data[:grouping_id] = data['groupings.id']
       {
         _id: data['groupings.id'],
         admin_approved: data['groupings.admin_approved'],
         group_name: data['groups.group_name'],
-        extension: data['extensions.time_delta'],
-        apply_penalty: data['extensions.apply_penalty'] || false,
-        note: data['extensions.note'] || '',
+        extension: extension_data,
         members: members[data['groupings.id']]
       }
     end.compact

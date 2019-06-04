@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
-import ExtensionModal from "./Modals/extension_modal";
+import ExtensionModal from './Modals/extension_modal';
 
 class GroupsManager extends React.Component {
   constructor(props) {
@@ -11,9 +11,7 @@ class GroupsManager extends React.Component {
       graders: [],
       students: [],
       show_modal: false,
-      selected_row_data: {
-        extension: {}
-      },
+      selected_extension_data: {},
       updating_extension: false,
       loading: true
     }
@@ -153,8 +151,8 @@ class GroupsManager extends React.Component {
     }).then(this.fetchData);
   };
 
-  handleShowModal = (row_data, updating) => {
-    this.setState({show_modal: true, selected_row_data: row_data, updating_extension: updating})
+  handleShowModal = (extension_data, updating) => {
+    this.setState({show_modal: true, selected_extension_data: extension_data, updating_extension: updating})
   };
 
   handleCloseModal = (updated) => {
@@ -200,14 +198,15 @@ class GroupsManager extends React.Component {
         <ExtensionModal
           isOpen={this.state.show_modal}
           onRequestClose={this.handleCloseModal}
-          weeks={this.state.selected_row_data.extension.weeks}
-          days={this.state.selected_row_data.extension.days}
-          hours={this.state.selected_row_data.extension.hours}
-          note={this.state.selected_row_data.note}
-          penalty={this.state.selected_row_data.apply_penalty}
-          grouping_id={this.state.selected_row_data._id}
+          weeks={this.state.selected_extension_data.weeks}
+          days={this.state.selected_extension_data.days}
+          hours={this.state.selected_extension_data.hours}
+          note={this.state.selected_extension_data.note}
+          penalty={this.state.selected_extension_data.apply_penalty}
+          grouping_id={this.state.selected_extension_data.grouping_id}
+          extension_id={this.state.selected_extension_data.id}
           updating={this.state.updating_extension}
-          key={this.state.selected_row_data._id} // this causes the ExtensionModal to be recreated if this value changes
+          key={this.state.selected_extension_data.id} // this causes the ExtensionModal to be recreated if this value changes
         />
       </div>
     );
@@ -325,32 +324,32 @@ class RawGroupsTable extends React.Component {
       Header: I18n.t('groups.extension'),
       accessor: 'extension',
       Cell: row => {
-        if (row.original.extension !== null && Object.entries(row.original.extension).length) {
-          let extension = Object.keys(row.original.extension).map(
-            (key) => {
-              if (row.original.extension[key]) {
-                // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
-                if (key === 'weeks') {
-                  return I18n.t('extensions.durations.weeks', {count: row.original.extension[key]});
-                } else if (key === 'days') {
-                  return I18n.t('extensions.durations.days', {count: row.original.extension[key]});
-                } else if (key === 'hours') {
-                  return I18n.t('extensions.durations.hours', {count: row.original.extension[key]});
-                } else {
-                  return '';
-                }
+        let extension = ['weeks', 'days', 'hours'].map(
+          (key) => {
+            if (row.original.extension[key]) {
+              // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
+              if (key === 'weeks') {
+                return I18n.t('extensions.durations.weeks', {count: row.original.extension[key]});
+              } else if (key === 'days') {
+                return I18n.t('extensions.durations.days', {count: row.original.extension[key]});
+              } else if (key === 'hours') {
+                return I18n.t('extensions.durations.hours', {count: row.original.extension[key]});
+              } else {
+                return '';
               }
             }
-          ).filter(Boolean).join(', ');
+          }
+        ).filter(Boolean).join(', ');
+        if (!!extension) {
           return <div>
-            <a href={'#'} onClick={() => this.props.onExtensionModal(row.original, true)}>
+            <a href={'#'} onClick={() => this.props.onExtensionModal(row.original.extension, true)}>
             {extension}
             </a>
           </div>
         } else {
           return <a href='#'
                     className="add-icon"
-                    onClick={() => this.props.onExtensionModal(row.original, false)}
+                    onClick={() => this.props.onExtensionModal(row.original.extension, false)}
                     title={I18n.t('add')}
           />
         }

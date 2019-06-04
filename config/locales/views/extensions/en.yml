@@ -3,7 +3,7 @@ en:
     hours: hours
     days: days
     weeks: weeks
-    apply_penalty: "Apply late submission policies when collecting this group's submissions"
+    apply_penalty: "Apply late submission policy when collecting this group's submissions"
     create:
       success: "Extension added"
       error: "Failed to create extension"

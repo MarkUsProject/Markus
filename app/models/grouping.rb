@@ -294,7 +294,7 @@ class Grouping < ApplicationRecord
   def can_invite?(user)
     if self.inviter == user
       raise I18n.t('groups.invite_member.errors.inviting_self')
-    elsif extension&.time_delta.present?
+    elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
       raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
