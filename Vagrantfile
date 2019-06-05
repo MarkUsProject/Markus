@@ -2,7 +2,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/ubuntu-18.04"
+  config.vm.box = "bento/ubuntu-16.04"
   config.vm.define :markus_box
 
   # Set this to your private key if you're having trouble
@@ -21,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3035, host: 3035
   # rq-dashboard
   config.vm.network "forwarded_port", guest: 9181, host: 9181
-
+  
   # The autotesting server must be running when MarkUs populates the seed database
   config.vm.provision "install-markus-autotesting", type: "shell" do |s|
     s.path = "script/install-markus-autotesting.sh"
