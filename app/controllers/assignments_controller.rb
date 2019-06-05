@@ -645,6 +645,7 @@ class AssignmentsController < ApplicationController
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     assignment.assign_attributes(assignment_params)
+    assignment.repository_folder = assignment_params[:short_identifier]
     new_required_files = assignment.only_required_files_changed? ||
                          assignment.is_hidden_changed? ||
                          assignment.assignment_files.any? { |file| file.changed? }
@@ -767,7 +768,6 @@ class AssignmentsController < ApplicationController
         :short_identifier,
         :description,
         :message,
-        :repository_folder,
         :due_date,
         :allow_web_submits,
         :vcs_submit,

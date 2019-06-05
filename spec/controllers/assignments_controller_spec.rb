@@ -1,6 +1,6 @@
 describe AssignmentsController do
   # copied from the controller
-  DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
+  DEFAULT_FIELDS = [:short_identifier, :description,
                     :due_date, :message, :group_min, :group_max,
                     :tokens_per_period, :allow_web_submits,
                     :student_form_groups, :remark_due_date,

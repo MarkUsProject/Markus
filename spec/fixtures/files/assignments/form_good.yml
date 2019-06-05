@@ -1,9 +1,7 @@
 assignments:
   - short_identifier: ATest1
     description: test1
-    repository_folder: ATest1
     due_date: 2013-07-22 14:00:00
   - short_identifier: ATest2
     description: test2
-    repository_folder: ATest2
     due_date: 2013-07-22 14:00:00

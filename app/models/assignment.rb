@@ -80,8 +80,10 @@ class Assignment < ApplicationRecord
   validates_presence_of :submission_rule
 
   validates_presence_of :short_identifier
+  validate :short_identifier_unchanged, on: :update
   validates_presence_of :description
   validates :repository_folder, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
+  validate :repository_folder_unchanged, on: :update
   validates_presence_of :due_date
   validates_presence_of :group_min
   validates_presence_of :group_max
@@ -145,7 +147,7 @@ class Assignment < ApplicationRecord
 
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
-  DEFAULT_FIELDS = [:short_identifier, :description, :repository_folder,
+  DEFAULT_FIELDS = [:short_identifier, :description,
                     :due_date, :message, :group_min, :group_max, :tokens_per_period,
                     :allow_web_submits, :student_form_groups, :remark_due_date,
                     :remark_message, :assign_graders_to_criteria, :enable_test,
@@ -1042,7 +1044,7 @@ class Assignment < ApplicationRecord
   end
 
   def autotest_path
-    File.join(TestRun::ASSIGNMENTS_DIR, self.short_identifier)
+    File.join(TestRun::ASSIGNMENTS_DIR, self.repository_folder)
   end
 
   def autotest_files_dir
@@ -1280,7 +1282,7 @@ class Assignment < ApplicationRecord
     case file_format
     when 'csv'
       result = MarkusCSV.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0])
+        assignment = self.find_or_create_by(short_identifier: row[0], repository_folder: row[0])
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
@@ -1297,7 +1299,8 @@ class Assignment < ApplicationRecord
       begin
         map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
-          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier],
+                                              repository_folder: row[:short_identifier])
           if assignment.new_record?
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
@@ -1313,6 +1316,20 @@ class Assignment < ApplicationRecord
       rescue ActiveRecord::ActiveRecordError, ArgumentError => e
         e
       end
+    end
+  end
+
+  def short_identifier_unchanged
+    if short_identifier_changed?
+      errors.add(:short_id_change, 'short identifier should not be changed once an assignment has been created')
+      false
+    end
+  end
+
+  def repository_folder_unchanged
+    if repository_folder_changed?
+      errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
+      false
     end
   end
 end
