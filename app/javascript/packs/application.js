@@ -104,3 +104,5 @@ import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_
 window.makeStarterCodeFileManager = makeStarterCodeFileManager;
 import { makeAutotestManager } from 'javascripts/Components/autotest_manager';
 window.makeAutotestManager = makeAutotestManager;
+import { makeStudentPeerReviewsTable } from 'javascripts/Components/student_peer_reviews_table';
+window.makeStudentPeerReviewsTable = makeStudentPeerReviewsTable;

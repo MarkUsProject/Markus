@@ -64,37 +64,39 @@ describe PeerReviewsController do
       let(:params) { { assignment_id: @pr_id, model: PeerReview } }
     end
 
-    before :each do
-      post :assign_groups,
-           params: { actionString: 'random_assign',
-                     selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                     selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assignment_id: @pr_id,
-                     numGroupsToAssign: 1
-           }
-      get :peer_review_mapping, params: { assignment_id: @pr_id }
-      @downloaded_text = response.body
-      PeerReview.all.destroy_all
-      @path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
-      # Now allow uploading by placing the data in a temporary file and reading
-      # the data back through 'uploading' (requires a clean database)
-      File.open(@path, 'w') do |f|
-        f.write(@downloaded_text)
+    context 'with a valid upload file' do
+      before :each do
+        post :assign_groups,
+             params: { actionString: 'random_assign',
+                       selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                       selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                       assignment_id: @pr_id,
+                       numGroupsToAssign: 1
+                     }
+        get :peer_review_mapping, params: { assignment_id: @pr_id }
+        @downloaded_text = response.body
+        PeerReview.all.destroy_all
+        @path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
+        # Now allow uploading by placing the data in a temporary file and reading
+        # the data back through 'uploading' (requires a clean database)
+        File.open(@path, 'w') do |f|
+          f.write(@downloaded_text)
+        end
+        csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
+        fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
+        allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
+
+        post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
       end
-      csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-      fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-      allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
-      post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
-    end
+      it 'has the correct number of peer reviews' do
+        expect(@assignment_with_pr.peer_reviews.count).to eq 3
+      end
 
-    it 'has the correct number of peer reviews' do
-      expect(@assignment_with_pr.peer_reviews.count).to eq 3
-    end
-
-    it 'temporary file is deleted' do
-      File.delete(@path)
-      expect(File.exist?(@path)).to be_falsey
+      it 'temporary file is deleted' do
+        File.delete(@path)
+        expect(File.exist?(@path)).to be_falsey
+      end
     end
   end
 

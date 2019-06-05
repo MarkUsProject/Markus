@@ -13,7 +13,9 @@ class SubmissionFileManager extends React.Component {
   }
 
   static defaultProps = {
-    fetchOnMount: true
+    fetchOnMount: true,
+    readOnly: false,
+    revision_identifier: undefined
   };
 
   componentDidMount() {
@@ -117,12 +119,6 @@ class SubmissionFileManager extends React.Component {
     );
   }
 }
-
-SubmissionFileManager.defaultProps = {
-  readOnly: false,
-  revision_identifier: undefined
-};
-
 
 export function makeSubmissionFileManager(elem, props) {
   render(<SubmissionFileManager {...props} />, elem);

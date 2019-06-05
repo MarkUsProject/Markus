@@ -31,6 +31,8 @@ module AutomatedTestsHelper
     # create/modify test groups based on the autotest specs
     test_group_ids = []
     test_specs['testers'].each do |tester_specs|
+      next if tester_specs['test_data'].nil?
+
       tester_specs['test_data'].each_with_index do |test_group_specs, i|
         test_group_specs['extra_info'] ||= {}
         extra_data_specs = test_group_specs['extra_info']

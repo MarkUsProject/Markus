@@ -41,16 +41,14 @@ describe Submission do
     it 'should create another extra mark if there was one originally' do
       extra_mark
       submission.make_remark_result
-      marks = ExtraMark.joins("LEFT OUTER JOIN results ON results.id=extra_marks.id")
-                .where("results.submission_id=?", submission.id)
+      marks = ExtraMark.where(result_id: [submission.get_original_result.id, submission.remark_result.id])
       expect(marks.count).to eq(2)
     end
 
     it 'should copy extra marks from the original result to the remark request' do
       extra_mark
       submission.make_remark_result
-      marks = ExtraMark.joins("LEFT OUTER JOIN results ON results.id=extra_marks.id")
-                .where("results.submission_id=?", submission.id)
+      marks = ExtraMark.where(result_id: [submission.get_original_result.id, submission.remark_result.id])
       attributes = marks.pluck('description', 'extra_mark', 'unit')
       expect(attributes[0]).to eq(attributes[1])
     end

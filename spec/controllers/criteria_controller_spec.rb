@@ -839,8 +839,9 @@ describe CriteriaController do
       it 'deletes all criteria previously created' do
         post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
-        expect(@assignment.get_criteria.map(&:id))
-          .not_to include(@rubric_criterion.id, @flexible_criterion.id, @checkbox_criterion.id)
+        expect(@assignment.rubric_criteria.find_by(name: @rubric_criterion.name)).to be_nil
+        expect(@assignment.flexible_criteria.find_by(name: @flexible_criterion.name)).to be_nil
+        expect(@assignment.checkbox_criteria.find_by(name: @checkbox_criterion.name)).to be_nil
       end
 
       it 'maintains the order between entries and positions for criteria' do

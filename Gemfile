@@ -110,7 +110,6 @@ group :test do
   gem 'shoulda'
   gem 'simplecov', require: false
   gem 'time-warp'
-  gem 'database_cleaner'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'rails-controller-testing'
 end
