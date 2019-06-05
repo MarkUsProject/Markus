@@ -17,7 +17,6 @@ window.ajax_events = ajax_events;
 
 // vendor libraries
 import 'javascripts/jquery.easyModal';
-import 'javascripts/jquery.Jcrop';
 
 // marked (markdown support)
 import marked from 'marked';
@@ -39,6 +38,10 @@ window.Rails = Rails;
 import * as I18n from 'i18n-js';
 window.I18n = I18n;
 require('translations');
+
+// JCrop
+import Jcrop from 'jcrop';
+window.Jcrop = Jcrop;
 
 // chart.js
 import { Chart } from 'chart.js';
