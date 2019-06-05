@@ -17,11 +17,6 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
 yes | server/bin/install.sh
 
-# Note: jdbc and java testers use jdk-12
-sudo add-apt-repository ppa:linuxuprising/java
-sudo apt update
-sudo apt install -y oracle-java12-installer
-
 # Note: install jdbc jar
 JAVA_JAR_PATH=${AUTOTEST_ROOT}/testers/testers/jdbc/bin/
 wget -P ${JAVA_JAR_PATH} https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
@@ -34,5 +29,5 @@ yes | ${AUTOTEST_ROOT}/testers/testers/java/bin/install.sh
 yes | ${AUTOTEST_ROOT}/testers/testers/py/bin/install.sh
 yes | ${AUTOTEST_ROOT}/testers/testers/pyta/bin/install.sh
 yes | ${AUTOTEST_ROOT}/testers/testers/racket/bin/install.sh
-yes | ${AUTOTEST_ROOT}/testers/testers/sql/bin/install.sh  #TODO: install after the autotester is ready
+yes | ${AUTOTEST_ROOT}/testers/testers/sql/bin/install.sh
 yes | ${AUTOTEST_ROOT}/testers/testers/jdbc/bin/install.sh "${JAVA_JAR_PATH}/postgresql-42.2.5.jar"
