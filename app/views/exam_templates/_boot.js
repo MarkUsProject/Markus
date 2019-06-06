@@ -26,3 +26,47 @@ function add_template_division(id) {
     `;
   $('.template-division-section-' + id + ' .add_template').before(new_division_row);
 }
+
+function toggle_cover_page(id, fields) {
+  if ($('#automatic_parsing').is(':checked')) {
+    $('#exam-cover-display-' + id).css('display', 'flex');
+    var i;
+    for (i=0; i<fields.length; i++) {
+      $('.field' + (i+1)).val(fields[i]);
+    }
+    attach_crop_box();
+  } else {
+    $('#exam-cover-display-' + id).css('display', 'none');
+  }
+}
+
+function attach_crop_box() {
+  var jcrop_api;
+
+  $('#crop-target').Jcrop({
+    onChange: pos => {
+      const stageHeight = $('#crop-target').height();
+      const stageWidth = $('#crop-target').width();
+      const { x, y, w, h } = pos;
+      // find the input element for width
+      // set the width value for that form element
+      $('#x').val(x/stageWidth);
+      $('#y').val(y/stageHeight);
+      $('#width').val(w/stageWidth);
+      $('#height').val(h/stageHeight);
+    }
+  }, function () {
+    jcrop_api = this;
+  });
+
+  // Set crop selection if values exist.
+  if ($('#x').val() && $('#y').val() && $('#width').val() && $('#height').val()) {
+    const stageHeight = $('#crop-target').height();
+    const stageWidth = $('#crop-target').width();
+    const x = parseFloat($('#x').val()) * stageWidth;
+    const y = parseFloat($('#y').val()) * stageHeight;
+    const width = parseFloat($('#width').val()) * stageWidth;
+    const height = parseFloat($('#height').val()) * stageHeight;
+    jcrop_api.setSelect([x, y, x + width, y + height]);
+  }
+}

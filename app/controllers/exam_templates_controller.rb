@@ -22,12 +22,11 @@ class ExamTemplatesController < ApplicationController
       flash_message(:error, t('exam_templates.create.failure'))
     else
       filename = new_uploaded_io.original_filename
-      new_template = ExamTemplate.new_with_file(new_uploaded_io.read,
-                                                assignment_id: assignment.id,
-                                                filename: filename,
-                                                name: name)
-      # sending flash message if saved
-      if new_template.save
+      exam_template = ExamTemplate.create_with_file(new_uploaded_io.read,
+                                                    assignment_id: assignment.id,
+                                                    filename: filename,
+                                                    name: name)
+      if exam_template.valid?
         flash_message(:success, t('exam_templates.create.success'))
       else
         flash_message(:error, t('exam_templates.create.failure'))
@@ -101,6 +100,47 @@ class ExamTemplatesController < ApplicationController
     send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
               type: "application/pdf")
+  end
+
+  def show_cover
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    cover_file = File.join(exam_template.base_path, 'cover.jpg')
+    if File.file?(cover_file)
+      send_file cover_file, disposition: 'inline', filename: 'cover.jpg'
+    else
+      head :not_found
+    end
+  end
+
+  def add_fields
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    if params[:automatic_parsing] == 'true'
+      exam_template.automatic_parsing = true
+      cover_field1 = params[:field1]
+      cover_field2 = params[:field2]
+      cover_field3 = params[:field3]
+      cover_field4 = params[:field4]
+      exam_template.crop_x = params[:x].to_f
+      exam_template.crop_y = params[:y].to_f
+      exam_template.crop_width = params[:width].to_f
+      exam_template.crop_height = params[:height].to_f
+
+      exam_template.cover_fields = cover_field1 != ' ' ? cover_field1 + ',' : ''
+      exam_template.cover_fields += cover_field2 != ' ' ? cover_field2 + ',' : ''
+      exam_template.cover_fields += cover_field3 != ' ' ? cover_field3 + ',' : ''
+      exam_template.cover_fields += cover_field4 != ' ' ? cover_field4 + ',' : ''
+    else
+      exam_template.automatic_parsing = false
+      exam_template.cover_fields = ''
+      exam_template.crop_x = nil
+      exam_template.crop_y = nil
+      exam_template.crop_width = nil
+      exam_template.crop_height = nil
+    end
+    exam_template.save
+    redirect_to action: 'index'
   end
 
   def split

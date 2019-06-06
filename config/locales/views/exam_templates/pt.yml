@@ -44,6 +44,14 @@ pt:
       generate_job_started:
         "Gerando pdfs de exame para exame %{exam_name} começou"
 
+    parsing:
+      title:
+        "Seleção automática de análise"
+      general:
+        "Analise automaticamente as informações do aluno"
+      save:
+        "Salve"
+
     split:
       success:
         "Exame dividido com êxito"

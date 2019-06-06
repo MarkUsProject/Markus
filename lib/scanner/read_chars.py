@@ -5,6 +5,7 @@ import glob
 import math
 import os
 import sys
+import tempfile
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -27,7 +28,7 @@ def gap_left(hist, x, th, K=10):
     for i in range(K):
         if x - i < 0:
             break
-        gap = gap and hist[x-i] <= th
+        gap = gap and (i > x or hist[x-i] <= th)
     return gap
 
 
@@ -41,8 +42,10 @@ def gap_right(hist, x, th, W, K=10):
     :return: whether this x-coordinate marks the end of a word/block.
     """
     gap = hist[x-1] > th
-    for i in range(min(K, W - x, len(hist) - x)):
-        gap = gap and hist[x+i] <= th
+    for i in range(K):
+        if x + i > W:
+            break
+        gap = gap and (x+i >= len(hist) or hist[x+i] <= th)
     return gap
 
 
@@ -227,7 +230,7 @@ def find_boxes(img):
     return img_final_bin
 
 
-def extract_char(img, num=True):
+def extract_char(img, crop_dir, num=True):
     """
     Takes a block of handwritten characters and prints the recognized output.
     :param img: input image of block of handwritten characters.
@@ -244,17 +247,6 @@ def extract_char(img, num=True):
     new_contours = []
     for k in range(len(contours)):
         new_contours.append(cv2.convexHull(contours[k], returnPoints=True))
-
-    if num:
-        cropped_dir_path = "/home/vagrant/Markus/lib/scanner/nums/1/"
-    else:
-        cropped_dir_path = "/home/vagrant/Markus/lib/scanner/names/1/"
-
-    # Remove previous images
-    olddir = cropped_dir_path + "*"
-    r = glob.glob(olddir)
-    for png in r:
-        os.remove(png)
 
     box_num = 0
     reached_x = 0
@@ -284,7 +276,7 @@ def extract_char(img, num=True):
                 new_img = process_num(cropped)
             else:
                 new_img = process_char(cropped)
-            cv2.imwrite(cropped_dir_path + str(box_num).zfill(2) + '.png', new_img)
+            cv2.imwrite(crop_dir + '/' + str(box_num).zfill(2) + '.png', new_img)
             reached_x = x + w
 
     return spaces
@@ -334,8 +326,12 @@ if __name__ == '__main__':
                 word = line[0:H, lefts[j]-BUF:rights[j]+BUF].copy()
                 hist = cv2.reduce(word, 1, cv2.REDUCE_AVG).reshape(-1)
 
-                spaces = extract_char(word, num=False)
-                get_name(spaces)
-            
-                spaces = extract_char(word, num=True)
-                get_num(spaces)
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    with tempfile.TemporaryDirectory(dir=tmp_dir) as img_dir:
+                        spaces = extract_char(word, img_dir, num=False)
+                        get_name(tmp_dir, img_dir, spaces)
+
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    with tempfile.TemporaryDirectory(dir=tmp_dir) as img_dir:
+                        spaces = extract_char(word, img_dir, num=True)
+                        get_num(tmp_dir, img_dir, spaces)

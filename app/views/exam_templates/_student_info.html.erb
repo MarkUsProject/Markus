@@ -1,0 +1,49 @@
+<%= form_for [@assignment, exam_template],
+             url: add_fields_assignment_exam_template_path(id: exam_template.id) do |f| %>
+
+  <p>
+    <%= check_box_tag :automatic_parsing, true,
+                      exam_template.automatic_parsing,
+                      onchange: "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;" %>
+    <%= t('exam_templates.parsing.general') %><br>
+  </p>
+
+  <div id="exam-cover-display-<%= exam_template.id %>" style="display: <% if exam_template.automatic_parsing %>flex<% else %>none<% end %>;">
+    <div id="exam_cover-<%= exam_template.id %>">
+      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" style="max-width: 400px; border: 1px solid black;">
+    </div>
+
+    <% if exam_template.automatic_parsing %>
+      <script>
+        window.onload = () => attach_crop_box()
+      </script>
+    <% end %>
+
+    <div class="division-table" style="padding:50px;">
+      <header>
+        <span class="label"><%= "Field" %></span>
+        <span class="start"><%= "Value" %></span>
+      </header>
+      <ul id="cover-fields-<%= exam_template.id %>">
+        <% for i in 1..4 do %>
+          <li>
+            <span><%= i %></span>
+            <%= select_tag("field#{i}", options_for_select({" " => " ",
+                                                            t('activerecord.attributes.user.full_name') => "full_name",
+                                                            t('activerecord.attributes.user.first_name') => "first_name",
+                                                            t('activerecord.attributes.user.last_name') => "last_name",
+                                                            t('activerecord.attributes.user.id_number') => "student_id",
+                                                            t('activerecord.attributes.user.user_name') => "username"},
+                                                           exam_template.get_cover_field(i-1))) %>
+          </li>
+        <% end %>
+      </ul>
+      <%= hidden_field_tag 'x', exam_template.crop_x %>
+      <%= hidden_field_tag 'y', exam_template.crop_y %>
+      <%= hidden_field_tag 'width', exam_template.crop_width %>
+      <%= hidden_field_tag 'height', exam_template.crop_height %>
+    </div>
+  </div>
+
+  <p><%= submit_tag t('exam_templates.parsing.save') %></p>
+<% end %>

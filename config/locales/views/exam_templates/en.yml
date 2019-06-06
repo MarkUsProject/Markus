@@ -44,6 +44,14 @@ en:
       generate_job_started:
         "Generating exam pdfs for exam %{exam_name} has begun."
 
+    parsing:
+      title:
+        "Automatic Parsing Selection"
+      general:
+        "Automatically parse student information"
+      save:
+        "Save"
+
     split:
       success:
         "Exam Template is successfully split"
