@@ -33,6 +33,7 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.create.failure'))
       end
     end
+    save_cover(new_template)
     redirect_to action: 'index'
   end
 
@@ -62,6 +63,7 @@ class ExamTemplatesController < ApplicationController
                                             old_filename: old_template_filename,
                                             new_filename: new_template_filename)
         old_exam_template.update(exam_template_params)
+        save_cover(old_exam_template)
         respond_with(old_exam_template, location: assignment_exam_templates_url)
         return
       end
@@ -101,6 +103,47 @@ class ExamTemplatesController < ApplicationController
     send_file(File.join(exam_template.base_path, params[:file_name]),
               filename: params[:file_name],
               type: "application/pdf")
+  end
+
+  def show_cover
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    cover_file = File.join(exam_template.base_path, 'cover.jpg')
+    if File.file?(cover_file)
+      send_file cover_file, disposition: 'inline', filename: 'cover.jpg'
+    else
+      head :not_found
+    end
+  end
+
+  def add_fields
+    assignment = Assignment.find(params[:assignment_id])
+    exam_template = assignment.exam_templates.find(params[:id])
+    if params[:automatic_parsing] == 'true'
+      exam_template.automatic_parsing = true
+      cover_field1 = params[:field1]
+      cover_field2 = params[:field2]
+      cover_field3 = params[:field3]
+      cover_field4 = params[:field4]
+      exam_template.crop_x = params[:x].to_f
+      exam_template.crop_y = params[:y].to_f
+      exam_template.crop_width = params[:width].to_f
+      exam_template.crop_height = params[:height].to_f
+
+      exam_template.cover_fields = cover_field1 != ' ' ? cover_field1 + ',' : ''
+      exam_template.cover_fields += cover_field2 != ' ' ? cover_field2 + ',' : ''
+      exam_template.cover_fields += cover_field3 != ' ' ? cover_field3 + ',' : ''
+      exam_template.cover_fields += cover_field4 != ' ' ? cover_field4 + ',' : ''
+    else
+      exam_template.automatic_parsing = false
+      exam_template.cover_fields = ''
+      exam_template.crop_x = nil
+      exam_template.crop_y = nil
+      exam_template.crop_width = nil
+      exam_template.crop_height = nil
+    end
+    exam_template.save
+    redirect_to action: 'index'
   end
 
   def split
@@ -270,5 +313,20 @@ class ExamTemplatesController < ApplicationController
          :name,
          template_divisions_attributes: [:id, :start, :end, :label, :_destroy]
        )
+  end
+
+  private
+
+  def save_cover(exam_template)
+    pdf = CombinePDF.load File.join(exam_template.base_path, exam_template.filename)
+    return if pdf.pages.empty?
+    cover = pdf.pages[0]
+    cover_page = CombinePDF.new
+    cover_page << cover
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
+      self.quality = 100
+      self.density = '300'
+    end
+    imglist.first.write(File.join(exam_template.base_path, 'cover.jpg'))
   end
 end

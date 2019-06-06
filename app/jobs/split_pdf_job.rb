@@ -239,8 +239,9 @@ class SplitPDFJob < ApplicationJob
         end
         repo.commit(txn)
 
-        # convert PDF to an image
+        next unless exam_template.automatic_parsing
         begin
+          # convert PDF to an image
           imglist = Magick::Image.from_blob(cover_pdf.to_pdf) do
             self.quality = 100
             self.density = '300'
@@ -251,8 +252,8 @@ class SplitPDFJob < ApplicationJob
 
         img = imglist.first
         # Snip out the middle of PDF that contains the student information
-        # TODO: store coordinates in exam template instead of hardcoding
-        student_info = img.crop 50, 1100, img.columns, img.rows / 6.0
+        student_info = img.crop exam_template.crop_x * img.columns, exam_template.crop_y * img.rows,
+                                exam_template.crop_width * img.columns, exam_template.crop_height * img.rows
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
@@ -260,16 +261,34 @@ class SplitPDFJob < ApplicationJob
         tokens = out.split("\n")
 
         # check if python script correctly parsed out the student info
-        if tokens.length != 6
+        if tokens.length != 2 * exam_template.num_cover_fields
           next
         end
 
-        # parse out name and student number for matching
-        first_name = tokens[0]
-        last_name = tokens[2]
-        student_id = tokens[-1]
+        first_name = nil
+        last_name = nil
+        student_id = nil
+        username = nil
 
-        student = match_student(first_name, last_name, student_id, exam_template.assignment)
+        cover_fields = exam_template.cover_fields.split(',')
+        cover_fields.each_with_index do |field, i|
+          case field
+          when 'full_name'
+            name_tokens = tokens[2 * i].split
+            first_name = name_tokens[0]
+            last_name = name_tokens[1..-1].join(' ')
+          when 'first_name'
+            first_name = tokens[2 * i]
+          when 'last_name'
+            last_name = tokens[2 * i]
+          when 'student_id'
+            student_id = tokens[2 * i + 1]
+          when 'username'
+            username = tokens[2 * i]
+          end
+        end
+
+        student = match_student(first_name, last_name, student_id, username, exam_template.assignment)
 
         unless student.nil?
           StudentMembership.find_or_create_by(user: student,
@@ -281,8 +300,8 @@ class SplitPDFJob < ApplicationJob
     num_complete
   end
 
-  # TODO: add in matching using name
-  def match_student(_first_name, _last_name, student_id, _exam)
+  # TODO: add in matching using name/username
+  def match_student(_first_name, _last_name, student_id, _username, _exam)
     Student.find_by(id_number: student_id)
   end
 

@@ -4,6 +4,7 @@
     "@babel/preset-react": "^7.0.0",
     "chart.js": "^2.8.0",
     "i18n-js": "^3.2.2",
+    "jcrop": "^0.0.1",
     "jquery": "^3.4.1",
     "marked": "^0.6.2",
     "moment": "^2.24.0",

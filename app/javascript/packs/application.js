@@ -39,6 +39,10 @@ import * as I18n from 'i18n-js';
 window.I18n = I18n;
 require('translations');
 
+// JCrop
+import Jcrop from 'jcrop';
+window.Jcrop = Jcrop;
+
 // chart.js
 import { Chart } from 'chart.js';
 import 'javascripts/chart_config';

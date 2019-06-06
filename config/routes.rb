@@ -105,10 +105,12 @@ Rails.application.routes.draw do
         member do
           get 'download'
           get 'download_generate'
+          get 'show_cover'
           get 'assign_errors'
           get 'download_raw_split_file'
           get 'download_error_file'
           get 'error_pages'
+          patch 'add_fields'
           patch 'generate'
           patch 'split'
           post 'fix_error'

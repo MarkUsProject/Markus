@@ -44,6 +44,14 @@ es:
       generate_job_started:
         "Generación de pdfs de examen para el examen %{exam_name} ha comenzado"
 
+    parsing:
+      title:
+        "Selección automática de análisis"
+      general:
+        "Analizar automáticamente la información del estudiante"
+      save:
+        "Salvar"
+
     split:
       success:
         "Examen con éxito dividido"
