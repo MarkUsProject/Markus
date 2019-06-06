@@ -39,7 +39,7 @@
                        size: 35,
                        maxlength: 30,
                        required: true,
-                       readonly: !current_page?(action: 'new') %>
+                       readonly: !@assignment.new_record? %>
     </div>
 
     <div>
