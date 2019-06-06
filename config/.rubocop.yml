@@ -71,3 +71,6 @@ Style/SymbolArray:
 
 Style/ParallelAssignment:
   Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
