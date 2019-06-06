@@ -38,19 +38,8 @@
                        onchange: 'set_onbeforeunload(true);',
                        size: 35,
                        maxlength: 30,
-                       required: true %>
-    </div>
-
-    <div>
-
-      <%= f.label :repository_folder,
-                  Assignment.human_attribute_name(:repository_folder),
-                  class: 'required' %>
-      <%= f.text_field :repository_folder,
-                       onchange: 'set_onbeforeunload(true);',
-                       size: 35,
                        required: true,
-                       readonly: true %>
+                       readonly: !@assignment.new_record? %>
     </div>
 
     <div>

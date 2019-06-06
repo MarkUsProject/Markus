@@ -104,6 +104,16 @@ describe Assignment do
       expect(parent_assignment.pr_assignment.id).to be assignment.id
       expect(assignment.parent_assignment.id).to be parent_assignment.id
     end
+    it 'should not allow the short_identifier to be updated' do
+      assignment = create(:assignment)
+      assignment.short_identifier = assignment.short_identifier + 'something'
+      expect(assignment).not_to be_valid
+    end
+    it 'should not allow the repository_folder to be updated' do
+      assignment = create(:assignment)
+      assignment.repository_folder = assignment.repository_folder + 'something'
+      expect(assignment).not_to be_valid
+    end
   end
 
   describe '#clone_groupings_from' do

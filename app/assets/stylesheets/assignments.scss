@@ -102,7 +102,7 @@ input#assignment_short_identifier {
   margin-right: 4em;
 }
 
-input#assignment_repository_folder[readonly] {
+input#assignment_short_identifier[readonly] {
   background-color: $disabled-grey;
   border-color: $disabled-dark;
   color: black;
