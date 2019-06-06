@@ -18,33 +18,11 @@ class ExamTemplate < ApplicationRecord
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
     return unless attributes.has_key? :assignment_id
-    assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
-    exam_template_name = attributes[:name].nil? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : attributes[:name]
-    template_path = File.join(
-      MarkusConfigurator.markus_exam_template_dir,
-      assignment_name,
-      exam_template_name
-    )
-    FileUtils.mkdir_p template_path unless Dir.exists? template_path
-
-    File.open(File.join(template_path, attributes[:filename]), 'wb') do |f|
-      f.write blob
-    end
-
-    pdf = CombinePDF.parse blob
-    attributes[:num_pages] = pdf.pages.length
-
-    create(attributes)
-  end
-
-  # Instantiate an ExamTemplate with the correct file
-  def self.new_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
     assignment = Assignment.find(attributes[:assignment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
-    exam_template_name = name_input == '' ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
+    exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name,
@@ -70,7 +48,11 @@ class ExamTemplate < ApplicationRecord
         assignment: assignment
       )
     end
-    return new_template
+    saved = new_template.save
+    if saved
+      new_template.save_cover
+    end
+    new_template
   end
 
   # Replace an ExamTemplate with the correct file
@@ -89,6 +71,7 @@ class ExamTemplate < ApplicationRecord
 
     pdf = CombinePDF.parse blob
     self.update(num_pages: pdf.pages.length, filename: attributes[:new_filename])
+    self.save_cover
   end
 
   def delete_with_file
@@ -263,6 +246,19 @@ class ExamTemplate < ApplicationRecord
     else
       ' '
     end
+  end
+
+  def save_cover
+    pdf = CombinePDF.load File.join(self.base_path, self.filename)
+    return if pdf.pages.empty?
+    cover = pdf.pages[0]
+    cover_page = CombinePDF.new
+    cover_page << cover
+    imglist = Magick::Image.from_blob(cover_page.to_pdf) do
+      self.quality = 100
+      self.density = '300'
+    end
+    imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end
 
   private

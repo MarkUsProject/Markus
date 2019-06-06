@@ -14,7 +14,9 @@
     </div>
 
     <% if exam_template.automatic_parsing %>
-      <script>attach_crop_box()</script>
+      <script>
+        window.onload = () => attach_crop_box()
+      </script>
     <% end %>
 
     <div class="division-table" style="padding:50px;">
