@@ -37,7 +37,7 @@
 #               └── file3.py
 
 namespace :markus do
-  task :archive_submissions, [:target_dir] => :environment  do |_task, args|
+  task :archive_submissions, [:target_dir] => :environment do |_task, args|
     target_dir = Pathname.new(args[:target_dir])
     raise "Directory #{target_dir} does not exist" unless Dir.exist?(target_dir)
 
@@ -51,13 +51,16 @@ namespace :markus do
     processed_groupings = 0
     print "\r"
     CSV.open(target_dir + 'group_memberships.csv', 'w') do |csv|
-      Assignment.all.pluck(:id, :short_identifier).each do |aid, short_id|
+      Assignment.where(parent_assignment_id: nil).pluck(:id, :short_identifier).each do |aid, short_id|
         short_id_dir = Pathname.new(short_id)
         assignment_dir = target_dir + short_id_dir
         FileUtils.makedirs(assignment_dir)
-        Grouping.where(assignment_id: aid).find_each.with_index do |grouping, i|
+        Grouping.where(assignment_id: aid)
+                .includes(current_submission_used: :submission_files)
+                .find_each.with_index do |grouping, i|
           submission = grouping.current_submission_used
           next unless submission
+          next unless submission.submission_files
 
           group_dir = assignment_dir + "group#{i}"
           csv << [group_dir.relative_path_from(target_dir).to_s, *grouping.accepted_students.pluck(:user_name)]
@@ -72,7 +75,7 @@ namespace :markus do
             File.write(file_dir + file.filename, file_content, mode: mode)
           end
           processed_groupings += 1
-          print "written files for #{processed_groupings}/#{total_groupings} groupings\r"
+          print "archived files for #{processed_groupings}/#{total_groupings} groupings\r"
           $stdout.flush
         end
       end
