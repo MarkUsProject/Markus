@@ -3,6 +3,10 @@ import { render } from 'react-dom';
 
 
 export class MarksPanel extends React.Component {
+  static defaultProps = {
+    marks: []
+  };
+
   constructor(props) {
     super(props);
     this.state = {

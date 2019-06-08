@@ -67,6 +67,7 @@ export class LeftPane extends React.Component {
               newAnnotation={this.props.newAnnotation}
               addExistingAnnotation={this.props.addExistingAnnotation}
               released_to_students={this.props.released_to_students}
+              loading={this.props.loading}
             />
         </TabPanel>
         <TabPanel forceRender={true}>

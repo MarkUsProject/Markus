@@ -4,6 +4,13 @@ import ReactTable from 'react-table';
 
 
 export class SummaryPanel extends React.Component {
+  static defaultProps = {
+    criterionSummaryData: [],
+    extra_marks: [],
+    extraMarkSubtotal: 0,
+    graceTokenDeductions: []
+  };
+
   constructor(props) {
     super(props);
     this.state = {

@@ -25,6 +25,7 @@ class Result extends React.Component {
     }
 
     this.state = {
+      annotation_categories: [],
       loading: true,
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
@@ -456,10 +457,6 @@ class Result extends React.Component {
   };
 
   render() {
-    if (this.state.loading) {
-      return I18n.t('working');
-    }
-
     return [
         <SubmissionSelector
           {...this.props}
@@ -483,6 +480,7 @@ class Result extends React.Component {
               <LeftPane
                 ref={this.leftPane}
                 {...this.props}
+                loading={this.state.loading}
                 result_id={this.props.result_id}
                 submission_id={this.props.submission_id}
                 assignment_id={this.props.assignment_id}
