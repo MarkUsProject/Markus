@@ -4,7 +4,6 @@
 .dp-highlighter {
   font: 1em $mono-fonts;
   margin: 0;
-  padding-top: 1px; /* adds a little border on top when controls are hidden */
   width: 100%;
 
   /* Clear styles */
@@ -26,16 +25,15 @@
 
   .bar {
     background: $grey;
-    border-radius: $radius;
-    margin: 0 0 20px 0;
-    padding: 5px;
+    margin: 0 0 10px 0;
+    padding: 2px;
   }
 
   /* Actual styling */
   ol {
     background-color: $white;
     color: $dark-grey;
-    list-style: decimal; /* for ie */
+    list-style: decimal outside;
     padding: 0;
 
     li {
@@ -57,8 +55,6 @@
     border-left: 2px solid #ddd;
     color: #5c5c5c;
     line-height: 1.2em;
-    list-style-position: outside !important;
-    list-style: decimal-leading-zero; /* better look for others, override cascade from OL */
     margin: 0 !important;
     padding: 0 3px 1px 10px !important;
   }
@@ -78,7 +74,7 @@
     background-color: #f8f8f8;
     color: #464646;
     font: 0.825em $fonts;
-    padding: 5px;
+    padding: 5px 0;
     text-align: right;
 
     a {

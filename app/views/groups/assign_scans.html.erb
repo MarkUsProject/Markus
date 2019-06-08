@@ -66,9 +66,9 @@
     parseNextScan(<%= raw @data.to_json %>);
   });
 
-  <% # Javascript for progress bar %>
-  <%= render partial: 'groups/update_progress_bar',
-             formats: [:js] %>
+  function update_bar(v) {
+    $('#progress-meter').attr('value', v);
+  }
 </script>
 <% content_for :title do %>
     <%= t('exam_templates.assign_scans.title') %>
@@ -79,10 +79,16 @@
     </span>
 <% end %>
 <% content_for :additional_headings do %>
-    <div class="progress-meter">
-      <span class="progress-span">
-      </span>
-    </div>
+    <meter
+      id="progress-meter"
+      min="0"
+      value="<%= @assignment.get_num_valid %>"
+      max="<%= @assignment.get_num_assigned %>"
+      low="<%= @assignment.get_num_assigned * 0.35 %>"
+      high="<%= @assignment.get_num_assigned * 0.75 %>"
+      optimum="<%= @assignment.get_num_assigned %>">
+    </meter>
+    &nbsp;|&nbsp;
     <%= link_to t('groups.manage_groups'), :assignment_groups %>
 <% end %>
 <div id='panes-content'>
