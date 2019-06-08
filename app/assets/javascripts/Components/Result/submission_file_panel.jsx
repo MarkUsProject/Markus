@@ -21,7 +21,7 @@ export class SubmissionFilePanel extends React.Component {
     window.submissionFilePanel = this;
 
     this.modalDownload = new ModalMarkus('#download_dialog');
-    if (localStorage.getItem('assignment_id') !== this.props.assignment_id) {
+    if (localStorage.getItem('assignment_id') !== String(this.props.assignment_id)) {
       localStorage.removeItem('file');
       localStorage.removeItem('file_id');
     }
