@@ -3,6 +3,11 @@ import { render } from 'react-dom';
 
 
 export class TagsPanel extends React.Component {
+  static defaultProps = {
+    availableTags: [],
+    currentTags: []
+  };
+
   renderTagList = () => {
     if (this.props.currentTags.length === 0) {
       return <span>{I18n.t('tags.results.no_current_tags')}</span>

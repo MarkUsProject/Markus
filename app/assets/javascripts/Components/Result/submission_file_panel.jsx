@@ -20,9 +20,6 @@ export class SubmissionFilePanel extends React.Component {
     // TODO: remove this binding.
     window.submissionFilePanel = this;
 
-    const selectedFile = this.getFirstFile(this.props.fileData);
-    this.setState({selectedFile});
-
     this.modalDownload = new ModalMarkus('#download_dialog');
     if (localStorage.getItem('assignment_id') !== this.props.assignment_id) {
       localStorage.removeItem('file');
@@ -42,7 +39,7 @@ export class SubmissionFilePanel extends React.Component {
     );
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     ReactDOM.render(
       <DownloadSubmissionModal
         fileData={this.props.fileData}
@@ -52,6 +49,11 @@ export class SubmissionFilePanel extends React.Component {
       />,
       document.getElementById('download_dialog_body')
     );
+
+    if (prevProps.loading && !this.props.loading) {
+      const selectedFile = this.getFirstFile(this.props.fileData);
+      this.setState({selectedFile});
+    }
   }
 
   getFirstFile = (fileData) => {
