@@ -68,7 +68,7 @@ export class SummaryPanel extends React.Component {
         <span className='final_mark'>
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;
-          {this.props.assignment_max_mark}
+          {+(this.props.assignment_max_mark)}
         </span>
       </div>
     );
@@ -248,7 +248,7 @@ export class SummaryPanel extends React.Component {
           <span className='final_mark'>
             {this.props.subtotal}
             &nbsp;/&nbsp;
-            {this.props.assignment_max_mark}
+            {+(this.props.assignment_max_mark)}
           </span>
         </div>
         {this.renderGraceTokenDeductions()}

@@ -108,15 +108,22 @@ export class SubmissionSelector extends React.Component {
             href={`${url}?direction=1`}>
             {I18n.t('results.next_submission')}
           </a>
-          <div className="progress-meter">
-            <span className="progress-span"
-                  style={{width: `${progressBarWidth * 100}%`, backgroundColor: progressBarColour}}>
-              {this.props.num_marked}/{this.props.num_assigned}&nbsp;{I18n.t('results.state.complete')}
-            </span>
+          <div className='progress'>
+            <meter
+              value={this.props.num_marked}
+              min={0}
+              max={this.props.num_assigned}
+              low={this.props.num_assigned * 0.35}
+              high={this.props.num_assigned * 0.75}
+              optimum={this.props.num_assigned}
+            >
+              {this.props.num_marked}/{this.props.num_assigned}
+            </meter>
+            {this.props.num_marked}/{this.props.num_assigned}&nbsp;{I18n.t('results.state.complete')}
           </div>
 
           <div style={{flexGrow: 1}} />
-          <h2 className='total'>{this.props.total} / {this.props.assignment_max_mark}</h2>
+          <h2 className='total'>{this.props.total} / {+(this.props.assignment_max_mark)}</h2>
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
