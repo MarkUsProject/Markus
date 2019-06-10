@@ -459,6 +459,7 @@ class Result extends React.Component {
   render() {
     return [
         <SubmissionSelector
+          key='submission-selector'
           {...this.props}
           assignment_max_mark={this.state.assignment_max_mark}
           fullscreen={this.state.fullscreen}
@@ -474,7 +475,7 @@ class Result extends React.Component {
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
         />,
-        <div id='panes-content'>
+        <div key='panes-content' id='panes-content'>
           <div id='panes'>
             <div id='left-pane'>
               <LeftPane

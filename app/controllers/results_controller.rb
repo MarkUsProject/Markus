@@ -37,6 +37,8 @@ class ResultsController < ApplicationController
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
         submission.feedback_files
+        is_review = result.is_a_review?
+        is_reviewer = current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
 
         if current_user.student? && !@current_user.is_reviewer_for?(assignment.pr_assignment, result)
           grouping = current_user.accepted_grouping_for(assignment.id)
@@ -48,12 +50,11 @@ class ResultsController < ApplicationController
         end
 
         data = {
-          grouping_id: submission.grouping_id,
+          grouping_id: is_reviewer ? nil : submission.grouping_id,
           marking_state: result.marking_state,
           released_to_students: result.released_to_students,
           detailed_annotations:
-            @current_user.admin? || @current_user.ta? ||
-            @current_user.is_reviewer_for?(assignment.pr_assignment, result),
+            @current_user.admin? || @current_user.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
           allow_remarks: assignment.allow_remarks,
@@ -63,8 +64,8 @@ class ResultsController < ApplicationController
           assignment_remark_message: assignment.remark_message,
           remark_due_date: assignment.remark_due_date,
           past_remark_due_date: assignment.past_remark_due_date?,
-          is_reviewer: @current_user.is_reviewer_for?(assignment.pr_assignment, result),
-          student_view: @current_user.student?
+          is_reviewer: is_reviewer,
+          student_view: @current_user.student? && !is_reviewer
         }
         if original_result.nil?
           data[:overall_comment] = result.overall_comment
@@ -73,8 +74,12 @@ class ResultsController < ApplicationController
           data[:overall_comment] = original_result.overall_comment
           data[:remark_overall_comment] = result.overall_comment
         end
-        data[:feedback_files] = submission.feedback_files.map do |f|
-          { id: f.id, filename: f.filename }
+        if is_reviewer
+          data[:feedback_files] = []
+        else
+          data[:feedback_files] = submission.feedback_files.map do |f|
+            { id: f.id, filename: f.filename }
+          end
         end
 
         if assignment.enable_test
@@ -132,7 +137,7 @@ class ResultsController < ApplicationController
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
           data[:group_name] = submission.grouping.get_group_name
-        elsif current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+        elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
@@ -156,7 +161,8 @@ class ResultsController < ApplicationController
           klass.left_outer_joins(:marks)
                .where(
                  assignment_id: assignment.id,
-                 ta_visible: true,
+                 ta_visible: !is_review,
+                 peer_visible: is_review,
                  'marks.result_id': [nil, result.id]
                ).pluck_to_hash(*fields)
                .map { |h| h.merge(criterion_type: klass.name) }
@@ -190,11 +196,15 @@ class ResultsController < ApplicationController
                                    .pluck_to_hash(:id, :description, :extra_mark, :unit)
 
         # Grace token deductions
-        data[:grace_token_deductions] =
-          submission.grouping
-                    .grace_period_deductions
-                    .joins(membership: :user)
-                    .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+        if is_reviewer
+          data[:grace_token_deductions] = []
+        else
+          data[:grace_token_deductions] =
+            submission.grouping
+              .grace_period_deductions
+              .joins(membership: :user)
+              .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+        end
 
         # Totals
         data[:assignment_max_mark] =
@@ -309,7 +319,7 @@ class ResultsController < ApplicationController
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
     elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
-      assigned_prs = current_user.grouping_for(assignment.id).peer_reviews_to_others
+      assigned_prs = current_user.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
       if params[:direction] == '1'
         next_pr = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
       else
