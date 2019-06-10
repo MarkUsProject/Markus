@@ -28,27 +28,31 @@ export class SubmissionFilePanel extends React.Component {
     localStorage.setItem('assignment_id', this.props.assignment_id);
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
-    ReactDOM.render(
-      <DownloadSubmissionModal
-        fileData={this.props.fileData}
-        initialFile={this.state.selectedFile}
-        downloadURL={Routes.download_assignment_submission_result_url(
-          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
-      />,
-      document.getElementById('download_dialog_body')
-    );
+    if (this.props.canDownload) {
+      ReactDOM.render(
+        <DownloadSubmissionModal
+          fileData={this.props.fileData}
+          initialFile={this.state.selectedFile}
+          downloadURL={Routes.download_assignment_submission_result_url(
+            this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+        />,
+        document.getElementById('download_dialog_body')
+      );
+    }
   }
 
   componentDidUpdate(prevProps) {
-    ReactDOM.render(
-      <DownloadSubmissionModal
-        fileData={this.props.fileData}
-        initialFile={this.state.selectedFile}
-        downloadURL={Routes.download_assignment_submission_result_url(
-          this.props.assignment_id, this.props.submission_id, this.props.result_id)}
-      />,
-      document.getElementById('download_dialog_body')
-    );
+    if (this.props.canDownload) {
+      ReactDOM.render(
+        <DownloadSubmissionModal
+          fileData={this.props.fileData}
+          initialFile={this.state.selectedFile}
+          downloadURL={Routes.download_assignment_submission_result_url(
+            this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+        />,
+        document.getElementById('download_dialog_body')
+      );
+    }
 
     if (prevProps.loading && !this.props.loading) {
       const selectedFile = this.getFirstFile(this.props.fileData);
@@ -98,8 +102,8 @@ export class SubmissionFilePanel extends React.Component {
       visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
     }
     return [
-        <div id='sel_box'/>,
-        <div id='annotation_menu'>
+        <div key='sel_box' id='sel_box'/>,
+        <div key='annotation_menu' id='annotation_menu'>
           <FileSelector
             fileData={this.props.fileData}
             onSelectFile={this.selectFile}
@@ -119,7 +123,7 @@ export class SubmissionFilePanel extends React.Component {
             }
           </div>
         </div>,
-        <div id='codeviewer'>
+        <div key='codeviewer' id='codeviewer'>
           <FileViewer
             ref={this.submissionFileViewer}
             assignment_id={this.props.assignment_id}
@@ -165,7 +169,7 @@ export class FileSelector extends React.Component {
         let dir = hash['directories'][d];
         dirs.push(
           <li className='nested-submenu' key={dir.path.join('/')}>
-            <a onClick={(e) => this.selectDirectory(e, dir.path)}>
+            <a key={`${dir.path.join('/')}-a`} onClick={(e) => this.selectDirectory(e, dir.path)}>
               <strong>{dir.name}</strong>
             </a>
             {this.hashToHTMLList(dir, newExpanded)}
@@ -181,7 +185,9 @@ export class FileSelector extends React.Component {
           const [name, id] = f;
           const fullPath = hash.path.concat([name]).join('/');
           return (<li className='file_item' key={fullPath}>
-            <a onClick={(e) => this.selectFile(e, fullPath, id)}>
+            <a
+              key={`${fullPath}-a`}
+              onClick={(e) => this.selectFile(e, fullPath, id)}>
               {f[0]}
             </a>
           </li>)

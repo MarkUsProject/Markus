@@ -7,6 +7,10 @@ import { TagsPanel } from './tags_panel';
 
 
 export class RightPane extends React.Component {
+  canShowSummaryPanel = () => {
+    return this.props.role !== 'Student' && !this.props.is_reviewer;
+  };
+
   canShowTagsPanel = () => {
     return this.props.role !== 'Student' && !this.props.is_reviewer;
   };
@@ -16,7 +20,9 @@ export class RightPane extends React.Component {
       <Tabs>
         <TabList>
           <Tab>{I18n.t('activerecord.models.mark.other')}</Tab>
-          <Tab>{I18n.t('results.summary')}</Tab>
+          {this.canShowSummaryPanel() &&
+           <Tab>{I18n.t('results.summary')}</Tab>
+          }
           {this.canShowTagsPanel() &&
            <Tab>{I18n.t('activerecord.models.tag.other')}/{I18n.t('activerecord.models.note.other')}</Tab>
           }
@@ -31,26 +37,28 @@ export class RightPane extends React.Component {
             destroyMark={this.props.destroyMark}
           />
         </TabPanel>
-        <TabPanel>
-          <SummaryPanel
-            old_marks={this.props.old_marks}
-            marks={this.props.marks}
-            released_to_students={this.props.released_to_students}
-            remark_submitted={this.props.remark_submitted}
-            is_reviewer={this.props.is_reviewer}
-            assignment_max_mark={this.props.assignment_max_mark}
-            old_total={this.props.old_total}
-            total={this.props.total}
-            subtotal={this.props.subtotal}
-            extraMarkSubtotal={this.props.extraMarkSubtotal}
-            extra_marks={this.props.extra_marks}
-            criterionSummaryData={this.props.criterionSummaryData}
-            graceTokenDeductions={this.props.grace_token_deductions}
-            deleteGraceTokenDeduction={this.props.deleteGraceTokenDeduction}
-            createExtraMark={this.props.createExtraMark}
-            destroyExtraMark={this.props.destroyExtraMark}
-          />
-        </TabPanel>
+        {this.canShowSummaryPanel() &&
+         <TabPanel>
+           <SummaryPanel
+             old_marks={this.props.old_marks}
+             marks={this.props.marks}
+             released_to_students={this.props.released_to_students}
+             remark_submitted={this.props.remark_submitted}
+             is_reviewer={this.props.is_reviewer}
+             assignment_max_mark={this.props.assignment_max_mark}
+             old_total={this.props.old_total}
+             total={this.props.total}
+             subtotal={this.props.subtotal}
+             extraMarkSubtotal={this.props.extraMarkSubtotal}
+             extra_marks={this.props.extra_marks}
+             criterionSummaryData={this.props.criterionSummaryData}
+             graceTokenDeductions={this.props.grace_token_deductions}
+             deleteGraceTokenDeduction={this.props.deleteGraceTokenDeduction}
+             createExtraMark={this.props.createExtraMark}
+             destroyExtraMark={this.props.destroyExtraMark}
+           />
+         </TabPanel>
+        }
         {this.canShowTagsPanel() &&
          <TabPanel>
            <TagsPanel

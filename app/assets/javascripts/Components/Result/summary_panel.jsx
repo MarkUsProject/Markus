@@ -195,7 +195,7 @@ export class SummaryPanel extends React.Component {
   };
 
   renderGraceTokenDeductions = () => {
-    if (this.props.graceTokenDeductions.length === 0) {
+    if (this.props.is_reviewer || this.props.graceTokenDeductions.length === 0) {
       return '';
     } else {
       let rows = this.props.graceTokenDeductions.flatMap(d => {
