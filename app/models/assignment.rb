@@ -166,20 +166,14 @@ class Assignment < ApplicationRecord
     end
   end
 
-  # Are we past all the due dates for this assignment?
+  # Are we past all due_dates and section due_dates for this assignment?
+  # This does not take extensions into consideration.
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
-    unless self.section_due_dates_type
-      return !due_date.nil? && Time.zone.now > due_date
-    end
+    return false if !due_date.nil? && Time.zone.now < due_date
+    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.zone.now < sec.due_date }
 
-    # If section due dates
-    self.section_due_dates.each do |d|
-      if !d.due_date.nil? && Time.zone.now > d.due_date
-        return true
-      end
-    end
-    false
+    true
   end
 
   # Return an array with names of sections past
@@ -200,15 +194,10 @@ class Assignment < ApplicationRecord
 
   # Whether or not this grouping is past its due date for this assignment.
   def grouping_past_due_date?(grouping)
-    if section_due_dates_type && grouping &&
-      grouping.inviter.section.present?
+    return past_all_due_dates? if grouping.nil?
 
-      section_due_date =
-        SectionDueDate.due_date_for(grouping.inviter.section, self)
-      !section_due_date.nil? && Time.zone.now > section_due_date
-    else
-      past_all_due_dates?
-    end
+    date = grouping.due_date
+    !date.nil? && Time.zone.now > date
   end
 
   def section_due_date(section)

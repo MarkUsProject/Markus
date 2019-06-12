@@ -1109,7 +1109,6 @@ describe Assignment do
         end
 
         it 'returns false' do
-          pending 'pending discussion on intended functionality'
           expect(@assignment.past_all_due_dates?).to be false
         end
       end
@@ -1159,9 +1158,10 @@ describe Assignment do
 
       context 'when a grouping is specified' do
         it 'returns based on due date of the assignment' do
-          grouping = create(:grouping)
-          expect(@due_assignment.grouping_past_due_date?(grouping)).to be true
-          expect(@not_due_assignment.grouping_past_due_date?(grouping))
+          due_grouping = create(:grouping, assignment: @due_assignment)
+          not_due_grouping = create(:grouping, assignment: @not_due_assignment)
+          expect(@due_assignment.grouping_past_due_date?(due_grouping)).to be true
+          expect(@not_due_assignment.grouping_past_due_date?(not_due_grouping))
             .to be false
         end
       end
@@ -1174,7 +1174,6 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          pending 'waiting on resolution for pending past_due_date example'
           @assignment.update_attributes(due_date: 1.days.ago)
           expect(@assignment.grouping_past_due_date?(nil)).to be true
           @assignment.update_attributes(due_date: 1.days.from_now)
