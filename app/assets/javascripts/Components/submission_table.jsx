@@ -178,8 +178,8 @@ class RawSubmissionTable extends React.Component {
           value={filter ? filter.value : 'all'}
         >
           <option value='all'>{I18n.t('all')}</option>
-          <option value='not_collected'>{I18n.t('results.state.not_collected')}</option>
           <option value='before_due_date'>{I18n.t('results.state.before_due_date')}</option>
+          <option value='not_collected'>{I18n.t('results.state.not_collected')}</option>
           <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
           <option value='complete'>{I18n.t('results.state.complete')}</option>
           <option value='released'>{I18n.t('results.state.released')}</option>

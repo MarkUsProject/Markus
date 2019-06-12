@@ -242,9 +242,8 @@ class Student < User
     end
   end
 
-  # Return the due date for this student for assignment with id +assignment_id+.
-  def due_date_for_assignment(assignment_id)
-    assignment = Assignment.find(assignment_id)
+  # Return the due date for this student for +assignment+.
+  def due_date_for_assignment(assignment)
     grouping = accepted_grouping_for(assignment)
     grouping&.due_date ||
       section&.section_due_date_for(assignment)&.due_date ||
