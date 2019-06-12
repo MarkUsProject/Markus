@@ -1,6 +1,8 @@
+@import 'constants';
+
 .react-modal {
-  background: white;
-  border: 1px solid gray;
+  background: $white;
+  border: 1px solid $grey;
   left: 50%;
   outline: none;
   overflow: auto;
