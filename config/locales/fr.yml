@@ -17,6 +17,7 @@ fr:
         peer_review_results: "Examen par les pairs Résultats"
         your_reviews: "Vos avis"
         review: "Avis"
+        deadline_with_extension: "%{deadline} (vous avez une extension jusqu'au %{extension_deadline})"
         batch_tests_status_table:
             test_runs_status: "UPDATE ME"
             in_progress: "UPDATE ME"

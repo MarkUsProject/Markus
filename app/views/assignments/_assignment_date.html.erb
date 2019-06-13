@@ -1,17 +1,19 @@
 <div class=<%= assignment.is_peer_review? ? 'pr_date' : 'date' %>>
-  <% if !assignment.section_due_dates_type %>
-    <%= l(assignment.due_date) %>
-    <% if assignment.due_date > Time.zone.now %>
-      <p class='time_left'>
-        (<%= distance_of_time_in_words_to_now(assignment.due_date) %>)
-      </p>
-    <% end %>
+  <% grouping = @current_user.accepted_grouping_for(assignment.id) %>
+  <% due_date = grouping&.due_date %>
+  <% if grouping.nil? %>
+    <%= I18n.l(assignment.due_date) %>
+    <% due_date = assignment.section_due_date(@section) %>
+  <% elsif grouping.extension.nil? %>
+    <%= I18n.l(due_date) %>
   <% else %>
-    <%= l(assignment.section_due_date(@section)) %>
-    <% if assignment.section_due_date(@section) > Time.zone.now %>
-      <p class='time_left'>
-        (<%= distance_of_time_in_words_to_now(assignment.section_due_date(@section)) %>)
-      </p>
-    <% end %>
+    <%= I18n.t('assignment.deadline_with_extension',
+               deadline: I18n.l(assignment.section_due_date(@section)),
+               extension_deadline: I18n.l(due_date)) %>
+  <% end %>
+  <% if due_date > Time.zone.now %>
+    <p class='time_left'>
+      (<%= distance_of_time_in_words_to_now(due_date) %>)
+    </p>
   <% end %>
 </div>
