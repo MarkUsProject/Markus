@@ -48,7 +48,7 @@ module RepositoryHelper
       subdir_path, filename = File.split(filename)
       filename = sanitize_file_name(filename)
       file_path = current_path.join(subdir_path).join(filename)
-      file_path_relative = file_path.relative_path_from(path).to_s
+      file_path_relative = file_path.relative_path_from(current_path).to_s
       file_path = file_path.to_s
       # Sometimes the file pointer of file_object is at the end of the file.
       # In order to avoid empty uploaded files, rewind it to be safe.

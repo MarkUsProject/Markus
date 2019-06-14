@@ -2,7 +2,7 @@ module Api
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionFilesController < MainApiController
-
+    include RepositoryHelper
     # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
@@ -107,19 +107,24 @@ module Api
         return
       end
 
+      if params[:file_content].respond_to? :read # binary data
+        content = params[:file_content].read
+      else
+        content = params[:file_content]
+      end
+
       tmpfile = Tempfile.new
       begin
-        if params[:file_content].respond_to? :read # binary data
-          content = params[:file_content].read
-        else
-          content = params[:file_content]
-        end
         tmpfile.write(content)
         tmpfile.rewind
         file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
-        success, messages = grouping.add_files([file], @current_user)
+        success, messages = grouping.group.access_repo do |repo|
+          file_path = File.dirname(params[:filename]).gsub(%r{^/}, '')
+          path = Pathname.new(grouping.assignment.repository_folder).join(file_path)
+          add_files([file], @current_user, repo, path: path)
+        end
       ensure
         tmpfile.close!
       end
