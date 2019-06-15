@@ -139,5 +139,49 @@ describe TasController do
         expect(response.content_type).to eq 'text/csv'
       end
     end
+    context 'yml' do
+      let(:yml_options) do
+        {
+          type: 'text/yaml',
+          filename: 'ta_list.yaml',
+          disposition: 'attachment'
+        }
+      end
+      before :each do
+        # create some test tas
+        4.times do
+          create(:ta)
+        end
+        @tas = Ta.order(:user_name)
+      end
+
+      it 'responds with appropriate status' do
+        get :download_ta_list, format: 'yaml'
+        expect(response.status).to eq(200)
+      end
+
+      it 'sets disposition as attachment' do
+        get :download_ta_list, format: 'yaml'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+
+      it 'expects a call to send_data' do
+        pending 'Fails in line 177'
+        output = []
+
+        @tas.all.each do |ta|
+          output.push(user_name: ta.user_name, last_name: ta.last_name, first_name: ta.first_name, email: ta.email)
+        end
+        output = output.to_yaml
+        expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
+        get :download_ta_list, format: 'yaml'
+      end
+
+      it 'returns text/yaml type' do
+        get :download_ta_list, format: 'yml'
+        expect(response.content_type).to eq 'text/yaml'
+      end
+    end
   end
 end
