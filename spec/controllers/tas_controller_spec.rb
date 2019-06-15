@@ -90,7 +90,7 @@ describe TasController do
     end
   end
 
-  context 'download_ta_list' do
+  context '#download' do
     context 'csv' do
       let(:csv_options) do
         {
@@ -101,21 +101,20 @@ describe TasController do
       end
 
       before :each do
-        # create some test tas
-        (0..4).each do
+        4.times do
           create(:ta)
         end
         @tas = Ta.order(:user_name)
       end
 
       it 'responds with appropriate status' do
-        get :download_ta_list, format: 'csv'
+        get :download, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download_ta_list, format: 'csv'
+        get :download, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -130,12 +129,12 @@ describe TasController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get :download_ta_list, format: 'csv'
+        get :download, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get :download_ta_list, format: 'csv'
+        get :download, format: 'csv'
         expect(response.content_type).to eq 'text/csv'
       end
     end
@@ -143,7 +142,7 @@ describe TasController do
       let(:yml_options) do
         {
           type: 'text/yaml',
-          filename: 'ta_list.yaml',
+          filename: 'ta_list.yml',
           disposition: 'attachment'
         }
       end
@@ -156,18 +155,17 @@ describe TasController do
       end
 
       it 'responds with appropriate status' do
-        get :download_ta_list, format: 'yaml'
+        get :download, format: 'yml'
         expect(response.status).to eq(200)
       end
 
       it 'sets disposition as attachment' do
-        get :download_ta_list, format: 'yaml'
+        get :download, format: 'yml'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
 
       it 'expects a call to send_data' do
-        pending 'Fails in line 177'
         output = []
 
         @tas.all.each do |ta|
@@ -175,11 +173,11 @@ describe TasController do
         end
         output = output.to_yaml
         expect(@controller).to receive(:send_data).with(output, yml_options) { @controller.head :ok }
-        get :download_ta_list, format: 'yaml'
+        get :download, format: 'yml'
       end
 
       it 'returns text/yaml type' do
-        get :download_ta_list, format: 'yml'
+        get :download, format: 'yml'
         expect(response.content_type).to eq 'text/yaml'
       end
     end
