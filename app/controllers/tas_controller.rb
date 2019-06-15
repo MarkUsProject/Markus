@@ -41,9 +41,7 @@ class TasController < ApplicationController
     respond_with(@user)
   end
 
-  #downloads users with the given role as a csv list
-  def download_ta_list
-    #find all the users
+  def download
     tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
@@ -51,13 +49,13 @@ class TasController < ApplicationController
         [ta.user_name,ta.last_name,ta.first_name,ta.email]
       end
       format = 'text/csv'
-    when 'xml'
-      output = tas.to_xml
-      format = 'text/xml'
     else
-      # Raise exception?
-      output = tas.to_xml
-      format = 'text/xml'
+      output = []
+      tas.all.each do |ta|
+        output.push(user_name: ta.user_name, last_name: ta.last_name, first_name: ta.first_name, email: ta.email)
+      end
+      output = output.to_yaml
+      format = 'text/yaml'
     end
     send_data(output,
               type: format,

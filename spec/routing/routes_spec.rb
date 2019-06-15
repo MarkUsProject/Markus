@@ -1194,10 +1194,10 @@ context 'tas collection' do
       locale: 'en')
   end
 
-  it 'routes GET download_ta_list properly' do
-    expect(get: path + '/download_ta_list').to route_to(
+  it 'routes GET download properly' do
+    expect(get: path + '/download').to route_to(
       controller: ctrl,
-      action: 'download_ta_list',
+      action: 'download',
       locale: 'en')
   end
 end

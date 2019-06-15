@@ -373,7 +373,7 @@ Rails.application.routes.draw do
     resources :tas  do
       collection do
         post 'upload_ta_list'
-        get 'download_ta_list'
+        get 'download'
       end
       member do
         get 'refresh_graph'
