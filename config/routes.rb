@@ -361,8 +361,8 @@ Rails.application.routes.draw do
         patch 'bulk_modify'
         get 'manage'
         get 'add_new_section'
-        get 'download_student_list'
-        post 'upload_student_list'
+        get 'download'
+        post 'upload'
       end
 
       member do
@@ -372,8 +372,8 @@ Rails.application.routes.draw do
 
     resources :tas  do
       collection do
-        post 'upload_ta_list'
         get 'download'
+        post 'upload'
       end
       member do
         get 'refresh_graph'

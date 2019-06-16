@@ -6,15 +6,15 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'userlist',
+                             upload_id: 'upload_file',
                              button_id: 'upload' %>
 
-  <p><%= t('tas.upload.select_csv_file').html_safe %></p>
-  <p><%= t('tas.upload.grader_same_user') %></p>
-
-  <%= form_tag upload_ta_list_tas_path, { multipart: true } do %>
+  <p>
+    <%= t('upload_help_html', section_id: 'students') %>
+  </p>
+  <%= form_tag upload_tas_path, { multipart: true } do %>
     <div>
-      <%= file_field_tag 'userlist' %>
+      <%= file_field_tag 'upload_file' %>
     </div>
     <div>
       <%= label_tag t('encoding') %>

@@ -23,18 +23,12 @@ pt:
     not_successfully_added_message_3: "Nome dos alunos são alfa-numéricos."
     not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
     not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
-    upload:
-      select_csv_file: "Selecione um arquivo CSV no padrão <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-      student_same_number: "Se um estudante com o mesmo nome de usuário exsitir, então a informação do aluno será atualizada."
 
   tas:
     edit: "Editar avaliador"
     new: "Criar novo avaliador"
     help:
       manage_graders: "Create graders."
-    upload:
-      grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
-      select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
 
   users:
     api_key:

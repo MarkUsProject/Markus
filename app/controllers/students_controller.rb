@@ -88,41 +88,52 @@ class StudentsController < ApplicationController
      @section = Section.new
   end
 
-  # downloads students as a csv list
-  def download_student_list
+  def download
     students = Student.order(:user_name).includes(:section)
     case params[:format]
       when 'csv'
         output = MarkusCSV.generate(students) do |student|
-          info = [student.user_name, student.last_name, student.first_name, student.id_number, student.email]
-          unless student.section.nil?
-            info << student.section.name
+          Student::CSV_UPLOAD_ORDER.map do |field|
+            if field == :section_name
+              student.section&.name
+            else
+              student.send(field)
+            end
           end
-          info
         end
         format = 'text/csv'
-      when 'xml'
-        output = students.to_xml
-        format = 'text/xml'
       else
-        # Raise exception?
-        output = students.to_xml
-        format = 'text/xml'
+        output = []
+        students.all.each do |student|
+          output.push(user_name: student.user_name,
+                      last_name: student.last_name,
+                      first_name: student.first_name,
+                      email: student.email,
+                      id_number: student.id_number,
+                      section_name: student.section&.name)
+        end
+        output = output.to_yaml
+        format = 'text/yaml'
     end
-    send_data(output, type: format, disposition: 'attachment')
+    send_data(output,
+              type: format,
+              filename: "student_list.#{params[:format]}",
+              disposition: 'attachment')
   end
 
-  def upload_student_list
-    if params[:userlist]
-      result = User.upload_user_list(Student, params[:userlist].read, params[:encoding])
-      unless result[:invalid_lines].blank?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].blank?
-        flash_message(:success, result[:valid_lines])
-      end
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
+      if data[:type] == '.csv'
+        result = User.upload_user_list(Student, params[:upload_file].read, params[:encoding])
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      end
     end
     redirect_to action: 'index'
   end

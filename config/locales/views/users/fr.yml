@@ -23,18 +23,12 @@ fr:
     not_successfully_added_message_3: "Les noms des étudiants sont en caractères alphanumériques."
     not_successfully_added_message_4: "Chaque champ est séparé par une virgule (pas d'espace)."
     not_successfully_added_message_5: "Chaque ligne a le bon nombre de champs comme spécifié."
-    upload:
-      select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-      student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
 
   tas:
     edit: "Modifier un correcteur"
     new: "Créer un nouveau correcteur"
     help:
       manage_graders: "Créer un nouveau correcteur"
-    upload:
-      grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
-      select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
 
   users:
     api_key:

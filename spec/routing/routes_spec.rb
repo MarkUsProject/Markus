@@ -1166,17 +1166,17 @@ context 'students collection' do
       locale: 'en')
   end
 
-  it 'routes GET download_student_list properly' do
-    expect(get: path + '/download_student_list').to route_to(
+  it 'routes GET download properly' do
+    expect(get: path + '/download').to route_to(
       controller: ctrl,
-      action: 'download_student_list',
+      action: 'download',
       locale: 'en')
   end
 
-  it 'routes POST upload_student_list properly' do
-    expect(post: path + '/upload_student_list').to route_to(
+  it 'routes POST upload properly' do
+    expect(post: path + '/upload').to route_to(
       controller: ctrl,
-      action: 'upload_student_list',
+      action: 'upload',
       locale: 'en')
   end
 end
@@ -1187,10 +1187,10 @@ context 'tas collection' do
   let(:path) { '/en/tas' }
   let(:ctrl) { 'tas' }
 
-  it 'routes POST upload_ta_list properly' do
-    expect(post: path + '/upload_ta_list').to route_to(
+  it 'routes POST upload properly' do
+    expect(post: path + '/upload').to route_to(
       controller: ctrl,
-      action: 'upload_ta_list',
+      action: 'upload',
       locale: 'en')
   end
 

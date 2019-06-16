@@ -6,39 +6,15 @@ describe TasController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
   end
 
-  context 'CSV_Uploads' do
-    before :each do
-      # We need to mock the rack file to return its content when
-      # the '.read' method is called to simulate the behaviour of
-      # the http uploaded file
-      @file_good = fixture_file_upload(
-        'files/tas/form_good.csv', 'text/csv')
-      allow(@file_good).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tas/form_good.csv',
-                    'text/csv')))
-
-      @file_invalid_column = fixture_file_upload(
-        'files/tas/form_invalid_column.csv', 'text/csv')
-      allow(@file_invalid_column).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tas/form_invalid_column.csv',
-                    'text/csv')))
-
-      @file_bad_csv = fixture_file_upload(
-        'files/bad_csv.csv', 'text/xls')
-      allow(@file_bad_csv).to receive(:read).and_return(
-        File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
-
-      @file_wrong_format = fixture_file_upload(
-        'files/wrong_csv_format.xls', 'text/xls')
-      allow(@file_wrong_format).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/wrong_csv_format.xls', 'text/csv')))
+  context '#upload' do
+    include_examples 'a controller supporting upload' do
+      let(:params) { {} }
     end
 
     it 'accepts a valid file' do
-      post :upload_ta_list, params: { userlist: @file_good }
+      post :upload, params: {
+        upload_file: fixture_file_upload('files/tas/form_good.csv', 'text/csv')
+      }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -46,47 +22,33 @@ describe TasController do
       expect(flash[:success].map { |f| extract_text f }).to eq(i18t_string)
       expect(response).to redirect_to action: 'index'
 
-      ta = Ta.where(user_name: 'c6conley')
-      expect(ta.take['first_name']).to eq('Mike')
-      expect(ta.take['last_name']).to eq('Conley')
-      ta = Ta.where(user_name: 'c8rada')
-      expect(ta.take['first_name']).to eq('Markus')
-      expect(ta.take['last_name']).to eq('Rada')
+      ta = Ta.find_by(user_name: 'c6conley')
+      expect(ta.first_name).to eq('Mike')
+      expect(ta.last_name).to eq('Conley')
+      expect(ta.email).to eq('mike@gmail.com')
+      ta = Ta.find_by(user_name: 'c8rada')
+      expect(ta.first_name).to eq('Markus')
+      expect(ta.last_name).to eq('Rada')
+      expect(ta.email).to eq('markus@gmail.com')
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload_ta_list, params: { userlist: @file_invalid_column }
+      post :upload, params: {
+        upload_file: fixture_file_upload(
+          'files/tas/form_invalid_column.csv', 'text/csv')
+      }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to action: 'index'
 
       expect(Ta.where(first_name: 'Mike')).to be_empty
-    end
 
-    it 'does not accept fileless submission' do
-      post :upload_ta_list
-
-      expect(response.status).to eq(302)
-      expect(response).to redirect_to action: 'index'
-    end
-
-    it 'does not accept a non-csv file with .csv extension' do
-      post :upload_ta_list, params: { userlist: @file_bad_csv }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to action: 'index'
-    end
-
-    it 'does not accept a .xls file' do
-      post :upload_ta_list, params: { userlist: @file_wrong_format }
-
-      expect(response.status).to eq(302)
-      expect(flash[:error]).to_not be_empty
-      expect(response).to redirect_to action: 'index'
-      expect(flash[:error].map { |f| extract_text f })
-        .to eq([I18n.t('upload_errors.malformed_csv')].map { |f| extract_text f })
+      # The valid row is still used to create a new TA.
+      ta = Ta.find_by(user_name: 'c8rada')
+      expect(ta.first_name).to eq('Markus')
+      expect(ta.last_name).to eq('Rada')
+      expect(ta.email).to eq('markus@gmail.com')
     end
   end
 
