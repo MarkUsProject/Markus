@@ -25,20 +25,12 @@ es:
     not_successfully_added_message_4: "Cada campo está separado por una coma (no espacios)."
     not_successfully_added_message_5: "Cada línea tiene los campos requeridos especificados cerca de la forma
       para subir archivos."
-    upload:
-      select_csv_file: "Seleccionar un archivo en formato CSV de la siguiente forma:
-        <code>user_name,last_name,first_name(,section,id_number,email)</code>"
-      student_same_number: "Si un estudiante con el mismo número de estudiante existe, entonces la información del
-        estudiante es actualizada."
 
   tas:
     edit: "Editar la información del evaluador"
     new: "Crear un nuevo evaluador"
     help:
       manage_graders: "Crear evaluadores."
-    upload:
-      grader_same_user: "Si un asistente de cátedra con el mismo nombre existe, la información del asistente es actualizada."
-      select_csv_file: "Seleccionar el archivo en formato CSV que tiene la siguiente forma: <code>user_name,last_name,first_name</code>"
 
   users:
     api_key:

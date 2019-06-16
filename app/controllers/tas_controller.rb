@@ -46,7 +46,9 @@ class TasController < ApplicationController
     case params[:format]
     when 'csv'
       output = MarkusCSV.generate(tas) do |ta|
-        [ta.user_name,ta.last_name,ta.first_name,ta.email]
+        Ta::CSV_UPLOAD_ORDER.map do |field|
+          ta.send(field)
+        end
       end
       format = 'text/csv'
     else
@@ -63,17 +65,19 @@ class TasController < ApplicationController
               disposition: 'attachment')
   end
 
-  def upload_ta_list
-    if params[:userlist]
-      result = User.upload_user_list(Ta, params[:userlist].read, params[:encoding])
-      unless result[:invalid_lines].blank?
-        flash_message(:error, result[:invalid_lines])
-      end
-      unless result[:valid_lines].blank?
-        flash_message(:success, result[:valid_lines])
-      end
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
     else
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
+      if data[:type] == '.csv'
+        result = User.upload_user_list(Ta, params[:upload_file].read, params[:encoding])
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      end
     end
     redirect_to action: 'index'
   end
