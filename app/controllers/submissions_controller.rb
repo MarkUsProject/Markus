@@ -458,7 +458,6 @@ class SubmissionsController < ApplicationController
     ## a currently downloading file
     short_id = assignment.short_identifier
     zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
-    ## check if there is a '/' in the file name to replace by '_'
     zip_path = Pathname.new('tmp') + zip_name
 
     ## delete the old file if it exists
@@ -469,7 +468,7 @@ class SubmissionsController < ApplicationController
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       groupings.each do |grouping|
         revision_id = grouping.current_submission_used&.revision_identifier
-        group_name = grouping.group.group_name
+        group_name = grouping.group.repo_name
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
           repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
