@@ -457,44 +457,22 @@ class SubmissionsController < ApplicationController
     ## create the zip name with the user name to have less chance to delete
     ## a currently downloading file
     short_id = assignment.short_identifier
-    zip_name = short_id + '_' + current_user.user_name + '.zip'
+    zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
     ## check if there is a '/' in the file name to replace by '_'
-    zip_path = 'tmp/' + zip_name.tr('/', '_')
+    zip_path = Pathname.new('tmp') + zip_name
 
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
 
-    groupings = Grouping.get_groupings_for_assignment(assignment,
-                                                      current_user)
+    groupings = Grouping.get_groupings_for_assignment(assignment, current_user)
 
-    ## build the zip file
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       groupings.each do |grouping|
-        ## retrieve the submitted files
-        submission = grouping.current_submission_used
-        next unless submission
-        files = submission.submission_files
-
-        ## create the grouping directory
-        sub_folder = grouping.group.repo_name
-        zip_file.mkdir(sub_folder) unless zip_file.find_entry(sub_folder)
-
-        files.each do |file|
-          ## retrieve the file and print an error on redirect back if there is
-          begin
-            file_content = file.retrieve_file
-          rescue Exception => e
-            flash_message(:error, e.message)
-            redirect_back(fallback_location: root_path)
-            return
-          end
-
-          ## create the file inside the sub folder
-          zip_file.get_output_stream(File.join(sub_folder,
-                                               file.filename)) do |f|
-            f.puts file_content
-          end
-
+        revision_id = grouping.current_submission_used&.revision_identifier
+        group_name = grouping.group.group_name
+        grouping.group.access_repo do |repo|
+          revision = repo.get_revision(revision_id)
+          repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
         end
       end
     end
@@ -551,52 +529,10 @@ class SubmissionsController < ApplicationController
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-        downloads_subdirectories('',
-                                 assignment.repository_folder,
-                                 zip_file, zip_name, repo, revision)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
       end
 
       send_file zip_path, filename: zip_name + '.zip'
-    end
-  end
-
-  # Given a subdirectory, its path, and an already created zip_file,
-  # fill the subdirectory within the zip_file with all of its files.
-  # Recursively fills the subdirectory with files and folders within
-  # it.
-  # Helper method for downloads.
-  def downloads_subdirectories(subdirectory, subdirectory_path, zip_file,
-                               zip_name, repo, revision)
-    files = revision.files_at_path(subdirectory_path)
-
-    files.each do |file|
-      begin
-        file_contents = repo.download_as_string(file.last)
-      rescue
-        return
-      end
-
-      zip_file.get_output_stream(File.join(zip_name, subdirectory +
-          file.first)) do |f|
-        f.puts file_contents
-      end
-    end
-
-    # Now recursively call this function on all sub directories.
-    directories = revision.directories_at_path(subdirectory_path)
-    directories.each do |new_subdirectory|
-      begin
-        # Recursively fill this sub-directory
-        zip_file.mkdir(zip_name + '/' + subdirectory +
-                           new_subdirectory[0]) unless
-            zip_file.find_entry(zip_name + '/' + subdirectory +
-                                    new_subdirectory[0])
-        downloads_subdirectories(subdirectory + new_subdirectory[0] +
-                                     '/',
-                                 directories[new_subdirectory[0]].path +
-                                     new_subdirectory[0] + '/',
-                                 zip_file, zip_name, repo, revision)
-      end
     end
   end
 
