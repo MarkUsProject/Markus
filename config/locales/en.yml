@@ -17,7 +17,6 @@ en:
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
         review: "Peer Review"
-        deadline_with_extension: "%{deadline} (you have an extension until %{extension_deadline})"
         batch_tests_status_table:
             test_runs_status: "Test Runs Status"
             in_progress: "in progress"

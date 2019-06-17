@@ -7,7 +7,7 @@
   <% elsif grouping.extension.nil? %>
     <%= I18n.l(due_date) %>
   <% else %>
-    <%= I18n.t('assignment.deadline_with_extension',
+    <%= I18n.t('assignments.deadline_with_extension',
                deadline: I18n.l(assignment.section_due_date(@section)),
                extension_deadline: I18n.l(due_date)) %>
   <% end %>

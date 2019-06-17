@@ -17,7 +17,6 @@ pt:
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"
         review: "Revisãos"
-        deadline_with_extension: "UPDATE ME"
         batch_tests_status_table:
             test_runs_status: "UPDATE ME"
             in_progress: "UPDATE ME"

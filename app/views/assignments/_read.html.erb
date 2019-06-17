@@ -18,10 +18,10 @@
   <div class='sub_block'>
     <span class='prop_label'><%= Assignment.human_attribute_name(:due_date) %></span>
     <span class="prop_paragraph">
-      <% if !@grouping.extension.nil? %>
-        <%= I18n.l(@grouping.due_date) %>
+      <% if !@grouping&.extension.nil? %>
+        <%= I18n.l(@grouping&.due_date || @assignment.section_due_date(current_user.try(:section))) %>
       <% else %>
-        <%= I18n.t('assignment.deadline_with_extension',
+        <%= I18n.t('assignments.deadline_with_extension',
                    deadline: I18n.l(@assignment.section_due_date(@grouping&.inviter&.section)),
                    extension_deadline: I18n.l(@grouping.due_date)) %>
       <% end %>
