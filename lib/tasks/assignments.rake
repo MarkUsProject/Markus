@@ -111,7 +111,8 @@ namespace :db do
         tokens_per_period: 0,
         token_start_date: DateTime.now,
         token_period: 1,
-        only_required_files: false
+        only_required_files: false,
+        section_due_dates_type: true
     )
 
     rule = NoLateSubmissionRule.new
@@ -137,7 +138,14 @@ namespace :db do
         tokens_per_period: 0,
         token_start_date: DateTime.now,
         token_period: 1,
-        only_required_files: false
+        only_required_files: false,
+        section_due_dates_type: true
     )
+
+    Assignment.where(section_due_dates_type: true).find_each do |assignment|
+      Section.all.find_each.with_index do |section, i|
+        SectionDueDate.create(assignment: assignment, section: section, due_date: assignment.due_date + (i + 1).days)
+      end
+    end
   end
 end
