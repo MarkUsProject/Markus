@@ -10,13 +10,21 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 
 
 class RawFileManager extends RawFileBrowser {
-  handleActionBarAddFileClick = (event) => {
+  handleActionBarAddFileClick = (event, selected) => {
     event.preventDefault();
-    window.modal_addnew.open();
+    let uploadTarget = '';
+    if (selected) {
+      if (selected.children) {
+        uploadTarget = selected.relativeKey;
+      } else {
+        uploadTarget = selected.relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
+      }
+    }
+    this.props.onActionBarAddFileClick(uploadTarget)
   };
 
   renderActionBar(selectedItem) {
-    const selectionIsFolder = selectedItem && !selectedItem.size;
+    const selectionIsFolder = selectedItem && selectedItem.children;
     let filter;
     if (this.props.canFilter) {
       filter = (
@@ -116,7 +124,7 @@ class RawFileManager extends RawFileBrowser {
         actions.unshift(
           <li key="action-add-file>">
             <a
-              onClick={this.handleActionBarAddFileClick}
+              onClick={(event) => this.handleActionBarAddFileClick(event, selectedItem)}
               href="#"
               role="button"
             >
@@ -150,7 +158,7 @@ class RawFileManager extends RawFileBrowser {
       actions.unshift(
         <li key="action-add-file>">
           <a
-            onClick={this.handleActionBarAddFileClick}
+            onClick={(event) => this.handleActionBarAddFileClick(event, selectedItem)}
             href="#"
             role="button"
           >

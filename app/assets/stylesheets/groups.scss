@@ -123,22 +123,6 @@
   height: 250px;
 }
 
-.extension-container {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.extension-container-vertical {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding: 5px;
-
-  > * {
-    margin: 5px;
-  }
-}
-
 .extension-note {
   width: 100%;
 }
