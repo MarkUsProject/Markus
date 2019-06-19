@@ -79,7 +79,7 @@ class SubmissionFileManager extends React.Component {
 
     let file = deleteFiles[0];
     let file_revisions = {};
-    file_revisions[file.key] = file.last_modified_revision;
+    file_revisions[file.key] = this.props.revision_identifier;
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
@@ -95,7 +95,7 @@ class SubmissionFileManager extends React.Component {
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
-        delete_folders: [folderKey],
+        new_folders: [folderKey],
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
@@ -103,7 +103,17 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleDeleteFolder = (folderKey) => {
-
+    let folder_revisions = {};
+    folder_revisions[folderKey] = this.props.revision_identifier
+    $.post({
+      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      data: {
+        delete_folders: [folderKey],
+        folder_revisions: folder_revisions,
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
   };
 
   handleActionBarDeleteClick = (event) => {
@@ -130,6 +140,7 @@ class SubmissionFileManager extends React.Component {
         onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
         onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
         onCreateFolder={this.props.readOnly ? undefined : this.handleCreateFolder}
+        onRenameFolder={() => {}}
         onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
         downloadAllURL={this.getDownloadAllURL()}
       />

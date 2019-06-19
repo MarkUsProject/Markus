@@ -335,6 +335,8 @@ class SubmissionsController < ApplicationController
       # been revised since the user last saw it.
       file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
 
+      folder_revisions = params[:folder_revisions].nil? ? {} : params[:folder_revisions]
+
       # The files that will be deleted
       delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
 
@@ -370,8 +372,12 @@ class SubmissionsController < ApplicationController
             messages.concat msgs
           end
           if new_folders.present?
-            success, msgs = @grouping.add_folders(new_folders, current_user,
-                                                  path: @path, repo: repo, txn: txn)
+            success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
+          end
+          if delete_folders.present?
+            success, msgs = remove_folders(folder_revisions.slice(*delete_folders), current_user, repo, path: path, txn: txn)
             should_commit &&= success
             messages = messages.concat msgs
           end
@@ -696,18 +702,22 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    entries = revision.tree_at_path(full_path)
-                      .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
-      dirname, basename = File.split(file_name)
-      dirname = '' if dirname == '.'
-      data = get_file_info(basename, file_obj, grouping.assignment.id,
-                           revision.revision_identifier, dirname, grouping.id)
-      next if data.nil?
-      data[:key] = file_name
-      data[:modified] = data[:last_revised_date]
-      data
+    entries = revision.tree_at_path(full_path).sort do |a, b|
+      a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
+    end
+    entries.map do |file_name, file_obj|
+      if file_obj.is_a? Repository::RevisionFile
+        dirname, basename = File.split(file_name)
+        dirname = '' if dirname == '.'
+        data = get_file_info(basename, file_obj, grouping.assignment.id,
+                             revision.revision_identifier, dirname, grouping.id)
+        next if data.nil?
+        data[:key] = file_name
+        data[:modified] = data[:last_revised_date]
+        data
+      else
+        {key: "#{file_name}/"}
+      end
     end.compact
-    entries
   end
 end
