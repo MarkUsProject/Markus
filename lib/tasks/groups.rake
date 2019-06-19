@@ -32,10 +32,9 @@ namespace :db do
             StudentMembership::STATUSES[:accepted],
             invoked_by_admin: true)
         end
-        if grouping.id % 10 == 0
-          apply_penalty = !assignment.submission_rule.is_a?(NoLateSubmissionRule) && grouping.id % 20 == 0
-          note = Faker::Movies::PrincessBride.quote
-          Extension.create(grouping: grouping, time_delta: 1.week, apply_penalty: apply_penalty, note: note)
+        if assignment.section_due_dates_type && grouping.id % 5 == 0
+            note = Faker::Movies::PrincessBride.quote
+            Extension.create(grouping: grouping, time_delta: 1.week, note: note)
         end
         group.access_repo do |repo|
           # add files to the root folder of the repo (e.g. "A1")
