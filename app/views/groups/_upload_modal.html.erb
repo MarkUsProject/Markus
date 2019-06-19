@@ -7,26 +7,19 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
-                             upload_id: 'group_grouplist',
+                             upload_id: 'upload_file',
                              button_id: 'upload' %>
 
   <p>
-    <%= t('groups.upload.description').html_safe %>
-    <% if !@assignment.groupings.nil? && @assignment.groupings.length > 0 %>
-      <div class='information'>
-        <%= t('groups.upload.importing') %>
-      </div>
-  <% end %>
+    <%= t('upload_help_html', section_id: 'groups') %>
   </p>
-  <%= form_for :group, html: {multipart: true},
-               url: { controller:'groups',
-                      action: 'csv_upload',
-                      id: @assignment.id } do |f| %>
+  <%= form_tag upload_assignment_groups_path(assignment_id: @assignment.id),
+               { multipart: true } do %>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
     </p>
-    <%= f.file_field :grouplist, size: 2 %>
+    <%= file_field_tag :upload_file, size: 2 %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),

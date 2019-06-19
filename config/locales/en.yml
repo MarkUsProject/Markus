@@ -82,9 +82,6 @@ en:
       review_state:         "Review State"
 
     groups:
-      upload:
-        description: "CSV file format:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
-        importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"

@@ -137,7 +137,7 @@ describe GroupsController do
       end
     end
 
-    describe '#csv_upload', keep_memory_repos: true do
+    describe '#upload', keep_memory_repos: true do
       before :all do
         # remove a generated repo so repeated test runs function properly
         FileUtils.rm_r(
@@ -148,34 +148,6 @@ describe GroupsController do
       before :each do
         # since the git
         allow(Repository.get_class).to receive(:purge_all).and_return nil
-
-        # We need to mock the rack file to return its content when
-        # the '.read' method is called to simulate the behaviour of
-        # the http uploaded file
-        @file_good = fixture_file_upload(
-          'files/groups/form_good.csv', 'text/csv')
-        allow(@file_good).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                      'files/groups/form_good.csv',
-                      'text/csv')))
-
-        @file_invalid_column = fixture_file_upload(
-          'files/groups/form_invalid_column.csv', 'text/csv')
-        allow(@file_invalid_column).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                      'files/groups/form_invalid_column.csv',
-                      'text/csv')))
-
-        @file_bad_csv = fixture_file_upload(
-          'files/bad_csv.csv', 'text/xls')
-        allow(@file_bad_csv).to receive(:read).and_return(
-          File.read(fixture_file_upload('files/bad_csv.csv', 'text/csv')))
-
-        @file_wrong_format = fixture_file_upload(
-          'files/wrong_csv_format.xls', 'text/xls')
-        allow(@file_wrong_format).to receive(:read).and_return(
-          File.read(fixture_file_upload(
-                      'files/wrong_csv_format.xls', 'text/csv')))
 
         # Setup for Git Repository
         allow(MarkusConfigurator)
@@ -193,35 +165,28 @@ describe GroupsController do
         end
       end
 
+      include_examples 'a controller supporting upload' do
+        let(:params) { { assignment_id: @assignment.id } }
+      end
+
       it 'accepts a valid file' do
         ActiveJob::Base.queue_adapter = :test
         expect do
-          post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_good } }
+          post :upload, params: {
+            assignment_id: @assignment.id,
+            upload_file: fixture_file_upload('files/groups/form_good.csv', 'text/csv')
+          }
         end.to have_enqueued_job(CreateGroupsJob)
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_blank
         expect(response).to redirect_to(action: 'index')
-
       end
 
       it 'does not accept files with invalid columns' do
-        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist: @file_invalid_column } }
-
-        expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_blank
-        expect(response).to redirect_to(action: 'index')
-      end
-
-      it 'does not accept fileless submission' do
-        post :csv_upload, params: { assignment_id: @assignment.id }
-
-        expect(response.status).to eq(302)
-        expect(flash[:error]).to_not be_blank
-        expect(response).to redirect_to(action: 'index')
-      end
-
-      it 'does not accept a .xls file' do
-        post :csv_upload, params: { assignment_id: @assignment.id, group: { grouplist:  @file_wrong_format } }
+        post :upload, params: {
+          assignment_id: @assignment.id,
+          upload_file: fixture_file_upload('files/groups/form_invalid_column.csv', 'text/csv')
+        }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to_not be_blank

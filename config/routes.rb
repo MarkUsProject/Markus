@@ -131,7 +131,7 @@ Rails.application.routes.draw do
           get 'get_names'
           get 'assign_student_and_next'
           get 'next_grouping'
-          post 'csv_upload'
+          post 'upload'
           get 'add_csv_group'
           get 'download_grouplist'
           get 'create_groups_when_students_work_alone'

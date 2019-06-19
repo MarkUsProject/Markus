@@ -94,9 +94,6 @@ es:
       review_state:                         "Estado de la Revisión"
 
     groups:
-      upload:
-        description:                     "Archivo en formato CSV:<br><code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
-        importing:                       " Importar grupos a MarkUs usando la opción Subir en Formato CSV destruirá los grupos existentes!"
       csv:
         could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
         could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
