@@ -240,25 +240,29 @@ class GroupsController < ApplicationController
   # allow_web_subits == false, the student's username will be used as the
   # repository name. If MarkUs is not repository admin, the repository name as
   # specified by the second field will be used instead.
-  def csv_upload
-    if params[:group] && params[:group][:grouplist]
-      file = params[:group][:grouplist]
-      encoding = params[:encoding]
-      @assignment = Assignment.find(params[:assignment_id])
-      data = []
-      result = MarkusCSV.parse(file.read, encoding: encoding) { |row| data << row }
+  def upload
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
+    else
+      assignment = Assignment.find(params[:assignment_id])
+      group_rows = []
+      result = MarkusCSV.parse(data[:file].read, encoding: params[:encoding]) do |row|
+        group_rows << row.take_while { |x| !x.blank? } unless row.blank?
+      end
       if result[:invalid_lines].empty?
-        if validate_csv_upload_file(@assignment, data)
-          @current_job = CreateGroupsJob.perform_later @assignment, data
+        if validate_csv_upload_file(assignment, group_rows)
+          @current_job = CreateGroupsJob.perform_later assignment, group_rows
           session[:job_id] = @current_job.job_id
         end
       else
         flash_message(:error, result[:invalid_lines])
       end
-    else
-      flash_message(:error, I18n.t('upload_errors.missing_file'))
     end
-    redirect_to action: 'index', id: params[:id]
+    redirect_to action: 'index'
   end
 
   def create_groups_when_students_work_alone

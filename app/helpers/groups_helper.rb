@@ -43,7 +43,7 @@ module GroupsHelper
     end
   end
 
-  # Run several checks on the data from a csv_upload file in order to determine whether to proceed with
+  # Run several checks on the data from an uploaded file in order to determine whether to proceed with
   # creating groups based on that file or not. Returns true if any errors are found and displays flash
   # messages describing each error unless +suppress_flash+ is true.
   def validate_csv_upload_file(assignment, data, suppress_flash: false)

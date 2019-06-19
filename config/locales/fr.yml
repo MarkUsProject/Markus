@@ -82,10 +82,6 @@ fr:
       review_state:         "Avis Etat"
 
     groups:
-      upload:
-        description: "Format du fichier CSV : <br>
-            <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
-        importing: "Importer les groupes par un fichier CSV dans MarkUs va detruire tous les groupes existants ! "
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."

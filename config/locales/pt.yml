@@ -82,9 +82,6 @@ pt:
       review_state:         "Estado de revisão"
 
     groups:
-      upload:
-        description: "Formato do arquivo CSV:<br> <code>group_name,repository_name,user_name,<br>user_name ... </code><br>"
-        importing: "Ao importar groupos via carregamento CSV no MarkUs você irá apagar os grupos existentes!"
       csv:
         could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
         could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"

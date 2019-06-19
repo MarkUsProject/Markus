@@ -336,10 +336,10 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes POST csv_upload properly' do
-        expect(post: group_path + '/csv_upload').to route_to(
+      it 'routes POST upload properly' do
+        expect(post: group_path + '/upload').to route_to(
           controller: group_ctrl,
-          action: 'csv_upload',
+          action: 'upload',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
