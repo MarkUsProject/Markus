@@ -469,14 +469,25 @@ class AssignmentsController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:id])
+
     path = params[:path] || '/'
     path = Pathname.new(@assignment.repository_folder).join(path.gsub(%r{^/}, ''))
+
+    # The files that will be deleted
+    delete_files = params[:delete_files] || []
     file_revisions = params[:file_revisions] || {}
-    delete_files = params[:delete_files] || []   # The files that will be deleted
-    new_files = params[:new_files] || []         # The files that will be added
 
+    # The files that will be added
+    new_files = params[:new_files] || []
 
-    if delete_files.empty? && new_files.empty?
+    # The folders that will be added
+    new_folders = params[:new_folders] || []
+
+    # The folders that will be deleted
+    delete_folders = params[:delete_folders] || []
+    folder_revisions = params[:folder_revisions] || {}
+
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       redirect_back(fallback_location: root_path)
     else
@@ -495,6 +506,16 @@ class AssignmentsController < ApplicationController
           success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true)
           should_commit &&= success
           messages.concat msgs
+        end
+        if new_folders.present?
+          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if delete_folders.present?
+          success, msgs = remove_folders(folder_revisions.slice(*delete_folders), current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
         end
         if should_commit
           commit_success, commit_msg = commit_transaction(repo, txn)
@@ -592,16 +613,22 @@ class AssignmentsController < ApplicationController
     full_path = File.join(assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    entries = revision.tree_at_path(full_path)
-                      .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
-      data = get_file_info(file_name, file_obj, assignment.id, path)
-      data[:key] = path.blank? ? data[:raw_name] : File.join(path, data[:raw_name])
-      data[:modified] = data[:last_revised_date]
-      data[:size] = 1 # Dummy value
-      data
+    entries = revision.tree_at_path(full_path).sort do |a, b|
+      a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
-    entries
+    entries.map do |file_name, file_obj|
+      if file_obj.is_a? Repository::RevisionFile
+        dirname, basename = File.split(file_name)
+        dirname = '' if dirname == '.'
+        data = get_file_info(basename, file_obj, assignment.id, dirname)
+        next if data.nil?
+        data[:key] = file_name
+        data[:modified] = data[:last_revised_date]
+        data
+      else
+        { key: "#{file_name}/", last_modified_revision: file_obj.last_modified_revision }
+      end
+    end.compact
   end
 
   def get_file_info(file_name, file, assignment_id, path)
