@@ -89,9 +89,14 @@ class AutomatedTestsController < ApplicationController
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
     testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    files_dir = Pathname.new assignment.autotest_files_dir
     files_data = assignment.autotest_files.map do |file|
-      { key: file, size: 1,
-        url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+      if files_dir.join(file).directory?
+        { key: "#{file}/" }
+      else
+        { key: file, size: 1,
+          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+      end
     end
     if File.exist? testers_schema_path
       schema_data = JSON.parse(File.open(testers_schema_path, &:read))
@@ -126,9 +131,19 @@ class AutomatedTestsController < ApplicationController
 
   def upload_files
     assignment = Assignment.find(params[:assignment_id])
+    new_folders = params[:new_folders] || []
+    delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
 
+    new_folders.each do |f|
+      folder_path = File.join(assignment.autotest_files_dir, f)
+      FileUtils.mkdir_p(folder_path)
+    end
+    delete_folders.each do |f|
+      folder_path = File.join(assignment.autotest_files_dir, f)
+      FileUtils.rm_rf(folder_path)
+    end
     new_files.each do |f|
       if f.size > MarkusConfigurator.markus_config_max_file_size
         flash_now(:error, t('student.submission.file_too_large', file_name: f.original_filename,
@@ -137,7 +152,7 @@ class AutomatedTestsController < ApplicationController
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
-      file_path = File.join(assignment.autotest_files_dir, f.original_filename)
+      file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
       file_content = f.read
       File.write(file_path, file_content, mode: 'wb')
     end
