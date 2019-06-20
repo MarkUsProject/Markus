@@ -178,12 +178,15 @@ module RepositoryHelper
       dirs[folder_path] = revision
     end
 
-    success, file_messages = remove_files(files, user, repo, path: '')
+    success, file_messages = remove_files(files, user, repo, path: '', txn: txn)
 
     return [success, file_messages] unless success
 
-    dirs.each do |dir, revision|
-      txn.remove(dir, revision)
+    # folders are removed in git if their contents are removed
+    unless repo.is_a? GitRepository
+      dirs.each do |dir, revision|
+        txn.remove(dir, revision)
+      end
     end
 
     if commit_txn
