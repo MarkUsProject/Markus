@@ -510,15 +510,14 @@ describe SubmissionsController do
       it 'should be able to download all groups\' submissions' do
         get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id }
         is_expected.to respond_with(:success)
-        zip_path = "tmp/#{@assignment.short_identifier}_" +
-                   "#{@admin.user_name}.zip"
+        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
+        zip_path = Pathname.new('tmp') + zip_subpath
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              File.join(
-                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
-                "file#{i}"))
+              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
+            p instance_variable_get(:"@file#{i}_path")
             expect(zip_file.find_entry(
                      instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
@@ -530,15 +529,13 @@ describe SubmissionsController do
         @ta = create(:ta)
         get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id }
         is_expected.to respond_with(:success)
-        zip_path = "tmp/#{@assignment.short_identifier}_" +
-                   "#{@ta.user_name}.zip"
+        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
+        zip_path = Pathname.new('tmp') + zip_subpath
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              File.join(
-                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
-                "file#{i}"))
+              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
             expect(zip_file.find_entry(
                      instance_variable_get(:"@file#{i}_path"))).to be_nil
           end
@@ -551,15 +548,13 @@ describe SubmissionsController do
         end
         get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id }
         is_expected.to respond_with(:success)
-        zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@ta.user_name}.zip"
+        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
+        zip_path = Pathname.new('tmp') + zip_subpath
         Zip::File.open(zip_path) do |zip_file|
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              File.join(
-                "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
-                "file#{i}"))
+              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
             expect(zip_file.find_entry(
               instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(

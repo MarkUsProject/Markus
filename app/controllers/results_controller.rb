@@ -469,23 +469,11 @@ class ResultsController < ApplicationController
 
     files = submission.submission_files
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      files.each do |file|
-        begin
-          if params[:include_annotations] == 'true' && !file.is_supported_image?
-            file_content = file.retrieve_file(true)
-          else
-            file_content = file.retrieve_file
-          end
-        rescue Exception => e
-          render plain: t('student.submission.missing_file',
-                            file_name: file.filename, message: e.message)
-          return
-        end
-        # Create the folder in the Zip file if it doesn't exist
-        zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
-
-        zip_file.get_output_stream(File.join(zip_name, file.filename)) do |f|
-          f.puts file_content
+      grouping.group.access_repo do |repo|
+        revision = repo.get_revision(revision_identifier)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+          submission_file = files.find_by(filename: file.name, path: file.path)
+          submission_file.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
         end
       end
     end
