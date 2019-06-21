@@ -34,3 +34,4 @@ fr:
     no_required_files: "Aucun fichier n'est requis pour ce projet."
     none: "Aucun devoir pour le moment."
     upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
+    deadline_with_extension: "%{deadline} (vous avez une extension jusqu'au %{extension_deadline})"

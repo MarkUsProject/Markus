@@ -33,3 +33,4 @@ pt:
     no_required_files: "Não há arquivos exigidos para esse projeto."
     none: "Não existem projetos atualmente."
     upload_file_requirement: "A lista de arquivos carregados não coincide com os arquivos de atribuição necessária"
+    deadline_with_extension: "UPDATE ME"

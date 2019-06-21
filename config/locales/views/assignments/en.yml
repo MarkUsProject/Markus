@@ -33,3 +33,4 @@ en:
     no_required_files: "There are no required files for this assignment."
     none: "There are currently no assignments."
     upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
+    deadline_with_extension: "%{deadline} (you have an extension until %{extension_deadline})"

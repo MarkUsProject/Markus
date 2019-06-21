@@ -73,3 +73,4 @@ es:
     no_required_files: "No hay archivos requeridos para este proyecto."
     none: "No existen proyectos por el momento."
     upload_file_requirement: "La lista de archivos entregados no coincide con los archivos necesarios para este proyecto."
+    deadline_with_extension: "UPDATE ME"
