@@ -6,7 +6,7 @@ class TestGroup < ApplicationRecord
   belongs_to :criterion, optional: true, polymorphic: true
   has_many :test_group_results, dependent: :delete_all
 
-  validates :name, presence: true, uniqueness: { scope: :assignment_id }
+  validates :name, presence: true
   validates :display_output, presence: true
 
 end
