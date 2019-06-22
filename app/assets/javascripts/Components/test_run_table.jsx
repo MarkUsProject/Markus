@@ -86,11 +86,11 @@ export class TestRunTable extends React.Component {
             {
               id: 'user_name',
               accessor: row => row['users.user_name'],
-              Cell: ({value}) => I18n.t('automated_tests.test_results_table.run_by') + ' ' + value,
+              Cell: ({value}) => I18n.t('activerecord.attributes.test_run.user') + ' ' + value,
             },
             {
               id: 'status',
-              accessor: row => I18n.t(`assignment.test_runs_statuses.${row['test_runs.status']}`)
+              accessor: row => I18n.t(`automated_tests.test_runs_statuses.${row['test_runs.status']}`)
             }
           ]}
           SubComponent={ row => (
@@ -130,7 +130,7 @@ class TestGroupResultTable extends React.Component {
     },
     {
       id: 'name',
-      Header: I18n.t('automated_tests.test_results_table.test_name'),
+      Header: I18n.t('activerecord.attributes.test_result.name'),
       accessor: row => row['test_results.name'],
       aggregate: (values, rows) => {
         if (rows.length === 0) {
@@ -142,7 +142,7 @@ class TestGroupResultTable extends React.Component {
     },
     {
       id: 'output',
-      Header: I18n.t('automated_tests.test_results_table.output'),
+      Header: I18n.t('activerecord.attributes.test_result.output'),
       accessor: row => row['test_results.output'] || '',
       Cell: ({value}) => <pre className={'test-results-output'}>{value}</pre>,
       show: this.state.show_output,
@@ -151,21 +151,21 @@ class TestGroupResultTable extends React.Component {
     },
     {
       id: 'test_status',
-      Header: I18n.t('automated_tests.test_results_table.status'),
+      Header: I18n.t('activerecord.attributes.test_result.status'),
       accessor: row => row['test_results.status'],
       minWidth: 50,
       aggregate: _ => ''
     },
     {
       id: 'marks_earned',
-      Header: I18n.t('automated_tests.test_results_table.marks_earned'),
+      Header: I18n.t('activerecord.attributes.test_result.marks_earned'),
       accessor: row => row['test_results.marks_earned'],
       minWidth: 40,
       className: 'number',
       aggregate: vals => vals.reduce((a, b) => a + b, 0),
     },
     {
-      Header: I18n.t('automated_tests.test_results_table.marks_total'),
+      Header: I18n.t('activerecord.attributes.test_result.marks_total'),
       id: 'test_results.marks_total',
       accessor: row => row['test_results.marks_total'],
       minWidth: 40,
@@ -180,7 +180,7 @@ class TestGroupResultTable extends React.Component {
     if (extraInfo) {
       extraInfoDisplay = (
         <div>
-          <h4>{I18n.t('automated_tests.test_results_table.extra_info')}</h4>
+          <h4>{I18n.t('activerecord.attributes.test_group_result.extra_info')}</h4>
           <pre>{extraInfo}</pre>
         </div>);
     } else {

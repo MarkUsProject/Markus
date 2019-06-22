@@ -4,3 +4,10 @@ fr:
       test_result:
         one: "Résultat de test"
         other: "Résultats de test"
+    attributes:
+      test_result:
+        marks_earned: "Points"
+        marks_total: "Total"
+        name: "Nom du Test"
+        output: "Sortie"
+        status: "Statut"

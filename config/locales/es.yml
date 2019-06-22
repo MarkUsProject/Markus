@@ -20,18 +20,6 @@ es:
         peer_review_results:              "Resultados para la Revisión de Compañeros"
         your_reviews:                     "Sus Revisiones"
         review:                           "Revisión"
-        batch_tests_status_table:
-            test_runs_status: "UPDATE ME"
-            in_progress: "UPDATE ME"
-            created_at: "UPDATE ME"
-            status: "UPDATE ME"
-            estimated_remaining_time: "UPDATE ME"
-            action: "UPDATE ME"
-        test_runs_statuses:
-            complete: "UPDATE ME"
-            in_progress: "UPDATE ME"
-            cancelled: "UPDATE ME"
-            problems: "UPDATE ME"
     peer_review:
         assign:                               "Asignar revisiones por pares"
         review:                               "Revisión"
@@ -157,37 +145,6 @@ es:
     #lib/validators/
     date_validator:
       invalid_date: "no es una fecha válida"
-
-    #Test Framework
-    automated_tests:
-      stop_test:                          "UPDATE ME"
-      stop_batch:                         "UPDATE ME"
-      tests_running:                      "Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados."
-      need_submission:                    "Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas
-                                           las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas."
-      test_results_table:
-        test_name:    "Nombre de la Prueba"
-        output:       "Resultado"
-        marks_earned: "Nota"
-        marks_total:  "UPDATE ME"
-        status:       "Estado"
-        extra_info: "UPDATE ME"
-        run_by: "UPDATE ME"
-      results:
-        all_tests: "UPDATE ME"
-        unknown_test: "UPDATE ME"
-        no_source_files: "No se encontró ningún archivo para probar"
-        bad_server: "UPDATE ME"
-        bad_results: "UPDATE ME '%{error}'"
-        no_tests: "UPDATE ME"
-        timeout: "%{seconds} UPDATE ME"
-        bad_marks_earned: "UPDATE ME"
-        bad_marks_total: "UPDATE ME"
-        bad_status: "UPDATE ME '%{status}'"
-        extra_raw_output: "UPDATE ME \n%{extra}\n"
-        extra_stderr: "UPDATE ME \n%{extra}\n"
-        extra_malformed: "UPDATE ME \n%{extra}\n"
-        extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
 
     poll_job:
       working_message: "%{progress} fuera de %{total}"
