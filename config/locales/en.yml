@@ -17,18 +17,6 @@ en:
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
         review: "Peer Review"
-        batch_tests_status_table:
-            test_runs_status: "Test Runs Status"
-            in_progress: "in progress"
-            created_at: "Started"
-            status: "Status"
-            estimated_remaining_time: "Estimated Remaining Time"
-            action: "Action"
-        test_runs_statuses:
-            complete: "complete"
-            in_progress: "in progress"
-            cancelled: "cancelled"
-            problems: "error"
     peer_review:
         assign: "Assign Peer Reviews"
         review: "Review "
@@ -142,36 +130,6 @@ en:
     #lib/validators/
     date_validator:
       invalid_date: "is not a valid date"
-
-    #Test Framework
-    automated_tests:
-      stop_test: "Stop test"
-      stop_batch: "Stop batch"
-      tests_running: "Running tests. Please refresh this page in a bit to view the results."
-      need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-      test_results_table:
-        test_name: "Test Name"
-        output: "Output"
-        marks_earned: "Mark"
-        marks_total: "Out of"
-        status: "Status"
-        extra_info: "Extra Info:"
-        run_by: "Run by"
-      results:
-        all_tests: "All tests"
-        unknown_test: "Unknown test"
-        no_source_files: "There are no student files to run the tests"
-        bad_server: "Server '%{hostname}' error: %{error}"
-        bad_results: "Test results are malformed: %{error}"
-        no_tests: "Test results are empty"
-        timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
-        bad_marks_earned: "Earned marks are missing"
-        bad_marks_total: "Total marks are missing"
-        bad_status: "Unrecognized test status '%{status}'"
-        extra_raw_output: "Raw test run output: \n%{extra}\n"
-        extra_stderr: "Messages on stderr: \n%{extra}\n"
-        extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
-        extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
 
     poll_job:
       working_message: "%{progress} out of %{total}"

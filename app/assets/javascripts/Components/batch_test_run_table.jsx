@@ -54,7 +54,7 @@ class BatchTestRunTable extends React.Component {
         );
         // increment in_progress number for this batch_id
         status[row.test_batch_id].in_progress += 1;
-        row.status = I18n.t('assignment.batch_tests_status_table.in_progress');
+        row.status = I18n.t('automated_tests.test_runs_statuses.in_progress');
       } else {
         row.time_to_completion = '';
         row.action = '';
@@ -76,7 +76,7 @@ class BatchTestRunTable extends React.Component {
           data={this.state.data}
           columns={[
             {
-              Header: I18n.t('assignment.batch_tests_status_table.created_at'),
+              Header: I18n.t('activerecord.attributes.test_batch.created_at'),
               accessor: 'created_at',
               minWidth: 120,
               sortMethod: dateSort,
@@ -97,7 +97,7 @@ class BatchTestRunTable extends React.Component {
               sortable: true,
             },
             {
-              Header: I18n.t('assignment.batch_tests_status_table.status'),
+              Header: I18n.t('activerecord.attributes.test_run.status'),
               accessor: 'status',
               minWidth: 70,
               aggregate: (vals, pivots) => {
@@ -118,13 +118,13 @@ class BatchTestRunTable extends React.Component {
               )
             },
             {
-              Header: I18n.t('assignment.batch_tests_status_table.estimated_remaining_time'),
+              Header: I18n.t('activerecord.attributes.test_run.time_to_service_estimate'),
               accessor: 'time_to_completion',
               Aggregated: <span></span>,
               sortable: false,
             },
             {
-              Header: I18n.t('assignment.batch_tests_status_table.action'),
+              Header: I18n.t('actions'),
               accessor: 'action',
               minWidth: 70,
               sortable: false,

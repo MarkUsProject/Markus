@@ -104,7 +104,7 @@ ignore_unused:
   - 'action_policy.*'
   - 'flash.*'
   - 'datetime.distance_in_words.*'
-  - 'assignment.test_runs_statuses.*'  # TODO: Figure out how to handle interpolation so we don't ignore this one
+  - 'automated_tests.test_runs_statuses.*'  # TODO: Figure out how to handle interpolation so we don't ignore this one
   - 'number.*'
   - 'support.*'
   - '*.*.default'

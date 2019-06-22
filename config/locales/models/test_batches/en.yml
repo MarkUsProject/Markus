@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    attributes:
+      test_batch:
+        created_at: "Started"
