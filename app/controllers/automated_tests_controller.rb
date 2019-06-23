@@ -139,8 +139,7 @@ class AutomatedTestsController < ApplicationController
       end
       file_path = File.join(assignment.autotest_files_dir, f.original_filename)
       file_content = f.read
-      mode = SubmissionFile.is_binary?(file_content) ? 'wb' : 'w'
-      File.write(file_path, file_content, mode: mode)
+      File.write(file_path, file_content, mode: 'wb')
     end
     delete_files.each do |f|
       file_path = File.join(assignment.autotest_files_dir, f)
