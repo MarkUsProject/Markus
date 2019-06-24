@@ -50,13 +50,6 @@ describe TestGroup do
       end
     end
 
-    context 'test group expected to be invalid when the name already exists in the same assignment' do
-      it 'return false when the file_name already exists' do
-        @invalid_test_group.name = 'valid_test_group'
-        expect(@invalid_test_group).not_to be_valid
-      end
-    end
-
     context 'test group expected to be invalid when the display_output option has an invalid option' do
       it 'raise an ArgumentError when the display_output option has an invalid option' do
         expect { @invalid_test_group.display_output = 'something_else' }.to raise_error(ArgumentError)
