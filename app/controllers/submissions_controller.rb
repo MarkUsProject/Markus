@@ -716,7 +716,7 @@ class SubmissionsController < ApplicationController
         data[:modified] = data[:last_revised_date]
         data
       else
-        {key: "#{file_name}/"}
+        { key: "#{file_name}/" }
       end
     end.compact
   end

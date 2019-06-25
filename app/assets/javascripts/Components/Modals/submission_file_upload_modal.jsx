@@ -6,8 +6,8 @@ class SubmissionFileUploadModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newfiles: []
-    }
+      newFiles: []
+    };
   }
 
   componentDidMount() {
@@ -16,11 +16,11 @@ class SubmissionFileUploadModal extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newfiles);
+    this.props.onSubmit(this.state.newFiles);
   };
 
   handleFileUpload = (event) => {
-    this.setState({newfiles: event.target.files})
+    this.setState({newFiles: event.target.files})
   };
 
   render() {
@@ -30,11 +30,11 @@ class SubmissionFileUploadModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t('add_new')}</h2>
+        <h2>{I18n.t('upload')}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={'modal-container-vertical'}>
             <div className={'modal-container'}>
-              <input type={'file'} name={'newfiles'} multiple={true} onChange={this.handleFileUpload}/>
+              <input type={'file'} name={'new_files'} multiple={true} onChange={this.handleFileUpload}/>
             </div>
             <div className={'modal-container'}>
               <input type='submit' value={I18n.t('save')} />

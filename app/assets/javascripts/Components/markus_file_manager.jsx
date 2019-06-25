@@ -14,17 +14,17 @@ class RawFileManager extends RawFileBrowser {
     event.preventDefault();
     let uploadTarget = '';
     if (selected) {
-      if (selected.children) {
+      if (selected.relativeKey.endsWith('/')) {
         uploadTarget = selected.relativeKey;
       } else {
         uploadTarget = selected.relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
       }
     }
-    this.props.onActionBarAddFileClick(uploadTarget)
+    this.props.onActionBarAddFileClick(uploadTarget);
   };
 
   renderActionBar(selectedItem) {
-    const selectionIsFolder = selectedItem && selectedItem.children;
+    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
     let filter;
     if (this.props.canFilter) {
       filter = (
