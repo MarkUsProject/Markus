@@ -489,9 +489,11 @@ describe SubmissionsController do
         @assignment = create(:assignment,
                              allow_web_submits: true,
                              group_min: 1)
+        @grouping_ids = []
         (1..3).to_a.each do |i|
           @grouping = create(:grouping,
                              assignment: @assignment)
+          @grouping_ids << @grouping.id
           @student = create(:student)
 
           instance_variable_set(:"@student#{i}", @student)
@@ -508,7 +510,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to download all groups\' submissions' do
-        get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id }
+        get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -517,7 +519,6 @@ describe SubmissionsController do
             instance_variable_set(
               :"@file#{i}_path",
               zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
-            p instance_variable_get(:"@file#{i}_path")
             expect(zip_file.find_entry(
                      instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
@@ -525,9 +526,29 @@ describe SubmissionsController do
           end
         end
       end
+
+      it 'should be able to download a subset of the submissions' do
+        grouping_ids = @grouping_ids[0...2]
+        get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: grouping_ids }
+        is_expected.to respond_with(:success)
+        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
+        zip_path = Pathname.new('tmp') + zip_subpath
+        Zip::File.open(zip_path) do |zip_file|
+          (1..2).to_a.each do |i|
+            instance_variable_set(
+              :"@file#{i}_path",
+              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
+            expect(zip_file.find_entry(
+              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+            expect("file#{i}'s content\n").to eq(
+                                                zip_file.read(instance_variable_get(:"@file#{i}_path")))
+          end
+        end
+      end
+
       it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
         @ta = create(:ta)
-        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id }
+        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -546,7 +567,7 @@ describe SubmissionsController do
         @assignment.groupings.each do |grouping|
           create(:ta_membership, user: @ta, grouping: grouping)
         end
-        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id }
+        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath

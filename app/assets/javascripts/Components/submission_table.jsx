@@ -288,6 +288,7 @@ class RawSubmissionTable extends React.Component {
 
           collectSubmissions={this.collectSubmissions}
           downloadGroupingFiles={this.downloadGroupingFiles}
+          selection={this.props.selection}
           runTests={this.runTests}
           releaseMarks={() => this.toggleRelease(true)}
           unreleaseMarks={() => this.toggleRelease(false)}
@@ -376,11 +377,13 @@ class SubmissionsActionBox extends React.Component {
     }
 
     let downloadGroupingFilesButton = (
-      <a
-        href={Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id)}
+      <a href={
+          Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id) +
+            '?groupings=' + this.props.selection.join()
+        }
         onClick={this.props.downloadGroupingFiles}
         download
-        className="button"
+        className={"button" + (this.props.disabled ? " disabled" : "")}
       >
         {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
       </a>
