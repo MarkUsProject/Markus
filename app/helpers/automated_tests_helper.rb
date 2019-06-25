@@ -5,6 +5,11 @@ module AutomatedTestsHelper
     end.transpose
     { type: :object,
       properties: {
+        name: {
+          type: :string,
+          title: "#{TestGroup.model_name.human} #{TestGroup.human_attribute_name(:name).downcase}",
+          default: TestGroup.model_name.human
+        },
         display_output: {
           type: :string,
           enum: TestGroup.display_outputs.keys,
@@ -35,12 +40,12 @@ module AutomatedTestsHelper
     test_specs['testers'].each do |tester_specs|
       next if tester_specs['test_data'].nil?
 
-      tester_specs['test_data'].each_with_index do |test_group_specs, i|
+      tester_specs['test_data'].each do |test_group_specs|
         test_group_specs['extra_info'] ||= {}
         extra_data_specs = test_group_specs['extra_info']
-        test_group_name = test_group_specs['name'] || "#{tester_specs['tester_type']}: #{i}"
         test_group_id = extra_data_specs['test_group_id']
         display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
+        test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
         criterion_id = nil
         criterion_type = nil
         if !extra_data_specs['criterion'].nil? && extra_data_specs['criterion'].include?('_')
