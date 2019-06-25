@@ -13,7 +13,12 @@ class AutotestManager extends React.Component {
       uiSchema: {
         testers: {
           items: {
-            classNames: 'tester-item'
+            classNames: 'tester-item',
+            test_data: {
+              items: {
+                'ui:order': ['extra_info', '*']
+              }
+            }
           }
         }
       },
