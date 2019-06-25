@@ -32,7 +32,8 @@ class AutotestManager extends React.Component {
       non_regenerating_tokens: false,
       unlimited_tokens: false,
       loading: true,
-      showModal: false
+      showModal: false,
+      uploadTarget: undefined
     };
   };
 
@@ -93,7 +94,7 @@ class AutotestManager extends React.Component {
       .then(this.endAction);
   };
 
-  uploadFiles = (uploadTarget) => {
+  openUploadModal = (uploadTarget) => {
     this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
@@ -265,7 +266,7 @@ class AutotestManager extends React.Component {
             onCreateFolder={this.handleCreateFolder}
             onRenameFolder={typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
             onDeleteFolder={this.handleDeleteFolder}
-            onActionBarAddFileClick={this.uploadFiles}
+            onActionBarAddFileClick={this.openUploadModal}
           />
         </fieldset>
         <fieldset>
