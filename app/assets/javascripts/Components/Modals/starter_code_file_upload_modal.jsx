@@ -6,9 +6,9 @@ class StarterCodeFileUploadModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newfiles: [],
+      newFiles: [],
       overwrite: true
-    }
+    };
   }
 
   componentDidMount() {
@@ -17,11 +17,11 @@ class StarterCodeFileUploadModal extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newfiles, this.state.overwrite);
+    this.props.onSubmit(this.state.newFiles, this.state.overwrite);
   };
 
   handleFileUpload = (event) => {
-    this.setState({newfiles: event.target.files})
+    this.setState({newFiles: event.target.files})
   };
 
   handleOverwriteChange = (event) => {
@@ -35,11 +35,11 @@ class StarterCodeFileUploadModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t('add_new')}</h2>
+        <h2>{I18n.t('upload')}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={'modal-container-vertical'}>
             <div className={'modal-container'}>
-              <input type={'file'} name={'newfiles'} multiple={true} onChange={this.handleFileUpload}/>
+              <input type={'file'} name={'new_files'} multiple={true} onChange={this.handleFileUpload}/>
             </div>
             <div>
               <label>

@@ -10,7 +10,8 @@ class StarterCodeFileManager extends React.Component {
     super(props);
     this.state = {
       files: [],
-      showModal: false
+      showModal: false,
+      uploadTarget: undefined
     };
   }
 
@@ -110,7 +111,7 @@ class StarterCodeFileManager extends React.Component {
     }
   };
 
-  uploadFiles = (uploadTarget) => {
+  openUploadModal = (uploadTarget) => {
     this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
@@ -134,7 +135,7 @@ class StarterCodeFileManager extends React.Component {
           onRenameFolder={!this.props.readOnly && typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
           onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
           downloadAllURL={this.getDownloadAllURL()}
-          onActionBarAddFileClick={this.props.readOnly ? undefined : this.uploadFiles}
+          onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
         />
         <StarterCodeFileUploadModal
           isOpen={this.state.showModal}
