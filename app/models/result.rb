@@ -194,7 +194,7 @@ class Result < ApplicationRecord
   def create_marks
     assignment = self.submission.assignment
     assignment.get_criteria(:ta).each do |criterion|
-      mark = criterion.marks.create(result_id: id)
+      criterion.marks.find_or_create_by(result_id: id)
     end
     self.update_total_mark
   end
