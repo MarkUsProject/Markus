@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_08_132638) do
+ActiveRecord::Schema.define(version: 2019_06_21_203403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -540,7 +540,6 @@ ActiveRecord::Schema.define(version: 2019_05_08_132638) do
     t.bigint "criterion_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assignment_id", "name"], name: "index_test_groups_on_assignment_id_and_name", unique: true
     t.index ["assignment_id"], name: "index_test_groups_on_assignment_id"
     t.index ["criterion_type", "criterion_id"], name: "index_test_groups_on_criterion_type_and_criterion_id"
   end
