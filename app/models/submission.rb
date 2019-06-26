@@ -115,11 +115,10 @@ class Submission < ApplicationRecord
   def set_autotest_marks
     test_run = test_runs.first
     return if test_run.nil? || test_run.test_group_results.empty?
+
     result = get_latest_result
     complete_marks = true
-    if result.marks.empty? # can happen if a criterion is created after collection
-      result.create_marks
-    end
+    result.create_marks # creates marks for any new criteria that may have just been added
     result.marks.each do |mark|
       test_groups = mark.markable.test_groups
       if test_groups.empty? # there's at least one manually-assigned mark
