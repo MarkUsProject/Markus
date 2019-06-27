@@ -10,17 +10,14 @@ function getFile(filename) {
   $('#upside_down')[0].checked = false;
   $('#info_form input[type=submit]').prop('disabled', false);
   $('#split_page_id').val(filename.split('.')[0])
-
   var path = Routes.download_error_file_assignment_exam_template_path(
     '',
     <%= @assignment.id %>,
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
   );
-
-  webViewerLoad(path).then(function () {
-    $('#copy_number').focus();
-  });
+  webViewerLoad(path);
+  $('#copy_number').focus();
 }
 
 function getErrorPages(value) {
@@ -59,8 +56,13 @@ $(document).ready(function () {
     getErrorPages($('#copy_number').val());
   });
 
-  $('#info_form').on('ajax:success', function (e, data) {
-    getFile(data);
+  $('#info_form').on('ajax:success', function (event) {
+    let filename = event.detail[0];
+    if (filename) {
+      getFile(filename);
+    } else {
+      window.location = '<%= view_logs_assignment_exam_templates_path(assignment_id: @assignment.id) %>';
+    }
   });
 
   <% if @next_error.nil? %>
