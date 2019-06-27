@@ -5,7 +5,8 @@
         {
           assignment_id: <%= @grouping.assignment_id %>,
           grouping_id: <%= @grouping.id %>,
-          collected_revision_id: '<%= @collected_revision&.revision_identifier %>'
+          collected_revision_id: '<%= @collected_revision&.revision_identifier %>',
+          enableSubdirs: <%= allowed_to? :manage_subdirectories? %>
         });
     });
   </script>

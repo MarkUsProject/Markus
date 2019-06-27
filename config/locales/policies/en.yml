@@ -24,3 +24,4 @@ en:
       submission:
         before_release?: "You cannot run tests because the marks have been released."
         not_a_student?: "You cannot run tests because students are not allowed to."
+        manage_subdirectories?: "You are not allowed to create, delete or change subdirectories."

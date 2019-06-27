@@ -333,21 +333,25 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+      file_revisions = params[:file_revisions] || {}
 
-      folder_revisions = params[:folder_revisions].nil? ? {} : params[:folder_revisions]
+      folder_revisions = params[:folder_revisions] || {}
 
       # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
+      delete_files = (params[:delete_files] || []).map { |f| [f, file_revisions[f]] }.to_h
 
       # The files that will be added
-      new_files = params[:new_files].nil? ? {} : params[:new_files]
+      new_files = params[:new_files] || {}
 
       # The folders that will be added
-      new_folders = params[:new_folders].nil? ? [] : params[:new_folders]
+      new_folders = params[:new_folders] || []
 
       # The folders that will be deleted
-      delete_folders = params[:delete_folders].nil? ? [] : params[:delete_folders]
+      delete_folders = (params[:delete_folders] || []).map { |f| [f, folder_revisions[f]] }.to_h
+
+      unless delete_folders.empty? && new_folders.empty?
+        authorize! to: :manage_subdirectories?
+      end
 
       if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
@@ -361,7 +365,7 @@ class SubmissionsController < ApplicationController
           only_required = @grouping.assignment.only_required_files
           required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
           if delete_files.present?
-            success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
+            success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
             should_commit &&= success
             messages.concat msgs
           end
@@ -377,7 +381,7 @@ class SubmissionsController < ApplicationController
             messages = messages.concat msgs
           end
           if delete_folders.present?
-            success, msgs = remove_folders(folder_revisions.slice(*delete_folders), current_user, repo, path: path, txn: txn)
+            success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
             should_commit &&= success
             messages = messages.concat msgs
           end

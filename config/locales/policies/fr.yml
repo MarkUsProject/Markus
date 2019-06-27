@@ -23,3 +23,4 @@ fr:
       submission:
         before_release?: "Les notes pour ce test sont déjà montré aux étudiants."
         not_a_student?: "UPDATE ME."
+        manage_subdirectories?: "Vous n'êtes pas autorisé à créer, supprimer ou modifier des dossiers."

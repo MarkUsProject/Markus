@@ -154,7 +154,7 @@ class SubmissionFileManager extends React.Component {
           onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
           downloadAllURL={this.getDownloadAllURL()}
           onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
-          disableActions={{rename: true}}
+          disableActions={{rename: true, addFolder: !this.props.enableSubdirs, deleteFolder: !this.props.enableSubdirs}}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showModal}

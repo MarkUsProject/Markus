@@ -82,6 +82,7 @@ class RawFileManager extends RawFileBrowser {
       else {
         if (
           selectedItem &&
+          !this.props.disableActions.addFolder &&
           typeof this.props.onCreateFolder === 'function' &&
           !this.state.nameFilter
         ) {
@@ -100,7 +101,8 @@ class RawFileManager extends RawFileBrowser {
           );
         }
         if (
-          selectedItem.keyDerived && !this.props.disableActions.rename && (
+          selectedItem.keyDerived &&
+          !this.props.disableActions.rename && (
             (selectionIsFolder && typeof this.props.onRenameFolder === 'function') ||
             (!selectionIsFolder && typeof this.props.onRenameFile === 'function')
           )
@@ -120,8 +122,12 @@ class RawFileManager extends RawFileBrowser {
         }
         if (
           selectedItem.keyDerived && (
-            (!selectionIsFolder && typeof this.props.onDeleteFile === 'function') ||
-            (selectionIsFolder && typeof this.props.onDeleteFolder === 'function')
+            (!selectionIsFolder &&
+              typeof this.props.onDeleteFile === 'function' &&
+              !this.props.disableActions.deleteFile) ||
+            (selectionIsFolder &&
+              typeof this.props.onDeleteFolder === 'function' &&
+              !this.props.disableActions.deleteFolder)
           )
         ) {
           actions.push(
@@ -155,6 +161,7 @@ class RawFileManager extends RawFileBrowser {
     else if (!this.props.readOnly) {
       // Nothing selected.
       if (
+        !this.props.disableActions.addFolder &&
         typeof this.props.onCreateFolder === 'function' &&
         !this.state.nameFilter
       ) {
@@ -186,7 +193,7 @@ class RawFileManager extends RawFileBrowser {
       );
     }
 
-    if (this.props.downloadAllURL) {
+    if (this.props.downloadAllURL && !this.props.disableActions.downloadAll) {
       actions.unshift(
         <li key="action-download-all">
           <a

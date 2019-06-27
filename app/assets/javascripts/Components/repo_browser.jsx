@@ -81,6 +81,7 @@ class RepoBrowser extends React.Component {
           revision_identifier={this.state.revision_identifier}
           onChange={this.fetchRevisions}
           fetchOnMount={false}
+          enableSubdirs={this.props.enableSubdirs}
         />
         <ManualCollectionForm
           assignment_id={this.props.assignment_id}

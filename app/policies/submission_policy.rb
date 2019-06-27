@@ -4,6 +4,10 @@ class SubmissionPolicy < ApplicationPolicy
     check?(:not_a_student?) && check?(:run_tests?, record.assignment) && check?(:before_release?)
   end
 
+  def manage_subdirectories?
+    check?(:not_a_student?)
+  end
+
   def not_a_student?
     !user.student?
   end
