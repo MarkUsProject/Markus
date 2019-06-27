@@ -2,7 +2,7 @@ en:
   activerecord:
     models:
       split_pdf_log:
-        one: "Split Pdf Log"
+        one: "Split PDF Log"
     attributes:
       split_pdf_log:
         filename: "Filename"

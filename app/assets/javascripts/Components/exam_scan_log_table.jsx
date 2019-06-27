@@ -38,7 +38,7 @@ class ExamScanLogTable extends React.Component {
         {
           Header: I18n.t('attributes.date'),
           accessor: 'date',
-          minWidth: 150
+          minWidth: 250
         },
         {
           Header: I18n.t('activerecord.attributes.split_pdf_log.filename'),
@@ -66,13 +66,17 @@ class ExamScanLogTable extends React.Component {
         },
         {
           Header: I18n.t('split_pdf_logs.pages_error'),
-          Cell: row =>
-            row.original.page_data.filter(p => p.status.startsWith('ERROR')).length
+          Cell: row => {
+            let errors = row.original.page_data.filter(p => p.status.startsWith('ERROR')).length;
+            return <span className={errors ? 'errors' : ''}>{errors}</span>;
+          },
+          className: 'number'
         },
         {
           Header: I18n.t('split_pdf_logs.pages_fixed'),
           Cell: row =>
-            row.original.page_data.filter(p => p.status === 'FIXED').length
+            row.original.page_data.filter(p => p.status === 'FIXED').length,
+          className: 'number'
         },
       ]
     },
@@ -101,6 +105,7 @@ class ExamScanLogTable extends React.Component {
         columns={this.columns}
         filterable
         defaultFilterMethod={stringFilter}
+        defaultSorted={[{id: 'date', desc: true}]}
         SubComponent={(row) => (
           <ExamScanErrorsTable
             data={row.original.page_data}
