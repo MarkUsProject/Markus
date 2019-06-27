@@ -37,7 +37,9 @@ class GenerateJob < ApplicationJob
             qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
             alignment = page_num % 2 == 0 ? :right : :left
             render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
-            text("#{exam_template.name} #{exam_num}-#{page_num + 1}", align: alignment)
+            draw_text(qrcode_content,
+                 at: [alignment == :left ? 140 : bounds.width - 140 - qrcode_content.length * 6,
+                      bounds.height - 30])
             start_new_page
           end
         end
