@@ -7,6 +7,7 @@
 
   <%= javascript_tag do -%>
     PDFJS.workerSrc = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
+    PDFView.isViewerEmbedded = true;
   <% end -%>
 <% end %>
 
