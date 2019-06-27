@@ -57,7 +57,7 @@ class SplitPDFJob < ApplicationJob
           top_left_qr_img = img.crop 20, 25, img.columns / 3.8, img.rows / 5.0
           top_left_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
         end
-        qrcode_regex = /(?<short_id>\w+)-(?<exam_num>\d+)-(?<page_num>\d+)/
+        qrcode_regex = /\A(?<short_id>[\w-]+)-(?<exam_num>\d+)-(?<page_num>\d+)\Z/
         left_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
         left_m = qrcode_regex.match left_qr_code_string
         unless left_m.nil?
@@ -65,7 +65,7 @@ class SplitPDFJob < ApplicationJob
         else # if parsing fails, try the top right corner of the PDF
           imglist.each do |img|
             # Snip out the top right corner of PDF that contains the QR code
-            top_right_qr_img = img.crop 500, 25, img.columns / 3.8, img.rows / 5.0
+            top_right_qr_img = img.crop 510, 25, img.columns / 3.8, img.rows / 5.0
             top_right_qr_img.write(File.join(raw_dir, "#{split_page.id}.jpg"))
             right_qr_code_string = ZXing.decode File.join(raw_dir, "#{split_page.id}.jpg")
             right_m = qrcode_regex.match right_qr_code_string
