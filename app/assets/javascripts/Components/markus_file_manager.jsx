@@ -23,6 +23,22 @@ class RawFileManager extends RawFileBrowser {
     this.props.onActionBarAddFileClick(uploadTarget);
   };
 
+  handleActionBarAddFolderClickSetSelection = (event, target) => {
+    event.persist();
+    this.select(target, "folder");
+    this.handleActionBarAddFolderClick(event)
+  };
+
+  folderTarget = (selectedItem) => {
+    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
+    if (selectionIsFolder) {
+      return selectedItem.relativeKey;
+    } else  {
+      const key = selectedItem ? selectedItem.relativeKey : '';
+      return key.substring(0, key.lastIndexOf("/") + 1)
+    }
+  };
+
   renderActionBar(selectedItem) {
     const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
     let filter;
@@ -65,27 +81,28 @@ class RawFileManager extends RawFileBrowser {
       }
       else {
         if (
-          selectionIsFolder &&
+          selectedItem &&
           typeof this.props.onCreateFolder === 'function' &&
           !this.state.nameFilter
         ) {
+          let target = this.folderTarget(selectedItem);
           actions.push(
             <li key="action-add-folder">
               <a
-                onClick={this.handleActionBarAddFolderClick}
+                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, target)}
                 href="#"
                 role="button"
               >
                 <i className="fa fa-folder-o" aria-hidden="true"/>
-                &nbsp;Add Subfolder
+                &nbsp;{target ? "Add Subolder" : "Add Folder"}
               </a>
             </li>
           );
         }
         if (
-          selectedItem.keyDerived && (
-            (selectionIsFolder && typeof this.props.onRenameFile === 'function') ||
-            (!selectionIsFolder && typeof this.props.onRenameFolder === 'function')
+          selectedItem.keyDerived && !this.props.disableActions.rename && (
+            (selectionIsFolder && typeof this.props.onRenameFolder === 'function') ||
+            (!selectionIsFolder && typeof this.props.onRenameFile === 'function')
           )
         ) {
           actions.push(
@@ -354,7 +371,8 @@ FileManager.defaultProps = {
     FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,
     Delete: <i className="fa fa-trash-o" aria-hidden="true" />,
     Loading: <i className="fa fa-circle-o-notch fa-spin" aria-hidden="true" />,
-  }
+  },
+  disableActions: {}
 };
 
 
