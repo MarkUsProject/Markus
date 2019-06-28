@@ -1,8 +1,7 @@
 require 'fileutils'
 
 class ExamTemplate < ApplicationRecord
-  before_save :set_formats_for_name_and_filename
-  after_initialize :set_defaults_for_name, unless: :persisted? # will only work if the object is new
+  before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   after_update :rename_exam_template_directory
   belongs_to :assignment
   validates :filename, :num_pages, :name, presence: true
@@ -270,10 +269,11 @@ class ExamTemplate < ApplicationRecord
   end
 
   def set_defaults_for_name
-    # Attribute 'name' of exam template is by default set to filename without extension
-    extension = File.extname self.filename
-    basename = File.basename self.filename, extension
-    self.name ||= basename
+    if self.name.blank?
+      # Attribute 'name' of exam template is by default set to filename without extension
+      extension = File.extname self.filename
+      self.name = File.basename self.filename, extension
+    end
   end
 
   # when name of exam template is changed, exam template directory in server should be renamed
