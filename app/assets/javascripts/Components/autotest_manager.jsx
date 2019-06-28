@@ -267,6 +267,7 @@ class AutotestManager extends React.Component {
             onRenameFolder={typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
             onDeleteFolder={this.handleDeleteFolder}
             onActionBarAddFileClick={this.openUploadModal}
+            disableActions={{rename: true}}
           />
         </fieldset>
         <fieldset>
