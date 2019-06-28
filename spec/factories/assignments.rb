@@ -45,4 +45,8 @@ FactoryBot.define do
     enable_student_tests { true }
     token_start_date { Time.current }
   end
+
+  factory :assignment_for_scanned_exam, parent: :assignment do
+    scanned_exam { true }
+  end
 end

@@ -30,48 +30,19 @@ namespace :db do
       scanned_exam: true
     )
 
+    # For a description of the seed files, see db/data/scanned_exams/README.md.
     file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/scanned_exams')
-    f = File.open(File.join(file_dir, 'midterm1.pdf'))
-    template = ExamTemplate.create_with_file(f.read, assignment_id: a.id, filename: 'midterm1.pdf')
-    template.template_divisions.create(label: 'Q1', start: 2, end: 2)
-    template.template_divisions.create(label: 'Q2', start: 3, end: 3)
-    template.template_divisions.create(label: 'Q3', start: 3, end: 3)
-    template.template_divisions.create(label: 'Q4', start: 4, end: 5)
+    f = File.open(File.join(file_dir, 'midterm1-v2-test.pdf'))
+    template = ExamTemplate.create_with_file(f.read, assignment_id: a.id, filename: 'midterm1-v2-test.pdf')
+    template.template_divisions.create(label: 'Q1', start: 3, end: 3)
+    template.template_divisions.create(label: 'Q2', start: 4, end: 4)
+    template.template_divisions.create(label: 'Q3', start: 5, end: 6)
 
-    template.generate_copies 5
-    template_path  = File.join(file_dir, 'midterm1_scanned_sample.pdf')
-    template.split_pdf(template_path, 'midterm1_scanned_sample.pdf', Admin.find_by(user_name: 'a'))
+    admin = Admin.first
 
-    template_path = File.join(file_dir, 'midterm33.pdf')
-    template.split_pdf(template_path, 'midterm33.pdf', Admin.find_by(user_name: 'a'))
-
-    template_path = File.join(file_dir, 'midterm35.pdf')
-    template.split_pdf(template_path, 'midterm35.pdf', Admin.find_by(user_name: 'a'))
-
-    template_path = File.join(file_dir, 'midterm42.pdf')
-    template.split_pdf(template_path, 'midterm42.pdf', Admin.find_by(user_name: 'a'))
-
-    f = File.open(File.join(file_dir, 'term1.pdf'))
-    template = ExamTemplate.create_with_file(f.read, assignment_id: a.id, filename: 'term1.pdf')
-    template.template_divisions.create(label: 'Q1-a', start: 2, end: 2)
-    template.template_divisions.create(label: 'Q1-b', start: 2, end: 3)
-    template.template_divisions.create(label: 'Q1-c', start: 4, end: 5)
-    template.template_divisions.create(label: 'Q2-a', start: 6, end: 6)
-    template.template_divisions.create(label: 'Q2-b', start: 6, end: 6)
-    template.template_divisions.create(label: 'Q2-c', start: 6, end: 6)
-    template.template_divisions.create(label: 'Q2-d', start: 6, end: 6)
-    template.template_divisions.create(label: 'Q3', start: 7, end: 7)
-
-    template_path = File.join(file_dir, 'term1_scanned_example.pdf')
-    template.split_pdf(template_path, 'term1_scanned_example.pdf', Admin.find_by(user_name: 'a'))
-
-    f = File.open(File.join(file_dir, 'term2.pdf'))
-    template = ExamTemplate.create_with_file(f.read, assignment_id: a.id, filename: 'term2.pdf')
-    template.template_divisions.create(label: 'Q1', start: 2, end: 3)
-    template.template_divisions.create(label: 'Q2', start: 4, end: 7)
-    template.template_divisions.create(label: 'Q3', start: 8, end: 11)
-
-    template_path = File.join(file_dir, 'term2_scanned_example.pdf')
-    template.split_pdf(template_path, 'term2_scanned_example.pdf', Admin.find_by(user_name: 'a'))
+    %w(1-20 100 101 102 103 104).each do |n|
+      template_path = File.join(file_dir, "midterm_scan_#{n}.pdf")
+      template.split_pdf(template_path, "midterm_scan_#{n}.pdf", admin)
+    end
   end
 end
