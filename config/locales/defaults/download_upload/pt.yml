@@ -20,3 +20,5 @@ pt:
   upload_success:
     one: "%{count} objeto carregado com sucesso."
     other: "%{count} objeto carregado com sucesso."
+  add_folder: "UPDATE ME"
+  rename: "UPDATE ME"

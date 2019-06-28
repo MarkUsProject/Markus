@@ -1,6 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import FileManager from './markus_file_manager'
+import SubmissionFileUploadModal from './Modals/submission_file_upload_modal'
 
 
 class SubmissionFileManager extends React.Component {
@@ -8,7 +9,9 @@ class SubmissionFileManager extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: []
+      files: [],
+      showModal: false,
+      uploadTarget: undefined
     };
   }
 
@@ -19,7 +22,6 @@ class SubmissionFileManager extends React.Component {
   };
 
   componentDidMount() {
-    window.modal_addnew = new ModalMarkus('#addnew_dialog');
     if (this.props.fetchOnMount) {
       this.fetchData();
     }
@@ -51,9 +53,11 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  handleCreateFiles = (files, prefix) => {
+  handleCreateFiles = (files) => {
+    const prefix = this.state.uploadTarget || '';
+    this.setState({showModal: false, uploadTarget: undefined});
     let data = new FormData();
-    files.forEach(f => data.append('new_files[]', f, f.name));
+    Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
     if (this.props.grouping_id) {
       data.append('grouping_id', this.props.grouping_id);
@@ -63,7 +67,8 @@ class SubmissionFileManager extends React.Component {
       data: data,
       processData: false,  // tell jQuery not to process the data
       contentType: false   // tell jQuery not to set contentType
-    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData);
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
   };
 
   handleDeleteFile = (fileKey) => {
@@ -79,12 +84,37 @@ class SubmissionFileManager extends React.Component {
 
     let file = deleteFiles[0];
     let file_revisions = {};
-    file_revisions[file.key] = file.last_modified_revision;
+    file_revisions[file.key] = this.props.revision_identifier;
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
         delete_files: [file.key],
         file_revisions: file_revisions,
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
+  handleCreateFolder = (folderKey) => {
+    $.post({
+      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      data: {
+        new_folders: [folderKey],
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
+  handleDeleteFolder = (folderKey) => {
+    let folder_revisions = {};
+    folder_revisions[folderKey] = this.props.revision_identifier;
+    $.post({
+      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+      data: {
+        delete_folders: [folderKey],
+        folder_revisions: folder_revisions,
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
@@ -105,17 +135,33 @@ class SubmissionFileManager extends React.Component {
     });
   };
 
+  openUploadModal = (uploadTarget) => {
+    this.setState({showModal: true, uploadTarget: uploadTarget})
+  };
+
   render() {
     return (
-      <FileManager
-        files={this.state.files}
-        noFilesMessage={I18n.t('submissions.no_files_available')}
+      <div>
+        <FileManager
+          files={this.state.files}
+          noFilesMessage={I18n.t('submissions.no_files_available')}
 
-        readOnly={this.props.readOnly}
-        onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
-        onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
-        downloadAllURL={this.getDownloadAllURL()}
-      />
+          readOnly={this.props.readOnly}
+          onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
+          onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}
+          onCreateFolder={this.props.readOnly ? undefined : this.handleCreateFolder}
+          onRenameFolder={!this.props.readOnly && typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
+          onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
+          downloadAllURL={this.getDownloadAllURL()}
+          onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
+          disableActions={{rename: true, addFolder: !this.props.enableSubdirs, deleteFolder: !this.props.enableSubdirs}}
+        />
+        <SubmissionFileUploadModal
+          isOpen={this.state.showModal}
+          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          onSubmit={this.handleCreateFiles}
+        />
+      </div>
     );
   }
 }

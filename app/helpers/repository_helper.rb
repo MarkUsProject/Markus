@@ -122,6 +122,81 @@ module RepositoryHelper
     end
   end
 
+  def add_folders(new_folders, user, repo, path: '/', txn: nil)
+    messages = []
+
+    if txn.nil?
+      txn = repo.get_transaction(user.user_name)
+      commit_txn = true
+    else
+      commit_txn = false
+    end
+
+    current_path = Pathname.new path
+
+    new_folders.each do |folder_path|
+      txn.add_path(current_path.join(folder_path))
+    end
+
+    if commit_txn
+      success, txn_messages = commit_transaction repo, txn
+      [success, messages + txn_messages]
+    else
+      [true, messages]
+    end
+  end
+
+  def remove_folders(folder_revisions, user, repo, path: '/', txn: nil)
+    messages = []
+
+    if txn.nil?
+      txn = repo.get_transaction(user.user_name)
+      commit_txn = true
+    else
+      commit_txn = false
+    end
+
+    current_path = Pathname.new path
+
+    current_revision = repo.get_latest_revision.revision_identifier
+
+    dirs = {}
+    files = {}
+    folder_revisions.each do |folder_path, revision|
+      folder_path = current_path.join(folder_path).to_s
+      next if dirs.include? folder_path
+
+      revision ||= current_revision
+      repo.get_revision(revision).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
+        path = File.join obj.path, obj.name
+        if obj.is_a? Repository::RevisionFile
+          files[path] = revision
+        else
+          dirs[path] = revision
+        end
+      end
+      dirs[folder_path] = revision
+    end
+
+    success, file_messages = remove_files(files, user, repo, path: '', txn: txn)
+
+    return [success, file_messages] unless success
+
+    # folders are removed in git if their contents are removed
+    unless repo.is_a? GitRepository
+      dirs.each do |dir, revision|
+        txn.remove(dir, revision)
+      end
+    end
+
+    if commit_txn
+      success, txn_messages = commit_transaction repo, txn
+      [success, messages + txn_messages]
+    else
+      [true, messages]
+    end
+  end
+
   # Helper method that commits a transaction +txn+ in repo +repo+. Returns a boolean and an array
   # where the boolean indicates whether the transaction was commited successfully and an array
   # containing any error or warning messages.

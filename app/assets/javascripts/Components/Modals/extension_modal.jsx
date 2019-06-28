@@ -92,8 +92,8 @@ class ExtensionModal extends React.Component {
       >
         <h2>{I18n.t("activerecord.models.extensions.one")}</h2>
         <form onSubmit={this.submitForm}>
-          <div className={'extension-container-vertical'}>
-            <div className={'extension-container'}>
+          <div className={'modal-container-vertical'}>
+            <div className={'modal-container'}>
               <label>
                 <input
                   type="number"
@@ -148,7 +148,7 @@ class ExtensionModal extends React.Component {
                 />
               </label>
             </div>
-            <div className={"extension-container"}>
+            <div className={"modal-container"}>
               <input type="submit" value={I18n.t("save")} />
               <button
                 onClick={this.deleteExtension}

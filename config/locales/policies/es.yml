@@ -23,3 +23,4 @@ es:
       submission:
         before_release?: "UPDATE ME."
         not_a_student?: "UPDATE ME."
+        manage_subdirectories?: "UPDATE ME."

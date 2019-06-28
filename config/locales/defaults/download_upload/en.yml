@@ -24,3 +24,5 @@ en:
   upload_success:
     one: "%{count} object successfully uploaded."
     other: "%{count} objects successfully uploaded."
+  add_folder: "Add Folder"
+  rename: "Rename"

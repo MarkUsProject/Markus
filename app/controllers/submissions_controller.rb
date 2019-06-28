@@ -333,15 +333,27 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+      file_revisions = params[:file_revisions] || {}
+
+      folder_revisions = params[:folder_revisions] || {}
 
       # The files that will be deleted
-      delete_files = params[:delete_files].nil? ? [] : params[:delete_files]
+      delete_files = (params[:delete_files] || []).map { |f| [f, file_revisions[f]] }.to_h
 
       # The files that will be added
-      new_files = params[:new_files].nil? ? {} : params[:new_files]
+      new_files = params[:new_files] || {}
 
-      if delete_files.empty? && new_files.empty?
+      # The folders that will be added
+      new_folders = params[:new_folders] || []
+
+      # The folders that will be deleted
+      delete_folders = (params[:delete_folders] || []).map { |f| [f, folder_revisions[f]] }.to_h
+
+      unless delete_folders.empty? && new_folders.empty?
+        authorize! to: :manage_subdirectories?
+      end
+
+      if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       else
         messages = []
@@ -353,7 +365,7 @@ class SubmissionsController < ApplicationController
           only_required = @grouping.assignment.only_required_files
           required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
           if delete_files.present?
-            success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
+            success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
             should_commit &&= success
             messages.concat msgs
           end
@@ -362,6 +374,16 @@ class SubmissionsController < ApplicationController
                                       path: path, txn: txn, check_size: true, required_files: required_files)
             should_commit &&= success
             messages.concat msgs
+          end
+          if new_folders.present?
+            success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
+          end
+          if delete_folders.present?
+            success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
           end
           if should_commit
             commit_success, commit_msg = commit_transaction(repo, txn)
@@ -619,18 +641,22 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    entries = revision.tree_at_path(full_path)
-                      .sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                      .select { |_, obj| obj.is_a? Repository::RevisionFile }.map do |file_name, file_obj|
-      dirname, basename = File.split(file_name)
-      dirname = '' if dirname == '.'
-      data = get_file_info(basename, file_obj, grouping.assignment.id,
-                           revision.revision_identifier, dirname, grouping.id)
-      next if data.nil?
-      data[:key] = file_name
-      data[:modified] = data[:last_revised_date]
-      data
+    entries = revision.tree_at_path(full_path).sort do |a, b|
+      a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
+    end
+    entries.map do |file_name, file_obj|
+      if file_obj.is_a? Repository::RevisionFile
+        dirname, basename = File.split(file_name)
+        dirname = '' if dirname == '.'
+        data = get_file_info(basename, file_obj, grouping.assignment.id,
+                             revision.revision_identifier, dirname, grouping.id)
+        next if data.nil?
+        data[:key] = file_name
+        data[:modified] = data[:last_revised_date]
+        data
+      else
+        { key: "#{file_name}/" }
+      end
     end.compact
-    entries
   end
 end

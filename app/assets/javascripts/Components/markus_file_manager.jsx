@@ -10,13 +10,37 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 
 
 class RawFileManager extends RawFileBrowser {
-  handleActionBarAddFileClick = (event) => {
+  handleActionBarAddFileClick = (event, selected) => {
     event.preventDefault();
-    window.modal_addnew.open();
+    let uploadTarget = '';
+    if (selected) {
+      if (selected.relativeKey.endsWith('/')) {
+        uploadTarget = selected.relativeKey;
+      } else {
+        uploadTarget = selected.relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
+      }
+    }
+    this.props.onActionBarAddFileClick(uploadTarget);
+  };
+
+  handleActionBarAddFolderClickSetSelection = (event, target) => {
+    event.persist();
+    this.select(target, "folder");
+    this.handleActionBarAddFolderClick(event)
+  };
+
+  folderTarget = (selectedItem) => {
+    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
+    if (selectionIsFolder) {
+      return selectedItem.relativeKey;
+    } else  {
+      const key = selectedItem ? selectedItem.relativeKey : '';
+      return key.substring(0, key.lastIndexOf("/") + 1)
+    }
   };
 
   renderActionBar(selectedItem) {
-    const selectionIsFolder = selectedItem && !selectedItem.size;
+    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
     let filter;
     if (this.props.canFilter) {
       filter = (
@@ -57,27 +81,30 @@ class RawFileManager extends RawFileBrowser {
       }
       else {
         if (
-          selectionIsFolder &&
+          selectedItem &&
+          !this.props.disableActions.addFolder &&
           typeof this.props.onCreateFolder === 'function' &&
           !this.state.nameFilter
         ) {
+          let target = this.folderTarget(selectedItem);
           actions.push(
             <li key="action-add-folder">
               <a
-                onClick={this.handleActionBarAddFolderClick}
+                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, target)}
                 href="#"
                 role="button"
               >
                 <i className="fa fa-folder-o" aria-hidden="true"/>
-                &nbsp;Add Subfolder
+                &nbsp;{I18n.t('add_folder')}
               </a>
             </li>
           );
         }
         if (
-          selectedItem.keyDerived && (
-            (selectionIsFolder && typeof this.props.onRenameFile === 'function') ||
-            (!selectionIsFolder && typeof this.props.onRenameFolder === 'function')
+          selectedItem.keyDerived &&
+          !this.props.disableActions.rename && (
+            (selectionIsFolder && typeof this.props.onRenameFolder === 'function') ||
+            (!selectionIsFolder && typeof this.props.onRenameFile === 'function')
           )
         ) {
           actions.push(
@@ -88,15 +115,19 @@ class RawFileManager extends RawFileBrowser {
                 role="button"
               >
                 <i className="fa fa-i-cursor" aria-hidden="true"/>
-                &nbsp;Rename
+                &nbsp;{I18n.t('rename')}
               </a>
             </li>
           );
         }
         if (
           selectedItem.keyDerived && (
-            (!selectionIsFolder && typeof this.props.onDeleteFile === 'function') ||
-            (selectionIsFolder && typeof this.props.onDeleteFolder === 'function')
+            (!selectionIsFolder &&
+              typeof this.props.onDeleteFile === 'function' &&
+              !this.props.disableActions.deleteFile) ||
+            (selectionIsFolder &&
+              typeof this.props.onDeleteFolder === 'function' &&
+              !this.props.disableActions.deleteFolder)
           )
         ) {
           actions.push(
@@ -116,7 +147,7 @@ class RawFileManager extends RawFileBrowser {
         actions.unshift(
           <li key="action-add-file>">
             <a
-              onClick={this.handleActionBarAddFileClick}
+              onClick={(event) => this.handleActionBarAddFileClick(event, selectedItem)}
               href="#"
               role="button"
             >
@@ -130,6 +161,7 @@ class RawFileManager extends RawFileBrowser {
     else if (!this.props.readOnly) {
       // Nothing selected.
       if (
+        !this.props.disableActions.addFolder &&
         typeof this.props.onCreateFolder === 'function' &&
         !this.state.nameFilter
       ) {
@@ -141,7 +173,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-folder-o" aria-hidden="true"/>
-              &nbsp;Add Folder
+              &nbsp;{I18n.t('add_folder')}
             </a>
           </li>
         )
@@ -150,7 +182,7 @@ class RawFileManager extends RawFileBrowser {
       actions.unshift(
         <li key="action-add-file>">
           <a
-            onClick={this.handleActionBarAddFileClick}
+            onClick={(event) => this.handleActionBarAddFileClick(event, selectedItem)}
             href="#"
             role="button"
           >
@@ -161,7 +193,7 @@ class RawFileManager extends RawFileBrowser {
       );
     }
 
-    if (this.props.downloadAllURL) {
+    if (this.props.downloadAllURL && !this.props.disableActions.downloadAll) {
       actions.unshift(
         <li key="action-download-all">
           <a
@@ -346,7 +378,8 @@ FileManager.defaultProps = {
     FolderOpen: <i className="fa fa-folder-open-o" aria-hidden="true" />,
     Delete: <i className="fa fa-trash-o" aria-hidden="true" />,
     Loading: <i className="fa fa-circle-o-notch fa-spin" aria-hidden="true" />,
-  }
+  },
+  disableActions: {}
 };
 
 

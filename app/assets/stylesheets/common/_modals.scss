@@ -11,3 +11,19 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.modal-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.modal-container-vertical {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 5px;
+
+  > * {
+    margin: 5px;
+  }
+}
