@@ -20,3 +20,5 @@ fr:
   upload_success:
     one: "%{count} objet été envoyé."
     other: "%{count} objets été envoyés."
+  add_folder: "Nouveau dossier"
+  rename: "Renommer"

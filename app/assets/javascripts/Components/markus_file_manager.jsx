@@ -95,7 +95,7 @@ class RawFileManager extends RawFileBrowser {
                 role="button"
               >
                 <i className="fa fa-folder-o" aria-hidden="true"/>
-                &nbsp;{target ? "Add Subolder" : "Add Folder"}
+                &nbsp;{I18n.t('add_folder')}
               </a>
             </li>
           );
@@ -115,7 +115,7 @@ class RawFileManager extends RawFileBrowser {
                 role="button"
               >
                 <i className="fa fa-i-cursor" aria-hidden="true"/>
-                &nbsp;Rename
+                &nbsp;{I18n.t('rename')}
               </a>
             </li>
           );
@@ -173,7 +173,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-folder-o" aria-hidden="true"/>
-              &nbsp;Add Folder
+              &nbsp;{I18n.t('add_folder')}
             </a>
           </li>
         )
