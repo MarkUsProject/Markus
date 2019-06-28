@@ -1,6 +1,5 @@
 <%= form_for [@assignment, exam_template], url: split_assignment_exam_template_path(id: exam_template.id),
              html: { multipart: true },
-             remote: true,
              authenticity_token: true do |f| %>
 
     <p>
