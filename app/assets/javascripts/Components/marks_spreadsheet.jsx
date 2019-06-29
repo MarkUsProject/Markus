@@ -99,8 +99,7 @@ class RawMarksSpreadsheet extends React.Component {
     },
     {
       Header: I18n.t('activerecord.models.section', {count: 1}),
-      accessor: 'section',
-      id: 'section',
+      accessor: 'section_id',
       show: this.props.show_sections || false,
       minWidth: 70,
       Cell: ({ value }) => {
@@ -172,11 +171,9 @@ class RawMarksSpreadsheet extends React.Component {
   }};
 
   markingStateColumn = {
-    accessor: 'marking_state',
+    accessor: 'released_to_student',
     Header: I18n.t('grade_entry_forms.grades.marking_state'),
-    Cell: row => {
-      return <img src={row.value} />;
-    },
+    Cell: ({ value }) => value ? I18n.t('results.state.released') : '',
     filterable: false,
     minWidth: 50,
   };
