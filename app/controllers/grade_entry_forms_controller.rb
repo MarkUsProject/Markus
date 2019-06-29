@@ -149,6 +149,7 @@ class GradeEntryFormsController < ApplicationController
       s = student.attributes
       s[:_id] = student.id
       s[:section] = student.section_id
+      s[:hidden] = student.hidden
       unless student_grade_entry.nil?
         student_grade_entry.grades.each do |grade|
           s[grade.grade_entry_item_id] = grade.grade

@@ -12,6 +12,7 @@ pt:
       give_grace_credits: "Dar créditos de tolerância"
       mark_active: "Marcar como ativo"
       mark_inactive: "Marcar como inativo"
+    display_inactive: "UPDATE ME"
     edit: "Editar um Aluno"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."
