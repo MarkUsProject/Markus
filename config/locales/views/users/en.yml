@@ -12,6 +12,7 @@ en:
       give_grace_credits: "Give grace credits"
       mark_active: "Mark as active"
       mark_inactive: "Mark as inactive"
+    display_inactive: "Display inactive students"
     edit: "Edit a Student"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."

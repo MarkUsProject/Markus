@@ -12,6 +12,7 @@ fr:
       give_grace_credits: "Donner du temps supplémentaire"
       mark_active: "Activer les étudiants"
       mark_inactive: "Désactiver les étudiants"
+    display_inactive: "UPDATE ME"
     edit: "Modification d'un(e) étudiant(e)"
     help:
       manage_students: "Mark students as active or inactive, give them grace credits."

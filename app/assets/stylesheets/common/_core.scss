@@ -239,6 +239,13 @@ label.required::after, th.required::after {
   overflow-y: scroll;
 }
 
+.ReactTable {
+  .rt-thead .rt-hidden,
+  .rt-hidden {
+    padding: 0;
+  }
+}
+
 .rt-th > select {
   margin: 0;
 }

@@ -85,11 +85,11 @@ input + label {
 }
 
 .react-release-marks {
+  display: inline-block;
   margin-bottom: 0.5em;
-  width: 100%;
 
   button {
-    margin-left: 1em;
+    margin: 0 0.5em;
   }
 }
 

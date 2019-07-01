@@ -13,6 +13,7 @@ es:
       give_grace_credits: "Dar créditos de gracia:"
       mark_active: "Markar como activo"
       mark_inactive: "Markar como inactivo"
+    display_inactive: "UPDATE ME"
     edit: "Editar un Estudiante"
     help:
       manage_students: "Markar estudiantes como activos o inactivos, darles créditos de gracia."

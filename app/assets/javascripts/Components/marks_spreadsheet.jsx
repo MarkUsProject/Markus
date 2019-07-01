@@ -5,13 +5,15 @@ import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 import {stringFilter} from './Helpers/table_helpers';
 
 class RawMarksSpreadsheet extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       grade_columns: [],
       data: [],
       sections: {},
       loading: true,
+      show_hidden: false,
+      filtered: [{id: 'hidden', value: false}]
     };
   }
 
@@ -79,6 +81,17 @@ class RawMarksSpreadsheet extends React.Component {
 
   nameColumns = () => [
     {
+      id: 'hidden',
+      accessor: 'hidden',
+      filterMethod: (filter, row) => {
+        return filter.value || !row.hidden;
+      },
+      className: 'rt-hidden',
+      headerClassName: 'rt-hidden',
+      width: 0,
+      Filter: () => '',
+    },
+    {
       Header: I18n.t('activerecord.attributes.user.user_name'),
       accessor: 'user_name',
       id: 'user_name',
@@ -86,8 +99,7 @@ class RawMarksSpreadsheet extends React.Component {
     },
     {
       Header: I18n.t('activerecord.models.section', {count: 1}),
-      accessor: 'section',
-      id: 'section',
+      accessor: 'section_id',
       show: this.props.show_sections || false,
       minWidth: 70,
       Cell: ({ value }) => {
@@ -159,17 +171,17 @@ class RawMarksSpreadsheet extends React.Component {
   }};
 
   markingStateColumn = {
-    accessor: 'marking_state',
+    accessor: 'released_to_student',
     Header: I18n.t('grade_entry_forms.grades.marking_state'),
-    Cell: row => {
-      return <img src={row.value} />;
-    },
+    Cell: ({ value }) => value ? I18n.t('results.state.released') : '',
     filterable: false,
     minWidth: 50,
   };
 
   updateTotal = (index, id, gradeEntryItemId, newGrade, newTotal) => {
-    this[`total-${id}`].setState({value: newTotal});
+    if (this.props.show_total) {
+      this[`total-${id}`].setState({value: newTotal});
+    }
     this.setState((prevState) => {
       // State should never be modified directly, we copy the relevant data using the spread syntax and modify the copy.
       let newData = [...prevState.data];
@@ -181,6 +193,17 @@ class RawMarksSpreadsheet extends React.Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
+    let f1 = this.state.filtered;
+    let f2 = nextState.filtered;
+    if (f1.length !== f2.length) {
+      return true;
+    }
+    for (let i = 0; i < f1.length; i++) {
+      if (f1[i].id !== f2[i].id || f1[i].value !== f2[i].value) {
+        return true;
+      }
+    }
+
     return (nextState.grade_columns.length !== this.state.grade_columns.length) ||
            (nextState.data.length !== this.state.data.length) ||
            (nextProps.selection !== this.props.selection);
@@ -215,6 +238,40 @@ class RawMarksSpreadsheet extends React.Component {
     });
   };
 
+  onFilteredChange = (filtered) => {
+    this.setState({filtered}, () => this.forceUpdate());
+  };
+
+  hiddenInput = () => {
+    return (
+      <span>
+        <input
+          name='show_hidden'
+          type='checkbox'
+          checked={this.state.show_hidden}
+          onChange={this.updateShowHidden}
+          style={{marginLeft: '5px', marginRight: '5px'}}
+        />
+        <label htmlFor='show_hidden'>
+          {I18n.t('students.display_inactive')}
+        </label>
+      </span>
+    );
+  };
+
+  updateShowHidden = (event) => {
+    let show_hidden = event.target.checked;
+    let filtered = [];
+    this.state.filtered.forEach(filter => {
+      if (filter.id === 'hidden') {
+        filtered.push({id: 'hidden', value: show_hidden});
+      } else {
+        filtered.push({...filter});
+      }
+    });
+    this.setState({show_hidden, filtered}, () => this.forceUpdate());
+  };
+
   render() {
     const { data, loading } = this.state;
 
@@ -223,6 +280,7 @@ class RawMarksSpreadsheet extends React.Component {
         <SpreadsheetActionBox
           ref={(r) => this.actionBox = r}
           toggleRelease={this.toggleRelease} />
+        {this.hiddenInput()}
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}
           data={data}
@@ -232,11 +290,10 @@ class RawMarksSpreadsheet extends React.Component {
               id: 'user_name'
             }
           ]}
-
           filterable
+          filtered={this.state.filtered}
           defaultFilterMethod={stringFilter}
-          /* Need to force update when rearranging table rows */
-          onFilteredChange={() => this.forceUpdate()}
+          onFilteredChange={this.onFilteredChange}
           onSortedChange={() => this.forceUpdate()}
           loading={loading}
           {...this.props.getCheckboxProps()}

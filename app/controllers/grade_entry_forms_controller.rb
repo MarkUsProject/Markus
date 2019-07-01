@@ -134,39 +134,46 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def populate_grades_table
-    grade_entry_form = GradeEntryForm.includes(grade_entry_students:
-                                                 [:grades, { user: :section }])
-                                     .find(params[:id])
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    student_pluck_attrs = [
+      Arel.sql('grade_entry_students.id as _id'),
+      :released_to_student,
+      Arel.sql('users.user_name as user_name'),
+      Arel.sql('users.first_name as first_name'),
+      Arel.sql('users.last_name as last_name'),
+      Arel.sql('users.hidden as hidden'),
+      Arel.sql('users.section_id as section_id')
+    ]
+    if grade_entry_form.show_total
+      student_pluck_attrs << Arel.sql('grade_entry_students.total_grade as total_marks')
+    end
+
     if current_user.admin?
       students = grade_entry_form.grade_entry_students
+                                 .joins(:user)
+                                 .pluck_to_hash(*student_pluck_attrs)
+      grades = grade_entry_form.grade_entry_students
+                               .joins(:grades)
+                               .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
+                               .group_by { |x| x[0] }
     elsif current_user.ta?
       students = current_user.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
+                             .joins(:user)
+                             .pluck_to_hash(*student_pluck_attrs)
+      grades = current_user.grade_entry_students
+                           .where(grade_entry_form: grade_entry_form)
+                           .joins(:grades)
+                           .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
+                           .group_by { |x| x[0] }
     end
 
-    student_grades = students.map do |student_grade_entry|
-      student = student_grade_entry.user
-      s = student.attributes
-      s[:_id] = student.id
-      s[:section] = student.section_id
-      unless student_grade_entry.nil?
-        student_grade_entry.grades.each do |grade|
-          s[grade.grade_entry_item_id] = grade.grade
-        end
-        # Populate marking state
-        if student_grade_entry.released_to_student
-          s[:marking_state] = ActionController::Base.helpers
-                              .asset_path('icons/email_go.png')
-        end
-        # Populate grade total
-        if grade_entry_form.show_total
-          total = student_grade_entry.total_grade
-          if !total.nil?
-            s[:total_marks] = total
-          else
-            s[:total_marks] = t('grade_entry_forms.grades.no_mark')
-          end
-        end
+    student_grades = students.map do |s|
+      (grades[s[:_id]] || []).each do |_, grade_entry_item_id, grade|
+        s[grade_entry_item_id] = grade
+      end
+      if grade_entry_form.show_total && s[:total_marks].nil?
+        s[:total_marks] = t('grade_entry_forms.grades.no_mark')
       end
       s
     end
