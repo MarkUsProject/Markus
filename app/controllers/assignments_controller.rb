@@ -513,7 +513,8 @@ class AssignmentsController < ApplicationController
           messages = messages.concat msgs
         end
         if delete_folders.present?
-          success, msgs = remove_folders(folder_revisions.slice(*delete_folders), current_user, repo, path: path, txn: txn)
+          success, msgs = remove_folders(folder_revisions.slice(*delete_folders),
+                                         current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages = messages.concat msgs
         end
