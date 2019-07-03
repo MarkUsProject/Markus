@@ -19,10 +19,7 @@ es:
       results_loss_warning: "Esta operación:
                              Identifica la versión del archivo para cada entrega que satisface el plazo
                              de entrega y/o la penalidad por demora establecidos para este proyecto.
-                             Crea las páginas web para anotar y calificar cada entrega.
-                             Precaución: Si la operación se lleva a cabo después de que el proceso de
-                             calificación ha iniciado, los datos serán reescritos. Los datos pueden ser
-                             recuperados usando el botón para deshacer la recolección."
+                             Crea las páginas web para anotar y calificar cada entrega."
       submit: "Recolectar entregas"
       this_revision: "Recolectar y Calificar esta revisión"
       undo_results_loss_warning: "Esta operación deshacera las operaciones anteriores del tipo Recolectar
@@ -30,6 +27,7 @@ es:
                                   del mismo tipo fueron realizadas por error. PRECAUCIÓN: Todo el proceso de
                                   calificación realizado desde la anterior operación de tipo Recolectar Todas
                                   las Entregas se perderá."
+      override_existing: "UPDATE ME"
     errors:
       no_submission: "%{group_name} no tiene entregas"
       not_complete: "No puede publicar los resultados para %{group_name}: el proceso de calificación no ha

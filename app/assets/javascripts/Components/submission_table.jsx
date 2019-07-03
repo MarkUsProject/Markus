@@ -3,6 +3,7 @@ import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
 import {stringFilter, dateSort} from './Helpers/table_helpers';
+import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 
 
 class RawSubmissionTable extends React.Component {
@@ -12,6 +13,7 @@ class RawSubmissionTable extends React.Component {
       groupings: [],
       sections: {},
       loading: true,
+      showModal: false
     };
   }
 
@@ -226,14 +228,12 @@ class RawSubmissionTable extends React.Component {
   };
 
   // Submission table actions
-  collectSubmissions = () => {
-    if (!window.confirm(I18n.t('submissions.collect.results_loss_warning'))) {
-      return;
-    }
-
+  collectSubmissions = (override) => {
+    console.log(override);
+    this.setState({showModal: false})
     $.post({
       url: Routes.collect_submissions_assignment_submissions_path(this.props.assignment_id),
-      data: { groupings: this.props.selection },
+      data: { groupings: this.props.selection, override: override },
     });
   };
 
@@ -286,7 +286,7 @@ class RawSubmissionTable extends React.Component {
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
 
-          collectSubmissions={this.collectSubmissions}
+          collectSubmissions={() => {this.setState({showModal: true})}}
           downloadGroupingFiles={this.downloadGroupingFiles}
           selection={this.props.selection}
           runTests={this.runTests}
@@ -311,6 +311,11 @@ class RawSubmissionTable extends React.Component {
           getTrProps={this.getTrProps}
 
           {...this.props.getCheckboxProps()}
+        />
+        <CollectSubmissionsModal
+          isOpen={this.state.showModal}
+          onRequestClose={() => {this.setState({showModal: false})}}
+          onSubmit={this.collectSubmissions}
         />
       </div>
     );
