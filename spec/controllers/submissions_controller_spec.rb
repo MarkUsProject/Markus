@@ -518,7 +518,7 @@ describe SubmissionsController do
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
+              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}")
             expect(zip_file.find_entry(
                      instance_variable_get(:"@file#{i}_path"))).to_not be_nil
             expect("file#{i}'s content\n").to eq(
@@ -537,11 +537,9 @@ describe SubmissionsController do
           (1..2).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
-            expect(zip_file.find_entry(
-              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(
-                                                zip_file.read(instance_variable_get(:"@file#{i}_path")))
+              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}")
+            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end
@@ -556,9 +554,8 @@ describe SubmissionsController do
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
-            expect(zip_file.find_entry(
-                     instance_variable_get(:"@file#{i}_path"))).to be_nil
+              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}")
+            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to be_nil
           end
         end
       end
@@ -575,11 +572,9 @@ describe SubmissionsController do
           (1..3).to_a.each do |i|
             instance_variable_set(
               :"@file#{i}_path",
-              zip_subpath + "#{instance_variable_get(:"@grouping#{i}").group.repo_name}" + "file#{i}")
-            expect(zip_file.find_entry(
-              instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(
-              zip_file.read(instance_variable_get(:"@file#{i}_path")))
+              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}")
+            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
+            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
           end
         end
       end

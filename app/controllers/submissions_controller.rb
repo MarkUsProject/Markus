@@ -475,8 +475,7 @@ class SubmissionsController < ApplicationController
   ##
   def download_groupings_files
     assignment = Assignment.find(params[:assignment_id])
-    groupings = params[:groupings].respond_to?(:map) ? params[:groupings] : params[:groupings].split(',')
-    groupings = Set.new groupings.map(&:to_i)
+    groupings = Set.new params[:groupings]&.map(&:to_i)
 
     ## create the zip name with the user name to have less chance to delete
     ## a currently downloading file
