@@ -205,7 +205,7 @@ class SubmissionsController < ApplicationController
                             .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
     groupings.each do |grouping|
-      next unless params[:override] == 'true' || grouping.current_submission_used.nil?
+      next if params[:override] != 'true' && grouping.is_collected?
 
       collect_now = collection_dates[grouping.id] <= Time.current
       some_before_due = true unless collect_now
