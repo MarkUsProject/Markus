@@ -397,6 +397,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_exam_python_executable
+    if defined? EXAM_PYTHON_EXE
+      EXAM_PYTHON_EXE
+    else
+      'python'
+    end
+  end
+
   ##########################################
   # Resque Configuration
   ##########################################

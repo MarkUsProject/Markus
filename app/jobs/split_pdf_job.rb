@@ -257,8 +257,10 @@ class SplitPDFJob < ApplicationJob
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
-        out = `./lib/scanner/read_chars.py #{student_info_file}`
-        tokens = out.split("\n")
+        python_exe = MarkusConfigurator.markus_exam_python_executable
+        read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
+        stdout, _status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
+        tokens = stdout.split("\n")
 
         # check if python script correctly parsed out the student info
         if tokens.length != 2 * exam_template.num_cover_fields

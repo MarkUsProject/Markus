@@ -285,6 +285,7 @@ Markus::Application.configure do
   # Global flag to enable/disable all exam plugin features.
   EXPERIMENTAL_EXAM_PLUGIN_ON = false
   EXAM_TEMPLATE_DIR = "#{::Rails.root}/data/prod/exam_templates"
+  EXAM_PYTHON_EXE = "#{::Rails.root}/lib/scanner/venv/bin/python"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
