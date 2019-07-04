@@ -79,3 +79,7 @@ coverage/
 
 # byebug gem
 .byebug_history
+
+# scanned exam python files
+venv/
+__pycache__/

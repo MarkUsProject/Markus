@@ -79,8 +79,10 @@ echo "- - - Installing Python dependencies - - -"
 sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo apt-get update
 sudo apt-get install -y python3.7 python3-pip
-python3.7 -m pip install pip
-python3.7 -m pip install --user --no-cache-dir -r $MARKUS_ROOT/lib/scanner/requirements.txt
+python3.7 -m venv ${MARKUS_ROOT}/lib/scanner/venv
+source ${MARKUS_ROOT}/lib/scanner/venv/bin/activate
+pip install -r ${MARKUS_ROOT}/lib/scanner/requirements.txt
+deactivate
 
 # Setup the postgres database.
 echo "- - - Setup Postgres Database, Step 1 - - -"
