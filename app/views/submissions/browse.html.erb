@@ -4,15 +4,14 @@
       window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
         {
           assignment_id: <%= @assignment.id %>,
-          show_grace_tokens:
-            <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
-          show_sections:
-            <%= Section.exists? %>,
-          show_members:
-            <%= @assignment.group_max > 1 || @assignment.scanned_exam? %>,
+          show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
+          show_sections: <%= Section.exists? %>,
+          show_members: <%= @assignment.group_max > 1 || @assignment.scanned_exam? %>,
           is_admin: <%= @current_user.admin? %>,
           can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
           max_mark: <%= @assignment.max_mark %>,
+          authenticity_token: '<%= form_authenticity_token(
+                         form_options: {action: download_groupings_files_assignment_submissions_url, method: 'get'}) %>'
         }
       );
     });

@@ -288,9 +288,11 @@ class RawSubmissionTable extends React.Component {
 
           collectSubmissions={this.collectSubmissions}
           downloadGroupingFiles={this.downloadGroupingFiles}
+          selection={this.props.selection}
           runTests={this.runTests}
           releaseMarks={() => this.toggleRelease(true)}
           unreleaseMarks={() => this.toggleRelease(false)}
+          authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}
@@ -321,7 +323,6 @@ SubmissionTable.defaultProps = {
   is_admin: false,
   can_run_tests: false
 };
-
 
 class SubmissionsActionBox extends React.Component {
   constructor(props) {
@@ -376,14 +377,19 @@ class SubmissionsActionBox extends React.Component {
     }
 
     let downloadGroupingFilesButton = (
-      <a
-        href={Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id)}
-        onClick={this.props.downloadGroupingFiles}
-        download
-        className="button"
+      <form action={Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id)}
+            onSubmit={this.props.downloadGroupingFiles}
       >
-        {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
-      </a>
+        {this.props.selection.map(selection => {
+          return (
+            <input type="number" name="groupings[]" defaultValue={selection} key={selection} hidden={true}/>
+          )
+        })}
+        <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
+        <button type={'submit'} disabled={this.props.disabled}>
+          {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
+        </button>
+      </form>
     );
 
     return (

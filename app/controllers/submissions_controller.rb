@@ -471,7 +471,7 @@ class SubmissionsController < ApplicationController
   end
 
   ##
-  # Download all files from all groupings in a .zip file.
+  # Download all files from groupings with id in +params[:groupings]+ in a .zip file.
   ##
   def download_groupings_files
     assignment = Assignment.find(params[:assignment_id])
@@ -485,7 +485,11 @@ class SubmissionsController < ApplicationController
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
 
-    groupings = Grouping.get_groupings_for_assignment(assignment, current_user)
+    groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
+
+    if current_user.ta?
+      groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
+    end
 
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       groupings.each do |grouping|
