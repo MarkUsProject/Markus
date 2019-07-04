@@ -475,7 +475,6 @@ class SubmissionsController < ApplicationController
   ##
   def download_groupings_files
     assignment = Assignment.find(params[:assignment_id])
-    groupings = Set.new params[:groupings]&.map(&:to_i)
 
     ## create the zip name with the user name to have less chance to delete
     ## a currently downloading file
@@ -486,12 +485,14 @@ class SubmissionsController < ApplicationController
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
 
-    assignment_groupings = Grouping.get_groupings_for_assignment(assignment, current_user)
+    groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
+
+    if current_user.ta?
+      groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
+    end
 
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      assignment_groupings.each do |grouping|
-        next unless groupings.include?(grouping.id)
-
+      groupings.each do |grouping|
         revision_id = grouping.current_submission_used&.revision_identifier
         group_name = grouping.group.repo_name
         grouping.group.access_repo do |repo|
