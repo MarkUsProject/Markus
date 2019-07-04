@@ -377,8 +377,9 @@ class SubmissionsActionBox extends React.Component {
     }
 
     let downloadGroupingFilesButton = (
-      <form action={Routes.download_groupings_files_assignment_submissions_path(this.props.assignment_id)}
+      <form action={Routes.download_groupings_files_assignment_submissions_url(this.props.assignment_id)}
             onSubmit={this.props.downloadGroupingFiles}
+            method="post"
       >
         {this.props.selection.map(selection => {
           return (

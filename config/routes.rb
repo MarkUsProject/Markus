@@ -174,7 +174,7 @@ Rails.application.routes.draw do
           post 'update_files'
           get 'server_time'
           get 'download'
-          get 'download_groupings_files'
+          post 'download_groupings_files'
           get 'check_collect_status'
         end
 
