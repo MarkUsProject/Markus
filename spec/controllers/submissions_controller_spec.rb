@@ -511,7 +511,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to download all groups\' submissions' do
-        get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -531,7 +531,7 @@ describe SubmissionsController do
 
       it 'should be able to download a subset of the submissions' do
         grouping_ids = @grouping_ids[0...2]
-        get_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: grouping_ids }
+        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -549,7 +549,7 @@ describe SubmissionsController do
 
       it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
         @ta = create(:ta)
-        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -568,7 +568,7 @@ describe SubmissionsController do
         @assignment.groupings.each do |grouping|
           create(:ta_membership, user: @ta, grouping: grouping)
         end
-        get_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
