@@ -237,6 +237,7 @@ label.required::after, th.required::after {
 .ReactTable .rt-thead,
 .ReactTable .rt-tbody {
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .ReactTable {
@@ -248,6 +249,11 @@ label.required::after, th.required::after {
 
 .rt-th > select {
   margin: 0;
+}
+
+.rt-td:last-child {
+  // Hack to ensure scrollbar doesn't cover cell contents.
+  padding-right: 22px;
 }
 
 .rt-action-box {
