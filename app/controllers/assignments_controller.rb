@@ -374,14 +374,8 @@ class AssignmentsController < ApplicationController
 
   def csv_summary
     assignment = Assignment.find(params[:id])
-    if params[:download] == 'download'
-      data = assignment.summary_csv(@current_user)
-      filename = "#{assignment.short_identifier}_summary.csv"
-    else
-      data = assignment.get_detailed_csv_report
-      filename = "#{assignment.short_identifier}_summary-DEPRECATED.csv"
-    end
-
+    data = assignment.summary_csv(@current_user)
+    filename = "#{assignment.short_identifier}_summary.csv"
     send_data data,
               disposition: 'attachment',
               type: 'text/csv',

@@ -128,15 +128,8 @@ class AssignmentSummaryTable extends React.Component {
               method='get'>
           <button
             type='submit'
-            name='download'
-            value='download'>
+            name='download'>
             {I18n.t('download')}
-          </button>
-          <button
-            type='submit'
-            name='download'
-            value='detailed_download'>
-            {'Old: ' + I18n.t('submissions.detailed_csv_report')}
           </button>
         </form>
         }
