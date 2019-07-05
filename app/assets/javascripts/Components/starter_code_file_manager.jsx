@@ -1,6 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import FileManager from './markus_file_manager'
+import StarterCodeFileUploadModal from './Modals/starter_code_file_upload_modal'
 
 
 class StarterCodeFileManager extends React.Component {
@@ -8,12 +9,13 @@ class StarterCodeFileManager extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: []
+      files: [],
+      showModal: false,
+      uploadTarget: undefined
     };
   }
 
   componentDidMount() {
-    window.modal_addnew = new ModalMarkus('#addnew_dialog');
     this.fetchData();
   }
 
@@ -23,13 +25,16 @@ class StarterCodeFileManager extends React.Component {
       .then(data => this.setState({files: data}));
   };
 
-  handleCreateFiles = (files, prefix) => {
+  handleCreateFiles = (files, overwrite) => {
+    const prefix = this.state.uploadTarget || '';
+    this.setState({showModal: false, uploadTarget: undefined});
     let data = new FormData();
-    files.forEach(f => data.append('new_files[]', f, f.name));
+    Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
     if (this.props.grouping_id) {
       data.append('grouping_id', this.props.grouping_id);
     }
+    data.append('overwrite', overwrite);
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: data,
@@ -62,11 +67,52 @@ class StarterCodeFileManager extends React.Component {
       .then(this.endAction);
   };
 
+  handleCreateFolder = (folderKey) => {
+    $.post({
+      url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
+      data: {
+        new_folders: [folderKey],
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
+  handleDeleteFolder = (folderKey) => {
+    let deleteFolders = [];
+    this.state.files.map((file) => {
+      if (file.key === folderKey) {
+        deleteFolders.push(file)
+      }
+    });
+    if (!deleteFolders) {
+      return;
+    }
+
+    let folder = deleteFolders[0];
+    let folder_revisions = {};
+    folder_revisions[folderKey] = folder.last_modified_revision;
+    console.log(folder_revisions);
+    $.post({
+      url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
+      data: {
+        delete_folders: [folderKey],
+        folder_revisions: folder_revisions,
+        grouping_id: this.props.grouping_id
+      }
+    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+      .then(this.endAction);
+  };
+
   handleActionBarDeleteClick = (event) => {
     event.preventDefault();
     if (this.state.selection) {
       this.handleDeleteFile(this.state.selection);
     }
+  };
+
+  openUploadModal = (uploadTarget) => {
+    this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
   getDownloadAllURL = () => {
@@ -85,7 +131,17 @@ class StarterCodeFileManager extends React.Component {
           readOnly={false}
           onDeleteFile={this.handleDeleteFile}
           onCreateFiles={this.handleCreateFiles}
+          onCreateFolder={this.props.readOnly ? undefined : this.handleCreateFolder}
+          onRenameFolder={!this.props.readOnly && typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
+          onDeleteFolder={this.props.readOnly ? undefined : this.handleDeleteFolder}
           downloadAllURL={this.getDownloadAllURL()}
+          onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
+          disableActions={{rename: true}}
+        />
+        <StarterCodeFileUploadModal
+          isOpen={this.state.showModal}
+          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          onSubmit={this.handleCreateFiles}
         />
       </div>
     );
