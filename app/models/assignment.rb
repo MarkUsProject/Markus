@@ -639,47 +639,6 @@ class Assignment < ApplicationRecord
     end
   end
 
-  # Get a detailed CSV report of criteria based marks
-  # (includes each criterion, with it's out-of value) for this assignment.
-  # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
-  # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
-  # Last column are grace-credits.
-  # TODO: remove this after version 1.7.
-  def get_detailed_csv_report
-    out_of = max_mark
-    students = Student.all
-    MarkusCSV.generate(students) do |student|
-      result = [student.user_name]
-      grouping = student.accepted_grouping_for(self.id)
-      if grouping.nil? || !grouping.has_submission?
-        # No grouping/no submission
-        # total percentage, total_grade
-        result.concat(['','0'])
-        # mark, max_mark
-        result.concat(Array.new(criteria_count, '').
-          zip(get_criteria.map(&:max_mark)).flatten)
-        # extra-mark, extra-percentage
-        result.concat(['',''])
-      else
-        # Fill in actual values, since we have a grouping
-        # and a submission.
-        submission = grouping.current_submission_used
-        result.concat([submission.get_latest_result.total_mark / out_of * 100,
-                       submission.get_latest_result.total_mark])
-        get_marks_list(submission).each do |mark|
-          result.concat(mark)
-        end
-        result.concat([submission.get_latest_result.get_total_extra_points,
-                       submission.get_latest_result.get_total_extra_percentage])
-      end
-      # push grace credits info
-      grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
-      result.push(grace_credits_data)
-      result
-    end
-  end
-
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
     get_criteria.map do |criterion|
