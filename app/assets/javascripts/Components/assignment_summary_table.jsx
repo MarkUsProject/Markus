@@ -39,6 +39,7 @@ class AssignmentSummaryTable extends React.Component {
     {
       Header: I18n.t('activerecord.models.groups.one'),
       id: 'group_name',
+      accessor: 'group_name',
       Cell: row => {
         if (row.original.result_id) {
           const path = Routes.edit_assignment_submission_result_path(
