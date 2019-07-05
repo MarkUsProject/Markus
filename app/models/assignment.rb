@@ -544,30 +544,35 @@ class Assignment < ApplicationRecord
 
     if user.admin?
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              :inviter,
-                              :tas,
-                              current_result: :marks)
+      graders = groupings.joins(:tas)
+                         .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                         .group_by { |x| x[:id] }
     else
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              :inviter,
-                              current_result: :marks)
-                    .joins(:memberships)
-                    .where('memberships.user_id': user.id)
+                      .joins(:memberships)
+                      .where('memberships.user_id': user.id)
+      graders = {}
     end
 
-    result_ids = groupings.pluck('results.id').uniq.compact
+    grouping_data = groupings.joins(:group)
+                             .left_outer_joins(inviter: :section)
+                             .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
+                             .group_by { |x| x[:id] }
+    members = groupings.joins(:accepted_students)
+                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                       .group_by { |x| x[:id] }
+    groupings_with_results = groupings.includes(current_result: :marks)
+    result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
-    grouping_data = groupings.map do |g|
+    final_data = groupings_with_results.map do |g|
       result = g.current_result
       {
-        group_name: g.group.group_name,
-        section: g.section,
-        members: g.accepted_students.map { |s| [s.user_name, s.first_name, s.last_name] },
-        graders: user.admin? ? g.tas.map(&:user_name) : [],
+        group_name: grouping_data[g.id][0]['groups.group_name'],
+        section: grouping_data[g.id][0]['sections.name'],
+        members: members.fetch(g.id, [])
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        graders: graders.fetch(g.id, [])
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: g.marking_state(result, self, user),
         final_grade: result&.total_mark,
         criteria: result.nil? ? {} : result.mark_hash,
@@ -584,7 +589,7 @@ class Assignment < ApplicationRecord
       }
     end
 
-    { data: grouping_data, criteriaColumns: criteria_columns }
+    { data: final_data, criteriaColumns: criteria_columns }
   end
 
   # Generate CSV summary of grades for this assignment

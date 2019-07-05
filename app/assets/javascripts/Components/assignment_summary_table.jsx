@@ -150,7 +150,7 @@ class AssignmentSummaryTable extends React.Component {
                 <h4>{I18n.t('activerecord.models.ta', {count: 2})}</h4>
                 <ul>
                   {row.original.graders.map((grader) => {
-                    return <li key={grader}>{grader}</li>;
+                    return <li key={grader[0]}>({grader[0]}) {grader[1]} {grader[2]}</li>;
                   })}
                 </ul>
               </div>
