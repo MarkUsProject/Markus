@@ -15,18 +15,6 @@
              handlers: [:erb] %>
 <% end %>
 
-<aside class='dialog' id='addnew_dialog'>
-  <h2><%= t('add_new') %></h2>
-  <%= form_with url: upload_files_assignment_automated_tests_path(assignment_id: @assignment.id),
-               multipart: true, id: 'file_form', remote: true do |f| %>
-    <%= f.file_field :new_files, name: 'new_files[]', multiple: true %>
-    <section class='dialog-actions'>
-      <%= f.submit t(:upload), onclick: 'modal_addnew.close();' %>
-      <%= f.button t(:cancel), onclick: 'modal_addnew.close(); return false;' %>
-    </section>
-  <% end %>
-</aside>
-
 <div class="wrapLeft">
   <%= render partial: 'shared/flash_message' %>
 </div>

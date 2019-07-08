@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import FileManager from './markus_file_manager';
 import Form from 'react-jsonschema-form';
 import Datepicker from './date_picker'
+import AutotestFileUploadModal from './Modals/autotest_file_upload_modal'
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -30,12 +31,13 @@ class AutotestManager extends React.Component {
       token_period: 0,
       non_regenerating_tokens: false,
       unlimited_tokens: false,
-      loading: true
+      loading: true,
+      showModal: false,
+      uploadTarget: undefined
     };
   };
 
   componentDidMount() {
-    window.modal_addnew = new ModalMarkus('#addnew_dialog');
     this.fetchData();
   }
 
@@ -52,8 +54,11 @@ class AutotestManager extends React.Component {
   };
 
   handleCreateFiles = (files) => {
+    const prefix = this.state.uploadTarget || '';
+    this.setState({showModal: false, uploadTarget: undefined});
     let data = new FormData();
-    files.forEach(f => data.append('new_files[]', f, f.name));
+    Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
+    data.append('path', prefix);
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: data,
@@ -71,6 +76,26 @@ class AutotestManager extends React.Component {
       data: {delete_files: [fileKey]}
     }).then(this.fetchFileDataOnly)
       .then(this.endAction);
+  };
+
+  handleCreateFolder = (folderKey) => {
+    $.post({
+      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      data: {new_folders: [folderKey]}
+    }).then(this.fetchFileDataOnly)
+      .then(this.endAction);
+  };
+
+  handleDeleteFolder = (folderKey) => {
+    $.post({
+      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      data: {delete_folders: [folderKey]}
+    }).then(this.fetchFileDataOnly)
+      .then(this.endAction);
+  };
+
+  openUploadModal = (uploadTarget) => {
+    this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
   handleFormChange = (data) => {
@@ -238,6 +263,11 @@ class AutotestManager extends React.Component {
             readOnly={!this.state.enable_test}
             onDeleteFile={this.handleDeleteFile}
             onCreateFile={this.handleCreateFiles}
+            onCreateFolder={this.handleCreateFolder}
+            onRenameFolder={typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
+            onDeleteFolder={this.handleDeleteFolder}
+            onActionBarAddFileClick={this.openUploadModal}
+            disableActions={{rename: true}}
           />
         </fieldset>
         <fieldset>
@@ -260,6 +290,11 @@ class AutotestManager extends React.Component {
                onClick={this.onSubmit}
         >
         </input>
+        <AutotestFileUploadModal
+          isOpen={this.state.showModal}
+          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          onSubmit={this.handleCreateFiles}
+        />
       </div>
     )
   }

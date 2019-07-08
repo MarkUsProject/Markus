@@ -1059,9 +1059,14 @@ class Assignment < ApplicationRecord
   end
 
   def autotest_files
-    files_dir = autotest_files_dir
+    files_dir = Pathname.new autotest_files_dir
     return [] unless Dir.exist? files_dir
-    Dir.entries(files_dir) - ['.', '..']
+
+    Dir.glob("#{files_dir}/**/*", File::FNM_DOTMATCH).map do |f|
+      unless %w[.. .].include?(File.basename(f))
+        Pathname.new(f).relative_path_from(files_dir).to_s
+      end
+    end.compact
   end
 
   def autotest_settings_file
