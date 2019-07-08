@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   scope '(:locale)', locale: /en|es|fr|pt/  do
     # API routes
     namespace :api do
-      resources :users, except: [:new, :edit]
+      resources :users, except: [:new, :edit] do
+        collection do
+          post 'create_or_unhide'
+        end
+      end
       resources :grade_entry_forms, only: [:show]
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do

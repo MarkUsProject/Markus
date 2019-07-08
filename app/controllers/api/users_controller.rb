@@ -148,6 +148,28 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
     end
 
+    # Creates a new user or unhides a user if they already exist
+    # Requires: user_name, type, first_name, last_name
+    # Optional: section_name, grace_credits
+    def create_or_unhide
+      if has_missing_params?([:user_name])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+
+      # Check if that user_name is taken
+      user = User.find_by_user_name(params[:user_name])
+      if user.nil?
+        create
+      else
+        user.update_attributes(hidden: false)
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      end
+    end
+
     # Process the parameters passed for user creation and update
     def process_attributes(params, attributes)
       # Get the id of the section corresponding to :section_name
