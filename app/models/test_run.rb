@@ -101,8 +101,10 @@ class TestRun < ApplicationRecord
     if json_tests.blank?
       if timeout.nil?
         message = I18n.t('automated_tests.results.no_tests')
+        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:no_results]
       else
         message = I18n.t('automated_tests.results.timeout', seconds: timeout)
+        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:timeout]
       end
       new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
                                                output: message)
@@ -117,6 +119,7 @@ class TestRun < ApplicationRecord
         marks_earned, marks_total = new_test_group_result.create_test_result_from_json(json_test)
       rescue StandardError
         # the tester can signal a critical failure that requires stopping and assigning zero marks
+        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:test_error]
         all_marks_earned = 0.0
         break
       end
@@ -127,6 +130,7 @@ class TestRun < ApplicationRecord
     unless timeout.nil?
       new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
                                                 output: I18n.t('automated_tests.results.timeout', seconds: timeout))
+      new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:timeout]
       all_marks_earned = 0.0
     end
     # save marks
