@@ -14,7 +14,6 @@ class SubmissionsController < ApplicationController
                          :download,
                          :downloads,
                          :download_groupings_files,
-                         :check_collect_status,
                          :manually_collect_and_begin_grading,
                          :repo_browser,
                          :update_submissions,
@@ -27,7 +26,6 @@ class SubmissionsController < ApplicationController
                        :revisions,
                        :repo_browser,
                        :download_groupings_files,
-                       :check_collect_status,
                        :update_submissions]
   before_action :authorize_for_student,
                 only: [:file_manager]
@@ -504,19 +502,6 @@ class SubmissionsController < ApplicationController
 
     ## Send the Zip file
     send_file zip_path, disposition: 'inline', filename: zip_name
-  end
-
-  ##
-  # Check the status of collection for all groupings
-  ##
-  def check_collect_status
-    assignment = Assignment.find(params[:assignment_id])
-    groupings = Grouping.get_groupings_for_assignment(assignment,
-                                                      current_user)
-
-    ## check collection is completed for all groupings
-    all_groupings_collected = groupings.all?(&:is_collected?)
-    render json: { collect_status: all_groupings_collected }
   end
 
   ##

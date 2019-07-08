@@ -175,7 +175,6 @@ Rails.application.routes.draw do
           get 'server_time'
           get 'download'
           post 'download_groupings_files'
-          get 'check_collect_status'
         end
 
         member do
