@@ -108,6 +108,7 @@ class TestRun < ApplicationRecord
       end
       new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
                                                output: message)
+      new_test_group_result.save
       return new_test_group_result
     end
 
