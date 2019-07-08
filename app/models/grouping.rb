@@ -572,54 +572,6 @@ class Grouping < ApplicationRecord
     collection_date > Time.current
   end
 
-  def self.get_groupings_for_assignment(assignment, user)
-    if user.ta?
-      assignment.ta_memberships.includes(grouping: [:group,
-                                                    :assignment,
-                                                    :tags,
-                                                    :inviter,
-                                                    :grace_period_deductions,
-                                                    current_submission_used:
-                                                      [:submission_files,
-                                                       :submitted_remark,
-                                                       :results,
-                                                       grouping: :group],
-                                                    accepted_student_memberships:
-                                                      [:grace_period_deductions,
-                                                       :user]])
-                .where(user: user)
-                .select { |m| assignment.scanned_exam? || m.grouping.is_valid? }
-                .map &:grouping
-    elsif user.is_a_reviewer?(assignment)
-      # grab only the groupings of reviewees that this reviewer
-      # is responsible for
-      user_group = user.grouping_for(assignment.id)
-      groupings = user_group.peer_reviews_to_others
-      groupings.map {|p| Result.find(p.result_id).submission.grouping}
-    elsif user.admin? && assignment.scanned_exam?
-      assignment.groupings.includes(:group)
-    else
-      assignment.groupings.joins(:memberships)
-          .includes(:assignment,
-                    :group,
-                    :grace_period_deductions,
-                    :tags,
-                    :peer_reviews_to_others,
-                    { current_submission_used: [:results,
-                                                :submission_files,
-                                                :submitted_remark,
-                                                grouping: :group] },
-                    { accepted_student_memberships: :user },
-                    { inviter: :section }
-          )
-          .where(memberships: { membership_status:
-                                    [StudentMembership::STATUSES[:inviter],
-                                     StudentMembership::STATUSES[:pending],
-                                     StudentMembership::STATUSES[:accepted]] })
-          .distinct
-    end
-  end
-
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)
     subquery = StudentMembership.all.to_sql
     assignment.groupings.includes(:non_rejected_student_memberships)
