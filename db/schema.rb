@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_21_203403) do
+ActiveRecord::Schema.define(version: 2019_07_08_183843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -529,6 +529,7 @@ ActiveRecord::Schema.define(version: 2019_06_21_203403) do
     t.float "marks_total", default: 0.0, null: false
     t.integer "test_run_id", null: false
     t.text "extra_info"
+    t.string "error_type"
     t.index ["test_run_id"], name: "index_test_group_results_on_test_run_id"
   end
 

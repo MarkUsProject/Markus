@@ -6,6 +6,12 @@ class TestGroupResult < ApplicationRecord
   validates :marks_earned, :marks_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :time, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
+  ERROR_TYPE = {
+    no_results: :no_results,
+    timeout: :timeout,
+    test_error: :test_error
+  }.freeze
+
   def create_test_result_from_json(json_test)
     # get basic attributes
     test_name = json_test.fetch('name', I18n.t('automated_tests.results.unknown_test'))
