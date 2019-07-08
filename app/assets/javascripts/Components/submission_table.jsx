@@ -229,8 +229,7 @@ class RawSubmissionTable extends React.Component {
 
   // Submission table actions
   collectSubmissions = (override) => {
-    console.log(override);
-    this.setState({showModal: false})
+    this.setState({showModal: false});
     $.post({
       url: Routes.collect_submissions_assignment_submissions_path(this.props.assignment_id),
       data: { groupings: this.props.selection, override: override },

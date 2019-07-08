@@ -49,14 +49,13 @@ class CollectSubmissionsModal extends React.Component {
               </label>
             </div>
             <div className={'modal-container'}>
-                <input type='submit' value={I18n.t('save')} />
+              <input type='submit' value={I18n.t('save')} />
             </div>
           </div>
         </form>
       </Modal>
     )
   }
-
 }
 
 export default CollectSubmissionsModal;
