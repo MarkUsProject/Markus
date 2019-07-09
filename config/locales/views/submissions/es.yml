@@ -27,7 +27,7 @@ es:
                                   del mismo tipo fueron realizadas por error. PRECAUCIÓN: Todo el proceso de
                                   calificación realizado desde la anterior operación de tipo Recolectar Todas
                                   las Entregas se perderá."
-      override_existing: "UPDATE ME"
+      override_existing_html: "UPDATE ME"
     errors:
       no_submission: "%{group_name} no tiene entregas"
       not_complete: "No puede publicar los resultados para %{group_name}: el proceso de calificación no ha

@@ -30,7 +30,7 @@ class CollectSubmissionsModal extends React.Component {
   render() {
     return (
       <Modal
-        className="react-modal"
+        className="react-modal dialog"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
@@ -39,18 +39,19 @@ class CollectSubmissionsModal extends React.Component {
         </h2>
         <form onSubmit={this.onSubmit}>
           <div className={'modal-container-vertical'}>
-            <div>
+            <p>
               {I18n.t('submissions.collect.results_loss_warning')}
-            </div>
-            <div>
+            </p>
+            <p>
               <label>
                 <input type="checkbox" name="override" onChange={this.handleOverrideChange}/>
-                &nbsp; {I18n.t('submissions.collect.override_existing')}
+                &nbsp;
+                <span dangerouslySetInnerHTML={{__html: I18n.t('submissions.collect.override_existing_html')}} />
               </label>
-            </div>
-            <div className={'modal-container'}>
-              <input type='submit' value={I18n.t('save')} />
-            </div>
+            </p>
+            <section className={'modal-container dialog-actions'}>
+              <input type='submit' value={I18n.t('submissions.collect.submit')} />
+            </section>
           </div>
         </form>
       </Modal>

@@ -11,7 +11,7 @@ fr:
                              Identifier la version des fichiers qui respecte la date d'échéance et/ou des pénalités."
       submit: "Récupérer les envois"
       this_revision: "Récupérer et évaluer cette révision"
-      override_existing: "Recueillir toutes les soumissions. Attention : cette action effacera vos annotations et évaluations "
+      override_existing_html: "Recueillir toutes les soumissions.? <strong>Attention : cette action effacera vos annotations et évaluations.</strong>"
     errors:
       no_submission: "%{group_name} n'a pas d'envoi"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
