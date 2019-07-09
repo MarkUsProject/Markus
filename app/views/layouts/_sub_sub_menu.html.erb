@@ -25,7 +25,7 @@
           <li <% if controller.controller_name == 'criteria'%>
               class='active'
               <% end %>>
-            <%= link_to MarkingScheme.model_name.human.pluralize,
+            <%= link_to Criterion.model_name.human.pluralize,
                         assignment_criteria_path(@assignment.id) %>
           </li>
           <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
