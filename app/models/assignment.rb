@@ -547,11 +547,20 @@ class Assignment < ApplicationRecord
       graders = groupings.joins(:tas)
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
+      assigned_criteria = nil
     else
       groupings = self.groupings
                       .joins(:memberships)
                       .where('memberships.user_id': user.id)
       graders = {}
+      if self.assign_graders_to_criteria
+        assigned_criteria = user.criterion_ta_associations
+                                .where(assignment_id: self.id)
+                                .pluck(:criterion_type, :criterion_id)
+                                .map { |t, id| "#{t}-#{id}" }
+      else
+        assigned_criteria = nil
+      end
     end
 
     grouping_data = groupings.joins(:group)
@@ -581,11 +590,14 @@ class Assignment < ApplicationRecord
         total_extra_marks: extra_marks_hash[result&.id]
       }
     end
+
     criteria_columns = self.get_criteria(:ta).map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
       {
         Header: crit.name,
-        accessor: "criteria.criterion_#{crit.class.to_s}_#{crit.id}",
-        className: 'number'
+        accessor: "criteria.criterion_#{crit.class}_#{crit.id}",
+        className: 'number ' + (unassigned ? 'unassigned' : ''),
+        headerClassName: unassigned ? 'unassigned' : ''
       }
     end
 
