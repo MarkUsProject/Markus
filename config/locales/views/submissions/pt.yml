@@ -12,6 +12,7 @@ pt:
       results_loss_warning: "Nota: Isso apagará qualquer avaliação e anotações que já foram feitas. Tem certeza que deseja continuar?"
       submit: "Coletar as submissões"
       this_revision: "Coletar e avaliar essa revisão"
+      override_existing: "UPDATE ME"
     errors:
       no_submission: "%{group_name} não tem submissões"
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"

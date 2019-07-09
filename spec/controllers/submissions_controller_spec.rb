@@ -306,6 +306,37 @@ describe SubmissionsController do
           result.save
           submission.save
         end
+        @grouping.update_attributes! is_collected: true
+      end
+
+      context 'where a grouping does not have a previously collected submission' do
+        let(:uncollected_grouping) { create(:grouping, assignment: @assignment) }
+        before(:each) do
+          uncollected_grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, 'file1_name')
+            txn.add(path, 'file1 content', '')
+            repo.commit(txn)
+          end
+        end
+
+        it 'should collect all groupings when override is true' do
+          @assignment.update_attributes!(due_date: Time.current - 1.week)
+          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+          expect(SubmissionsJob).to receive(:perform_later).with(array_including(@grouping, uncollected_grouping))
+          post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
+                                                          groupings: [@grouping.id, uncollected_grouping.id],
+                                                          override: true }
+        end
+
+        it 'should collect the uncollected grouping only when override is false' do
+          @assignment.update_attributes!(due_date: Time.current - 1.week)
+          allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
+          expect(SubmissionsJob).to receive(:perform_later).with([uncollected_grouping])
+          post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
+                                                          groupings: [@grouping.id, uncollected_grouping.id],
+                                                          override: false }
+        end
       end
 
       it 'should be able to release submissions' do
@@ -341,7 +372,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -356,7 +387,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -378,7 +409,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -393,7 +424,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end

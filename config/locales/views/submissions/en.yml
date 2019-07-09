@@ -9,13 +9,13 @@ en:
       overwrite_warning: "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
       progress: "%{count}/%{size} submissions collected"
       results_loss_warning: "This operation:
-                             Identifies the file version for each submission that meets the due date and/or late penalty set for this assignment.
-                             Creates the views for annotating and grading each submission.
-                             Warning: If this operation is carried out after grading has begun, this grading work will be overwritten. This work can be recovered using the Undo Collection button."
+                             Identifies the file version for each selected group that meets the due date and/or late penalty set for this assignment.
+                             Creates the views for annotating and grading each selected group."
       submit: "Collect Submissions"
       this_revision: "Collect and Grade This Revision"
       undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
                                   WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
+      override_existing: "Override previously collected submissions. Warning: any previous grading work will be overwritten."
     errors:
       no_submission: "%{group_name} has no submissions"
       not_complete: "Cannot release result for %{group_name}: the marking is not complete."

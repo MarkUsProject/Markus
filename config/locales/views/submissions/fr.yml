@@ -7,9 +7,11 @@ fr:
       could_not_collect_some_released: "Impossible de recueillir des soumissions pour certains groupements et projet %{assignment_identifier}."
       overwrite_warning: "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes-vous sûr de vouloir faire cela ?"
       progress: "%{count}/%{size} envois récupérés"
-      results_loss_warning: "Attention : cette action effacera vos annotations et évaluations. Êtes-vous sûr de vouloir continuer ?"
+      results_loss_warning: "Cette action:
+                             Identifier la version des fichiers qui respecte la date d'échéance et/ou des pénalités."
       submit: "Récupérer les envois"
       this_revision: "Récupérer et évaluer cette révision"
+      override_existing: "Recueillir toutes les soumissions. Attention : cette action effacera vos annotations et évaluations "
     errors:
       no_submission: "%{group_name} n'a pas d'envoi"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
