@@ -279,6 +279,12 @@ label.required::after, th.required::after {
   text-align: right;
 }
 
+.rt-th.unassigned,
+.rt-td.unassigned {
+  background-color: $light-grey;
+  color: $grey;
+}
+
 // Styling patches for react-keyed-file-browser
 .fa-trash-o::before {
   content: asset_url('icons/bin_closed.png');
