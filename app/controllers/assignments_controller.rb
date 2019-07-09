@@ -571,7 +571,7 @@ class AssignmentsController < ApplicationController
     if current_user.admin?
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
-      redirect_to browse_assignment_submissions_path(params[:id])
+      redirect_to summary_assignment_path(params[:id])
     else # curret_user.student?
       redirect_to student_interface_assignment_path
     end
