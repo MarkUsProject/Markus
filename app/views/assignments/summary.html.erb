@@ -13,5 +13,14 @@
   </script>
 <% end %>
 
+<% content_for :additional_headings do %>
+  <% if @current_user.ta? %>
+    <span class='menu_bar'></span>
+    <%= t('submissions.how_many_marked',
+          num_marked: @assignment.get_num_marked(@current_user.id),
+          num_assigned: @assignment.get_num_assigned(@current_user.id)) %>
+  <% end %>
+<% end %>
+
 
 <div id='assignment_summary_table'></div>

@@ -96,8 +96,8 @@
                 </td>
 
                 <td>
-                  <span id='collected_submissions_<%= assignment.short_identifier %>'>
-                    <% if assignment.submission_rule.can_collect_all_now? %>
+                  <% if @current_user.admin? && assignment.submission_rule.can_collect_all_now? %>
+                    <span id='collected_submissions_<%= assignment.short_identifier %>'>
                       <%= link_to t('submissions.collect.progress',
                                     count: assignment.groupings
                                                      .where(is_collected: true)
@@ -106,8 +106,8 @@
                                     controller: :submissions,
                                     action: :browse,
                                     assignment_id: assignment.id %>
-                    <% end %>
-                  </span>
+                    </span>
+                  <% end %>
                   <span id='class_average__<%= assignment.short_identifier %>'>
                     <% unless assignment.results_average.nil? %>
                       <br>
