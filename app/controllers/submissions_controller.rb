@@ -557,7 +557,7 @@ class SubmissionsController < ApplicationController
     end
     assignment = Assignment.find(params[:assignment_id])
     groupings = assignment.groupings.where(id: params[:groupings])
-    release = params[:release_results]
+    release = params[:release_results] == 'true'
 
     begin
       changed = assignment.is_peer_review? ?
