@@ -71,7 +71,7 @@ class GradeEntryFormsController < ApplicationController
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])
     grade_entry_student =
-      grade_entry_form.grade_entry_students.find_or_create_by(user_id: params[:student_id])
+      grade_entry_form.grade_entry_students.find(params[:student_id])
     grade =
       grade_entry_student.grades.find_or_create_by(grade_entry_item_id: params[:grade_entry_item_id])
 
