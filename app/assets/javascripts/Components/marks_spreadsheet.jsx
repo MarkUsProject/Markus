@@ -138,9 +138,9 @@ class RawMarksSpreadsheet extends React.Component {
   inputCell = row => {
     return <GradeEntryCell
       grade_entry_form_id={this.props.grade_entry_form_id}
-      grade_id={'grade_' + row.original.id + '_' + row.column.id}
+      grade_id={'grade_' + row.original._id + '_' + row.column.id}
       grade_entry_column={row.column.id}
-      student_id={row.original.id}
+      student_id={row.original._id}
       default_value={row.value}
       updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
                     this.updateTotal(row.index, row.original.id, gradeEntryItemId, newGrade, newTotal)}
