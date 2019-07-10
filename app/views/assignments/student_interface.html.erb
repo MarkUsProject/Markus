@@ -190,7 +190,7 @@
                if @grouping.inviter == @current_user &&
                   @assignment.student_form_groups &&
                   !@assignment.past_collection_date?(@student.section) &&
-                  !@grouping.extension.exists?%>
+                  @grouping&.extension.nil?%>
               <% # Student has reached the group max and is not working alone
                  if @grouping.student_membership_number < @assignment.group_max &&
                          @group.group_name != @current_user.user_name %>
