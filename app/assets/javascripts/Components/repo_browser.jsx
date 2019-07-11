@@ -85,6 +85,7 @@ class RepoBrowser extends React.Component {
         />
         <ManualCollectionForm
           assignment_id={this.props.assignment_id}
+          late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
         />
@@ -120,8 +121,10 @@ class ManualCollectionForm extends React.Component {
                name="authenticity_token"
                value={AUTH_TOKEN} />
         <p>
-          <input type="checkbox" name="apply_late_penalty" id="apply_late_penalty" />
-          <label htmlFor="apply_late_penalty">{I18n.t('submissions.collect.apply_late_penalty')}</label>
+          <input hidden={!this.props.late_penalty} type="checkbox" name="apply_late_penalty" id="apply_late_penalty" />
+          <label hidden={!this.props.late_penalty} htmlFor="apply_late_penalty">
+            {I18n.t('submissions.collect.apply_late_penalty')}
+          </label>
         </p>
         <input type="submit"
                name="commit"
