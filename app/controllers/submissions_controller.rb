@@ -202,12 +202,15 @@ class SubmissionsController < ApplicationController
                             .where(id: groupings)
                             .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
+    is_scanned_exam = assignment.scanned_exam
     groupings.each do |grouping|
+      unless is_scanned_exam
+        collect_now = collection_dates[grouping.id] <= Time.current
+        some_before_due = true unless collect_now
+        next unless collect_now
+      end
       next if params[:override] != 'true' && grouping.is_collected?
-
-      collect_now = collection_dates[grouping.id] <= Time.current
-      some_before_due = true unless collect_now
-      next if !collect_now || some_released.include?(grouping.id)
+      next if some_released.include?(grouping.id)
 
       collectable << grouping
     end
@@ -270,9 +273,8 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     self.class.layout 'assignment_content'
 
-    if current_user.ta?
-      return
-    end
+    return if current_user.ta?
+    return if @assignment.scanned_exam
 
     if @assignment.past_all_collection_dates?
       flash_now(:success, t('submissions.grading_can_begin'))
