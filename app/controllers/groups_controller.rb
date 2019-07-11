@@ -136,7 +136,7 @@ class GroupsController < ApplicationController
     else
       next_grouping = Grouping.get_assign_scans_grouping(@assignment)
     end
-    if next_grouping.nil?
+    if next_grouping&.current_submission_used.nil?
       if @assignment.groupings.left_outer_joins(:current_submission_used).where('submissions.id': nil).any?
         flash_message(:warning, I18n.t('exam_templates.assign_scans.not_all_submissions_collected'))
       end
