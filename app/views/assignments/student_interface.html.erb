@@ -65,7 +65,7 @@
            if @grouping.nil? %>
           <p class='notice'>
             <%= t('groups.student_interface.no_group_yet') %>
-            <% if @assignment.past_collection_date?(@student.section) %>
+            <% if !@assignment.scanned_exam && @assignment.past_collection_date?(@student.section) %>
               <%= t('assignments.due_date.final_due_date_passed') %>
             <% end %>
           </p>

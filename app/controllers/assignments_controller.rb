@@ -214,10 +214,12 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
 
-    if @assignment.past_collection_date?
-      flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
-    elsif !past_date.blank?
-      flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
+    unless @assignment.scanned_exam
+      if @assignment.past_collection_date?
+        flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
+      elsif !past_date.blank?
+        flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
+      end
     end
 
     # build section_due_dates for each section that doesn't already have a due date

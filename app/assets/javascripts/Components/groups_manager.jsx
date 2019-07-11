@@ -323,6 +323,7 @@ class RawGroupsTable extends React.Component {
     {
       Header: I18n.t('groups.extension'),
       accessor: 'extension',
+      show: !this.props.scanned_exam,
       Cell: row => {
         let extension = ['weeks', 'days', 'hours'].map(
           (key) => {
