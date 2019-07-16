@@ -1,5 +1,4 @@
 describe Api::AssignmentsController do
-
   DEFAULT_FIELDS = [:id, :description, :short_identifier, :message, :due_date,
                     :group_min, :group_max, :tokens_per_period, :allow_web_submits,
                     :student_form_groups, :remark_due_date, :remark_message,
