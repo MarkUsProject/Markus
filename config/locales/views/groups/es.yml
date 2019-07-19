@@ -47,6 +47,7 @@ es:
       group_size_html: "Los grupos deben tener de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> personas."
       invite_more_students: "El grupo no es válido. Usted necesita invitar más estudiantes."
       may_not_add_more: "Usted no puede añadir más personas a su grupo en este momento."
+      may_not_join: "UPDATE ME"
       may_not_modify: "Usted no puede modificar su grupo en este momento."
       modification_limited: "En este momento, las modificaciones de su grupo son limitadas. La fecha
                              límite y período de aplazamiento de gracia (si existe uno) han pasado."

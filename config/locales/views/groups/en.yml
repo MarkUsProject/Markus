@@ -39,6 +39,7 @@ en:
       group_size_html: "Each group must have between <strong>%{group_min}</strong> to <strong>%{group_max}</strong> members, inclusive."
       invite_more_students: "Your group does not have enough members, and you need to invite more students."
       may_not_add_more: "You may not invite any more students to your group."
+      may_not_join: "You may not accept this invitation, because the final due date has passed."
       may_not_modify: "You may not modify your group at this time."
       modification_limited: "Modification of your group is very limited, because the final due date has passed."
       no_group_yet: "You are not currently in a group for this assignment."
