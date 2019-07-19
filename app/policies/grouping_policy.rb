@@ -50,6 +50,6 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def no_extension?
-    !record.extension.exists?
+    record.extension.nil?
   end
 end
