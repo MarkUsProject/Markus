@@ -15,7 +15,7 @@ module Api
     # Returns a list of assignments and their attributes
     # Optional: filter, fields
     def index
-      assignments = get_collection(Assignment)
+      assignments = get_collection(Assignment) || return
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|

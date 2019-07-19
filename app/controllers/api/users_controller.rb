@@ -12,7 +12,7 @@ module Api
     # Returns users and their attributes
     # Optional: filter, fields
     def index
-      users = get_collection(User)
+      users = get_collection(User) || return
 
       fields = fields_to_render(@@default_fields)
 

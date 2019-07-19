@@ -95,50 +95,19 @@ module Api
     end
 
     # Helper method for filtering, limit, offset
-    # Optionally accepts a collection - an object of class Active Record::Relation
-    def get_collection(collection_class, collection = nil)
-      # We'll append .where, .limit, and .offset to the collection
-      # Ignore default_scope order, always order by id to be consistent
-      if collection
-        collection = collection.order('id')
-      else
-        collection = collection_class.order('id')
-      end
-
-      filters = {}
-      # params[:filter] will match the following format:
-      # param:argument,param:argument,param:argument...
-      unless params[:filter].blank?
-        valid_filters = /(\w+:\w+,{0,1})+/.match(params[:filter])
-        unless valid_filters.nil?
-          valid_filters.to_s.split(',').each do |filter|
-            key, value = filter.split(':')
-            if collection_class.column_names.include?(key)
-              key = key.to_sym
-
-              # Check if validation forces values to be numeric
-              numericality = false
-              collection_class.validators_on(key).each do |validator|
-                if validator.is_a?(ActiveModel::Validations::NumericalityValidator)
-                  collection = collection.where("? = ?", key, value)
-                  numericality = true
-                  break
-                end
-              end
-
-              # Do a case-insensitive search if dealing with strings
-              unless numericality
-                collection = collection.where('? = ?', key.downcase, value.downcase)
-              end
-            end
-          end
-        end
-      end
-
-      # Apply offsets and limits, or get all if they aren't set
-      collection = collection.offset(params[:offset].to_i) if !params[:offset].blank?
-      collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
-      collection if filters.empty?
+    # Ignores default_scope order, always order by id to be consistent
+    #
+    # Renders an error message and returns false if the filters are malformed
+    def get_collection(collection)
+      collection.order('id')
+        .where(params[:filter]&.split(',')&.map { |filter| filter.split(':') }&.to_h)
+        .offset(params[:offset]&.to_i)
+        .limit(params[:limit]&.to_i)
+        .load
+    rescue
+      render 'shared/http_status', locals: {code: '422', message:
+        'Invalid or malformed parameter values'}, status: 422
+      return false
     end
 
     # Helper method handling which fields to render, given the provided default
