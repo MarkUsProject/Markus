@@ -22,7 +22,8 @@ module Api
 
       collection = Group.joins(:assignments).where(assignments:
         {id: params[:assignment_id]})
-      groups = get_collection(Group, collection)
+
+      groups = get_collection(collection) || return
       fields = fields_to_render(DEFAULT_FIELDS)
 
       students = include_students(fields)

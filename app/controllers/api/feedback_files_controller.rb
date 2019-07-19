@@ -15,7 +15,7 @@ module Api
 
       collection = submission.feedback_files
 
-      feedback_files = get_collection(FeedbackFile, collection)
+      feedback_files = get_collection(collection) || return
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
