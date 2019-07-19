@@ -100,14 +100,14 @@ module Api
     # Renders an error message and returns false if the filters are malformed
     def get_collection(collection)
       collection.order('id')
-        .where(params[:filter]&.split(',')&.map { |filter| filter.split(':') }&.to_h)
-        .offset(params[:offset]&.to_i)
-        .limit(params[:limit]&.to_i)
-        .load
-    rescue
-      render 'shared/http_status', locals: {code: '422', message:
-        'Invalid or malformed parameter values'}, status: 422
-      return false
+                .where(params[:filter]&.split(',')&.map { |filter| filter.split(':') }&.to_h)
+                .offset(params[:offset]&.to_i)
+                .limit(params[:limit]&.to_i)
+                .load
+    rescue StandardError
+      render 'shared/http_status', locals: { code: '422', message:
+        'Invalid or malformed parameter values' }, status: 422
+      false
     end
 
     # Helper method handling which fields to render, given the provided default
