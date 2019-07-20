@@ -10,15 +10,6 @@ class Ta < User
 
   BLANK_MARK = ''
 
-  def memberships_for_assignment(assignment)
-    assignment.ta_memberships.where(user_id: id, include: { grouping: :group })
-  end
-
-  def is_assigned_to_grouping?(grouping_id)
-    grouping = Grouping.find(grouping_id)
-    grouping.ta_memberships.where(user_id: id).size > 0
-  end
-
   def get_criterion_associations_by_assignment(assignment)
     if assignment.assign_graders_to_criteria
       criterion_ta_associations.includes(:assignment, :criterion).select do |association|
