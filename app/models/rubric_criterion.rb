@@ -62,24 +62,6 @@ class RubricCriterion < Criterion
     end
   end
 
-  # Set all the level names at once and saves the object.
-  #
-  # ===Params:
-  #
-  # levels::  An array containing every level name. A rubric criterion contains
-  #           RUBRIC_LEVELS levels. If the array is smaller, only the first levels
-  #           are set. If the array is bigger, higher indexes are ignored.
-  #
-  # ===Returns:
-  #
-  # Whether the save operation was successful or not.
-  def set_level_names(levels)
-    levels.each_with_index do |level, index|
-      self['level_' + index.to_s + '_name'] = level
-    end
-    save
-  end
-
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #

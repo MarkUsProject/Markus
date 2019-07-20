@@ -12,15 +12,7 @@ describe RubricCriterion do
     it { is_expected.to validate_presence_of(:max_mark) }
     it { is_expected.to validate_presence_of(:name) }
 
-    # Test that Criteria assigned to non-existent Assignment
-    # is NOT OK
-    def test_assignment_id_dne
-      assignment_id_dne = create(:rubric_criterion)
-      assignment_id_dne.assignment = create(:assignment)
-      assert !assignment_id_dne.save
-    end
-
-    it 'round weights that have more than 1 significant digits' do
+    it 'rounds weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be > 0
       criterion = RubricCriterion.first
       criterion.max_mark = 0.5555555555
@@ -28,38 +20,26 @@ describe RubricCriterion do
       expect(criterion.max_mark).to eq 0.6
     end
 
-    it 'find a mark for a specific rubric and result' do
+    it 'finds a mark for a specific rubric and result' do
       assignment = create(:assignment)
+      rubric = create(:rubric_criterion, assignment: assignment)
       grouping = create(:grouping, assignment: assignment)
       submission = create(:submission, grouping: grouping)
-      complete_result = create(:complete_result, submission: submission)
-      rubric = create(:rubric_criterion, assignment: assignment)
+      incomplete_result = create(:incomplete_result, submission: submission)
 
-      expect(rubric.mark_for(complete_result.id))
+      mark = rubric.mark_for(incomplete_result.id)
+      expect(mark).to_not be_nil
+      expect(mark.mark).to be_nil
     end
 
-    it 'set default levels' do
+    it 'sets default levels' do
       r = RubricCriterion.new
-      expect(r.set_default_levels)
-      r.save
+      r.set_default_levels
       expect(r.level_0_name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
       expect(r.level_1_name).to eq(I18n.t('rubric_criteria.defaults.level_1'))
       expect(r.level_2_name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
       expect(r.level_3_name).to eq(I18n.t('rubric_criteria.defaults.level_3'))
       expect(r.level_4_name).to eq(I18n.t('rubric_criteria.defaults.level_4'))
-    end
-
-    it 'be able to set all the level names at once' do
-      r = RubricCriterion.new
-      levels = []
-      0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
-        levels << 'l' + i.to_s
-      end
-      expect(r).to receive(:save).once
-      r.set_level_names(levels)
-      0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
-        expect(r['level_' + i.to_s + '_name']).to eq('l' + i.to_s)
-      end
     end
   end
 
@@ -67,12 +47,6 @@ describe RubricCriterion do
     before(:each) do
       @criterion = create(:rubric_criterion)
       @ta = create(:ta)
-    end
-
-    it 'assign a TA by id' do
-      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
-      @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
     end
 
     it 'not assign the same TA multiple times' do
@@ -264,24 +238,5 @@ describe RubricCriterion do
         end
       end
     end
-  end
-  ####################   HELPERS    #################################
-
-  # Helper method for test_validate_presence_of to create a criterion without
-  # the specified attribute. if attr == nil then all attributes are included
-  def create_no_attr(attr)
-    new_rubric_criteria = {
-      name: 'some criteria',
-      assignment_id: Assignment.make,
-      max_mark: 0.25,
-      level_0_name: 'Horrible',
-      level_1_name: 'Poor',
-      level_2_name: 'Satisfactory',
-      level_3_name: 'Good',
-      level_4_name: 'Excellent'
-    }
-
-    new_rubric_criteria.delete(attr) if attr
-    RubricCriterion.new(new_rubric_criteria)
   end
 end
