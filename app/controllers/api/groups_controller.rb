@@ -4,9 +4,9 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class GroupsController < MainApiController
     # Define default fields to display for index and show methods
-    @@default_fields = [:id, :group_name, :created_at, :updated_at, :first_name,
-                        :last_name, :user_name, :membership_status,
-                        :student_memberships]
+    DEFAULT_FIELDS = [:id, :group_name, :student_memberships].freeze
+    MEMBERSHIP_FIELDS = [:id, :membership_status, :user].freeze
+    USER_FIELDS = [:id, :user_name, :first_name, :last_name].freeze
 
     # Returns an assignment's groups along with their attributes
     # Requires: assignment_id
@@ -23,7 +23,7 @@ module Api
       collection = Group.joins(:assignments).where(assignments:
         {id: params[:assignment_id]})
       groups = get_collection(Group, collection)
-      fields = fields_to_render(@@default_fields)
+      fields = fields_to_render(DEFAULT_FIELDS)
 
       students = include_students(fields)
 
@@ -57,7 +57,7 @@ module Api
 
       if group.grouping_for_assignment(params[:assignment_id])
         # We found a grouping for that assignment
-        fields = fields_to_render(@@default_fields)
+        fields = fields_to_render(DEFAULT_FIELDS)
         students = include_students(fields)
 
         respond_to do |format|
@@ -76,7 +76,11 @@ module Api
     # Include student_memberships and user info if required
     def include_students(fields)
       if fields.include?(:student_memberships)
-        {student_memberships: {include: :user}}
+        { student_memberships:
+            { include:
+                { user:
+                    { only: USER_FIELDS } },
+              only: MEMBERSHIP_FIELDS } }
       end
     end
 
