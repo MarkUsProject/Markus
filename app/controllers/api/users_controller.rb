@@ -14,12 +14,9 @@ module Api
     def index
       users = get_collection(User) || return
 
-      fields = fields_to_render(DEFAULT_FIELDS)
-
       respond_to do |format|
-        format.xml{render xml: users.to_xml(only: fields, root: 'users',
-          skip_types: 'true')}
-        format.json{render json: users.to_json(only: fields)}
+        format.xml { render xml: users.to_xml(only: DEFAULT_FIELDS, root: 'users', skip_types: 'true') }
+        format.json { render json: users.to_json(only: DEFAULT_FIELDS) }
       end
     end
 
@@ -91,12 +88,9 @@ module Api
         render 'shared/http_status', locals: {code: '404', message:
           'No user exists with that id'}, status: 404
       else
-        fields = fields_to_render(DEFAULT_FIELDS)
-
         respond_to do |format|
-          format.xml{render xml: user.to_xml(only: fields, root: 'user',
-            skip_types: 'true')}
-          format.json{render json: user.to_json(only: fields)}
+          format.xml { render xml: user.to_xml(only: DEFAULT_FIELDS, root: 'user', skip_types: 'true') }
+          format.json { render json: user.to_json(only: DEFAULT_FIELDS) }
         end
       end
     end

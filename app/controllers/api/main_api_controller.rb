@@ -109,26 +109,6 @@ module Api
       end
     end
 
-    # Helper method handling which fields to render, given the provided default
-    # fields and those present in params[:fields]
-    def fields_to_render(default_fields)
-      fields = []
-      # params[:fields] will match the following format:
-      # argument,argument,argument...
-      unless params[:fields].blank?
-        filtered_fields = /(\w+,{0,1})+/.match(params[:fields])
-        unless filtered_fields.nil?
-          filtered_fields.to_s.split(',').each do |field|
-            field = field.to_sym
-            fields << field if default_fields.include?(field)
-          end
-        end
-      end
-
-      fields = default_fields if fields.empty?
-      fields
-    end
-
     # Checks that the symbols provided in the array aren't blank in the params
     def has_missing_params?(required_params)
       required_params.each do |param|
