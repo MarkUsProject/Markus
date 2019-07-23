@@ -4,7 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class FeedbackFilesController < MainApiController
     # Define default fields for index method
-    @@default_fields = [:id, :filename]
+    DEFAULT_FIELDS = [:id, :filename]
 
     # Returns a list of Feedback Files associated with a group's assignment submission
     # Requires: assignment_id, group_id
@@ -16,7 +16,7 @@ module Api
       collection = submission.feedback_files
 
       feedback_files = get_collection(collection) || return
-      fields = fields_to_render(@@default_fields)
+      fields = fields_to_render(DEFAULT_FIELDS)
 
       respond_to do |format|
         format.xml{render xml: feedback_files.to_xml(only: fields, root:

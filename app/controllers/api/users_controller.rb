@@ -6,7 +6,7 @@ module Api
     before_action :authorize!
 
     # Define default fields to display for index and show methods
-    @@default_fields = [:id, :user_name, :type, :first_name, :last_name,
+    DEFAULT_FIELDS = [:id, :user_name, :type, :first_name, :last_name,
                         :grace_credits, :notes_count]
 
     # Returns users and their attributes
@@ -14,7 +14,7 @@ module Api
     def index
       users = get_collection(User) || return
 
-      fields = fields_to_render(@@default_fields)
+      fields = fields_to_render(DEFAULT_FIELDS)
 
       respond_to do |format|
         format.xml{render xml: users.to_xml(only: fields, root: 'users',
@@ -91,7 +91,7 @@ module Api
         render 'shared/http_status', locals: {code: '404', message:
           'No user exists with that id'}, status: 404
       else
-        fields = fields_to_render(@@default_fields)
+        fields = fields_to_render(DEFAULT_FIELDS)
 
         respond_to do |format|
           format.xml{render xml: user.to_xml(only: fields, root: 'user',
