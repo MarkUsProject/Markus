@@ -26,10 +26,10 @@ module Api
       groups = get_collection(collection) || return
 
       respond_to do |format|
-        format.xml{render xml: groups.to_xml(only: DEFAULT_FIELDS, root:
-          'groups', skip_types: 'true', include: include_students)}
-        format.json{render json: groups.to_json(only: DEFAULT_FIELDS,
-          include: include_students)}
+        format.xml do
+          render xml: groups.to_xml(only: DEFAULT_FIELDS, root: 'groups', skip_types: 'true', include: include_students)
+        end
+        format.json { render json: groups.to_json(only: DEFAULT_FIELDS, include: include_students) }
       end
     end
 
