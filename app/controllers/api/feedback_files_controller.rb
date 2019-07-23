@@ -4,7 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class FeedbackFilesController < MainApiController
     # Define default fields for index method
-    DEFAULT_FIELDS = [:id, :filename]
+    DEFAULT_FIELDS = [:id, :filename].freeze
 
     # Returns a list of Feedback Files associated with a group's assignment submission
     # Requires: assignment_id, group_id
