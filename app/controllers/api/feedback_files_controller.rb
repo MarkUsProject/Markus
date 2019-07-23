@@ -16,12 +16,12 @@ module Api
       collection = submission.feedback_files
 
       feedback_files = get_collection(collection) || return
-      fields = fields_to_render(DEFAULT_FIELDS)
 
       respond_to do |format|
-        format.xml{render xml: feedback_files.to_xml(only: fields, root:
-          'feedback_files', skip_types: 'true')}
-        format.json{render json: feedback_files.to_json(only: fields)}
+        format.xml do
+          render xml: feedback_files.to_xml(only: DEFAULT_FIELDS, root: 'feedback_files', skip_types: 'true')
+        end
+        format.json { render json: feedback_files.to_json(only: DEFAULT_FIELDS) }
       end
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission

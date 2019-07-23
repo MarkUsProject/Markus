@@ -24,15 +24,12 @@ module Api
         {id: params[:assignment_id]})
 
       groups = get_collection(collection) || return
-      fields = fields_to_render(DEFAULT_FIELDS)
-
-      students = include_students(fields)
 
       respond_to do |format|
-        format.xml{render xml: groups.to_xml(only: fields, root:
-          'groups', skip_types: 'true', include: students)}
-        format.json{render json: groups.to_json(only: fields,
-          include: students)}
+        format.xml{render xml: groups.to_xml(only: DEFAULT_FIELDS, root:
+          'groups', skip_types: 'true', include: include_students)}
+        format.json{render json: groups.to_json(only: DEFAULT_FIELDS,
+          include: include_students)}
       end
     end
 
@@ -58,14 +55,11 @@ module Api
 
       if group.grouping_for_assignment(params[:assignment_id])
         # We found a grouping for that assignment
-        fields = fields_to_render(DEFAULT_FIELDS)
-        students = include_students(fields)
-
         respond_to do |format|
-          format.xml{render xml: group.to_xml(only: fields, root:
-            'group', skip_types: 'true', include: students)}
-          format.json{render json: group.to_json(only: fields,
-            include: students)}
+          format.xml do
+            render xml: group.to_xml(only: DEFAULT_FIELDS, root: 'group', skip_types: 'true', include: include_students)
+          end
+          format.json { render json: group.to_json(only: DEFAULT_FIELDS, include: include_students) }
         end
       else
         # The group doesn't have a grouping associated with that assignment
@@ -75,14 +69,12 @@ module Api
     end
 
     # Include student_memberships and user info if required
-    def include_students(fields)
-      if fields.include?(:student_memberships)
-        { student_memberships:
-            { include:
-                { user:
-                    { only: USER_FIELDS } },
-              only: MEMBERSHIP_FIELDS } }
-      end
+    def include_students
+      { student_memberships:
+          { include:
+              { user:
+                  { only: USER_FIELDS } },
+            only: MEMBERSHIP_FIELDS } }
     end
 
     def add_members
