@@ -4,9 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class GroupsController < MainApiController
     # Define default fields to display for index and show methods
-    DEFAULT_FIELDS = [:id, :group_name, :student_memberships].freeze
-    MEMBERSHIP_FIELDS = [:id, :membership_status, :user].freeze
-    USER_FIELDS = [:id, :user_name, :first_name, :last_name].freeze
+    DEFAULT_FIELDS = [:id, :group_name].freeze
 
     # Returns an assignment's groups along with their attributes
     # Requires: assignment_id
@@ -20,16 +18,15 @@ module Api
         return
       end
 
-      collection = Group.joins(:assignments).where(assignments:
-        {id: params[:assignment_id]})
+      groups = get_collection(Group) || return
 
-      groups = get_collection(collection) || return
+      group_data = include_memberships(groups)
 
       respond_to do |format|
         format.xml do
-          render xml: groups.to_xml(only: DEFAULT_FIELDS, root: 'groups', skip_types: 'true', include: include_students)
+          render xml: group_data.to_xml(root: 'groups', skip_types: 'true')
         end
-        format.json { render json: groups.to_json(only: DEFAULT_FIELDS, include: include_students) }
+        format.json { render json: group_data }
       end
     end
 
@@ -46,35 +43,31 @@ module Api
       end
 
       # Error if no group exists with that id
-      group = Group.find_by(id: params[:id])
-      if group.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-          'No group exists with that id'}, status: 404
+      group = Group.joins(:groupings).where(id: params[:id], 'groupings.assignment_id': params[:assignment_id])
+      unless group.exists?
+        render 'shared/http_status', locals: { code: '404', message:
+          'No group exists with that id for that assignment' }, status: 404
         return
       end
 
-      if group.grouping_for_assignment(params[:assignment_id])
-        # We found a grouping for that assignment
-        respond_to do |format|
-          format.xml do
-            render xml: group.to_xml(only: DEFAULT_FIELDS, root: 'group', skip_types: 'true', include: include_students)
-          end
-          format.json { render json: group.to_json(only: DEFAULT_FIELDS, include: include_students) }
+      group_data = include_memberships(group)
+
+      # We found a grouping for that assignment
+      respond_to do |format|
+        format.xml do
+          render xml: group_data.to_xml(root: 'groups', skip_types: 'true')
         end
-      else
-        # The group doesn't have a grouping associated with that assignment
-        render 'shared/http_status', locals: {code: '422', message:
-          'The group is not involved with that assignment'}, status: 422
+        format.json { render json: group_data }
       end
     end
 
-    # Include student_memberships and user info if required
-    def include_students
-      { student_memberships:
-          { include:
-              { user:
-                  { only: USER_FIELDS } },
-            only: MEMBERSHIP_FIELDS } }
+    # Include student_memberships and user info
+    def include_memberships(groups)
+      groups.joins(groupings: [:assignment, student_memberships: :user])
+            .where('assignments.id': params[:assignment_id])
+            .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
+            .group_by { |h| h.slice(*DEFAULT_FIELDS) }
+            .map { |k, v| k.merge(members: v.map { |h| h.except(*DEFAULT_FIELDS) }) }
     end
 
     def add_members
