@@ -94,18 +94,19 @@ module Api
       end
     end
 
-    # Helper method for filtering, limit, offset
+    # Helper method for filtering
     # Ignores default_scope order, always order by id to be consistent
     #
     # Renders an error message and returns false if the filters are malformed
     def get_collection(collection)
-      collection.order('id')
-                .where(params[:filter]&.split(',')&.map { |filter| filter.split(':') }&.to_h)
-                .load
-    rescue StandardError
-      render 'shared/http_status', locals: { code: '422', message:
-        'Invalid or malformed parameter values' }, status: 422
-      false
+      filter_params = params[:filter] ? params[:filter].permit(self.class::DEFAULT_FIELDS) : {}
+      if !params[:filter].nil? && !params[:filter].empty? && filter_params.empty?
+        render 'shared/http_status', locals: { code: '422', message:
+          'Invalid or malformed parameter values' }, status: 422
+        false
+      else
+        collection.order('id').where(filter_params)
+      end
     end
 
     # Helper method handling which fields to render, given the provided default

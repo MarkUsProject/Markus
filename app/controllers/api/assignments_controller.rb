@@ -4,7 +4,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class AssignmentsController < MainApiController
     # Define default fields to display for index and show methods
-    @@default_fields = [:id, :description, :short_identifier, :message, :due_date,
+    DEFAULT_FIELDS = [:id, :description, :short_identifier, :message, :due_date,
                         :group_min, :group_max, :tokens_per_period, :allow_web_submits,
                         :student_form_groups, :remark_due_date, :remark_message,
                         :assign_graders_to_criteria, :enable_test, :enable_student_tests, :allow_remarks,
@@ -16,7 +16,7 @@ module Api
     # Optional: filter, fields
     def index
       assignments = get_collection(Assignment) || return
-      fields = fields_to_render(@@default_fields)
+      fields = fields_to_render(DEFAULT_FIELDS)
 
       respond_to do |format|
         format.xml{render xml: assignments.to_xml(only: fields, root:
@@ -35,7 +35,7 @@ module Api
         render 'shared/http_status', locals: {code: '404', message:
           'No assignment exists with that id'}, status: 404
       else
-        fields = fields_to_render(@@default_fields)
+        fields = fields_to_render(DEFAULT_FIELDS)
 
         respond_to do |format|
           format.xml{render xml: assignment.to_xml(only: fields, root:
@@ -165,7 +165,7 @@ module Api
     # Process the parameters passed for assignment creation and update
     def process_attributes(params, attributes)
       # Loop through default fields other than id
-      fields = Array.new(@@default_fields)
+      fields = Array.new(DEFAULT_FIELDS)
       fields.delete(:id)
       fields.each do |field|
         attributes[field] = params[field] if !params[field].nil?
