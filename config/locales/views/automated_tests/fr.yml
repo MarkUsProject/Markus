@@ -19,6 +19,10 @@ fr:
       in_progress: "UPDATE ME"
       problems: "UPDATE ME"
     title: "Tests automatisés"
+    display_output:
+      instructors: "Ne montre jamais"
+      instructors_and_students: "Montrer toujours"
+      instructors_and_student_tests: "Montrer seulement les tests lancés par les étudiants"
 
     # Test results
     no_results: "Aucun résultats"

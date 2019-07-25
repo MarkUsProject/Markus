@@ -19,6 +19,10 @@ en:
       in_progress: "in progress"
       problems: "error"
     title: "Automated Testing"
+    display_output:
+      instructors: "Never display"
+      instructors_and_students: "Display for all tests"
+      instructors_and_student_tests: "Display only for student tests"
 
     # Test results
     no_results: "No test results to display"

@@ -90,17 +90,18 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
+    file_keys = []
     files_data = assignment.autotest_files.map do |file|
       if files_dir.join(file).directory?
         { key: "#{file}/" }
       else
+        file_keys << file
         { key: file, size: 1,
           url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
       end
     end
     if File.exist? testers_schema_path
       schema_data = JSON.parse(File.open(testers_schema_path, &:read))
-      file_keys = files_data.map { |data| data[:key] }
       fill_in_schema_data!(schema_data, file_keys, assignment)
     else
       flash_now(:notice, I18n.t('automated_tests.loading_specs'))
