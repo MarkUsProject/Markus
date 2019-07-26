@@ -5,6 +5,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "bento/ubuntu-18.04"
   config.vm.define :markus_box
 
+  # Increase virtual memory. It should be more than half a gigabyte
+  # but we'll do a full gigabyte just to be safe.
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   # Set this to your private key if you're having trouble
   # ssh-ing into Vagrant (it's requiring a password)
   # config.ssh.private_key_path = "/home/.ssh/id_rsa"
