@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'upload_dialog' %>
-<%= content_for :modal_title, t('annotation_categories.upload.title') %>
+<%= content_for :modal_title, t('upload_the', item: Assignment.model_name.human.pluralize) %>
 <%= content_for :modal_open_link, '#uploadModal' %>
 
 <%= content_for :modal_content do %>

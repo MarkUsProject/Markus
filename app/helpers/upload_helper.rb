@@ -18,7 +18,12 @@ module UploadHelper
     elsif %w[.yml .yaml].include? filetype
       {
         type: '.yml',
-        contents: YAML.safe_load(upload_file.utf8_encode(encoding), [Date, Time])
+        contents: YAML.safe_load(
+          upload_file.utf8_encode(encoding),
+          [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone],
+          [],
+          true # Allow aliases in YML file
+        )
       }
     else
       raise StandardError, I18n.t('upload_errors.malformed_csv')
