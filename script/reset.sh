@@ -33,7 +33,7 @@ done
 
 echo "[MARKUS] Removing old redis entries"
 pushd "${AUTOTEST_ROOT}"/server > /dev/null
-REDIS_WORKERS=$(python3 -c "import config as c; print(f'{c.REDIS_PREFIX}:{c.REDIS_WORKERS_LIST}')")
+REDIS_WORKERS=$(python3 -c "import config as c; print(f'{c.REDIS_PREFIX}:{c.REDIS_WORKERS_HASH}')")
 popd > /dev/null
 redis-cli --raw DUMP ${REDIS_WORKERS} | head -c-1 >| /tmp/.redis.tmp # make the dump play nice with shell commands
 redis-cli FLUSHDB
