@@ -19,6 +19,7 @@ es:
       in_progress: "UPDATE ME"
       problems: "UPDATE ME"
     title: "Pruebas Automatizadas"
+    display_output_title: "UPDATE ME"
     display_output:
       instructors: "No mostrar"
       instructors_and_students: "Mostrar después de realizar la entrega"

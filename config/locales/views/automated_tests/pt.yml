@@ -19,6 +19,7 @@ pt:
       in_progress: "UPDATE ME"
       problems: "UPDATE ME"
     title: "UPDATE ME"
+    display_output_title: "UPDATE ME"
     display_output:
       instructors: "UPDATE ME"
       instructors_and_students: "UPDATE ME"
