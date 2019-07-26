@@ -47,11 +47,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.args = "~/markus-autotesting"
   end
 
-  config.vm.provision "install-svn", type: "shell", run: "never" do |s|
-    s.path = "script/install-svn.sh"
-    s.privileged = false
-  end
-
   config.vm.provider "virtualbox" do |vb|
     # Uncomment the following line if you want a GUI.
     # vb.gui = true
