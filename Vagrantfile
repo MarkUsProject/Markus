@@ -2,8 +2,18 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box = "bento/ubuntu-18.04"
   config.vm.define :markus_box
+
+  config.vm.provider "virtualbox" do |vb|
+    # Uncomment the following line if you want a GUI.
+    # vb.gui = true
+    vb.name = "markus"
+    vb.memory = 2048
+
+    # Sync time every 5 seconds so code reloads properly
+    vb.customize ["guestproperty", "set", :id, "--timesync-threshold", 5000]
+  end
 
   # Set this to your private key if you're having trouble
   # ssh-ing into Vagrant (it's requiring a password)
@@ -21,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3035, host: 3035
   # rq-dashboard
   config.vm.network "forwarded_port", guest: 9181, host: 9181
-  
+
   # The autotesting server must be running when MarkUs populates the seed database
   config.vm.provision "install-markus-autotesting", type: "shell" do |s|
     s.path = "script/install-markus-autotesting.sh"
@@ -39,21 +49,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.path = "script/start-autotest-workers.sh"
     s.privileged = false
     s.args = "~/markus-autotesting"
-  end
-
-  config.vm.provision "install-svn", type: "shell", run: "never" do |s|
-    s.path = "script/install-svn.sh"
-    s.privileged = false
-  end
-
-  config.vm.provider "virtualbox" do |vb|
-    # Uncomment the following line if you want a GUI.
-    # vb.gui = true
-    vb.name = "markus"
-    vb.memory = 2048
-
-    # Sync time every 5 seconds so code reloads properly
-    vb.customize ["guestproperty", "set", :id, "--timesync-threshold", 5000]
   end
 
   config.vm.post_up_message =

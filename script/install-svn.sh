@@ -3,6 +3,8 @@
 # This file is currently not used but should be kept to install
 # svn on travis in case we want to test interactions with svn
 # in the future.
+# This file may also be used to install the svn ruby bindings on
+# a vagrant machine if we are using the non-default version of ruby
 
 SVN_BASE=subversion-1.9.3  # Pinned to version in libsvn1.
 MIRROR_PRIMARY=http://archive.apache.org/dist/subversion
