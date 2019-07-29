@@ -5,10 +5,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "bento/ubuntu-18.04"
   config.vm.define :markus_box
 
-  # Increase virtual memory. It should be more than half a gigabyte
-  # but we'll do a full gigabyte just to be safe.
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 1024
+  config.vm.provider "virtualbox" do |vb|
+    # Uncomment the following line if you want a GUI.
+    # vb.gui = true
+    vb.name = "markus"
+    vb.memory = 2048
+
+    # Sync time every 5 seconds so code reloads properly
+    vb.customize ["guestproperty", "set", :id, "--timesync-threshold", 5000]
   end
 
   # Set this to your private key if you're having trouble
@@ -45,16 +49,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.path = "script/start-autotest-workers.sh"
     s.privileged = false
     s.args = "~/markus-autotesting"
-  end
-
-  config.vm.provider "virtualbox" do |vb|
-    # Uncomment the following line if you want a GUI.
-    # vb.gui = true
-    vb.name = "markus"
-    vb.memory = 2048
-
-    # Sync time every 5 seconds so code reloads properly
-    vb.customize ["guestproperty", "set", :id, "--timesync-threshold", 5000]
   end
 
   config.vm.post_up_message =
