@@ -81,15 +81,10 @@ class SubmissionFileManager extends React.Component {
     if (!deleteFiles) {
       return;
     }
-
-    let file = deleteFiles[0];
-    let file_revisions = {};
-    file_revisions[file.key] = this.props.revision_identifier;
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
-        delete_files: [file.key],
-        file_revisions: file_revisions,
+        delete_files: [deleteFiles[0].key],
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
@@ -108,13 +103,10 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleDeleteFolder = (folderKey) => {
-    let folder_revisions = {};
-    folder_revisions[folderKey] = this.props.revision_identifier;
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
         delete_folders: [folderKey],
-        folder_revisions: folder_revisions,
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
@@ -145,7 +137,6 @@ class SubmissionFileManager extends React.Component {
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('submissions.no_files_available')}
-
           readOnly={this.props.readOnly}
           onDeleteFile={this.props.readOnly ? undefined : this.handleDeleteFile}
           onCreateFiles={this.props.readOnly ? undefined : this.handleCreateFiles}

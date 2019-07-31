@@ -471,7 +471,6 @@ class AssignmentsController < ApplicationController
 
     # The files that will be deleted
     delete_files = params[:delete_files] || []
-    file_revisions = params[:file_revisions] || {}
 
     # The files that will be added
     new_files = params[:new_files] || []
@@ -481,7 +480,6 @@ class AssignmentsController < ApplicationController
 
     # The folders that will be deleted
     delete_folders = params[:delete_folders] || []
-    folder_revisions = params[:folder_revisions] || {}
 
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
@@ -494,7 +492,7 @@ class AssignmentsController < ApplicationController
                                                                   assignment: @assignment.short_identifier))
         should_commit = true
         if delete_files.present?
-          success, msgs = remove_files(file_revisions.slice(*delete_files), current_user, repo, path: path, txn: txn)
+          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
         end
@@ -509,8 +507,7 @@ class AssignmentsController < ApplicationController
           messages = messages.concat msgs
         end
         if delete_folders.present?
-          success, msgs = remove_folders(folder_revisions.slice(*delete_folders),
-                                         current_user, repo, path: path, txn: txn)
+          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages = messages.concat msgs
         end

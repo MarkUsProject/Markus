@@ -58,6 +58,14 @@ class RepoBrowser extends React.Component {
     return <option className={className} key={rev.id} value={rev.id}>{text}</option>;
   };
 
+  isReadOnly = () => {
+    if (!!this.state.revisions.length) {
+      return this.state.revision_identifier !== this.state.revisions[0].id
+    } else {
+      return false
+    }
+  };
+
   render() {
     let className = '';
     if (this.state.revision_identifier === this.props.collected_revision_id) {
@@ -82,6 +90,7 @@ class RepoBrowser extends React.Component {
           onChange={this.fetchRevisions}
           fetchOnMount={false}
           enableSubdirs={this.props.enableSubdirs}
+          readOnly={this.isReadOnly()}
         />
         <ManualCollectionForm
           assignment_id={this.props.assignment_id}

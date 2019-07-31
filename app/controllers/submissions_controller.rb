@@ -331,25 +331,17 @@ class SubmissionsController < ApplicationController
         @grouping = @assignment.groupings.find(params[:grouping_id])
       end
 
-      # Get the revision numbers for the files that we've seen - these
-      # values will be the "expected revision numbers" that we'll provide
-      # to the transaction to ensure that we don't overwrite a file that's
-      # been revised since the user last saw it.
-      file_revisions = params[:file_revisions] || {}
-
-      folder_revisions = params[:folder_revisions] || {}
-
       # The files that will be deleted
-      delete_files = (params[:delete_files] || []).map { |f| [f, file_revisions[f]] }.to_h
+      delete_files = params[:delete_files] || []
 
       # The files that will be added
-      new_files = params[:new_files] || {}
+      new_files = params[:new_files] || []
 
       # The folders that will be added
       new_folders = params[:new_folders] || []
 
       # The folders that will be deleted
-      delete_folders = (params[:delete_folders] || []).map { |f| [f, folder_revisions[f]] }.to_h
+      delete_folders = params[:delete_folders] || []
 
       unless delete_folders.empty? && new_folders.empty?
         authorize! to: :manage_subdirectories?

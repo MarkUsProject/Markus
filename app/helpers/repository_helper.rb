@@ -76,11 +76,9 @@ module RepositoryHelper
     end
   end
 
-  # Delete files in this open +repo+. +file_revisions+ should be a Hash mapping file names to
-  # the expected revision that contains the file to be deleted. +file_revisions+ can also be an
-  # array and if so, the expected revision that contains the file will default to the most recent
-  # revision. +user+ is the user that is responsible for the repository transaction, and
-  # +path+ is the relative path from the root of the repository to prepend to each filename.
+  # Delete files in this open +repo+. +files+ should be an list of filenames to remove.
+  # +user+ is the user that is responsible for the repository transaction, and  +path+ is the relative
+  # path from the root of the repository to prepend to each filename.
   #
   # If files should be added as part of an existent transaction, the transaction object can be
   # passed as the +txn+ keyword argument, otherwise a new transaction will be created. If the +txn+
@@ -92,7 +90,7 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments
   # (each of which can be passed directly to flash_message from a controller).
-  def remove_files(file_revisions, user, repo, path: '/', txn: nil)
+  def remove_files(files, user, repo, path: '/', txn: nil)
     messages = []
 
     if txn.nil?
@@ -106,12 +104,12 @@ module RepositoryHelper
 
     current_revision = repo.get_latest_revision.revision_identifier
 
-    file_revisions.each do |file_path, revision|
+    files.each do |file_path|
       subdir_path, basename = File.split(file_path)
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, revision || current_revision)
+      txn.remove(file_path, current_revision)
     end
 
     if commit_txn
@@ -146,7 +144,7 @@ module RepositoryHelper
     end
   end
 
-  def remove_folders(folder_revisions, user, repo, path: '/', txn: nil)
+  def remove_folders(folders, user, repo, path: '/', txn: nil)
     messages = []
 
     if txn.nil?
@@ -161,23 +159,21 @@ module RepositoryHelper
     current_revision = repo.get_latest_revision.revision_identifier
 
     dirs = {}
-    files = {}
-    folder_revisions.each do |folder_path, revision|
+    files = []
+    folders.each do |folder_path|
       folder_path = current_path.join(folder_path).to_s
       next if dirs.include? folder_path
 
-      revision ||= current_revision
-      repo.get_revision(revision).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
+      repo.get_revision(current_revision).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
         path = File.join obj.path, obj.name
         if obj.is_a? Repository::RevisionFile
-          files[path] = revision
+          files << path
         else
-          dirs[path] = revision
+          dirs[path] = current_revision
         end
       end
-      dirs[folder_path] = revision
+      dirs[folder_path] = current_revision
     end
-
     success, file_messages = remove_files(files, user, repo, path: '', txn: txn)
 
     return [success, file_messages] unless success
