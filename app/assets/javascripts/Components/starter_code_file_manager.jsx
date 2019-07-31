@@ -54,14 +54,10 @@ class StarterCodeFileManager extends React.Component {
       return;
     }
 
-    let file = deleteFiles[0];
-    let file_revisions = {};
-    file_revisions[file.key] = file.last_modified_revision;
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: {
-        delete_files: [file.key],
-        file_revisions: file_revisions,
+        delete_files: [deleteFiles[0].key],
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
       .then(this.endAction);
@@ -79,25 +75,10 @@ class StarterCodeFileManager extends React.Component {
   };
 
   handleDeleteFolder = (folderKey) => {
-    let deleteFolders = [];
-    this.state.files.map((file) => {
-      if (file.key === folderKey) {
-        deleteFolders.push(file)
-      }
-    });
-    if (!deleteFolders) {
-      return;
-    }
-
-    let folder = deleteFolders[0];
-    let folder_revisions = {};
-    folder_revisions[folderKey] = folder.last_modified_revision;
-    console.log(folder_revisions);
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: {
         delete_folders: [folderKey],
-        folder_revisions: folder_revisions,
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
