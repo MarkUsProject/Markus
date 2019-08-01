@@ -26,8 +26,7 @@ module Api
         return
       end
 
-      submission = Submission.get_submission_by_group_and_assignment(
-        group[:group_name], assignment[:short_identifier])
+      submission = group.grouping_for_assignment(assignment.id)&.current_submission_used
       if submission.nil?
         # No assignment submission by that group
         render 'shared/http_status', locals: {code: '404', message:
@@ -45,6 +44,7 @@ module Api
       end
 
       zip_name = "#{assignment[:short_identifier]}_#{group[:group_name]}.zip"
+      FileUtils.rm_f "tmp/#{zip_name}"
 
       # If only one file is found, send the file, otherwise loop through and
       # create a zip with all files
