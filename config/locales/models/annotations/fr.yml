@@ -5,5 +5,5 @@ fr:
         one: "Annotation"
     attributes:
       annotation:
-        created_by: "Créée par :"
+        creator: "Créée par :"
 

@@ -8,7 +8,6 @@ pt:
         not_a_ta?: "UPDATE ME."
         not_yet_in_group?: "Você já tem um grupo, e não pode criar outro"
         students_form_groups?: "Atribuição não permite que os alunos formem grupos."
-        test_scripts_uploaded?: "UPDATE ME."
         tokens_released?: "Nenhum tokens dado."
         work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
       grouping:

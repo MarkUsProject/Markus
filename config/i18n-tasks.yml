@@ -31,6 +31,7 @@ data:
   # External locale data (e.g. gems).
   # This data is not considered unused and is never written to.
   external:
+    - "<%= %x[bundle show rails-i18n].chomp %>/rails/locale/%{locale}.yml"
     ## Example (replace %#= with %=):
     # - "<%#= %x[bundle show vagrant].chomp %>/templates/locales/%{locale}.yml"
 

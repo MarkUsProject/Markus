@@ -26,7 +26,7 @@
     <li <% if controller.action_name == 'summary' %>
         class='active'
         <% end %>>
-      <%= link_to t('marks.summary'),
+      <%= link_to t('results.summary'),
                   summary_assignment_path(@assignment || @grouping.assignment) %>
     </li>
   <% end %>

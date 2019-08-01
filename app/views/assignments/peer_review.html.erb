@@ -33,13 +33,13 @@
 
   <div id='student_column_right'>
     <div class='block'>
-      <h2><%= t('student.group_information') %></h2>
+      <h2><%= t('groups.student_interface.group_information') %></h2>
 
       <div class='block_content'>
         <% # If student has no group, inform them
            if @grouping.nil? %>
             <p class='notice'>
-              <%= t('student.no_group_yet') %>.
+              <%= t('groups.student_interface.no_group_yet') %>.
               <% if @assignment.past_collection_date?(@student.section) %>
                 <%= t('assignments.due_date.final_due_date_passed') %>
               <% end %>
@@ -47,7 +47,7 @@
         <% else %>
             <%# Since the student has a group already, we display information about the group only %>
             <h3>
-              <%= t("student.your_group") %>
+              <%= t('groups.student_interface.your_group') %>
             </h3>
 
             <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>

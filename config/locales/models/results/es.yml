@@ -6,5 +6,5 @@ es:
     attributes:
       result:
         marking_state: "Estado del Proceso de Calificación"
-        overall_comments: "Comentarios Generales"
+        overall_comment: "Comentarios Generales"
         total_mark: "Nota total"

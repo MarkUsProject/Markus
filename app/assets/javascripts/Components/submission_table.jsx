@@ -347,13 +347,6 @@ class SubmissionsActionBox extends React.Component {
           {I18n.t('submissions.collect.submit')}
         </button>
       );
-      // TODO: look into re-enabling undo collection
-      // uncollectButton = (
-      //   <button onClick={this.props.uncollectSubmissions}
-      //           disabled={this.props.disabled}>
-      //     {I18n.t('collect_submissions.uncollect_all')}
-      //   </button>
-      // );
 
       releaseMarksButton = (
         <button

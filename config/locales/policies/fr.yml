@@ -8,7 +8,6 @@ fr:
         not_a_ta?: "Les correcteurs ne sont pas autorisés à éxecuter des tests."
         not_yet_in_group?: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
         students_form_groups?: "Ce projet n'autorise pas les étudiants à former des groupes."
-        test_scripts_uploaded?: "Aucun scripts de test trouvés."
         tokens_released?: "Aucun jetons disponible."
         work_alone?: "Vous ne pouvez pas travailler seul sur ce projet. Il faut au minimum %{group_min} étudiants pour former un groupe."
       grouping:
