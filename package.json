@@ -15,7 +15,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-jsonschema-form": "^1.6.1",
-    "react-keyed-file-browser": "^1.5.1",
+    "react-keyed-file-browser": "^1.5.2",
     "react-modal": "^3.8.2",
     "react-table": "^6.9.2",
     "react-tabs": "^3.0.0"
