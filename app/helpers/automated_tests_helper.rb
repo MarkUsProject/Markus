@@ -13,8 +13,9 @@ module AutomatedTestsHelper
         display_output: {
           type: :string,
           enum: TestGroup.display_outputs.keys,
+          enumNames: TestGroup.display_outputs.keys.map { |k| I18n.t("automated_tests.display_output.#{k}") },
           default: TestGroup.display_outputs.keys.first,
-          title: TestGroup.human_attribute_name(:display_output)
+          title: I18n.t('automated_tests.display_output_title')
         },
         criterion: {
           type: :string,

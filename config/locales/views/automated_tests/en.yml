@@ -19,6 +19,11 @@ en:
       in_progress: "in progress"
       problems: "error"
     title: "Automated Testing"
+    display_output_title: "Display test output to students?"
+    display_output:
+      instructors: "Never display test output to students"
+      instructors_and_students: "Always display test output to students"
+      instructors_and_student_tests: "Only display test output to students for student-run tests"
 
     # Test results
     no_results: "No test results to display"
