@@ -19,5 +19,6 @@ en:
 
     next:   "Next"
     prev:   "Previous"
+    time:   "Time"
 
   hours: "hour(s)"

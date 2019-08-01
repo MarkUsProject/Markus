@@ -14,7 +14,7 @@ class Datepicker extends React.Component {
 
   handleClose = () => {
     if (this.props.warn_before_now && moment(this.props.date, I18n.t('time.format_string.js')).isBefore(moment())) {
-      alert(I18n.t('date.before_now'));
+      alert(I18n.t('date.before_now_warning'));
     }
     if (typeof this.props.onClose === 'function') {
       this.props.onClose();
@@ -43,7 +43,7 @@ class Datepicker extends React.Component {
       dayNamesMin: typeof this.props.dayNamesMin === 'undefined' ? I18n.t('date.abbr_day_names') : this.props.dayNamesMin,
       hourText: typeof this.props.hourText === 'undefined' ? I18n.t('datetime.prompts.hour') : this.props.hourText,
       minuteText: typeof this.props.minuteText === 'undefined' ? I18n.t('datetime.prompts.minute') : this.props.minuteText,
-      timeText: typeof this.props.timeText === 'undefined' ? I18n.t('datetime.prompts.time') : this.props.timeText,
+      timeText: typeof this.props.timeText === 'undefined' ? I18n.t('time.time') : this.props.timeText,
       prevText: typeof this.props.prevText === 'undefined' ? I18n.t('time.prev') : this.props.prevText,
       nextText: typeof this.props.nextText === 'undefined' ? I18n.t('time.next') : this.props.nextText,
       closeText: typeof this.props.closeText === 'undefined' ? I18n.t('close') : this.props.closeText

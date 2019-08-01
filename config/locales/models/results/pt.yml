@@ -6,5 +6,5 @@ pt:
     attributes:
       result:
         marking_state: "Status de avalição"
-        overall_comments: "Comentários gerais"
+        overall_comment: "Comentários gerais"
         total_mark: "Nota total"
