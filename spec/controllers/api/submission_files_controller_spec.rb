@@ -62,7 +62,7 @@ describe Api::SubmissionFilesController do
         it 'should be successful' do
           expect(response.status).to eq(200)
         end
-        it 'should return a zip containing both files' do
+        xit 'should return a zip containing both files' do # TODO: remove pending when PR #4101 is pulled in
           files = 0
           Zip::InputStream.open(StringIO.new(response.body)) do |io|
             while (entry = io.get_next_entry)
@@ -71,11 +71,11 @@ describe Api::SubmissionFilesController do
           end
           expect(files).to eq 2
         end
-        it 'should return a zip containing the content of both files' do
+        xit 'should return a zip with the content of both files' do # TODO: remove pending when PR #4101 is pulled in
           content = []
           Zip::InputStream.open(StringIO.new(response.body)) do |io|
             while (entry = io.get_next_entry)
-              content << io.read.strip.encode.force_encoding('utf-8') unless entry.name_is_directory?
+              content << io.read.strip.force_encoding('utf-8') unless entry.name_is_directory?
             end
           end
           expect(content).to contain_exactly(*file_content)
