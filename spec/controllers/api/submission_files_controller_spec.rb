@@ -16,7 +16,7 @@ describe Api::SubmissionFilesController do
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create,  params: { assignment_id: 1, group_id: 1 }
+      post :create, params: { assignment_id: 1, group_id: 1 }
 
       expect(response.status).to eq(403)
     end
@@ -35,8 +35,8 @@ describe Api::SubmissionFilesController do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     let(:group) { grouping.group }
-    let(:file_content) { 2.times.map { Faker::TvShows::HeyArnold.quote } }
-    let(:file_names) { 2.times.map { Faker::File.file_name('') } }
+    let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
+    let(:file_names) { Array.new(2) { Faker::File.file_name('') } }
     before :each do
       admin = create :admin
       admin.reset_api_key

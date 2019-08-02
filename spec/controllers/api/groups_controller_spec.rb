@@ -16,7 +16,7 @@ describe Api::GroupsController do
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create,  params: { assignment_id: 1 }
+      post :create, params: { assignment_id: 1 }
 
       expect(response.status).to eq(403)
     end
@@ -81,7 +81,7 @@ describe Api::GroupsController do
           end
         end
         context 'with multiple groupings' do
-          let(:groupings) { 5.times.map { create :grouping_with_inviter, assignment: assignment } }
+          let(:groupings) { Array.new(5) { create :grouping_with_inviter, assignment: assignment } }
           it 'should return content about all groupings' do
             groupings
             get :index, params: { assignment_id: assignment.id }

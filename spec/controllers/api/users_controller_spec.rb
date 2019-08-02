@@ -11,7 +11,7 @@ describe Api::UsersController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1}
+      get :show, params: { id: 1 }
       expect(response.status).to eq(403)
     end
 
@@ -176,7 +176,7 @@ describe Api::UsersController do
       end
       context 'when updating a user that does not exist' do
         it 'should raise a 404 error' do
-          put :update, params: { id: student.id+1, user_name: tmp_student.user_name }
+          put :update, params: { id: student.id + 1, user_name: tmp_student.user_name }
           expect(response.status).to eq(404)
         end
       end
