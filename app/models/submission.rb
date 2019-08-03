@@ -263,20 +263,6 @@ class Submission < ApplicationRecord
     end
   end
 
-  #=== Description
-  # Helper class method to find a submission by providing a group_name and
-  # and an assignment short identifier.
-  #=== Returns
-  # nil if no such submission exists.
-  def self.get_submission_by_group_and_assignment(group_n, ass_si)
-    assignment = Assignment.where(short_identifier: ass_si).first
-    group = Group.where(group_name: group_n).first
-    if !assignment.nil? && !group.nil?
-      grouping = group.grouping_for_assignment(assignment.id)
-      grouping.current_submission_used if !grouping.nil?
-    end
-  end
-
   def self.get_submission_by_group_id_and_assignment_id(group_id, assignment_id)
     group = Group.find(group_id)
     grouping = group.grouping_for_assignment(assignment_id)

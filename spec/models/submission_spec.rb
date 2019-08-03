@@ -90,21 +90,6 @@ describe Submission do
   end
 
   describe 'The Submission class' do
-    it 'should be able to find a submission object by group name and assignment short identifier' do
-      assignment = create(:assignment)
-      group = create(:group)
-      grouping = create(:grouping, assignment: assignment, group: group)
-      submission = create(:version_used_submission, grouping: grouping)
-      sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
-                                                               assignment.short_identifier)
-      expect(sub2).to_not be_nil
-      expect(sub2).to be_a Submission
-      expect(sub2).to eq submission
-      expect(Submission.get_submission_by_group_and_assignment(
-              'group_name_not_there',
-              'A_not_there')).to be_nil
-    end
-
     it 'create a remark result' do
       s = create(:submission)
       s.update(remark_request_timestamp: Time.zone.now)
