@@ -20,4 +20,4 @@ fi
 
 echo "[MARKUS] Starting MarkUs"
 bin/webpack-dev-server &
-bundle exec rails s
+RAILS_RELATIVE_URL_ROOT=/csc108 bundle exec rails s
