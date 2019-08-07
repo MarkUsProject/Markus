@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :users, except: [:new, :edit] do
         collection do
           post 'create_or_unhide'
+          put 'update_by_username'
         end
       end
       resources :grade_entry_forms, only: [:show]
