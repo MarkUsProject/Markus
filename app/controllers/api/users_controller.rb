@@ -164,8 +164,8 @@ module Api
       end
 
       # Otherwise everything went alright.
-      render 'shared/http_status', locals: {code: '200', message:
-        HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
     # Creates a new user or unhides a user if they already exist
