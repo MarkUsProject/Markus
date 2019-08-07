@@ -141,6 +141,38 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
     end
 
+    # Update a user's attributes based on their user_name as opposed
+    # to their id (use the regular update method instead)
+    # Requires: user_name
+    def update_by_username
+      if has_missing_params?([:user_name])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+
+      # Check if that user_name is taken
+      user = User.find_by_user_name(params[:user_name])
+      if user.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'User was not found' }, status: 404
+        return
+      end
+      user.attributes = process_attributes(params, {})
+
+      unless user.save
+        # Some error occurred
+        render 'shared/http_status', locals: { code: '500', message:
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        return
+      end
+
+      # Otherwise everything went alright.
+      render 'shared/http_status', locals: { code: '200', message:
+        HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
     # Creates a new user or unhides a user if they already exist
     # Requires: user_name, type, first_name, last_name
     # Optional: section_name, grace_credits
