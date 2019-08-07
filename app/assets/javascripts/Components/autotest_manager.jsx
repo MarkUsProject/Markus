@@ -64,7 +64,8 @@ class AutotestManager extends React.Component {
       data: data,
       processData: false, // tell jQuery not to process the data
       contentType: false  // tell jQuery not to set contentType
-    }).then(this.fetchFileDataOnly);
+    }).then(this.fetchFileDataOnly)
+      .then(this.onSubmit); // uploading files will send changes to the autotester without requiring an explicit save
   };
 
   handleDeleteFile = (fileKey) => {
@@ -75,6 +76,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_files: [fileKey]}
     }).then(this.fetchFileDataOnly)
+      .then(this.onSubmit) // deleting files will send changes to the autotester without requiring an explicit save
       .then(this.endAction);
   };
 
@@ -83,6 +85,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {new_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
+      .then(this.onSubmit) // creating folders will send changes to the autotester without requiring an explicit save
       .then(this.endAction);
   };
 
@@ -91,6 +94,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
+      .then(this.onSubmit) // deleting folders will send changes to the autotester without requiring an explicit save
       .then(this.endAction);
   };
 
@@ -285,7 +289,6 @@ class AutotestManager extends React.Component {
         </fieldset>
         {this.studentTestsField()}
         <input type='submit'
-               disabled={!this.state.enable_test}
                value={I18n.t('save')}
                onClick={this.onSubmit}
         >
