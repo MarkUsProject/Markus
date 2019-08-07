@@ -154,6 +154,11 @@ module Api
 
       # Check if that user_name is taken
       user = User.find_by_user_name(params[:user_name])
+      if user.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'User was not found' }, status: 404
+        return
+      end
       user.attributes = process_attributes(params, {})
 
       unless user.save
