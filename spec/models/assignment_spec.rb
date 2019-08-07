@@ -860,14 +860,14 @@ describe Assignment do
     end
   end
 
-  describe '#groups_submitted' do
+  describe '#current_submissions_used' do
     before :each do
       @assignment = create(:assignment)
     end
 
     context 'when no groups have made a submission' do
       it 'returns an empty array' do
-        expect(@assignment.groups_submitted).to eq []
+        expect(@assignment.current_submissions_used).to eq []
       end
     end
 
@@ -879,21 +879,23 @@ describe Assignment do
       describe 'once' do
         before :each do
           create(:version_used_submission, grouping: @grouping)
+          @grouping.reload
         end
 
-        it 'returns the group' do
-          expect(@assignment.groups_submitted).to eq [@grouping]
+        it 'returns the group\'s submission' do
+          expect(@assignment.current_submissions_used).to eq [@grouping.current_submission_used]
         end
       end
 
       describe 'more than once' do
         before :each do
+          create(:submission, grouping: @grouping)
           create(:version_used_submission, grouping: @grouping)
-          create(:version_used_submission, grouping: @grouping)
+          @grouping.reload
         end
 
-        it 'returns one instance of the group' do
-          expect(@assignment.groups_submitted).to eq [@grouping]
+        it 'returns the group\'s collected submission' do
+          expect(@assignment.current_submissions_used).to eq [@grouping.current_submission_used]
         end
       end
     end
@@ -903,16 +905,18 @@ describe Assignment do
         @groupings = Array.new(2) { create(:grouping, assignment: @assignment) }
         @groupings.each do |group|
           create(:version_used_submission, grouping: group)
+          group.reload
         end
       end
 
       it 'returns those groups' do
-        expect(@assignment.groups_submitted).to match_array(@groupings)
+        expect(@assignment.current_submissions_used)
+          .to match_array(@groupings.map(&:current_submission_used))
       end
     end
   end
 
-  describe '#graded_submission_results' do
+  describe '#ungraded_submission_results' do
     before :each do
       @assignment = create(:assignment)
       @student = create(:student)
@@ -925,34 +929,33 @@ describe Assignment do
     end
 
     context 'when no submissions have been graded' do
-      it 'returns an empty array' do
-        expect(@assignment.graded_submission_results.size).to eq 0
+      it 'returns the submissions' do
+        expect(@assignment.ungraded_submission_results.size).to eq 2
       end
     end
 
     context 'when submission(s) have been graded' do
       before :each do
-        @result = @submission.get_latest_result
+        @result = @submission.current_result
         @result.marking_state = Result::MARKING_STATES[:complete]
         @result.save
       end
 
       describe 'one submission' do
-        it 'returns the result' do
-          expect(@assignment.graded_submission_results).to eq [@result]
+        it 'does not return the graded submission' do
+          expect(@assignment.ungraded_submission_results.size).to eq 1
         end
       end
 
       describe 'all submissions' do
         before :each do
-          @other_result = @other_submission.get_latest_result
+          @other_result = @other_submission.current_result
           @other_result.marking_state = Result::MARKING_STATES[:complete]
           @other_result.save
         end
 
         it 'returns all of the results' do
-          expect(@assignment.graded_submission_results)
-            .to match_array [@result, @other_result]
+          expect(@assignment.ungraded_submission_results.size).to eq 0
         end
       end
     end

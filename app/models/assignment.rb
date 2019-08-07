@@ -772,18 +772,11 @@ class Assignment < ApplicationRecord
     Ta.find(ta_memberships.map(&:user_id))
   end
 
-  # Returns all the submissions that have been graded (completed)
-  def graded_submission_results
-    results = []
-    groupings.includes(:current_result).each do |grouping|
-      next if grouping.current_result.nil? || grouping.current_result.marking_state == Result::MARKING_STATES[:incomplete]
-      results.push(grouping.current_result)
-    end
-    results
-  end
-
-  def groups_submitted
-    groupings.includes(:current_submission_used).select(&:has_submission?)
+  # Returns all the submissions that have not been graded (completed).
+  # Note: This assumes that every submission has at least one result.
+  def ungraded_submission_results
+    current_submissions_used.joins(:current_result)
+                            .where('results.marking_state': Result::MARKING_STATES[:incomplete])
   end
 
   def is_criteria_mark?(ta_id)

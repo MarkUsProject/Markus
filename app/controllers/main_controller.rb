@@ -138,12 +138,7 @@ class MainController < ApplicationController
       redirect_to controller: 'assignments', action: 'index'
       return
     end
-    @assignments = Assignment.unscoped.includes([
-      :assignment_stat, :groupings, :ta_memberships,
-      :pr_assignment,
-      groupings: :current_submission_used,
-      submission_rule: :assignment
-    ]).order('due_date ASC')
+    @assignments = Assignment.all.includes(:pr_assignment).order('due_date ASC')
     @grade_entry_forms = GradeEntryForm.unscoped.includes([
       :grade_entry_items
     ]).order('id ASC')
