@@ -4,7 +4,7 @@ en:
   class_average: "Class average"
   median: "Median"
   class_median: "Class median"
-  assignments_submitted: "Number of submissions in total"
+  assignments_submitted: "Number of submissions collected"
   assignments_graded: "Number of submissions graded"
   num_failed: "Number of fails"
   num_zeros: "Number of zeros"

@@ -19,8 +19,7 @@
               <% end %>
               <%= link_to link_text,
                           view_summary_grade_entry_form_path(grade_entry_form.id),
-                          data: { remote: true, id: grade_entry_form.short_identifier },
-                          class: (grade_entry_form == @current_assignment ? "link_disabled" : "") %>
+                          data: { remote: true, id: grade_entry_form.short_identifier } %>
             </td>
           </tr>
         <% end %>

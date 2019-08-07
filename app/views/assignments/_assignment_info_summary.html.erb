@@ -28,14 +28,15 @@
   <tr>
     <td><%= t(:assignments_submitted) %></td>
     <td>
-      <%= "#{assignment.groups_submitted.size}/#{assignment.groupings.size}" %>
+      <% num_submissions = assignment.current_submissions_used.size %>
+      <%= "#{num_submissions}/#{assignment.groupings.size}" %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:assignments_graded) %></td>
     <td>
-      <%= "#{assignment.graded_submission_results.size}/#{assignment.groupings.size}" %>
+      <%= "#{num_submissions - assignment.ungraded_submission_results.size}/#{assignment.groupings.size}" %>
     </td>
   </tr>
 

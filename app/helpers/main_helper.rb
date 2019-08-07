@@ -21,7 +21,7 @@ module MainHelper
   end
 
   def due_date_color(assignment)
-    assignment.past_collection_date? ? 'after' : 'before'
+    Time.zone.now > assignment.due_date ? 'after' : 'before'
   end
 
 end

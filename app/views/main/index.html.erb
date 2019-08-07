@@ -7,18 +7,15 @@
     <div id='dashboard_lists'>
       <div id='assignment_list'>
         <h3 class='title'><%= Assignment.model_name.human.pluralize %></h3>
-        <%= render partial: 'dashboard_list',
-                   locals: { controller: 'main' } %>
+        <%= render partial: 'dashboard_list' %>
       </div>
       <div id='spreadsheet_list'>
         <h3 class='title'><%= GradeEntryForm.model_name.human.pluralize %></h3>
-        <%= render partial: 'spreadsheet_list',
-                   locals: { controller: 'main' } %>
+        <%= render partial: 'spreadsheet_list' %>
       </div>
       <div id='summary'>
         <h3 class='title'><%= t('course_summary.title') %></h3>
-        <%= render partial: 'summary',
-                   locals: { controller: 'main' } %>
+        <%= render partial: 'summary' %>
       </div>
     </div>
     <div id='assignment_summaries'>
