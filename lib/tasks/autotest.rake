@@ -145,8 +145,8 @@ class AutotestSetup
   def upload_test_files
     # send files for all hostnames because the
     # autotester uses the names as part of a hash key
-    AutotestSpecsJob.perform_now('http://localhost:3000/csc108', @assignment)
-    AutotestSpecsJob.perform_now('http://127.0.0.1:3000/csc108', @assignment)
-    AutotestSpecsJob.perform_now('http://0.0.0.0:3000/csc108', @assignment)
+    AutotestSpecsJob.perform_now('http://localhost:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://127.0.0.1:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://0.0.0.0:3000', @assignment)
   end
 end
