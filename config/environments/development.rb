@@ -34,6 +34,9 @@ Markus::Application.configure do
   # Show where SQL queries were generated from.
   config.active_record.verbose_query_logs = true
 
+  # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
+  config.action_controller.relative_url_root = '/csc108'
+
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running
