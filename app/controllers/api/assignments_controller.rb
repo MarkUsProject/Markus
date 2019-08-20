@@ -210,5 +210,15 @@ module Api
       submission_rule
     end
 
+    def grades_summary
+      assignment = Assignment.find(params[:id])
+      send_data assignment.summary_csv(@current_user),
+                type: 'text/csv',
+                filename: "#{assignment.short_identifier}_grades_summary.csv",
+                disposition: 'inline'
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
   end # end AssignmentsController
 end
