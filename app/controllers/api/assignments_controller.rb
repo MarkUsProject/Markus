@@ -219,6 +219,5 @@ module Api
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
-
   end # end AssignmentsController
 end
