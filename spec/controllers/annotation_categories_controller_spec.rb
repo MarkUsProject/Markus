@@ -62,7 +62,7 @@ describe AnnotationCategoriesController do
       expect(flash[:success].size).to eq(1)
       expect(response.status).to eq(302)
 
-      annotation_category_list = AnnotationCategory.all
+      annotation_category_list = AnnotationCategory.order(:annotation_category_name)
       index = 0
       while index < annotation_category_list.size
         curr_cat = annotation_category_list[index]
