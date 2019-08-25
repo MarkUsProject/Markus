@@ -24,15 +24,15 @@ class CriterionTaAssociation < ApplicationRecord
     end
 
     new_ta_mappings = []
-    result = MarkusCSV.parse(csv_data.read) do |row|
-      raise CSVInvalidLineError if row.empty?
+    result = MarkusCsv.parse(csv_data.read) do |row|
+      raise CsvInvalidLineError if row.empty?
       criterion_name, *ta_user_names = row
 
       criterion = criteria.find { |crit| crit.name == criterion_name }
-      raise CSVInvalidLineError if criterion.nil?
+      raise CsvInvalidLineError if criterion.nil?
 
       unless ta_user_names.all? { |g| Ta.exists?(user_name: g) }
-        raise CSVInvalidLineError
+        raise CsvInvalidLineError
       end
 
       ta_user_names.each do |user_name|

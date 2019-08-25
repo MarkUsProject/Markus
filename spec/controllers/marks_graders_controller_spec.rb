@@ -123,7 +123,7 @@ describe MarksGradersController do
     # parse header object to check for the right content type
     it 'returns text/csv type' do
       get :grader_mapping, params: { grade_entry_form_id: grade_entry_form.id }, format: 'csv'
-      expect(response.content_type).to eq 'text/csv'
+      expect(response.media_type).to eq 'text/csv'
     end
   end
 end

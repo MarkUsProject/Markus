@@ -63,8 +63,7 @@ namespace :markus do
       remark_request: 'Please remark my assignment.',
       remark_request_timestamp: Time.zone.now)
 
-    submission.remark_result.update_attributes(
-      marking_state: Result::MARKING_STATES[:incomplete])
+    submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
   end
 
   def create_criteria(a)
@@ -111,7 +110,7 @@ namespace :markus do
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
       if i == (Student.count/2).ceil
-        a.update_attributes(due_date: Time.now, token_start_date: Time.now)
+        a.update(due_date: Time.now, token_start_date: Time.now)
         a.save
       end
       submit_files(group, a)
@@ -338,7 +337,7 @@ namespace :markus do
       submit_files(group, a)
     end
 
-    a.update_attributes(due_date: Time.now, token_start_date: Time.now)
+    a.update(due_date: Time.now, token_start_date: Time.now)
     a.save
 
     puts '6: Marking State examples'
@@ -372,7 +371,7 @@ namespace :markus do
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
       if j == Student.count - 1
-        a.update_attributes(due_date: Time.now, token_start_date: Time.now)
+        a.update(due_date: Time.now, token_start_date: Time.now)
         a.save
       end
       next if j == 1

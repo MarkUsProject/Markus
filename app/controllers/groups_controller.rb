@@ -250,7 +250,7 @@ class GroupsController < ApplicationController
     else
       assignment = Assignment.find(params[:assignment_id])
       group_rows = []
-      result = MarkusCSV.parse(data[:file].read, encoding: params[:encoding]) do |row|
+      result = MarkusCsv.parse(data[:file].read, encoding: params[:encoding]) do |row|
         group_rows << row.take_while { |x| !x.blank? } unless row.blank?
       end
       if result[:invalid_lines].empty?
@@ -292,7 +292,7 @@ class GroupsController < ApplicationController
     groupings = assignment.groupings.includes(:group,
                                               student_memberships: [:user])
 
-    file_out = MarkusCSV.generate(groupings) do |grouping|
+    file_out = MarkusCsv.generate(groupings) do |grouping|
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
       [grouping.group.group_name, grouping.group.repo_name].concat(
         grouping.student_memberships.map do |member|

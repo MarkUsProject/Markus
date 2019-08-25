@@ -14,7 +14,7 @@ module Markus
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version
-    config.load_defaults 5.2
+    config.load_defaults 6.0
 
     # Configure sensitive parameters which will be filtered from the log file
     config.filter_parameters += [:password]
@@ -27,6 +27,12 @@ module Markus
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
+
+    # Set redis as the Rails cache store
+    # config.cache_store = :redis_cache_store
+
+    # Do not add autoload paths to load path.
+    config.add_autoload_paths_to_load_path = false
 
     # Use RSpec as test framework
     config.generators do |g|

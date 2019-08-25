@@ -13,11 +13,11 @@ class Tag < ApplicationRecord
   def self.from_csv(data)
     admins = Hash[Admin.pluck(:user_name, :id)]
     tag_data = []
-    result = MarkusCSV.parse(data) do |row|
-      raise CSVInvalidLineError if row.length < NUM_CSV_FIELDS
+    result = MarkusCsv.parse(data) do |row|
+      raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
       name, description, user_id = row[0], row[1], admins[row[2]]
       if name.nil? || name.strip.blank? || user_id.nil?
-        raise CSVInvalidLineError
+        raise CsvInvalidLineError
       end
 
       tag_data << {

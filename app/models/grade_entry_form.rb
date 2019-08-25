@@ -166,7 +166,7 @@ class GradeEntryForm < ApplicationRecord
                      .pluck('users.user_name', 'grade_entry_items.position', :grade)
                      .group_by { |x| x[0] }
     num_items = self.grade_entry_items.count
-    MarkusCSV.generate(students, headers) do |user_name, total_grade|
+    MarkusCsv.generate(students, headers) do |user_name, total_grade|
       row = [user_name]
       if grade_data.key? user_name
         # Take grades sorted by position.
@@ -196,7 +196,7 @@ class GradeEntryForm < ApplicationRecord
     updated_grades = []
 
     # Parse the grades
-    result = MarkusCSV.parse(grades_data, header_count: 2) do |row|
+    result = MarkusCsv.parse(grades_data, header_count: 2) do |row|
       next unless row.any?
       # grab names and totals from the first two rows
       if names.empty?
@@ -210,13 +210,13 @@ class GradeEntryForm < ApplicationRecord
       end
 
       s_id = grade_entry_students[row[0]]
-      raise CSVInvalidLineError if s_id.nil?
+      raise CsvInvalidLineError if s_id.nil?
 
       row.drop(1).zip(updated_columns).take([row.size - 1, updated_columns.size].min).each do |grade, item_id|
         begin
           new_grade = grade.blank? ? nil : Float(grade)
         rescue ArgumentError
-          raise CSVInvalidLineError
+          raise CsvInvalidLineError
         end
         if overwrite || !all_grades.member?([s_id, item_id])
           updated_grades << {

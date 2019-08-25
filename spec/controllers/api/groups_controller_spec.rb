@@ -254,7 +254,7 @@ describe Api::GroupsController do
                                                                        markable_type: criterion.class.name)
           mark.mark = 10
           mark.save!
-          submission.current_result.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+          submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
           post :update_marks, params: { id: grouping.group.id,
                                         assignment_id: grouping.assignment.id,
                                         criterion.name => 4 }
@@ -301,7 +301,7 @@ describe Api::GroupsController do
       let(:submission) { create(:version_used_submission, grouping: grouping) }
       context 'should complete a result' do
         before :each do
-          submission.current_result.update_attributes(marking_state: Result::MARKING_STATES[:incomplete])
+          submission.current_result.update(marking_state: Result::MARKING_STATES[:incomplete])
           post :update_marking_state, params: { id: grouping.group.id,
                                                 assignment_id: grouping.assignment.id,
                                                 marking_state: Result::MARKING_STATES[:complete] }
@@ -316,7 +316,7 @@ describe Api::GroupsController do
       end
       context 'should un-complete a result' do
         before :each do
-          submission.current_result.update_attributes(marking_state: Result::MARKING_STATES[:complete])
+          submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
           post :update_marking_state, params: { id: grouping.group.id,
                                                 assignment_id: grouping.assignment.id,
                                                 marking_state: Result::MARKING_STATES[:incomplete] }

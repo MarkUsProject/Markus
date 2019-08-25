@@ -44,7 +44,7 @@ class SectionsController < ApplicationController
 
   def update
     @section = Section.find(params[:id])
-    if @section.update_attributes(section_params)
+    if @section.update(section_params)
       flash_message(:success, t('.success', name: @section.name))
       redirect_to action: 'index'
     else

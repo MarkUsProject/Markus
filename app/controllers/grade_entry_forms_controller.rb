@@ -52,7 +52,7 @@ class GradeEntryFormsController < ApplicationController
       new_params.update(date: nil)
     end
 
-    @grade_entry_form.update_attributes(new_params)
+    @grade_entry_form.update(new_params)
     respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path @grade_entry_form })
   end
 

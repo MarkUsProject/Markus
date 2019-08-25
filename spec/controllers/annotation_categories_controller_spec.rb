@@ -127,16 +127,16 @@ describe AnnotationCategoriesController do
     end
 
     # parse header object to check for the right content type
-    it 'returns vnd.ms-excel type' do
+    it 'returns text/csv type' do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
-      expect(response.content_type).to eq 'text/csv'
+      expect(response.media_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
       filename = response.header['Content-Disposition']
-                         .split.last.split('"').second
+                         .split[1].split('"').second
       expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
     end
   end

@@ -24,9 +24,9 @@ class TaMembership < Membership
       assignment.groupings.joins(:group).pluck('groups.group_name', :id)
     ]
     graders = Hash[Ta.pluck(:user_name, :id)]
-    result = MarkusCSV.parse(csv_data.read) do |row|
-      raise CSVInvalidLineError if row.empty?
-      raise CSVInvalidLineError if groupings[row[0]].nil?
+    result = MarkusCsv.parse(csv_data.read) do |row|
+      raise CsvInvalidLineError if row.empty?
+      raise CsvInvalidLineError if groupings[row[0]].nil?
 
       row.drop(1).each do |grader_name|
         unless graders[grader_name].nil?

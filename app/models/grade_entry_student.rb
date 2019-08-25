@@ -106,7 +106,7 @@ class GradeEntryStudent < ApplicationRecord
     # Attempt to find the student
     student = Student.where(user_name: user_name).first
     if student.nil?
-      raise CSVInvalidLineError
+      raise CsvInvalidLineError
     end
 
     # Create the GradeEntryStudent if it doesn't already exist

@@ -108,8 +108,8 @@ class PeerReview < ApplicationRecord
     reviewee_map = Hash[
       assignment.parent_assignment.groupings.includes(:group).map { |g| [g.group.group_name, g] }
     ]
-    MarkusCSV.parse(data) do |row|
-      raise CSVInvalidLineError if row.size < 2
+    MarkusCsv.parse(data) do |row|
+      raise CsvInvalidLineError if row.size < 2
       reviewee = reviewee_map[row.first]
       next if reviewee.nil?
       row.shift # Drop the reviewer, the rest are reviewees and makes iteration easier.

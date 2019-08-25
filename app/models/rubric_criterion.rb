@@ -76,12 +76,12 @@ class RubricCriterion < Criterion
   #
   # ===Raises:
   #
-  # CSVInvalidLineError  If the row does not contain enough information, if the weight
+  # CsvInvalidLineError  If the row does not contain enough information, if the weight
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
+      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -92,7 +92,7 @@ class RubricCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
     rescue ArgumentError
-      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
+      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -107,7 +107,7 @@ class RubricCriterion < Criterion
       criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
-      raise CSVInvalidLineError
+      raise CsvInvalidLineError
     end
     criterion
   end

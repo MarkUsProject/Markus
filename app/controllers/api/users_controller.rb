@@ -189,7 +189,7 @@ module Api
       if user.nil?
         create
       else
-        user.update_attributes(hidden: false)
+        user.update(hidden: false)
         render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
       end

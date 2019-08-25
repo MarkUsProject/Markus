@@ -120,5 +120,5 @@ EOL
 echo "- - - Update .profile - - -"
 cat >> /home/vagrant/.profile << 'EOL'
 export PATH="${PATH}:/home/vagrant/Markus/bin"
-export HOST="0.0.0.0"
+export BINDING="0.0.0.0"
 EOL

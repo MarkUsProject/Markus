@@ -42,12 +42,12 @@ class FlexibleCriterion < Criterion
   #
   # ===Raises:
   #
-  # CSVInvalidLineError  If the row does not contain enough information,
+  # CsvInvalidLineError  If the row does not contain enough information,
   #                      if the maximum mark is zero, nil or does not evaluate to a
   #                      float, or if the criterion is not successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
+      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     working_row = row.clone
     name = working_row.shift
@@ -58,11 +58,11 @@ class FlexibleCriterion < Criterion
     begin
       criterion.max_mark = Float(working_row.shift)
     rescue ArgumentError
-      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
+      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     # Check that the maximum mark given is a valid number.
     if criterion.max_mark.nil? or criterion.max_mark.zero?
-      raise CSVInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
+      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -71,7 +71,7 @@ class FlexibleCriterion < Criterion
     # Set description to the one cloned only if the original description is valid.
     criterion.description = working_row.shift unless row[2].nil?
     unless criterion.save
-      raise CSVInvalidLineError
+      raise CsvInvalidLineError
     end
     criterion
   end

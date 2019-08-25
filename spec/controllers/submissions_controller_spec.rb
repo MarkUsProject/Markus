@@ -306,7 +306,7 @@ describe SubmissionsController do
           result.save
           submission.save
         end
-        @grouping.update_attributes! is_collected: true
+        @grouping.update! is_collected: true
       end
 
       context 'where a grouping does not have a previously collected submission' do
@@ -321,7 +321,7 @@ describe SubmissionsController do
         end
 
         it 'should collect all groupings when override is true' do
-          @assignment.update_attributes!(due_date: Time.current - 1.week)
+          @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(array_including(@grouping, uncollected_grouping))
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
@@ -330,7 +330,7 @@ describe SubmissionsController do
         end
 
         it 'should collect the uncollected grouping only when override is false' do
-          @assignment.update_attributes!(due_date: Time.current - 1.week)
+          @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with([uncollected_grouping])
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
@@ -363,7 +363,7 @@ describe SubmissionsController do
           end
 
           it 'should get an error if it is before the section due date' do
-            @section_due_date.update_attributes!(due_date: Time.current + 1.week)
+            @section_due_date.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
@@ -378,7 +378,7 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the section due date' do
-            @section_due_date.update_attributes!(due_date: Time.current - 1.week)
+            @section_due_date.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
@@ -400,7 +400,7 @@ describe SubmissionsController do
           end
 
           it 'should get an error if it is before the global due date' do
-            @assignment.update_attributes!(due_date: Time.current + 1.week)
+            @assignment.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
@@ -415,7 +415,7 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the global due date' do
-            @assignment.update_attributes!(due_date: Time.current - 1.week)
+            @assignment.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)

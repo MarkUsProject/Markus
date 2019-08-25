@@ -64,7 +64,7 @@ class GradersController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     groupings = assignment.groupings.includes(:group, :tas)
 
-    file_out = MarkusCSV.generate(groupings) do |grouping|
+    file_out = MarkusCsv.generate(groupings) do |grouping|
       [grouping.group.group_name] + grouping.tas.map(&:user_name)
     end
     send_data file_out,
@@ -77,7 +77,7 @@ class GradersController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     criteria = assignment.get_criteria(:ta, :all, includes: [:tas])
 
-    file_out = MarkusCSV.generate(criteria) do |criterion|
+    file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name] + criterion.tas.map(&:user_name)
     end
 

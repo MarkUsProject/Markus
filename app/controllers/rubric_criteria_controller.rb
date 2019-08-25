@@ -4,7 +4,7 @@ class RubricCriteriaController < ApplicationController
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
-    file_out = MarkusCSV.generate(@assignment.get_criteria(:all, :rubric)) do |criterion|
+    file_out = MarkusCsv.generate(@assignment.get_criteria(:all, :rubric)) do |criterion|
       criterion_array = [criterion.name, criterion.max_mark]
       (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
         criterion_array.push(criterion['level_' + i.to_s + '_name'])
@@ -26,7 +26,7 @@ class RubricCriteriaController < ApplicationController
     if params[:csv_upload] && params[:csv_upload][:rubric]
       file = params[:csv_upload][:rubric]
       result = RubricCriterion.transaction do
-        MarkusCSV.parse(file.read, encoding: encoding) do |row|
+        MarkusCsv.parse(file.read, encoding: encoding) do |row|
           next if CSV.generate_line(row).strip.empty?
           RubricCriterion.create_or_update_from_csv_row(row, @assignment)
         end

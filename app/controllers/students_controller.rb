@@ -92,7 +92,7 @@ class StudentsController < ApplicationController
     students = Student.order(:user_name).includes(:section)
     case params[:format]
       when 'csv'
-        output = MarkusCSV.generate(students) do |student|
+        output = MarkusCsv.generate(students) do |student|
           Student::CSV_UPLOAD_ORDER.map do |field|
             if field == :section_name
               student.section&.name

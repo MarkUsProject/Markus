@@ -130,7 +130,7 @@ describe TagsController do
       # parse header object to check for the right content type
       it 'returns text/csv type' do
         get :download, params: { assignment_id: assignment.id }, format: 'csv'
-        expect(response.content_type).to eq 'text/csv'
+        expect(response.media_type).to eq 'text/csv'
       end
     end
 
@@ -193,7 +193,7 @@ describe TagsController do
       # parse header object to check for the right content type
       it 'returns text/yml type' do
         get :download, params: { assignment_id: assignment.id }, format: 'yml'
-        expect(response.content_type).to eq 'text/yml'
+        expect(response.media_type).to eq 'text/yml'
       end
     end
   end

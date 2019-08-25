@@ -23,7 +23,7 @@ class AnnotationCategory < ApplicationRecord
         last_editor_id: current_user.id
       )
       unless annotation_text.save
-        raise CSVInvalidLineError
+        raise CsvInvalidLineError
       end
     end
   end

@@ -970,12 +970,12 @@ describe Grouping do
         let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
 
         before :each do
-          grouping.inviter.update_attributes!(section: section)
+          grouping.inviter.update!(section: section)
         end
 
         context 'and section_due_dates_type is false' do
           before :each do
-            assignment.update_attributes!(section_due_dates_type: false)
+            assignment.update!(section_due_dates_type: false)
           end
 
           it 'should return the assignment due date' do
@@ -993,7 +993,7 @@ describe Grouping do
         end
         context 'and section_due_dates_type is true' do
           before :each do
-            assignment.update_attributes!(section_due_dates_type: true)
+            assignment.update!(section_due_dates_type: true)
           end
 
           it 'should return the section due date' do

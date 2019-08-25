@@ -5,7 +5,7 @@ class TestBatch < ApplicationRecord
     test_runs.each do |test_run|
       if test_run.in_progress? && test_run.time_to_service_estimate && test_run.time_to_service&.positive?
         new_estimate = [(test_run.time_to_service_estimate - time_delta).to_i, 0].max
-        test_run.update_attributes(time_to_service_estimate: new_estimate)
+        test_run.update(time_to_service_estimate: new_estimate)
       end
     end
   end
