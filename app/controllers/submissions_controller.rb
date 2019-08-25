@@ -139,7 +139,7 @@ class SubmissionsController < ApplicationController
     if @assignment.allow_web_submits && @assignment.vcs_submit
       flash_message(:notice, t('submissions.student.version_control_warning'))
     end
-    render layout: 'assignment_content'
+    render 'file_manager', layout: 'assignment_content', locals: {}
   end
 
   def populate_file_manager
@@ -497,7 +497,7 @@ class SubmissionsController < ApplicationController
     end
 
     ## Send the Zip file
-    send_file zip_path, disposition: 'inline', filename: zip_name
+    send_file zip_path, disposition: 'inline', filename: zip_name.to_s
   end
 
   ##

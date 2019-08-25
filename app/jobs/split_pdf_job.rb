@@ -1,4 +1,4 @@
-class SplitPDFJob < ApplicationJob
+class SplitPdfJob < ApplicationJob
 
   queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
 
@@ -79,7 +79,7 @@ class SplitPDFJob < ApplicationJob
           num_pages_qr_scan_error += 1
           status = 'ERROR: QR code not found'
           m_logger.log(status)
-          split_page.update_attributes(status: status)
+          split_page.update(status: status)
         else
           group = Group.find_or_create_by(
             group_name: group_name_for(exam_template, m[:exam_num].to_i),
@@ -94,14 +94,14 @@ class SplitPDFJob < ApplicationJob
             m_logger.log(status)
             num_pages_qr_scan_error += 1
           end
-          split_page.update_attributes(status: status, group: group, exam_page_number: m[:page_num].to_i)
+          split_page.update(status: status, group: group, exam_page_number: m[:page_num].to_i)
         end
         progress.increment
       end
       num_complete = save_pages(exam_template, partial_exams, filename, split_pdf_log)
       num_incomplete = partial_exams.length - num_complete
 
-      split_pdf_log.update_attributes(
+      split_pdf_log.update(
         num_groups_in_complete: num_complete,
         num_groups_in_incomplete: num_incomplete,
         num_pages_qr_scan_error: num_pages_qr_scan_error
@@ -170,7 +170,7 @@ class SplitPDFJob < ApplicationJob
           status = File.dirname(destination) == complete_dir ? 'Saved to complete directory' : 'Saved to incomplete directory'
         end
         # update status of page
-        split_page.update_attributes(status: status)
+        split_page.update(status: status)
       end
 
       group.access_repo do |repo|

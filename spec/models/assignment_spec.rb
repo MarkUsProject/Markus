@@ -1091,7 +1091,7 @@ describe Assignment do
 
       context 'and SectionDueDates are disabled' do
         before :each do
-          @assignment.update_attributes(section_due_dates_type: false)
+          @assignment.update(section_due_dates_type: false)
         end
 
         it 'returns false' do
@@ -1101,7 +1101,7 @@ describe Assignment do
 
       context 'and there are SectionDueDates past due' do
         before :each do
-          @assignment.update_attributes(section_due_dates_type: true)
+          @assignment.update(section_due_dates_type: true)
           @section_due_date = SectionDueDate.create(section: create(:section),
                                                     assignment: @assignment,
                                                     due_date: 1.days.ago)
@@ -1121,7 +1121,7 @@ describe Assignment do
 
       context 'and SectionDueDates are disabled' do
         before :each do
-          @assignment.update_attributes(section_due_dates_type: false)
+          @assignment.update(section_due_dates_type: false)
         end
 
         it 'returns true' do
@@ -1131,7 +1131,7 @@ describe Assignment do
 
       context 'and there is a SectionDueDate not past due' do
         before :each do
-          @assignment.update_attributes(section_due_dates_type: true)
+          @assignment.update(section_due_dates_type: true)
           SectionDueDate.create(section: create(:section), assignment: @assignment, due_date: 1.days.from_now)
         end
 
@@ -1174,9 +1174,9 @@ describe Assignment do
 
       context 'when no grouping is specified' do
         it 'returns based on due date of the assignment' do
-          @assignment.update_attributes(due_date: 1.days.ago)
+          @assignment.update(due_date: 1.days.ago)
           expect(@assignment.grouping_past_due_date?(nil)).to be true
-          @assignment.update_attributes(due_date: 1.days.from_now)
+          @assignment.update(due_date: 1.days.from_now)
           expect(@assignment.grouping_past_due_date?(nil)).to be false
         end
       end
@@ -1191,9 +1191,9 @@ describe Assignment do
 
         context 'that does not have an associated SectionDueDate' do
           it 'returns based on due date of the assignment' do
-            @assignment.update_attributes(due_date: 1.days.ago)
+            @assignment.update(due_date: 1.days.ago)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be true
-            @assignment.update_attributes(due_date: 1.days.from_now)
+            @assignment.update(due_date: 1.days.from_now)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be false
           end
         end
@@ -1204,12 +1204,12 @@ describe Assignment do
                                                       assignment: @assignment)
           end
           it 'returns based on the SectionDueDate of the grouping' do
-            @section_due_date.update_attributes(due_date: 1.days.from_now)
-            @assignment.update_attributes(due_date: 1.days.ago)
+            @section_due_date.update(due_date: 1.days.from_now)
+            @assignment.update(due_date: 1.days.ago)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be false
 
-            @section_due_date.update_attributes(due_date: 1.days.ago)
-            @assignment.update_attributes(due_date: 1.days.from_now)
+            @section_due_date.update(due_date: 1.days.ago)
+            @assignment.update(due_date: 1.days.from_now)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be true
           end
         end
@@ -1225,7 +1225,7 @@ describe Assignment do
 
       context 'when the assignment is past due' do
         it 'returns one name for the assignment' do
-          @assignment.update_attributes(due_date: 1.days.ago)
+          @assignment.update(due_date: 1.days.ago)
 
           expect(@assignment.section_names_past_due_date).to eq []
         end
@@ -1233,7 +1233,7 @@ describe Assignment do
 
       context 'when the assignment is not past due' do
         it 'returns an empty array' do
-          @assignment.update_attributes(due_date: 1.days.from_now)
+          @assignment.update(due_date: 1.days.from_now)
 
           expect(@assignment.section_names_past_due_date).to eq []
         end
@@ -1254,7 +1254,7 @@ describe Assignment do
 
         context 'that is past due' do
           it 'returns an array with the name of the section' do
-            @section_due_date.update_attributes(due_date: 1.days.ago)
+            @section_due_date.update(due_date: 1.days.ago)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section.name]
@@ -1263,7 +1263,7 @@ describe Assignment do
 
         context 'that is not past due' do
           it 'returns an empty array' do
-            @section_due_date.update_attributes(due_date: 1.days.from_now)
+            @section_due_date.update(due_date: 1.days.from_now)
 
             expect(@assignment.section_names_past_due_date).to eq []
           end
@@ -1282,7 +1282,7 @@ describe Assignment do
         context 'where both are past due' do
           it 'returns an array with both section names' do
             @section_due_dates.each do |section_due_date|
-              section_due_date.update_attributes(due_date: 1.days.ago)
+              section_due_date.update(due_date: 1.days.ago)
             end
 
             expect(@assignment.section_names_past_due_date)
@@ -1292,8 +1292,8 @@ describe Assignment do
 
         context 'where one is past due' do
           it 'returns an array with the name of that section' do
-            @section_due_dates.first.update_attributes(due_date: 1.days.ago)
-            @section_due_dates.last.update_attributes(due_date: 1.days.from_now)
+            @section_due_dates.first.update(due_date: 1.days.ago)
+            @section_due_dates.last.update(due_date: 1.days.from_now)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section_names.first]
@@ -1303,7 +1303,7 @@ describe Assignment do
         context 'where neither is past due' do
           it 'returns an empty array' do
             @section_due_dates.each do |section_due_date|
-              section_due_date.update_attributes(due_date: 1.days.from_now)
+              section_due_date.update(due_date: 1.days.from_now)
             end
 
             expect(@assignment.section_names_past_due_date).to eq []

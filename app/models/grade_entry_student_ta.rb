@@ -42,14 +42,14 @@ class GradeEntryStudentTa < ApplicationRecord
       grade_entry_form.grade_entry_students.joins(:user).pluck('users.user_name', :id)
     ]
 
-    result = MarkusCSV.parse(csv_data.read) do |row|
-      raise CSVInvalidLineError if row.empty?
+    result = MarkusCsv.parse(csv_data.read) do |row|
+      raise CsvInvalidLineError if row.empty?
       grade_entry_student_id = grade_entry_students[row.first]
-      raise CSVInvalidLineError if grade_entry_student_id.nil?
+      raise CsvInvalidLineError if grade_entry_student_id.nil?
       row.drop(1).each do |ta_user_name|
         next if ta_user_name.blank?
         ta_id = tas[ta_user_name]
-        raise CSVInvalidLineError if ta_id.nil?
+        raise CsvInvalidLineError if ta_id.nil?
         new_mappings << { grade_entry_student_id: grade_entry_student_id, ta_id: ta_id }
       end
     end

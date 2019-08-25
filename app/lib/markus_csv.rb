@@ -1,6 +1,6 @@
 require 'csv'
 
-class MarkusCSV
+class MarkusCsv
   MAX_INVALID_LINES = 10
   INVALID_LINE_SEP = ' - '
 
@@ -16,7 +16,7 @@ class MarkusCSV
 
   # Performs an action for each object in a collection represented by
   # a CSV string. 'input' is the input string and parse_obj is a block
-  # which takes a line and performs an action, or raises CSVInvalidLineError.
+  # which takes a line and performs an action, or raises CsvInvalidLineError.
   # Returns a result hash, containing a success message with the number of
   # successful rows parsed, as well as an error message, consisting of one
   # of the following:
@@ -29,16 +29,16 @@ class MarkusCSV
     header_count = options.delete(:header_count) || 0
     begin
       if options[:encoding]
-        input = input.utf8_encode(options[:encoding])
+        input = input.encode(Encoding::UTF_8, options[:encoding])
       end
       CSV.parse(input, options) do |row|
         begin
           parse_obj.call(row)
           valid_line_count += 1
-        rescue CSVInvalidLineError => e
+        rescue CsvInvalidLineError => e
           # append individual error messages to each entry
           line = row.join(',')
-          unless e.message.blank? || e.message == 'CSVInvalidLineError'
+          unless e.message.blank? || e.message == 'CsvInvalidLineError'
             line.concat(" (#{e.message})")
           end
           invalid_lines << line

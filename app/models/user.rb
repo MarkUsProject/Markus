@@ -173,9 +173,9 @@ class User < ApplicationRecord
       user_columns[section_name_i] = :section_id # becomes foreign key
     end
 
-    parsed = MarkusCSV.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
+    parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
       next if row.empty?
-      raise CSVInvalidLineError if user_names.include?(row[user_name_i])
+      raise CsvInvalidLineError if user_names.include?(row[user_name_i])
       if row.size < user_columns.size
         row.fill(nil, row.size...user_columns.size)
       end
@@ -194,7 +194,7 @@ class User < ApplicationRecord
       # we should not trust the rows processed before finding it was malformed
       users.clear
     else
-      parsed[:valid_lines] = '' # reset the value from MarkusCSV#parse, use import's return instead
+      parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
     end
 
     begin
@@ -208,10 +208,10 @@ class User < ApplicationRecord
         if parsed[:invalid_lines].blank?
           parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
         else
-          parsed[:invalid_lines] += MarkusCSV::INVALID_LINE_SEP # concat to invalid_lines from MarkusCSV#parse
+          parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
         end
         parsed[:invalid_lines] +=
-          imported.failed_instances.map { |f| "#{f[:user_name]}" }.join(MarkusCSV::INVALID_LINE_SEP)
+          imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
       end
       unless imported.ids.empty?
         parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)

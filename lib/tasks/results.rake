@@ -52,8 +52,8 @@ namespace :markus do
       default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
       rubric_criteria.each do |rubric_criteria|
         rc = RubricCriterion.new
-        rc.update_attributes(rubric_criteria)
-        rc.update_attributes(default_levels)
+        rc.update(rubric_criteria)
+        rc.update(default_levels)
         rc.assignment = a1
         rc.save
       end

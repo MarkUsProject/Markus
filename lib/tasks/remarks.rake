@@ -25,8 +25,7 @@ namespace :db do
           remark_request: 'Please remark my assignment.',
           remark_request_timestamp: Time.zone.now)
 
-        submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:incomplete])
+        submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
       end
     end
 
@@ -52,7 +51,7 @@ namespace :db do
       result.save
     end
 
-    remark_submission.remark_result.update_attributes(
+    remark_submission.remark_result.update(
       marking_state: Result::MARKING_STATES[:complete],
       released_to_students: true)
   end

@@ -19,7 +19,7 @@ class ExtensionsController < ApplicationController
   def update
     params = extension_params
     extension = Extension.find(params[:id])
-    if extension&.update_attributes(grouping_id: params[:grouping_id],
+    if extension&.update(grouping_id: params[:grouping_id],
                                     time_delta: duration_from_params,
                                     apply_penalty: params[:penalty],
                                     note: params[:note])

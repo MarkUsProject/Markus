@@ -56,7 +56,7 @@ class Result < ApplicationRecord
   # Warning: this does not check if the +assignment+ passed as an argument is actually
   # the one associate with this result.
   def update_total_mark(assignment: nil)
-    update_attributes(total_mark: get_total_mark(assignment: assignment))
+    update(total_mark: get_total_mark(assignment: assignment))
   end
 
   # Calculate the total mark for this submission

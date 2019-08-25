@@ -97,7 +97,7 @@ class NotesController < ApplicationController
   end
 
   def update
-    if @note.update_attributes(notes_params)
+    if @note.update(notes_params)
       respond_with @note
     else
       render 'edit', formats: [:html], handlers: [:erb]

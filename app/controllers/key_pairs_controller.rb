@@ -152,7 +152,7 @@ class KeyPairsController < ApplicationController
     @key_pair = KeyPair.find(params[:id])
 
     respond_to do |format|
-      if @key_pair.update_attributes(key_pair_params)
+      if @key_pair.update(key_pair_params)
         flash_message(:success, t('key_pairs.update.success'))
         format.html do
           redirect_to @key_pair

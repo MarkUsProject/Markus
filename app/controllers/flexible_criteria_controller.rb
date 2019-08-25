@@ -5,7 +5,7 @@ class FlexibleCriteriaController < ApplicationController
   def download
     @assignment = Assignment.find(params[:assignment_id])
     criteria = @assignment.get_criteria(:all, :flexible)
-    file_out = MarkusCSV.generate(criteria) do |criterion|
+    file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name, criterion.max_mark, criterion.description]
     end
     send_data(file_out,
@@ -20,7 +20,7 @@ class FlexibleCriteriaController < ApplicationController
     encoding = params[:encoding]
     if request.post? && !file.blank?
       FlexibleCriterion.transaction do
-        result = MarkusCSV.parse(file.read, encoding: encoding) do |row|
+        result = MarkusCsv.parse(file.read, encoding: encoding) do |row|
           next if CSV.generate_line(row).strip.empty?
           FlexibleCriterion.create_or_update_from_csv_row(row, @assignment)
         end

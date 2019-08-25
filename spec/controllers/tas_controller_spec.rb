@@ -97,7 +97,7 @@ describe TasController do
       # parse header object to check for the right content type
       it 'returns text/csv type' do
         get :download, format: 'csv'
-        expect(response.content_type).to eq 'text/csv'
+        expect(response.media_type).to eq 'text/csv'
       end
     end
     context 'yml' do
@@ -140,7 +140,7 @@ describe TasController do
 
       it 'returns text/yaml type' do
         get :download, format: 'yml'
-        expect(response.content_type).to eq 'text/yaml'
+        expect(response.media_type).to eq 'text/yaml'
       end
     end
   end

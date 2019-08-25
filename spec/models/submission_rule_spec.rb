@@ -100,19 +100,19 @@ describe SubmissionRule do
 
       context 'and Assignment Due Date is in the past' do
         before :each do
-          assignment.update_attributes!(due_date: 2.days.ago)
+          assignment.update!(due_date: 2.days.ago)
         end
 
         context 'and Section Due Date is in the past' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.ago)
+            section_due_date.update!(due_date: 1.day.ago)
           end
           include_examples 'due_date_calculations', true, true
         end
 
         context 'and Section Due Date is in the future' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.from_now)
+            section_due_date.update!(due_date: 1.day.from_now)
           end
           include_examples 'due_date_calculations', true, false
         end
@@ -120,19 +120,19 @@ describe SubmissionRule do
 
       context 'and Assignment Due Date is in the future' do
         before :each do
-          assignment.update_attributes!(due_date: 2.days.from_now)
+          assignment.update!(due_date: 2.days.from_now)
         end
 
         context 'and Section Due Date is in the past' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.ago)
+            section_due_date.update!(due_date: 1.day.ago)
           end
           include_examples 'due_date_calculations', false, true
         end
 
         context 'and Section Due Date is in the future' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.from_now)
+            section_due_date.update!(due_date: 1.day.from_now)
           end
           include_examples 'due_date_calculations', false, false
         end
@@ -142,19 +142,19 @@ describe SubmissionRule do
       let(:assignment) { create(:assignment, section_due_dates_type: false) }
       context 'and Assignment Due Date is in the past' do
         before :each do
-          assignment.update_attributes!(due_date: 2.days.ago)
+          assignment.update!(due_date: 2.days.ago)
         end
 
         context 'and Section Due Date is in the past' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.ago)
+            section_due_date.update!(due_date: 1.day.ago)
           end
           include_examples 'due_date_calculations', true, true, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.from_now)
+            section_due_date.update!(due_date: 1.day.from_now)
           end
           include_examples 'due_date_calculations', true, true, section_enabled: false
         end
@@ -162,19 +162,19 @@ describe SubmissionRule do
 
       context 'and Assignment Due Date is in the future' do
         before :each do
-          assignment.update_attributes!(due_date: 2.days.from_now)
+          assignment.update!(due_date: 2.days.from_now)
         end
 
         context 'and Section Due Date is in the past' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.ago)
+            section_due_date.update!(due_date: 1.day.ago)
           end
           include_examples 'due_date_calculations', false, false, section_enabled: false
         end
 
         context 'and Section Due Date is in the future' do
           before :each do
-            section_due_date.update_attributes!(due_date: 1.day.from_now)
+            section_due_date.update!(due_date: 1.day.from_now)
           end
           include_examples 'due_date_calculations', false, false, section_enabled: false
         end

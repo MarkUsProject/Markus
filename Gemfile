@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails'
+gem 'rails', '~> 6.0.0'
 gem 'sprockets'
 
 # Models and database interactions
@@ -29,7 +29,6 @@ gem 'webpacker'
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'resque'
-gem 'redis-rails'
 
 # Authorization
 gem 'action_policy'
@@ -41,7 +40,7 @@ gem 'histogram'
 # Internationalization
 gem 'i18n'
 gem 'i18n-js'
-gem 'rails-i18n'
+gem 'rails-i18n', '~> 6.0.0'
 
 # Exam template requirements
 gem 'combine_pdf'

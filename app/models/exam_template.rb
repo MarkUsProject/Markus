@@ -105,7 +105,7 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPDFJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
+    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)
@@ -149,7 +149,7 @@ class ExamTemplate < ApplicationRecord
           group_name: "#{self.name}_paper_#{exam_num}",
           repo_name: "#{self.name}_paper_#{exam_num}"
         )
-        split_page.update_attributes(status: 'FIXED', exam_page_number: page_num, group: group)
+        split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
         # This creates both a new grouping and a new folder in the group repository
         # when a new group is entered.
         Grouping.find_or_create_by(

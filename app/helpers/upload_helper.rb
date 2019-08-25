@@ -19,7 +19,7 @@ module UploadHelper
       {
         type: '.yml',
         contents: YAML.safe_load(
-          upload_file.utf8_encode(encoding),
+          upload_file.read.encode(Encoding::UTF_8, encoding),
           [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone],
           [],
           true # Allow aliases in YML file

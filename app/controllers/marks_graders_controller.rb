@@ -94,7 +94,7 @@ class MarksGradersController < ApplicationController
                       .group_by { |x| x[0] }
                       .to_a
 
-    file_out = MarkusCSV.generate(students) do |student, graders|
+    file_out = MarkusCsv.generate(students) do |student, graders|
       [student] + graders.map { |x| x[1] }
     end
 

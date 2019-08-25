@@ -1298,7 +1298,7 @@ class Assignment < ApplicationRecord
       end
       map.to_yaml
     when 'csv'
-      MarkusCSV.generate(assignments) do |assignment|
+      MarkusCsv.generate(assignments) do |assignment|
         DEFAULT_FIELDS.map do |f|
           assignment.send(f)
         end
@@ -1309,7 +1309,7 @@ class Assignment < ApplicationRecord
   def self.upload_assignment_list(file_format, assignment_data)
     case file_format
     when 'csv'
-      result = MarkusCSV.parse(assignment_data) do |row|
+      result = MarkusCsv.parse(assignment_data) do |row|
         assignment = self.find_or_create_by(short_identifier: row[0], repository_folder: row[0])
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
@@ -1320,7 +1320,7 @@ class Assignment < ApplicationRecord
           assignment.unlimited_tokens = false
         end
         assignment.update(attrs)
-        raise CSVInvalidLineError unless assignment.valid?
+        raise CsvInvalidLineError unless assignment.valid?
       end
       result
     when 'yml'

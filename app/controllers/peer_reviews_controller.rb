@@ -147,7 +147,7 @@ class PeerReviewsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     naming_map = PeerReview.get_mappings_for assignment
 
-    file_out = MarkusCSV.generate(naming_map) do |reviewee, reviewers|
+    file_out = MarkusCsv.generate(naming_map) do |reviewee, reviewers|
       [reviewee] + reviewers
     end
 

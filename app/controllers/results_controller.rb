@@ -682,8 +682,7 @@ class ResultsController < ApplicationController
   end
 
   def update_overall_comment
-    Result.find(params[:id]).update_attributes(
-      overall_comment: params[:result][:overall_comment])
+    Result.find(params[:id]).update(overall_comment: params[:result][:overall_comment])
     flash_message :success,
                   t('flash.actions.update.success', resource_name: Result.human_attribute_name(:overall_comment))
     head :ok
@@ -695,7 +694,7 @@ class ResultsController < ApplicationController
       head :bad_request
     else
       @submission = Submission.find(params[:id])
-      @submission.update_attributes(
+      @submission.update(
         remark_request: params[:submission][:remark_request],
         remark_request_timestamp: Time.zone.now
       )
@@ -707,10 +706,8 @@ class ResultsController < ApplicationController
           @submission.make_remark_result
           @submission.non_pr_results.reload
         end
-        @submission.remark_result.update_attributes(
-          marking_state: Result::MARKING_STATES[:incomplete])
-        @submission.get_original_result.update_attributes(
-          released_to_students: false)
+        @submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
+        @submission.get_original_result.update(released_to_students: false)
         render js: 'location.reload();'
       else
         head :bad_request
@@ -723,8 +720,7 @@ class ResultsController < ApplicationController
     submission = Submission.find(params[:submission_id])
 
     submission.remark_result.destroy
-    submission.get_original_result.update_attributes(
-      released_to_students: true)
+    submission.get_original_result.update(released_to_students: true)
 
     redirect_to controller: 'results',
                 action: 'view_marks',

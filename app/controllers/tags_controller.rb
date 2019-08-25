@@ -84,7 +84,7 @@ class TagsController < ApplicationController
 
     case params[:format]
     when 'csv'
-      output = MarkusCSV.generate(tags) do |tag_data|
+      output = MarkusCsv.generate(tags) do |tag_data|
         tag_data
       end
       format = 'text/csv'

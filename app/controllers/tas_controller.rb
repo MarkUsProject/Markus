@@ -45,7 +45,7 @@ class TasController < ApplicationController
     tas = Ta.order(:user_name)
     case params[:format]
     when 'csv'
-      output = MarkusCSV.generate(tas) do |ta|
+      output = MarkusCsv.generate(tas) do |ta|
         Ta::CSV_UPLOAD_ORDER.map do |field|
           ta.send(field)
         end

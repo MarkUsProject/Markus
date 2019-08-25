@@ -62,8 +62,7 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
 
-    @annotation_category.update_attributes(annotation_category_params)
-    if @annotation_category.save
+    if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
     else
       flash_message(:error, @annotation_category.errors.full_messages)
@@ -72,7 +71,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
-    @annotation_text.update_attributes(annotation_text_params)
+    @annotation_text.update(annotation_text_params)
     @annotation_text.last_editor_id = current_user.id
     if @annotation_text.save
       flash_now(:success, t('annotation_categories.update.success'))
@@ -84,7 +83,7 @@ class AnnotationCategoriesController < ApplicationController
     if request.post?
       # Attempt to add Annotation Text
       @annotation_text = AnnotationText.new
-      @annotation_text.update_attributes(annotation_text_params)
+      @annotation_text.update(annotation_text_params)
       @annotation_text.annotation_category = @annotation_category
       @annotation_text.creator_id = current_user.id
       @annotation_text.last_editor_id = current_user.id
@@ -144,7 +143,7 @@ class AnnotationCategoriesController < ApplicationController
     case params[:format]
       when 'csv'
         ac = prepare_for_conversion(@annotation_categories)
-        file_out = MarkusCSV.generate(
+        file_out = MarkusCsv.generate(
           ac) do |annotation_category_name, annotation_texts|
           # csv format is annotation_category.name, annotation_text.content
           annotation_texts.unshift(annotation_category_name)
@@ -174,7 +173,7 @@ class AnnotationCategoriesController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = MarkusCSV.parse(data[:file].read, encoding: data[:encoding]) do |row|
+        result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
           next if CSV.generate_line(row).strip.empty?
           AnnotationCategory.add_by_row(row, @assignment, current_user)
         end
@@ -186,7 +185,7 @@ class AnnotationCategoriesController < ApplicationController
         data[:contents].each do |category, texts|
           AnnotationCategory.add_by_row([category] + texts, @assignment, current_user)
           successes += 1
-        rescue CSVInvalidLineError
+        rescue CsvInvalidLineError
           flash_message(:error, t('annotation_categories.upload.error',
                                   annotation_category: key, annotation_line: annotation_line))
           next

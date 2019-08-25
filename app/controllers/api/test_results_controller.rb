@@ -115,9 +115,7 @@ module Api
                             .test_results.find(params[:id])
 
       # Update filename if provided
-      test_result.update_attributes(test_result_params)
-
-      if test_result.save
+      if test_result.update(test_result_params)
         # Everything went fine; report success
         render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

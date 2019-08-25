@@ -1,4 +1,4 @@
-describe SplitPDFJob do
+describe SplitPdfJob do
   let (:admin) { create(:admin) }
   let (:exam_template) { create(:exam_template_midterm) }
   
@@ -20,7 +20,7 @@ describe SplitPDFJob do
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPDFJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
 
     expect(Group.count).to eq 20
     expect(split_pdf_log.num_groups_in_complete + split_pdf_log.num_groups_in_incomplete).to eq 20
@@ -41,7 +41,7 @@ describe SplitPDFJob do
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPDFJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_complete).to eq 1
@@ -61,7 +61,7 @@ describe SplitPDFJob do
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPDFJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
@@ -86,7 +86,7 @@ describe SplitPDFJob do
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPDFJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
@@ -111,7 +111,7 @@ describe SplitPDFJob do
     )
     FileUtils.cp "db/data/scanned_exams/#{filename}",
                  File.join(exam_template.base_path, 'raw', "raw_upload_#{split_pdf_log.id}.pdf")
-    SplitPDFJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
+    SplitPdfJob.perform_now(exam_template, '', split_pdf_log, filename, admin)
 
     expect(Group.count).to eq 1
     expect(split_pdf_log.num_groups_in_incomplete).to eq 1
