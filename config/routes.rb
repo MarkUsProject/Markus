@@ -14,7 +14,11 @@ Rails.application.routes.draw do
           put 'update_by_username'
         end
       end
-      resources :grade_entry_forms, only: [:show]
+      resources :grade_entry_forms, only: [:show, :index] do
+        member do
+          put 'update_grades'
+        end
+      end
       resources :assignments, except: [:new, :edit] do
         resources :groups, except: [:new, :edit] do
           collection do
@@ -37,6 +41,9 @@ Rails.application.routes.draw do
             put 'update_marks'
             put 'update_marking_state'
           end
+        end
+        member do
+          get 'grades_summary'
         end
       end
       resources :main_api
