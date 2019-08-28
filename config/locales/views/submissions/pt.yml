@@ -14,6 +14,7 @@ pt:
       this_revision: "Coletar e avaliar essa revisão"
       override_existing_html: "UPDATE ME"
     errors:
+      could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
       no_submission: "%{group_name} não tem submissões"
       not_complete: "Não pode liberar resultado para %{group_name}: o estado da avaliação não está completo"
       not_complete_unrelease: "Não é possível esconder o resultado para %{group_name}: a avaliação não está completa"
@@ -49,6 +50,7 @@ pt:
                                 Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
 
     # Miscellaneous
+    cannot_display: "Conteudo binário: Use o botao de download para ver o arquivo!"
     commit_date: "Data de envio"
     detailed_csv_report: "Relatório detalhado CSV"
     grace_credits_used: "Créditos de tolerância usados"
@@ -63,4 +65,5 @@ pt:
     repo_list: "Lista de repositórios"
     repo_checkout_file: "Comando para transferir projetos"
     status: "Status"
+    successfully_changed: "%{changed} resultados atualizados."
     unrelease_marks: "Esconder notas"

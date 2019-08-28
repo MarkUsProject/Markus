@@ -1,4 +1,5 @@
 es:
+  uncommitted_changes_warning: "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de esta página?"
   optional: "Opcional"
   required_fields: "Campos requeridos"
 

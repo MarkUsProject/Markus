@@ -1,4 +1,5 @@
 pt:
+  uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
   optional: "opcional"
   required_fields: "Campos exigidos"
 

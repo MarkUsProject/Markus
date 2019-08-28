@@ -3,3 +3,7 @@ en:
     help_message: "Click on an annotation category to add annotations."
     last_edited_by: "Last Edited By:"
     text: "Text"
+
+    download_submission_file:
+      begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+      end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"

@@ -1,18 +1,6 @@
 en:
     # app/views/assignments/
     assignment:
-        group:
-            assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
-            grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
-            clone_warning:
-                no_active_students: "Group '%{group}' not cloned: zero active students left"
-                no_member: "Member '%{member}' not added to Group '%{group}': %{error}"
-                other: "Group '%{group}' not cloned: %{error}"
-        starter_code:
-            description: "Starter code files you upload will be automatically added to every new group's repositories."
-            enqueued: "Starter code files will be uploaded to existing group repositories in the background."
-            overwrite: "Overwrite group files"
-            title: "Starter Code"
         start_peer_review: "Peer Review"
         peer_review_results: "Peer Review Results"
         your_reviews: "Your Reviews"
@@ -45,11 +33,9 @@ en:
         upload:
             header: "Upload Peer Review CSV"
 
-    add_new:            "Add New File"
     peer_reviews:       "Peer reviews"
 
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
-    uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
 
     csv:
       bad_cell: "Error: the csv contains the following invalid cells: %{bad_cells}"
@@ -69,15 +55,8 @@ en:
     browse_submissions:
       review_state:         "Review State"
 
-    groups:
-      csv:
-        could_not_find_source: "Could not find source assignment for cloning groups"
-        could_not_find_target: "Could not find target assignment for cloning groups"
-
     results:
       review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
-      successfully_changed: "Successfully updated %{changed} results"
-      could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
 
     #Sutdent's View (student)
     student:
@@ -95,32 +74,13 @@ en:
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
 
-    update_files:
-      success:  "Your changes have been made."
-
     submission_file:
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "No access to submission file with id #%{submission_file_id}."
-        binary_file_message: "Binary content: Use download button to view file!"
 
     feedback_file:
       error:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
-
-    criteria_csv_error:
-      weight_not_number: "weight is not a number."
-
-    criteria:
-      upload:
-        error:
-          invalid_format: "The following criteria had invalid format:"
-        empty_error:     "No criteria were found in the provided file."
-      errors:
-        messages:
-          released_marks:         "Cannot update criteria for an assignment with released marks."
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

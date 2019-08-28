@@ -31,6 +31,10 @@ pt:
     modifying_visibility: "Modificando a visibilidade"
     modifying_visibility_help: "Os ícones na coluna mais à direita sob a visibilidade representam o seguinte:"
 
+    errors:
+      invalid_format: "Os seguintes critérios deveriam formato inválido:"
+      released_marks: "TODO"
+
     # Miscellaneous
     description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
     max_mark_short: "Nota"

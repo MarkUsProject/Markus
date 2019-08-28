@@ -2,8 +2,15 @@ es:
   groups:
     add_all_groups: "Añadir todos los grupos"
     another_assignment_group: "Usar los grupos de otro proyecto"
+    assign_over_limit: "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo %{group}."
     assigned_students: "Asignados"
     assignment_to_use: "¿Qué grupos le gustaría usar?"
+    clone_warning:
+      could_not_find_source: "No se pudo encontrar el proyecto de origen para clonar los grupos"
+      could_not_find_target: "No se pudo encontrar el proyecto de destino para clonar los grupos"
+      no_active_students: "UPDATE ME '%{group}'"
+      no_member: "UPDATE ME '%{member}''%{group}': %{error}"
+      other: "UPDATE ME '%{group}': %{error}"
     could_not_delete: "No se pudieron eliminar los siguientes grupos - notese que los grupos no pueden
                       ser eliminados para este proyecto si una entrega ya ha sido enviada para los
                       mismos."
@@ -12,6 +19,7 @@ es:
                     asociada con el mismo. ¿Desea continuar?"
     delete_groups_linked: "Esto eliminará todos los grupos relacionados a este proyecto. ¿Desea continuar?"
     empty: "Grupo vacío"
+    grace_day_over_limit: "Ha asignado uno o más estudiantes que tienen menos créditos para el período de aplazamiento de gracia que la cantidad ya utilizada por el grupo %{group}."
     group_name_already_in_use: "Este nombre ya existe en este proyecto."
     help: "Administrar los grupos de los estudiantes. Usted puede crear nuevos grupos y
           manualmente añadir y remover estudiantes de los mismos."

@@ -130,16 +130,8 @@ class RubricCriterion < Criterion
     # Create a new RubricCriterion
     criterion = RubricCriterion.new
     criterion.name = name
-    # Check max_mark is not a string.
-    begin
-      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
-    rescue ArgumentError
-      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
-    rescue TypeError
-      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
-    rescue NoMethodError
-      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
-    end
+    criterion.max_mark = criterion_yml[1]['max_mark']
+
     # Next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]

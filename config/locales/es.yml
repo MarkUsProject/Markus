@@ -1,21 +1,6 @@
 es:
     # app/views/assignments/
     assignment:
-        group:
-            assign_over_limit:            "Ha sobrepasado el límite máximo de alumnos que pueden ser asignados al grupo
-                                           %{group}"
-            grace_day_over_limit:         "Ha asignado uno o más estudiantes que tienen menos créditos para el período
-                                           de aplazamiento de gracia que la cantidad ya utilizada por el grupo
-                                           %{group}."
-            clone_warning:
-                no_active_students: "UPDATE ME '%{group}'"
-                no_member:          "UPDATE ME '%{member}''%{group}': %{error}"
-                other:              "UPDATE ME '%{group}': %{error}"
-        starter_code:
-            description: "UPDATE ME."
-            enqueued: "UPDATE ME."
-            overwrite: "UPDATE ME"
-            title: "Código Inicial"
         start_peer_review:                "Revisión de Compañeros"
         peer_review_results:              "Resultados para la Revisión de Compañeros"
         your_reviews:                     "Sus Revisiones"
@@ -49,12 +34,9 @@ es:
         upload:
             header:      "Subir la Revisión de Compañeros en formato CSV"
 
-    add_new:                     "Añadir Nuevo Archivo"
     peer_reviews:                "Revisiones de Compañeros"
 
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
-    uncommitted_changes_warning:         "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de
-                                          esta página?"
 
     csv:
       repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
@@ -81,16 +63,9 @@ es:
     browse_submissions:
       review_state:                         "Estado de la Revisión"
 
-    groups:
-      csv:
-        could_not_find_source:          "No se pudo encontrar el proyecto de origen para clonar los grupos"
-        could_not_find_target:          "No se pudo encontrar el proyecto de destino para clonar los grupos"
-
     results:
       review_title:                    "%{assignment_name} Revisión de pares para %{group_name} –
                                         revisado por %{reviewer_name}"
-      successfully_changed:            "%{changed} resultados han sido actualizados exitosamente"
-      could_not_find_file:             "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
 
     #Sutdent's View (student)
     student:
@@ -110,32 +85,13 @@ es:
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
 
-    update_files:
-      success: "Sus cambios han sido realizados."
-
     submission_file:
-      download:
-        begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
-        end_annotation:   "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
       error:
         no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
-        binary_file_message: "Contenido binario: Use el botón de descarga para ver el archivo!"
 
     feedback_file:
       error:
         no_access:        "No existe acceso al archivo de retroalimentación con id #%{feedback_file_id}."
-
-    criteria_csv_error:
-      weight_not_number: "el peso no es un número."
-
-    criteria:
-      upload:
-        error:
-          invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
-        empty_error:     "No se encontró ningún criterio en el archivo provisto."
-      errors:
-        messages:
-          released_marks:         "TODO"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

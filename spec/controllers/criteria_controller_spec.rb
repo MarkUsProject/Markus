@@ -971,7 +971,7 @@ describe CriteriaController do
         expect(@assignment.get_criteria.map(&:name))
           .not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('criteria.upload.error.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
+          .to eq([I18n.t('criteria.errors.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
       end
 
       it 'does not create criteria with an invalid mark' do

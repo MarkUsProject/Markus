@@ -104,7 +104,7 @@ class StarterCodeFileManager extends React.Component {
   render() {
     return (
       <div>
-        <p>{I18n.t('assignment.starter_code.description')}</p>
+        <p>{I18n.t('assignments.starter_code.description')}</p>
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('submissions.no_files_available')}

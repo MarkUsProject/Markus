@@ -31,6 +31,10 @@ es:
     modifying_visibility: "Modificando la visibilidad"
     modifying_visibility_help: "Los íconos en la columna derecha debajo de visibilidad representan lo siguiente:"
 
+    errors:
+      invalid_format: "Los siguientes criterios de calificación tenían un formato inválido:"
+      released_marks: "TODO"
+
     # Miscellaneous
     description_hint: "Usted puede usar etiquetas HTML simples en este campo.
       Guarde los cambios para ver una vista preliminar."

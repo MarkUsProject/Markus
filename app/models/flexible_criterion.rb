@@ -91,16 +91,8 @@ class FlexibleCriterion < Criterion
     # Create a new RubricCriterion
     criterion = FlexibleCriterion.new
     criterion.name = name
-    # Check max_mark is not a string.
-    begin
-      criterion.max_mark = Float(criterion_yml[1]['max_mark'])
-    rescue ArgumentError
-      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
-    rescue TypeError
-      raise RuntimeError.new(I18n.t('criteria_csv_error.weight_not_number'))
-    rescue NoMethodError
-      raise RuntimeError.new(I18n.t('criteria.upload.empty_error'))
-    end
+    criterion.max_mark = criterion_yml[1]['max_mark']
+
     # Set the description to the one given, or to an empty string if
     # a description is not given.
     criterion.description =

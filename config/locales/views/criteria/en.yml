@@ -32,6 +32,10 @@ en:
     modifying_visibility: "Modifying visibility"
     modifying_visibility_help: "The icons on the rightmost column under visibility represent the following:"
 
+    errors:
+      invalid_format: "The following criteria had invalid format:"
+      released_marks: "Cannot update criteria for an assignment with released marks."
+
     # Miscellaneous
     description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
     max_mark_short: "Max Mark"
