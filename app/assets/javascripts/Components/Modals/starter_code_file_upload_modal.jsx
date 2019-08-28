@@ -49,7 +49,7 @@ class StarterCodeFileUploadModal extends React.Component {
                   checked={this.state.overwrite}
                   name={'overwrite'}
                   onChange={this.handleOverwriteChange}
-                /> {I18n.t('assignment.starter_code.overwrite')}
+                /> {I18n.t('assignments.starter_code.overwrite')}
               </label>
             </div>
             <div className={'modal-container'}>

@@ -152,7 +152,7 @@ class RawFileManager extends RawFileBrowser {
               role="button"
             >
               <i className="fa fa-add-file-o" aria-hidden="true"/>
-              &nbsp;{I18n.t('add_new')}
+              &nbsp;{I18n.t('upload_the', {item: I18n.t('file')})}
             </a>
           </li>
         );
@@ -187,7 +187,7 @@ class RawFileManager extends RawFileBrowser {
             role="button"
           >
             <i className="fa fa-add-file-o" aria-hidden="true"/>
-            &nbsp;{I18n.t('add_new')}
+            &nbsp;{I18n.t('upload_the', {item: I18n.t('file')})}
           </a>
         </li>
       );

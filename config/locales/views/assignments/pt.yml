@@ -23,6 +23,11 @@ pt:
         submission_rules: "UPDATE ME"
     scanned_exam:
       under_review: "Este exame está sendo marcado"
+    starter_code:
+      description: "UPDATE ME."
+      enqueued: "UPDATE ME."
+      overwrite: "UPDATE ME"
+      title: "UPDATE ME"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"

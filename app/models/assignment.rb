@@ -455,7 +455,7 @@ class Assignment < ApplicationRecord
       original_assignment.groupings.each do |g|
         active_student_memberships = g.accepted_student_memberships.select { |m| !m.user.hidden }
         if active_student_memberships.empty?
-          warnings << I18n.t('assignment.group.clone_warning.no_active_students', group: g.group.group_name)
+          warnings << I18n.t('groups.clone_warning.no_active_students', group: g.group.group_name)
           next
         end
         active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
@@ -464,7 +464,7 @@ class Assignment < ApplicationRecord
         grouping.assignment_id = self.id
         grouping.admin_approved = g.admin_approved
         unless grouping.save
-          warnings << I18n.t('assignment.group.clone_warning.other',
+          warnings << I18n.t('groups.clone_warning.other',
                              group: g.group.group_name, error: grouping.errors.messages)
           next
         end
@@ -477,7 +477,7 @@ class Assignment < ApplicationRecord
             membership.membership_status = m.membership_status
             unless grouping.memberships << membership # this saves the membership as a side effect, i.e. can return false
               grouping.memberships.delete(membership)
-              warnings << I18n.t('assignment.group.clone_warning.no_member',
+              warnings << I18n.t('groups.clone_warning.no_member',
                                  member: m.user.user_name, group: g.group.group_name, error: membership.errors.messages)
             end
           end

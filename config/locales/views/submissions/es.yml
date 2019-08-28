@@ -29,6 +29,7 @@ es:
                                   las Entregas se perderá."
       override_existing_html: "UPDATE ME"
     errors:
+      could_not_find_file: "No se pudo encontrar %{filename} en el repositorio %{repository_name}"
       no_submission: "%{group_name} no tiene entregas"
       not_complete: "No puede publicar los resultados para %{group_name}: el proceso de calificación no ha
                      sido completado."
@@ -93,6 +94,7 @@ es:
                                 antes de realizar la entrega."
 
     # Miscellaneous
+    cannot_display: "Contenido binario: Use el botón de descarga para ver el archivo!"
     commit_date: "Fecha del Commit"
     detailed_csv_report: "Reporte Detallado en formato CSV"
     grace_credits_used: "Créditos de Gracia Usados"
@@ -110,4 +112,5 @@ es:
     repo_checkout_file: "Nueva Copia de Archivo"
     run_tests: "Lanzar pruebas"
     status: "Estado"
+    successfully_changed: "%{changed} resultados han sido actualizados exitosamente"
     unrelease_marks: "Ocultar Notas"

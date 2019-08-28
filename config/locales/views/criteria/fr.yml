@@ -34,6 +34,10 @@ fr:
     modifying_visibility: "Visibilité Modification"
     modifying_visibility_help: "Les icônes sur la colonne de droite sous la visibilité représentent ce qui suit:"
 
+    errors:
+      invalid_format: "Les critères suivants a un format non valide:"
+      released_marks: "TODO"
+
     # Miscellaneous
     description_hint: "Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ.
       Pour un aperçu, sauvegardez."

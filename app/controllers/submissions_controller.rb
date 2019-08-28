@@ -381,7 +381,7 @@ class SubmissionsController < ApplicationController
           end
           if should_commit
             commit_success, commit_msg = commit_transaction(repo, txn)
-            flash_message(:success, I18n.t('update_files.success')) if commit_success
+            flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
             messages << commit_msg
           end
         end
@@ -426,7 +426,7 @@ class SubmissionsController < ApplicationController
 
         if SubmissionFile.is_binary?(file_contents)
           # If the file appears to be binary, display a warning
-          render json: { content: I18n.t('submission_file.error.binary_file_message').to_json, type: 'unknown' }
+          render json: { content: I18n.t('submissions.cannot_display').to_json, type: 'unknown' }
         else
           render json: { content: file_contents.to_json, type: file.get_file_type }
         end
@@ -563,8 +563,8 @@ class SubmissionsController < ApplicationController
         assignment.update_remark_request_count
 
         # These flashes don't get rendered. Find another way to display?
-        flash_now(:success, I18n.t('results.successfully_changed',
-                                 changed: changed))
+        flash_now(:success, I18n.t('submissions.successfully_changed',
+                                   changed: changed))
         if release
           MarkusLogger.instance.log(
             'Marks released for assignment' +

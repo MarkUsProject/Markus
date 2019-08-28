@@ -1,18 +1,6 @@
 pt:
     # app/views/assignments/
     assignment:
-        group:
-            assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}"
-            grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto"
-            clone_warning:
-                no_active_students: "UPDATE ME '%{group}'"
-                no_member: "UPDATE ME '%{member}''%{group}': %{error}"
-                other: "UPDATE ME '%{group}': %{error}"
-        starter_code:
-            description: "UPDATE ME."
-            enqueued: "UPDATE ME."
-            overwrite: "UPDATE ME"
-            title: "UPDATE ME"
         start_peer_review: "Revisão de pares"
         peer_review_results: "Resultados de Avaliação pelos Pares"
         your_reviews: "Os seus comentários"
@@ -45,11 +33,9 @@ pt:
         upload:
             header: "Carregar CSV Peer Review"
 
-    add_new:            "Adicionar novo"
     peer_reviews:       "Avaliações pelos pares"
 
     csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
-    uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
 
     csv:
       repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
@@ -69,15 +55,8 @@ pt:
     browse_submissions:
       review_state:         "Estado de revisão"
 
-    groups:
-      csv:
-        could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
-        could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
-
     results:
       review_title: "Revisão %{assignment_name} : %{group_name}"
-      successfully_changed: "%{changed} resultados atualizados"
-      could_not_find_file: "Não foi possível encontrar %{filename} no repositório %{repository_name}"
 
     #Sutdent's View (student)
     student:
@@ -94,32 +73,13 @@ pt:
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         empty_file_warning: "UPDATE ME"
 
-    update_files:
-      success:  "As alterações foram feitas."
-
     submission_file:
-      download:
-        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
       error:
         no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
-        binary_file_message: "Conteudo binário: Use o botao de download para ver o arquivo!"
 
     feedback_file:
       error:
         no_access: "Não há accesso para resultado do teste com id #%{feedback_file_id}."
-
-    criteria_csv_error:
-      weight_not_number: "peso não é um número."
-
-    criteria:
-      upload:
-        error:
-          invalid_format: "Os seguintes critérios deveriam formato inválido:"
-        empty_error:     "Nenhum critério foi encontrado no arquivo fornecido."
-      errors:
-        messages:
-          released_marks:         "TODO"
 
     #lib/validators/
     date_validator:

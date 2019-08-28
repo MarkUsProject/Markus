@@ -2,3 +2,7 @@ pt:
   annotations:
     help_message: "Clique em uma categoria de anotação para adicionar anotações."
     last_edited_by: "Última edição por:"
+
+    download_submission_file:
+      begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
+      end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"

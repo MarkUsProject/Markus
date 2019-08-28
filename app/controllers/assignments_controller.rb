@@ -513,7 +513,7 @@ class AssignmentsController < ApplicationController
         end
         if should_commit
           commit_success, commit_msg = commit_transaction(repo, txn)
-          flash_message(:success, I18n.t('update_files.success')) if commit_success
+          flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
           messages << commit_msg
         else
           commit_success = should_commit
@@ -524,7 +524,7 @@ class AssignmentsController < ApplicationController
         if should_commit && commit_success
           if new_files.present?
             UpdateStarterCodeJob.perform_later(@assignment.id, params.fetch(:overwrite, 'false') == 'true')
-            flash_message(:success, t('assignment.starter_code.enqueued'))
+            flash_message(:success, t('assignments.starter_code.enqueued'))
             redirect_back(fallback_location: root_path)
           else
             head :ok

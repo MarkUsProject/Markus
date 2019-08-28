@@ -2,13 +2,21 @@ pt:
   groups:
     add_all_groups: "Adicionar todos os grupos"
     another_assignment_group: "Use grupos de outro projeto"
+    assign_over_limit: "Você indicou mais que o máximo de estudantes para o grupo %{group}."
     assigned_students: "Atribuíds"
     assignment_to_use: "Quais atribuições de grupos você gostaria de usar?"
+    clone_warning:
+      could_not_find_source: "O projeto fonte de onde os grupos serão copiados não foi encontrado"
+      could_not_find_target: "O projeto alvo para o qual os grupos serão copiados não foi encontrado"
+      no_active_students: "UPDATE ME '%{group}'"
+      no_member: "UPDATE ME '%{member}''%{group}': %{error}"
+      other: "UPDATE ME '%{group}': %{error}"
     could_not_delete: "Não foi possível deletar os seguintes grupos - grupos não podem ser deletados para este projeto se já existir algum envio."
     delete: "Deletar este grupo"
     delete_confirm: 'Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?'
     delete_groups_linked: "Isto irá deletar todos os grupos ligados ao projeto. Continuar?"
     empty: "Grupo vazio"
+    grace_day_over_limit: "Você indicou um ou mais estudantes que possuem menos créditos de carência que a quantidade já utilizada pelo grupo %{group} neste projeto."
     group_name_already_in_use: "Já existe um projeto com este nome."
     invalidate_confirm: "Isso irá impedir que o grupo envie mesmo com o número exigido de alunos. Você tem certeza disso?"
     invalid_group_warning: "Seu grupo é atualmente inválido. Você provavelmente não cumpriu o tamanho mínimo do grupo. Você pode não ser capaz de enviar qualquer coisa, e seu trabalho não pode ser classificado, até que você tenha atingido esse mínimo.. "

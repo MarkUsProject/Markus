@@ -1,4 +1,5 @@
 en:
+  uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
   optional: "Optional"
   required_fields: "Required Fields"
 

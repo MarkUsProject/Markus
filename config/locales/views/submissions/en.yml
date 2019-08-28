@@ -16,6 +16,7 @@ en:
                                   WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
       override_existing_html: "Recollect previously collected submissions? <strong>Warning: any previous grading work will be lost.</strong>"
     errors:
+      could_not_find_file: "Could not find %{filename} for group %{group_name}"
       no_submission: "%{group_name} has no submissions"
       not_complete: "Cannot release result for %{group_name}: the marking is not complete."
       not_complete_unrelease: "Cannot unrelease result for %{group_name}: the marking is not complete."
@@ -52,6 +53,7 @@ en:
                                 Make sure you have worked on the most recent files before submitting."
 
     # Miscellaneous
+    cannot_display: "Cannot display this file. Please download it to view."
     commit_date: "Submission Date"
     detailed_csv_report: "Detailed CSV Report"
     grace_credits_used: "Grace Credits Used"
@@ -67,4 +69,5 @@ en:
     repo_checkout_file: "Repository Checkout File"
     run_tests: "Run Tests"
     status: "Status"
+    successfully_changed: "Successfully updated %{changed} results."
     unrelease_marks: "Unrelease Marks"

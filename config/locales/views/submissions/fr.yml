@@ -13,6 +13,7 @@ fr:
       this_revision: "Récupérer et évaluer cette révision"
       override_existing_html: "Recueillir toutes les soumissions.? <strong>Attention : cette action effacera vos annotations et évaluations.</strong>"
     errors:
+      could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
       no_submission: "%{group_name} n'a pas d'envoi"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
       not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
@@ -44,6 +45,7 @@ fr:
                                 Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
 
     # Miscellaneous
+    cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
     commit_date: "Date d'envoi (commit)"
     detailed_csv_report: "Rappost CSV détaillé"
     grace_credits_used: "Utilisation des \"grace credits\""
@@ -58,4 +60,5 @@ fr:
     repo_list: "Liste des dépôts"
     repo_checkout_file: "Commandes pour extraire les projets"
     status: "Statut"
+    successfully_changed: "Les %{changed} résultats ont été mis à jour."
     unrelease_marks: "Cacher les notes"

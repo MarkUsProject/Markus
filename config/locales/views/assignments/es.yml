@@ -63,6 +63,11 @@ es:
                            los integrantes del grupo verán sus créditos de gracia reducidos."
     scanned_exam:
       under_review: "Este examen todavía está en revisión"
+    starter_code:
+      description: "UPDATE ME."
+      enqueued: "UPDATE ME."
+      overwrite: "UPDATE ME"
+      title: "Código Inicial"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"

@@ -38,7 +38,7 @@
 <div id='file_manager'></div>
 
 <aside class='dialog' id='addnew_dialog'>
-  <h2><%= t('add_new') %></h2>
+  <h2><%= t('upload_the', item: t(:file)) %></h2>
 
   <%= form_tag update_files_assignment_submissions_path(@assignment.id),
                { multipart: true, id: 'file_form' } do %>

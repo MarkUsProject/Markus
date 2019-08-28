@@ -115,9 +115,9 @@ class SubmissionFile < ApplicationRecord
       revision = open_repo.get_revision(revision_identifier)
       revision_file = revision.files_at_path(self.path, with_attrs: false)[self.filename]
       if revision_file.nil?
-        raise I18n.t('results.could_not_find_file',
+        raise I18n.t('submissions.errors.could_not_find_file',
                      filename: self.filename,
-                     repository_name: student_group.repository_name)
+                     group_name: student_group.group_name)
       end
       open_repo.download_as_string(revision_file)
     end
@@ -144,13 +144,13 @@ class SubmissionFile < ApplicationRecord
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t('submission_file.download.begin_annotation',
+           result = result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
                id: annot.annotation_number.to_s,
                text: text,
                comment_start: comment_syntax[0],
                comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
-          result = result.concat(I18n.t('submission_file.download.end_annotation',
+          result = result.concat(I18n.t('annotations.download_submission_file.end_annotation',
                id: annot.annotation_number.to_s,
                comment_start: comment_syntax[0],
                comment_end: comment_syntax[1]) + "\n")

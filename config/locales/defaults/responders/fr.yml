@@ -7,6 +7,8 @@ fr:
       update:
         success: "Mise à jour de %{resource_name}."
         error: "Erreur dans la mise à jour de %{resource_name}."
+      update_files:
+        success:  "Les changements ont été enregistrés."
       destroy:
         success: "Supprimé avec succès %{resource_name}."
         error: "Impossible de supprimer %{resource_name}."

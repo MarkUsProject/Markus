@@ -1,18 +1,6 @@
 fr:
     # app/views/assignments/
     assignment:
-        group:
-            assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
-            grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
-            clone_warning:
-                no_active_students: "UPDATE ME '%{group}'"
-                no_member: "UPDATE ME '%{member}''%{group}': %{error}"
-                other: "UPDATE ME '%{group}': %{error}"
-        starter_code:
-            description: "UPDATE ME."
-            enqueued: "UPDATE ME."
-            overwrite: "UPDATE ME"
-            title: "UPDATE ME"
         start_peer_review: "Examen par les pairs"
         peer_review_results: "Examen par les pairs Résultats"
         your_reviews: "Vos avis"
@@ -45,11 +33,9 @@ fr:
         upload:
             header: "Télécharger Peer Review CSV"
 
-    add_new:            "Nouveau"
     peer_reviews:       "Examens par le pairs"
 
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
-    uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
 
     csv:
       repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
@@ -69,15 +55,8 @@ fr:
     browse_submissions:
       review_state:         "Avis Etat"
 
-    groups:
-      csv:
-        could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
-        could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
-
     results:
       review_title: "Avis %{assignment_name} : %{group_name}"
-      successfully_changed: "Les %{changed} résultats ont été mis à jour."
-      could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
 
     #Sutdent's View (student)
     student:
@@ -94,32 +73,13 @@ fr:
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         empty_file_warning: "UPDATE ME"
 
-    update_files:
-      success:  "Les changements ont été enregistrés."
-
     submission_file:
-      download:
-        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
       error:
         no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
-        binary_file_message: "Fichier binaire : utiliser le bouton Télécharger pour voir Binary content: Use download button to view file!"
 
     feedback_file:
       error:
         no_access: "No access to feedback file with id #%{feedback_file_id}."
-
-    criteria_csv_error:
-      weight_not_number: "le coefficient n'est pas un nombre."
-
-    criteria:
-      upload:
-        error:
-          invalid_format: "Les critères suivants a un format non valide:"
-        empty_error:     "Aucun critère n'a été trouvé dans le fichier fourni."
-      errors:
-        messages:
-          released_marks:         "TODO"
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:

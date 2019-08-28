@@ -14,7 +14,7 @@ class CriteriaController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      flash_now(:error, t('criteria.errors.released_marks'))
       head :bad_request
     end
   end
@@ -22,7 +22,7 @@ class CriteriaController < ApplicationController
   def create
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      flash_now(:error, t('criteria.errors.released_marks'))
       head :bad_request
       return
     end
@@ -47,7 +47,7 @@ class CriteriaController < ApplicationController
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      flash_now(:error, t('criteria.errors.released_marks'))
     end
   end
 
@@ -55,7 +55,7 @@ class CriteriaController < ApplicationController
     @criterion = params[:criterion_type].constantize.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      flash_now(:error, t('criteria.errors.released_marks'))
       return
     end
     # Delete all marks associated with this criterion.
@@ -68,7 +68,7 @@ class CriteriaController < ApplicationController
     @criterion = criterion_type.constantize.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
-      flash_now(:error, t('criteria.errors.messages.released_marks'))
+      flash_now(:error, t('criteria.errors.released_marks'))
       head :bad_request
       return
     end
@@ -135,7 +135,7 @@ class CriteriaController < ApplicationController
   def upload
     assignment = Assignment.find(params[:assignment_id])
     if assignment.released_marks.any?
-      flash_message(:error, t('criteria.errors.messages.released_marks'))
+      flash_message(:error, t('criteria.errors.released_marks'))
       redirect_to action: 'index', id: assignment.id
       return
     end
@@ -169,20 +169,18 @@ class CriteriaController < ApplicationController
 
             criterion.assignment_id = assignment.id
             criterion.position = pos
-
-            if criterion.save
-              pos += 1
-              successes += 1
-            else # An error occurred. E.g., both visibility options are false.
-              raise RuntimeError
-            end
-          rescue RuntimeError
+            criterion.save!
+            pos += 1
+            successes += 1
+          rescue ActiveRecord::RecordInvalid # E.g., both visibility options are false.
+            crit_format_errors << criterion_yml[0]
+          rescue RuntimeError # An error occurred.
             crit_format_errors << criterion_yml[0]
           end
         end
         unless crit_format_errors.empty?
           flash_message(:error,
-                        I18n.t('criteria.upload.error.invalid_format') + ' ' +
+                        I18n.t('criteria.errors.invalid_format') + ' ' +
                           crit_format_errors.join(', '))
         end
         if successes > 0

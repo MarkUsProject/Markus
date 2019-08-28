@@ -312,9 +312,9 @@ class GroupsController < ApplicationController
     source_assignment = Assignment.find(params[:clone_assignment_id])
 
     if source_assignment.nil?
-      flash_message(:warning, t('groups.csv.could_not_find_source'))
+      flash_message(:warning, t('groups.clone_warning.could_not_find_source'))
     elsif target_assignment.nil?
-      flash_message(:warning, t('groups.csv.could_not_find_target'))
+      flash_message(:warning, t('groups.clone_warning.could_not_find_target'))
     else
       # Clone the groupings
       clone_warnings = target_assignment.clone_groupings_from(source_assignment.id)
@@ -578,7 +578,7 @@ class GroupsController < ApplicationController
     group_name = grouping.group.group_name
     if assignment.student_form_groups
       if students_in_group > assignment.group_max
-        raise I18n.t('assignment.group.assign_over_limit', group: group_name)
+        raise I18n.t('groups.assign_over_limit', group: group_name)
       end
     end
   end
@@ -610,7 +610,7 @@ class GroupsController < ApplicationController
     # Generate a warning if a member is added to a group and they
     # have fewer grace days credits than already used by that group
     if student.remaining_grace_credits < grouping.grace_period_deduction_single
-      @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit', group: grouping.group.group_name)
+      @warning_grace_day = I18n.t('groups.grace_day_over_limit', group: grouping.group.group_name)
     end
 
     grouping.reload
