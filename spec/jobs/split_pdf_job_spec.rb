@@ -1,4 +1,4 @@
-describe SplitPdfJob do
+xdescribe SplitPdfJob do
   let (:admin) { create(:admin) }
   let (:exam_template) { create(:exam_template_midterm) }
   
