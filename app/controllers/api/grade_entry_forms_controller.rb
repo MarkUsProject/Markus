@@ -70,7 +70,7 @@ module Api
           grade_item = GradeEntryItem.new(**column_params, grade_entry_form_id: new_form.id, position: i + 1)
           unless grade_item.save
             render 'shared/http_status', locals: { code: '500', message:
-              new_form.errors.full_messages.first }, status: 500
+              grade_item.errors.full_messages.first }, status: 500
             raise ActiveRecord::Rollback
           end
         end
@@ -84,9 +84,12 @@ module Api
     #   :short_identifier, :description, :date, :is_hidden
     #   grade_entry_items:
     #     :id, :name, :out_of, :bonus
+    #
+    # if the grade_entry_items id param is set, an existing item will be
+    # updated, otherwise a new grade_entry_item will be created
     def update
       # check if there is an existing assignment
-      form = GradeEntryForm.find(params[:id])
+      form = GradeEntryForm.find_by_id(params[:id])
       if form.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'Grade Entry Form not found' }, status: 404
@@ -102,17 +105,28 @@ module Api
         end
 
         params[:grade_entry_items]&.each do |column_params|
-          grade_item = GradeEntryItem.find_by_id(column_params[:id])
-          if grade_item.nil?
-            render 'shared/http_status', locals: { code: '404', message:
-              "Grade Entry Item with id=#{column_params[:id]} not found" }, status: 404
-            raise ActiveRecord::Rollback
-          end
-          column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
-          unless grade_item.update(column_params)
-            render 'shared/http_status', locals: { code: '500', message:
-              grade_item.errors.full_messages.first }, status: 500
-            raise ActiveRecord::Rollback
+          if column_params[:id].nil?
+            column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
+            position = form.grade_entry_items.count + 1
+            grade_item = GradeEntryItem.new(**column_params, grade_entry_form_id: form.id, position: position)
+            unless grade_item.save
+              render 'shared/http_status', locals: { code: '500', message:
+                grade_item.errors.full_messages.first }, status: 500
+              raise ActiveRecord::Rollback
+            end
+          else
+            column_params = column_params.permit(:id, :name, :out_of, :bonus).to_h.symbolize_keys
+            grade_item = form.grade_entry_items.where(id: column_params[:id]).first
+            if grade_item.nil?
+              render 'shared/http_status', locals: { code: '404', message:
+                "Grade Entry Item with id=#{column_params[:id]} not found" }, status: 404
+              raise ActiveRecord::Rollback
+            end
+            unless grade_item.update(column_params)
+              render 'shared/http_status', locals: { code: '500', message:
+                grade_item.errors.full_messages.first }, status: 500
+              raise ActiveRecord::Rollback
+            end
           end
         end
         render 'shared/http_status', locals: { code: '200', message:
