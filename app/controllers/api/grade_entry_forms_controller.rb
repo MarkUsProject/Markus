@@ -20,7 +20,7 @@ module Api
     def index
       grade_entry_forms = get_collection(GradeEntryForm.includes(:grade_entry_items)) || return
 
-      include_args = { only: DEFAULT_FIELDS, include: { grade_entry_items: { only: [:name, :out_of] } } }
+      include_args = { only: DEFAULT_FIELDS, include: { grade_entry_items: { only: [:id, :name, :out_of] } } }
 
       respond_to do |format|
         format.xml do
@@ -28,6 +28,95 @@ module Api
           render xml: xml
         end
         format.json { render json: grade_entry_forms.to_json(include_args) }
+      end
+    end
+
+    # create a new grade entry form
+    # Requires:
+    #   :short_identifier
+    # Optional:
+    #   :description, :date, :is_hidden
+    #   grade_entry_items:
+    #     :name, :out_of, :bonus
+    def create
+      if has_missing_params?([:short_identifier])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+
+      # check if there is an existing assignment
+      form = GradeEntryForm.find_by_short_identifier(params[:short_identifier])
+      unless form.nil?
+        render 'shared/http_status', locals: { code: '409', message:
+          'Grade Entry Form already exists' }, status: 409
+        return
+      end
+
+      ApplicationRecord.transaction do
+        create_params = params.permit(*DEFAULT_FIELDS, :show_total)
+        create_params[:is_hidden] ||= false
+        create_params[:description] ||= ''
+        new_form = GradeEntryForm.new(create_params)
+        unless new_form.save
+          render 'shared/http_status', locals: { code: '500', message:
+            new_form.errors.full_messages.first }, status: 500
+          raise ActiveRecord::Rollback
+        end
+
+        params[:grade_entry_items]&.each&.with_index do |column_params, i|
+          column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
+          grade_item = GradeEntryItem.new(**column_params, grade_entry_form_id: new_form.id, position: i + 1)
+          unless grade_item.save
+            render 'shared/http_status', locals: { code: '500', message:
+              new_form.errors.full_messages.first }, status: 500
+            raise ActiveRecord::Rollback
+          end
+        end
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      end
+    end
+
+    # create a new grade entry form
+    # params:
+    #   :short_identifier, :description, :date, :is_hidden
+    #   grade_entry_items:
+    #     :id, :name, :out_of, :bonus
+    def update
+      # check if there is an existing assignment
+      form = GradeEntryForm.find(params[:id])
+      if form.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+          'Grade Entry Form not found' }, status: 404
+        return
+      end
+
+      ApplicationRecord.transaction do
+        update_params = params.permit(*DEFAULT_FIELDS, :show_total)
+        unless form.update(update_params)
+          render 'shared/http_status', locals: { code: '500', message:
+            form.errors.full_messages.first }, status: 500
+          raise ActiveRecord::Rollback
+        end
+
+        params[:grade_entry_items]&.each do |column_params|
+          grade_item = GradeEntryItem.find_by_id(column_params[:id])
+          if grade_item.nil?
+            render 'shared/http_status', locals: { code: '404', message:
+              "Grade Entry Item with id=#{column_params[:id]} not found" }, status: 404
+            raise ActiveRecord::Rollback
+          end
+          column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
+          unless grade_item.update(column_params)
+            render 'shared/http_status', locals: { code: '500', message:
+              grade_item.errors.full_messages.first }, status: 500
+            raise ActiveRecord::Rollback
+          end
+        end
+        render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
       end
     end
 
