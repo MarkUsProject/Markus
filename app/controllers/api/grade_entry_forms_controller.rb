@@ -2,7 +2,7 @@ module Api
 
   class GradeEntryFormsController < MainApiController
 
-    DEFAULT_FIELDS = [:id, :short_identifier, :description, :date, :is_hidden].freeze
+    DEFAULT_FIELDS = [:id, :short_identifier, :description, :date, :is_hidden, :show_total].freeze
 
     # Sends the contents of the specified grade entry form
     # Requires: id
@@ -55,7 +55,7 @@ module Api
       end
 
       ApplicationRecord.transaction do
-        create_params = params.permit(*DEFAULT_FIELDS, :show_total)
+        create_params = params.permit(*DEFAULT_FIELDS)
         create_params[:is_hidden] ||= false
         create_params[:description] ||= ''
         new_form = GradeEntryForm.new(create_params)
@@ -97,7 +97,7 @@ module Api
       end
 
       ApplicationRecord.transaction do
-        update_params = params.permit(*DEFAULT_FIELDS, :show_total)
+        update_params = params.permit(*DEFAULT_FIELDS)
         unless form.update(update_params)
           render 'shared/http_status', locals: { code: '500', message:
             form.errors.full_messages.first }, status: 500
