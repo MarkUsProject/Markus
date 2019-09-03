@@ -67,7 +67,7 @@ module Api
 
         params[:grade_entry_items]&.each&.with_index do |column_params, i|
           column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
-          grade_item = GradeEntryItem.new(**column_params, grade_entry_form_id: new_form.id, position: i + 1)
+          grade_item = new_form.grade_entry_items.build(**column_params, position: i + 1)
           unless grade_item.save
             render 'shared/http_status', locals: { code: '500', message:
               grade_item.errors.full_messages.first }, status: 500
@@ -104,11 +104,11 @@ module Api
           raise ActiveRecord::Rollback
         end
 
+        position = form.grade_entry_items.count
         params[:grade_entry_items]&.each do |column_params|
           if column_params[:id].nil?
             column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
-            position = form.grade_entry_items.count + 1
-            grade_item = GradeEntryItem.new(**column_params, grade_entry_form_id: form.id, position: position)
+            grade_item = form.build(**column_params, position: position += 1)
             unless grade_item.save
               render 'shared/http_status', locals: { code: '500', message:
                 grade_item.errors.full_messages.first }, status: 500
