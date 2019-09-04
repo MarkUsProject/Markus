@@ -14,7 +14,7 @@ Rails.application.routes.draw do
           put 'update_by_username'
         end
       end
-      resources :grade_entry_forms, only: [:show, :index] do
+      resources :grade_entry_forms, only: [:show, :index, :create, :update] do
         member do
           put 'update_grades'
         end
