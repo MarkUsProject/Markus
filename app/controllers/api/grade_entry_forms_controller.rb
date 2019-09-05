@@ -108,7 +108,7 @@ module Api
         params[:grade_entry_items]&.each do |column_params|
           if column_params[:id].nil?
             column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
-            grade_item = form.build(**column_params, position: position += 1)
+            grade_item = form.grade_entry_items.build(**column_params, position: position += 1)
             unless grade_item.save
               render 'shared/http_status', locals: { code: '500', message:
                 grade_item.errors.full_messages.first }, status: 500
