@@ -72,7 +72,7 @@ export class SubmissionFilePanel extends React.Component {
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
-        let f = this.getFirstFile(dir);
+        let f = this.getFirstFile(fileData.directories[dir]);
         if (f !== null) {
           return f;
         }
@@ -222,7 +222,7 @@ export class FileSelector extends React.Component {
       expand = [];
     }
     let selectorLabel;
-    if (!this.props.fileData.files.length && !this.props.fileData.directories.length) {
+    if (!this.props.fileData.files.length && !Object.keys(this.props.fileData.directories).length) {
       selectorLabel = I18n.t('submissions.no_files_available');
     } else if (this.props.selectedFile !== null) {
       selectorLabel = this.props.selectedFile[0];
