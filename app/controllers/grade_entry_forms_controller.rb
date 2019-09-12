@@ -48,10 +48,6 @@ class GradeEntryFormsController < ApplicationController
     # Process changes to input properties
     new_params = update_grade_entry_form_params(params)
 
-    if params[:date_check]
-      new_params.update(date: nil)
-    end
-
     @grade_entry_form.update(new_params)
     respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path @grade_entry_form })
   end

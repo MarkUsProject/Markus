@@ -10,7 +10,6 @@ pt:
       successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
       update_error: "O estado da avaliação para %{user_name} não pôde ser salvo "
     none: "Atualmente não há notas nas planilhas."
-    remove_date: "Remover data"
     required_fields_html: "Campos obrigatórios <span class='required_field'>*</span>"
     students:
       detailed_marks_message: "Notas detalhadas estão disponíveis."
