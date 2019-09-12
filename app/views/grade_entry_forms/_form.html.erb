@@ -49,11 +49,6 @@
                          class: 'datepicker',
                          size: 30,
                          placeholder: t('date.format_string.placeholder') %>
-        (<%= label :date_check, t('grade_entry_forms.remove_date') %>
-        <%= check_box_tag :date_check,
-                          true,
-                          false,
-                          disabled: @grade_entry_form.date.blank? %>)
       </div>
 
       <div>

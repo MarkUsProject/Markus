@@ -217,4 +217,19 @@ describe GradeEntryFormsController do
       get :download, params: { id: grade_entry_form_with_data_and_total }
     end
   end
+
+  describe '#update' do
+    before :each do
+      @user = User.where(user_name: 'c8shosta').first
+    end
+
+    it 'clears date if blank' do
+      patch :update, params: { id: grade_entry_form, grade_entry_form: {date: nil} }
+      expect(response.status).to eq 302
+
+      # assert that date has changed upon reload
+      expect(grade_entry_form.date).to_not be_nil
+      expect(grade_entry_form.reload.date).to be_nil
+    end
+  end
 end
