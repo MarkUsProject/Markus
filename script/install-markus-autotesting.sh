@@ -12,11 +12,11 @@ git clone https://github.com/MarkUsProject/markus-autotesting.git ${AUTOTEST_ROO
 cd ${AUTOTEST_ROOT}
 
 echo "- - - Setting up the autotester - - -"
-# Note: autotester install.sh requires Python 3.7
-sudo add-apt-repository -y ppa:deadsnakes/ppa
 # See https://github.com/chef/bento/issues/661 for details on this command.
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-sudo apt-get install -y build-essential
+# Note: autotester install.sh requires Python 3.7
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install build-essential openssl
 yes | server/bin/install.sh
 
 # Note: install jdbc jar
