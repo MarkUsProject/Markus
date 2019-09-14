@@ -221,13 +221,13 @@ describe GradeEntryFormsController do
   describe '#update' do
     it 'clears date if blank' do
       expect(grade_entry_form.date).to_not be_nil
-      patch :update, params: { id: grade_entry_form, grade_entry_form: {date: nil} }
+      patch :update, params: { id: grade_entry_form, grade_entry_form: { date: nil } }
       expect(grade_entry_form.reload.date).to be_nil
     end
 
     it 'updates date field' do
       expect(grade_entry_form.date).to_not be_nil
-      patch :update, params: { id: grade_entry_form.id, grade_entry_form: {date: '2019-11-14'} }
+      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { date: '2019-11-14' } }
       expect(grade_entry_form.reload.date).to eq Date.new(2019, 11, 14)
     end
   end
