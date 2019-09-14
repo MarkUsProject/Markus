@@ -13,7 +13,6 @@ fr:
     no_result: "Les notes ne sont pas encore disponibles."
     previous_submission: "Précédent"
     results_for: "Résultats pour"
-    review_for: "Avis pour"
     set_to_incomplete: "Revenir à incomplet"
     set_to_complete: "Réglage pour terminer"
     state:

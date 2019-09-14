@@ -11,7 +11,7 @@
       <% else %>
         <% title = assessment.short_identifier %>
         <% if assessment.is_a?(Assignment) && assessment.is_peer_review? %>
-          <% title += " #{t('assignment.review')}" %>
+          <% title = "#{assessment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" %>
         <% end %>
         <% if assessment.is_hidden %>
           <% title = t('assignments.hidden', assignment_text: title) %>
@@ -58,7 +58,7 @@
     </li>
     <% if assessment.is_peer_review? || is_viewing_a_peer_review_result %>
       <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
-        <%= link_to t('peer_review.assign'),
+        <%= link_to t('peer_reviews.assign'),
                     assignment_peer_reviews_path(target_id) %>
       </li>
     <% end %>
@@ -73,7 +73,7 @@
       <% end %>
     >
       <%= link_to assessment.is_peer_review? || is_viewing_a_peer_review_result ?
-                    t('peer_review.reviews') : Submission.model_name.human.pluralize,
+                    PeerReview.model_name.human.pluralize : Submission.model_name.human.pluralize,
                   browse_assignment_submissions_path(target_id) %>
     </li>
     <% unless assessment.is_peer_review? || is_viewing_a_peer_review_result %>

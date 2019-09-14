@@ -20,7 +20,7 @@
 
 <% content_for :title do %>
   <% if @assignment.is_peer_review? %>
-    <%=t('peer_review.reviews')%>: <%= sanitize(@assignment.parent_assignment.short_identifier) %>
+    <%= PeerReview.model_name.human.pluralize %>: <%= sanitize(@assignment.parent_assignment.short_identifier) %>
   <% else %>
     <%= "#{Submission.model_name.human.pluralize}: #{sanitize(@assignment.short_identifier)}" %>
   <% end %>

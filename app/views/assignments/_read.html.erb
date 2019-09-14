@@ -4,8 +4,9 @@
   <div class='sub_block'>
     <span class='prop_label'><%= Assignment.human_attribute_name(:short_identifier) %></span>
     <span class="prop_paragraph">
-      <%= @assignment.is_peer_review? ? t('results.review_for') + @assignment.parent_assignment.short_identifier :
-                                        @assignment.short_identifier %></span>
+      <%= @assignment.is_peer_review? ?
+            "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
+            @assignment.short_identifier %></span>
   </div>
   <div class='sub_block'>
     <span class='prop_label'><%= Assignment.human_attribute_name(:description) %></span>

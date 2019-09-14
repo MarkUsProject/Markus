@@ -91,7 +91,7 @@ class BatchTestRunTable extends React.Component {
                   return vals[0];
                 } else {
                   const numGroups = Object.keys(vals).length;
-                  return numGroups + ' ' + I18n.t('activerecord.models.groups', {count: numGroups})
+                  return numGroups + ' ' + I18n.t('activerecord.models.group', {count: numGroups})
                 }
               },
               sortable: true,

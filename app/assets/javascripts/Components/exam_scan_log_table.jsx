@@ -155,7 +155,7 @@ class ExamScanErrorsTable extends React.Component {
       },
     },
     {
-      Header: I18n.t('activerecord.models.groups.one'),
+      Header: I18n.t('activerecord.models.group.one'),
       accessor: 'group',
       maxWidth: 150,
     },
