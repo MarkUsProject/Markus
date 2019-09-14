@@ -141,7 +141,7 @@ class ResultsController < ApplicationController
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
-          data[:group_name] = I18n.t('assignment.review')
+          data[:group_name] = PeerReview.model_name.human
         end
 
         # Marks

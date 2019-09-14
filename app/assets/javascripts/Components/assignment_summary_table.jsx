@@ -37,7 +37,7 @@ class AssignmentSummaryTable extends React.Component {
 
   fixedColumns = [
     {
-      Header: I18n.t('activerecord.models.groups.one'),
+      Header: I18n.t('activerecord.models.group.one'),
       id: 'group_name',
       accessor: 'group_name',
       Cell: row => {

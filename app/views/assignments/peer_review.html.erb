@@ -10,9 +10,8 @@
 <div class='title_bar'>
   <h1>
     <%= @assignment.is_peer_review? ?
-            t('student.peer_assignment',
-              short_identifier: @assignment.parent_assignment.short_identifier) :
-            t('student.peer_assignment', short_identifier: @assignment.short_identifier) %>
+          "#{@assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" :
+          "#{@assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" %>
   </h1>
 </div>
 
@@ -90,15 +89,14 @@
       </div>
     </div>
     <div class='block'>
-      <h2><%= t('assignment.peer_review_results') %></h2>
+      <h2><%= t('peer_reviews.your_results') %></h2>
       <div id='peer_review_results' class='block_content'>
-        <h3> <%= t('assignment.your_reviews') %> </h3>
         <% if @prs.empty? %>
-            <p class='notice'><%= t('student.no_reviews') %></p>
+            <p class='notice'><%= t('peer_reviews.your_results_none') %></p>
         <% else %>
           <ul>
             <% @prs.each_with_index do |pr, i| %>
-                <li><%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
+                <li><%= link_to("#{PeerReview.model_name.human} #{i + 1}",
                             view_marks_assignment_result_path(@assignment.parent_assignment.id, pr.result_id)) %> </li>
             <% end %>
           </ul>

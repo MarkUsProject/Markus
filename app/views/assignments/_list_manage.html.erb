@@ -56,13 +56,14 @@
                       <% if @current_user.admin? %>
                         <% if assignment.pr_assignment.is_hidden %>
                           <%= link_to t('assignments.hidden',
-                                        assignment_text: t('results.review_for') + assignment.short_identifier),
+                                        assignment_text:
+                                          "#{assignment.short_identifier} #{PeerReview.model_name.human}"),
                                       { controller: controller,
                                         action: action,
                                         id: assignment.pr_assignment },
                                       class: 'pr_assignment_list' %>
                         <% else %>
-                          <%= link_to t('results.review_for') + assignment.short_identifier,
+                          <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
                                       {  controller: controller,
                                          action: action,
                                          id: assignment.pr_assignment },
@@ -71,11 +72,12 @@
                       <% else %>
                           <% if assignment.pr_assignment.is_hidden %>
                               <%= link_to t('assignments.hidden',
-                                            assignment_text: t('results.review_for') + assignment.short_identifier),
+                                            assignment_text:
+                                              "#{assignment.short_identifier} #{PeerReview.model_name.human}"),
                                           { },
                                           class: 'pr_assignment_list' %>
                           <% else %>
-                              <%= link_to t('results.review_for') + assignment.short_identifier,
+                              <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
                                           { },
                                           class: 'pr_assignment_list' %>
                           <% end %>

@@ -222,7 +222,7 @@ class RawGroupsTable extends React.Component {
       id: '_id'
     },
     {
-      Header: I18n.t('activerecord.models.groups.one'),
+      Header: I18n.t('activerecord.models.group.one'),
       accessor: 'group_name',
       id: 'group_name',
       Cell: row => {
@@ -493,7 +493,7 @@ class GroupsActionBox extends React.Component {
           className=''
           onClick={this.props.createGroup}
         >
-          {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.groups.one')})}
+          {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.group.one')})}
         </button>
         <button
           className=''
