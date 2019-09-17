@@ -54,7 +54,11 @@
           <%= t('penalty_period_submission_rules.deadline_html') %>
         </span>
         <% @enum_penalty.each { |p| acc += p.hours } %>
-        <%= I18n.l(@grouping.due_date + acc.hours) %>
+        <% if @grouping.nil? %>
+          <%= I18n.l(@assignment.section_due_date(@current_user.try(:section)) + acc.hours) %>
+        <% else %>
+          <%= I18n.l(@grouping.due_date + acc.hours) %>
+        <% end %>
       <% end %>
     </div>
 
@@ -66,14 +70,14 @@
     <%#Cannot assign Grace Period without first assigning a group.%>
     <% unless @grouping.nil? && @penalty.type == "GracePeriodSubmissionRule" %>
       <div class='sub_block'>
-        <span class='prop_label'><%= User.human_attribute_name(:grace_credits) %></span>
         <% if @penalty.type == "GracePeriodSubmissionRule" %>
+          <span class='prop_label'><%= User.human_attribute_name(:grace_credits) %></span>
           <% unless @grouping.nil? %>
             <%= t('grace_period_submission_rules.group_credits_html',
                   available_grace_credits: @grouping.available_grace_credits) %>
           <% end %>
         <% elsif @penalty.type == "PenaltyDecayPeriodSubmissionRule" %>
-          <br><ul>
+          <ul>
           <% @enum_penalty.each do |p| %>
             <% if p == @enum_penalty.first %>
               <li><%= t('penalty_decay_period_submission_rules.details_message_first',
