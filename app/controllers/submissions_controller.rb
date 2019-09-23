@@ -216,8 +216,10 @@ class SubmissionsController < ApplicationController
     end
     success = ''
     if collectable.count > 0
-      current_job = SubmissionsJob.perform_later(collectable)
-      session[:job_id] = current_job.job_id
+      current_job = SubmissionsJob.perform_later(collectable,
+                                                 collection_dates: collection_dates.transform_keys(&:to_s))
+      # TODO: Re-enable this after investigating activejob-status behaviour.
+      # session[:job_id] = current_job.job_id
       success = I18n.t('submissions.collect.collection_job_started_for_groups',
                        assignment_identifier: assignment.short_identifier)
     end
