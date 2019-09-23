@@ -20,7 +20,6 @@ class SubmissionsJob < ApplicationJob
 
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
-    time = assignment.submission_rule.calculate_collection_time.localtime
 
     progress.total = groupings.size
     groupings.each do |grouping|
@@ -28,6 +27,7 @@ class SubmissionsJob < ApplicationJob
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
         if options[:revision_identifier].nil?
+          time = options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
           new_submission = Submission.create_by_timestamp(grouping, time)
         else
           new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
