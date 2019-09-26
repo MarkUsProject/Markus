@@ -41,7 +41,7 @@ class AssignmentProperties < ApplicationRecord
                          numericality: { only_integer: true,
                                          greater_than_or_equal_to: 0 }
   end
-  with_options if: ->{ !:non_regenerating_tokens && :enable_student_tests && !:unlimited_tokens} do |assignment|
+  with_options if: ->{ (!:non_regenerating_tokens) && :enable_student_tests && (!:unlimited_tokens) } do |assignment|
     assignment.validates :token_period,
                          presence: true,
                          numericality: { greater_than: 0 }
@@ -52,17 +52,15 @@ class AssignmentProperties < ApplicationRecord
   validate :minimum_number_of_groups
 
   def minimum_number_of_groups
-    if (group_max && group_min) && group_max < group_min
-      errors.add(:group_max, 'must be greater than the minimum number of groups')
-      false
-    end
+    return unless (group_max && group_min) && group_max < group_min
+    errors.add(:group_max, 'must be greater than the minimum number of groups')
+    false
   end
 
   def repository_folder_unchanged
-    if repository_folder_changed?
-      errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
-      false
-    end
+    return unless repository_folder_changed?
+    errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
+    false
   end
 
 end

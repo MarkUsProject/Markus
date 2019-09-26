@@ -1,5 +1,6 @@
+# Assessment is an abstract model used for single-table-inheritance with Assignment and GradeEntryForm
+# It can represent any form of graded work (assignment, test, lab, exam...etc.)
 class Assessment < ApplicationRecord
-
   scope :assignments, -> { where(type: 'Assignment') }
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 
@@ -15,16 +16,14 @@ class Assessment < ApplicationRecord
   validates_presence_of :date
   validates_inclusion_of :is_hidden, in: [true, false]
 
-
   def self.type
-    %w(Assignment GradeEntryForm)
+    %w[Assignment GradeEntryForm]
   end
 
   def short_identifier_unchanged
-    if short_identifier_changed?
-      errors.add(:short_id_change, 'short identifier should not be changed once an assignment has been created')
-      false
-    end
+    return unless short_identifier_unchanged?
+    errors.add(:short_id_change, 'short identifier should not be changed once an assignment has been created')
+    false
   end
 
 end
