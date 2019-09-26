@@ -6,7 +6,7 @@
 
 <% content_for :title,
   t('assignments.marking_scheme', identifier: @assignment.is_peer_review? ?
-    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review'):
+    @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
     @assignment.short_identifier) %>
 
 <% @heading_buttons = [

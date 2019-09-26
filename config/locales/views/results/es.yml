@@ -17,7 +17,6 @@ es:
     no_result: "No existen notas disponibles."
     previous_submission: "Anterior"
     results_for: "Resultados para"
-    review_for: "Revisión para"
     set_to_incomplete: "Marcar como Incompleto"
     set_to_complete: "Marcar como Completo"
     state:

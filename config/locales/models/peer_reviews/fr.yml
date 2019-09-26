@@ -1,0 +1,9 @@
+fr:
+  activerecord:
+    models:
+      peer_review:
+        one: "Examen par le pairs"
+        other: "Examens par le pairs"
+    attributes:
+      peer_review:
+        reviewer: "Réviseur"

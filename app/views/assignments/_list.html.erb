@@ -31,7 +31,7 @@
                   <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
                       <%=
                         # assignment name
-                        link_to t('results.review_for') + assignment.short_identifier,
+                        link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
                                 {controller: controller,
                                 action: 'peer_review',
                                 id: peer_review_aid},

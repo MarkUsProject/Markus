@@ -1,0 +1,9 @@
+es:
+  activerecord:
+    models:
+      peer_review:
+        one: "Revision de Compañeros"
+        other: "Revisiones de Compañeros"
+    attributes:
+      peer_review:
+        reviewer: "Revisor"

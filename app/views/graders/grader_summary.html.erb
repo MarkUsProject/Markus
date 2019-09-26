@@ -1,7 +1,7 @@
 <div class='title_bar'>
   <h2>
     <% if assignment.is_peer_review? %>
-        <%= link_to "#{assignment.parent_assignment.short_identifier}: #{t('assignment.review')}",
+        <%= link_to "#{assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",
                     browse_assignment_submissions_path(assignment.id) %>
     <% else %>
         <%= link_to "#{assignment.short_identifier}: #{assignment.description}",

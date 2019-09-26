@@ -1,40 +1,4 @@
 en:
-    # app/views/assignments/
-    assignment:
-        start_peer_review: "Peer Review"
-        peer_review_results: "Peer Review Results"
-        your_reviews: "Your Reviews"
-        review: "Peer Review"
-    peer_review:
-        assign: "Assign Peer Reviews"
-        review: "Review "
-        reviews: "Reviews"
-        problem: "An unexpected problem occured"
-        submission_nil_failure: "Submissions for original assignment need to be collected first"
-        random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
-        number_of_reviews_header: "Num reviews"
-        assigned_reviewers_header: "Assigned reviewers"
-        reviewer_group: "Reviewer group"
-        reviews_made_on_submission: "Reviews made on your submission: "
-        reviewers_reviews: "This reviewer's reviews: "
-        view_ta_result: "View TA Result"
-        empty_list_reviewers: "Cannot have an empty list of reviewers"
-        empty_list_reviewees: "Cannot have an empty list of reviewees"
-        cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
-        number_per_group: "Number of peer reviews per group"
-        number_assigned_reviewers: "Num Assigned Reviewers"
-        action:
-            assign: "Assign Peer Reviewer(s)"
-            unassign: "Unassign Peer Reviewer(s)"
-            random_assign: "Randomly Assign Reviewers"
-        download:
-            assigned_reviewers_header: "Download Peer Review Mapping"
-            assigned_reviewers_csv: "Reviewer group to reviewee group CSV"
-        upload:
-            header: "Upload Peer Review CSV"
-
-    peer_reviews:       "Peer reviews"
-
     csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
 
     csv:
@@ -52,17 +16,8 @@ en:
       memberships_not_unique: "The student already belongs to a different group for the current assignment"
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
 
-    browse_submissions:
-      review_state:         "Review State"
-
-    results:
-      review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
-
     #Sutdent's View (student)
     student:
-      peer_assignment: "%{short_identifier}: Peer Reviews"
-      no_peer_submission_yet: "You have no submissions to review yet."
-      no_reviews: "No one has reviewed your submissions yet."
       submission:
         conflicts: "Conflicts"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"

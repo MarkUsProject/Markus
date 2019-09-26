@@ -9,7 +9,7 @@
 
 <% content_for :title, t('.title',
   assignment_short_identifier: @assignment.is_peer_review? ?
-    @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+    @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
     @assignment.short_identifier) %>
 
 <% path = new_assignment_annotation_category_path %>

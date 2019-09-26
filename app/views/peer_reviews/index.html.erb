@@ -12,7 +12,7 @@
   </script>
 <% end %>
 
-<% content_for :title, t('peer_reviews') %>
+<% content_for :title, PeerReview.model_name.human.pluralize %>
 
 <% @heading_buttons = [
   { link_text: t('download'),
@@ -25,19 +25,7 @@
 
 <div class="clear"></div>
 
-<div id='notice'>
-  <div class='success' id='add_success' style='display: none;'></div>
-
-  <%# This is for error display injected by JavaScript %>
-  <div class='error' id='errors' style='display: none; '>
-    <h3><%= t('peer_review.problem') %></h3>
-    <div id='errors_title'></div>
-    <div id='errors_contents'></div>
-  </div>
-
-  <%# All other flash messages %>
-  <%= render 'shared/flash_message' %>
-</div>
+<%= render 'shared/flash_message' %>
 
 <div id='peer_reviews_manager'></div>
 

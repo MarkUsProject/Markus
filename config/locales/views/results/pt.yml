@@ -13,7 +13,6 @@ pt:
     no_result: "Nenhuma nota está disponível."
     previous_submission: "Anterior"
     results_for: "Resultados para"
-    review_for: "Revisão para"
     set_to_incomplete: "Reverter para incompleta"
     set_to_complete: "Conjunto para completar"
     state:

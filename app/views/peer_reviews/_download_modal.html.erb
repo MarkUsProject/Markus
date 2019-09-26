@@ -1,12 +1,12 @@
 <%= content_for :modal_id, 'download_dialog' %>
-<%= content_for :modal_title, t('peer_review.download.assigned_reviewers_header') %>
+<%= content_for :modal_title, t(:download_the, item: t('peer_reviews.peer_review_mapping')) %>
 <%= content_for :modal_open_link, '#downloadModal' %>
 
 <%= content_for :modal_content do %>
   <div class='clickable_links'>
     <div class='clickable_text'>
       <img class='clickable_image' src='<%= image_path('icons/download-file.png') %>'>
-      <%= t('peer_review.download.assigned_reviewers_csv') %>
+      <%= t('download_csv') %>
     </div>
     <%= link_to '',
                 { action: 'peer_review_mapping' },
