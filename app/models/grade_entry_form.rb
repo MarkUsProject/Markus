@@ -2,7 +2,7 @@
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
-class GradeEntryForm < ApplicationRecord
+class GradeEntryForm < Assessment
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy,
@@ -13,15 +13,6 @@ class GradeEntryForm < ApplicationRecord
 
   has_many                  :grades, through: :grade_entry_items
 
-  # Call custom validator in order to validate the date attribute
-  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
-  # Look in lib/validators/* for more info
-  validates                 :date, date: true
-
-  validates_presence_of     :short_identifier
-  validates_uniqueness_of   :short_identifier, case_sensitive: true
-
-  validates                 :is_hidden, inclusion: { in: [true, false] }
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
   after_create :create_all_grade_entry_students
