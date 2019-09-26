@@ -313,10 +313,10 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
   end
 
   create_table "levels", force: :cascade do |t|
-    t.bigint "rubric_criterion_id"
+    t.bigint "rubric_criterion_id", null: false
     t.string "name", null: false
     t.integer "number", null: false
-    t.string "description"
+    t.string "description", null: false
     t.float "mark", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
