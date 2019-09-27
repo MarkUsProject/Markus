@@ -56,32 +56,46 @@ export class SubmissionFilePanel extends React.Component {
     }
 
     if (prevProps.loading && !this.props.loading) {
-      const selectedFile = this.getFirstFile(this.props.fileData);
+      let selectedFile;
+      const stored_file = localStorage.getItem('file');
+      const stored_assignment = localStorage.getItem('assignment_id');
+      if (!this.state.student_view && stored_assignment === this.props.assignment_id.toString() && stored_file) {
+        let filepath = stored_file.split('/');
+        selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filepath.pop())];
+      }
+      if (!selectedFile) {
+        localStorage.removeItem('file');
+        selectedFile = this.getFirstFile(this.props.fileData);
+      }
       this.setState({selectedFile});
     }
   }
 
-  getFirstFile = (fileData, filename) => {
-    if (!this.state.student_view &&
-        localStorage.getItem('assignment_id') === this.props.assignment_id.toString() &&
-        localStorage.getItem('file') && !filename) {
-        return this.getFirstFile(fileData, localStorage.getItem('file'))
-    }
-    if (fileData.files.length > 0) {
-      if (filename) {
-        for (let file_data of fileData.files) {
-          if (file_data[0] === filename) {
-            return file_data;
-          }
-        }
-      } else {
-        return fileData.files[0];
+  getNamedFileId = (fileData, path, filename) => {
+    if (!!path.length) {
+      let dir = path.shift();
+      if (fileData.directories.hasOwnProperty(dir)) {
+        return this.getNamedFileId(fileData.directories[dir], path, filename)
       }
+    } else {
+      for (let file_data of fileData.files) {
+        if (file_data[0] === filename) {
+          return file_data[1];
+        }
+      }
+    }
+    return null;
+  };
+
+  getFirstFile = (fileData) => {
+    if (fileData.files.length > 0) {
+        return fileData.files[0];
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
         let f = this.getFirstFile(fileData.directories[dir], filename);
         if (f !== null) {
+          f[0] = `${dir}/${f[0]}`;
           return f;
         }
       }
