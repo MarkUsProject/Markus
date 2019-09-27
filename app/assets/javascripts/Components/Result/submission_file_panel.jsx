@@ -23,7 +23,6 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload = new ModalMarkus('#download_dialog');
     if (localStorage.getItem('assignment_id') !== String(this.props.assignment_id)) {
       localStorage.removeItem('file');
-      localStorage.removeItem('file_id');
     }
     localStorage.setItem('assignment_id', this.props.assignment_id);
 
@@ -39,6 +38,8 @@ export class SubmissionFilePanel extends React.Component {
         document.getElementById('download_dialog_body')
       );
     }
+    const selectedFile = this.getFirstFile(this.props.fileData);
+    this.setState({selectedFile});
   }
 
   componentDidUpdate(prevProps) {
@@ -60,19 +61,26 @@ export class SubmissionFilePanel extends React.Component {
     }
   }
 
-  getFirstFile = (fileData) => {
+  getFirstFile = (fileData, filename) => {
     if (!this.state.student_view &&
         localStorage.getItem('assignment_id') === this.props.assignment_id.toString() &&
-        localStorage.getItem('file')) {
-      return [localStorage.getItem('file'), parseInt(localStorage.getItem('file_id'), 10)];
+        localStorage.getItem('file') && !filename) {
+        return this.getFirstFile(fileData, localStorage.getItem('file'))
     }
-
     if (fileData.files.length > 0) {
-      return fileData.files[0];
+      if (filename) {
+        for (let file_data of fileData.files) {
+          if (file_data[0] === filename) {
+            return file_data;
+          }
+        }
+      } else {
+        return fileData.files[0];
+      }
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
-        let f = this.getFirstFile(dir);
+        let f = this.getFirstFile(fileData.directories[dir], filename);
         if (f !== null) {
           return f;
         }
@@ -84,7 +92,6 @@ export class SubmissionFilePanel extends React.Component {
   selectFile = (file, id, focusLine) => {
     this.setState({selectedFile: [file, id], focusLine: focusLine});
     localStorage.setItem('file', file);
-    localStorage.setItem('file_id', id)
   };
 
   // Download the currently-selected file.
