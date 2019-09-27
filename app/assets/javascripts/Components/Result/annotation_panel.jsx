@@ -25,6 +25,12 @@ export class AnnotationPanel extends React.Component {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.overallComment !== this.props.overallComment) {
+      this.setState({overallComment: this.props.overallComment});
+    }
+  }
+
   updateOverallComment = (event) => {
     const comment = event.target.value;
     this.setState({overallComment: comment, unsavedChanges: true});
