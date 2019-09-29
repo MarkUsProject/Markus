@@ -153,12 +153,9 @@ module RandomAssignHelper
   end
 
   def save_peer_reviews(pr_assignment)
-    peer_reviews_reviewer_result = []
-    peer_reviews = []
-    results = []
-    marks = []
+    return if @reviewers.empty? || @reviewees.empty?
 
-    assignment_criteria = pr_assignment.parent_assignment.get_criteria(:ta)
+    assignment_criteria = pr_assignment.get_criteria(:peer)
 
     groupings = Grouping.includes(:current_submission_used)
                         .where(id: @reviewees)
@@ -167,31 +164,40 @@ module RandomAssignHelper
       [g.id, g.current_submission_used.id]
     end]
 
-    # Generate the objects to be added before we start doing mass commits, and
-    # also remember them so we can attach them to a new peer review.
-    @reviewers.zip(@reviewees).each do |reviewer_id, reviewee_id|
-      result = Result.new(submission_id: submission_map[reviewee_id],
-                          marking_state: Result::MARKING_STATES[:incomplete])
-      results << result
-      assignment_criteria.each { |criterion| marks << criterion.marks.new(result: result) }
-      peer_reviews_reviewer_result << [reviewer_id, result]
+    now = Time.now
+    results = Result.insert_all(
+      @reviewees.map do |reviewee_id|
+        { submission_id: submission_map[reviewee_id],
+          marking_state: Result::MARKING_STATES[:incomplete],
+          created_at: now,
+          updated_at: now }
+      end
+    )
+    unless assignment_criteria.empty?
+      Mark.insert_all(
+        results.flat_map do |result|
+          assignment_criteria.map do |criterion|
+            { result_id: result['id'],
+              markable_id: criterion.id,
+              markable_type: criterion.class.to_s,
+              created_at: now,
+              updated_at: now }
+          end
+        end
+      )
     end
-
-    Result.import results, validate: false
-    Mark.import marks, validate: false
 
     # Peer reviews require IDs to have been made, so they come last.
-    peer_reviews_reviewer_result.each do |prdata|
-      peer_review = PeerReview.new(reviewer_id: prdata[0], result: prdata[1])
-      peer_reviews << peer_review
-    end
-
-    PeerReview.import peer_reviews, validate: false
-
-    Upsert.batch(Result.connection, Result.table_name) do |upsert|
-      results.zip(peer_reviews).each do |result, pr|
-        upsert.row({ id: result.id }, peer_review_id: pr.id)
+    pr_ids = PeerReview.insert_all(
+      results.zip(@reviewers).map do |result, reviewer_id|
+        { reviewer_id: reviewer_id, result_id: result['id'], created_at: now, updated_at: now }
       end
-    end
+    )
+
+    Result.upsert_all(
+      results.zip(pr_ids).map do |result, pr_id|
+        { id: result['id'], peer_review_id: pr_id['id'] }
+      end
+    )
   end
 end
