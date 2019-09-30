@@ -35,7 +35,7 @@ class RubricCriterion < Criterion
     end
     self.assigned_groups_count = result.uniq.length
   end
-
+  
   LEVELS = []
 
   def mark_for(result_id)
@@ -70,12 +70,10 @@ class RubricCriterion < Criterion
     ]
     default.each_with_index do |level, index|
 
-      # creates a new level and saves it to database
-      new_level = Level.create( :name => level['name'], :number => index, :description => level['description'],
-                                :mark => index)
-      LEVELS.push(new_level)
-      sort
     end
+    @max_mark = 4
+    @rubric_levels = LEVELS.length
+    @max_levels = LEVELS.length - 1
   end
 
   def sort
