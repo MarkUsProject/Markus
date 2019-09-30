@@ -2,7 +2,7 @@ class RubricCriteriaController < ApplicationController
 
   before_action :authorize_only_for_admin
 
-  def download_csv
+  def csv_download
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCsv.generate(@assignment.get_criteria(:all, :rubric)) do |criterion|
       criterion_array = [criterion.name, criterion.max_mark]
