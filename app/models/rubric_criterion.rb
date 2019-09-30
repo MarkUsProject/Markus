@@ -12,6 +12,8 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
+  has_many :levels,
+
   belongs_to :assignment, counter_cache: true
 
   validates_presence_of :assigned_groups_count
@@ -34,32 +36,36 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  # Just a small effort here to remove magic numbers...
-  RUBRIC_LEVELS = 5
-  DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = RUBRIC_LEVELS - 1
-  DEFAULT_LEVELS = [
-    {'name' => I18n.t('rubric_criteria.defaults.level_0'),
-     'description' => I18n.t('rubric_criteria.defaults.description_0')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_1'),
-     'description' => I18n.t('rubric_criteria.defaults.description_1')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_2'),
-     'description' => I18n.t('rubric_criteria.defaults.description_2')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_3'),
-     'description' => I18n.t('rubric_criteria.defaults.description_3')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_4'),
-     'description' => I18n.t('rubric_criteria.defaults.description_4')}
-  ]
+  @max_mark = 0
+  @rubric_levels = 0
+  @max_levels = 0
+  LEVELS = []
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
   end
 
   def set_default_levels
-    DEFAULT_LEVELS.each_with_index do |level, index|
-      self['level_' + index.to_s + '_name'] = level['name']
-      self['level_' + index.to_s + '_description'] = level['description']
+    default_levels = [
+      {'name' => I18n.t('rubric_criteria.defaults.level_0'),
+       'description' => I18n.t('rubric_criteria.defaults.description_0')},
+      {'name' => I18n.t('rubric_criteria.defaults.level_1'),
+       'description' => I18n.t('rubric_criteria.defaults.description_1')},
+      {'name' => I18n.t('rubric_criteria.defaults.level_2'),
+       'description' => I18n.t('rubric_criteria.defaults.description_2')},
+      {'name' => I18n.t('rubric_criteria.defaults.level_3'),
+       'description' => I18n.t('rubric_criteria.defaults.description_3')},
+      {'name' => I18n.t('rubric_criteria.defaults.level_4'),
+       'description' => I18n.t('rubric_criteria.defaults.description_4')}
+    ]
+    default.each_with_index do |level, index|
+      # Level(name: something ...)
+      new_level = Level(level['name'], level['description'], index)
+      LEVELS.push(new_level)
     end
+    @max_mark = 4
+    @rubric_levels = LEVELS.length
+    @max_levels = LEVELS.length - 1
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
