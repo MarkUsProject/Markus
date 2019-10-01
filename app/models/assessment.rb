@@ -7,13 +7,13 @@ class Assessment < ApplicationRecord
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  validates :date, date: true
+  validates :due_date, date: true
 
   validates_uniqueness_of :short_identifier, case_sensitive: true
   validates_presence_of :short_identifier
   validate :short_identifier_unchanged, on: :update
   validates_presence_of :description
-  validates_presence_of :date
+  validates_presence_of :due_date
   validates_inclusion_of :is_hidden, in: [true, false]
 
   def self.type
@@ -22,7 +22,7 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_unchanged?
-    errors.add(:short_id_change, 'short identifier should not be changed once an assignment has been created')
+    errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
 

@@ -35,13 +35,13 @@ class AssignmentProperties < ApplicationRecord
   validates_inclusion_of :non_regenerating_tokens, in: [true, false], if: :enable_student_tests
   validates_inclusion_of :unlimited_tokens, in: [true, false], if: :enable_student_tests
   validates_presence_of :token_start_date, if: :enable_student_tests
-  with_options if: ->{ :enable_student_tests && !:unlimited_tokens } do |assignment|
+  with_options if: -> { :enable_student_tests && !:unlimited_tokens } do |assignment|
     assignment.validates :tokens_per_period,
                          presence: true,
                          numericality: { only_integer: true,
                                          greater_than_or_equal_to: 0 }
   end
-  with_options if: ->{ (!:non_regenerating_tokens) && :enable_student_tests && (!:unlimited_tokens) } do |assignment|
+  with_options if: -> { !:non_regenerating_tokens && :enable_student_tests && !:unlimited_tokens } do |assignment|
     assignment.validates :token_period,
                          presence: true,
                          numericality: { greater_than: 0 }

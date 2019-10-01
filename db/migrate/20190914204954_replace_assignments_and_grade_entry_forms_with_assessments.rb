@@ -25,12 +25,12 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
 
     create_table :assessments, id: :serial, force: :cascade do |t|
       t.string :short_identifier, null: false
-      t.string :type
-      t.string :description
-      t.text :message
-      t.date :date
-      t.boolean :is_hidden
-      t.boolean :show_total
+      t.string :type, null: false
+      t.string :description, null: false
+      t.text :message, null: false
+      t.date :due_date
+      t.boolean :is_hidden, default: true, null: false
+      t.boolean :show_total, default: false, null: false
 
       t.timestamps
     end
