@@ -17,7 +17,7 @@
     "react-jsonschema-form": "^1.8.0",
     "react-keyed-file-browser": "^1.5.2",
     "react-modal": "^3.10.1",
-    "react-table": "^6.9.2",
+    "react-table": "^6.10.3",
     "react-tabs": "^3.0.0"
   },
   "devDependencies": {

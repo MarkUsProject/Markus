@@ -6180,10 +6180,10 @@ react-modal@^3.10.1:
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
 
-react-table@^6.9.2:
-  version "6.9.2"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.9.2.tgz#6a59adfeb8d5deced288241ed1c7847035b5ec5f"
-  integrity sha512-sTbNHU8Um0xRtmCd1js873HXnXaMWeBwZoiljuj0l1d44eaqjKyYPK/3HCBbJg1yeE2O5pQJ3Km0tlm9niNL9w==
+react-table@^6.10.3:
+  version "6.10.3"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.10.3.tgz#d085487a5a1b18b76486b71cf1d388d87c8c7362"
+  integrity sha512-sVlq2/rxVaQJywGD95+qGiMr/SMHFIFnXdx619BLOWE/Os5FOGtV6pQJNAjZixbQZiOu7dmBO1kME28uxh6wmA==
   dependencies:
     classnames "^2.2.5"
 
