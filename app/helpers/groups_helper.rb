@@ -19,30 +19,6 @@ module GroupsHelper
     end
   end
 
-  # Gets information needed to display group info
-  # on the front-end. Attributes include URLs for actions
-  # such as validation, renaming, showing notes, etc.
-  def get_groupings_table_info(target_assignment=nil)
-    if target_assignment.nil?
-      target_assignment = @assignment
-    end
-
-    groupings = target_assignment.groupings
-                           .includes(:group,
-                                     :student_memberships,
-                                     :non_rejected_student_memberships,
-                                     :students,
-                                     :inviter)
-    groupings.map do |grouping|
-      g = grouping.attributes
-      g[:name] = grouping.group.group_name
-      g[:members] = grouping.student_memberships.map {|membership| [membership.user.id, membership.user.user_name, membership.membership_status]}#grouping.students
-      g[:section] = grouping.section
-      g[:valid] = grouping.is_valid?
-      g
-    end
-  end
-
   # Run several checks on the data from an uploaded file in order to determine whether to proceed with
   # creating groups based on that file or not. Returns true if any errors are found and displays flash
   # messages describing each error unless +suppress_flash+ is true.
