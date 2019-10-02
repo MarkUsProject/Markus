@@ -189,7 +189,9 @@ class GradeEntryFormsController < ApplicationController
       grade_entry_form = GradeEntryForm.find_by_id(params[:id])
       release = params[:release_results] == 'true'
       GradeEntryStudent.transaction do
-        GradeEntryStudent.upsert_all(params[:students].map { |id| { id: id, released_to_student: release } })
+        grade_entry_form.grade_entry_students.where(id: params[:students].map(&:to_i)).each do |ge_student|
+          ge_student.update!(released_to_student: release)
+        end
         num_changed = params[:students].length
         flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
                                        numGradeEntryStudentsChanged: num_changed))
