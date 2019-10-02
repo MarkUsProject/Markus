@@ -104,7 +104,7 @@ class RawMarksSpreadsheet extends React.Component {
       show: this.props.show_sections || false,
       minWidth: 70,
       Cell: ({ value }) => {
-        return value === null ? '' : this.state.sections[value]
+        return this.state.sections[value] || ''
       },
       filterMethod: (filter, row) => {
         if (filter.value === 'all') {

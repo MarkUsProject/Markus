@@ -145,7 +145,7 @@ class ResultsController < ApplicationController
         end
 
         # Marks
-        common_fields = [:id, :name, :position, :max_mark, 'marks.mark']
+        common_fields = [:id, :name, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           if klass == RubricCriterion
             fields = common_fields + [
@@ -158,14 +158,18 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          klass.left_outer_joins(:marks)
-               .where(
-                 assignment_id: assignment.id,
-                 ta_visible: !is_review,
-                 peer_visible: is_review,
-                 'marks.result_id': [nil, result.id]
-               ).pluck_to_hash(*fields)
-               .map { |h| h.merge(criterion_type: klass.name) }
+          criteria = klass.where(assignment_id: assignment.id,
+                                 ta_visible: !is_review,
+                                 peer_visible: is_review)
+          criteria_info = criteria.pluck_to_hash(*fields)
+          marks_info = criteria.joins(:marks)
+                               .where('marks.result_id': result.id)
+                               .pluck_to_hash(*fields, 'marks.mark')
+                               .group_by { |h| h[:id] }
+          criteria_info.map do |h|
+            info = marks_info[h[:id]]&.first || h.merge('marks.mark': nil)
+            info.merge(criterion_type: klass.name)
+          end
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
