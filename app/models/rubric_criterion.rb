@@ -45,7 +45,7 @@ class RubricCriterion < Criterion
     max_level = Level.find(LEVELS[LEVELS.length - 1].id)
     max_level.mark
   end
-
+  
   def set_default_levels
     default_levels = [
       {'name' => I18n.t('rubric_criteria.defaults.level_0'),
@@ -64,11 +64,6 @@ class RubricCriterion < Criterion
     end
   end
 
-  def sort
-    LEVELS.sort{|a,b|
-      Level.find(a.id).mark <=> Level.find(b.id).mark
-    }
-  end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
