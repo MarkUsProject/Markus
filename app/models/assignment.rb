@@ -372,11 +372,13 @@ class Assignment < ApplicationRecord
                     .joins(:group)
                     .left_outer_joins(:extension)
                     .left_outer_joins(non_rejected_student_memberships: :user)
+                    .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
                                    'groups.group_name',
                                    'users.user_name',
                                    'memberships.membership_status',
+                                   'sections.name',
                                    'extensions.id',
                                    'extensions.time_delta',
                                    'extensions.apply_penalty',
@@ -408,7 +410,8 @@ class Assignment < ApplicationRecord
         admin_approved: data['groupings.admin_approved'],
         group_name: data['groups.group_name'],
         extension: extension_data,
-        members: members[data['groupings.id']]
+        members: members[data['groupings.id']],
+        section: data['sections.name'] || ''
       }
     end.compact
 
