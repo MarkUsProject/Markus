@@ -35,7 +35,6 @@ class RubricCriterion < Criterion
     end
     self.assigned_groups_count = result.uniq.length
   end
-  
   LEVELS = []
 
   def mark_for(result_id)
@@ -45,14 +44,6 @@ class RubricCriterion < Criterion
   def get_max_mark
     max_level = Level.find(LEVELS[LEVELS.length - 1].id)
     max_level.mark
-  end
-
-  def get_num_levels
-    LEVELS.length
-  end
-
-  def get_max_levels
-    LEVELS.length - 1
   end
 
   def set_default_levels
@@ -71,9 +62,6 @@ class RubricCriterion < Criterion
     default.each_with_index do |level, index|
 
     end
-    @max_mark = 4
-    @rubric_levels = LEVELS.length
-    @max_levels = LEVELS.length - 1
   end
 
   def sort
