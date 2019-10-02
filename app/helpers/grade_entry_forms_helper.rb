@@ -2,26 +2,6 @@
 
 module GradeEntryFormsHelper
 
-  # Release/unrelease the marks for a grade entry form for the given
-  # grade_entry_students
-  # Return the number of GradeEntryStudents that have been updated successfully
-  def set_release_on_grade_entry_students(grade_entry_students, release, errors)
-    numGradeEntryStudentsChanged = 0
-    grade_entry_students.each do |grade_entry_student|
-      begin
-        grade_entry_student.released_to_student = release
-        unless grade_entry_student.save
-          raise I18n.t('grade_entry_forms.grades.update_error',
-                       user_name: grade_entry_student.user.user_name)
-        end
-        numGradeEntryStudentsChanged += 1
-      rescue Exception => e
-        errors.push(e.message)
-      end
-    end
-    numGradeEntryStudentsChanged
-  end
-
   # Removes items that have empty names (so they don't get updated)
   def update_grade_entry_form_params(attributes)
     grade_entry_items =
