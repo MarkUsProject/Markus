@@ -6,6 +6,7 @@ class CreateLevels < ActiveRecord::Migration[6.0]
       t.integer :number, null: false
       t.string :description, null: false
       t.float :mark, null: false
+
       t.timestamps
     end
   end
