@@ -48,11 +48,11 @@ class RubricCriterion < Criterion
   end
 
   def get_num_levels
-
+    LEVELS.length
   end
 
   def get_max_levels
-    LEVELS.length
+    LEVELS.length - 1
   end
 
   def set_default_levels
@@ -69,10 +69,19 @@ class RubricCriterion < Criterion
        'description' => I18n.t('rubric_criteria.defaults.description_4')}
     ]
     default.each_with_index do |level, index|
-      # Level(name: something ...)
-      new_level = Level(level['name'], level['description'], index)
+
+      # creates a new level and saves it to database
+      new_level = Level.create( :name => level['name'], :number => index, :description => level['description'],
+                                :mark => index)
       LEVELS.push(new_level)
+      sort
     end
+  end
+
+  def sort
+    LEVELS.sort{|a,b|
+      Level.find(a.id).mark <=> Level.find(b.id).mark
+    }
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
