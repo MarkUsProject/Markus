@@ -36,13 +36,23 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  @max_mark = 0
-  @rubric_levels = 0
-  @max_levels = 0
   LEVELS = []
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
+  end
+
+  def get_max_mark
+    max_level = Level.find(LEVELS[LEVELS.length - 1].id)
+    max_level.mark
+  end
+
+  def get_num_levels
+
+  end
+
+  def get_max_levels
+    LEVELS.length
   end
 
   def set_default_levels
@@ -63,9 +73,6 @@ class RubricCriterion < Criterion
       new_level = Level(level['name'], level['description'], index)
       LEVELS.push(new_level)
     end
-    @max_mark = 4
-    @rubric_levels = LEVELS.length
-    @max_levels = LEVELS.length - 1
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
