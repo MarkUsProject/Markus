@@ -7,10 +7,10 @@ class Result < ApplicationRecord
 
   belongs_to :submission
   has_one :grouping, through: :submission
-  has_many :marks
-  has_many :extra_marks
-  has_many :annotations
-  has_many :peer_reviews
+  has_many :marks, dependent: :destroy
+  has_many :extra_marks, dependent: :destroy
+  has_many :annotations, dependent: :destroy
+  has_many :peer_reviews, dependent: :destroy
 
   after_create :create_marks
   validates_presence_of :marking_state
