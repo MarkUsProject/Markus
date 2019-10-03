@@ -8,7 +8,6 @@ es:
       no_mark: "N/A"
       select_a_student: "Usted debe seleccionar al menos un estudiante para lanzar la actualización."
       successfully_changed: "Se han actualizado %{numGradeEntryStudentsChanged} estudiantes exitosamente."
-      update_error: "El estado del proceso de calificación para %{user_name} no se pudo guardar."
     none: "No existen hojas de notas por el momento."
     required_fields_html: "Campos Requeridos <span class='required_field'>*</span>"
     students:

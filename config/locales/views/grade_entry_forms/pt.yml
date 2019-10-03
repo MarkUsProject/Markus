@@ -8,7 +8,6 @@ pt:
       no_mark: "N/A"
       select_a_student: "Você deve selecionar pelo menos um aluno para atualizar."
       successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
-      update_error: "O estado da avaliação para %{user_name} não pôde ser salvo "
     none: "Atualmente não há notas nas planilhas."
     required_fields_html: "Campos obrigatórios <span class='required_field'>*</span>"
     students:
