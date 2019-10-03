@@ -35,6 +35,7 @@ describe RubricCriterion do
     it 'sets default levels' do
       r = RubricCriterion.new
       r.set_default_levels
+      byebug
       expect(r.LEVELS[0]).to eq(I18n.t('rubric_criteria.defaults.level_0'))
       expect(r.LEVELS[1]).to eq(I18n.t('rubric_criteria.defaults.level_1'))
       expect(r.LEVELS[2]).to eq(I18n.t('rubric_criteria.defaults.level_2'))
