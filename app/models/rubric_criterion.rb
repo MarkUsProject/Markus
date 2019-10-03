@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels,
+  has_many :levels
 
   belongs_to :assignment, counter_cache: true
 
@@ -36,6 +36,9 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
   LEVELS = []
+  RUBRIC_LEVELS = 5
+  DEFAULT_MAX_MARKS = 4
+  MAX_LEVELS = RUBRIC_LEVELS - 1
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
@@ -45,7 +48,7 @@ class RubricCriterion < Criterion
     max_level = Level.find(LEVELS[LEVELS.length - 1].id)
     max_level.mark
   end
-  
+
   def set_default_levels
     default_levels = [
       {'name' => I18n.t('rubric_criteria.defaults.level_0'),
@@ -60,7 +63,6 @@ class RubricCriterion < Criterion
        'description' => I18n.t('rubric_criteria.defaults.description_4')}
     ]
     default.each_with_index do |level, index|
-
     end
   end
 
