@@ -89,6 +89,7 @@ class RawMarksSpreadsheet extends React.Component {
       className: 'rt-hidden',
       headerClassName: 'rt-hidden',
       width: 0,
+      show: false,
       Filter: () => '',
     },
     {
