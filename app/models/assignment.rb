@@ -4,9 +4,8 @@ class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
-  has_one :assignment_properties, dependent: :destroy
+  has_one :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_properties
-  validates_associated :assignment_properties
   validates_presence_of :assignment_properties
 
   has_many :rubric_criteria,
@@ -40,12 +39,6 @@ class Assignment < Assessment
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  has_one :assignment_stat, dependent: :destroy
-  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
-  validates_associated :assignment_stat
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates_presence_of :assignment_stat
-
   has_many :groupings # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
@@ -74,11 +67,6 @@ class Assignment < Assessment
   accepts_nested_attributes_for :section_due_dates
 
   has_many :exam_templates, dependent: :destroy
-
-  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
-  accepts_nested_attributes_for :submission_rule, allow_destroy: true
-  validates_associated :submission_rule
-  validates_presence_of :submission_rule
 
   after_create :build_starter_code_repo
 
