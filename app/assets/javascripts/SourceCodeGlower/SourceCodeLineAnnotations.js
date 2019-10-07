@@ -48,6 +48,10 @@ SourceCodeLineAnnotations.prototype.annotateLine = function(
 
   // Glow the Source Code Line
   var line = this.getLineManager().getLine(lineNum);
+  if (!line) {
+    console.log('Annotation line out of bounds');
+    return;
+  }
   var thisReference = this;
   line.glow(annotationId.toString(), columnStart, columnEnd,
     function(event) {
