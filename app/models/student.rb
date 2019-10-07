@@ -25,6 +25,8 @@ class Student < User
   belongs_to :section, optional: true
   accepts_nested_attributes_for :section
 
+  validate :section_nil_or_exists?
+
   validates_numericality_of :grace_credits,
                             only_integer: true,
                             greater_than_or_equal_to: 0
@@ -248,5 +250,12 @@ class Student < User
     grouping&.due_date ||
       section&.section_due_date_for(assignment)&.due_date ||
       assignment&.due_date
+  end
+
+  private
+
+  # make sure that the section_id refers to a valid section if it is not nil
+  def section_nil_or_exists?
+    errors.add(:base, 'Section must be nil or exist') unless section_id.nil? || !section.nil?
   end
 end
