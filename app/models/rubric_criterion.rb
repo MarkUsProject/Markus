@@ -35,19 +35,19 @@ class RubricCriterion < Criterion
     end
     self.assigned_groups_count = result.uniq.length
   end
-  LEVELS = []
+
   RUBRIC_LEVELS = 5
   DEFAULT_MAX_MARKS = 4
   MAX_LEVELS = RUBRIC_LEVELS - 1
+
+  def get_levels
+    self.levels
+  end
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
   end
 
-  def get_max_mark
-    max_level = Level.find(LEVELS[LEVELS.length - 1].id)
-    max_level.mark
-  end
 
   def set_default_levels
     default_levels = [
@@ -62,10 +62,13 @@ class RubricCriterion < Criterion
       {'name' => I18n.t('rubric_criteria.defaults.level_4'),
        'description' => I18n.t('rubric_criteria.defaults.description_4')}
     ]
-    default.each_with_index do |level, index|
+    default_levels.each_with_index do |level, index|
+      # creates a new level and saves it to database
+      new_level = self.levels.new( :name => level['name'], :number => index, :description => level['description'],
+                                                          :mark => index)
+      new_level.save!
     end
   end
-
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
