@@ -33,14 +33,16 @@ describe RubricCriterion do
     end
 
     it 'sets default levels' do
-      r = RubricCriterion.new
-      r.set_default_levels
+      assignment = create(:assignment)
+      rubric = create(:rubric_criterion, assignment: assignment)
+      rubric.set_default_levels
+      levels = rubric.get_levels
       byebug
-      expect(r.LEVELS[0]).to eq(I18n.t('rubric_criteria.defaults.level_0'))
-      expect(r.LEVELS[1]).to eq(I18n.t('rubric_criteria.defaults.level_1'))
-      expect(r.LEVELS[2]).to eq(I18n.t('rubric_criteria.defaults.level_2'))
-      expect(r.LEVELS[3]).to eq(I18n.t('rubric_criteria.defaults.level_3'))
-      expect(r.LEVELS[4]).to eq(I18n.t('rubric_criteria.defaults.level_4'))
+      expect(rubric.LEVELS[0]).to eq(I18n.t('rubric_criteria.defaults.level_0'))
+      expect(rubric.LEVELS[1]).to eq(I18n.t('rubric_criteria.defaults.level_1'))
+      expect(rubric.LEVELS[2]).to eq(I18n.t('rubric_criteria.defaults.level_2'))
+      expect(rubric.LEVELS[3]).to eq(I18n.t('rubric_criteria.defaults.level_3'))
+      expect(rubric.LEVELS[4]).to eq(I18n.t('rubric_criteria.defaults.level_4'))
     end
   end
 
