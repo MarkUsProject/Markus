@@ -13,28 +13,31 @@ export class AnnotationPanel extends React.Component {
     this.submitOverallCommentButton = React.createRef();
   }
 
-  componentDidMount() {
-    const comment = this.state.overallComment;
+  updateOverallCommentPreview() {
+    document.getElementById('overall_comment_preview').innerHTML = marked(this.state.overallComment, {sanitize: true});
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'overall_comment_preview']);
+  }
+
+  componentDidUpdate(prevProps) {
     let target_id;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
       target_id = 'overall_comment_text';
     } else {
       target_id = 'overall_comment_preview';
     }
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
-  }
-
-  componentDidUpdate(prevProps) {
+    if (prevProps.released_to_students !== this.props.released_to_students ||
+        prevProps.remarkSubmitted !== this.props.remarkSubmitted) {
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
+    }
     if (prevProps.overallComment !== this.props.overallComment) {
-      this.setState({overallComment: this.props.overallComment});
+      let callback = (target_id === 'overall_comment_preview') ? this.updateOverallCommentPreview : ()=>{};
+      this.setState({overallComment: this.props.overallComment}, callback);
     }
   }
 
   updateOverallComment = (event) => {
     const comment = event.target.value;
-    this.setState({overallComment: comment, unsavedChanges: true});
-    document.getElementById('overall_comment_preview').innerHTML = marked(comment, {sanitize: true});
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'overall_comment_preview']);
+    this.setState({overallComment: comment, unsavedChanges: true}, this.updateOverallCommentPreview);
   };
 
   submitOverallComment = (event) => {
