@@ -21,7 +21,6 @@ export class AnnotationPanel extends React.Component {
     } else {
       target_id = 'overall_comment_preview';
     }
-    document.getElementById(target_id).innerHTML = marked(comment, {sanitize: true});
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
   }
 
@@ -54,7 +53,8 @@ export class AnnotationPanel extends React.Component {
   render() {
     let overallCommentElement;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      overallCommentElement = <div id='overall_comment_text' />;
+      let marked_comment = marked(this.state.overallComment, {sanitize: true});
+      overallCommentElement = <div id='overall_comment_text' dangerouslySetInnerHTML={{__html: marked_comment}}/>;
     } else {
       overallCommentElement = (
         <div className="overall-comment">
