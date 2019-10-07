@@ -33,7 +33,7 @@ class SubmissionFile < ApplicationRecord
       'python'
     when '.js'
       'javascript'
-    when '.c'
+    when '.c', '.h'
       'c'
     when '.hs'
       'haskell'
