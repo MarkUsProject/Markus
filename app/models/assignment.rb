@@ -4,7 +4,7 @@ class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
-  has_one :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
+  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_properties
   validates_presence_of :assignment_properties
 
@@ -81,7 +81,7 @@ class Assignment < Assessment
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  has_one :assignment_stat, dependent: :destroy, foreign_key: :assessment_id
+  has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_stat, allow_destroy: true
   validates_associated :assignment_stat
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
@@ -849,7 +849,7 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    if has_peer_review and Assignment.where(parent_assignment_id: id).empty?
+    if assignment_properties.has_peer_review and Assignment.where(parent_assignment_id: id).empty?
       peerreview_assignment = Assignment.new
       peerreview_assignment.parent_assignment = self
       peerreview_assignment.submission_rule = NoLateSubmissionRule.new
@@ -1194,9 +1194,7 @@ class Assignment < Assessment
   private
 
   def update_permissions_if_vcs_changed
-    if saved_change_to_vcs_submit?
-      Repository.get_class.update_permissions
-    end
+    assignment_properties.update_permissions_if_vcs_changed
   end
 
   def reset_collection_time
@@ -1204,7 +1202,7 @@ class Assignment < Assessment
   end
 
   def update_assigned_tokens
-    difference = tokens_per_period - tokens_per_period_before_last_save
+    difference = assignment_properties.tokens_per_period - assignment_properties.tokens_per_period_before_last_save
     if difference == 0
       return
     end
