@@ -1,7 +1,5 @@
 require 'digest/md5'
 
-class InvalidSubversionRepository < Repository::ConnectionError; end
-
 # Implements AbstractRepository for Subversion repositories
 # It implements the following paradigm:
 #   1. Repositories are created by using SubversionRepository.create()

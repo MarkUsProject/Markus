@@ -158,7 +158,7 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          criteria = klass.where(is_review ? assignment.pr_assignment.id : assignment.id,
+          criteria = klass.where(assignment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
           criteria_info = criteria.pluck_to_hash(*fields)
