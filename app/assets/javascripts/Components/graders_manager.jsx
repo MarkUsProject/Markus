@@ -316,7 +316,7 @@ class RawGroupsTable extends React.Component {
         show: this.props.showSections || false,
         minWidth: 70,
         Cell: ({ value }) => {
-          return value === null ? '' : this.props.sections[value]
+          return this.props.sections[value] || '';
         },
         filterMethod: (filter, row) => {
           if (filter.value === 'all') {
