@@ -21,15 +21,15 @@ namespace :db do
         repository_folder: 'A0',
         allow_web_submits: true,
         display_grader_names_to_students: false,
-        submission_rule: rule,
-        assignment_stat: assignment_stat,
         allow_remarks: false,
         enable_test: false,
         tokens_per_period: 0,
         token_start_date: DateTime.now,
         token_period: 1,
         only_required_files: false
-      }
+      },
+      submission_rule: rule,
+      assignment_stat: assignment_stat
     )
     Period.create(submission_rule: rule, hours: 24)
 

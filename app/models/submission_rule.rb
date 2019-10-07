@@ -6,7 +6,7 @@ class SubmissionRule < ApplicationRecord
     end
   end
 
-  belongs_to :assignment_properties, inverse_of: :submission_rule, foreign_key: :assessment_id
+  belongs_to :assignment, inverse_of: :submission_rule, foreign_key: :assessment_id
   has_many :periods, -> { order('id') }, dependent: :destroy
   accepts_nested_attributes_for :periods, allow_destroy: true
 

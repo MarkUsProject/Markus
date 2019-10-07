@@ -76,7 +76,7 @@ class Assignment < Assessment
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
 
-  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment_properties, foreign_key: :assessment_id
+  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
