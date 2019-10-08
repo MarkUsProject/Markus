@@ -47,12 +47,10 @@ class RawSubmissionTable extends React.Component {
       id: 'group_name',
       Cell: row => {
         let members = '';
-        if (this.props.show_members) {
-          if (row.original.members) {
-            members = ` (${row.original.members.join(', ')})`;
-          } else {
-            members = '';
-          }
+        if (row.original.members.length === 1 && row.value === row.original.members[0]) {
+          members = '';
+        } else {
+          members = ` (${row.original.members.join(', ')})`;
         }
         if (row.original.result_id) {
           const result_url = Routes.edit_assignment_submission_result_path(
