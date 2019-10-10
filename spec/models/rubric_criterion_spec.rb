@@ -37,12 +37,11 @@ describe RubricCriterion do
       rubric = create(:rubric_criterion, assignment: assignment)
       rubric.set_default_levels
       levels = rubric.get_levels
-      byebug
-      expect(rubric.LEVELS[0]).to eq(I18n.t('rubric_criteria.defaults.level_0'))
-      expect(rubric.LEVELS[1]).to eq(I18n.t('rubric_criteria.defaults.level_1'))
-      expect(rubric.LEVELS[2]).to eq(I18n.t('rubric_criteria.defaults.level_2'))
-      expect(rubric.LEVELS[3]).to eq(I18n.t('rubric_criteria.defaults.level_3'))
-      expect(rubric.LEVELS[4]).to eq(I18n.t('rubric_criteria.defaults.level_4'))
+      expect(levels[0].name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
+      expect(levels[1].name).to eq(I18n.t('rubric_criteria.defaults.level_1'))
+      expect(levels[2].name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
+      expect(levels[3].name).to eq(I18n.t('rubric_criteria.defaults.level_3'))
+      expect(levels[4].name).to eq(I18n.t('rubric_criteria.defaults.level_4'))
     end
   end
 
@@ -113,7 +112,7 @@ describe RubricCriterion do
         it 'raises' do
           expect do
             RubricCriterion.create_or_update_from_csv_row([], @assignment)
-              .to raise_error CsvInvalidLineError
+                           .to raise_error CsvInvalidLineError
           end
         end
       end
@@ -226,7 +225,7 @@ describe RubricCriterion do
 
         context 'be able to create a new instance with level descriptions' do
           it 'not raise error' do
-            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            criterion = RubricCriterion.create_or_update_fbyerom_csv_row(@csv_base_row, @assignment)
             expect(criterion).not_to be_nil
             expect(criterion).to be_an_instance_of(RubricCriterion)
             expect(criterion.assignment).to eq(@assignment)

@@ -37,8 +37,8 @@ class RubricCriterion < Criterion
   end
 
   RUBRIC_LEVELS = 5
-  DEFAULT_MAX_MARKS = 4
-  MAX_LEVELS = RUBRIC_LEVELS - 1
+  DEFAULT_MAX_MARK = 4
+  MAX_LEVEL = RUBRIC_LEVELS - 1
 
   def get_levels
     self.levels
@@ -48,25 +48,23 @@ class RubricCriterion < Criterion
     marks.where(result_id: result_id).first
   end
 
-
   def set_default_levels
     default_levels = [
-      {'name' => I18n.t('rubric_criteria.defaults.level_0'),
-       'description' => I18n.t('rubric_criteria.defaults.description_0')},
-      {'name' => I18n.t('rubric_criteria.defaults.level_1'),
-       'description' => I18n.t('rubric_criteria.defaults.description_1')},
-      {'name' => I18n.t('rubric_criteria.defaults.level_2'),
-       'description' => I18n.t('rubric_criteria.defaults.description_2')},
-      {'name' => I18n.t('rubric_criteria.defaults.level_3'),
-       'description' => I18n.t('rubric_criteria.defaults.description_3')},
-      {'name' => I18n.t('rubric_criteria.defaults.level_4'),
-       'description' => I18n.t('rubric_criteria.defaults.description_4')}
+      { 'name' => I18n.t('rubric_criteria.defaults.level_0'),
+        'description' => I18n.t('rubric_criteria.defaults.description_0') },
+      { 'name' => I18n.t('rubric_criteria.defaults.level_1'),
+        'description' => I18n.t('rubric_criteria.defaults.description_1') },
+      { 'name' => I18n.t('rubric_criteria.defaults.level_2'),
+        'description' => I18n.t('rubric_criteria.defaults.description_2') },
+      { 'name' => I18n.t('rubric_criteria.defaults.level_3'),
+        'description' => I18n.t('rubric_criteria.defaults.description_3') },
+      { 'name' => I18n.t('rubric_criteria.defaults.level_4'),
+        'description' => I18n.t('rubric_criteria.defaults.description_4') }
     ]
     default_levels.each_with_index do |level, index|
       # creates a new level and saves it to database
-      new_level = self.levels.new( :name => level['name'], :number => index, :description => level['description'],
-                                                          :mark => index)
-      new_level.save!
+      self.levels.create(name: level['name'], number: index,
+                         description: level['description'], mark: index)
     end
   end
 
@@ -91,6 +89,7 @@ class RubricCriterion < Criterion
     if row.length < RUBRIC_LEVELS + 2
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
+
     working_row = row.clone
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
@@ -107,16 +106,17 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
     # next comes the level names.
-    (0..RUBRIC_LEVELS-1).each do |i|
+    (0..RUBRIC_LEVELS - 1).each do |i|
       criterion['level_' + i.to_s + '_name'] = working_row.shift
     end
     # the rest of the values are level descriptions.
-    (0..RUBRIC_LEVELS-1).each do |i|
+    (0..RUBRIC_LEVELS - 1).each do |i|
       criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
       raise CsvInvalidLineError
     end
+
     criterion
   end
 
@@ -141,7 +141,7 @@ class RubricCriterion < Criterion
     criterion.max_mark = criterion_yml[1]['max_mark']
 
     # Next comes the level names.
-    (0..RUBRIC_LEVELS-1).each do |i|
+    (0..RUBRIC_LEVELS - 1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
         criterion['level_' + i.to_s + '_name'] =
           criterion_yml[1]['level_' + i.to_s]['name']
@@ -158,21 +158,20 @@ class RubricCriterion < Criterion
   # Returns a hash containing the information of a single rubric criterion.
   def to_yml
     { self.name =>
-      { 'type'         => 'rubric',
-        'max_mark'     => self.max_mark.to_f,
-        'level_0'      => { 'name'        => self.level_0_name,
-                            'description' => self.level_0_description },
-        'level_1'      => { 'name'        => self.level_1_name,
-                            'description' => self.level_1_description },
-        'level_2'      => { 'name'        => self.level_2_name,
-                            'description' => self.level_2_description },
-        'level_3'      => { 'name'        => self.level_3_name,
-                            'description' => self.level_3_description },
-        'level_4'      => { 'name'        => self.level_4_name,
-                            'description' => self.level_4_description },
-        'ta_visible'   => self.ta_visible,
-        'peer_visible' => self.peer_visible }
-    }
+      { 'type' => 'rubric',
+        'max_mark' => self.max_mark.to_f,
+        'level_0' => { 'name' => self.level_0_name,
+                       'description' => self.level_0_description },
+        'level_1' => { 'name' => self.level_1_name,
+                       'description' => self.level_1_description },
+        'level_2' => { 'name' => self.level_2_name,
+                       'description' => self.level_2_description },
+        'level_3' => { 'name' => self.level_3_name,
+                       'description' => self.level_3_description },
+        'level_4' => { 'name' => self.level_4_name,
+                       'description' => self.level_4_description },
+        'ta_visible' => self.ta_visible,
+        'peer_visible' => self.peer_visible } }
   end
 
   def weight
@@ -199,7 +198,7 @@ class RubricCriterion < Criterion
     associations = criterion_ta_associations.where(ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
-      if (ta.criterion_ta_associations & associations).size < 1
+      if (ta.criterion_ta_associations & associations).empty?
         criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
       end
     end
@@ -208,11 +207,12 @@ class RubricCriterion < Criterion
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
     associations_for_criteria = criterion_ta_associations.where(
-      ta_id: ta_array).to_a
+      ta_id: ta_array
+    ).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      if assoc_to_remove.size > 0
+      unless assoc_to_remove.empty?
         criterion_ta_associations.delete(assoc_to_remove)
         assoc_to_remove.first.destroy
       end
@@ -220,13 +220,14 @@ class RubricCriterion < Criterion
   end
 
   def get_ta_names
-    criterion_ta_associations.collect {|association| association.ta.user_name}
+    criterion_ta_associations.collect { |association| association.ta.user_name }
   end
 
   def has_associated_ta?(ta)
     unless ta.ta?
       return false
     end
-    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
+
+    criterion_ta_associations.where(ta_id: ta.id).first != nil
   end
 end
