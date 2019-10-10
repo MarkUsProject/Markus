@@ -85,6 +85,7 @@ class RubricCriterion < Criterion
     if row.length < RUBRIC_LEVELS + 2
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
+    # byebug
 
     working_row = row.clone
     name = working_row.shift
@@ -101,14 +102,40 @@ class RubricCriterion < Criterion
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
     end
+    level_names = []
+    level_descriptions = []
     # next comes the level names.
     (0..RUBRIC_LEVELS - 1).each do |i|
-      criterion['level_' + i.to_s + '_name'] = working_row.shift
+      level_names.push(working_row.shift)
     end
     # the rest of the values are level descriptions.
     (0..RUBRIC_LEVELS - 1).each do |i|
-      criterion['level_' + i.to_s + '_description'] = working_row.shift
+      level_descriptions.push(working_row.shift)
     end
+    # raises an error if the number of name entries is not the same as the number of description entries
+    if level_names.length != level_descriptions.length
+      raise CsvInvalidLineError, "Number of name entries do not match number of description entries"
+    end
+
+    # byebug
+
+    (0..level_names.length).each do |index|
+      self.levels.create(name: level_names[index], number: index,
+                         description: level_descriptions[index], mark: index)
+    # end
+
+    # byebug
+
+
+
+
+    # (0..RUBRIC_LEVELS-1).each do |i|
+    #   criterion['level_' + i.to_s + '_name'] = working_row.shift
+    # end
+    #
+    # (0..RUBRIC_LEVELS-1).each do |i|
+    #   criterion['level_' + i.to_s + '_description'] = working_row.shift
+    # end
     unless criterion.save
       raise CsvInvalidLineError
     end

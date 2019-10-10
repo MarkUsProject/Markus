@@ -189,10 +189,13 @@ describe RubricCriterion do
       end
 
       it 'be able to create a new instance without level descriptions' do
+        byebug
         criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
         expect(criterion).not_to be_nil
         expect(criterion).to be_an_instance_of(RubricCriterion)
         expect(criterion.assignment).to eq(@assignment)
+        criterion_levels = criterion.levels
+        byebug
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
           expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
         end
