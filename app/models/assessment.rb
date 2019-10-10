@@ -25,5 +25,4 @@ class Assessment < ApplicationRecord
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
-
 end

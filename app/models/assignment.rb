@@ -1,5 +1,6 @@
 require 'csv'
 
+# Represents an assignment where students submit work to be graded
 class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
@@ -849,7 +850,7 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    if assignment_properties.has_peer_review and Assignment.where(parent_assignment_id: id).empty?
+    if assignment_properties.has_peer_review && Assignment.where(parent_assignment_id: id).empty?
       peerreview_assignment = Assignment.new
       peerreview_assignment.parent_assignment = self
       peerreview_assignment.submission_rule = NoLateSubmissionRule.new

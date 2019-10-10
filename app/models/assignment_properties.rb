@@ -1,5 +1,5 @@
+# Internal model used to link assignment attributes with the assignment STI model
 class AssignmentProperties < ApplicationRecord
-
   belongs_to :assignment, dependent: :destroy, foreign_key: :assessment_id
   validates_presence_of :assignment
 
@@ -64,9 +64,7 @@ class AssignmentProperties < ApplicationRecord
   end
 
   def update_permissions_if_vcs_changed
-    if saved_change_to_vcs_submit?
-      Repository.get_class.update_permissions
-    end
+    return unless saved_change_to_vcs_submit?
+    Repository.get_class.update_permissions
   end
-
 end
