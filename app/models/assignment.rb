@@ -850,26 +850,25 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    if assignment_properties.has_peer_review && Assignment.where(parent_assignment_id: id).empty?
-      peerreview_assignment = Assignment.new
-      peerreview_assignment.parent_assignment = self
-      peerreview_assignment.submission_rule = NoLateSubmissionRule.new
-      peerreview_assignment.assignment_stat = AssignmentStat.new
-      peerreview_assignment.token_period = 1
-      peerreview_assignment.non_regenerating_tokens = false
-      peerreview_assignment.unlimited_tokens = false
-      peerreview_assignment.short_identifier = short_identifier + '_pr'
-      peerreview_assignment.description = description
-      peerreview_assignment.repository_folder = repository_folder
-      peerreview_assignment.due_date = due_date
-      peerreview_assignment.is_hidden = true
+    return unless assignment_properties.has_peer_review && Assignment.where(parent_assignment_id: id).empty?
+    peerreview_assignment = Assignment.new
+    peerreview_assignment.parent_assignment = self
+    peerreview_assignment.submission_rule = NoLateSubmissionRule.new
+    peerreview_assignment.assignment_stat = AssignmentStat.new
+    peerreview_assignment.token_period = 1
+    peerreview_assignment.non_regenerating_tokens = false
+    peerreview_assignment.unlimited_tokens = false
+    peerreview_assignment.short_identifier = short_identifier + '_pr'
+    peerreview_assignment.description = description
+    peerreview_assignment.repository_folder = repository_folder
+    peerreview_assignment.due_date = due_date
+    peerreview_assignment.is_hidden = true
 
-      # We do not want to have the database in an inconsistent state, so we
-      # need to have the database rollback the 'has_peer_review' column to
-      # be false
-      if not peerreview_assignment.save
-        raise ActiveRecord::Rollback
-      end
+    # We do not want to have the database in an inconsistent state, so we
+    # need to have the database rollback the 'has_peer_review' column to
+    # be false
+    unless peerreview_assignment.save
+      raise ActiveRecord::Rollback
     end
   end
 
