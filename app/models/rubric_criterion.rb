@@ -40,7 +40,7 @@ class RubricCriterion < Criterion
   DEFAULT_MAX_MARK = 4
   MAX_LEVEL = RUBRIC_LEVELS - 1
 
-  def get_levels
+  def levels
     self.levels
   end
 
