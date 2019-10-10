@@ -867,9 +867,8 @@ class Assignment < Assessment
     # We do not want to have the database in an inconsistent state, so we
     # need to have the database rollback the 'has_peer_review' column to
     # be false
-    unless peerreview_assignment.save
-      raise ActiveRecord::Rollback
-    end
+    return if peerreview_assignment.save
+    raise ActiveRecord::Rollback
   end
 
   ### REPO ###
