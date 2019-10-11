@@ -94,7 +94,7 @@ export class SubmissionFilePanel extends React.Component {
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
-        let f = this.getFirstFile(fileData.directories[dir], filename);
+        let f = this.getFirstFile(fileData.directories[dir]);
         if (f !== null) {
           f[0] = `${dir}/${f[0]}`;
           return f;
