@@ -6,7 +6,6 @@
           assignment_id: <%= @assignment.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
-          show_members: <%= @assignment.group_max > 1 || @assignment.scanned_exam? %>,
           is_admin: <%= @current_user.admin? %>,
           can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
           max_mark: <%= @assignment.max_mark %>,
