@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels
+  has_many :levels, -> { order(:mark) }
 
   belongs_to :assignment, counter_cache: true
 
