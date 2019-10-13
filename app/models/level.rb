@@ -4,7 +4,7 @@ class Level < ApplicationRecord
 
   validates :name, presence: true
   validates :number, presence: true
-  validates :description, presence: true
+  validates :description, presence: false
   validates :mark, presence: true
 
   validates_numericality_of :number, only_integer: true, greater_than_or_equal_to: 0, allow_nil: true

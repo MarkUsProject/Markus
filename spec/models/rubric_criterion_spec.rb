@@ -189,20 +189,24 @@ describe RubricCriterion do
         @csv_base_row = row
       end
 
+      # WIP NEXT STEP IS TO GET THIS TEST TO RUN CORRECTLY, MAYBE HAVE TO CHANGE CSV BASE ROW BEING PASSED IN
+      #
       it 'be able to create a new instance without level descriptions' do
-        criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+        rubric = create(:rubric_criterion, assignment: @assignment)
+        criterion = rubric.create_or_update_from_csv_row(@csv_base_row, @assignment)
         expect(criterion).not_to be_nil
         expect(criterion).to be_an_instance_of(RubricCriterion)
         expect(criterion.assignment).to eq(@assignment)
-        criterion_levels = criterion.levels
+        levels = rubric.levels
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-          expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
+          level = levels[i]
+          expect('name' + i.to_s).to eq(level.name)
         end
       end
 
       context 'and there is an existing rubric criterion with the same name' do
         setup do
-          criterion = RubricCriterion.new
+          criterion = create(:rubric_criterion, assignment: @assignment)
           criterion.set_default_levels
           # 'criterion 5' is the name used in the criterion held
           # in @csv_base_row - but they use different level names/descriptions.

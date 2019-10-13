@@ -80,7 +80,7 @@ class RubricCriterion < Criterion
   # CsvInvalidLineError  If the row does not contain enough information, if the weight
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
-  def self.create_or_update_from_csv_row(row, assignment)
+  def create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
