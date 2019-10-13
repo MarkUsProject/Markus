@@ -36,7 +36,7 @@ describe RubricCriterion do
       assignment = create(:assignment)
       rubric = create(:rubric_criterion, assignment: assignment)
       rubric.set_default_levels
-      levels = rubric.get_levels
+      levels = rubric.levels
       expect(levels[0].name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
       expect(levels[1].name).to eq(I18n.t('rubric_criteria.defaults.level_1'))
       expect(levels[2].name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
@@ -225,7 +225,7 @@ describe RubricCriterion do
 
         context 'be able to create a new instance with level descriptions' do
           it 'not raise error' do
-            criterion = RubricCriterion.create_or_update_fbyerom_csv_row(@csv_base_row, @assignment)
+            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             expect(criterion).not_to be_nil
             expect(criterion).to be_an_instance_of(RubricCriterion)
             expect(criterion.assignment).to eq(@assignment)

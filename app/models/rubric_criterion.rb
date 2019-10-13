@@ -40,10 +40,6 @@ class RubricCriterion < Criterion
   DEFAULT_MAX_MARK = 4
   MAX_LEVEL = RUBRIC_LEVELS - 1
 
-  def levels
-    self.levels
-  end
-
   def mark_for(result_id)
     marks.where(result_id: result_id).first
   end
@@ -198,7 +194,7 @@ class RubricCriterion < Criterion
     associations = criterion_ta_associations.where(ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
-      if (ta.criterion_ta_associations & associations).empty?
+      if (ta.criterion_ta_associations & associations).size < 1
         criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
       end
     end
@@ -207,8 +203,7 @@ class RubricCriterion < Criterion
   def remove_tas(ta_array)
     ta_array = Array(ta_array)
     associations_for_criteria = criterion_ta_associations.where(
-      ta_id: ta_array
-    ).to_a
+      ta_id: ta_array).to_a
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
@@ -228,6 +223,6 @@ class RubricCriterion < Criterion
       return false
     end
 
-    criterion_ta_associations.where(ta_id: ta.id).first != nil
+    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 end
