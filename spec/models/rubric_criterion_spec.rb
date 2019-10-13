@@ -178,24 +178,23 @@ describe RubricCriterion do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
         row = ['criterion 5', '1.0']
+        # order is name, number, description, mark
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
           row << 'name' + i.to_s
-        end
-        # ...containing commas and quotes in the descriptions
-        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+          row << i
+          # ...containing commas and quotes in the descriptions
           row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+          row << i
         end
         @csv_base_row = row
       end
 
       it 'be able to create a new instance without level descriptions' do
-        byebug
         criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
         expect(criterion).not_to be_nil
         expect(criterion).to be_an_instance_of(RubricCriterion)
         expect(criterion.assignment).to eq(@assignment)
         criterion_levels = criterion.levels
-        byebug
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
           expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
         end
