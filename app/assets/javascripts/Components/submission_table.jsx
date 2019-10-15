@@ -47,7 +47,7 @@ class RawSubmissionTable extends React.Component {
       id: 'group_name',
       Cell: row => {
         let members = '';
-        if (row.original.members.length === 1 && row.value === row.original.members[0]) {
+        if (!row.original.members || row.original.members.length === 1 && row.value === row.original.members[0]) {
           members = '';
         } else {
           members = ` (${row.original.members.join(', ')})`;
