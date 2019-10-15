@@ -104,7 +104,6 @@ end
 group :test do
   gem 'factory_bot_rails'
   gem 'machinist', '< 3'
-  gem 'minitest'
   gem 'mocha', require: false
   gem 'shoulda'
   gem 'simplecov', require: false
