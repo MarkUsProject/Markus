@@ -36,7 +36,7 @@ describe Api::SubmissionFilesController do
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     let(:group) { grouping.group }
     let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
-    let(:file_names) { Array.new(2) { Faker::File.file_name('') } }
+    let(:file_names) { Array.new(2) { Faker::File.file_name(dir: '') } }
     before :each do
       admin = create :admin
       admin.reset_api_key
