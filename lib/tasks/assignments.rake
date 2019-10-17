@@ -152,7 +152,9 @@ namespace :db do
         assignment_stat: assignment_stat
     )
 
-    Assignment.joins(:assignment_properties).where(:assignment_properties => {section_due_dates_type: true}).find_each do |assignment|
+    Assignment.joins(:assignment_properties)
+              .where(:assignment_properties => { section_due_dates_type: true })
+              .find_each do |assignment|
       Section.all.find_each.with_index do |section, i|
         SectionDueDate.create(assignment: assignment, section: section, due_date: assignment.due_date + (i + 1).days)
       end

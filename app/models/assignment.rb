@@ -975,8 +975,9 @@ class Assignment < Assessment
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
-    Assignment.includes(groupings: [:group, { accepted_student_memberships: :user }])
-              .where(vcs_submit: true)
+    Assignment.joins(:assignment_properties)
+              .includes(groupings: [:group, { accepted_student_memberships: :user }])
+              .where(assignment_properties: { vcs_submit: true })
               .order(due_date: :desc)
   end
 
