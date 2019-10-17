@@ -69,6 +69,11 @@ class Assignment < Assessment
 
   has_many :exam_templates, dependent: :destroy
 
+  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
+  accepts_nested_attributes_for :submission_rule, allow_destroy: true
+  validates_associated :submission_rule
+  validates_presence_of :submission_rule
+
   after_create :build_starter_code_repo
 
   before_save :reset_collection_time
