@@ -137,17 +137,28 @@ class RubricCriterion < Criterion
     criterion.max_mark = criterion_yml[1]['max_mark']
 
     # Next comes the level names.
+    # (0..RUBRIC_LEVELS - 1).each do |i|
+    #   if criterion_yml[1]['level_' + i.to_s]
+    #     criterion['level_' + i.to_s + '_name'] =
+    #       criterion_yml[1]['level_' + i.to_s]['name']
+    #     criterion['level_' + i.to_s + '_description'] =
+    #       criterion_yml[1]['level_' + i.to_s]['description']
+    #   end
+    # end
+
     (0..RUBRIC_LEVELS - 1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
-        criterion['level_' + i.to_s + '_name'] =
-          criterion_yml[1]['level_' + i.to_s]['name']
-        criterion['level_' + i.to_s + '_description'] =
-          criterion_yml[1]['level_' + i.to_s]['description']
+        criterion.levels.build(:rubric_criterion => criterion,
+                               :name => criterion_yml[1]['level_' + i.to_s]['name'],
+                               :number => i,
+                               :description => criterion['level_' + i.to_s + '_description'],
+                               :mark => criterion['level_' + i.to_s + '_mark'])
       end
     end
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    criterion.save
     criterion
   end
 

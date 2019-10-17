@@ -1,0 +1,25 @@
+Grammar usage:
+    type: rubric
+    max_mark: 16.0
+    level_0:
+      name: Beginner
+      description: There are more than 5 grammar mistakes in this entire essay.
+      mark: 0
+    level_1:
+      name: Intermediate
+      description: Intermediate.
+      mark: 2
+    level_2:
+      name: Accomplished
+      description: Accomplished.
+      mark: 3
+    level_3:
+      name: level 3 criterion
+      description: level 3 description
+      mark: 5
+    level_4:
+      name: level 4 criterion
+      description: level 4 description
+      mark: 6
+    ta_visible: true
+    peer_visible: false

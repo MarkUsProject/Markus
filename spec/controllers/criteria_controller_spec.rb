@@ -935,6 +935,20 @@ describe CriteriaController do
         expect(cr1.peer_visible).to be false
       end
 
+      it ' creates a rubric criterion with levels properly ' do
+        @yaml_file = fixture_file_upload('spec/fixtures/files/rubric_criteria/rubric_criterion_test.yaml')
+
+        post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @yaml_file }
+
+        expect(@assignment.get_criteria(:all, :rubric).pluck(:name)).to contain_exactly('Grammar usage')
+        test_rubric_criterion = @assignment.get_criteria(:all, :rubric).find_by('Grammar usage')
+
+        expect(test_rubric_criterion.levels).not_to be_nil
+        (0..test_rubric_criterion.size - 1).each do |i|
+          expect(test_rubric_criterion.levels[i].name == "level_" + i.to_s )
+        end
+      end
+
       it 'creates criteria being case insensitive with the type given' do
         post_as @admin, :upload, params: { assignment_id: @assignment.id, upload_file: @uploaded_file }
 
