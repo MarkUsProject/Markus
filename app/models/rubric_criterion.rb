@@ -101,9 +101,8 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
-    # create the levels
-    # Right now neither upsert nor save works :(
-    (0..RUBRIC_LEVELS - 1).each do |i|
+    # create/update the levels
+    (0..RUBRIC_LEVELS - 1).each do
       name = working_row.shift
       number = working_row.shift
       description = working_row.shift
@@ -111,19 +110,12 @@ class RubricCriterion < Criterion
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
         level = criterion.levels.find_by(name: name)
-        # check out find and create by and find or initialize by
-        criterion.levels.upsert(id: level.id, rubric_criterion_id: level.rubric_criterion_id, name: name, number: number,
-                           description: description, mark: level.mark, created_at: level.created_at, updated_at: level.updated_at)
-        # byebug
-        # level.name = name
-        # level.number = number
-        # level.description = description
-        # level.mark = mark
-        # level.save
-        # byebug
+        criterion.levels.upsert(id: level.id, rubric_criterion_id: level.rubric_criterion_id, name: name,
+                                number: number, description: description, mark: level.mark,
+                                created_at: level.created_at, updated_at: level.updated_at)
       # Otherwise, we create a new level
       else
-        self.levels.create(name: name, number: number, description: description, mark: mark)
+        criterion.levels.create(name: name, number: number, description: description, mark: mark)
       end
       unless criterion.save
         raise CsvInvalidLineError
