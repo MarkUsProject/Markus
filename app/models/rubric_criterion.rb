@@ -214,7 +214,7 @@ class RubricCriterion < Criterion
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      if assoc_to_remove.size > 0
+      unless assoc_to_remove.size.empty?
         criterion_ta_associations.delete(assoc_to_remove)
         assoc_to_remove.first.destroy
       end
