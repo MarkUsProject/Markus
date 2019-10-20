@@ -80,7 +80,7 @@ class RubricCriterion < Criterion
   # CsvInvalidLineError  If the row does not contain enough information, if the weight
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
-  def create_or_update_from_csv_row(row, assignment)
+  def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
@@ -102,27 +102,33 @@ class RubricCriterion < Criterion
     end
 
     # create the levels
+    # Right now neither upsert nor save works :(
     (0..RUBRIC_LEVELS - 1).each do |i|
       name = working_row.shift
       number = working_row.shift
       description = working_row.shift
       mark = working_row.shift
-      self.levels.create(name: name, number: number, description: description, mark: mark)
+      # if level name exists we will update the level
+      if criterion.levels.exists?(name: name)
+        level = criterion.levels.find_by(name: name)
+        # check out find and create by and find or initialize by
+        criterion.levels.upsert(id: level.id, rubric_criterion_id: level.rubric_criterion_id, name: name, number: number,
+                           description: description, mark: level.mark, created_at: level.created_at, updated_at: level.updated_at)
+        # byebug
+        # level.name = name
+        # level.number = number
+        # level.description = description
+        # level.mark = mark
+        # level.save
+        # byebug
+      # Otherwise, we create a new level
+      else
+        self.levels.create(name: name, number: number, description: description, mark: mark)
+      end
+      unless criterion.save
+        raise CsvInvalidLineError
+      end
     end
-
-
-    # (0..RUBRIC_LEVELS-1).each do |i|
-    #   criterion['level_' + i.to_s + '_name'] = working_row.shift
-    # end
-    #
-    # (0..RUBRIC_LEVELS-1).each do |i|
-    #   criterion['level_' + i.to_s + '_description'] = working_row.shift
-    # end
-    unless criterion.save
-      raise CsvInvalidLineError
-    end
-
-    criterion
   end
 
   # Instantiate a RubricCriterion from a YML entry
