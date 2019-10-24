@@ -31,6 +31,12 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.date :due_date
       t.boolean :is_hidden, default: true, null: false
       t.boolean :show_total, default: false, null: false
+      t.integer :notes_count, default: 0
+      t.integer :rubric_criteria_count
+      t.integer :flexible_criteria_count
+      t.integer :checkbox_criteria_count
+      t.integer :groupings_count
+      t.integer :outstanding_remark_request_count
 
       t.timestamps
     end
@@ -52,11 +58,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.boolean :section_due_dates_type, default: false, null: false
       t.boolean :display_grader_names_to_students, default: false, null: false
       t.boolean :enable_test, default: false, null: false
-      t.integer :notes_count, default: 0
       t.boolean :assign_graders_to_criteria, default: false, null: false
-      t.integer :rubric_criteria_count
-      t.integer :flexible_criteria_count
-      t.integer :groupings_count
       t.integer :tokens_per_period, default: 0, null: false
       t.boolean :allow_remarks, default: false, null: false
       t.datetime :remark_due_date
@@ -64,7 +66,6 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.float :results_median
       t.integer :results_fails
       t.integer :results_zeros
-      t.integer :outstanding_remark_request_count
       t.boolean :unlimited_tokens, default: false, null: false
       t.boolean :is_hidden, default: false, null: false
       t.boolean :only_required_files, default: false, null: false
@@ -73,7 +74,6 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.float :token_period
       t.integer :parent_assignment_id
       t.boolean :has_peer_review, default: false, null: false
-      t.integer :checkbox_criteria_count
       t.boolean :enable_student_tests, default: false, null: false
       t.boolean :non_regenerating_tokens, default: false, null: false
       t.boolean :scanned_exam, default: false, null: false
