@@ -1,6 +1,6 @@
 class AssignmentFile < ApplicationRecord
 
-  belongs_to :assignment
+  belongs_to :assignment, foreign_key: :assessment_id
   has_many :criteria_assignment_files_joins, dependent: :destroy
   has_many :template_divisions
 

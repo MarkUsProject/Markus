@@ -20,6 +20,7 @@ namespace :db do
 
     Assignment.all.each do |assignment|
       5.times do |index|
+        byebug
         ac = AnnotationCategory.create(assignment: assignment,
                                        position: index + 1,
                                        annotation_category_name: random_words(3))

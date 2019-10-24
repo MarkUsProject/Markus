@@ -2,7 +2,7 @@ class AnnotationCategory < ApplicationRecord
   has_many :annotation_texts, dependent: :destroy
 
   validates_presence_of :annotation_category_name
-  validates_uniqueness_of :annotation_category_name, scope: :assignment_id
+  validates_uniqueness_of :annotation_category_name, scope: :assessment_id
 
   belongs_to :assignment
 

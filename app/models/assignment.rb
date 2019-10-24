@@ -32,11 +32,9 @@ class Assignment < Assessment
            class_name: 'AnnotationCategory',
            dependent: :destroy
 
-  has_many :criterion_ta_associations,
-		   dependent: :destroy
+  has_many :criterion_ta_associations, dependent: :destroy
 
-  has_many :assignment_files,
-		   dependent: :destroy
+  has_many :assignment_files, dependent: :destroy, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
@@ -64,7 +62,7 @@ class Assignment < Assessment
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates
+  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :section_due_dates
 
   has_many :exam_templates, dependent: :destroy
@@ -103,7 +101,7 @@ class Assignment < Assessment
                     :is_hidden, :vcs_submit, :has_peer_review]
 
   # Set the default order of assignments: in ascending order of date (due_date)
-  default_scope { order(:date, :id) }
+  default_scope { order(:due_date, :id) }
 
   # Are we past all due_dates and section due_dates for this assignment?
   # This does not take extensions into consideration.
@@ -979,7 +977,9 @@ class Assignment < Assessment
   ### /REPO ###
 
   def self.get_required_files
-    assignments = Assignment.includes(:assignment_files).where(scanned_exam: false, is_hidden: false)
+    assignments = Assignment
+                    .includes(:assignment_files, :assignment_properties)
+                    .where(assignment_properties: {scanned_exam: false}, is_hidden: false)
     required = {}
     assignments.each do |assignment|
       files = assignment.assignment_files.map(&:filename)
@@ -988,7 +988,7 @@ class Assignment < Assessment
       else
         required_only = assignment.only_required_files
       end
-      required[assignment.repository_folder] = { required: files, required_only: required_only }
+      required[assignment.assignment_properties.repository_folder] = { required: files, required_only: required_only }
     end
     required
   end
