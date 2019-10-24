@@ -123,7 +123,7 @@ export class SubmissionSelector extends React.Component {
           </div>
 
           <div style={{flexGrow: 1}} />
-          <h2 className='total'>{this.props.total} / {+(this.props.assignment_max_mark)}</h2>
+          <h2 className='total'>{+(Math.round(this.props.total * 100) / 100)} / {+(this.props.assignment_max_mark)}</h2>
           {this.renderToggleMarkingStateButton()}
           {this.renderReleaseMarksButton()}
           {this.renderFullscreenButton()}
