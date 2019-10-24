@@ -8,7 +8,7 @@ class SectionDueDate < ApplicationRecord
     return assignment.due_date unless assignment.section_due_dates_type
 
     section_due_date =
-      where(section_id: section.id, assignment_id: assignment.id).first
+      where(section_id: section.id, assessment_id: assignment.id).first
     section_due_date.try(:due_date) || assignment.due_date
   end
 

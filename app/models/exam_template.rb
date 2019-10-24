@@ -16,8 +16,8 @@ class ExamTemplate < ApplicationRecord
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment = Assignment.find(attributes[:assignment_id])
+    return unless attributes.has_key? :assessment_id
+    assignment = Assignment.find(attributes[:assessment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
@@ -56,8 +56,8 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    return unless attributes.has_key? :assessment_id
+    assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name,
@@ -154,7 +154,7 @@ class ExamTemplate < ApplicationRecord
         # when a new group is entered.
         Grouping.find_or_create_by(
           group_id: group.id,
-          assignment_id: self.assignment_id
+          assessment_id: self.assessment_id
         )
 
         # add assignment files based on template divisions

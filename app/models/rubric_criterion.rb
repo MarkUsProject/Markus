@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id#, counter_cache: true
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count

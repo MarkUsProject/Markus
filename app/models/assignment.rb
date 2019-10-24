@@ -42,7 +42,7 @@ class Assignment < Assessment
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment
-  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assessment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
 
@@ -138,7 +138,7 @@ class Assignment < Assessment
   end
 
   def section_due_date(section)
-    unless section_due_dates_type && section
+    unless assignment_properties.section_due_dates_type && section
       return due_date
     end
 
@@ -170,7 +170,7 @@ class Assignment < Assessment
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
     section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
-                                 .where('section_due_dates.assignment_id': id)
+                                 .where('section_due_dates.assessment_id': id)
                                  .pluck('groupings.id', 'section_due_dates.due_date')
 
     grouping_extensions = groupings.joins(:extension)
@@ -251,7 +251,7 @@ class Assignment < Assessment
   # submissions are considered.
   def marking_started?
     Result.joins(:marks, submission: :grouping)
-          .where(groupings: { assignment_id: id },
+          .where(groupings: { assessment_id: id },
                  submissions: { submission_version_used: true })
           .where.not(marks: { mark: nil })
           .any?
@@ -374,12 +374,12 @@ class Assignment < Assessment
     Grouping.create(group: group, assignment: self)
   end
 
-  # Clones the Groupings from the assignment with id assignment_id
+  # Clones the Groupings from the assignment with id assessment_id
   # into self.  Destroys any previously existing Groupings associated
   # with this Assignment
-  def clone_groupings_from(assignment_id)
+  def clone_groupings_from(assessment_id)
     warnings = []
-    original_assignment = Assignment.find(assignment_id)
+    original_assignment = Assignment.find(assessment_id)
     self.transaction do
       self.group_min = original_assignment.group_min
       self.group_max = original_assignment.group_max
@@ -398,7 +398,7 @@ class Assignment < Assessment
         active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
         grouping = Grouping.new
         grouping.group_id = g.group_id
-        grouping.assignment_id = self.id
+        grouping.assessment_id = self.id
         grouping.admin_approved = g.admin_approved
         unless grouping.save
           warnings << I18n.t('groups.clone_warning.other',
@@ -459,7 +459,8 @@ class Assignment < Assessment
       next if submission&.revision_identifier.nil?
       repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
                                                                  submission.revision_identifier,
-                                                                 grouping.group.group_name, repository_folder)
+                                                                 grouping.group.group_name,
+                                                                 assignment_properties.repository_folder)
     end
     repo_commands
   end
@@ -492,7 +493,7 @@ class Assignment < Assessment
       graders = {}
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
-                                .where(assignment_id: self.id)
+                                .where(assessment_id: self.id)
                                 .pluck(:criterion_type, :criterion_id)
                                 .map { |t, id| "#{t}-#{id}" }
       else
@@ -638,6 +639,7 @@ class Assignment < Assessment
 
   def get_all_criteria(type, include_opt)
     if type == :all
+      byebug
       all_criteria = rubric_criteria.includes(include_opt) +
                      flexible_criteria.includes(include_opt) +
                      checkbox_criteria.includes(include_opt)
@@ -748,7 +750,7 @@ class Assignment < Assessment
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
                    .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
-                   .where('m.mark IS NOT NULL AND assignment_id = ?', self.id)
+                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
@@ -781,7 +783,7 @@ class Assignment < Assessment
                 .where(submissions: {submission_version_used: true},
                        memberships: {user_id: ta_id},
                        results: {marking_state: Result::MARKING_STATES[:complete]},
-                       groupings: {assignment_id: self.id})
+                       groupings: {assessment_id: self.id})
                 .select('annotations.id').uniq.size
     end
   end
@@ -790,7 +792,7 @@ class Assignment < Assessment
     groupings = Grouping.arel_table
     submissions = Submission.arel_table
     subs = Submission.joins(:grouping)
-                     .where(groupings[:assignment_id].eq(id)
+                     .where(groupings[:assessment_id].eq(id)
                      .and(submissions[:submission_version_used].eq(true)))
 
     res = Result.submitted_remarks_and_all_non_remarks
@@ -838,7 +840,7 @@ class Assignment < Assessment
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
-    not parent_assignment_id.nil?
+    not parent_assessment_id.nil?
   end
 
   # Returns true if this is a parent assignment that has a child peer review
@@ -848,7 +850,7 @@ class Assignment < Assessment
   end
 
   def create_peer_review_assignment_if_not_exist
-    return unless assignment_properties.has_peer_review && Assignment.where(parent_assignment_id: id).empty?
+    return unless assignment_properties.has_peer_review && Assignment.where(parent_assessment_id: id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.submission_rule = NoLateSubmissionRule.new
@@ -858,7 +860,7 @@ class Assignment < Assessment
     peerreview_assignment.unlimited_tokens = false
     peerreview_assignment.short_identifier = short_identifier + '_pr'
     peerreview_assignment.description = description
-    peerreview_assignment.repository_folder = repository_folder
+    peerreview_assignment.repository_folder = assignment_properties.repository_folder
     peerreview_assignment.due_date = due_date
     peerreview_assignment.is_hidden = true
 
@@ -879,7 +881,7 @@ class Assignment < Assessment
       end
       access_starter_code_repo do |repo|
         txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
-        txn.add_path(self.repository_folder)
+        txn.add_path(self.assignment_properties.repository_folder)
         repo.commit(txn)
       end
     rescue StandardError => e
@@ -932,7 +934,7 @@ class Assignment < Assessment
     starter_tree.sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
                 .each do |starter_obj_name, starter_obj|
       next if internal_file_names.include?(File.basename(starter_obj_name))
-      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
+      starter_obj_path = File.join(self.assignment_properties.repository_folder, starter_obj_name)
       already_exists = group_revision.path_exists?(starter_obj_path)
       next if already_exists && !overwrite
       if starter_obj.is_a? Repository::RevisionDirectory
@@ -994,7 +996,7 @@ class Assignment < Assessment
   end
 
   def autotest_path
-    File.join(TestRun::ASSIGNMENTS_DIR, self.repository_folder)
+    File.join(TestRun::ASSIGNMENTS_DIR, self.assignment_properties.repository_folder)
   end
 
   def autotest_files_dir
@@ -1239,7 +1241,8 @@ class Assignment < Assessment
     case file_format
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0], repository_folder: row[0])
+        assignment = self.find_or_create_by(short_identifier: row[0],
+                                            assignment_properties: { repository_folder: row[0] })
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?

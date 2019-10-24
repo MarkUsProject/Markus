@@ -20,7 +20,6 @@ namespace :db do
 
     Assignment.all.each do |assignment|
       5.times do |index|
-        byebug
         ac = AnnotationCategory.create(assignment: assignment,
                                        position: index + 1,
                                        annotation_category_name: random_words(3))
@@ -33,7 +32,7 @@ namespace :db do
       3.times do |index|
         RubricCriterion.create(
             name:                  random_sentences(1),
-            assignment_id:         assignment.id,
+            assessment_id:         assignment.id,
             position:              index + 1,
             max_mark:              pos_rand(3),
             level_0_name:          random_words(5),
@@ -52,7 +51,7 @@ namespace :db do
       3.times do |index|
         FlexibleCriterion.create(
             name:                    random_sentences(1),
-            assignment_id:           assignment.id,
+            assessment_id:           assignment.id,
             description:             random_sentences(5),
             position:                index + 4,
             max_mark:                pos_rand(3),
@@ -65,7 +64,7 @@ namespace :db do
       3.times do |index|
         CheckboxCriterion.create(
             name:                    random_sentences(1),
-            assignment_id:           assignment.id,
+            assessment_id:           assignment.id,
             description:             random_sentences(5),
             position:                index + 7,
             max_mark:                1,
