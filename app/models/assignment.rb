@@ -361,7 +361,7 @@ class Assignment < ApplicationRecord
   end
 
   def all_grouping_data
-    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name)
+    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = Hash[student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
     end
