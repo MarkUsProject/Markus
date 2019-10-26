@@ -520,6 +520,7 @@ class GroupsActionBox extends React.Component {
       <div className='rt-action-box'>
         <span>
           <input
+            id='show_hidden'
             name='show_hidden'
             type='checkbox'
             checked={this.props.showHidden}
