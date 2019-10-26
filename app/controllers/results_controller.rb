@@ -732,8 +732,8 @@ class ResultsController < ApplicationController
   end
 
   def delete_grace_period_deduction
-    @grouping = Grouping.find(params[:id])
-    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
+    result = Result.find(params[:id])
+    grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
     head :ok
   end
