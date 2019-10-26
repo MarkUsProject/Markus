@@ -242,6 +242,7 @@ class RawMarksSpreadsheet extends React.Component {
     return (
       <span>
         <input
+          id='show_hidden'
           name='show_hidden'
           type='checkbox'
           checked={this.state.show_hidden}
