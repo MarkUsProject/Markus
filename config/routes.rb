@@ -212,7 +212,7 @@ Rails.application.routes.draw do
             get 'download_zip'
             delete 'cancel_remark_request'
             post 'add_extra_mark'
-            post 'delete_grace_period_deduction'
+            delete 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
             post 'set_released_to_students'
@@ -377,7 +377,7 @@ Rails.application.routes.draw do
       end
 
       member do
-        post 'delete_grace_period_deduction'
+        delete 'delete_grace_period_deduction'
       end
     end
 
