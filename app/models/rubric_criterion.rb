@@ -101,8 +101,11 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
+    # there are 5 fields for each level
+    num_levels = working_row.length/5
+
     # create/update the levels
-    (0..RUBRIC_LEVELS - 1).each do
+    (0..num_levels).each do
       name = working_row.shift
       number = working_row.shift
       description = working_row.shift
@@ -214,7 +217,7 @@ class RubricCriterion < Criterion
     ta_array.each do |ta|
       # & is the mathematical set intersection operator between two arrays
       assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      unless assoc_to_remove.size.empty?
+      unless assoc_to_remove.empty?
         criterion_ta_associations.delete(assoc_to_remove)
         assoc_to_remove.first.destroy
       end
