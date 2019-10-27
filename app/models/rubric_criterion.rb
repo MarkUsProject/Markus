@@ -102,7 +102,7 @@ class RubricCriterion < Criterion
     end
 
     # there are 5 fields for each level
-    num_levels = working_row.length/5
+    num_levels = working_row.length / 5
 
     # create/update the levels
     (0..num_levels).each do
