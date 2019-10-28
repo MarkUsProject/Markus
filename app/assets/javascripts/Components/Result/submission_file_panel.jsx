@@ -260,7 +260,8 @@ export class FileSelector extends React.Component {
             e.stopPropagation();
             this.expandFileSelector(expand);
           }}
-          onMouseLeave={() => this.expandFileSelector(null)}
+          onBlur={() => this.expandFileSelector(null)}
+          tabIndex={-1}
         >
           <a>{selectorLabel}</a>
           {arrow}
