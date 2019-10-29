@@ -83,7 +83,7 @@ class RubricCriterion < Criterion
   def self.create_or_update_from_csv_row(row, assignment)
     # get number of required fields
     required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
-    if row.length < required_fields + 2
+    if row.length < required_fields + 1
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
@@ -93,11 +93,6 @@ class RubricCriterion < Criterion
     # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
-    begin
-      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
-    rescue ArgumentError
-      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
-    end
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
@@ -126,6 +121,7 @@ class RubricCriterion < Criterion
         raise CsvInvalidLineError
       end
     end
+    criterion.max_mark = Float(criterion.levels.maximum("mark"))
   end
 
   # Instantiate a RubricCriterion from a YML entry
@@ -182,10 +178,6 @@ class RubricCriterion < Criterion
                        'description' => self.level_4_description },
         'ta_visible' => self.ta_visible,
         'peer_visible' => self.peer_visible } }
-  end
-
-  def weight
-    max_mark / MAX_LEVEL
   end
 
   def round_max_mark

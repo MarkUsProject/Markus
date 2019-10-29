@@ -179,7 +179,7 @@ describe RubricCriterion do
       before(:each) do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
-        row = ['criterion 5', '1.0']
+        row = ['criterion 5']
         # get number of required fields
         required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
         # order is name, number, description, mark
@@ -211,7 +211,7 @@ describe RubricCriterion do
         context 'allow a criterion with the same name to overwrite' do
           it 'not raise error' do
             names = ['Very Poor', 'Weak', 'Passable', 'Good', 'Excellent']
-            row = ['criterion 5', '1.0']
+            row = ['criterion 5']
             # order is name, number, description, mark
             (0..@criterion.levels.length - 1).each do |i|
               row << names[i]
