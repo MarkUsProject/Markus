@@ -81,7 +81,9 @@ class RubricCriterion < Criterion
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
-    if row.length < RUBRIC_LEVELS + 2
+    # get number of required fields
+    required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
+    if row.length < required_fields + 2
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
@@ -146,8 +148,10 @@ class RubricCriterion < Criterion
     criterion.name = name
     criterion.max_mark = criterion_yml[1]['max_mark']
 
+    # get number of required fields
+    required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
     # Next comes the level names.
-    (0..RUBRIC_LEVELS - 1).each do |i|
+    (0..required_fields - 1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
         criterion['level_' + i.to_s + '_name'] =
           criterion_yml[1]['level_' + i.to_s]['name']
