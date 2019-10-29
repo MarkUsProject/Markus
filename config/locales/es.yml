@@ -63,6 +63,7 @@ es:
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
       create_groups_job: "%{progress}/%{total} grupos creados"
+      create_groups_job_extra_info: "Ha fallado: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
     repo:
