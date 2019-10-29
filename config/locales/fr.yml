@@ -53,6 +53,7 @@ fr:
       split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"
       generate_job: "Génération de la copie %{progress} de %{total} pour %{exam_name}"
       create_groups_job: "%{progress}/%{total} groupes créés"
+      create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
     repo:

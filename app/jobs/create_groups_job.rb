@@ -3,7 +3,7 @@ class CreateGroupsJob < ApplicationJob
   queue_as MarkusConfigurator.markus_job_create_groups_queue_name
 
   def self.on_complete_js(_status)
-    'window.groupsManager.fetchData'
+    '() => {window.groupsManager && window.groupsManager.fetchData}'
   end
 
   def self.show_status(status)
@@ -89,6 +89,12 @@ class CreateGroupsJob < ApplicationJob
               raise ActiveRecord::Rollback
             end
             progress.increment
+          rescue ActiveRecord::Rollback
+            status[:error_message] = "#{status[:error_message]}\n#{I18n.t('poll_job.create_groups_job_extra_info',
+                                                                          group_name: group_name,
+                                                                          repo_name: repo_name,
+                                                                          members: members)}"
+            raise
           end
         end
       end
