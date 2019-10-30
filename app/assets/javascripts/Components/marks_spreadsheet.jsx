@@ -48,11 +48,6 @@ class RawMarksSpreadsheet extends React.Component {
     }).then(response => {
       this.props.resetSelection();
 
-      if (this.props.show_total) {
-        response.data.forEach(row => {
-          this[`total-${row.id}`] |= React.createRef();
-        });
-      }
       this.setState({
         data: response.data,
         loading: false,
@@ -144,7 +139,7 @@ class RawMarksSpreadsheet extends React.Component {
       student_id={row.original._id}
       default_value={row.value}
       updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
-                    this.updateTotal(row.index, row.original.id, gradeEntryItemId, newGrade, newTotal)}
+                    this.updateTotal(row.index, row.original._id, gradeEntryItemId, newGrade, newTotal)}
     />;
   };
 
@@ -154,7 +149,7 @@ class RawMarksSpreadsheet extends React.Component {
     minWidth: 50,
     className: 'grade-total',
     Cell: row => {
-      return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original.id}`] = node} />;
+      return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original._id}`] = node} />;
     },
     defaultSortDesc: true,
     sortMethod: (a, b, desc) => {
