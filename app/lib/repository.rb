@@ -350,6 +350,8 @@ module Repository
     attr_accessor :server_timestamp
 
     def initialize(revision_identifier)
+      raise RevisionDoesNotExist if revision_identifier.nil?
+
       @revision_identifier = revision_identifier
       @revision_identifier_ui = @revision_identifier
     end

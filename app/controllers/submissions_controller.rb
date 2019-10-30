@@ -494,6 +494,8 @@ class SubmissionsController < ApplicationController
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
           repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
+        rescue Repository::RevisionDoesNotExist
+          next
         end
       end
     end
