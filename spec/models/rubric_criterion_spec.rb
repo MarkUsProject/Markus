@@ -178,64 +178,62 @@ describe RubricCriterion do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
         row = ['criterion 5', '1.0']
+        # order is name, number, description, mark
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
           row << 'name' + i.to_s
-        end
-        # ...containing commas and quotes in the descriptions
-        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+          row << i
+          # ...containing commas and quotes in the descriptions
           row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
+          row << i
         end
         @csv_base_row = row
       end
 
-      it 'be able to create a new instance without level descriptions' do
-        criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-        expect(criterion).not_to be_nil
-        expect(criterion).to be_an_instance_of(RubricCriterion)
-        expect(criterion.assignment).to eq(@assignment)
-        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-          expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
-        end
-      end
-
       context 'and there is an existing rubric criterion with the same name' do
-        setup do
-          criterion = RubricCriterion.new
-          criterion.set_default_levels
+        before(:each) do
+          @criterion = create(:rubric_criterion, assignment: @assignment)
+          @criterion.set_default_levels
           # 'criterion 5' is the name used in the criterion held
           # in @csv_base_row - but they use different level names/descriptions.
           # I'll use the defaults here, and see if I can overwrite with
           # @csv_base_row.
-          criterion.name = 'criterion 5'
-          criterion.assignment = @assignment
-          criterion.position = @assignment.next_criterion_position
-          criterion.max_mark = 5.0
-          expect(criterion.save)
+          @criterion.name = 'criterion 5'
+          @criterion.assignment = @assignment
+          @criterion.position = @assignment.next_criterion_position
+          @criterion.max_mark = 5.0
+          expect(@criterion.save)
         end
 
         context 'allow a criterion with the same name to overwrite' do
           it 'not raise error' do
-            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-            (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-              expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
-              expect(4.0).to eq(criterion.max_mark)
+            names = ['Very Poor', 'Weak', 'Passable', 'Good', 'Excellent']
+            row = ['criterion 5', '1.0']
+            # order is name, number, description, mark
+            (0..@criterion.levels.length - 1).each do |i|
+              row << names[i]
+              row << i
+              # ...containing commas and quotes in the descriptions
+              row << 'new description number ' + i.to_s
+              row << i
+            end
+
+            RubricCriterion.create_or_update_from_csv_row(row, @assignment)
+            @criterion.reload
+            levels = @criterion.levels
+            expect(levels.length).to eq(5)
+            (0..levels.length - 1).each do |i|
+              expect(names[i]).to eq(levels[i].name)
+              expect('new description number ' + i.to_s).to eq(levels[i].description)
             end
           end
         end
 
-        context 'be able to create a new instance with level descriptions' do
+        context 'allow a criterion with the same name to add levels' do
           it 'not raise error' do
-            criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
-            expect(criterion).not_to be_nil
-            expect(criterion).to be_an_instance_of(RubricCriterion)
-            expect(criterion.assignment).to eq(@assignment)
-            (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
-              assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
-              expect('name' + i.to_s).to eq(criterion['level_' + i.to_s + '_name'])
-              expect(
-                'description' + i.to_s + ' with comma (,) and ""quotes""'
-              ).to eq(criterion['level_' + i.to_s + '_description'])
-            end
+            RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            levels = @criterion.levels
+            expect(levels[0].mark).to eq(0.0)
+            expect(levels.length).to eq(10)
           end
         end
       end
