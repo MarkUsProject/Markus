@@ -11,7 +11,7 @@ namespace :markus do
   end
 
   def collect(group, a)
-    grouping = group.groupings.where(assignment_id: a.id).first
+    grouping = group.groupings.where(assessment_id: a.id).first
     time = grouping.assignment.submission_rule.calculate_collection_time.localtime
     submission = Submission.create_by_timestamp(grouping, time)
     a.submission_rule.apply_submission_rule(submission)
@@ -69,7 +69,7 @@ namespace :markus do
   def create_criteria(a)
     CheckboxCriterion.create(
       name:                    'Mark1',
-      assignment_id:           a.id,
+      assessment_id:           a.id,
       description:             '',
       position:                0,
       max_mark:                10,
@@ -79,7 +79,7 @@ namespace :markus do
     )
     FlexibleCriterion.create(
       name:                    'Mark2',
-      assignment_id:           a.id,
+      assessment_id:           a.id,
       description:             '',
       position:                1,
       max_mark:                10,
@@ -89,7 +89,7 @@ namespace :markus do
     )
     RubricCriterion.create(
       name:                  'Mark3',
-      assignment_id:         a.id,
+      assessment_id:         a.id,
       position:              2,
       max_mark:              10,
       level_0_name:          'Very Poor',

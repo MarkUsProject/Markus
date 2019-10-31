@@ -124,7 +124,7 @@ class Result < ApplicationRecord
   def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
-                        .pluck(:id, :extra_mark, :unit, 'assignments.id')
+                        .pluck(:id, :extra_mark, :unit, 'assessments.id')
     extra_marks_hash = Hash.new { |h,k| h[k] = 0 }
     max_mark_hash = Hash.new
     result_data.each do |id, extra_mark, unit, assessment_id|

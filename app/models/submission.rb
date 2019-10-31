@@ -245,7 +245,7 @@ class Submission < ApplicationRecord
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
     if path == '/'
-      path = assignment.repository_folder
+      path = assignment.assignment_properties.repository_folder
     end
 
     # First, go through directories...

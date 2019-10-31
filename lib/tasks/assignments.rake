@@ -7,7 +7,7 @@ namespace :db do
     rule = GracePeriodSubmissionRule.new
     assignment_stat = AssignmentStat.new
     puts 'Assignment 0: Grace Token usage'
-    @a0 = Assignment.create(
+    Assignment.create(
       short_identifier: 'A0',
       description: 'Variables and Simple Operations',
       message: 'using basic operators and assigning variables',

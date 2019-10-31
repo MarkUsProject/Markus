@@ -73,7 +73,8 @@ namespace :db do
     end
 
     puts 'Assign Marks for Spreadsheets'
-    grade_entry_form = GradeEntryForm.find(1)
+    # Quiz1
+    grade_entry_form = GradeEntryForm.first
     # Add marks to every student
     grade_entry_form.grade_entry_students.find_each do |student|
       # For each question, assign a random mark based on its out_of value

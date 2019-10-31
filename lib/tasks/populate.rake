@@ -59,10 +59,10 @@ namespace :markus do
     a1 = Assignment.find_by_short_identifier("A1")
     req_file1 = AssignmentFile.new
     req_file1.filename = "conditionals.py"
-    req_file1.assignment_id = a1.id
+    req_file1.assessment_id = a1.id
     req_file2 = AssignmentFile.new
     req_file2.filename = "loops.py"
-    req_file2.assignment_id = a1.id
+    req_file2.assessment_id = a1.id
     a1.due_date = 1.week.from_now # due date is a week from now
     a1.message += "\nNote: You are working alone for this assignment."
     a1.group_min = 1

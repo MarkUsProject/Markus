@@ -3,7 +3,7 @@ require 'fileutils'
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   after_update :rename_exam_template_directory
-  belongs_to :assignment
+  belongs_to :assignment, foreign_key: :assessment_id
   validates :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
                           scope: :assignment
@@ -38,13 +38,13 @@ class ExamTemplate < ApplicationRecord
         name: name_input,
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     else
       new_template = ExamTemplate.new(
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     end
     saved = new_template.save

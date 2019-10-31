@@ -62,11 +62,12 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.string "type", null: false
     t.string "description", null: false
     t.text "message", null: false
-    t.date "due_date"
+    t.datetime "due_date"
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "parent_assessment_id"
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end
 
@@ -113,7 +114,6 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.boolean "vcs_submit", default: false, null: false
     t.datetime "token_start_date"
     t.float "token_period"
-    t.integer "parent_assignment_id"
     t.boolean "has_peer_review", default: false, null: false
     t.integer "checkbox_criteria_count"
     t.boolean "enable_student_tests", default: false, null: false
