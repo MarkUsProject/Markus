@@ -38,6 +38,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.integer :groupings_count
       t.integer :outstanding_remark_request_count
       t.integer :parent_assessment_id
+
       t.timestamps
     end
     add_index :assessments, [:type, :short_identifier]

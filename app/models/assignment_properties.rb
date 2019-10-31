@@ -1,6 +1,6 @@
 # Internal model used to link assignment attributes with the assignment STI model
 class AssignmentProperties < ApplicationRecord
-  belongs_to :assignment, dependent: :destroy, foreign_key: :assessment_id
+  belongs_to :assignment, inverse_of: :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
   validates_presence_of :assignment
 
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
@@ -11,6 +11,7 @@ class AssignmentProperties < ApplicationRecord
   validates_presence_of :group_min
   validates_presence_of :group_max
   validates_presence_of :notes_count
+
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]
   validates_inclusion_of :vcs_submit, in: [true, false]
@@ -67,4 +68,5 @@ class AssignmentProperties < ApplicationRecord
     return unless saved_change_to_vcs_submit?
     Repository.get_class.update_permissions
   end
+
 end
