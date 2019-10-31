@@ -137,7 +137,7 @@ class User < ApplicationRecord
   end
 
   def grouping_for(aid)
-    groupings.find {|g| g.assessment_id == aid}
+    groupings.find { |g| g.assessment_id == aid }
   end
 
   def is_a_reviewer?(assignment)

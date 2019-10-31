@@ -16,7 +16,7 @@ class ExamTemplate < ApplicationRecord
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
-    return unless attributes.has_key? :assessment_id
+    return unless attributes.key? :assessment_id
     assignment = Assignment.find(attributes[:assessment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
@@ -56,7 +56,7 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
-    return unless attributes.has_key? :assessment_id
+    return unless attributes.key? :assessment_id
     assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,

@@ -136,7 +136,7 @@ class Criterion < ApplicationRecord
     if max_mark_changed? && !max_mark_was.nil?  # if max_mark is updated
       # results with specific assignment
       results = Result.includes(submission: :grouping)
-                      .where(groupings: {assessment_id: assessment_id})
+                      .where(groupings: { assessment_id: assessment_id })
       all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
       # all associated marks should have their mark value scaled to the change.
       Upsert.batch(Mark.connection, Mark.table_name) do |upsert|

@@ -12,17 +12,20 @@ class Assignment < Assessment
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
-		   dependent: :destroy, foreign_key: :assessment_id
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
-       dependent: :destroy, foreign_key: :assessment_id
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
   has_many :checkbox_criteria,
            -> { order(:position) },
            class_name: 'CheckboxCriterion',
-       dependent: :destroy, foreign_key: :assessment_id
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
@@ -42,7 +45,10 @@ class Assignment < Assessment
   has_many :groupings, foreign_key: :assessment_id
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
-  belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment,
+  belongs_to :parent_assignment,
+             class_name: 'Assignment',
+             optional: true,
+             inverse_of: :pr_assignment,
              foreign_key: :parent_assessment_id
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assessment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
@@ -782,10 +788,10 @@ class Assignment < Assessment
     else
       # uniq is required since entries are doubled if there is a remark request
       Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
-                .where(submissions: {submission_version_used: true},
-                       memberships: {user_id: ta_id},
-                       results: {marking_state: Result::MARKING_STATES[:complete]},
-                       groupings: {assessment_id: self.id})
+                .where(submissions: { submission_version_used: true },
+                       memberships: { user_id: ta_id },
+                       results: { marking_state: Result::MARKING_STATES[:complete] },
+                       groupings: { assessment_id: self.id })
                 .select('annotations.id').uniq.size
     end
   end
@@ -842,7 +848,7 @@ class Assignment < Assessment
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
-    not parent_assessment_id.nil?
+    !parent_assessment_id.nil?
   end
 
   # Returns true if this is a parent assignment that has a child peer review
@@ -984,9 +990,8 @@ class Assignment < Assessment
   ### /REPO ###
 
   def self.get_required_files
-    assignments = Assignment
-                    .includes(:assignment_files, :assignment_properties)
-                    .where(assignment_properties: {scanned_exam: false}, is_hidden: false)
+    assignments = Assignment.includes(:assignment_files, :assignment_properties)
+                            .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
     required = {}
     assignments.each do |assignment|
       files = assignment.assignment_files.map(&:filename)

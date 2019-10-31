@@ -14,7 +14,7 @@ namespace :db do
     feedbackfiles = []
     marks = []
     #Right now, only generate marks for three assignments
-    Grouping.joins(:assignment).where(assessments: {short_identifier: ['A0', 'A1', 'A2']}).each do |grouping|
+    Grouping.joins(:assignment).where(assessments: { short_identifier: %w(A0 A1 A2) }).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
       result = new_submission.results.first
@@ -55,7 +55,7 @@ namespace :db do
 
     Mark
       .joins(result: [submission: [grouping: :assignment]])
-      .where(assessments: {short_identifier: ['A0', 'A1', 'A2']}).destroy_all
+      .where(assessments: { short_identifier: %w(A0 A1 A2) }).destroy_all
     Mark.import marks
 
     puts 'Release Results for Assignments'

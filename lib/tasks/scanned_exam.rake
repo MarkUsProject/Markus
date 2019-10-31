@@ -26,7 +26,7 @@ namespace :db do
         tokens_per_period: 0,
         token_start_date: DateTime.now,
         token_period: 1,
-        scanned_exam: true,
+        scanned_exam: true
       },
       submission_rule: NoLateSubmissionRule.new,
       assignment_stat: AssignmentStat.new

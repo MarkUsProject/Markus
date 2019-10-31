@@ -269,8 +269,7 @@ class Submission < ApplicationRecord
     grouping.current_submission_used
   end
 
-  def self.get_submission_by_grouping_id_and_assessment_id(grouping_id,
-                                                        assessment_id)
+  def self.get_submission_by_grouping_id_and_assessment_id(grouping_id, assessment_id)
     assignment = Assignment.find(assessment_id)
     grouping = assignment.groupings.find(grouping_id)
     grouping.current_submission_used
