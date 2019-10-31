@@ -142,8 +142,8 @@ class RubricCriterion < Criterion
         criterion.levels.build(:rubric_criterion => criterion,
                                :name => criterion_yml[1]['level_' + i.to_s]['name'],
                                :number => i,
-                               :description => criterion_yml['level_' + i.to_s + '_description'],
-                               :mark => criterion_yml['level_' + i.to_s + '_mark'])
+                               :description => criterion_yml[1]['level_' + i.to_s]['description'],
+                               :mark => criterion_yml[1]['level_' + i.to_s]['mark'])
       end
     end
     # Visibility options
