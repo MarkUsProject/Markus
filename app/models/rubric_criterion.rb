@@ -70,10 +70,9 @@ class RubricCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, weight, _names_, _descriptions_] where the _names_ part
-  #               must contain RUBRIC_LEVELS elements representing the name of each
-  #               level and the _descriptions_ part (optional) can contain up to
-  #               RUBRIC_LEVELS description (one for each level).
+  #               format: [name, weight, _levels_ ] where the _levels part contains
+  #               the following information about each level in the following order:
+  #               name, number, description, mark.
   # assignment::  The assignment to which the newly created criterion should belong.
   #
   # ===Raises:
@@ -101,19 +100,30 @@ class RubricCriterion < Criterion
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
     end
-    # next comes the level names.
-    (0..RUBRIC_LEVELS - 1).each do |i|
-      criterion['level_' + i.to_s + '_name'] = working_row.shift
-    end
-    # the rest of the values are level descriptions.
-    (0..RUBRIC_LEVELS - 1).each do |i|
-      criterion['level_' + i.to_s + '_description'] = working_row.shift
-    end
-    unless criterion.save
-      raise CsvInvalidLineError
-    end
 
-    criterion
+    # there are 5 fields for each level
+    num_levels = working_row.length / 5
+
+    # create/update the levels
+    (0..num_levels).each do
+      name = working_row.shift
+      number = working_row.shift
+      description = working_row.shift
+      mark = working_row.shift
+      # if level name exists we will update the level
+      if criterion.levels.exists?(name: name)
+        level = criterion.levels.find_by(name: name)
+        criterion.levels.upsert(id: level.id, rubric_criterion_id: level.rubric_criterion_id, name: name,
+                                number: number, description: description, mark: level.mark,
+                                created_at: level.created_at, updated_at: level.updated_at)
+      # Otherwise, we create a new level
+      else
+        criterion.levels.create(name: name, number: number, description: description, mark: mark)
+      end
+      unless criterion.save
+        raise CsvInvalidLineError
+      end
+    end
   end
 
   # Instantiate a RubricCriterion from a YML entry
