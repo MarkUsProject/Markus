@@ -184,7 +184,7 @@ GEM
     prawn-qrcode (0.3.1)
       prawn (>= 1)
       rqrcode (>= 0.4.1)
-    puma (4.2.0)
+    puma (4.2.1)
       nio4r (~> 2.0)
     rack (2.0.7)
     rack-protection (2.0.4)
