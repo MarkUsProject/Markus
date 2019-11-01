@@ -73,6 +73,7 @@ dump.rdb
 /node_modules
 yarn-debug.log*
 .yarn-integrity
+yarn-error.log
 
 # simplecov gem
 coverage/
