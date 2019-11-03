@@ -217,13 +217,9 @@ class ResultsController < ApplicationController
         data[:old_total] = original_result&.total_mark
 
         # Tags
-        data[:current_tags] = Tag.left_outer_joins(:groupings)
-                                 .where('groupings_tags.grouping_id': submission.grouping_id)
-                                 .pluck_to_hash(:id, :name)
-        data[:available_tags] = Tag.left_outer_joins(:groupings)
-                                   .where.not('groupings_tags.grouping_id': submission.grouping_id)
-                                   .or(Tag.left_outer_joins(:groupings).where('groupings.id': nil))
-                                   .pluck_to_hash(:id, :name)
+        all_tags = Tag.pluck_to_hash(:id, :name)
+        data[:current_tags] = submission.grouping.tags.pluck_to_hash(:id, :name)
+        data[:available_tags] = all_tags - data[:current_tags]
 
         render json: data
       end
