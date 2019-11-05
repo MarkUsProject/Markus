@@ -61,7 +61,7 @@ class AutotestSetup
         allow_remarks: false,
         enable_test: true,
         tokens_per_period: 0,
-        token_start_date: DateTime.now,
+        token_start_date: Time.now,
         token_period: 1,
         only_required_files: false,
         enable_student_tests: true,

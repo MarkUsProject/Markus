@@ -36,14 +36,14 @@ class Result < ApplicationRecord
     # including old results after having remarked results). This is a typical
     # greatest-n-per-group problem and can be implemented using a subquery
     # join.
-    subquery = Result
-                 .select('max(results.id) max_id')
-                 .joins(submission: { grouping: { student_memberships: :user } })
-                 .where(groupings: { assessment_id: assessment_id },
-                   users: { hidden: false },
-                   submissions: { submission_version_used: true },
-                   marking_state: Result::MARKING_STATES[:complete])
-                 .group('users.id')
+    subquery = Result.select('max(results.id) max_id')
+                     .joins(submission: { grouping: { student_memberships: :user } })
+                     .where(
+                       groupings: { assessment_id: assessment_id },
+                       users: { hidden: false },
+                       submissions: { submission_version_used: true },
+                       marking_state: Result::MARKING_STATES[:complete])
+                     .group('users.id')
     Result.joins("JOIN (#{subquery.to_sql}) s ON id = s.max_id")
       .order(:total_mark).pluck(:total_mark)
   end

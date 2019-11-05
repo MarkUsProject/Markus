@@ -68,5 +68,4 @@ class AssignmentProperties < ApplicationRecord
     return unless saved_change_to_vcs_submit?
     Repository.get_class.update_permissions
   end
-
 end
