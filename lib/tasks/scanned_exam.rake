@@ -24,7 +24,7 @@ namespace :db do
         remark_due_date: 7.days.from_now,
         enable_test: false,
         tokens_per_period: 0,
-        token_start_date: DateTime.now,
+        token_start_date: Time.now,
         token_period: 1,
         scanned_exam: true
       },

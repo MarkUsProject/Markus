@@ -24,7 +24,7 @@ namespace :db do
         allow_remarks: false,
         enable_test: false,
         tokens_per_period: 0,
-        token_start_date: DateTime.now,
+        token_start_date: Time.now,
         token_period: 1,
         only_required_files: false
       },
@@ -54,7 +54,7 @@ namespace :db do
           remark_due_date: 2.day.ago,
           enable_test: false,
           tokens_per_period: 0,
-          token_start_date: DateTime.now,
+          token_start_date: Time.now,
           token_period: 1,
           only_required_files: false
         },
@@ -86,7 +86,7 @@ namespace :db do
           allow_remarks: false,
           enable_test: false,
           tokens_per_period: 0,
-          token_start_date: DateTime.now,
+          token_start_date: Time.now,
           token_period: 1,
           only_required_files: false
         },
@@ -114,7 +114,7 @@ namespace :db do
           allow_remarks: false,
           enable_test: false,
           tokens_per_period: 0,
-          token_start_date: DateTime.now,
+          token_start_date: Time.now,
           token_period: 1,
           only_required_files: false,
           section_due_dates_type: true
@@ -143,7 +143,7 @@ namespace :db do
           allow_remarks: false,
           enable_test: false,
           tokens_per_period: 0,
-          token_start_date: DateTime.now,
+          token_start_date: Time.now,
           token_period: 1,
           only_required_files: false,
           section_due_dates_type: true
