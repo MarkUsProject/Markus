@@ -116,12 +116,10 @@ class RubricCriterion < Criterion
         criterion.levels.create(name: name, number: number, description: description, mark: mark)
       end
       unless criterion.save
-        byebug
         raise CsvInvalidLineError
       end
     end
-    # criterion.update
-    criterion.max_mark = Float(criterion.levels.maximum('mark'))
+    criterion.update(max_mark: Float(criterion.levels.maximum('mark')))
   end
 
   # Instantiate a RubricCriterion from a YML entry
