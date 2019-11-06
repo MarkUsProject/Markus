@@ -81,9 +81,8 @@ class RubricCriterion < Criterion
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
-    # get number of required fields
-    required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
-    if row.length < required_fields + 1
+    # we only require the user to upload a single entry, as blank rubric criterion can be uploaded
+    if row.length < 1
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
 
@@ -98,11 +97,10 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
-    # there are 5 fields for each level
-    num_levels = working_row.length / 5
-
+    # there are 4 fields for each level
+    num_levels = working_row.length / 4
     # create/update the levels
-    (0..num_levels).each do
+    (0..num_levels - 1).each do
       name = working_row.shift
       number = working_row.shift
       description = working_row.shift
@@ -118,9 +116,11 @@ class RubricCriterion < Criterion
         criterion.levels.create(name: name, number: number, description: description, mark: mark)
       end
       unless criterion.save
+        byebug
         raise CsvInvalidLineError
       end
     end
+    # criterion.update
     criterion.max_mark = Float(criterion.levels.maximum('mark'))
   end
 
@@ -144,10 +144,8 @@ class RubricCriterion < Criterion
     criterion.name = name
     criterion.max_mark = criterion_yml[1]['max_mark']
 
-    # get number of required fields
-    required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
     # Next comes the level names.
-    (0..required_fields - 1).each do |i|
+    (0..RUBRIC_LEVELS - 1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
         criterion['level_' + i.to_s + '_name'] =
           criterion_yml[1]['level_' + i.to_s]['name']
@@ -178,6 +176,10 @@ class RubricCriterion < Criterion
                        'description' => self.level_4_description },
         'ta_visible' => self.ta_visible,
         'peer_visible' => self.peer_visible } }
+  end
+
+  def weight
+    max_mark / MAX_LEVEL
   end
 
   def round_max_mark

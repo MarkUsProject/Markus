@@ -143,9 +143,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on rows with elements without names for every criterion' do
         row = %w[name 1.0]
-        # get number of required fields
-        required = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
-        (0..required).each do |i|
+        levels = 5
+        (0..levels).each do |i|
           row << 'name' + i.to_s
           it 'raises' do
             expect do
@@ -180,10 +179,10 @@ describe RubricCriterion do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
         row = ['criterion 5']
-        # get number of required fields
-        required_fields = Level.validators.grep(ActiveRecord::Validations::PresenceValidator).length
+        rubric_levels = 5
         # order is name, number, description, mark
-        (0..required_fields - 1).each do |i|
+        # .weight
+        (0..rubric_levels - 1).each do |i|
           row << 'name' + i.to_s
           row << i
           # ...containing commas and quotes in the descriptions
