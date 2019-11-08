@@ -87,6 +87,7 @@ class RubricCriterion < Criterion
 
     working_row = row.clone
     name = working_row.shift
+
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
@@ -102,20 +103,17 @@ class RubricCriterion < Criterion
     end
 
     # there are 5 fields for each level
-    num_levels = working_row.length / 5
+    num_levels = working_row.length / 4
 
     # create/update the levels
-    (0..num_levels).each do
+    (0..num_levels - 1).each do
       name = working_row.shift
       number = working_row.shift
       description = working_row.shift
       mark = working_row.shift
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
-        level = criterion.levels.find_by(name: name)
-        criterion.levels.upsert(id: level.id, rubric_criterion_id: level.rubric_criterion_id, name: name,
-                                number: number, description: description, mark: level.mark,
-                                created_at: level.created_at, updated_at: level.updated_at)
+        criterion.levels.find_by(name: name).update(name: name, number: number, description: description, mark: mark)
       # Otherwise, we create a new level
       else
         criterion.levels.create(name: name, number: number, description: description, mark: mark)
