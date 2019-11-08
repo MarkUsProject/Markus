@@ -29,9 +29,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.string :description, null: false
       t.text :message, null: false
       t.datetime :due_date
-      t.boolean :is_hidden, default: true, null: false
+      t.boolean :is_hidden, default: false, null: false
       t.boolean :show_total, default: false, null: false
-      t.integer :notes_count, default: 0
       t.integer :rubric_criteria_count
       t.integer :flexible_criteria_count
       t.integer :checkbox_criteria_count
@@ -67,8 +66,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.float :results_median
       t.integer :results_fails
       t.integer :results_zeros
+      t.integer :notes_count, default: 0
       t.boolean :unlimited_tokens, default: false, null: false
-      t.boolean :is_hidden, default: false, null: false
       t.boolean :only_required_files, default: false, null: false
       t.boolean :vcs_submit, default: false, null: false
       t.datetime :token_start_date

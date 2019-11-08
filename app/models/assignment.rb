@@ -995,10 +995,10 @@ class Assignment < Assessment
     required = {}
     assignments.each do |assignment|
       files = assignment.assignment_files.map(&:filename)
-      if assignment.only_required_files.nil?
+      if assignment.assignment_properties.only_required_files.nil?
         required_only = false
       else
-        required_only = assignment.only_required_files
+        required_only = assignment.assignment_properties.only_required_files
       end
       required[assignment.assignment_properties.repository_folder] = { required: files, required_only: required_only }
     end
