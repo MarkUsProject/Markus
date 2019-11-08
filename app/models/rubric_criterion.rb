@@ -85,7 +85,6 @@ class RubricCriterion < Criterion
     if row.length < 1
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
-
     working_row = row.clone
     name = working_row.shift
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
@@ -115,6 +114,7 @@ class RubricCriterion < Criterion
       else
         criterion.levels.create(name: name, number: number, description: description, mark: mark)
       end
+
       unless criterion.save
         raise CsvInvalidLineError
       end
@@ -177,7 +177,7 @@ class RubricCriterion < Criterion
   end
 
   def weight
-    max_mark / MAX_LEVEL
+    self.max_mark / (self.levels.length - 1)
   end
 
   def round_max_mark
