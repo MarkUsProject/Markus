@@ -46,10 +46,7 @@ class Assignment < Assessment
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
   belongs_to :parent_assignment,
-             class_name: 'Assignment',
-             optional: true,
-             inverse_of: :pr_assignment,
-             foreign_key: :parent_assessment_id
+             class_name: 'Assignment', optional: true, inverse_of: :pr_assignment, foreign_key: :parent_assessment_id
   has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assessment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
