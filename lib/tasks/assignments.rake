@@ -18,7 +18,7 @@ namespace :db do
         student_form_groups: true,
         repository_folder: 'A0',
         token_start_date: Time.now,
-        token_period: 1,
+        token_period: 1
       },
       submission_rule: rule,
       assignment_stat: assignment_stat
@@ -38,7 +38,7 @@ namespace :db do
           allow_remarks: true,
           remark_due_date: 2.day.ago,
           token_start_date: Time.now,
-          token_period: 1,
+          token_period: 1
         },
         submission_rule: rule,
         assignment_stat: assignment_stat
@@ -62,7 +62,7 @@ namespace :db do
           student_form_groups: true,
           repository_folder: 'A2',
           token_start_date: Time.now,
-          token_period: 1,
+          token_period: 1
         },
         submission_rule: rule,
         assignment_stat: assignment_stat

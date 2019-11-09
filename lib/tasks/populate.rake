@@ -98,11 +98,11 @@ namespace :markus do
 Mars,irgnored_repo,c9puccin,c7stanfo,g5dindyv\n
 Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     a3 = Assignment.create(
-      short_identifier: "A3",
-      description: "Shell Scripting",
+      short_identifier: 'A3',
+      description: 'Shell Scripting',
       message: "Learn how to use functions, parameter passing and proper return codes.\nNote: You have been assigned to a group by the instructor.",
       group_name_displayed: true,
-      repository_folder: "A3",
+      repository_folder: 'A3',
       due_date: 3.week.from_now,
       invalid_override: true
     )

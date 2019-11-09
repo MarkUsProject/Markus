@@ -1270,7 +1270,7 @@ class Assignment < Assessment
         map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier],
-                                              repository_folder: row[:short_identifier])
+                                              assignment_properties: { repository_folder: row[:short_identifier] })
           if assignment.new_record?
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new

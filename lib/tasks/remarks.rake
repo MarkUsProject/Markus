@@ -30,7 +30,6 @@ namespace :db do
     end
 
     # Remark one of the remark requests and release it to students
-    byebug
     remark_submission = Result.where.not(remark_request_submitted_at: nil).first.submission
     remark_group = Grouping.find_by_group_id(remark_submission.grouping_id)
     result = remark_submission.results.first
