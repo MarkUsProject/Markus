@@ -181,7 +181,6 @@ describe RubricCriterion do
         row = ['criterion 5']
         rubric_levels = 5
         # order is name, number, description, mark
-        # .weight
         (0..rubric_levels - 1).each do |i|
           row << 'name' + i.to_s
           row << i
