@@ -33,6 +33,8 @@ class CriteriaController < ApplicationController
                              assignment_id: @assignment.id,
                              max_mark: params[:max_mark_prompt],
                              position: @assignment.next_criterion_position)
+      @criterion.save!
+      @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
     else
@@ -41,8 +43,6 @@ class CriteriaController < ApplicationController
       end
       head :unprocessable_entity
     end
-    @criterion.save!
-    @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
   end
 
   def edit
