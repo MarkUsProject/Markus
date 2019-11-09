@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
-    t.integer "creator_id"
     t.string "creator_type"
+    t.integer "creator_id"
     t.integer "result_id"
     t.index ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id"
     t.index ["submission_file_id"], name: "index_annotations_on_submission_file_id"
@@ -62,9 +62,15 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.string "type", null: false
     t.string "description", null: false
     t.text "message", null: false
-    t.date "due_date"
-    t.boolean "is_hidden", default: true, null: false
+    t.datetime "due_date"
+    t.boolean "is_hidden", default: false, null: false
     t.boolean "show_total", default: false, null: false
+    t.integer "rubric_criteria_count"
+    t.integer "flexible_criteria_count"
+    t.integer "checkbox_criteria_count"
+    t.integer "groupings_count"
+    t.integer "outstanding_remark_request_count"
+    t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
@@ -94,11 +100,7 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.boolean "section_due_dates_type", default: false, null: false
     t.boolean "display_grader_names_to_students", default: false, null: false
     t.boolean "enable_test", default: false, null: false
-    t.integer "notes_count", default: 0
     t.boolean "assign_graders_to_criteria", default: false, null: false
-    t.integer "rubric_criteria_count"
-    t.integer "flexible_criteria_count"
-    t.integer "groupings_count"
     t.integer "tokens_per_period", default: 0, null: false
     t.boolean "allow_remarks", default: false, null: false
     t.datetime "remark_due_date"
@@ -106,16 +108,13 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.float "results_median"
     t.integer "results_fails"
     t.integer "results_zeros"
-    t.integer "outstanding_remark_request_count"
+    t.integer "notes_count", default: 0
     t.boolean "unlimited_tokens", default: false, null: false
-    t.boolean "is_hidden", default: false, null: false
     t.boolean "only_required_files", default: false, null: false
     t.boolean "vcs_submit", default: false, null: false
     t.datetime "token_start_date"
     t.float "token_period"
-    t.integer "parent_assignment_id"
     t.boolean "has_peer_review", default: false, null: false
-    t.integer "checkbox_criteria_count"
     t.boolean "enable_student_tests", default: false, null: false
     t.boolean "non_regenerating_tokens", default: false, null: false
     t.boolean "scanned_exam", default: false, null: false
@@ -154,8 +153,8 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
 
   create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
     t.integer "ta_id"
-    t.integer "criterion_id"
     t.string "criterion_type"
+    t.integer "criterion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "assessment_id"
@@ -203,9 +202,9 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.string "filename", null: false
     t.binary "file_content", null: false
     t.string "mime_type", null: false
+    t.integer "submission_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "submission_id"
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
   end
 
@@ -352,8 +351,8 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.integer "creator_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "noteable_id", null: false
     t.string "noteable_type", null: false
+    t.integer "noteable_id", null: false
     t.index ["creator_id"], name: "index_notes_on_creator_id"
   end
 

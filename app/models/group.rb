@@ -32,7 +32,7 @@ class Group < ApplicationRecord
   end
 
   def grouping_for_assignment(aid)
-    groupings.where(assignment_id: aid).first
+    groupings.where(assessment_id: aid).first
   end
 
   # Returns the URL for externally accessible repos
@@ -97,7 +97,7 @@ class Group < ApplicationRecord
   # rollback before the repo itself is actually created (in an after_create_commit callback).
   #
   # Note that this requires the repo_name to be set either explicitly or by calling set_repo_name
-  # after the group has been created. 
+  # after the group has been created.
   def check_repo_uniqueness
     return true unless Repository.get_class.repository_exists? repo_path
 

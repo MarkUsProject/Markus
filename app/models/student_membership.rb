@@ -76,7 +76,7 @@ class StudentMembership < Membership
     accepted_or_inviter = [STATUSES[:accepted], STATUSES[:inviter]]
     return true unless accepted_or_inviter.include?(new) && !accepted_or_inviter.include?(old)
     other_users = StudentMembership.joins(:grouping)
-                                   .where('groupings.assignment_id': grouping.assignment_id)
+                                   .where('groupings.assessment_id': grouping.assessment_id)
                                    .where(membership_status: [:inviter, :accepted])
                                    .where(user_id: user_id)
     unless other_users.empty?

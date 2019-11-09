@@ -15,7 +15,7 @@ class TaMembership < Membership
     if remove_existing
       Repository.get_class.update_permissions_after do
         TaMembership.joins(:grouping)
-                    .where(groupings: { assignment_id: assignment.id })
+                    .where(groupings: { assessment_id: assignment.id })
                     .delete_all
       end
     end

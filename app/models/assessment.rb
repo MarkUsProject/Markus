@@ -21,9 +21,8 @@ class Assessment < ApplicationRecord
   end
 
   def short_identifier_unchanged
-    return unless short_identifier_unchanged?
+    return unless short_identifier_changed?
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
-
 end

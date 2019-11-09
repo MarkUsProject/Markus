@@ -27,13 +27,13 @@ class Ta < User
   end
 
   def get_membership_count_by_assignment(assignment)
-    memberships.where(groupings: { assignment_id: assignment.id })
+    memberships.where(groupings: { assessment_id: assignment.id })
                .includes(:grouping)
                .count
   end
 
   def get_groupings_by_assignment(assignment)
-    groupings.where(assignment_id: assignment.id)
+    groupings.where(assessment_id: assignment.id)
              .includes(:students, :tas, :group, :assignment)
   end
 
