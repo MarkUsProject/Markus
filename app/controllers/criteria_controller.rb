@@ -28,7 +28,7 @@ class CriteriaController < ApplicationController
     end
     criterion_class = params[:criterion_type].constantize
     @criterion = criterion_class.new
-    @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
+
     if @criterion.update(name: params[:new_criterion_prompt],
                              assignment_id: @assignment.id,
                              max_mark: params[:max_mark_prompt],
@@ -41,6 +41,8 @@ class CriteriaController < ApplicationController
       end
       head :unprocessable_entity
     end
+    @criterion.save!
+    @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
   end
 
   def edit
