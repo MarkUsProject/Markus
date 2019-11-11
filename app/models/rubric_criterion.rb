@@ -82,7 +82,7 @@ class RubricCriterion < Criterion
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
     # we only require the user to upload a single entry, as blank rubric criterion can be uploaded
-    if row.length < 1
+    if row.empty?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     working_row = row.clone
