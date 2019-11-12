@@ -102,7 +102,7 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
-    # there are 5 fields for each level
+    # there are 4 fields for each level
     num_levels = working_row.length / 4
 
     # create/update the levels
