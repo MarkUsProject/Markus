@@ -1,7 +1,7 @@
 pt:
   activerecord:
     models:
-      groups:
+      group:
         one: "Grupo"
     attributes:
       group:
