@@ -81,10 +81,10 @@ class RubricCriterion < Criterion
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
-    if row.length < RUBRIC_LEVELS + 2
+    # we only require the user to upload a single entry, as blank rubric criterion can be uploaded
+    if row.empty?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
-
     working_row = row.clone
     name = working_row.shift
 
@@ -92,11 +92,6 @@ class RubricCriterion < Criterion
     # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
-    begin
-      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
-    rescue ArgumentError
-      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
-    end
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
@@ -118,10 +113,12 @@ class RubricCriterion < Criterion
       else
         criterion.levels.create(name: name, number: number, description: description, mark: mark)
       end
+
       unless criterion.save
         raise CsvInvalidLineError
       end
     end
+    criterion.update(max_mark: Float(criterion.levels.maximum('mark')))
   end
 
   # Instantiate a RubricCriterion from a YML entry
@@ -179,7 +176,7 @@ class RubricCriterion < Criterion
   end
 
   def weight
-    max_mark / MAX_LEVEL
+    self.max_mark / (self.levels.length - 1)
   end
 
   def round_max_mark
