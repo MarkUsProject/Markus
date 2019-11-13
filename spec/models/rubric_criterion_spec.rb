@@ -143,7 +143,8 @@ describe RubricCriterion do
     context 'when parsing a CSV file' do
       describe 'raise csv line error on rows with elements without names for every criterion' do
         row = %w[name 1.0]
-        (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
+        levels = 5
+        (0..levels).each do |i|
           row << 'name' + i.to_s
           it 'raises' do
             expect do
@@ -177,9 +178,10 @@ describe RubricCriterion do
       before(:each) do
         # we'll need a valid assignment for those cases.
         @assignment = create(:assignment)
-        row = ['criterion 5', '1.0']
+        row = ['criterion 5']
+        rubric_levels = 5
         # order is name, number, description, mark
-        (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
+        (0..rubric_levels - 1).each do |i|
           row << 'name' + i.to_s
           row << i
           # ...containing commas and quotes in the descriptions
@@ -207,7 +209,7 @@ describe RubricCriterion do
         context 'allow a criterion with the same name to overwrite' do
           it 'not raise error' do
             names = ['Very Poor', 'Weak', 'Passable', 'Good', 'Excellent']
-            row = ['criterion 5', '1.0']
+            row = ['criterion 5']
             # order is name, number, description, mark
             (0..@criterion.levels.length - 1).each do |i|
               row << names[i]
