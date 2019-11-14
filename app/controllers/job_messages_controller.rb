@@ -10,29 +10,33 @@ class JobMessagesController < ApplicationController
 
   def get
     status = ActiveJob::Status.get(params[:job_id])
-    if status.working?
-      if status[:job_class]
-        flash_now(:notice, status[:job_class].show_status(status))
-      else #default x out of y message
-        flash_now(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
-      end
+    if status.queued?
+      flash_message(:notice, t('poll_job.queued'))
+    elsif status.working?
+      flash_progress_message(status)
+    elsif status[:job_class]&.show_error_message(status).present?
+      flash_progress_message(status)
+      flash_message(:error, status[:job_class].show_error_message(status))
+    elsif status.completed?
+      status[:progress] = status[:total]
+      flash_progress_message(status)
+      flash_message(:success, t('poll_job.completed'))
     else
-      if status.queued?
-        flash_now(:notice, t('poll_job.queued'))
-      elsif status[:job_class]&.respond_to?(:show_error_message)
-        error_message = status[:job_class].show_error_message(status)
-        if error_message.present?
-          flash_now(:error, status[:job_class].show_error_message(status))
-        end
-      elsif status.completed?
-        flash_now(:success, t('poll_job.completed'))
-      else
-        flash_now(:error, t('poll_job.failed'))
-      end
-      if status.completed? || status.failed?
-        session[:job_id] = nil
-      end
+      flash_message(:error, t('poll_job.failed'))
+    end
+    if status.completed? || status.failed?
+      session[:job_id] = nil
     end
     render json: status.read
+  end
+
+  private
+
+  def flash_progress_message(status)
+    if status[:job_class]
+      flash_message(:notice, status[:job_class].show_status(status))
+    else # default x out of y message
+      flash_message(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
+    end
   end
 end
