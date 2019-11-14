@@ -7,12 +7,13 @@ class SubmissionsJob < ApplicationJob
   end
 
   def self.show_status(status)
-    I18n.t('poll_job.submissions_job', progress: status[:progress],
-           total: status[:total])
+    I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
   end
 
-  before_enqueue do |job|
-    status.update(job_class: self.class)
+  def add_error_messages(messages)
+    msg = [status[:error_message], *messages].compact.join("\n")
+    status.update(error_message: msg)
+    Rails.logger.error msg
   end
 
   def perform(groupings, options = {})
@@ -45,12 +46,15 @@ class SubmissionsJob < ApplicationJob
 
         grouping.is_collected = true
         grouping.save
-      rescue => e
-        Rails.logger.error e.message
-      ensure
+        add_error_messages(grouping.errors.full_messages) unless grouping.errors.blank?
         progress.increment
+      rescue StandardError => e
+        add_error_messages([e.message])
       end
     end
+  rescue StandardError => e
+    add_error_messages([e.message])
+  ensure
     m_logger.log('Submission collection process done')
   end
 end
