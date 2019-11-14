@@ -152,8 +152,8 @@ class Assignment < Assessment
 
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
-    return due_date unless section_due_dates_type
-    due_dates = section_due_dates.map(&:due_date) << due_date
+    return due_date unless assignment_properties.section_due_dates_type
+    due_dates = assignment_properties.section_due_dates.map(&:due_date) << due_date
     due_dates.compact.max
   end
 
