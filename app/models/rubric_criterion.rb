@@ -160,10 +160,10 @@ class RubricCriterion < Criterion
   def to_yml
     levels_to_yml = { self.name => { 'type' => 'rubric',
                                      'max_mark' => self.max_mark.to_f } }
-
     index = 0
     while index < self.levels.size - 1
-      levels_to_yml[self.name].store(self.levels[i].name,  'description' => self.levels[i].description,
+      levels_to_yml[self.name].store(self.levels[i].name,
+                                     'description' => self.levels[i].description,
                                      'mark' => self.levels[i].mark)
     end
     levels_to_yml[self.name].store('ta_visible', self.ta_visible)
