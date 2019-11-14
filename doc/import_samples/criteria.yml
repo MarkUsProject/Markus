@@ -1,56 +1,49 @@
 Quality of Writing:
-    type: rubric
-    max_mark: 24.0
-    level_0:
-        name: Beginner
-        description: The essay is very poorly organized structure and gives no new information.
-    level_1:
-        name: Capable
-        description: The essay is poorly organized but gives new information.
-    level_2:
-        name: Accomplished
-        description: The essay is well-structure and conveys new information clearly.
-    level_3:
-        name: level 3 criterion
-        description: level 3 description
-    level_4:
-        name: level 4 criterion
-        description: level 4 description
-    ta_visible: true
-    peer_visible: false
+  type: rubric
+  max_mark: 24.0
+  Beginner:
+    description: The essay is very poorly organized structure and gives no new information.
+    mark: 0.0
+  Capable:
+    description: The essay is poorly organized but gives new information.
+    mark: 12.0
+  Accomplished:
+    description: The essay is well-structure and conveys new information clearly.
+    mark: 24.0
+  ta_visible: true
+  peer_visible: false
 
-Grammar usage:
-    type: rubric
-    max_mark: 16.0
-    level_0:
-        name: Beginner
-        description: There are more than 5 grammar mistakes in this entire essay.
-    level_1:
-        name: Intermediate
-        description: Intermediate.
-    level_2:
-        name: Accomplished
-        description: Accomplished.
-    level_3:
-        name: level 3 criterion
-        description: level 3 description
-    level_4:
-        name: level 4 criterion
-        description: level 4 description
-    ta_visible: true
-    peer_visible: false
+Javadoc and other comments:
+  type: rubric
+  max_mark: 4.0
+  Very Poor:
+    description: Comments and Javadoc are frequently missing or not understandable.
+    mark: 0.0
+  Weak:
+    description: An attempt was made to write Javadoc and other comments, but significant problems exist such as excessive comments or misleading or unhelpful comments.
+    mark: 1.0
+  Acceptable:
+    description: Javadoc and other comments are frequently unclear or missing.
+    mark: 2.0
+  Good:
+    description: Javadoc occasionally missing or Javadoc and other comments are good but occasionally unclear.
+    mark: 3.0
+  Exemplary:
+    description: Javadoc occasionally missing or Javadoc and other comments are good but almost always unclear.
+    mark: 4.0
+  ta_visible: true
+  peer_visible: false
 
 Definition translation:
-    type: flexible
-    max_mark: 5.0
-    description: This is a flexible criterion and you can put either "Flexible" or "flexible".
-    ta_visible: true
-    peer_visible: false
+  type: flexible
+  max_mark: 5.0
+  description: This is a flexible criterion and you can put either "Flexible" or "flexible".
+  ta_visible: true
+  peer_visible: false
 
 Proof header:
-    type: checkbox
-    max_mark: 2.0
-    description: This is one is a checkbox criterion and students either get full marks or 0 for this criterion.
-    ta_visible: true
-    peer_visible: false
-
+  type: checkbox
+  max_mark: 2.0
+  description: This is one is a checkbox criterion and students either get full marks or 0 for this criterion.
+  ta_visible: true
+  peer_visible: false
