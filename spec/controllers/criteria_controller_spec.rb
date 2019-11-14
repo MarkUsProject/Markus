@@ -983,7 +983,7 @@ describe CriteriaController do
           expect(criteria.levels[i].valid? == true)
         end
         expect(criteria.levels[0].name).to eq('Beginner')
-        expect(criteria.levels[0].description).to eq('The essay is very poorly organized'+
+        expect(criteria.levels[0].description).to eq('The essay is very poorly organized'\
                                                        ' structure and gives no new information.')
         expect(criteria.levels[0].mark).to eq(10.0)
 
