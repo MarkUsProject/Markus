@@ -14,9 +14,9 @@ class JobMessagesController < ApplicationController
       flash_message(:notice, t('poll_job.queued'))
     elsif status.working?
       flash_progress_message(status)
-    elsif status[:job_class]&.show_error_message(status).present?
+    elsif status[:error_message].present?
       flash_progress_message(status)
-      flash_message(:error, status[:job_class].show_error_message(status))
+      flash_message(:error, status[:error_message])
     elsif status.completed?
       status[:progress] = status[:total]
       flash_progress_message(status)
@@ -33,10 +33,6 @@ class JobMessagesController < ApplicationController
   private
 
   def flash_progress_message(status)
-    if status[:job_class]
-      flash_message(:notice, status[:job_class].show_status(status))
-    else # default x out of y message
-      flash_message(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
-    end
+    flash_message(:notice, status[:job_class].show_status(status))
   end
 end
