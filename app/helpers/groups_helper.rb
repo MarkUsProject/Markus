@@ -50,36 +50,29 @@ module GroupsHelper
   # Display flash message based errors contained in the +errors+ hash
   def flash_csv_upload_file_validation_errors(errors)
     unless errors[:bad_cell].empty?
-      flash_now :error, I18n.t('csv.bad_cell',
-                               bad_cells: errors[:bad_cell].map { |c| "'#{c}'" }.join(', '))
+      flash_message :error, I18n.t('csv.bad_cell', bad_cells: errors[:bad_cell].map { |c| "'#{c}'" }.join(', '))
     end
     unless errors[:dup_groups].empty?
-      flash_now :error, I18n.t('csv.duplicate_group_name',
-                               group_names: errors[:dup_groups].join(', '))
+      flash_message :error, I18n.t('csv.duplicate_group_name', group_names: errors[:dup_groups].join(', '))
     end
     unless errors[:dup_repos].empty?
-      flash_now :error, I18n.t('csv.duplicate_repo_name',
-                               repo_names: errors[:dup_repos].join(', '))
+      flash_message :error, I18n.t('csv.duplicate_repo_name', repo_names: errors[:dup_repos].join(', '))
     end
     unless errors[:dup_members].empty?
-      flash_now :error, I18n.t('csv.duplicate_membership_name',
-                               member_names: errors[:dup_members].join(', '))
+      flash_message :error, I18n.t('csv.duplicate_membership_name', member_names: errors[:dup_members].join(', '))
     end
     unless errors[:bad_repo].empty?
-      flash_now :error, I18n.t('csv.bad_repo_warning',
-                               group_names: errors[:bad_repo].join(', '))
+      flash_message :error, I18n.t('csv.bad_repo_warning', group_names: errors[:bad_repo].join(', '))
     end
     unless errors[:inconsistent_group_memberships].empty?
-      flash_now :error, I18n.t('csv.bad_membership_warning',
-                               group_names: errors[:inconsistent_group_memberships].join(', '))
+      flash_message :error, I18n.t('csv.bad_membership_warning',
+                                   group_names: errors[:inconsistent_group_memberships].join(', '))
     end
     unless errors[:bad_students].empty?
-      flash_now :error, I18n.t('csv.bad_students',
-                               student_names: errors[:bad_students].join(', '))
+      flash_message :error, I18n.t('csv.bad_students', student_names: errors[:bad_students].join(', '))
     end
     unless errors[:membership_exists].empty?
-      flash_now :error, I18n.t('csv.memberships_exist',
-                               student_names: errors[:membership_exists].join(', '))
+      flash_message :error, I18n.t('csv.memberships_exist', student_names: errors[:membership_exists].join(', '))
     end
   end
 

@@ -3,7 +3,7 @@ class CreateGroupsJob < ApplicationJob
   queue_as MarkusConfigurator.markus_job_create_groups_queue_name
 
   def self.on_complete_js(_status)
-    '() => {window.groupsManager && window.groupsManager.fetchData}'
+    '() => {window.groupsManager && window.groupsManager.fetchData()}'
   end
 
   def self.show_status(status)
