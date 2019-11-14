@@ -56,6 +56,7 @@ fr:
       create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+      update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

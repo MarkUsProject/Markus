@@ -51,6 +51,7 @@ pt:
       create_groups_job_extra_info: "Falhou: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
+      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

@@ -57,6 +57,7 @@ en:
       create_groups_job_extra_info: "failed for group: %{group_name}, repo: %{repo_name}, members: %{members}"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
+      update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
     repo:
       commits:
         assignment_folder: "Create assignment folder for %{assignment}"

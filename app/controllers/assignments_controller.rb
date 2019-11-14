@@ -246,7 +246,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     rescue
     end
@@ -308,7 +309,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
