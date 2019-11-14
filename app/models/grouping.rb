@@ -68,7 +68,7 @@ class Grouping < ApplicationRecord
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
   validates_associated :assignment, on: :create
 
   belongs_to :group
@@ -270,7 +270,7 @@ class Grouping < ApplicationRecord
 
   # Add a new member to base
   def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
+    if user.has_accepted_grouping_for?(self.assessment_id) || user.hidden
       nil
     else
       member = StudentMembership.new(user: user, membership_status:
@@ -462,7 +462,7 @@ class Grouping < ApplicationRecord
     return unless MarkusConfigurator.markus_config_repository_admin? # create folder only if we are repo admin
     result = true
     self.group.access_repo do |group_repo|
-      assignment_folder = self.assignment.repository_folder
+      assignment_folder = self.assignment.assignment_properties.repository_folder
       unless group_repo.get_latest_revision.path_exists?(assignment_folder)
         txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                           assignment: self.assignment.short_identifier))
@@ -803,9 +803,9 @@ class Grouping < ApplicationRecord
   private
 
   def use_section_due_date?
-    assignment.section_due_dates_type &&
+    assignment.assignment_properties.section_due_dates_type &&
       inviter.present? &&
       inviter.section.present? &&
-      assignment.section_due_dates.present?
+      assignment.assignment_properties.section_due_dates.present?
   end
 end

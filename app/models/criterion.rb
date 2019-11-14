@@ -4,7 +4,7 @@ class Criterion < ApplicationRecord
   after_update :scale_marks
 
   validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assignment_id
+  validates_uniqueness_of :name, scope: :assessment_id
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark, greater_than: 0
@@ -74,9 +74,9 @@ class Criterion < ApplicationRecord
     new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
     values = new_values - existing_values
 
-    # Add assignment_id column common to all rows. It is not included above so
+    # Add assessment_id column common to all rows. It is not included above so
     # that the set operation is faster.
-    columns << :assignment_id
+    columns << :assessment_id
     values.map { |value| value << assignment.id }
     # TODO replace CriterionTaAssociation.import with
     # CriterionTaAssociation.create when the PG driver supports bulk create,
@@ -106,14 +106,14 @@ class Criterion < ApplicationRecord
   end
 
   # Updates the +assigned_groups_count+ field of all criteria that belong to
-  # an assignment with ID +assignment_id+.
+  # an assignment with ID +assessment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation
              .from(
                # subquery
                assignment.criterion_ta_associations
                          .joins(ta: :groupings)
-                         .where('groupings.assignment_id': assignment.id)
+                         .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
                                  'criterion_ta_associations.criterion_type',
                                  'groupings.id')
@@ -124,7 +124,7 @@ class Criterion < ApplicationRecord
 
     [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
       Upsert.batch(klass.connection, klass.table_name) do |upsert|
-        klass.where(assignment_id: assignment.id).find_each do |crit|
+        klass.where(assessment_id: assignment.id).find_each do |crit|
           upsert.row({ id: crit.id }, assigned_groups_count: counts[[crit.id, klass.to_s]] || 0)
         end
       end
@@ -136,7 +136,7 @@ class Criterion < ApplicationRecord
     if max_mark_changed? && !max_mark_was.nil?  # if max_mark is updated
       # results with specific assignment
       results = Result.includes(submission: :grouping)
-                      .where(groupings: {assignment_id: assignment_id})
+                      .where(groupings: { assessment_id: assessment_id })
       all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
       # all associated marks should have their mark value scaled to the change.
       Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
@@ -144,7 +144,7 @@ class Criterion < ApplicationRecord
           upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false) )
         end
       end
-      a = Assignment.find(assignment_id)
+      a = Assignment.find(assessment_id)
       Upsert.batch(Result.connection, Result.table_name) do |upsert|
         results.each do |r|
           upsert.row({ id: r.id }, total_mark: r.get_total_mark(assignment: a))

@@ -1,6 +1,7 @@
 # Internal model used to link assignment attributes with the assignment STI model
 class AssignmentProperties < ApplicationRecord
-  belongs_to :assignment, inverse_of: :assignment_properties, dependent: :destroy
+  belongs_to :assignment, inverse_of: :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
+  validates_presence_of :assignment
 
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
@@ -62,7 +63,7 @@ class AssignmentProperties < ApplicationRecord
     errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
     false
   end
-  
+
   def update_permissions_if_vcs_changed
     return unless saved_change_to_vcs_submit?
     Repository.get_class.update_permissions

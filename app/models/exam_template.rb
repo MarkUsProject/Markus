@@ -3,7 +3,7 @@ require 'fileutils'
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   after_update :rename_exam_template_directory
-  belongs_to :assignment
+  belongs_to :assignment, foreign_key: :assessment_id
   validates :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
                           scope: :assignment
@@ -16,8 +16,8 @@ class ExamTemplate < ApplicationRecord
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment = Assignment.find(attributes[:assignment_id])
+    return unless attributes.key? :assessment_id
+    assignment = Assignment.find(attributes[:assessment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
@@ -38,13 +38,13 @@ class ExamTemplate < ApplicationRecord
         name: name_input,
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     else
       new_template = ExamTemplate.new(
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     end
     saved = new_template.save
@@ -56,8 +56,8 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    return unless attributes.key? :assessment_id
+    assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
     template_path = File.join(
       MarkusConfigurator.markus_exam_template_dir,
       assignment_name,
@@ -154,7 +154,7 @@ class ExamTemplate < ApplicationRecord
         # when a new group is entered.
         Grouping.find_or_create_by(
           group_id: group.id,
-          assignment_id: self.assignment_id
+          assessment_id: self.assessment_id
         )
 
         # add assignment files based on template divisions

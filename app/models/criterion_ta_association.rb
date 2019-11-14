@@ -41,7 +41,7 @@ class CriterionTaAssociation < ApplicationRecord
           criterion_id: criterion.id,
           criterion_type: criterion.class,
           ta_id: ta_id,
-          assignment_id: assignment.id
+          assessment_id: assignment.id
         }
       end
     end

@@ -51,11 +51,11 @@ namespace :markus do
     processed_groupings = 0
     print "\r"
     CSV.open(target_dir + 'group_memberships.csv', 'w') do |csv|
-      Assignment.where(parent_assignment_id: nil).pluck(:id, :short_identifier).each do |aid, short_id|
+      Assignment.where(parent_assessment_id: nil).pluck(:id, :short_identifier).each do |aid, short_id|
         short_id_dir = Pathname.new(short_id)
         assignment_dir = target_dir + short_id_dir
         FileUtils.makedirs(assignment_dir)
-        Grouping.where(assignment_id: aid)
+        Grouping.where(assessment_id: aid)
                 .includes(current_submission_used: :submission_files)
                 .find_each.with_index do |grouping, i|
           submission = grouping.current_submission_used

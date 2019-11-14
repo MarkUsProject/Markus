@@ -10,7 +10,7 @@ namespace :db do
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment
-        if assignment.group_min == 1 && assignment.group_max == 1
+        if assignment.assignment_properties.group_min == 1 && assignment.assignment_properties.group_max == 1
           student.create_group_for_working_alone_student(assignment.id)
           group = Group.find_by group_name: student.user_name
           grouping = student.accepted_grouping_for(assignment.id)
@@ -32,7 +32,7 @@ namespace :db do
             StudentMembership::STATUSES[:accepted],
             invoked_by_admin: true)
         end
-        if assignment.section_due_dates_type && grouping.id % 5 == 0
+        if assignment.assignment_properties.section_due_dates_type && grouping.id % 5 == 0
             note = Faker::Movies::PrincessBride.quote
             Extension.create(grouping: grouping, time_delta: 1.week, note: note)
         end
@@ -41,7 +41,7 @@ namespace :db do
           # recursively copying contents(files & directories) inside the file_dir
           txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
           file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
-          copy_dir(file_dir, txn, assignment.repository_folder)
+          copy_dir(file_dir, txn, assignment.assignment_properties.repository_folder)
           repo.commit(txn)
         end
       end
