@@ -53,6 +53,8 @@ pt:
       submissions_job: "%{progress}/%{total} Submissões coletadas"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job_failed_count: "%{failed} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

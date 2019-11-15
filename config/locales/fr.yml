@@ -58,6 +58,8 @@ fr:
       submissions_job: "%{progress}/%{total} Soumissions collectées"
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
       update_starter_code_job: "%{progress}/%{total} repos modifiés"
+      autotest_run_job: "%{progress}/%{total} Tests commencés"
+      autotest_run_job_failed_count: "%{failed} Tests échoués"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"
