@@ -52,6 +52,7 @@ pt:
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

@@ -57,6 +57,7 @@ fr:
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
+      update_starter_code_job: "%{progress}/%{total} repos modifiés"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

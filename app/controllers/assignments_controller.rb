@@ -525,8 +525,9 @@ class AssignmentsController < ApplicationController
 
         if should_commit && commit_success
           if new_files.present?
-            UpdateStarterCodeJob.perform_later(@assignment.id, params.fetch(:overwrite, 'false') == 'true')
-            flash_message(:success, t('assignments.starter_code.enqueued'))
+            @current_job = UpdateStarterCodeJob.perform_later(@assignment.id,
+                                                              params.fetch(:overwrite, 'false') == 'true')
+            session[:job_id] = @current_job.job_id
             redirect_back(fallback_location: root_path)
           else
             head :ok

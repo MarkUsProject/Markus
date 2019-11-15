@@ -58,6 +58,7 @@ en:
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
+      update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
     repo:
       commits:
         assignment_folder: "Create assignment folder for %{assignment}"

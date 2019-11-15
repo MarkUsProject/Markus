@@ -67,6 +67,7 @@ es:
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"
