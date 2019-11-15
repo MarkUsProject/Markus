@@ -214,7 +214,6 @@ class SubmissionsController < ApplicationController
 
       collectable << grouping
     end
-    success = ''
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
                                                  collection_dates: collection_dates.transform_keys(&:to_s))
@@ -230,7 +229,6 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    flash_now(:success, success) unless success.empty?
     render 'shared/_poll_job.js.erb'
   end
 
