@@ -80,7 +80,8 @@ class ExamTemplate < ApplicationRecord
 
   # Generate copies of the given exam template, with the given start number.
   def generate_copies(num_copies, start=1)
-    GenerateJob.perform_later(self, num_copies, start)
+    @current_job = GenerateJob.perform_later(self, num_copies, start)
+    session[:job_id] = @current_job.job_id
   end
 
   # Split up PDF file based on this exam template.
@@ -105,7 +106,8 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
+    @current_job = SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
+    session[:job_id] = @current_job.job_id
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)

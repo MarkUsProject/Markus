@@ -216,9 +216,9 @@ class SubmissionsController < ApplicationController
     end
     success = ''
     if collectable.count > 0
-      current_job = SubmissionsJob.perform_later(collectable,
+      @current_job = SubmissionsJob.perform_later(collectable,
                                                  collection_dates: collection_dates.transform_keys(&:to_s))
-      session[:job_id] = current_job.job_id
+      session[:job_id] = @current_job.job_id
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',
@@ -250,7 +250,8 @@ class SubmissionsController < ApplicationController
     begin
       if !test_runs.empty?
         authorize! assignment, to: :run_tests?
-        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_runs)
+        @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_runs)
+        session[:job_id] = @current_job.job_id
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')
