@@ -253,7 +253,7 @@ class GroupsController < ApplicationController
         group_rows << row.take_while { |x| !x.blank? } unless row.blank?
       end
       if result[:invalid_lines].empty?
-        if true#validate_csv_upload_file(assignment, group_rows)
+        if validate_csv_upload_file(assignment, group_rows)
           @current_job = CreateGroupsJob.perform_later assignment, group_rows
           session[:job_id] = @current_job.job_id
         end
