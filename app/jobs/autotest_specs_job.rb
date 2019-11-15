@@ -2,6 +2,8 @@ class AutotestSpecsJob < ApplicationJob
   include AutomatedTestsHelper
   queue_as MarkusConfigurator.autotest_specs_queue
 
+  def self.show_status(_status); end
+
   def perform(host_with_port, assignment)
     assignment_tests_path = assignment.autotest_files_dir
     if Rails.application.config.action_controller.relative_url_root.nil?
@@ -54,7 +56,7 @@ class AutotestSpecsJob < ApplicationJob
       end
       # TODO: Use output for something?
     rescue StandardError => e
-      # TODO: Where to show failure?
+      self.status[:error_message] = e.message
     end
   end
 end
