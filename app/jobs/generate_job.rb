@@ -51,7 +51,7 @@ class GenerateJob < ApplicationJob
       progress.increment
     rescue StandardError => e
       status.update(error_message: e.to_s)
-      return
+      raise
     end
 
     generated_pdf.save File.join(

@@ -82,9 +82,9 @@ class CreateGroupsJob < ApplicationJob
           progress.increment
         rescue ActiveRecord::Rollback
           status[:error_message] = "#{status[:error_message]};#{I18n.t('poll_job.create_groups_job_extra_info',
-                                                                        group_name: group_name,
-                                                                        repo_name: repo_name,
-                                                                        members: members)}"
+                                                                       group_name: group_name,
+                                                                       repo_name: repo_name,
+                                                                       members: members)}"
           raise
         end
       end

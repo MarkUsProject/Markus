@@ -272,7 +272,9 @@ class ResultsController < ApplicationController
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! submission, to: :run_tests?
       test_run = submission.create_test_run!(user: current_user)
-      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
+      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                  current_user.id,
+                                                  [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
