@@ -33,6 +33,7 @@ class JobMessagesController < ApplicationController
   private
 
   def flash_progress_message(status)
-    flash_message(:notice, status[:job_class].show_status(status))
+    current_status = status[:job_class].show_status(status)
+    flash_message(:notice, current_status) unless current_status.nil?
   end
 end
