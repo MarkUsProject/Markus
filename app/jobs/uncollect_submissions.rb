@@ -10,11 +10,9 @@ class UncollectSubmissions < ApplicationJob
     I18n.t('poll_job.uncollect_submissions_job')
   end
 
-  before_enqueue do |job|
-    status.update(job_class: self.class)
-  end
-
   def perform(assignment)
     # TODO: implement this.
+  rescue StandardError => e
+    status[:error_message] = e.message
   end
 end
