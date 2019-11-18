@@ -1,8 +1,16 @@
 class GroupingPolicy < ApplicationPolicy
 
   def run_tests?
-    check?(:run_tests?, record.assignment) && (!user.student? ||
-      (check?(:member?) && check?(:not_in_progress?) && check?(:tokens_available?))
+    assignment = record.assignment
+    check?(:not_a_ta?, assignment) &&
+    check?(:enabled?, assignment) && (
+      !user.student? || (
+        check?(:member?) &&
+        check?(:not_in_progress?) &&
+        check?(:tokens_available?) &&
+        check?(:tokens_released?, assignment)
+        check?(:before_due_date?)
+      )
     )
   end
 
@@ -30,7 +38,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def before_due_date?
-    !record.assignment.past_collection_date?(record.inviter.section)
+    !record.past_collection_date?
   end
 
   def delete_rejected?
