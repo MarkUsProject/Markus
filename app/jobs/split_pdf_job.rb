@@ -19,7 +19,6 @@ class SplitPdfJob < ApplicationJob
   def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_user = nil)
     m_logger = MarkusLogger.instance
     begin
-      raise StandardError, 'e'
       # Create directory for files whose QR code couldn't be parsed
       error_dir = File.join(exam_template.base_path, 'error')
       raw_dir = File.join(exam_template.base_path, 'raw')
@@ -110,10 +109,9 @@ class SplitPdfJob < ApplicationJob
       m_logger.log('Split pdf process done')
       return split_pdf_log
     rescue StandardError => e
-      status.update(error_message: e.message)
-      Rails.logger.error e.message
       # Clean tmp folder
       Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
+      raise e
     end
   end
 

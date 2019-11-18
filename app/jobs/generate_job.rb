@@ -49,9 +49,6 @@ class GenerateJob < ApplicationJob
         generated_pdf << (qr_page << template_page)
       end
       progress.increment
-    rescue StandardError => e
-      status.update(error_message: e.to_s)
-      raise
     end
 
     generated_pdf.save File.join(

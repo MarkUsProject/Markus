@@ -55,8 +55,6 @@ class AutotestSpecsJob < ApplicationJob
         end
       end
       # TODO: Use output for something?
-    rescue StandardError => e
-      self.status[:error_message] = e.message
     end
   end
 end

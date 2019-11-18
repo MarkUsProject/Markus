@@ -27,7 +27,5 @@ class UpdateStarterCodeJob < ApplicationJob
         progress.increment
       end
     end
-  rescue StandardError => e
-    status[:error_message] = e.message
   end
 end

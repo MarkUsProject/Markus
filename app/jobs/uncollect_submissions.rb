@@ -12,7 +12,5 @@ class UncollectSubmissions < ApplicationJob
 
   def perform(assignment)
     # TODO: implement this.
-  rescue StandardError => e
-    status[:error_message] = e.message
   end
 end

@@ -88,11 +88,7 @@ class CreateGroupsJob < ApplicationJob
           raise
         end
       end
-    rescue StandardError => e
-      status.update(error_message: e.to_s)
-      return
     end
-
     m_logger = MarkusLogger.instance
     m_logger.log('Creating all individual groups completed',
                  MarkusLogger::INFO)

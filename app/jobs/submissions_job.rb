@@ -52,8 +52,6 @@ class SubmissionsJob < ApplicationJob
         add_error_messages([e.message])
       end
     end
-  rescue StandardError => e
-    add_error_messages([e.message])
   ensure
     m_logger.log('Submission collection process done')
   end

@@ -9,7 +9,13 @@ class ApplicationJob < ActiveJob::Base
     I18n.t('poll_job.working_message', progress: status[:progress], total: status[:total])
   end
 
-  before_enqueue do |_job|
-    self.status.update(job_class: self.class)
+  before_enqueue do |job|
+    self.status.update(job_class: job.class)
+  end
+
+  rescue_from(StandardError) do |e|
+    self.status.update(error_message: e.to_s)
+    self.status.update(status: :failed)
+    raise
   end
 end

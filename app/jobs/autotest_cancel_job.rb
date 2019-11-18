@@ -37,7 +37,5 @@ class AutotestCancelJob < ApplicationJob
     end
     TestRun.find(test_run_ids).each { |test_run| test_run.update(time_to_service: -1) }
     # TODO: Use output for something?
-  rescue StandardError => e
-    self.status[:error_message] = e.message
   end
 end

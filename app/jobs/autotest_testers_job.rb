@@ -28,8 +28,6 @@ class AutotestTestersJob < ApplicationJob
       end
       testers_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
       File.open(testers_path, 'w') { |f| f.write(output) }
-    rescue StandardError => e
-      self.status[:error_message] = e.message
     end
   end
 end

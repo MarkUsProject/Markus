@@ -17,7 +17,5 @@ class UpdateRepoRequiredFilesJob < ApplicationJob
       repo.commit(txn)
       progress.increment
     end
-  rescue StandardError => e
-    status[:error_message] = e.message
   end
 end
