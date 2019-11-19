@@ -48,6 +48,7 @@ fr:
     poll_job:
       working_message: "%{progress} hors de %{total}"
       queued: "Mis en file d'attente"
+      not_enqueued: "Aucun tâches mis en file"
       completed: "Terminé"
       failed: "échoué"
       split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"

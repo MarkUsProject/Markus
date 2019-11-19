@@ -49,6 +49,7 @@ en:
     poll_job:
       working_message: "%{progress} out of %{total}"
       queued: "Queued"
+      not_enqueued: "No job was enqueued"
       completed: "Completed"
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"

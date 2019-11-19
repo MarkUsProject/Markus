@@ -58,6 +58,7 @@ es:
     poll_job:
       working_message: "%{progress} fuera de %{total}"
       queued: "En cola"
+      not_enqueued: "No en cola"
       completed: "Terminado"
       failed: "Ha fallado"
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
