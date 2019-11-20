@@ -1,7 +1,7 @@
 language: ruby
 rvm:
   - 2.5.3
-dist: bionic
+dist: xenial
 addons:
   postgresql: "10"
   apt:
