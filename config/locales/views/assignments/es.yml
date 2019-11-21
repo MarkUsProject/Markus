@@ -65,7 +65,6 @@ es:
       under_review: "Este examen todavía está en revisión"
     starter_code:
       description: "UPDATE ME."
-      enqueued: "UPDATE ME."
       overwrite: "UPDATE ME"
       title: "Código Inicial"
 

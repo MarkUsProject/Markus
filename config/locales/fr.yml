@@ -48,6 +48,7 @@ fr:
     poll_job:
       working_message: "%{progress} hors de %{total}"
       queued: "Mis en file d'attente"
+      not_enqueued: "Aucun tâches mis en file"
       completed: "Terminé"
       failed: "échoué"
       split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"
@@ -56,6 +57,10 @@ fr:
       create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+      update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
+      update_starter_code_job: "%{progress}/%{total} repos modifiés"
+      autotest_run_job: "%{progress}/%{total} Tests commencés"
+      autotest_run_job_failed_count: "%{failed} Tests échoués"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

@@ -272,7 +272,10 @@ class ResultsController < ApplicationController
       authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
       authorize! submission, to: :run_tests?
       test_run = submission.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
+      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                  current_user.id,
+                                                  [{ id: test_run.id }])
+      session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -283,7 +286,8 @@ class ResultsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 

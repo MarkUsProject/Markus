@@ -25,7 +25,6 @@ pt:
       under_review: "Este exame está sendo marcado"
     starter_code:
       description: "UPDATE ME."
-      enqueued: "UPDATE ME."
       overwrite: "UPDATE ME"
       title: "UPDATE ME"
 

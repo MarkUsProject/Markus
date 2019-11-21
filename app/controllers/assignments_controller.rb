@@ -246,7 +246,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     rescue
     end
@@ -308,7 +309,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
@@ -328,13 +330,15 @@ class AssignmentsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
@@ -523,8 +527,9 @@ class AssignmentsController < ApplicationController
 
         if should_commit && commit_success
           if new_files.present?
-            UpdateStarterCodeJob.perform_later(@assignment.id, params.fetch(:overwrite, 'false') == 'true')
-            flash_message(:success, t('assignments.starter_code.enqueued'))
+            @current_job = UpdateStarterCodeJob.perform_later(@assignment.id,
+                                                              params.fetch(:overwrite, 'false') == 'true')
+            session[:job_id] = @current_job.job_id
             redirect_back(fallback_location: root_path)
           else
             head :ok

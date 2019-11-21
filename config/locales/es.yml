@@ -58,6 +58,7 @@ es:
     poll_job:
       working_message: "%{progress} fuera de %{total}"
       queued: "En cola"
+      not_enqueued: "No en cola"
       completed: "Terminado"
       failed: "Ha fallado"
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
@@ -66,6 +67,10 @@ es:
       create_groups_job_extra_info: "Ha fallado: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
+      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job_failed_count: "%{failed} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

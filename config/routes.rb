@@ -415,7 +415,7 @@ Rails.application.routes.draw do
     resources :extensions
   end
 
-  resources :job_messages, only: %w(show), param: :job_id do
+  resources :job_messages, param: :job_id do
     member do
       get 'get'
     end

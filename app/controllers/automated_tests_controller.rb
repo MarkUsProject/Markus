@@ -13,7 +13,8 @@ class AutomatedTestsController < ApplicationController
     Assignment.transaction do
       assignment.update! assignment_params
       update_test_groups_from_specs(assignment, test_specs)
-      AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      session[:job_id] = @current_job.job_id
       flash_message(:success, t('flash.actions.update.success', resource_name: Assignment.model_name.human))
     rescue StandardError => e
       flash_message(:error, e.message)
@@ -65,7 +66,10 @@ class AutomatedTestsController < ApplicationController
       authorize! grouping, to: :run_tests?
       grouping.decrease_test_tokens
       test_run = grouping.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
+      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                  current_user.id,
+                                                  [{ id: test_run.id }])
+      session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -82,7 +86,8 @@ class AutomatedTestsController < ApplicationController
 
   # TODO: use authorizations from here on
   def fetch_testers
-    AutotestTestersJob.perform_later
+    @current_job = AutotestTestersJob.perform_later
+    session[:job_id] = @current_job.job_id
     head :no_content
   end
 
@@ -105,7 +110,8 @@ class AutomatedTestsController < ApplicationController
       fill_in_schema_data!(schema_data, file_keys, assignment)
     else
       flash_now(:notice, I18n.t('automated_tests.loading_specs'))
-      AutotestTestersJob.perform_later
+      @current_job = AutotestTestersJob.perform_later
+      session[:job_id] = @current_job.job_id
       schema_data = {}
     end
     test_specs_path = assignment.autotest_settings_file

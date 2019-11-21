@@ -387,8 +387,7 @@ describe SubmissionsController do
             @section_due_date.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
-            expect(@assignment).to receive(:short_identifier) { 'a1' }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
             post_as @admin,
@@ -424,8 +423,7 @@ describe SubmissionsController do
             @assignment.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
-            expect(@assignment).to receive(:short_identifier) { 'a1' }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
             post_as @admin,
