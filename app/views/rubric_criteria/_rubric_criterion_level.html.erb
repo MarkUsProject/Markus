@@ -8,9 +8,15 @@
               class: "bold_inline_label" %>
 </div>
 <br>
-<%= f.text_field "#{criterion.levels[rubric_level_index].name}.to_sym",
+<span class="rubric_level_title">Name:  </span>
+<%= f.text_field :name, value: "#{criterion.levels[rubric_level_index].name}",
                  class: "rubric_level_input"%>
-<%= f.text_area "#{criterion.levels[rubric_level_index].description}".to_sym,
+<br>
+<span class="rubric_level_title">Mark:  </span>
+<%= f.number_field :mark, value: "#{criterion.levels[rubric_level_index].mark}", step: 1,
+                class: "rubric_level_input"%>
+<div class="rubric_level_title">Description:  </div>
+<%= f.text_area :description, value: "#{criterion.levels[rubric_level_index].description}",
                 class: "rubric_text_area"%>
 <br>
 <br>

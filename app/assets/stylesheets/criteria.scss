@@ -80,9 +80,15 @@
     border-left: 1px solid $grey;
     display: table-cell;
     padding-left: 1em;
+    width: 100%;
 
     .rubric_level_header {
       margin-bottom: 0.5em;
+    }
+
+    .rubric_level_title {
+      font-weight: bold;
+      margin: 0 3px 5px 0;
     }
 
     input {
