@@ -141,13 +141,13 @@ class RubricCriterion < Criterion
     criterion.name = name
     criterion.max_mark = criterion_yml[1]['max_mark']
 
-    # Next comes the level names.
     (0..RUBRIC_LEVELS - 1).each do |i|
       if criterion_yml[1]['level_' + i.to_s]
-        criterion['level_' + i.to_s + '_name'] =
-          criterion_yml[1]['level_' + i.to_s]['name']
-        criterion['level_' + i.to_s + '_description'] =
-          criterion_yml[1]['level_' + i.to_s]['description']
+        criterion.levels.build(rubric_criterion: criterion,
+                               name: criterion_yml[1]['level_' + i.to_s]['name'],
+                               number: i,
+                               description: criterion_yml[1]['level_' + i.to_s]['description'],
+                               mark: criterion_yml[1]['level_' + i.to_s]['mark'])
       end
     end
     # Visibility options
