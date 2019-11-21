@@ -2,7 +2,7 @@
 # in a grade entry form.
 class GradeEntryItem < ApplicationRecord
 
-  belongs_to :grade_entry_form, inverse_of: :grade_entry_items
+  belongs_to :grade_entry_form, inverse_of: :grade_entry_items, foreign_key: :assessment_id
 
   has_many :grades, dependent: :delete_all
 

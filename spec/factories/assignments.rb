@@ -6,14 +6,13 @@ FactoryBot.define do
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
 
-    assignment_properties = AssignmentProperties.new
-    assignment_properties.repository_folder = Faker::Lorem.word
-    assignment_properties.token_period = 1
-    assignment_properties { assignment_properties }
-
     due_date { 1.minute.from_now }
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
+
+    after(:build) do |assignment|
+      assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)
+    end
   end
 
   factory :assignment_with_peer_review, parent: :assignment do

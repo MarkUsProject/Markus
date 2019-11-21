@@ -323,7 +323,7 @@ class Grouping < ApplicationRecord
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    admin_approved || (non_rejected_student_memberships.size >= assignment.group_min)
+    admin_approved || (non_rejected_student_memberships.size >= assignment.assignment_properties.group_min)
   end
 
   # Validates a group
@@ -806,6 +806,6 @@ class Grouping < ApplicationRecord
     assignment.assignment_properties.section_due_dates_type &&
       inviter.present? &&
       inviter.section.present? &&
-      assignment.assignment_properties.section_due_dates.present?
+      assignment.section_due_dates.present?
   end
 end

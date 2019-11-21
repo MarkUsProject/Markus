@@ -11,7 +11,7 @@ describe AnnotationCategory do
 
     it do
       is_expected.to validate_uniqueness_of(:annotation_category_name)
-                          .scoped_to(:assignment_id)
+                          .scoped_to(:assessment_id)
     end
   end
 

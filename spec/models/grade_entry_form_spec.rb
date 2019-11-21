@@ -7,11 +7,11 @@ describe GradeEntryForm do
   it { is_expected.to validate_presence_of(:short_identifier) }
 
   # Dates in the past should also be allowed
-  it { is_expected.to allow_value(1.day.ago).for(:date) }
-  it { is_expected.to allow_value(1.day.from_now).for(:date) }
-  it { is_expected.not_to allow_value('100-10').for(:date) }
-  it { is_expected.not_to allow_value('2009-').for(:date) }
-  it { is_expected.not_to allow_value('abcd').for(:date) }
+  it { is_expected.to allow_value(1.day.ago).for(:due_date) }
+  it { is_expected.to allow_value(1.day.from_now).for(:due_date) }
+  it { is_expected.not_to allow_value('100-10').for(:due_date) }
+  it { is_expected.not_to allow_value('2009-').for(:due_date) }
+  it { is_expected.not_to allow_value('abcd').for(:due_date) }
 
   describe 'uniqueness validation' do
     subject { create :grade_entry_form }
@@ -190,7 +190,7 @@ describe GradeEntryForm do
   end
 
   def make_grade_entry_form_with_multiple_grade_entry_items
-    grade_entry_form = GradeEntryForm.create(short_identifier: 'T1', date: 1.day.ago, is_hidden: false)
+    grade_entry_form = GradeEntryForm.create(short_identifier: 'T1', due_date: 1.day.ago, is_hidden: false)
     grade_entry_items = []
     (1..3).each do |i|
       grade_entry_items << GradeEntryItem.create(grade_entry_form: @grade_entry_form,

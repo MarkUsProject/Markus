@@ -4,7 +4,7 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :user
   validates_associated :user, on: :create
 
-  belongs_to :grade_entry_form
+  belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
 
   has_many :grades, dependent: :destroy
