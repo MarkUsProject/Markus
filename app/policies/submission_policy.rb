@@ -1,6 +1,7 @@
 class SubmissionPolicy < ApplicationPolicy
 
   def run_tests?
+    check?(:not_a_student?) &&
     check?(:run_tests?, record.grouping) &&
     check?(:before_release?)
   end
