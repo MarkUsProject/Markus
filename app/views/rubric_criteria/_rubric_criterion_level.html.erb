@@ -8,11 +8,10 @@
               class: "bold_inline_label" %>
 </div>
 <br>
-<%= f.text_field criterion.levels[rubric_level_index].name.to_sym,
+<%= f.text_field "#{criterion.levels[rubric_level_index].name}.to_sym",
                  class: "rubric_level_input"%>
-<%= f.text_area criterion.levels[rubric_level_index].description.to_sym,
+<%= f.text_area "#{criterion.levels[rubric_level_index].description}".to_sym,
                 class: "rubric_text_area"%>
 <br>
 <br>
 
-#rubric_criteria.level.level_index
