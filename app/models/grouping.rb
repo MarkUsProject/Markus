@@ -569,7 +569,7 @@ class Grouping < ApplicationRecord
   end
 
   def past_collection_date?
-    collection_date > Time.current
+    collection_date < Time.current
   end
 
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)

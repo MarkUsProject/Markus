@@ -9,7 +9,7 @@ describe SubmissionPolicy do
 
       context 'if the assignment policy fails' do
         let(:submission) { build_stubbed(:submission) }
-        it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? } }
+        it { is_expected.not_to pass :run_tests?, because_of: { GroupingPolicy => :run_tests? } }
       end
 
       context 'if the assignment policy passes' do
@@ -36,7 +36,7 @@ describe SubmissionPolicy do
     context 'when the user is a TA' do
       let(:user) { build(:ta) }
       let(:submission) { build_stubbed(:submission) }
-      it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? } }
+      it { is_expected.not_to pass :run_tests?, because_of: { GroupingPolicy => :run_tests? } }
     end
 
     context 'when the user is a student' do
