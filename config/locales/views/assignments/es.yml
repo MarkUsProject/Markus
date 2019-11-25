@@ -3,6 +3,7 @@ es:
     due_date:
       final_due_date_passed: "El plazo de aplazamiento de gracia para este proyecto ha pasado"
       marking_started_warning: "UPDATE ME"
+      marking_overwrite_warning: "UPDATE ME"
       past_due_date_notice: "El último plazo de entrega para este proyecto está en el pasado por: "
     form:
       add_required_file: "Añadir un archivo requerido"

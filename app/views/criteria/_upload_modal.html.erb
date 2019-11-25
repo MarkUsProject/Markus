@@ -9,7 +9,12 @@
                              id: 'upload_script_yml',
                              upload_id: 'upload_file',
                              button_id: 'upload' %>
-
+  <% if @assignment.marking_started? %>
+    <div class="warning">
+      <p><%= t('assignments.due_date.marking_started_warning').html_safe %></p>
+      <p><%= t('assignments.due_date.marking_overwrite_warning').html_safe %></p>
+    </div>
+  <% end %>
   <%= t('upload_help_html', section_id: Criterion.name.pluralize.underscore.dasherize) %>
   <%= form_tag upload_assignment_criteria_path(@assignment),
                multipart: true, size: 1 do %>
