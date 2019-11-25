@@ -86,9 +86,22 @@
       margin-bottom: 0.5em;
     }
 
-    .rubric_level_title {
-      font-weight: bold;
-      margin: 0 3px 5px 0;
+    .rubric_field {
+      float:left;
+      margin-left: 15px;
+    }
+
+    .rubric_label {
+      width:45px;
+      clear:left;
+      text-align:right;
+      padding-right:10px;
+      float:left;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
     }
 
     input {
