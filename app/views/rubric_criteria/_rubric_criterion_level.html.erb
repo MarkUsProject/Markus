@@ -7,15 +7,24 @@
                      index: rubric_level_index),
               class: "bold_inline_label" %>
 </div>
-<br>
-<span class="rubric_level_title">Name:  </span>
+
+<span class="rubric_level_title">
+  <%= f.label :name, RubricCriterion.human_attribute_name(:level_name) %>
+</span>
 <%= f.text_field :name, value: "#{criterion.levels[rubric_level_index].name}",
                  class: "rubric_level_input"%>
 <br>
-<span class="rubric_level_title">Mark:  </span>
-<%= f.number_field :mark, value: "#{criterion.levels[rubric_level_index].mark}", step: 1,
+
+<span class="rubric_level_title">
+  <%= f.label :mark, RubricCriterion.human_attribute_name(:level_mark) %>
+</span>
+<%= f.number_field :mark, value: "#{criterion.levels[rubric_level_index].mark}", step: 0.1,
                 class: "rubric_level_input"%>
-<div class="rubric_level_title">Description:  </div>
+<br>
+
+<span class="rubric_level_title">
+  <%= f.label :description, RubricCriterion.human_attribute_name(:level_description) %>
+</span>
 <%= f.text_area :description, value: "#{criterion.levels[rubric_level_index].description}",
                 class: "rubric_text_area"%>
 <br>

@@ -35,6 +35,9 @@ en:
         max_mark: "Maximum mark"
         peer_visible: "Make visible to peer reviewers"
         ta_visible: "Make visible to teaching assistants"
+        level_name: "Name"
+        level_mark: "Mark"
+        level_description: "Description"
 
     errors:
       models:
