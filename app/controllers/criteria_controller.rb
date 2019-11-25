@@ -188,12 +188,24 @@ class CriteriaController < ApplicationController
                           I18n.t('upload_success', count: successes))
           end
         end
+        reset_results_total_mark assignment.id
       end
     end
     redirect_to action: 'index', assignment_id: assignment.id
   end
 
   private
+
+  # Resets the total mark for all results for the
+  # given assignment with id +assignment_id+
+  def reset_results_total_mark(assignment_id)
+    Result.joins(submission: :grouping)
+          .where('submissions.submission_version_used': true, 'groupings.assignment_id': assignment_id)
+          .each do |result|
+      result.update(marking_state: Result::MARKING_STATES[:incomplete])
+      result.update_total_mark
+    end
+  end
 
   def flexible_criterion_params
     params.require(:flexible_criterion).permit(:name,
