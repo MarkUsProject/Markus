@@ -30,6 +30,9 @@ es:
         ta_visible: "Hacer visible a los asistentes de cátedra"
       rubric_criterion:
         description: "Descripción"
+        level_name: "Nombre"
+        level_mark: "Nota"
+        level_description: "Descripción"
         name: "Nombre del criterio"
         max_mark: "Nota Máxima"
         peer_visible: "Hacer visible a los revisores de compañeros"
