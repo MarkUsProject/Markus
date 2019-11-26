@@ -138,7 +138,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion'},
+                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
                  format: :js
         end
 
@@ -764,7 +764,7 @@ describe CriteriaController do
       it 'maintains the order between entries and positions for criteria' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria.map{ |cr| [cr.name, cr.position] })
+        expect(assignment.get_criteria.map { |cr| [cr.name, cr.position] })
           .to match_array([['cr30', 1],
                            ['cr20', 2],
                            ['cr100', 3],
