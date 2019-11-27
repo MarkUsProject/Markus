@@ -69,3 +69,4 @@ en:
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
         starter_code: "Update starter code files for assignment %{assignment}"
+      timeout: 'Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.'

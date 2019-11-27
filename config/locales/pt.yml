@@ -63,3 +63,4 @@ pt:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+      timeout: 'UPDATE ME %{ms}'

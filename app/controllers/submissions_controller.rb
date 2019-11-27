@@ -314,83 +314,82 @@ class SubmissionsController < ApplicationController
   # update_files action handles transactional submission of files.
   def update_files
     assignment_id = params[:assignment_id]
-    begin
-      @assignment = Assignment.find(assignment_id)
-      if current_user.student? && !@assignment.allow_web_submits
-        raise t('student.submission.external_submit_only')
-      end
-      @path = params[:path].blank? ? '/' : params[:path]
+    @assignment = Assignment.find(assignment_id)
+    raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
 
-      if current_user.student?
-        @grouping = current_user.accepted_grouping_for(assignment_id)
-        unless @grouping.is_valid?
-          set_filebrowser_vars(@grouping)
-          return
-        end
-      else
-        @grouping = @assignment.groupings.find(params[:grouping_id])
-      end
+    @path = params[:path].blank? ? '/' : params[:path]
 
-      # The files that will be deleted
-      delete_files = params[:delete_files] || []
-
-      # The files that will be added
-      new_files = params[:new_files] || []
-
-      # The folders that will be added
-      new_folders = params[:new_folders] || []
-
-      # The folders that will be deleted
-      delete_folders = params[:delete_folders] || []
-
-      unless delete_folders.empty? && new_folders.empty?
-        authorize! to: :manage_subdirectories?
-      end
-
-      if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
-        flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-      else
-        messages = []
-        @grouping.group.access_repo do |repo|
-          # Create transaction, setting the author.  Timestamp is implicit.
-          txn = repo.get_transaction(current_user.user_name)
-          should_commit = true
-          path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
-          only_required = @grouping.assignment.only_required_files
-          required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
-          if delete_files.present?
-            success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages.concat msgs
-          end
-          if new_files.present?
-            success, msgs = add_files(new_files, current_user, repo,
-                                      path: path, txn: txn, check_size: true, required_files: required_files)
-            should_commit &&= success
-            messages.concat msgs
-          end
-          if new_folders.present?
-            success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages = messages.concat msgs
-          end
-          if delete_folders.present?
-            success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages = messages.concat msgs
-          end
-          if should_commit
-            commit_success, commit_msg = commit_transaction(repo, txn)
-            flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
-            messages << commit_msg
-          end
-        end
-        flash_repository_messages messages
+    if current_user.student?
+      @grouping = current_user.accepted_grouping_for(assignment_id)
+      unless @grouping.is_valid?
         set_filebrowser_vars(@grouping)
+        return
       end
-    ensure
-      redirect_back(fallback_location: root_path)
+    else
+      @grouping = @assignment.groupings.find(params[:grouping_id])
     end
+
+    # The files that will be deleted
+    delete_files = params[:delete_files] || []
+
+    # The files that will be added
+    new_files = params[:new_files] || []
+
+    # The folders that will be added
+    new_folders = params[:new_folders] || []
+
+    # The folders that will be deleted
+    delete_folders = params[:delete_folders] || []
+
+    unless delete_folders.empty? && new_folders.empty?
+      authorize! to: :manage_subdirectories?
+    end
+
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+    else
+      messages = []
+      @grouping.group.access_repo do |repo|
+        # Create transaction, setting the author.  Timestamp is implicit.
+        txn = repo.get_transaction(current_user.user_name)
+        should_commit = true
+        path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
+        only_required = @grouping.assignment.only_required_files
+        required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
+        if delete_files.present?
+          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages.concat msgs
+        end
+        if new_files.present?
+          success, msgs = add_files(new_files, current_user, repo,
+                                    path: path, txn: txn, check_size: true, required_files: required_files)
+          should_commit &&= success
+          messages.concat msgs
+        end
+        if new_folders.present?
+          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if delete_folders.present?
+          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if should_commit
+          commit_success, commit_msg = commit_transaction(repo, txn)
+          flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
+          messages << commit_msg
+        end
+      end
+      flash_repository_messages messages
+      set_filebrowser_vars(@grouping)
+    end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+  ensure
+    redirect_back(fallback_location: root_path)
   end
 
   def get_file

@@ -78,7 +78,7 @@ class AssignmentsController < ApplicationController
         rescue RuntimeError => error
           flash_message(:error, error.message)
         end
-        redirect_to action: 'student_interface', id: @assignment.id
+        redirect_to controller: :assignments
       else
         if @assignment.scanned_exam
           flash_now(:notice, t('assignments.scanned_exam.under_review'))
