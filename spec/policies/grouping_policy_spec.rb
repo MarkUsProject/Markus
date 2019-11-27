@@ -7,11 +7,6 @@ describe GroupingPolicy do
     context 'when the user is an admin' do
       let(:user) { build(:admin) }
 
-      context 'if the assignment policy fails' do
-        let(:grouping) { build_stubbed(:grouping) }
-        it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? } }
-      end
-
       context 'if the assignment policy passes' do
         let(:assignment) { create(:assignment_for_tests) }
         let(:grouping) { build_stubbed(:grouping, assignment: assignment) }
@@ -19,19 +14,8 @@ describe GroupingPolicy do
       end
     end
 
-    context 'when the user is a TA' do
-      let(:user) { build(:ta) }
-      let(:grouping) { build_stubbed(:grouping) }
-      it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? } }
-    end
-
     context 'when the user is a student' do
       let(:user) { build(:student) }
-
-      context 'if the assignment policy fails' do
-        let(:grouping) { build_stubbed(:grouping) }
-        it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :run_tests? } }
-      end
 
       context 'if the assignment policy passes' do
         let(:assignment) { create(:assignment_for_student_tests, unlimited_tokens: false) }
