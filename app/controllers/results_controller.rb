@@ -47,6 +47,8 @@ class ResultsController < ApplicationController
             head :forbidden
             return
           end
+        else
+          grouping = submission.grouping
         end
 
         data = {
@@ -84,7 +86,8 @@ class ResultsController < ApplicationController
 
         if assignment.enable_test
           begin
-            authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+            authorize! assignment, to: :run_tests?
+            authorize! grouping, to: :run_tests?
             authorize! submission, to: :run_tests?
             authorized = true
           rescue ActionPolicy::Unauthorized
@@ -235,7 +238,8 @@ class ResultsController < ApplicationController
 
     # authorization
     begin
-      authorize! @assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+      authorize! @assignment, to: :run_tests?
+      authorize! @grouping, to: :run_tests?
       authorize! @submission, to: :run_tests?
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
@@ -269,7 +273,8 @@ class ResultsController < ApplicationController
     begin
       submission = Result.find(params[:id]).submission
       assignment = submission.assignment
-      authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+      authorize! assignment, to: :run_tests?
+      authorize! submission.grouping, to: :run_tests?
       authorize! submission, to: :run_tests?
       test_run = submission.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,

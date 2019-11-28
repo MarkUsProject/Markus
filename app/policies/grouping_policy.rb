@@ -1,13 +1,11 @@
 class GroupingPolicy < ApplicationPolicy
 
   def run_tests?
-    check?(:run_tests?, record.assignment) && (
-      !user.student? || (
-        check?(:member?) &&
-        check?(:not_in_progress?) &&
-        check?(:tokens_available?) &&
-        check?(:before_due_date?)
-      )
+    !user.student? || (
+      check?(:member?) &&
+      check?(:not_in_progress?) &&
+      check?(:tokens_available?) &&
+      check?(:before_due_date?)
     )
   end
 
