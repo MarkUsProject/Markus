@@ -621,7 +621,9 @@ describe Grouping do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           begin
-            txn.add(File.join(@assignment.assignment_properties.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
+            txn.add(File.join(@assignment.assignment_properties.repository_folder, @file.filename),
+                    'ShapesTest content',
+                    'text/plain')
             unless repo.commit(txn)
               raise 'Commit failed!'
             end

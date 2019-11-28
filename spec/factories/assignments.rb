@@ -16,7 +16,8 @@ FactoryBot.define do
 
     after(:build) do |assignment, evaluator|
       if evaluator.assignment_properties_attributes
-        assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment,
+        assignment.assignment_properties ||= build(:assignment_properties,
+                                                   assignment: assignment,
                                                    attributes: evaluator.assignment_properties_attributes)
       else
         assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)

@@ -36,24 +36,24 @@ describe GradeEntryItem do
   # Make sure different grade entry forms can have grade entry items
   # with the same name
   it 'allows same column name for different grade entry forms' do
-    grade_entry_form_1 = GradeEntryForm.create!(short_identifier: 'a',
+    grade_entry_form1 = GradeEntryForm.create!(short_identifier: 'a',
                                                 due_date: 1.days.from_now,
                                                 description: '1',
                                                 message: '1',
                                                 is_hidden: false)
-    grade_entry_form_2 = GradeEntryForm.create!(short_identifier: 'b',
+    grade_entry_form2 = GradeEntryForm.create!(short_identifier: 'b',
                                                 due_date: 1.days.from_now,
                                                 description: '2',
                                                 message: '2',
                                                 is_hidden: false)
-    column = grade_entry_form_1.grade_entry_items.create!(name: 'Q1', position: 1, out_of: 1)
+    column = grade_entry_form1.grade_entry_items.create!(name: 'Q1', position: 1, out_of: 1)
 
     # Re-use the column name for a different grade entry form
     dup_column = GradeEntryItem.new
     dup_column.name = column.name
     dup_column.out_of = column.out_of
     dup_column.position = column.position
-    dup_column.grade_entry_form = grade_entry_form_2
+    dup_column.grade_entry_form = grade_entry_form2
 
     expect(dup_column).to be_valid
   end

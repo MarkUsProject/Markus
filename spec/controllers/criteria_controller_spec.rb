@@ -154,7 +154,7 @@ describe CriteriaController do
         before(:each) do
           get_as @admin,
                  :new,
-                 params: { assessment_id: @assignment.id, criterion_type: 'FlexibleCriterion'},
+                 params: { assessment_id: @assignment.id, criterion_type: 'FlexibleCriterion' },
                  format: :js
         end
 
@@ -554,7 +554,7 @@ describe CriteriaController do
         before(:each) do
           get_as @admin,
                  :new,
-                 params: { assessment_id:  @assignment.id, criterion_type: 'RubricCriterion' },
+                 params: { assessment_id: @assignment.id, criterion_type: 'RubricCriterion' },
                  format: :js
         end
 

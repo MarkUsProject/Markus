@@ -694,10 +694,9 @@ class Grouping < ApplicationRecord
   end
 
   def decrease_test_tokens
-    if !self.assignment.assignment_properties.unlimited_tokens && self.test_tokens > 0
-      self.test_tokens -= 1
-      save
-    end
+    return unless !self.assignment.assignment_properties.unlimited_tokens && self.test_tokens > 0
+    self.test_tokens -= 1
+    save
   end
 
   # TODO: Refactor into more flexible code from here to the end:
