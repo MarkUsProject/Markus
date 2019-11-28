@@ -30,22 +30,17 @@ namespace :db do
       end
 
       3.times do |index|
-        RubricCriterion.create(
+        rubric = RubricCriterion.create(
             name:                  random_sentences(1),
             assignment_id:         assignment.id,
             position:              index + 1,
             max_mark:              pos_rand(3),
-            level_0_name:          random_words(5),
-            level_0_description:   random_sentences(5),
-            level_1_name:          random_words(5),
-            level_1_description:   random_sentences(5),
-            level_2_name:          random_words(5),
-            level_2_description:   random_sentences(5),
-            level_3_name:          random_words(5),
-            level_3_description:   random_sentences(5),
-            level_4_name:          random_words(5),
-            level_4_description:   random_sentences(5)
         )
+        5.times do |number|
+          rubric.levels.create(name: random_words(1), number: number,
+                             description: random_sentences(5), mark: number)
+        end
+        byebug
       end
 
       3.times do |index|
