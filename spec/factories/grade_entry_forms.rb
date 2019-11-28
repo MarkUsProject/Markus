@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :grade_entry_form do
     sequence(:short_identifier) { |i| "Spreadsheet #{i}" }
+    description { Faker::Lorem.sentence }
+    message { Faker::Lorem.sentence }
     due_date { Time.now }
     is_hidden { false }
     show_total { false }
@@ -8,6 +10,8 @@ FactoryBot.define do
 
   factory :grade_entry_form_with_data, class: GradeEntryForm do
     sequence(:short_identifier) { |i| "Spreadsheet #{i} (with data)" }
+    description { Faker::Lorem.sentence }
+    message { Faker::Lorem.sentence }
     due_date { Time.now }
     is_hidden { false }
     show_total { false }
@@ -18,6 +22,8 @@ FactoryBot.define do
 
   factory :grade_entry_form_with_data_and_total, class: GradeEntryForm do
     sequence(:short_identifier) { |i| "Spreadsheet #{i} (with data and total)" }
+    description { Faker::Lorem.sentence }
+    message { Faker::Lorem.sentence }
     due_date { Time.now }
     is_hidden { false }
     show_total { true }

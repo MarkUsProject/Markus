@@ -25,10 +25,10 @@ class GradeEntryStudent < ApplicationRecord
     student_ids = Student.where(id: Array(student_ids)).pluck(:id)
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
-    columns = [:user_id, :grade_entry_form_id]
+    columns = [:user_id, :assessment_id]
     existing_values = GradeEntryStudent
-      .where(user_id: student_ids, grade_entry_form_id: form_ids)
-      .pluck(:user_id, :grade_entry_form_id)
+      .where(user_id: student_ids, assessment_id: form_ids)
+      .pluck(:user_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
@@ -90,7 +90,7 @@ class GradeEntryStudent < ApplicationRecord
     GradeEntryStudentTa.joins(:grade_entry_student)
                        .where('grade_entry_students.user_id': student_ids,
                               'grade_entry_students_tas.ta_id': grader_ids,
-                              'grade_entry_students.grade_entry_form_id': form.id)
+                              'grade_entry_students.assessment_id': form.id)
                        .delete_all
   end
 

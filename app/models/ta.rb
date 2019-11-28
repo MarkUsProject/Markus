@@ -11,7 +11,7 @@ class Ta < User
   BLANK_MARK = ''
 
   def get_criterion_associations_by_assignment(assignment)
-    if assignment.assign_graders_to_criteria
+    if assignment.assignment_properties.assign_graders_to_criteria
       criterion_ta_associations.includes(:assignment, :criterion).select do |association|
         association.assignment == assignment
       end
@@ -38,7 +38,7 @@ class Ta < User
   end
 
   def get_membership_count_by_grade_entry_form(grade_entry_form)
-    grade_entry_students.where('grade_entry_form_id = ?', grade_entry_form.id)
+    grade_entry_students.where('assessment_id = ?', grade_entry_form.id)
                         .includes(:grade_entry_form)
                         .count
   end

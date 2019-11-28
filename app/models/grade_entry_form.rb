@@ -6,10 +6,12 @@ class GradeEntryForm < Assessment
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy,
-                            inverse_of: :grade_entry_form
+                            inverse_of: :grade_entry_form,
+                            foreign_key: :assessment_id
 
   has_many                  :grade_entry_students,
-                            dependent: :destroy
+                            dependent: :destroy,
+                            foreign_key: :assessment_id
 
   has_many                  :grades, through: :grade_entry_items
 
@@ -127,7 +129,7 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    columns = [:user_id, :grade_entry_form_id, :released_to_student]
+    columns = [:user_id, :assessment_id, :released_to_student]
 
     values = Student.all.map do |student|
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
@@ -138,7 +140,7 @@ class GradeEntryForm < Assessment
 
   def export_as_csv
     students = Student.left_outer_joins(:grade_entry_students)
-                      .where(hidden: false, 'grade_entry_students.grade_entry_form_id': self.id)
+                      .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                       .order(:user_name)
                       .pluck(:user_name, 'grade_entry_students.total_grade')
     headers = []
@@ -235,7 +237,7 @@ class GradeEntryForm < Assessment
         name: names[i],
         out_of: totals[i],
         position: i + 1,
-        grade_entry_form_id: self.id
+        assessment_id: self.id
       }
     end
 
@@ -250,14 +252,14 @@ class GradeEntryForm < Assessment
           name: item.name,
           out_of: item.out_of,
           position: i + 1,
-          grade_entry_form_id: item.grade_entry_form_id
+          assessment_id: item.assessment_id
         }
         i += 1
       end
     end
 
     GradeEntryItem.import updated_items,
-                          on_duplicate_key_update: { conflict_target: [:name, :grade_entry_form_id],
+                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
                                                      columns: [:out_of, :position] }
     self.grade_entry_items.reload
   end

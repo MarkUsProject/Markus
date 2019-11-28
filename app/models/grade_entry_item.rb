@@ -10,7 +10,7 @@ class GradeEntryItem < ApplicationRecord
 
   validates_presence_of :name
   validates_uniqueness_of :name,
-                          scope: :grade_entry_form_id
+                          scope: :assessment_id
 
   validates_presence_of :out_of
   validates_numericality_of :out_of,

@@ -411,7 +411,8 @@ describe Grouping do
     describe '#refresh_test_tokens' do
       context 'if assignment.tokens is not nil' do
         before do
-          @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
+          @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
+                                                                                           tokens_per_period: 10 })
           @group = FactoryBot.create(:group)
           @grouping = Grouping.create(group: @group, assignment: @assignment)
           @student1 = FactoryBot.create(:student)
@@ -435,26 +436,27 @@ describe Grouping do
 
     describe '#update_assigned_tokens' do
       before :each do
-        @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
+        @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
+                                                                                         tokens_per_period: 6 })
         @group = FactoryBot.create(:group)
         @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
         @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
       end
 
       it 'updates token count properly when it is being increased' do
-        @assignment.tokens_per_period = 9
+        @assignment.assignment_properties.tokens_per_period = 9
         @assignment.save
         expect(@grouping.test_tokens).to eq(8)
       end
 
       it 'updates token count properly when it is being decreased' do
-        @assignment.tokens_per_period = 3
+        @assignment.assignment_properties.tokens_per_period = 3
         @assignment.save
         expect(@grouping.test_tokens).to eq(2)
       end
 
       it 'does not allow token count to go below 0' do
-        @assignment.tokens_per_period = 0
+        @assignment.assignment_properties.tokens_per_period = 0
         @assignment.save
         expect(@grouping.test_tokens).to eq(0)
       end
@@ -581,7 +583,7 @@ describe Grouping do
         @grouping = create(:grouping, assignment: @assignment)
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
-          assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
+          assignment_folder = File.join(@assignment.assignment_properties.repository_folder, File::SEPARATOR)
           begin
             txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
             unless repo.commit(txn)
@@ -619,7 +621,7 @@ describe Grouping do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           begin
-            txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
+            txn.add(File.join(@assignment.assignment_properties.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
             unless repo.commit(txn)
               raise 'Commit failed!'
             end
@@ -735,7 +737,7 @@ describe Grouping do
 
     context 'without students (ie created by an admin) for a assignment with section restriction' do
       before :each do
-        @assignment = create(:assignment, section_due_dates_type: true)
+        @assignment = create(:assignment, assignment_properties_attributes: { section_groups_only: true })
         @grouping = create(:grouping, assignment: @assignment)
         section01 = create(:section)
         section02 = create(:section)
@@ -759,7 +761,9 @@ describe Grouping do
         @student_can_invite = create(:student, section: @section)
         @student_cannot_invite = create(:student)
 
-        assignment = create(:assignment, group_max: 2, section_groups_only: true, due_date: Time.now + 2.days)
+        assignment = create(:assignment,
+                            due_date: Time.now + 2.days,
+                            assignment_properties_attributes: { group_max: 2, section_groups_only: true })
         @grouping = create(:grouping, assignment: assignment)
         create(:inviter_student_membership,
                user: student,
@@ -975,7 +979,7 @@ describe Grouping do
 
         context 'and section_due_dates_type is false' do
           before :each do
-            assignment.update!(section_due_dates_type: false)
+            assignment.assignment_properties.update!(section_due_dates_type: false)
           end
 
           it 'should return the assignment due date' do
@@ -993,7 +997,7 @@ describe Grouping do
         end
         context 'and section_due_dates_type is true' do
           before :each do
-            assignment.update!(section_due_dates_type: true)
+            assignment.assignment_properties.update!(section_due_dates_type: true)
           end
 
           it 'should return the section due date' do
@@ -1036,7 +1040,7 @@ describe Grouping do
 
       context 'with sections before due date' do
         before :each do
-          @assignment.section_due_dates_type = true
+          @assignment.assignment_properties.section_due_dates_type = true
           @assignment.save
           @section = create(:section)
           create(:inviter_student_membership,
@@ -1075,7 +1079,7 @@ describe Grouping do
 
       context 'with sections after due date' do
         before :each do
-          @assignment.section_due_dates_type = true
+          @assignment.assignment_properties.section_due_dates_type = true
           @assignment.save
           @section = create(:section)
           create(:inviter_student_membership,

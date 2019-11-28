@@ -10,8 +10,17 @@ FactoryBot.define do
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
 
-    after(:build) do |assignment|
-      assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)
+    transient do
+      assignment_properties_attributes { nil }
+    end
+
+    after(:build) do |assignment, evaluator|
+      if evaluator.assignment_properties_attributes
+        assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment,
+                                                   attributes: evaluator.assignment_properties_attributes)
+      else
+        assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)
+      end
     end
   end
 

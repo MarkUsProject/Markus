@@ -1250,8 +1250,8 @@ class Assignment < Assessment
         if assignment.new_record?
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
-          assignment.token_period = 1
-          assignment.unlimited_tokens = false
+          assignment.assignment_properties.token_period = 1
+          assignment.assignment_properties.unlimited_tokens = false
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?

@@ -34,7 +34,7 @@ describe ResultsController do
 
   def self.test_redirect_no_login(route_name)
     it "should be redirected from #{route_name}" do
-      method(ROUTES[route_name]).call(route_name, params: { assignment_id: 1, submission_id: 1, id: 1 })
+      method(ROUTES[route_name]).call(route_name, params: { assessment_id: 1, submission_id: 1, id: 1 })
       expect(response).to redirect_to action: 'login', controller: 'main'
     end
   end
@@ -47,7 +47,7 @@ describe ResultsController do
 
   def self.test_unauthorized(route_name)
     it "should not be authorized to access #{route_name}" do
-      method(ROUTES[route_name]).call(route_name, params: { assignment_id: assignment.id,
+      method(ROUTES[route_name]).call(route_name, params: { assessment_id: assignment.id,
                                                             submission_id: submission.id,
                                                             id: incomplete_result.id })
       expect(response).to have_http_status(:missing)
@@ -59,7 +59,7 @@ describe ResultsController do
       context 'without permission' do
         before :each do
           allow_any_instance_of(ResultsController).to receive(:authorized_to_download?).and_return false
-          get :download, params: { assignment_id: assignment.id,
+          get :download, params: { assessment_id: assignment.id,
                                    submission_id: submission.id,
                                    id: incomplete_result.id }
         end
@@ -73,7 +73,7 @@ describe ResultsController do
         context 'and without any file errors' do
           before :each do
             allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-            get :download, params: { assignment_id: assignment.id,
+            get :download, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      select_file_id: submission_file.id,
                                      id: incomplete_result.id }
@@ -90,7 +90,7 @@ describe ResultsController do
         context 'and with a file error' do
           before :each do
             allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_raise SAMPLE_ERROR_MESSAGE
-            get :download, params: { assignment_id: assignment.id,
+            get :download, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      select_file_id: submission_file.id,
                                      id: incomplete_result.id }
@@ -104,7 +104,7 @@ describe ResultsController do
           before :each do
             allow_any_instance_of(SubmissionFile).to receive(:is_supported_image?).and_return true
             allow_any_instance_of(SubmissionFile).to receive(:retrieve_file).and_return SAMPLE_FILE_CONTENT
-            get :download, params: { assignment_id: assignment.id,
+            get :download, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      select_file_id: submission_file.id,
                                      id: incomplete_result.id,
@@ -128,13 +128,13 @@ describe ResultsController do
     context 'accessing next_grouping' do
       it 'should redirect when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
-        get :next_grouping, params: { assignment_id: assignment.id, submission_id: submission.id,
+        get :next_grouping, params: { assessment_id: assignment.id, submission_id: submission.id,
                                       grouping_id: grouping.id, id: incomplete_result.id }
         expect(response).to have_http_status(:redirect)
       end
       it 'should redirect when current grouping does not have a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return false
-        get :next_grouping, params: { assignment_id: assignment.id, submission_id: submission.id,
+        get :next_grouping, params: { assessment_id: assignment.id, submission_id: submission.id,
                                       grouping_id: grouping.id, id: incomplete_result.id }
         expect(response).to have_http_status(:redirect)
       end
@@ -142,7 +142,7 @@ describe ResultsController do
     context 'accessing toggle_marking_state' do
       context 'with a complete result' do
         before :each do
-          post :toggle_marking_state, params: { assignment_id: assignment.id, submission_id: submission.id,
+          post :toggle_marking_state, params: { assessment_id: assignment.id, submission_id: submission.id,
                                                 id: complete_result.id }, xhr: true
         end
         it { expect(response).to have_http_status(:success) }
@@ -153,7 +153,7 @@ describe ResultsController do
       before :each do
         grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
-          path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+          path = File.join(assignment.assignment_properties.repository_folder, SAMPLE_FILE_NAME)
           txn.add(path, SAMPLE_FILE_CONTENT, '')
           repo.commit(txn)
           @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
@@ -174,7 +174,7 @@ describe ResultsController do
         end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
-        submission_file_dir = "#{assignment.repository_folder}-#{grouping.group.repo_name}"
+        submission_file_dir = "#{assignment.assignment_properties.repository_folder}-#{grouping.group.repo_name}"
         @submission_file_path = File.join(submission_file_dir, SAMPLE_FILE_NAME)
       end
       after :each do
@@ -183,7 +183,7 @@ describe ResultsController do
       end
       context 'and including annotations' do
         before :each do
-          get :download_zip, params: {  assignment_id: assignment.id,
+          get :download_zip, params: {  assessment_id: assignment.id,
                                         submission_id: @submission.id,
                                         id: @submission.id,
                                         grouping_id: grouping.id,
@@ -212,7 +212,7 @@ describe ResultsController do
       end
       context 'and not including annotations' do
         before :each do
-          get :download_zip, params: {  assignment_id: assignment.id,
+          get :download_zip, params: {  assessment_id: assignment.id,
                                         submission_id: @submission.id,
                                         id: @submission.id,
                                         grouping_id: grouping.id,
@@ -242,7 +242,7 @@ describe ResultsController do
     end
     context 'accessing update_mark' do
       it 'should report an updated mark' do
-        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+        patch :update_mark, params: { assessment_id: assignment.id, submission_id: submission.id,
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
@@ -253,7 +253,7 @@ describe ResultsController do
         before :each do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
-          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+          patch :update_mark, params: { assessment_id: assignment.id, submission_id: submission.id,
                                         id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                         markable_type: rubric_mark.markable_type,
                                         mark: 1 }, xhr: true
@@ -266,7 +266,7 @@ describe ResultsController do
     end
     context 'accessing view_mark' do
       before :each do
-        get :view_marks, params: { assignment_id: assignment.id, submission_id: submission.id,
+        get :view_marks, params: { assessment_id: assignment.id, submission_id: submission.id,
                                    id: incomplete_result.id }, xhr: true
       end
       it { expect(response).to have_http_status(:success) }
@@ -276,7 +276,7 @@ describe ResultsController do
         before :each do
           allow_any_instance_of(ExtraMark).to receive(:save).and_return false
           @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+          post :add_extra_mark, params: { assessment_id: assignment.id, submission_id: submission.id,
                                           id: submission.get_latest_result.id,
                                           extra_mark: { extra_mark: 1 } }, xhr: true
         end
@@ -289,7 +289,7 @@ describe ResultsController do
         before :each do
           allow_any_instance_of(ExtraMark).to receive(:save).and_call_original
           @old_mark = submission.get_latest_result.total_mark
-          post :add_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+          post :add_extra_mark, params: { assessment_id: assignment.id, submission_id: submission.id,
                                           id: submission.get_latest_result.id,
                                           extra_mark: { extra_mark: 1 } }, xhr: true
         end
@@ -304,7 +304,7 @@ describe ResultsController do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
         submission.get_latest_result.update_total_mark
         @old_mark = submission.get_latest_result.total_mark
-        post :remove_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+        post :remove_extra_mark, params: { assessment_id: assignment.id, submission_id: submission.id,
                                            id: extra_mark.id }, xhr: true
       end
       test_no_flash
@@ -316,7 +316,7 @@ describe ResultsController do
     end
     context 'accessing update_overall_comment' do
       before :each do
-        post :update_overall_comment, params: { assignment_id: assignment.id, submission_id: submission.id,
+        post :update_overall_comment, params: { assessment_id: assignment.id, submission_id: submission.id,
                                                 id: incomplete_result.id,
                                                 result: { overall_comment: SAMPLE_COMMENT } }, xhr: true
         incomplete_result.reload
@@ -381,7 +381,7 @@ describe ResultsController do
       context 'for a grouping with no submission' do
         before :each do
           allow_any_instance_of(Grouping).to receive(:has_submission?).and_return false
-          get :view_marks, params: { assignment_id: assignment.id,
+          get :view_marks, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      id: incomplete_result.id }
         end
@@ -393,7 +393,7 @@ describe ResultsController do
       context 'for a grouping with a submission but no result' do
         before :each do
           allow_any_instance_of(Submission).to receive(:has_result?).and_return false
-          get :view_marks, params: { assignment_id: assignment.id,
+          get :view_marks, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      id: incomplete_result.id }
         end
@@ -407,7 +407,7 @@ describe ResultsController do
         before :each do
           allow_any_instance_of(Submission).to receive(:has_result?).and_return true
           allow_any_instance_of(Result).to receive(:released_to_students).and_return false
-          get :view_marks, params: { assignment_id: assignment.id,
+          get :view_marks, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      id: incomplete_result.id }
         end
@@ -421,7 +421,7 @@ describe ResultsController do
         before :each do
           allow_any_instance_of(Submission).to receive(:has_result?).and_return true
           allow_any_instance_of(Result).to receive(:released_to_students).and_return true
-          get :view_marks, params: { assignment_id: assignment.id,
+          get :view_marks, params: { assessment_id: assignment.id,
                                      submission_id: submission.id,
                                      id: complete_result.id }
         end
@@ -461,7 +461,7 @@ describe ResultsController do
           before :each do
             released_result.submission.make_remark_result
             released_result.submission.update(remark_request_timestamp: Time.zone.now)
-            get :edit, params: { assignment_id: assignment.id, submission_id: released_result.submission.id,
+            get :edit, params: { assessment_id: assignment.id, submission_id: released_result.submission.id,
                                  id: released_result.submission.remark_result.id }
           end
           it 'should have an edit form with fields for an overall comment' do
@@ -473,7 +473,7 @@ describe ResultsController do
     end
     context 'accessing set_released_to_students' do
       before :each do
-        get :set_released_to_students, params: { assignment_id: assignment.id, submission_id: submission.id,
+        get :set_released_to_students, params: { assessment_id: assignment.id, submission_id: submission.id,
                                                  id: complete_result.id, value: 'true' }, xhr: true
       end
       it { expect(response).to have_http_status(:success) }
@@ -486,7 +486,7 @@ describe ResultsController do
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
     context 'accessing edit' do
       before :each do
-        get :edit, params: { assignment_id: assignment.id, submission_id: submission.id,
+        get :edit, params: { assessment_id: assignment.id, submission_id: submission.id,
                              id: incomplete_result.id }, xhr: true
       end
       test_no_flash

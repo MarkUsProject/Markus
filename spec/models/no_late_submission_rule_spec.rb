@@ -1,7 +1,7 @@
 describe NoLateSubmissionRule do
   it 'be able to create NoLateSubmissionRule' do
     rule = NoLateSubmissionRule.new
-    rule.assignment = create(:assignment, section_due_dates_type: true)
+    rule.assignment = create(:assignment, assignment_properties_attributes: { section_due_dates_type: true })
     expect(rule.save).to be true
   end
 
@@ -27,7 +27,7 @@ describe NoLateSubmissionRule do
   # Shouldn't apply any penalties
   context 'If submission collection date was after due date' do
     before(:each) do
-      @assignment = create(:assignment, section_due_dates_type: true)
+      @assignment = create(:assignment, assignment_properties_attributes: { section_due_dates_type: true })
       @grouping = create(:grouping, assignment: @assignment)
       @assignment.due_date = Time.now - 2.days
       @submission = create(:submission, grouping: @grouping)
