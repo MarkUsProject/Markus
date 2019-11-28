@@ -97,7 +97,6 @@ namespace :markus do
       rubric.levels.create(name: random_words(1), number: number,
                            description: random_sentences(5), mark: number)
     end
-    byebug
   end
 
   def submit_half_on_time(a)

@@ -40,7 +40,6 @@ namespace :db do
           rubric.levels.create(name: random_words(1), number: number,
                              description: random_sentences(5), mark: number)
         end
-        byebug
       end
 
       3.times do |index|
