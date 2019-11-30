@@ -31,9 +31,6 @@ en:
         ta_visible: "Make visible to teaching assistants"
       rubric_criterion:
         description: "Description"
-        level_name: "Name"
-        level_mark: "Mark"
-        level_description: "Description"
         name: "Name"
         max_mark: "Maximum mark"
         peer_visible: "Make visible to peer reviewers"

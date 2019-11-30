@@ -30,9 +30,6 @@ fr:
         ta_visible: "Rendre visible aux assistants d'enseignement"
       rubric_criterion:
         description: "Description"
-        level_name: "Nom"
-        level_mark: "Note"
-        level_description: "Description"
         name: "Nom"
         max_mark: "Note maximale"
         peer_visible: "Rendre visible à leurs auteurs pairs"

@@ -30,9 +30,6 @@ pt:
         ta_visible: "Tornar visível para assistentes de ensino"
       rubric_criterion:
         description: "Descrição"
-        level_name: "Nome"
-        level_mark: "Nota"
-        level_description: "Descrição"
         name: "Nome"
         max_mark: "Nota máxima"
         peer_visible: "Tornar visível a perscrutar revisores"

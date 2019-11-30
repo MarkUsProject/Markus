@@ -8,16 +8,16 @@
               class: "bold_inline_label" %>
 </div>
 <div>
-  <%= f.label :name, RubricCriterion.human_attribute_name(:level_name), class: 'required' %>
+  <%= f.label :name, Level.human_attribute_name(:name), class: 'required' %>
   <%= f.text_field :name, value: "#{level.name}"%>
 </div>
 <div>
-  <%= f.label :mark, RubricCriterion.human_attribute_name(:level_mark) + " (#{level.mark}/#{criterion.max_mark})",
+  <%= f.label :mark, Level.human_attribute_name(:mark) + " (#{level.mark}/#{criterion.max_mark})",
               class: 'required' %>
   <%= f.number_field :mark, value: "#{level.mark}", step: 0.1%>
 </div>
 <div>
-  <%= f.label :description, RubricCriterion.human_attribute_name(:level_description), class: 'description required' %>
+  <%= f.label :description, Level.human_attribute_name(:description), class: 'description required' %>
   <%= f.text_area :description, value: "#{level.description}"%>
 </div>
 
