@@ -9,16 +9,16 @@
 </div>
 <div>
   <%= f.label :name, RubricCriterion.human_attribute_name(:level_name), class: 'required' %>
-  <%= f.text_field :name, value: "#{criterion.levels[rubric_level_index].name}"%>
+  <%= f.text_field :name, value: "#{level.name}"%>
 </div>
 <div>
-  <%= f.label :mark, RubricCriterion.human_attribute_name(:level_mark) + " (#{criterion.levels[rubric_level_index].mark}/#{criterion.max_mark})",
+  <%= f.label :mark, RubricCriterion.human_attribute_name(:level_mark) + " (#{level.mark}/#{criterion.max_mark})",
               class: 'required' %>
-  <%= f.number_field :mark, value: "#{criterion.levels[rubric_level_index].mark}", step: 0.1%>
+  <%= f.number_field :mark, value: "#{level.mark}", step: 0.1%>
 </div>
 <div>
   <%= f.label :description, RubricCriterion.human_attribute_name(:level_description), class: 'description required' %>
-  <%= f.text_area :description, value: "#{criterion.levels[rubric_level_index].description}"%>
+  <%= f.text_area :description, value: "#{level.description}"%>
 </div>
 
 <br>
