@@ -1,6 +1,8 @@
-language: ruby
+language: generic
 rvm:
   - 2.5.3
+node_js:
+  - "11.0"
 dist: xenial
 addons:
   postgresql: "10"
@@ -30,7 +32,6 @@ before_script:
   - bundle exec rake db:migrate RAILS_ENV=test
 
 script:
-  # - bundle exec rake test # shoulda (with rails 5) compatibility issues
   - bundle exec rspec
 
 services:
@@ -40,7 +41,7 @@ services:
 notifications:
   email: false
 
-bundler_args: --retry 10
+bundler_args: --retry 10 --without mysql sqlite offline unicorn
 
 cache:
   yarn: true
