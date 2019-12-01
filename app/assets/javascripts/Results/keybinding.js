@@ -24,16 +24,20 @@ Mousetrap.bind('shift+right', function() {
 
 // Go to the previous criterion with shift + up
 Mousetrap.bind('shift+up', function(e) {
-  e.preventDefault();
-  prevCriterion();
-  return false;
+  if (!is_text_selected()) {
+    e.preventDefault();
+    prevCriterion();
+    return false;
+  }
 });
 
 // Go to the next criterion with shift + down
 Mousetrap.bind('shift+down', function(e) {
-  e.preventDefault();
-  nextCriterion();
-  return false;
+  if (!is_text_selected()) {
+    e.preventDefault();
+    nextCriterion();
+    return false;
+  }
 });
 
 // When on rubric criterion, use the arrow keys to hover over the next rubric
