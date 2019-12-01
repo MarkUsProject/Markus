@@ -62,23 +62,13 @@ class ApplicationController < ActionController::Base
   # Set locale according to URL parameter. If unknown parameter is
   # requested, fall back to default locale.
   def set_locale
-    @available_locales = AVAILABLE_LANGS if @available_locales.nil?
-    I18n.locale = params[:locale] || I18n.default_locale
-
-    locale_path = File.join(LOCALES_DIRECTORY, "#{I18n.locale}.yml")
-
-    unless I18n.load_path.include? locale_path
-      I18n.load_path << locale_path
-      I18n.backend.send(:init_translations)
+    if params[:locale].nil?
+      I18n.locale = I18n.default_locale
+    elsif I18n.available_locales.include? params[:locale].to_sym
+      I18n.locale = params[:locale]
+    else
+      flash_now(:notice, I18n.t('locale_not_available', locale: params[:locale]))
     end
-
-  # handle unknown locales
-  rescue Exception => err
-    logger.error err
-    flash.now[:notice] = I18n.t('locale_not_available', locale: I18n.locale)
-
-    I18n.load_path -= [locale_path]
-    I18n.locale = I18n.default_locale
   end
 
   def get_file_encodings
