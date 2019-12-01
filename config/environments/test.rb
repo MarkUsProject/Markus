@@ -24,6 +24,12 @@ Markus::Application.configure do
   # Disable caching.
   config.action_controller.perform_caching = false
 
+  # Explicitly whitelist available locales for i18n-js.
+  I18n.available_locales = [:en, :fr, :es, :pt]
+
+  # Set default locale.
+  I18n.default_locale = :en
+
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running
@@ -181,13 +187,6 @@ Markus::Application.configure do
   ###################################################################
   # Global flag to enable/disable starter code feature.
   STARTER_CODE_ON = true
-
-  ###################################################################
-  # Set this to the desired default language MarkUs should load if
-  # nothing else tells it otherwise. At the moment valid values are
-  # 'en', 'fr'. Please make sure that proper locale files are present
-  # in config/locales.
-  MARKUS_DEFAULT_LANGUAGE = 'en'
 
   ###################################################################
   # Session Timeouts

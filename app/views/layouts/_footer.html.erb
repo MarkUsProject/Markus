@@ -10,8 +10,7 @@
         relative_root = Rails.application.config.action_controller.relative_url_root || ''
         curr_path = request.path.gsub(relative_root, "").gsub(Regexp.compile("(?<=/)#{I18n.locale}/"), "")
 
-        select_tag(:locale, options_for_select(@available_locales,
-                   selected: "#{I18n.locale}"),
+        select_tag(:locale, options_for_select(I18n.available_locales, selected: "#{I18n.locale}"),
                    { onchange: "javascript:
                                     window.location.href =
                                          '#{relative_root}/' +
