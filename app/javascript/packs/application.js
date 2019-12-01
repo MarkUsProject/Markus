@@ -36,8 +36,8 @@ window.Rails = Rails;
 
 // i18n-js
 import * as I18n from 'i18n-js';
+import 'translations';
 window.I18n = I18n;
-require('translations');
 
 // JCrop
 import Jcrop from 'jcrop';
