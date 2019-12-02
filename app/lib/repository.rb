@@ -308,7 +308,7 @@ module Repository
       begin
         loop do
           return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
-          raise Timeout::Error(I18n.t('repo.timeout')) if elapsed_time >= timeout
+          raise Timeout::Error, I18n.t('repo.timeout') if elapsed_time >= timeout
 
           sleep(interval / 1000.0) # interval is in milliseconds but sleep arg is in seconds
           elapsed_time += interval
