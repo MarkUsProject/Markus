@@ -65,25 +65,18 @@ class AssignmentsController < ApplicationController
 
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
-    end
+
     if @grouping.nil?
-      if @assignment.group_max == 1 && !@assignment.scanned_exam
+      if @assignment.scanned_exam
+        flash_now(:notice, t('assignments.scanned_exam.under_review'))
+      elsif @assignment.group_max == 1
         begin
           @student.create_group_for_working_alone_student(@assignment.id)
-        rescue RuntimeError => error
-          flash_message(:error, error.message)
+        rescue StandardError => e
+          flash_message(:error, e.message)
+          redirect_to controller: :assignments
         end
-        redirect_to controller: :assignments
-      else
-        if @assignment.scanned_exam
-          flash_now(:notice, t('assignments.scanned_exam.under_review'))
-        end
-        render :student_interface
+        @grouping = @student.accepted_grouping_for(@assignment.id)
       end
     else
       # We look for the information on this group...
@@ -96,6 +89,13 @@ class AssignmentsController < ApplicationController
 
       # Look up submission information
       set_repo_vars(@assignment, @grouping)
+    end
+
+    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
+    @due_date = @student.due_date_for_assignment(@assignment)
+    if @student.has_pending_groupings_for?(@assignment.id)
+      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
   end
 
