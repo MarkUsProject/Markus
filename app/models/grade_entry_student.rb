@@ -27,8 +27,8 @@ class GradeEntryStudent < ApplicationRecord
 
     columns = [:user_id, :assessment_id]
     existing_values = GradeEntryStudent
-      .where(user_id: student_ids, assessment_id: form_ids)
-      .pluck(:user_id, :assessment_id)
+                        .where(user_id: student_ids, assessment_id: form_ids)
+                        .pluck(:user_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values

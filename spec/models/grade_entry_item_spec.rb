@@ -37,15 +37,15 @@ describe GradeEntryItem do
   # with the same name
   it 'allows same column name for different grade entry forms' do
     grade_entry_form1 = GradeEntryForm.create!(short_identifier: 'a',
-                                                due_date: 1.days.from_now,
-                                                description: '1',
-                                                message: '1',
-                                                is_hidden: false)
+                                               due_date: 1.days.from_now,
+                                               description: '1',
+                                               message: '1',
+                                               is_hidden: false)
     grade_entry_form2 = GradeEntryForm.create!(short_identifier: 'b',
-                                                due_date: 1.days.from_now,
-                                                description: '2',
-                                                message: '2',
-                                                is_hidden: false)
+                                               due_date: 1.days.from_now,
+                                               description: '2',
+                                               message: '2',
+                                               is_hidden: false)
     column = grade_entry_form1.grade_entry_items.create!(name: 'Q1', position: 1, out_of: 1)
 
     # Re-use the column name for a different grade entry form
