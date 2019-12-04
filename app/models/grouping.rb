@@ -808,6 +808,6 @@ class Grouping < ApplicationRecord
     assignment.assignment_properties.section_due_dates_type &&
       inviter.present? &&
       inviter.section.present? &&
-      assignment.section_due_dates.present?
+      assignment.assignment_properties.section_due_dates.present?
   end
 end

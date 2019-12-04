@@ -33,6 +33,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.text :message, null: false
       t.datetime :due_date
       t.boolean :is_hidden, default: true, null: false
+
       t.boolean :show_total, default: false, null: false
       t.integer :rubric_criteria_count
       t.integer :flexible_criteria_count
