@@ -659,7 +659,7 @@ class AssignmentsController < ApplicationController
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
                          assignment.saved_change_to_is_hidden? ||
-                         assignment.assignment_files.any?(&:changed?) ||
+                         assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:section_due_dates_type]
