@@ -655,14 +655,12 @@ class AssignmentsController < ApplicationController
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     assignment.assign_attributes(assignment_params)
-    assignment.repository_folder = assignment_params[:short_identifier]
-    new_required_files = assignment.only_required_files_changed? ||
-                         assignment.is_hidden_changed? ||
-                         assignment.assignment_files.any? { |file| file.changed? }
+    assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
     assignment.save!
-    new_required_files = new_required_files ||
+    new_required_files = assignment.saved_change_to_only_required_files? ||
+                         assignment.saved_change_to_is_hidden? ||
+                         assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
-
     # if there are no section due dates, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
