@@ -88,7 +88,6 @@ class RawSubmissionTable extends React.Component {
         return (
           <a href={Routes.repo_browser_assignment_submission_path(
                      this.props.assignment_id, row.original._id)}
-             className={row.original.no_files ? 'no-files' : ''}
           >
             {row.original.group_name}
           </a>

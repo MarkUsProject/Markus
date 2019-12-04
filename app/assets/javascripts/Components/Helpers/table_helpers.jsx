@@ -13,13 +13,7 @@ export function stringFilter(filter, row) {
 
 export function dateSort(a, b) {
   /** Sort values as dates */
-  if (typeof a === 'string' && typeof b === 'string') {
-    let a_date = Date.parse(a);
-    let b_date = Date.parse(b);
-    return a_date > b_date ? 1 : -1;
-  } else {
-    return a > b ? 1 : -1;
-  }
+  return (Date.parse(a) || 0) > (Date.parse(b) || 0);
 };
 
 export function markingStateColumn(...override_keys) {

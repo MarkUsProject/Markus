@@ -1179,13 +1179,12 @@ class Assignment < ApplicationRecord
                   'groups.group_name',
                   'submissions.revision_timestamp')
 
-    empty_submissions = groupings
-                        .joins(current_submission_used: :submission_files)
-                        .group('groupings.id')
-                        .count('submission_files.*')
-                        .select! { |_, v| v.zero? }
-    empty_submissions ||= {}
-
+    empty_submissions = Set.new(groupings.joins(:current_submission_used)
+                                         .pluck('groupings.id',
+                                                'revision_identifier',
+                                                'groupings.starter_code_revision_identifier')
+                                         .map { |id, rev, sc_rev| id if rev == sc_rev }
+                                         .compact)
     tag_data = groupings
                .joins(:tags)
                .pluck_to_hash('groupings.id', 'tags.name')
@@ -1233,17 +1232,19 @@ class Assignment < ApplicationRecord
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
         group_name: group_name,
-        # TODO: for some reason, this is not automatically converted to our timezone by the query
-        submission_time: revision_timestamp.nil? ? '' : I18n.l(revision_timestamp.in_time_zone),
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
-        no_files: empty_submissions.key?(grouping_id),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
                                      result_info['results.released_to_students'],
                                      collection_date)
       }
 
-      if result_info.present?
+      unless empty_submissions.include?(grouping_id) || revision_timestamp.nil?
+        # TODO: for some reason, this is not automatically converted to our timezone by the query
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
+      end
+
+      if result_info['results.id'].present?
         base[:result_id] = result_info['results.id']
         base[:final_grade] = result_info['results.total_mark']
       end
