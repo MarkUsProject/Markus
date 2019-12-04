@@ -5,7 +5,7 @@ class Grouping < ApplicationRecord
   include ActiveRecordCreator
   include SubmissionsHelper
 
-  after_create_commit :create_grouping_repository_folder
+  after_create :create_grouping_repository_folder
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy

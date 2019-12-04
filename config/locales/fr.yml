@@ -68,3 +68,4 @@ fr:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+      timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'
