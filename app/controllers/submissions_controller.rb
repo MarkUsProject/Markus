@@ -46,6 +46,7 @@ class SubmissionsController < ApplicationController
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
+    @assignment = @grouping.assignment
     @collected_revision = nil
     @revision = nil
     @grouping.group.access_repo do |repo|
