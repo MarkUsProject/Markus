@@ -70,3 +70,12 @@ en:
     status: "Status"
     successfully_changed: "Successfully updated %{changed} results."
     unrelease_marks: "Unrelease Marks"
+
+    state:
+      complete: "Complete"
+      incomplete: "Incomplete"
+      not_collected: "Not Collected"
+      in_progress: "In Progress"
+      released: "Released"
+      remark_requested: "Remark Requested"
+      before_due_date: "Before Due Date"

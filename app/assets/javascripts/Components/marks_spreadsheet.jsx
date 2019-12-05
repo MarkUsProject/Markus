@@ -169,7 +169,7 @@ class RawMarksSpreadsheet extends React.Component {
   markingStateColumn = {
     accessor: 'released_to_student',
     Header: I18n.t('grade_entry_forms.grades.marking_state'),
-    Cell: ({ value }) => value ? I18n.t('results.state.released') : '',
+    Cell: ({ value }) => value ? I18n.t('submissions.state.released') : '',
     filterable: false,
     minWidth: 50,
   };

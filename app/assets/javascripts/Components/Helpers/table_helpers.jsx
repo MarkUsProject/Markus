@@ -24,22 +24,22 @@ export function markingStateColumn(...override_keys) {
       let marking_state = '';
       switch (row.original.marking_state) {
         case 'not_collected':
-          marking_state = I18n.t('results.state.not_collected');
+          marking_state = I18n.t('submissions.state.not_collected');
           break;
         case 'incomplete':
-          marking_state = I18n.t('results.state.in_progress');
+          marking_state = I18n.t('submissions.state.in_progress');
           break;
         case 'complete':
-          marking_state = I18n.t('results.state.complete');
+          marking_state = I18n.t('submissions.state.complete');
           break;
         case 'released':
-          marking_state = I18n.t('results.state.released');
+          marking_state = I18n.t('submissions.state.released');
           break;
         case 'remark':
-          marking_state = I18n.t('results.state.remark_requested');
+          marking_state = I18n.t('submissions.state.remark_requested');
           break;
         case 'before_due_date':
-          marking_state = I18n.t('results.state.before_due_date');
+          marking_state = I18n.t('submissions.state.before_due_date');
           break;
         default:
           // should not get here
@@ -61,12 +61,12 @@ export function markingStateColumn(...override_keys) {
         value={filter ? filter.value : 'all'}
       >
         <option value='all'>{I18n.t('all')}</option>
-        <option value='before_due_date'>{I18n.t('results.state.before_due_date')}</option>
-        <option value='not_collected'>{I18n.t('results.state.not_collected')}</option>
-        <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
-        <option value='complete'>{I18n.t('results.state.complete')}</option>
-        <option value='released'>{I18n.t('results.state.released')}</option>
-        <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
+        <option value='before_due_date'>{I18n.t('submissions.state.before_due_date')}</option>
+        <option value='not_collected'>{I18n.t('submissions.state.not_collected')}</option>
+        <option value='incomplete'>{I18n.t('submissions.state.in_progress')}</option>
+        <option value='complete'>{I18n.t('submissions.state.complete')}</option>
+        <option value='released'>{I18n.t('submissions.state.released')}</option>
+        <option value='remark'>{I18n.t('submissions.state.remark_requested')}</option>
       </select>,
   ...override_keys})
 };
