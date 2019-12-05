@@ -101,6 +101,10 @@ export class AnnotationTable extends React.Component {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
   }
 
+  componentDidUpdate() {
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
+  }
+
   render() {
     let allColumns = this.columns;
     if (this.props.detailed) {
@@ -108,15 +112,17 @@ export class AnnotationTable extends React.Component {
     }
 
     return (
-      <ReactTable
-        data={this.props.annotations}
-        columns={allColumns}
-        filterable
-        defaultSorted={[
-          {id: 'filename'},
-          {id: 'number'}
-        ]}
-      />
+      <div id={'annotation_table'}>
+        <ReactTable
+          data={this.props.annotations}
+          columns={allColumns}
+          filterable
+          defaultSorted={[
+            {id: 'filename'},
+            {id: 'number'}
+          ]}
+        />
+      </div>
     );
   }
 }

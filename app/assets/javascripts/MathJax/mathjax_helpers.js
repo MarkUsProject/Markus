@@ -1,7 +1,9 @@
 // function that reloads the DOM for
 // MathJax (http://www.mathjax.org/docs/1.1/typeset.html)
 function reloadDOM() {
-  MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+  Array.prototype.forEach.call(document.getElementsByClassName('annotation_text_display'), element => {
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, element]);
+  });
 }
 
 function updatePreview(source, destination) {
