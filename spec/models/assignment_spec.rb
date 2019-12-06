@@ -1587,10 +1587,10 @@ describe Assignment do
     context 'an Admin user' do
       let(:admin) { create :admin }
       let(:tags) { create_list :tag, 3, user: admin }
-      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]); g } }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
       let(:data) { assignment.current_submission_data(admin) }
       let(:submission) { create :version_used_submission, grouping: groupings[0] }
-      let(:released_result) { create :released_result, submission: submission}
+      let(:released_result) { create :released_result, submission: submission }
 
       it 'should return results for all assignment groupings' do
         expect(data.size).to eq groupings.size
@@ -1602,7 +1602,7 @@ describe Assignment do
       end
 
       it 'should include tags' do
-        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a.map(&:name) }
+        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
         expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
       end
 
@@ -1645,33 +1645,33 @@ describe Assignment do
 
       it 'should include a submission time if a non-empty submission exists' do
         time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
-        expect(data.select { |h| h.has_key? :submission_time }.count).to eq 1
+        expect(data.select { |h| h.key? :submission_time }.count).to eq 1
         expect(data.map { |h| h[:submission_time] }).to include(time_stamp)
       end
 
       it 'should not include a submission time if an empty submission exists' do
         submission.update(revision_identifier: submission.grouping.starter_code_revision_identifier)
-        expect(data.select { |h| h.has_key? :submission_time }.count).to eq 0
+        expect(data.select { |h| h.key? :submission_time }.count).to eq 0
       end
 
       it 'should not include the result id if a result does not exist' do
-        expect(data.select { |h| h.has_key? :result_id }.count).to eq 0
+        expect(data.select { |h| h.key? :result_id }.count).to eq 0
       end
 
       it 'should include the result id if a result exists' do
         result_id = submission.current_result.id
         expect(data.map { |h| h[:result_id] }).to include(result_id)
-        expect(data.select { |h| h.has_key? :result_id }.count).to eq 1
+        expect(data.select { |h| h.key? :result_id }.count).to eq 1
       end
 
       it 'should not include the total mark if a result does not exist' do
-        expect(data.select { |h| h.has_key? :final_grade }.count).to eq 0
+        expect(data.select { |h| h.key? :final_grade }.count).to eq 0
       end
 
       it 'should include the total mark if a result exists' do
         final_grade = submission.current_result.total_mark
         expect(data.map { |h| h[:final_grade] }).to include(final_grade)
-        expect(data.select { |h| h.has_key? :final_grade }.count).to eq 1
+        expect(data.select { |h| h.key? :final_grade }.count).to eq 1
       end
 
       context 'there are groups without members' do
@@ -1679,7 +1679,7 @@ describe Assignment do
 
         it 'should not include member information for groups without members' do
           expect(data.count).to eq 5
-          expect(data.select { |h| h.has_key? :members }.count).to eq 3
+          expect(data.select { |h| h.key? :members }.count).to eq 3
         end
 
         it 'should include member information for groups with members' do
@@ -1690,7 +1690,7 @@ describe Assignment do
 
       context 'there are groups with members in a given section' do
         let(:section_groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
-        let!(:sections) { section_groupings.map { |g| s=create(:section); g.inviter.update(section: s); s } }
+        let!(:sections) { section_groupings.map { |g| (s = create(:section)) && g.inviter.update(section: s) && s } }
 
         it 'should include section information for groups in a section' do
           section_names = sections.map(&:name)
@@ -1699,19 +1699,21 @@ describe Assignment do
 
         it 'should not include section information for groups not in a section' do
           expect(data.count).to eq 5
-          expect(data.select { |h| h.has_key? :section }.count).to eq 2
+          expect(data.select { |h| h.key? :section }.count).to eq 2
         end
       end
 
       it 'should not include grace credit info if the submission rule is not a grace credit rule' do
-        expect(data.select { |h| h.has_key? :grace_credits_used }.count).to eq 0
+        expect(data.select { |h| h.key? :grace_credits_used }.count).to eq 0
       end
 
       context 'the assignment uses grace credit deductions' do
         let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
-        let!(:grace_period_deduction) { create(:grace_period_deduction,
-                                               membership: groupings[0].accepted_student_memberships.first,
-                                               deduction: 1) }
+        let!(:grace_period_deduction) do
+          create(:grace_period_deduction,
+                 membership: groupings[0].accepted_student_memberships.first,
+                 deduction: 1)
+        end
 
         it 'should include grace credit deduction information for one grouping' do
           expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
@@ -1724,4 +1726,3 @@ describe Assignment do
     end
   end
 end
-
