@@ -3,6 +3,7 @@ pt:
     due_date:
       final_due_date_passed: "O período de tolerância para este projeto já passou"
       marking_started_warning: "UPDATE ME"
+      marking_overwrite_warning_html: "UPDATE ME"
       past_due_date_notice: "Já se passou do prazo de entrega do projeto: "
     form:
       add_required_file: "Inserir arquivo exigido"

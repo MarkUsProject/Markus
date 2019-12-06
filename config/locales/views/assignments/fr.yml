@@ -3,6 +3,7 @@ fr:
     due_date:
       final_due_date_passed: "La période de grâce pour ce projet est terminée"
       marking_started_warning: "UPDATE ME"
+      marking_overwrite_warning_html: "UPDATE ME"
       past_due_date_notice: "La date de retour de ce projet est passée pour : "
     form:
       add_required_file: "Ajouter un fichier requis"
