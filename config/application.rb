@@ -46,8 +46,6 @@ module Markus
     config.assets.quiet = true
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
-    # Precompile additional assets.
-    config.assets.precompile = %w(manifest.js)
 
     # Configure responders gem flash keys.
     # NOTE: This didn't work when put in config/initializers/responders.rb.
