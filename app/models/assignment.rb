@@ -1177,14 +1177,9 @@ class Assignment < ApplicationRecord
            .left_outer_joins(:group, :current_submission_used)
            .pluck('groupings.id',
                   'groups.group_name',
-                  'submissions.revision_timestamp')
+                  'submissions.revision_timestamp',
+                  'submissions.is_empty')
 
-    empty_submissions = Set.new(groupings.joins(:current_submission_used)
-                                         .pluck('groupings.id',
-                                                'revision_identifier',
-                                                'groupings.starter_code_revision_identifier')
-                                         .map { |id, rev, sc_rev| id if rev == sc_rev }
-                                         .compact)
     tag_data = groupings
                .joins(:tags)
                .pluck_to_hash('groupings.id', 'tags.name')
@@ -1224,7 +1219,7 @@ class Assignment < ApplicationRecord
     data_collections = [tag_data, result_data, member_data, section_data, collection_dates]
 
     # This is the submission data that's actually returned
-    data.map do |grouping_id, group_name, revision_timestamp|
+    data.map do |grouping_id, group_name, revision_timestamp, is_empty|
       tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
@@ -1239,7 +1234,7 @@ class Assignment < ApplicationRecord
                                      collection_date)
       }
 
-      unless empty_submissions.include?(grouping_id) || revision_timestamp.nil?
+      unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
         base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
       end

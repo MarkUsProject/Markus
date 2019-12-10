@@ -1650,7 +1650,7 @@ describe Assignment do
       end
 
       it 'should not include a submission time if an empty submission exists' do
-        submission.update(revision_identifier: submission.grouping.starter_code_revision_identifier)
+        submission.update(is_empty: true)
         expect(data.select { |h| h.key? :submission_time }.count).to eq 0
       end
 

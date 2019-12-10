@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_11_182851) do
+ActiveRecord::Schema.define(version: 2019_12_10_143220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -494,6 +494,7 @@ ActiveRecord::Schema.define(version: 2019_10_11_182851) do
     t.datetime "revision_timestamp"
     t.text "remark_request"
     t.datetime "remark_request_timestamp"
+    t.boolean "is_empty", default: true, null: false
     t.index ["grouping_id"], name: "index_submissions_on_grouping_id"
   end
 

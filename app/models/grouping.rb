@@ -477,9 +477,9 @@ class Grouping < ApplicationRecord
         txn = self.assignment.update_starter_code_files(group_repo, starter_repo, starter_tree)
         if txn.has_jobs?
           result = group_repo.commit(txn)
+          self.update(starter_code_revision_identifier: group_repo.get_latest_revision.revision_identifier)
         end
       end
-      self.update(starter_code_revision_identifier: group_repo.get_latest_revision.revision_identifier)
     end
 
     result
