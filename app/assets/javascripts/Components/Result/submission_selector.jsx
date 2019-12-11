@@ -119,7 +119,7 @@ export class SubmissionSelector extends React.Component {
             >
               {this.props.num_marked}/{this.props.num_assigned}
             </meter>
-            {this.props.num_marked}/{this.props.num_assigned}&nbsp;{I18n.t('results.state.complete')}
+            {this.props.num_marked}/{this.props.num_assigned}&nbsp;{I18n.t('submissions.state.complete')}
           </div>
 
           <div style={{flexGrow: 1}} />

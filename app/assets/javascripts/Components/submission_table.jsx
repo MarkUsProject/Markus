@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-import {stringFilter, dateSort} from './Helpers/table_helpers';
+import {stringFilter, dateSort, markingStateColumn} from './Helpers/table_helpers';
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 
 
@@ -88,7 +88,6 @@ class RawSubmissionTable extends React.Component {
         return (
           <a href={Routes.repo_browser_assignment_submission_path(
                      this.props.assignment_id, row.original._id)}
-             className={row.original.no_files ? 'no-files' : ''}
           >
             {row.original.group_name}
           </a>
@@ -134,59 +133,7 @@ class RawSubmissionTable extends React.Component {
       minWidth: 100,
       style: { textAlign: 'right' },
     },
-    {
-      Header: I18n.t('activerecord.attributes.result.marking_state'),
-      accessor: 'marking_state',
-      Cell: row => {
-        let marking_state = '';
-        switch (row.original.marking_state) {
-          case 'not_collected':
-            marking_state = I18n.t('results.state.not_collected');
-            break;
-          case 'incomplete':
-            marking_state = I18n.t('results.state.in_progress');
-            break;
-          case 'complete':
-            marking_state = I18n.t('results.state.complete');
-            break;
-          case 'released':
-            marking_state = I18n.t('results.state.released');
-            break;
-          case 'remark':
-            marking_state = I18n.t('results.state.remark_requested');
-            break;
-          case 'before_due_date':
-            marking_state = I18n.t('results.state.before_due_date');
-            break;
-          default:
-            // should not get here
-            marking_state = row.original.marking_state
-        }
-        return ( marking_state );
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value === 'all') {
-          return true;
-        } else {
-          return filter.value === row[filter.id];
-        }
-      },
-      Filter: ({ filter, onChange }) =>
-        <select
-          onChange={event => onChange(event.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          <option value='all'>{I18n.t('all')}</option>
-          <option value='before_due_date'>{I18n.t('results.state.before_due_date')}</option>
-          <option value='not_collected'>{I18n.t('results.state.not_collected')}</option>
-          <option value='incomplete'>{I18n.t('results.state.in_progress')}</option>
-          <option value='complete'>{I18n.t('results.state.complete')}</option>
-          <option value='released'>{I18n.t('results.state.released')}</option>
-          <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
-        </select>,
-      minWidth: 70
-    },
+    markingStateColumn({minWidth: 70}),
     {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',

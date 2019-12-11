@@ -59,11 +59,17 @@ class Submission < ApplicationRecord
       new_submission.revision_timestamp = revision&.server_timestamp
       new_submission.revision_identifier = revision&.revision_identifier
       unless revision.nil?
-        begin
-          new_submission.populate_with_submission_files(revision)
+        SubmissionFile.transaction do
+          new_submission.is_empty = !new_submission.populate_with_submission_files(revision)
         rescue Repository::FileDoesNotExist
           # populate the submission with no files instead of raising an exception
+          raise ActiveRecord::Rollback
         end
+      end
+      starter_code_revision = grouping.starter_code_revision_identifier
+      unless starter_code_revision.nil?
+        # if starter code exists, check if the student did not change the starter code
+        new_submission.is_empty = starter_code_revision == revision&.revision_identifier
       end
       new_submission.save!
       new_submission
@@ -241,6 +247,11 @@ class Submission < ApplicationRecord
   end
 
   # Helper methods
+
+  # Create submission files for this submission. Do not create submission
+  # files that are one of the reserved filenames for a given repository type.
+  #
+  # Return True if at least one submission file was created.
   def populate_with_submission_files(revision, path='/')
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
@@ -248,19 +259,24 @@ class Submission < ApplicationRecord
       path = assignment.repository_folder
     end
 
+    files_added = false
     # First, go through directories...
     directories = revision.directories_at_path(path)
     directories.each do |directory_name, directory|
-      populate_with_submission_files(revision, File.join(path, directory.name))
+      files_added = populate_with_submission_files(revision, File.join(path, directory.name))
     end
     files = revision.files_at_path(path)
     files.each do |filename, file|
+      next if Repository.get_class.internal_file_names.include? filename
+
+      files_added = true
       new_file = SubmissionFile.new
       new_file.submission = self
       new_file.filename = file.name
       new_file.path = file.path
       new_file.save
     end
+    files_added
   end
 
   def self.get_submission_by_group_id_and_assignment_id(group_id, assignment_id)

@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * @file
  * Provides generic helper functions for react tables
@@ -11,11 +13,60 @@ export function stringFilter(filter, row) {
 
 export function dateSort(a, b) {
   /** Sort values as dates */
-  if (typeof a === 'string' && typeof b === 'string') {
-    let a_date = Date.parse(a);
-    let b_date = Date.parse(b);
-    return a_date > b_date ? 1 : -1;
-  } else {
-    return a > b ? 1 : -1;
-  }
+  return (Date.parse(a) || 0) > (Date.parse(b) || 0);
+};
+
+export function markingStateColumn(...override_keys) {
+  return ({
+    Header: I18n.t('activerecord.attributes.result.marking_state'),
+    accessor: 'marking_state',
+    Cell: row => {
+      let marking_state = '';
+      switch (row.original.marking_state) {
+        case 'not_collected':
+          marking_state = I18n.t('submissions.state.not_collected');
+          break;
+        case 'incomplete':
+          marking_state = I18n.t('submissions.state.in_progress');
+          break;
+        case 'complete':
+          marking_state = I18n.t('submissions.state.complete');
+          break;
+        case 'released':
+          marking_state = I18n.t('submissions.state.released');
+          break;
+        case 'remark':
+          marking_state = I18n.t('submissions.state.remark_requested');
+          break;
+        case 'before_due_date':
+          marking_state = I18n.t('submissions.state.before_due_date');
+          break;
+        default:
+          // should not get here
+          marking_state = row.original.marking_state
+      }
+      return ( marking_state );
+    },
+    filterMethod: (filter, row) => {
+      if (filter.value === 'all') {
+        return true;
+      } else {
+        return filter.value === row[filter.id];
+      }
+    },
+    Filter: ({ filter, onChange }) =>
+      <select
+        onChange={event => onChange(event.target.value)}
+        style={{ width: '100%' }}
+        value={filter ? filter.value : 'all'}
+      >
+        <option value='all'>{I18n.t('all')}</option>
+        <option value='before_due_date'>{I18n.t('submissions.state.before_due_date')}</option>
+        <option value='not_collected'>{I18n.t('submissions.state.not_collected')}</option>
+        <option value='incomplete'>{I18n.t('submissions.state.in_progress')}</option>
+        <option value='complete'>{I18n.t('submissions.state.complete')}</option>
+        <option value='released'>{I18n.t('submissions.state.released')}</option>
+        <option value='remark'>{I18n.t('submissions.state.remark_requested')}</option>
+      </select>,
+  ...override_keys})
 };

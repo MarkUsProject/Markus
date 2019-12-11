@@ -477,7 +477,7 @@ class Grouping < ApplicationRecord
         txn = self.assignment.update_starter_code_files(group_repo, starter_repo, starter_tree)
         if txn.has_jobs?
           result = group_repo.commit(txn)
-          self.starter_code_revision_identifier = group_repo.get_latest_revision.revision_identifier
+          self.update(starter_code_revision_identifier: group_repo.get_latest_revision.revision_identifier)
         end
       end
     end
@@ -623,41 +623,6 @@ class Grouping < ApplicationRecord
       end
     else
       '-'
-    end
-  end
-
-  # Helper for populate_submissions_table.
-  # Returns the current marking state for the submission.
-  # It would be nice to use Result::MARKING_STATES, but that doesn't have
-  # states for released or remark requested.
-  # result is the current result, if it exists
-  def marking_state(result, assignment, user)
-    if !user.student? && assignment.is_peer_review?
-      # if an admin or TA is viewing peer review submissions
-      pr_results = peer_reviews_to_others.map &:result
-      if pr_results.empty?
-        return 'partial'
-      end
-      unreleased_results = pr_results.find_all {|r| !r.released_to_students}
-      if unreleased_results.size == 0
-        'released'
-      else
-        'partial'
-      end
-    else
-      if !has_submission?
-        I18n.t('results.state.not_collected')
-      elsif result.released_to_students
-        'released'
-      elsif result.marking_state != Result::MARKING_STATES[:complete]
-        if current_submission_used.has_remark?
-          'remark'
-        else
-          'partial'
-        end
-      else
-        'completed'
-      end
     end
   end
 

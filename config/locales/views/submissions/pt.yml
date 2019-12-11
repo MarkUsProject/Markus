@@ -66,3 +66,11 @@ pt:
     status: "Status"
     successfully_changed: "%{changed} resultados atualizados."
     unrelease_marks: "Esconder notas"
+
+    state:
+      complete: "Completado"
+      in_progress: "Em progresso"
+      not_collected: "Não coletado"
+      released: "Liberado"
+      remark_requested: "Pedido de revisão"
+      before_due_date: "UPDATE ME"

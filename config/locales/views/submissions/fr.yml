@@ -61,3 +61,11 @@ fr:
     status: "Statut"
     successfully_changed: "Les %{changed} résultats ont été mis à jour."
     unrelease_marks: "Cacher les notes"
+
+    state:
+      not_collected: "Pas récupéré"
+      in_progress: "En cours"
+      complete: "Terminé"
+      released: "Affiché"
+      remark_requested: "Réévaluation demandée"
+      before_due_date: "Avant la date d'échéance"

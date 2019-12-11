@@ -111,3 +111,11 @@ es:
     status: "Estado"
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"
     unrelease_marks: "Ocultar Notas"
+
+    state:
+      complete: "Completado"
+      in_progress: "En progreso"
+      not_collected: "No ha sido recolectado"
+      released: "Publicado"
+      remark_requested: "Recalificación solicitada"
+      before_due_date: "UPDATE ME"
