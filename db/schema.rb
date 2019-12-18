@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.string "description", null: false
     t.text "message", null: false
     t.datetime "due_date"
-    t.boolean "is_hidden", default: false, null: false
+    t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
     t.integer "rubric_criteria_count"
     t.integer "flexible_criteria_count"
@@ -232,24 +232,24 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
   end
 
   create_table "grade_entry_items", id: :serial, force: :cascade do |t|
-    t.integer "grade_entry_form_id"
     t.string "name", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "out_of"
     t.integer "position"
     t.boolean "bonus", default: false
-    t.index ["grade_entry_form_id", "name"], name: "index_grade_entry_items_on_grade_entry_form_id_and_name", unique: true
+    t.bigint "assessment_id"
+    t.index ["assessment_id", "name"], name: "index_grade_entry_items_on_assessment_id_and_name", unique: true
   end
 
   create_table "grade_entry_students", id: :serial, force: :cascade do |t|
     t.integer "user_id"
-    t.integer "grade_entry_form_id"
     t.boolean "released_to_student"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "total_grade"
-    t.index ["user_id", "grade_entry_form_id"], name: "index_grade_entry_students_on_user_id_and_grade_entry_form_id", unique: true
+    t.bigint "assessment_id"
+    t.index ["user_id", "assessment_id"], name: "index_grade_entry_students_on_user_id_and_assessment_id", unique: true
   end
 
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
@@ -590,6 +590,7 @@ ActiveRecord::Schema.define(version: 2019_09_14_204954) do
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
 
+  add_foreign_key "annotation_categories", "assessments", name: "fk_annotation_categories_assignments", on_delete: :cascade
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"

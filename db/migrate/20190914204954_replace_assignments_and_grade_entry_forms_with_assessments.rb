@@ -9,10 +9,13 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
         add_index :groupings, [:assignment_id, :group_id], name: "groupings_u1", unique: true
         add_index :rubric_criteria, [:assignment_id, :name], name: "rubric_criteria_index_1", unique: true
         add_index :flexible_criteria, [:assignment_id, :name], unique: true
+        add_index :grade_entry_items, [:grade_entry_form_id, :name], unique: true
+        add_index :grade_entry_students, [:user_id, :grade_entry_form_id], unique: true
 
         add_index :assignments, [:short_identifier], unique: true
         add_index :grade_entry_forms, [:short_identifier], unique: true
 
+        add_foreign_key :annotation_categories, :assignments, name: "fk_annotation_categories_assignments", on_delete: :cascade
         add_foreign_key :assignment_files, :assignments, name: "fk_assignment_files_assignments", on_delete: :cascade
         add_foreign_key :assignment_stats, :assignments, name: "fk_assignment_stats_assignments", on_delete: :cascade
         add_foreign_key :checkbox_criteria, :assignments
@@ -29,7 +32,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.string :description, null: false
       t.text :message, null: false
       t.datetime :due_date
-      t.boolean :is_hidden, default: false, null: false
+      t.boolean :is_hidden, default: true, null: false
+
       t.boolean :show_total, default: false, null: false
       t.integer :rubric_criteria_count
       t.integer :flexible_criteria_count
@@ -93,6 +97,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
     remove_reference :flexible_criteria, :assignment, index: true, null: false
     remove_reference :section_due_dates, :assignment, index: false
     remove_reference :submission_rules, :assignment, index: true, null: false
+    remove_reference :grade_entry_items, :grade_entry_form, index: false
+    remove_reference :grade_entry_students, :grade_entry_form, index: false
 
     add_reference :assignment_files, :assessment, index: true
     add_reference :assignment_stats, :assessment, index: false
@@ -106,7 +112,10 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
     add_reference :flexible_criteria, :assessment, index: true, null: false
     add_reference :section_due_dates, :assessment, index: false
     add_reference :submission_rules, :assessment, index: true, null: false
+    add_reference :grade_entry_items, :assessment, index: false
+    add_reference :grade_entry_students, :assessment, index: false
 
+    add_foreign_key :annotation_categories, :assessments, name: "fk_annotation_categories_assignments", on_delete: :cascade
     add_foreign_key :assignment_files, :assessments, name: "fk_assignment_files_assignments", on_delete: :cascade
     add_foreign_key :assignment_stats, :assessments, name: "fk_assignment_stats_assignments", on_delete: :cascade
     add_foreign_key :checkbox_criteria, :assessments
@@ -120,6 +129,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
     add_index :groupings, [:assessment_id, :group_id], name: "groupings_u1", unique: true
     add_index :rubric_criteria, [:assessment_id, :name], name: "rubric_criteria_index_1", unique: true
     add_index :flexible_criteria, [:assessment_id, :name], unique: true
+    add_index :grade_entry_items, [:assessment_id, :name], unique: true
+    add_index :grade_entry_students, [:user_id, :assessment_id], unique: true
 
     drop_table :assignments, id: :serial do |t|
       t.string :short_identifier, null: false

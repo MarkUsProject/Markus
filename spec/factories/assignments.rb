@@ -5,11 +5,24 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    repository_folder { Faker::Lorem.word }
+
     due_date { 1.minute.from_now }
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
-    token_period { 1 }
+
+    transient do
+      assignment_properties_attributes { nil }
+    end
+
+    after(:build) do |assignment, evaluator|
+      if evaluator.assignment_properties_attributes
+        assignment.assignment_properties ||= build(:assignment_properties,
+                                                   assignment: assignment,
+                                                   attributes: evaluator.assignment_properties_attributes)
+      else
+        assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)
+      end
+    end
   end
 
   factory :assignment_with_peer_review, parent: :assignment do

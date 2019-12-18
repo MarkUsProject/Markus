@@ -96,7 +96,7 @@ describe SubmissionRule do
     let(:grouping_with_section) { create(:grouping, inviter: inviter_with_section, assignment: assignment) }
     let(:grouping_without_section) { create(:grouping, inviter: inviter_without_section, assignment: assignment) }
     context 'are enabled' do
-      let(:assignment) { create(:assignment, section_due_dates_type: true) }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { section_due_dates_type: true }) }
 
       context 'and Assignment Due Date is in the past' do
         before :each do
@@ -139,7 +139,7 @@ describe SubmissionRule do
       end
     end
     context 'are disabled' do
-      let(:assignment) { create(:assignment, section_due_dates_type: false) }
+      let(:assignment) { create(:assignment, assignment_properties_attributes: { section_due_dates_type: false }) }
       context 'and Assignment Due Date is in the past' do
         before :each do
           assignment.update!(due_date: 2.days.ago)
@@ -227,8 +227,9 @@ describe SubmissionRule do
   context 'Assignment with a coming due date and with a past section due date' do
     before(:each) do
       # the assignment due date is to come...
-      @assignment = create(:assignment, section_due_dates_type: true,
-                                    due_date: 2.days.from_now, group_min: 1)
+      @assignment = create(:assignment,
+                           due_date: 2.days.from_now,
+                           assignment_properties_attributes: { section_due_dates_type: true, group_min: 1 })
 
       # ... but the section due date is in the past
       @section = create(:section)

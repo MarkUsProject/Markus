@@ -10,7 +10,7 @@ describe TagsController do
 
   context '#upload' do
     include_examples 'a controller supporting upload' do
-      let(:params) { { assignment_id: assignment.id } }
+      let(:params) { { assessment_id: assignment.id } }
     end
 
     before :each do
@@ -47,7 +47,7 @@ describe TagsController do
     end
 
     it 'accepts a valid CSV file' do
-      post :upload, params: { upload_file: @file_good_csv, assignment_id: assignment.id }
+      post :upload, params: { upload_file: @file_good_csv, assessment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -60,7 +60,7 @@ describe TagsController do
     end
 
     it 'accepts a valid YML file' do
-      post :upload, params: { upload_file: @file_good_yml, assignment_id: assignment.id }
+      post :upload, params: { upload_file: @file_good_yml, assessment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -71,7 +71,7 @@ describe TagsController do
     end
 
     it 'does not accept files with invalid columns' do
-      post :upload, params: { upload_file: @file_invalid_column, assignment_id: assignment.id }
+      post :upload, params: { upload_file: @file_invalid_column, assessment_id: assignment.id }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
@@ -105,13 +105,13 @@ describe TagsController do
       end
 
       it 'responds with appropriate status' do
-        get :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get :download, params: { assessment_id: assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get :download, params: { assessment_id: assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -124,12 +124,12 @@ describe TagsController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get :download, params: { assessment_id: assignment.id }, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get :download, params: { assessment_id: assignment.id }, format: 'csv'
         expect(response.media_type).to eq 'text/csv'
       end
     end
@@ -159,13 +159,13 @@ describe TagsController do
       end
 
       it 'responds with appropriate status' do
-        get :download, params: { assignment_id: assignment.id }, format: 'yml'
+        get :download, params: { assessment_id: assignment.id }, format: 'yml'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download, params: { assignment_id: assignment.id }, format: 'yml'
+        get :download, params: { assessment_id: assignment.id }, format: 'yml'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -187,12 +187,12 @@ describe TagsController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get :download, params: { assignment_id: assignment.id }, format: 'yml'
+        get :download, params: { assessment_id: assignment.id }, format: 'yml'
       end
 
       # parse header object to check for the right content type
       it 'returns text/yml type' do
-        get :download, params: { assignment_id: assignment.id }, format: 'yml'
+        get :download, params: { assessment_id: assignment.id }, format: 'yml'
         expect(response.media_type).to eq 'text/yml'
       end
     end

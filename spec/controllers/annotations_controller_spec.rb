@@ -86,7 +86,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
@@ -100,7 +100,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
+                        result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
@@ -121,7 +121,7 @@ describe AnnotationsController do
                result_id: result.id})
       post_as @a,
               :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+              params: { id: anno.id, submission_file_id: submission_file.id, assessment_id: assignment.id,
                         result_id: result.id },
               format: :js
       expect(response.status).to eq(200)
@@ -140,7 +140,7 @@ describe AnnotationsController do
               result_id: result.id})
       put_as @a,
              :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+             params: { id: anno.id, assessment_id: assignment.id, submission_file_id: submission_file.id,
                        result_id: result.id, content: annotation_text.content },
              format: :js
       expect(response.status).to eq(200)
@@ -181,7 +181,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
@@ -195,7 +195,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
+                        result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(200)
       expect(assigns(:submission_file)).to be_truthy
@@ -216,7 +216,7 @@ describe AnnotationsController do
               result_id: result.id})
       post_as @ta,
               :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+              params: { id: anno.id, submission_file_id: submission_file.id, assessment_id: assignment.id,
                         result_id: result.id },
               format: :js
       expect(response.status).to eq(200)
@@ -235,7 +235,7 @@ describe AnnotationsController do
               result_id: result.id})
       put_as @ta,
              :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+             params: { id: anno.id, assessment_id: assignment.id, submission_file_id: submission_file.id,
                        result_id: result.id, content: annotation_text.content },
              format: :js
       expect(response.status).to eq(200)
@@ -273,7 +273,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
+                        column_end: 1, annotation_type: 'text', result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(404)
     end # End context :create text
@@ -283,7 +283,7 @@ describe AnnotationsController do
               :create,
               params: { content: annotation_text.content, category_id: annotation_category.id,
                         submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
+                        result_id: result.id, assessment_id: assignment.id },
               format: :js
       expect(response.status).to eq(404)
     end # End context :create image
@@ -300,7 +300,7 @@ describe AnnotationsController do
                 result_id: result.id})
       post_as @stu,
               :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+              params: { id: anno.id, submission_file_id: submission_file.id, assessment_id: assignment.id,
                         result_id: result.id },
               format: :js
       expect(response.status).to eq(404)
@@ -318,7 +318,7 @@ describe AnnotationsController do
                 result_id: result.id})
       put_as @stu,
              :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+             params: { id: anno.id, assessment_id: assignment.id, submission_file_id: submission_file.id,
                        result_id: result.id, content: annotation_text.content },
              format: :js
       expect(response.status).to eq(404)
