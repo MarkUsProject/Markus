@@ -239,7 +239,7 @@ describe GradeEntryFormsController do
          gef.out_of_total],
         [ges.user.user_name, '', '50.0', '', '50.0']
       ]
-      csv_data = MarkusCsv.generate(csv_array) do |data|
+      csv_data = MarkusCSV.generate(csv_array) do |data|
         data
       end
 
