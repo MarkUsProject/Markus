@@ -216,6 +216,40 @@ describe GradeEntryFormsController do
       ) { @controller.head :ok }
       get :download, params: { id: grade_entry_form_with_data_and_total }
     end
+
+    it 'shows blank entries when no grade exists' do
+      gef = create(:grade_entry_form, show_total: true)
+      3.times do |i|
+        create(:grade_entry_item, position: i + 1, grade_entry_form: gef)
+      end
+      ges = gef.grade_entry_students.first
+      ges.grades.create(grade_entry_item: gef.grade_entry_items.find_by(position: 2), grade: 50)
+      ges.save
+
+      csv_array = [
+        ['',
+         gef.grade_entry_items[0].name,
+         gef.grade_entry_items[1].name,
+         gef.grade_entry_items[2].name,
+         GradeEntryForm.human_attribute_name(:total)],
+        [GradeEntryItem.human_attribute_name(:out_of),
+         gef.grade_entry_items[0].out_of.to_s,
+         gef.grade_entry_items[1].out_of.to_s,
+         gef.grade_entry_items[2].out_of.to_s,
+         gef.out_of_total],
+        [ges.user.user_name, '', '50.0', '', '50.0']
+      ]
+      csv_data = MarkusCsv.generate(csv_array) do |data|
+        data
+      end
+
+      expect(@controller).to receive(:send_data).with(
+        csv_data,
+        filename: "#{gef.short_identifier}_grades_report.csv",
+        **csv_options
+      ) { @controller.head :ok }
+      get :download, params: { id: gef }
+    end
   end
 
   describe '#update' do
