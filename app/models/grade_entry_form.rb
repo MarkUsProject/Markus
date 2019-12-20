@@ -169,9 +169,11 @@ class GradeEntryForm < ApplicationRecord
     MarkusCSV.generate(students, headers) do |user_name, total_grade|
       row = [user_name]
       if grade_data.key? user_name
-        # Take grades sorted by position.
-        student_grades = grade_data[user_name].sort_by { |x| x[1] }
-                                              .map { |x| x[2].nil? ? '' : x[2] }
+        student_grades = Array.new(num_items, '')
+        grade_data[user_name].each do |g|
+          grade_index = g[1] - 1
+          student_grades[grade_index] = g[2].nil? ? '' : g[2]
+        end
         row.concat(student_grades)
         row << (total_grade.nil? ? '' : total_grade) if self.show_total
       else
