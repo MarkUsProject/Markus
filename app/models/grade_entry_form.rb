@@ -166,11 +166,10 @@ class GradeEntryForm < ApplicationRecord
                      .pluck('users.user_name', 'grade_entry_items.position', :grade)
                      .group_by { |x| x[0] }
     num_items = self.grade_entry_items.count
-    grade_entry_positions = self.grade_entry_items.pluck(:position).sort
     MarkusCsv.generate(students, headers) do |user_name, total_grade|
       row = [user_name]
       if grade_data.key? user_name
-        student_grades = grade_entry_positions.map { '' }
+        student_grades = Array.new(num_items, '')
         grade_data[user_name].each do |g|
           grade_index = g[1] - 1
           student_grades[grade_index] = g[2].nil? ? '' : g[2]
