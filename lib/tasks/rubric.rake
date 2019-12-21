@@ -34,7 +34,7 @@ namespace :db do
             name:                  random_sentences(1),
             assignment_id:         assignment.id,
             position:              index + 1,
-            max_mark:              pos_rand(3),
+            max_mark:              4,
         )
         5.times do |number|
           rubric.levels.create(name: random_words(1), number: number,

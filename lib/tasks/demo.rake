@@ -91,13 +91,12 @@ namespace :markus do
       name:                  'Mark3',
       assignment_id:         a.id,
       position:              2,
-      max_mark:              10,
+      max_mark:              4,
     )
     5.times do |number|
       rubric.levels.create(name: random_words(1), number: number,
                            description: random_sentences(5), mark: number)
     end
-    byebug
   end
 
   def submit_half_on_time(a)
