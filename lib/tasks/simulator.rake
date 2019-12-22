@@ -93,11 +93,11 @@ namespace :markus do
             max_mark: max_mark_3},
           {name: "Uses For Loop",
            max_mark: max_mark_4}]
-        default_levels = [ {name: 'Quite Poor', number: 0, description: 'This criterion was not satisfied whatsoever', mark: 0 },
+        default_levels = [{name: 'Quite Poor', number: 0, description: 'This criterion was not satisfied whatsoever', mark: 0 },
                           { name: 'Satisfactory', number: 1, description: 'This criterion was satisfied', mark: 1 },
                           { name: 'Good', number: 2, description: 'This criterion was satisfied well', mark: 2 },
                           { name: 'Great', number: 3, description: 'This criterion was satisfied really well!', mark: 3 },
-                          { name: 'Excellent', number: 4, description: 'This criterion was satisfied excellently', mark: 4 } ]
+                          { name: 'Excellent', number: 4, description: 'This criterion was satisfied excellently', mark: 4 }]
         rubric_criteria.each do |rubric_criterion|
           params = { rubric: {
             assignment: assignment, levels_attributes: default_levels

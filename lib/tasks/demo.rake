@@ -99,7 +99,6 @@ namespace :markus do
       position: 2, max_mark: 4, levels_attributes: attributes
     } }
     RubricCriterion.create!(params[:rubric])
-    
   end
 
   def submit_half_on_time(a)
