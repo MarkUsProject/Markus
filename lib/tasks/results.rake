@@ -48,7 +48,8 @@ namespace :markus do
       end
 
       # create rubric criteria for a1
-      rubric_criteria = [{name: 'Uses Conditionals', max_mark: 4}, {name: 'Code Clarity', max_mark: 8}, {name: 'Code Is Documented', max_mark: 12}, {name: 'Uses For Loop', max_mark: 4}]
+      rubric_criteria = [{ name: 'Uses Conditionals', max_mark: 4 }, { name: 'Code Clarity', max_mark: 8 },
+                         { name: 'Code Is Documented', max_mark: 12 }, { name: 'Uses For Loop', max_mark: 4 }]
       default_levels = [{ name: 'Quite Poor', number: 0, description: 'This criterion was not satisfied whatsoever', mark: 0 },
                         { name: 'Satisfactory', number: 1, description: 'This criterion was satisfied', mark: 1 },
                         { name: 'Good', number: 2, description: 'This criterion was satisfied well', mark: 2 },
