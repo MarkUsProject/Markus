@@ -87,16 +87,19 @@ namespace :markus do
       updated_at:              nil,
       assigned_groups_count:   nil
     )
-    rubric = RubricCriterion.create(
-      name:                  'Mark3',
-      assignment_id:         a.id,
-      position:              2,
-      max_mark:              4,
-    )
+
+    attributes = []
     5.times do |number|
-      rubric.levels.create(name: random_words(1), number: number,
-                           description: random_sentences(5), mark: number)
+      lvl = { name: random_words(1), number: number,
+              description: random_sentences(5), mark: number }
+      attributes.push(lvl)
     end
+    params = { rubric: {
+      name: 'Mark3', assignment_id: a.id,
+      position: 2, max_mark: 4, levels_attributes: attributes
+    } }
+    RubricCriterion.create!(params[:rubric])
+    
   end
 
   def submit_half_on_time(a)
