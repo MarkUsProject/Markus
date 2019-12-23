@@ -38,6 +38,7 @@ services:
     - PSQL_HISTFILE=/app/log/.psql_history
     - EDITOR=vi
     - RAILS_RELATIVE_URL_ROOT=/csc108
+    - SEED_AUTOTEST=false
     depends_on:
     - postgres
     - redis
