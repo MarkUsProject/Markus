@@ -25,6 +25,7 @@ services:
     - bundle:/bundle
     - node_modules:/app/node_modules
     - packs:/app/public/packs
+    - packs:/app/public/packs-test
     - .dockerfiles/.psqlrc:/root/.psqlrc:ro
     environment:
     - NODE_ENV=development
@@ -81,6 +82,16 @@ services:
     ports:
     - 6379
 
+  test:
+    <<: *backend
+    command: rspec
+    environment:
+    - NODE_ENV=test
+    - RAILS_ENV=test
+    - REDIS_URL=redis://redis:6379/
+    - DATABASE_URL=postgres://postgres:postgres@postgres:5432
+    - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
+
   webpacker:
     <<: *app
     command: ./bin/webpack-dev-server
@@ -91,6 +102,7 @@ services:
     - bundle:/bundle
     - node_modules:/app/node_modules
     - packs:/app/public/packs
+    - packs:/app/public/packs-test
     environment:
     - NODE_ENV=${NODE_ENV:-development}
     - RAILS_ENV=${RAILS_ENV:-development}
