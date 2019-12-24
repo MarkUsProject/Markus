@@ -4,9 +4,9 @@ namespace :db do
   task :groups => :environment do
     puts 'Assign Groups/Students for Assignments'
     Faker::Config.random = Random.new(42) # seeds the random number generator so Faker output is deterministic
-    students = Student.all
+    students = Student.limit(10)
     Assignment.all.each do |assignment|
-      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 15
+      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 5
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment
@@ -28,7 +28,7 @@ namespace :db do
             StudentMembership::STATUSES[:inviter],
             invoked_by_admin: true)
           grouping.invite(
-            [students[time + 15].user_name],
+            [students[time + num_groups].user_name],
             StudentMembership::STATUSES[:accepted],
             invoked_by_admin: true)
         end

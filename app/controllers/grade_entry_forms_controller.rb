@@ -179,55 +179,24 @@ class GradeEntryFormsController < ApplicationController
 
   # Release/unrelease the marks for all the students or for a subset of students
   def update_grade_entry_students
-    return unless request.post?
-
-    grade_entry_form = GradeEntryForm.find_by_id(params[:id])
-    errors = []
-    grade_entry_students = []
-
-    if params[:students].nil?
-      errors.push(I18n.t('grade_entry_forms.grades.select_a_student'))
+    if params[:students].blank?
+      flash_message(:warning, I18n.t('grade_entry_forms.grades.select_a_student'))
     else
-      params[:students].each do |student_id|
-        grade_entry_students.push(
-          grade_entry_form.grade_entry_students
-                          .find_or_create_by(user_id: student_id))
+      grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+      release = params[:release_results] == 'true'
+      GradeEntryStudent.transaction do
+        GradeEntryStudent.upsert_all(params[:students].map { |id| { id: id, released_to_student: release } })
+        num_changed = params[:students].length
+        flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
+                                       numGradeEntryStudentsChanged: num_changed))
+        action = release ? 'released' : 'unreleased'
+        log_message = "#{action} #{num_changed} for marks spreadsheet '#{grade_entry_form.short_identifier}'."
+        MarkusLogger.instance.log(log_message)
+      rescue StandardError => e
+        flash_message(:error, e.message)
+        raise ActiveRecord::Rollback
       end
     end
-
-    num_changed = 0
-    # Releasing/unreleasing marks should be logged
-    log_message = ''
-    if params[:release_results] == 'true'
-      num_changed = set_release_on_grade_entry_students(
-          grade_entry_students,
-          true,
-          errors)
-      log_message = "Marks released for marks spreadsheet '" +
-          "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
-          "(for #{num_changed} students)."
-    elsif params[:release_results] == 'false'
-      num_changed = set_release_on_grade_entry_students(
-          grade_entry_students,
-          false,
-          errors)
-      log_message = "Marks unreleased for marks spreadsheet '" +
-          "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
-          "(for #{num_changed} students)."
-    end
-
-    # Display success message
-    if num_changed > 0
-      flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
-                                     numGradeEntryStudentsChanged: num_changed))
-      m_logger = MarkusLogger.instance
-      m_logger.log(log_message)
-    end
-    errors.each do |err|
-      flash_message(:error, err)
-    end
-
-    head :ok
   end
 
   # Download the grades for this grade entry form as a CSV file

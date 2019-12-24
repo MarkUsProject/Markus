@@ -89,13 +89,12 @@ describe PeerReviewsController do
         post :upload, params: { assessment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
       end
 
-      it 'has the correct number of peer reviews' do
-        expect(@assignment_with_pr.peer_reviews.count).to eq 3
+      after :each do
+        File.delete(@path)
       end
 
-      it 'temporary file is deleted' do
-        File.delete(@path)
-        expect(File.exist?(@path)).to be_falsey
+      it 'has the correct number of peer reviews' do
+        expect(@assignment_with_pr.peer_reviews.count).to eq 3
       end
     end
   end

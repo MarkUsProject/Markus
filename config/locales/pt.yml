@@ -43,13 +43,19 @@ pt:
     poll_job:
       working_message: "%{progress} fora de %{total}"
       queued: "Enfileiradas"
+      not_enqueued: "Não enfileiradas"
       completed: "Completado"
       failed: "Falhou"
       split_pdf_job: "Processando a página %{progress} em %{total} para %{exam_name}"
       generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"
       create_groups_job: "%{progress}/%{total} grupos criados"
+      create_groups_job_extra_info: "Falhou: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
+      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job_failed_count: "%{failed} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"
@@ -57,3 +63,4 @@ pt:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+      timeout: 'UPDATE ME %{ms}'

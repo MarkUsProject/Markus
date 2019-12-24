@@ -7,8 +7,9 @@ module Api
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
     # Optional:
+    #  - collected: If present, the collected revision will be sent, otherwise the
+    #               latest revision will be sent instead
     #  - file_name: Name of the file, if absent all files will be downloaded
-    #  - include_annotations: If 'true', will include annotations in the file(s)
     def index
       assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
@@ -26,69 +27,62 @@ module Api
         return
       end
 
-      submission = group.grouping_for_assignment(assignment.id)&.current_submission_used
-      if submission.nil?
-        # No assignment submission by that group
-        render 'shared/http_status', locals: {code: '404', message:
-          'Submission was not found'}, status: 404
-        return
+      if params[:collected].present?
+        submission = group.grouping_for_assignment(assignment.id)&.current_submission_used
+        if submission.nil?
+          # No assignment submission by that group
+          render 'shared/http_status', locals: { code: '404', message:
+            'Submission was not found' }, status: 404
+          return
+        end
       end
 
       if params[:filename].present?
-        # Find the requested file if filename is set
-        files = [SubmissionFile.find_by_filename_and_submission_id(
-          params[:filename], submission.id)]
-      else
-        # Otherwise we get all the files in the submission
-        files = SubmissionFile.where(submission_id: submission.id)
-      end
-
-      zip_name = "#{assignment[:short_identifier]}_#{group[:group_name]}.zip"
-      FileUtils.rm_f "tmp/#{zip_name}"
-
-      # If only one file is found, send the file, otherwise loop through and
-      # create a zip with all files
-      files.each do |file|
-        if file.nil?
-          # No such file in the submission
-          render 'shared/http_status', locals: {code: '422', message:
-            'File was not found'}, status: 422
-          return
-        end
-
-        #Get the file contents
-        begin
-          if params[:include_annotations] == 'true'
-            file_contents = file.retrieve_file(true)
+        path = File.dirname(params[:filename])
+        file_name = File.basename(params[:filename])
+        path = path == '.' ? '/' : path
+        group.access_repo do |repo|
+          if params[:collected].present?
+            revision_id = submission.revision_identifier
+            revision = repo.get_revision(revision_id)
           else
-            file_contents = file.retrieve_file
+            revision = repo.get_latest_revision
           end
-        rescue Exception
-            # Could not retrieve file
-            render 'shared/http_status', locals: {code: '500', message:
-              HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
-          return
+          file = revision.files_at_path(File.join(assignment.assignment_properties.repository_folder, path))[file_name]
+          if file.nil?
+            render 'shared/http_status', locals: { code: '422', message:
+              HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+            return
+          end
+          file_contents = repo.download_as_string(file)
+          send_data file_contents,
+                    disposition: 'inline',
+                    filename: file_name
         end
+      else
+        ## create the zip name with the user name to have less chance to delete
+        ## a currently downloading file
+        short_id = assignment.short_identifier
+        zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
+        zip_path = Pathname.new('tmp') + zip_name
 
-        if files.length == 1
-          # If we only have 1 file being requested, send it
-          send_data file_contents, disposition: 'inline', filename: file.filename
-        else
-          # Otherwise zip up the requested submission files
-          Zip::File.open("tmp/#{zip_name}", Zip::File::CREATE) do |zipfile|
-            unless zipfile.find_entry(file.path)
-              zipfile.mkdir(file.path)
+        ## delete the old file if it exists
+        File.delete(zip_path) if File.exist?(zip_path)
+
+        Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+          group.access_repo do |repo|
+            if params[:collected].present?
+              revision_id = submission.revision_identifier
+              revision = repo.get_revision(revision_id)
+            else
+              revision = repo.get_latest_revision
             end
-            zipfile.get_output_stream(file.path + '/' + file.filename) { |f|
-              f.puts file_contents }
+            repo.send_tree_to_zip(assignment.assignment_properties.repository_folder,
+                                  zip_file, zip_name + group.group_name, revision)
           end
         end
-      end
 
-      # Send the zip
-      if files.length > 1
-        send_file "tmp/#{zip_name}", disposition: 'inline', filename:
-          zip_name
+        send_file zip_path, disposition: 'inline', filename: zip_name.to_s
       end
     end
 

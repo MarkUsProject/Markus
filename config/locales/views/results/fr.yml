@@ -15,13 +15,6 @@ fr:
     results_for: "Résultats pour"
     set_to_incomplete: "Revenir à incomplet"
     set_to_complete: "Réglage pour terminer"
-    state:
-      not_collected: "Pas récupéré"
-      in_progress: "En cours"
-      complete: "Terminé"
-      released: "Affiché"
-      remark_requested: "Réévaluation demandée"
-      before_due_date: "Avant la date d'échéance"
     subtotal: "Sous-total"
     summary: "Récapitulatif"
     total_extra_marks: "Total Notes Supplémentaires"

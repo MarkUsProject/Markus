@@ -8,7 +8,6 @@ fr:
       no_mark: "NC"
       select_a_student: "Vous devez sélectionner au moins un(e) étudiant(e)."
       successfully_changed: "Mise à jour de %{numGradeEntryStudentsChanged} étudiant(s)."
-      update_error: "L'affichage de la note de l'étudiant(e) %{user_name} n'a pas pu être enregistrée."
     none: "Il n'y a pas de feuille de notes pour le moment."
     required_fields_html: "Champs obligatoires <span class='required_field'>*</span>"
     students:

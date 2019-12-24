@@ -36,10 +36,14 @@ class GitRepository < Repository::AbstractRepository
         rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
         end
         @repos.reset('origin/master', :hard) # align to whatever is in origin/master
-      rescue Rugged::Error, Rugged::OSError
+      rescue Rugged::Error, Rugged::OSError => e
+        m_logger = MarkusLogger.instance
+        m_logger.log "Error accessing repository #{@repos_path}: #{e.message}"
         reclone_repo
       end
     else
+      m_logger = MarkusLogger.instance
+      m_logger.log "Error accessing repository #{@repos_path}: repository missing"
       reclone_repo
     end
   end

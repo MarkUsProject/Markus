@@ -1,6 +1,6 @@
 describe ResultsController do
   let(:assignment) { create :assignment }
-  let(:student) { create :student }
+  let(:student) { create :student, grace_credits: 2 }
   let(:admin) { create :admin }
   let(:ta) { create :ta }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
@@ -335,7 +335,7 @@ describe ResultsController do
              add_extra_mark: :post,
              download_zip: :get,
              cancel_remark_request: :delete,
-             delete_grace_period_deduction: :post,
+             delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
              set_released_to_students: :post,
@@ -480,6 +480,43 @@ describe ResultsController do
       test_assigns_not_nil :result
     end
     include_examples 'shared ta and admin tests'
+
+    describe '#delete_grace_period_deduction' do
+      it 'deletes an existing grace period deduction' do
+        expect(grouping.grace_period_deductions.exists?).to be false
+        deduction = create(:grace_period_deduction,
+                           membership: grouping.accepted_student_memberships.first,
+                           deduction: 1)
+        expect(grouping.grace_period_deductions.exists?).to be true
+        delete :delete_grace_period_deduction,
+               params: { assignment_id: assignment.id, submission_id: submission.id,
+                         id: complete_result.id, deduction_id: deduction.id }
+        expect(grouping.grace_period_deductions.exists?).to be false
+      end
+
+      it 'raises a RecordNotFound error when given a grace period deduction that does not exist' do
+        expect do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: 100 }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'raises a RecordNotFound error when given a grace period deduction for a different grouping' do
+        student2 = create(:student, grace_credits: 2)
+        grouping2 = create(:grouping_with_inviter, assignment: assignment, inviter: student2)
+        submission2 = create(:version_used_submission, grouping: grouping2)
+        create(:complete_result, submission: submission2)
+        deduction = create(:grace_period_deduction,
+                           membership: grouping2.accepted_student_memberships.first,
+                           deduction: 1)
+        expect do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: deduction.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }

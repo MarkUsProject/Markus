@@ -66,6 +66,7 @@ module CourseSummariesHelper
         user_name: student.user_name,
         first_name: student.first_name,
         last_name: student.last_name,
+        hidden: student.hidden,
         assignment_marks: marks,
         grade_entry_form_marks: gef_marks
     }

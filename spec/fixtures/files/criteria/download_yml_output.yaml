@@ -1,45 +1,33 @@
 ---
-cr30:
+Rubric Criterion:
   level_0:
-    description: Fail
-    name: What?
+    description: "This criterion was not satisifed whatsoever."
+    name: Poor
   level_1:
-    description: "Almost fail"
-    name: Hmm
+    description: "This criterion was satisfied."
+    name: Satisfactory
   level_2:
-    description: "Not bad"
-    name: Average
-  level_3:
-    description: Alright
+    description: "This criterion was satisfied well."
     name: Good
+  level_3:
+    description: "This criterion was satisfied very well."
+    name: Great
   level_4:
-    description: Impressive
+    description: "This criterion was satisfied exceptionally well."
     name: Excellent
-  max_mark: 5.0
-  peer_visible: true
-  ta_visible: false
+  max_mark: 4.0
+  peer_visible: false
+  ta_visible: true
   type: rubric
-cr20:
-  description: "I am flexible"
-  max_mark: 2.0
-  peer_visible: true
-  ta_visible: true
-  type: flexible
-cr100:
-  description: "I am checkbox"
-  max_mark: 5.0
-  peer_visible: false
-  ta_visible: true
-  type: checkbox
-cr80:
-  description: ""
-  max_mark: 10.0
-  peer_visible: true
-  ta_visible: true
-  type: flexible
-cr60: 
-  description: ""
-  max_mark: 10.0
-  peer_visible: false
-  ta_visible: true
-  type: flexible
+Flexible Criterion:
+    description: ""
+    max_mark: 1.0
+    peer_visible: false
+    ta_visible: true
+    type: flexible
+Checkbox Criterion:
+    description: ""
+    max_mark: 1.0
+    peer_visible: false
+    ta_visible: true
+    type: checkbox

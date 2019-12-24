@@ -31,12 +31,14 @@ class PeerReviewsController < ApplicationController
   def populate
     @assignment = Assignment.find(params[:assignment_id])
 
-    reviewer_groups = get_groupings_table_info
-    reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
+    reviewer_groups = @assignment.all_grouping_data
+    reviewee_groups = @assignment.parent_assignment.all_grouping_data
 
     reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
-    num_reviews_map = PeerReview.group(:reviewer_id).having(reviewer_id: reviewer_groups.map { |g| g['id'] }).count
+    num_reviews_map = PeerReview.group(:reviewer_id)
+                                .having(reviewer_id: reviewer_groups[:groups].map { |g| g[:_id] })
+                                .count
 
     render json: {
       reviewer_groups: reviewer_groups,

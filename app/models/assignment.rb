@@ -298,7 +298,7 @@ class Assignment < Assessment
   end
 
   def all_grouping_data
-    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name)
+    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = Hash[student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
     end
@@ -309,11 +309,13 @@ class Assignment < Assessment
                     .joins(:group)
                     .left_outer_joins(:extension)
                     .left_outer_joins(non_rejected_student_memberships: :user)
+                    .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
                                    'groups.group_name',
                                    'users.user_name',
                                    'memberships.membership_status',
+                                   'sections.name',
                                    'extensions.id',
                                    'extensions.time_delta',
                                    'extensions.apply_penalty',
@@ -345,7 +347,8 @@ class Assignment < Assessment
         admin_approved: data['groupings.admin_approved'],
         group_name: data['groups.group_name'],
         extension: extension_data,
-        members: members[data['groupings.id']]
+        members: members[data['groupings.id']],
+        section: data['sections.name'] || ''
       }
     end.compact
 
@@ -514,6 +517,7 @@ class Assignment < Assessment
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
     final_data = groupings_with_results.map do |g|
       result = g.current_result
+      has_remark = g.current_submission_used&.submitted_remark.present?
       {
         group_name: grouping_data[g.id][0]['groups.group_name'],
         section: grouping_data[g.id][0]['sections.name'],
@@ -521,7 +525,10 @@ class Assignment < Assessment
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
-        marking_state: g.marking_state(result, self, user),
+        marking_state: marking_state(has_remark,
+                                     result&.marking_state,
+                                     result&.released_to_students,
+                                     g.collection_date),
         final_grade: result&.total_mark,
         criteria: result.nil? ? {} : result.mark_hash,
         result_id: result&.id,
@@ -1103,9 +1110,7 @@ class Assignment < Assessment
     if current_user.admin?
       groupings = self.groupings
     elsif current_user.ta?
-      groupings = self.groupings
-                      .joins('INNER JOIN memberships ta_memberships ON ta_memberships.grouping_id = groupings.id')
-                      .where('ta_memberships.user_id = ?', current_user.id)
+      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
     else
       return []
     end
@@ -1114,19 +1119,13 @@ class Assignment < Assessment
            .left_outer_joins(:group, :current_submission_used)
            .pluck('groupings.id',
                   'groups.group_name',
-                  'submissions.revision_timestamp')
-
-    empty_submissions = groupings
-                        .joins(current_submission_used: :submission_files)
-                        .group('groupings.id')
-                        .count('submission_files.*')
-                        .select! { |_, v| v == 0 }
-    empty_submissions ||= {}
+                  'submissions.revision_timestamp',
+                  'submissions.is_empty')
 
     tag_data = groupings
                .joins(:tags)
-               .pluck('groupings.id', 'tags.name')
-               .group_by { |gid, _| gid }
+               .pluck_to_hash('groupings.id', 'tags.name')
+               .group_by { |h| h['groupings.id'] }
 
     if self.submission_rule.is_a? GracePeriodSubmissionRule
       deductions = groupings
@@ -1138,19 +1137,19 @@ class Assignment < Assessment
     end
 
     result_data = groupings
-                  .joins(:current_result)
+                  .left_outer_joins(current_submission_used: [:current_result, :submitted_remark])
                   .order('results.created_at DESC')
-                  .pluck('groupings.id',
-                         'results.id',
-                         'results.marking_state',
-                         'results.total_mark',
-                         'results.released_to_students')
-                  .group_by { |x| x[0] }
+                  .pluck_to_hash('groupings.id',
+                                 'results.id',
+                                 'results.marking_state',
+                                 'results.total_mark',
+                                 'results.released_to_students')
+                  .group_by { |h| h['groupings.id'] }
 
     member_data = groupings
                   .joins(:accepted_students)
-                  .pluck('groupings.id', 'users.user_name')
-                  .group_by { |gid, _| gid }
+                  .pluck_to_hash('groupings.id', 'users.user_name')
+                  .group_by { |h| h['groupings.id'] }
 
     section_data = groupings
                    .joins(inviter: :section)
@@ -1159,43 +1158,62 @@ class Assignment < Assessment
 
     collection_dates = all_grouping_collection_dates
 
+    data_collections = [tag_data, result_data, member_data, section_data, collection_dates]
+
     # This is the submission data that's actually returned
-    data.map do |g|
+    data.map do |grouping_id, group_name, revision_timestamp, is_empty|
+      tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
+      has_remark = result_info&.count&.> 1
+      result_info = result_info&.first || {}
+
       base = {
-        _id: g[0], # Needed for checkbox version of react-table
-        group_name: g[1],
-        # TODO: for some reason, this is not automatically converted to our timezone by the query
-        submission_time: g[2].nil? ? '' : I18n.l(g[2].in_time_zone),
-        tags: (tag_data[g[0]].nil? ? [] : tag_data[g[0]].map { |_, tag| tag }),
-        no_files: empty_submissions.key?(g[0])
+        _id: grouping_id, # Needed for checkbox version of react-table
+        group_name: group_name,
+        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
+        marking_state: marking_state(has_remark,
+                                     result_info['results.marking_state'],
+                                     result_info['results.released_to_students'],
+                                     collection_date)
       }
 
-      result = result_data[g[0]] && result_data[g[0]][0]
-      if result
-        base[:result_id], base[:final_grade] = result[1], result[3]
-        # Fixup for marking_state, based on Grouping#marking_state
-        if result[2] == 'incomplete' && result_data[g[0]].size > 1
-          base[:marking_state] = 'remark'
-        elsif result[4]
-          base[:marking_state] = 'released'
-        else
-          base[:marking_state] = result[2]
-        end
-      elsif collection_dates[g[0]] < Time.current
-        base[:marking_state] = 'not_collected'
-      else
-        base[:marking_state] = 'before_due_date'
+      unless is_empty || revision_timestamp.nil?
+        # TODO: for some reason, this is not automatically converted to our timezone by the query
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
       end
 
-      base[:members] = member_data[g[0]].map { |_, member| member } if member_data.key? g[0]
-      base[:section] = section_data[g[0]] if section_data.key? g[0]
-      base[:grace_credits_used] = deductions[g[0]] if self.submission_rule.is_a? GracePeriodSubmissionRule
+      if result_info['results.id'].present?
+        base[:result_id] = result_info['results.id']
+        base[:final_grade] = result_info['results.total_mark']
+      end
+
+      base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
+      base[:section] = section_info unless section_info.nil?
+      base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 
       base
     end
   end
 
   private
+
+  # Returns the marking state used in the submission and course summary tables
+  # for the result(s) for single submission.
+  #
+  # +has_remark+ is a boolean indicating whether a remark request exists for this submission
+  # +result_marking_state+ is one of Result::MARKING_STATES or nil if there are no results for this submission
+  # +released_to_students+ is a boolean indicating whether a result has been released to students
+  # +collection_date+ is a Time object indicating when the submission was collected
+  def marking_state(has_remark, result_marking_state, released_to_students, collection_date)
+    if result_marking_state.present?
+      return 'remark' if result_marking_state == Result::MARKING_STATES[:incomplete] && has_remark
+      return 'released' if released_to_students
+
+      return result_marking_state
+    end
+    return 'not_collected' if collection_date < Time.current
+
+    'before_due_date'
+  end
 
   def update_permissions_if_vcs_changed
     assignment_properties.update_permissions_if_vcs_changed
@@ -1206,7 +1224,8 @@ class Assignment < Assessment
   end
 
   def update_assigned_tokens
-    difference = assignment_properties.tokens_per_period - assignment_properties.tokens_per_period_before_last_save
+    difference = assignment_properties.tokens_per_period -
+        (assignment_properties.tokens_per_period_before_last_save || 0)
     if difference == 0
       return
     end

@@ -18,24 +18,19 @@ Markus::Application.configure do
   # Print deprecation notices to stderr.
   config.active_support.deprecation = :stderr
 
-  # Enable/disable caching. By default caching is disabled.
-  # Run rails dev:cache to toggle caching.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
-    config.action_controller.perform_caching = true
-    config.cache_store = :memory_store
-    config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
-    }
-  else
-    config.action_controller.perform_caching = false
-    config.cache_store = :null_store
-  end
+  config.cache_store = :redis_cache_store, { url: ENV.fetch('REDIS_URL') { 'redis://localhost:6379/1' } }
 
   # Show where SQL queries were generated from.
   config.active_record.verbose_query_logs = true
 
   # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
   config.action_controller.relative_url_root = '/csc108'
+
+  # Explicitly whitelist available locales for i18n-js.
+  I18n.available_locales = [:en, :fr, :es, :pt]
+
+  # Set default locale.
+  I18n.default_locale = :en
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
@@ -195,13 +190,6 @@ Markus::Application.configure do
   ###################################################################
   # Global flag to enable/disable starter code feature.
   STARTER_CODE_ON = true
-
-  ###################################################################
-  # Set this to the desired default language MarkUs should load if
-  # nothing else tells it otherwise. At the moment valid values are
-  # 'en', 'fr'. Please make sure that proper locale files are present
-  # in config/locales.
-  MARKUS_DEFAULT_LANGUAGE = 'en'
 
   ###################################################################
   # Session Timeouts

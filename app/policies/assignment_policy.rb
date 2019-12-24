@@ -1,9 +1,10 @@
 class AssignmentPolicy < ApplicationPolicy
 
   def run_tests?
-    check?(:not_a_ta?) && check?(:enabled?) && check?(:test_groups_exist?) && (!user.student? ||
-      (check?(:tokens_released?) && check?(:before_due_date?))
-    )
+    check?(:not_a_ta?) &&
+    check?(:enabled?) &&
+    check?(:test_groups_exist?) &&
+    (!user.student? || check?(:tokens_released?))
   end
 
   def not_a_ta?

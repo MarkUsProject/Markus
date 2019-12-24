@@ -1,38 +1,32 @@
 class JobMessagesController < ApplicationController
   before_action :authorize_only_for_admin
 
-  def show
-   @job_message = Rails.cache.fetch(params[:job_id])
-   respond_to do |format|
-     format.json { render 'job_messages/show'}
-   end
-  end
-
   def get
     status = ActiveJob::Status.get(params[:job_id])
-    if status.working?
-      if status[:job_class]
-        flash_now(:notice, status[:job_class].show_status(status))
-      else #default x out of y message
-        flash_now(:notice, t('poll_job.working_message', progress: status[:progress], total: status[:total]))
-      end
-    else
-      if status.queued?
-        flash_now(:notice, t('poll_job.queued'))
-      elsif status[:job_class]&.respond_to?(:show_error_message)
-        error_message = status[:job_class].show_error_message(status)
-        if error_message.present?
-          flash_now(:error, status[:job_class].show_error_message(status))
-        end
-      elsif status.completed?
-        flash_now(:success, t('poll_job.completed'))
-      else
-        flash_now(:error, t('poll_job.failed'))
-      end
-      if status.completed? || status.failed?
-        session[:job_id] = nil
-      end
+    if status.failed?
+      flash_message(:error, t('poll_job.failed')) unless status[:error_message].present?
+      session[:job_id] = nil
+    elsif status.completed?
+      status[:progress] = status[:total]
+      flash_message(:success, t('poll_job.completed'))
+      session[:job_id] = nil
+    elsif status.read.empty?
+      flash_message(:error, t('poll_job.failed'))
+      session[:job_id] = nil
+      render 'shared/http_status', locals: { code: '404', message: t('poll_job.not_enqueued') }, status: 404
+      return
     end
+    flash_job_messages(status)
     render json: status.read
+  end
+
+  private
+
+  def flash_job_messages(status)
+    flash_message(:error, status[:error_message]) if status[:error_message].present?
+    current_status = status[:job_class]&.show_status(status)
+    return if current_status.nil?
+
+    status.queued? ? flash_message(:notice, t('poll_job.queued')) : flash_message(:notice, current_status)
   end
 end

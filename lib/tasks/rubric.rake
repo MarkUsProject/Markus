@@ -11,11 +11,11 @@ namespace :db do
     end
 
     def random_words(range)
-      Faker::Lorem.words(pos_rand(range)).join(' ')
+      Faker::Lorem.words(number: pos_rand(range)).join(' ')
     end
 
     def random_sentences(range)
-      Faker::Lorem.sentence(pos_rand(range))
+      Faker::Lorem.sentence(word_count: pos_rand(range))
     end
 
     Assignment.all.each do |assignment|

@@ -19,13 +19,6 @@ es:
     results_for: "Resultados para"
     set_to_incomplete: "Marcar como Incompleto"
     set_to_complete: "Marcar como Completo"
-    state:
-      complete: "Completado"
-      in_progress: "En progreso"
-      not_collected: "No ha sido recolectado"
-      released: "Publicado"
-      remark_requested: "Recalificación solicitada"
-      before_due_date: "UPDATE ME"
     subtotal: "Subtotal"
     summary: "Resumen"
     total_extra_marks: "Notas Adicionales Totales"

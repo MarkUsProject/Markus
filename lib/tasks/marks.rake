@@ -4,6 +4,9 @@ namespace :db do
   task :marks => :environment do
     puts 'Assign Marks for Assignments (This may take a while)'
 
+    Assignment.find_by(short_identifier: 'A0').update(due_date: 24.hours.ago)
+    Assignment.where(short_identifier: %w[A1 A2]).update_all(due_date: Time.current)
+
     # Open the text for the feedback files to reference
     mfile = File.open("db/data/feedback_files/machinefb.txt", "rb")
     hfile = File.open("db/data/feedback_files/humanfb.txt", "rb")

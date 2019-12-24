@@ -266,7 +266,34 @@ describe GroupsController do
     end
 
     describe '#use_another_assignment_groups'
-    describe '#global_actions'
+    describe '#global_actions' do
+      describe 'remove_members' do
+        let(:grouping) { create :grouping_with_inviter }
+        let(:pending_student) { create :student }
+        let(:accepted_student) { create :student }
+
+        before :each do
+          create :student_membership, user: pending_student, grouping: grouping
+          create :accepted_student_membership, user: accepted_student, grouping: grouping
+        end
+
+        it 'should remove an accepted membership' do
+          post :global_actions, params: { assignment_id: grouping.assignment.id,
+                                          groupings: [grouping.id],
+                                          students_to_remove: [accepted_student.id],
+                                          global_actions: 'unassign' }
+          expect(grouping.memberships).not_to include(accepted_student)
+        end
+
+        it 'should remove a pending membership' do
+          post :global_actions, params: { assignment_id: grouping.assignment.id,
+                                          groupings: [grouping.id],
+                                          students_to_remove: [pending_student.id],
+                                          global_actions: 'unassign' }
+          expect(grouping.memberships).not_to include(pending_student)
+        end
+      end
+    end
     describe '#invalidate_groupings'
     describe '#validate_groupings'
     describe '#delete_groupings'

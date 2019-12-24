@@ -41,7 +41,7 @@ describe PenaltyDecayPeriodSubmissionRule do
 
     it 'be able to calculate collection time for a grouping' do
       expect(Time.now).to be < @assignment.due_date
-      due_date_plus_period = @assignment.due_date + 2.days
+      due_date_plus_period = @assignment.due_date + 48.hours
       expect(due_date_plus_period.to_a).to eq @rule.calculate_grouping_collection_time(@membership.grouping).to_a
     end
 

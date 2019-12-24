@@ -46,6 +46,7 @@ class SubmissionsController < ApplicationController
 
   def repo_browser
     @grouping = Grouping.find(params[:id])
+    @assignment = @grouping.assignment
     @collected_revision = nil
     @revision = nil
     @grouping.group.access_repo do |repo|
@@ -214,12 +215,10 @@ class SubmissionsController < ApplicationController
 
       collectable << grouping
     end
-    success = ''
     if collectable.count > 0
-      current_job = SubmissionsJob.perform_later(collectable)
-      session[:job_id] = current_job.job_id
-      success = I18n.t('submissions.collect.collection_job_started_for_groups',
-                       assignment_identifier: assignment.short_identifier)
+      @current_job = SubmissionsJob.perform_later(collectable,
+                                                 collection_dates: collection_dates.transform_keys(&:to_s))
+      session[:job_id] = @current_job.job_id
     end
     if some_before_due
       error = I18n.t('submissions.collect.could_not_collect_some_due',
@@ -231,7 +230,6 @@ class SubmissionsController < ApplicationController
                      assignment_identifier: assignment.short_identifier)
       flash_now(:error, error)
     end
-    flash_now(:success, success) unless success.empty?
     render 'shared/_poll_job.js.erb'
   end
 
@@ -251,7 +249,10 @@ class SubmissionsController < ApplicationController
     begin
       if !test_runs.empty?
         authorize! assignment, to: :run_tests?
-        AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, test_runs)
+        @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                    current_user.id,
+                                                    test_runs)
+        session[:job_id] = @current_job.job_id
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')
@@ -314,83 +315,84 @@ class SubmissionsController < ApplicationController
   # update_files action handles transactional submission of files.
   def update_files
     assignment_id = params[:assignment_id]
-    begin
-      @assignment = Assignment.find(assignment_id)
-      if current_user.student? && !@assignment.allow_web_submits
-        raise t('student.submission.external_submit_only')
-      end
-      @path = params[:path].blank? ? '/' : params[:path]
-
-      if current_user.student?
-        @grouping = current_user.accepted_grouping_for(assignment_id)
-        unless @grouping.is_valid?
-          set_filebrowser_vars(@grouping)
-          return
-        end
-      else
-        @grouping = @assignment.groupings.find(params[:grouping_id])
-      end
-
-      # The files that will be deleted
-      delete_files = params[:delete_files] || []
-
-      # The files that will be added
-      new_files = params[:new_files] || []
-
-      # The folders that will be added
-      new_folders = params[:new_folders] || []
-
-      # The folders that will be deleted
-      delete_folders = params[:delete_folders] || []
-
-      unless delete_folders.empty? && new_folders.empty?
-        authorize! to: :manage_subdirectories?
-      end
-
-      if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
-        flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-      else
-        messages = []
-        @grouping.group.access_repo do |repo|
-          # Create transaction, setting the author.  Timestamp is implicit.
-          txn = repo.get_transaction(current_user.user_name)
-          should_commit = true
-          path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
-          only_required = @grouping.assignment.only_required_files
-          required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
-          if delete_files.present?
-            success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages.concat msgs
-          end
-          if new_files.present?
-            success, msgs = add_files(new_files, current_user, repo,
-                                      path: path, txn: txn, check_size: true, required_files: required_files)
-            should_commit &&= success
-            messages.concat msgs
-          end
-          if new_folders.present?
-            success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages = messages.concat msgs
-          end
-          if delete_folders.present?
-            success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
-            should_commit &&= success
-            messages = messages.concat msgs
-          end
-          if should_commit
-            commit_success, commit_msg = commit_transaction(repo, txn)
-            flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
-            messages << commit_msg
-          end
-        end
-        flash_repository_messages messages
-        set_filebrowser_vars(@grouping)
-      end
-    ensure
-      redirect_back(fallback_location: root_path)
+    @assignment = Assignment.find(assignment_id)
+    if current_user.student? && !@assignment.assignment_properties.allow_web_submits
+      raise t('student.submission.external_submit_only')
     end
+
+    @path = params[:path].blank? ? '/' : params[:path]
+
+    if current_user.student?
+      @grouping = current_user.accepted_grouping_for(assignment_id)
+      unless @grouping.is_valid?
+        set_filebrowser_vars(@grouping)
+        return
+      end
+    else
+      @grouping = @assignment.groupings.find(params[:grouping_id])
+    end
+
+    # The files that will be deleted
+    delete_files = params[:delete_files] || []
+
+    # The files that will be added
+    new_files = params[:new_files] || []
+
+    # The folders that will be added
+    new_folders = params[:new_folders] || []
+
+    # The folders that will be deleted
+    delete_folders = params[:delete_folders] || []
+
+    unless delete_folders.empty? && new_folders.empty?
+      authorize! to: :manage_subdirectories?
+    end
+
+    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
+      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
+    else
+      messages = []
+      @grouping.group.access_repo do |repo|
+        # Create transaction, setting the author.  Timestamp is implicit.
+        txn = repo.get_transaction(current_user.user_name)
+        should_commit = true
+        path = Pathname.new(@grouping.assignment.assignment_properties.repository_folder).join(@path.gsub(%r{^/}, ''))
+        only_required = @grouping.assignment.assignment_properties.only_required_files
+        required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
+        if delete_files.present?
+          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages.concat msgs
+        end
+        if new_files.present?
+          success, msgs = add_files(new_files, current_user, repo,
+                                    path: path, txn: txn, check_size: true, required_files: required_files)
+          should_commit &&= success
+          messages.concat msgs
+        end
+        if new_folders.present?
+          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if delete_folders.present?
+          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
+          should_commit &&= success
+          messages = messages.concat msgs
+        end
+        if should_commit
+          commit_success, commit_msg = commit_transaction(repo, txn)
+          flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
+          messages << commit_msg
+        end
+      end
+      flash_repository_messages messages
+      set_filebrowser_vars(@grouping)
+    end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+  ensure
+    redirect_back(fallback_location: root_path)
   end
 
   def get_file
@@ -491,7 +493,10 @@ class SubmissionsController < ApplicationController
         group_name = grouping.group.repo_name
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
+          repo.send_tree_to_zip(assignment.assignment_properties.repository_folder,
+                                zip_file, zip_name + group_name, revision)
+        rescue Repository::RevisionDoesNotExist
+          next
         end
       end
     end

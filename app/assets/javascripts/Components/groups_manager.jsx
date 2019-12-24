@@ -10,6 +10,7 @@ class GroupsManager extends React.Component {
     this.state = {
       graders: [],
       students: [],
+      show_hidden: false,
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
@@ -46,6 +47,11 @@ class GroupsManager extends React.Component {
         loading: false,
       });
     });
+  };
+
+  updateShowHidden = (event) => {
+    let show_hidden = event.target.checked;
+    this.setState({show_hidden});
   };
 
   createGroup = () => {
@@ -172,12 +178,15 @@ class GroupsManager extends React.Component {
           createAllGroups={this.createAllGroups}
           createGroup={this.createGroup}
           deleteGroups={this.deleteGroups}
+          showHidden={this.state.show_hidden}
+          updateShowHidden={this.updateShowHidden}
         />
         <div className='mapping-tables'>
           <div className='mapping-table'>
             <StudentsTable
               ref={(r) => this.studentsTable = r}
               students={this.state.students} loading={this.state.loading}
+              showHidden={this.state.show_hidden}
             />
           </div>
           <div className='mapping-table'>
@@ -393,8 +402,23 @@ class RawGroupsTable extends React.Component {
 
 
 class RawStudentsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filtered: []
+    };
+  }
+
   getColumns = () => {
     return [
+      {
+        accessor: 'hidden',
+        id: 'hidden',
+        width: 0,
+        className: 'rt-hidden',
+        headerClassName: 'rt-hidden',
+        resizable: false
+      },
       {
         show: false,
         accessor: '_id',
@@ -444,6 +468,23 @@ class RawStudentsTable extends React.Component {
     ];
   };
 
+  static getDerivedStateFromProps(props, state) {
+    let filtered = [];
+    for (let i = 0; i < state.filtered.length; i++) {
+      if (state.filtered[i].id !== 'hidden') {
+        filtered.push(state.filtered[i]);
+      }
+    }
+    if (!props.showHidden) {
+      filtered.push({id: 'hidden', value: false});
+    }
+    return {filtered};
+  }
+
+  onFilteredChange = (filtered) => {
+    this.setState({filtered});
+  };
+
   render() {
     return (
       <CheckboxTable
@@ -458,6 +499,8 @@ class RawStudentsTable extends React.Component {
         ]}
         loading={this.props.loading}
         filterable
+        filtered={this.state.filtered}
+        onFilteredChange={this.onFilteredChange}
 
         {...this.props.getCheckboxProps()}
       />
@@ -475,6 +518,19 @@ class GroupsActionBox extends React.Component {
     // TODO: 'icons/bin_closed.png' for Group deletion icon
     return (
       <div className='rt-action-box'>
+        <span>
+          <input
+            id='show_hidden'
+            name='show_hidden'
+            type='checkbox'
+            checked={this.props.showHidden}
+            onChange={this.props.updateShowHidden}
+            style={{marginLeft: '5px', marginRight: '5px'}}
+          />
+          <label htmlFor='show_hidden'>
+            {I18n.t('students.display_inactive')}
+          </label>
+        </span>
         <button
           className=''
           onClick={this.props.assign}

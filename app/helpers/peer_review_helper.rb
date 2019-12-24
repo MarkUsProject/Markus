@@ -4,9 +4,9 @@ end
 module PeerReviewHelper
   # Returns a dict of: reviewee_id => [list of reviewer_id's].
   def create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
-    reviewer_ids = reviewer_groups.map { |reviewer| reviewer['id'] }
+    reviewer_ids = reviewer_groups[:groups].map { |reviewer| reviewer[:_id] }
     peer_review_map = Hash.new { |hash, key| hash[key] = [] }
-    reviewee_groups.each { |reviewee| peer_review_map[reviewee['id']] }
+    reviewee_groups[:groups].each { |reviewee| peer_review_map[reviewee[:_id]] }
 
     PeerReview.includes(result: [submission: [grouping: :group]])
               .where(reviewer_id: reviewer_ids).each do |peer_review|
@@ -23,8 +23,8 @@ module PeerReviewHelper
     # is present in both tables. This means ids from both the reviewers and the
     # reviewees group, since this data is eligible for use in both tables.
     unique_group_ids = {}
-    reviewer_groups.each { |reviewer| unique_group_ids[reviewer['id']] = 0 }
-    reviewee_groups.each { |reviewee| unique_group_ids[reviewee['id']] = 0 }
+    reviewer_groups[:groups].each { |reviewer| unique_group_ids[reviewer[:_id]] = 0 }
+    reviewee_groups[:groups].each { |reviewee| unique_group_ids[reviewee[:_id]] = 0 }
 
     # Compress into a single list so we can pass it off as a query.
     id_to_group_name_list = []

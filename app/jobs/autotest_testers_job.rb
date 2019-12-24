@@ -1,6 +1,8 @@
 class AutotestTestersJob < ApplicationJob
   queue_as MarkusConfigurator.autotest_testers_queue
 
+  def self.show_status(_status); end
+
   def perform
     server_username = MarkusConfigurator.autotest_server_username
     server_command = MarkusConfigurator.autotest_server_command
@@ -26,8 +28,6 @@ class AutotestTestersJob < ApplicationJob
       end
       testers_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
       File.open(testers_path, 'w') { |f| f.write(output) }
-    rescue StandardError => e
-      # TODO: Where to show failure?
     end
   end
 end

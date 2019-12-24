@@ -13,7 +13,6 @@ class SplitPdfJob < ApplicationJob
   end
 
   before_enqueue do |job|
-    status.update(job_class: self.class)
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
@@ -109,8 +108,7 @@ class SplitPdfJob < ApplicationJob
 
       m_logger.log('Split pdf process done')
       return split_pdf_log
-    rescue => e
-      Rails.logger.error e.message
+    rescue StandardError => e
       # Clean tmp folder
       Dir.glob('/tmp/magick-*').each { |file| File.delete(file) }
       raise e

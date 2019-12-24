@@ -91,8 +91,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id)
-                 .to_a
+      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -471,7 +470,6 @@ class GroupsController < ApplicationController
                                           ta_memberships: :user},
                                         :group]}])
                             .find(params[:assignment_id])
-    action = params[:global_actions]
     grouping_ids = params[:groupings]
     student_ids = params[:students]
     students_to_remove = params[:students_to_remove]
@@ -481,14 +479,8 @@ class GroupsController < ApplicationController
     # the error string. The front-end should get it and display
     # the message in an error div.
     begin
-      # Every action should have a grouping associated with it.
-      # (except for unassign)
-      # check_for_groupings makes sure there is at least one and
-      # raises an error if there isn't.
       groupings = Grouping.where(id: grouping_ids)
-      unless action == 'unassign'
-        check_for_groupings(groupings)
-      end
+      check_for_groupings(groupings)
 
       # Students are only needed for assign/unassign so don't
       # need to check.
@@ -504,7 +496,7 @@ class GroupsController < ApplicationController
       when 'assign'
         add_members(students, groupings, assignment)
       when 'unassign'
-        remove_members(students_to_remove, assignment)
+        remove_members(students_to_remove, groupings, assignment)
       end
       head :ok
     rescue => e
@@ -616,19 +608,19 @@ class GroupsController < ApplicationController
     grouping.reload
   end
 
-  # Removes the students contained in params from the groupings given
-  # in groupings.
-  # This is meant to be called with the params from global_actions, and for
-  # each student to delete it will have a parameter
-  # of the form "groupid_studentid"
-  # This code is possibly not safe. (should add error checking)
-  def remove_members(member_ids_to_remove, assignment)
-    members_to_remove = Student.where(user_name: member_ids_to_remove)
+  # Removes the students with user names in +member_names+ from the
+  # groupings in +groupings+. This removes any type of student membership
+  # even pending memberships.
+  #
+  # This is meant to be called with the params from global_actions
+  def remove_members(member_names, groupings, assignment)
+    members_to_remove = Student.where(user_name: member_names)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
-        grouping = member.accepted_grouping_for(assignment.id)
-        membership = grouping.student_memberships.find_by_user_id(member.id)
-        remove_member(membership, grouping, assignment)
+        groupings.each do |grouping|
+          membership = grouping.student_memberships.find_by_user_id(member.id)
+          remove_member(membership, grouping, assignment)
+        end
       end
     end
   end
