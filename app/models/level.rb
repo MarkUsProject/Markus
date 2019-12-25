@@ -1,6 +1,6 @@
 # Level represent a level within a Rubric Criterion
 class Level < ApplicationRecord
-  belongs_to :rubric_criterion, optional: true
+  belongs_to :rubric_criterion
 
   validates :name, presence: true
   validates :number, presence: true

@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels, -> { order(:mark) }
+  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion
   accepts_nested_attributes_for :levels
 
   belongs_to :assignment, counter_cache: true
