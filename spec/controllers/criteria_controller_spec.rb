@@ -19,42 +19,42 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, params: { assessment_id: 1 }
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, params: { assessment_id: 1 }
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, params: { assessment_id: 1, id: 1 }
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, params: { assessment_id: 1 }
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -63,7 +63,7 @@ describe CriteriaController do
         context 'and a submission' do
           context '#edit' do
             it 'should respond with redirect' do
-              get :edit, params: { assessment_id: assignment.id, submission_id: submission.id, id: 1 }
+              get :edit, params: { assignment_id: assignment.id, submission_id: submission.id, id: 1 }
               is_expected.to respond_with :redirect
             end
           end
@@ -72,7 +72,7 @@ describe CriteriaController do
 
       context '#download' do
         it 'should respond with redirect' do
-          get :download, params: { assessment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -81,35 +81,35 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, params: { assessment_id: 1 }
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, params: { assessment_id: 1 }
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, params: { assessment_id: 1, id: 1 }
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -118,7 +118,7 @@ describe CriteriaController do
     describe 'An authenticated and authorized admin doing a GET' do
       context '#index' do
         before(:each) do
-          get_as admin, :index, params: { assessment_id: assignment.id }
+          get_as admin, :index, params: { assignment_id: assignment.id }
         end
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
@@ -138,7 +138,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assessment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
+                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
                  format: :js
         end
 
@@ -159,7 +159,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assessment_id: 1, id: flexible_criterion.id, criterion_type: flexible_criterion.class.to_s },
+                 params: { assignment_id: 1, id: flexible_criterion.id, criterion_type: flexible_criterion.class.to_s },
                  format: :js
         end
 
@@ -186,7 +186,7 @@ describe CriteriaController do
 
             get_as admin,
                    :update,
-                   params: { assessment_id: 1, id: flexible_criterion.id,
+                   params: { assignment_id: 1, id: flexible_criterion.id,
                              flexible_criterion: { name: 'one', max_mark: 10 },
                              criterion_type: 'FlexibleCriterion' },
                    format: :js
@@ -205,7 +205,7 @@ describe CriteriaController do
           before(:each) do
             get_as admin,
                    :update,
-                   params: { assessment_id: 1, id: flexible_criterion.id,
+                   params: { assignment_id: 1, id: flexible_criterion.id,
                              flexible_criterion: { name: 'one', max_mark: 10 },
                              criterion_type: 'FlexibleCriterion' },
                    format: :js
@@ -225,7 +225,7 @@ describe CriteriaController do
     describe 'An authenticated and authorized admin doing a POST' do
       context '#index' do
         before(:each) do
-          post_as admin, :index, params: { assessment_id: assignment.id }
+          post_as admin, :index, params: { assignment_id: assignment.id }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -248,7 +248,7 @@ describe CriteriaController do
             expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
+                    params: { assignment_id: assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
                               new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
@@ -266,7 +266,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, flexible_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
@@ -287,7 +287,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, flexible_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
@@ -309,7 +309,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assessment_id: 1,
+                  params: { assignment_id: 1,
                             id: flexible_criterion.id,
                             criterion_type: flexible_criterion.class.to_s },
                   format: :js
@@ -333,7 +333,7 @@ describe CriteriaController do
                 :update_positions,
                 params: { criterion: ["#{flexible_criterion2.class} #{flexible_criterion2.id}",
                                       "#{flexible_criterion.class} #{flexible_criterion.id}"],
-                          assessment_id: assignment.id },
+                          assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
@@ -349,7 +349,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assessment_id: 1,
+                  params: { assignment_id: 1,
                             id: flexible_criterion.id,
                             criterion_type: flexible_criterion.class.to_s },
                   format: :js
@@ -379,21 +379,21 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, params: { assessment_id: 1 }
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, params: { assessment_id: 1 }
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, params: { assessment_id: 1, id: 1 }
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
 
@@ -401,7 +401,7 @@ describe CriteriaController do
           context 'and a submission' do
             context '#edit' do
               it 'should respond with redirect' do
-                get :edit, params: { assessment_id: assignment.id, submission_id: submission.id, id: 1 }
+                get :edit, params: { assignment_id: assignment.id, submission_id: submission.id, id: 1 }
                 is_expected.to respond_with :redirect
               end
             end
@@ -411,28 +411,28 @@ describe CriteriaController do
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, params: { assessment_id: 1 }
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#download' do
         it 'should respond with redirect' do
-          get :download, params: { assessment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -441,35 +441,35 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, params: { assessment_id: 1 }
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, params: { assessment_id: 1 }
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, params: { assessment_id: 1, id: 1 }
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -478,7 +478,7 @@ describe CriteriaController do
     describe 'An authenticated and authorized admin doing a GET' do
       context '#index' do
         before(:each) do
-          get_as admin, :index, params: { assessment_id: assignment.id }
+          get_as admin, :index, params: { assignment_id: assignment.id }
         end
         it 'should respond assign assignment and criteria' do
           expect(assigns(:assignment)).to be_truthy
@@ -498,7 +498,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assessment_id: assignment.id, criterion_type: 'RubricCriterion' },
+                 params: { assignment_id: assignment.id, criterion_type: 'RubricCriterion' },
                  format: :js
         end
 
@@ -519,7 +519,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assessment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                 params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
                  format: :js
         end
 
@@ -545,7 +545,7 @@ describe CriteriaController do
             )
             get_as admin,
                    :update,
-                   params: { assessment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
+                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
                              criterion_type: 'RubricCriterion' },
                    format: :js
           end
@@ -563,7 +563,7 @@ describe CriteriaController do
           before(:each) do
             get_as admin,
                    :update,
-                   params: { assessment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
+                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
                              criterion_type: 'RubricCriterion' },
                    format: :js
           end
@@ -582,7 +582,7 @@ describe CriteriaController do
     describe 'An authenticated and authorized admin doing a POST' do
       context '#index' do
         before(:each) do
-          post_as admin, :index, params: { assessment_id: assignment.id }
+          post_as admin, :index, params: { assignment_id: assignment.id }
         end
         it 'should respond with appropriate content' do
           expect(assigns(:assignment)).to be_truthy
@@ -605,7 +605,7 @@ describe CriteriaController do
             expect_any_instance_of(RubricCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
+                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
                     format: :js
           end
@@ -623,7 +623,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, rubric_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
@@ -644,7 +644,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assessment_id: assignment.id, rubric_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
@@ -666,7 +666,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assessment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
                   format: :js
         end
 
@@ -688,7 +688,7 @@ describe CriteriaController do
                 :update_positions,
                 params: { criterion: ["#{rubric_criterion2.class} #{rubric_criterion2.id}",
                                       "#{rubric_criterion.class} #{rubric_criterion.id}"],
-                          assessment_id: assignment.id },
+                          assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')
         is_expected.to respond_with(:success)
@@ -704,7 +704,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assessment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -747,14 +747,14 @@ describe CriteriaController do
     context 'When a file containing a mixture of entries is uploaded' do
 
       it 'raises an error if the file does not include any criteria' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: empty_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: empty_file }
 
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('upload_errors.blank')].map { |f| extract_text f })
       end
 
       it 'deletes all criteria previously created' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.rubric_criteria.find_by(name: rubric_criterion.name)).to be_nil
         expect(assignment.flexible_criteria.find_by(name: flexible_criterion.name)).to be_nil
@@ -762,7 +762,7 @@ describe CriteriaController do
       end
 
       it 'maintains the order between entries and positions for criteria' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria.map { |cr| [cr.name, cr.position] })
           .to match_array([['cr30', 1],
@@ -776,7 +776,7 @@ describe CriteriaController do
       end
 
       it 'creates all criteria with properly formatted entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria.map(&:name)).to contain_exactly('cr30',
                                                                        'cr20',
@@ -791,7 +791,7 @@ describe CriteriaController do
       end
 
       it 'creates rubric criteria with properly formatted entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria(:all, :rubric).pluck(:name)).to contain_exactly('cr30', 'cr90')
 
@@ -827,7 +827,7 @@ describe CriteriaController do
       end
 
       it 'creates flexible criteria with properly formatted entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
 
@@ -857,7 +857,7 @@ describe CriteriaController do
       end
 
       it 'creates checkbox criteria with properly formatted entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria(:all, :checkbox).pluck(:name)).to contain_exactly('cr100', 'cr40')
         cr1 = assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100')
@@ -868,20 +868,20 @@ describe CriteriaController do
       end
 
       it 'creates criteria being case insensitive with the type given' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
       end
 
       it 'creates criteria that lack a description' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
         expect(assignment.get_criteria(:all, :flexible).map(&:name)).to include('cr80')
         expect(assignment.get_criteria(:all, :flexible).find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
         expect(assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
         expect(assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').ta_visible).to be true
         expect(assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').peer_visible).to be false
@@ -890,14 +890,14 @@ describe CriteriaController do
       end
 
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: round_max_mark_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: round_max_mark_file }
 
         expect(assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
 
         expect(assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
       end
       it 'does not create criteria with format errors in entries' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: invalid_mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
         expect(assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error].map { |f| extract_text f })
@@ -905,19 +905,19 @@ describe CriteriaController do
       end
 
       it 'does not create criteria with an invalid mark' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: invalid_mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
         expect(assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: invalid_mixed_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
         expect(assignment.get_criteria.map(&:name)).not_to include('cr70')
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do
-        post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: partially_valid_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
 
         criteria = assignment.get_criteria(:all, :rubric).first
         expect(criteria.name).to eq('Quality of Writing')
@@ -933,17 +933,17 @@ describe CriteriaController do
 
       context 'When some criteria have been previously uploaded and and admin performs a download' do
         it 'responds with appropriate status' do
-          post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: uploaded_file }
+          post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: uploaded_file }
 
-          get :download, params: { assessment_id: assignment.id }
+          get :download, params: { assignment_id: assignment.id }
 
           expect(response.status).to eq(200)
         end
 
         it 'sends the correct information' do
-          post_as admin, :upload, params: { assessment_id: assignment.id, upload_file: test_upload_download_file }
+          post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: test_upload_download_file }
 
-          get :download, params: { assessment_id: assignment.id }
+          get :download, params: { assignment_id: assignment.id }
 
           expect(YAML.safe_load(response.body)).to eq(YAML.safe_load(expected_download.read))
         end
@@ -954,7 +954,7 @@ describe CriteriaController do
   let(:assignment) { FactoryBot.create(:assignment) }
   context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
     include_examples 'a controller supporting upload' do
-      let(:params) { { assessment_id: assignment.id } }
+      let(:params) { { assignment_id: assignment.id } }
     end
   end
 end

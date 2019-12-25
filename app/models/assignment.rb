@@ -92,7 +92,7 @@ class Assignment < Assessment
   # Copy of API::AssignmentController without the id and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description,
-                    :date, :message, :group_min, :group_max, :tokens_per_period,
+                    :due_date, :message, :group_min, :group_max, :tokens_per_period,
                     :allow_web_submits, :student_form_groups, :remark_due_date,
                     :remark_message, :assign_graders_to_criteria, :enable_test,
                     :enable_student_tests, :allow_remarks,
@@ -879,6 +879,10 @@ class Assignment < Assessment
     # be false
     return if peerreview_assignment.save
     raise ActiveRecord::Rollback
+  end
+
+  def scanned_exam?
+    assignment_properties.scanned_exam?
   end
 
   ### REPO ###

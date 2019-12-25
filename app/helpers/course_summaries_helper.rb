@@ -30,9 +30,9 @@ module CourseSummariesHelper
       @gef_weights = get_gef_marking_weights_for_all_marking_schemes
     end
 
-    rubric_max = RubricCriterion.group(:assignment_id).sum(:max_mark)
-    flexible_max = FlexibleCriterion.group(:assignment_id).sum(:max_mark)
-    checkbox_max = CheckboxCriterion.group(:assignment_id).sum(:max_mark)
+    rubric_max = RubricCriterion.group(:assessment_id).sum(:max_mark)
+    flexible_max = FlexibleCriterion.group(:assessment_id).sum(:max_mark)
+    checkbox_max = CheckboxCriterion.group(:assessment_id).sum(:max_mark)
     @max_marks = Hash[@all_assignments.map do |a|
       [a.id, rubric_max.fetch(a.id, 0) + flexible_max.fetch(a.id, 0) + checkbox_max.fetch(a.id, 0)]
     end

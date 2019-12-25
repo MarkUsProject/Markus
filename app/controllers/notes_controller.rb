@@ -122,7 +122,7 @@ class NotesController < ApplicationController
         @groupings = Array.new
         return
       end
-      @groupings = Grouping.includes(:group, student_memberships: :user).where(assignment_id: assignment.id)
+      @groupings = assignment.groupings.includes(:group, student_memberships: :user)
     end
 
     def new_retrieve

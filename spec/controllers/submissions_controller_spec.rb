@@ -6,9 +6,7 @@ describe SubmissionsController do
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -26,7 +24,7 @@ describe SubmissionsController do
                                    'text/java')
 
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
-      post_as @student, :update_files, params: { assessment_id: @assignment.id, new_files: [file_1, file_2] }
+      post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file_1, file_2] }
 
       is_expected.to respond_with(:redirect)
 
@@ -49,12 +47,12 @@ describe SubmissionsController do
     end
 
     it 'should be able to populate the file manager' do
-      get_as @student, :populate_file_manager, params: { assessment_id: @assignment.id }, format: 'json'
+      get_as @student, :populate_file_manager, params: { assignment_id: @assignment.id }, format: 'json'
       is_expected.to respond_with(:success)
     end
 
     it 'should be able to access file manager page' do
-      get_as @student, :file_manager, params: { assessment_id: @assignment.id }
+      get_as @student, :file_manager, params: { assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -67,7 +65,7 @@ describe SubmissionsController do
     end
 
     it 'should render with the assignment content layout' do
-      get_as @student, :file_manager, params: { assessment_id: @assignment.id }
+      get_as @student, :file_manager, params: { assignment_id: @assignment.id }
       expect(response).to render_template('layouts/assignment_content')
     end
 
@@ -98,7 +96,7 @@ describe SubmissionsController do
 
         post_as @student,
                 :update_files,
-                params: { assessment_id: @assignment.id, new_files: [@file_1, @file_2],
+                params: { assignment_id: @assignment.id, new_files: [@file_1, @file_2],
                           file_revisions: { 'Shapes.java' => old_file_1.from_revision,
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
@@ -145,7 +143,7 @@ describe SubmissionsController do
 
         post_as @student,
                 :update_files,
-                params: { assessment_id: @assignment.id, delete_files: ['Shapes.java'],
+                params: { assignment_id: @assignment.id, delete_files: ['Shapes.java'],
                           file_revisions: { 'Shapes.java' => old_file_1.from_revision,
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
@@ -170,19 +168,19 @@ describe SubmissionsController do
     # Repository Browser Tests
     # TODO:  TEST REPO BROWSER HERE
     it 'should not be able to use the repository browser' do
-      get_as @student, :repo_browser, params: { assessment_id: 1, id: Grouping.last.id }
+      get_as @student, :repo_browser, params: { assignment_id: 1, id: Grouping.last.id }
       is_expected.to respond_with(:missing)
     end
 
     # Stopping a curious student
     it 'should not be able download svn checkout commands' do
-      get_as @student, :download_repo_checkout_commands, params: { assessment_id: 1 }
+      get_as @student, :download_repo_checkout_commands, params: { assignment_id: 1 }
 
       is_expected.to respond_with(:missing)
     end
 
     it 'should not be able to download the svn repository list' do
-      get_as @student, :download_repo_list, params: { assessment_id: 1 }
+      get_as @student, :download_repo_list, params: { assignment_id: 1 }
 
       is_expected.to respond_with(:missing)
     end
@@ -191,9 +189,7 @@ describe SubmissionsController do
   describe 'A TA' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -221,7 +217,7 @@ describe SubmissionsController do
       revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as @ta_membership.user,
              :repo_browser,
-             params: { assessment_id: @assignment.id, id: Grouping.last.id,
+             params: { assignment_id: @assignment.id, id: Grouping.last.id,
                        revision_identifier: revision_identifier,
                        path: '/' }
       is_expected.to respond_with(:success)
@@ -231,19 +227,19 @@ describe SubmissionsController do
       revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as @ta_membership.user,
              :repo_browser,
-             params: { assessment_id: @assignment.id, id: Grouping.last.id,
+             params: { assignment_id: @assignment.id, id: Grouping.last.id,
                        revision_identifier: revision_identifier,
                        path: '/' }
       expect(response).to render_template('layouts/assignment_content')
     end
 
     it 'should be able to download the svn checkout commands' do
-      get_as @ta_membership.user, :download_repo_checkout_commands, params: { assessment_id: 1 }
+      get_as @ta_membership.user, :download_repo_checkout_commands, params: { assignment_id: 1 }
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download the svn repository list' do
-      get_as @ta_membership.user, :download_repo_list, params: { assessment_id: 1 }
+      get_as @ta_membership.user, :download_repo_list, params: { assignment_id: 1 }
       is_expected.to respond_with(:missing)
     end
   end
@@ -251,9 +247,7 @@ describe SubmissionsController do
   describe 'An administrator' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -270,22 +264,22 @@ describe SubmissionsController do
     end
 
     it 'should be able to access the repository browser' do
-      get_as @admin, :repo_browser, params: { assessment_id: @assignment.id, id: Grouping.last.id, path: '/' }
+      get_as @admin, :repo_browser, params: { assignment_id: @assignment.id, id: Grouping.last.id, path: '/' }
       is_expected.to respond_with(:success)
     end
 
     it 'should render with the assignment_content layout' do
-      get_as @admin, :repo_browser, params: { assessment_id: @assignment.id, id: Grouping.last.id, path: '/' }
+      get_as @admin, :repo_browser, params: { assignment_id: @assignment.id, id: Grouping.last.id, path: '/' }
       expect(response).to render_template(layout: 'layouts/assignment_content')
     end
 
     it 'should be able to download the svn checkout commands' do
-      get_as @admin, :download_repo_checkout_commands, params: { assessment_id: @assignment.id }
+      get_as @admin, :download_repo_checkout_commands, params: { assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
 
     it 'should be able to download the svn repository list' do
-      get_as @admin, :download_repo_list, params: { assessment_id: @assignment.id }
+      get_as @admin, :download_repo_list, params: { assignment_id: @assignment.id }
       is_expected.to respond_with(:success)
     end
 
@@ -327,7 +321,7 @@ describe SubmissionsController do
               array_including(@grouping, uncollected_grouping),
               collection_dates: hash_including
           )
-          post_as @admin, :collect_submissions, params: { assessment_id: @assignment.id,
+          post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
                                                           override: true }
         end
@@ -339,7 +333,7 @@ describe SubmissionsController do
               [uncollected_grouping],
               collection_dates: hash_including
           )
-          post_as @admin, :collect_submissions, params: { assessment_id: @assignment.id,
+          post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
                                                           override: false }
         end
@@ -349,13 +343,13 @@ describe SubmissionsController do
         allow(Assignment).to receive(:find) { @assignment }
         post_as @admin,
                 :update_submissions,
-                params: { assessment_id: 1, groupings: ([] << @assignment.groupings).flatten, release_results: 'true' }
+                params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten, release_results: 'true' }
         is_expected.to respond_with(:success)
       end
 
       context 'of selected groupings' do
         it 'should get an error if no groupings are selected' do
-          post_as @admin, :collect_submissions, params: { assessment_id: 1, groupings: [] }
+          post_as @admin, :collect_submissions, params: { assignment_id: 1, groupings: [] }
 
           is_expected.to respond_with(:bad_request)
         end
@@ -378,7 +372,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assessment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -392,7 +386,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assessment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -414,7 +408,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assessment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -428,7 +422,7 @@ describe SubmissionsController do
 
             post_as @admin,
                     :collect_submissions,
-                    params: { assessment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
+                    params: { assignment_id: 1, override: true, groupings: ([] << @assignment.groupings).flatten }
 
             expect(response).to render_template(:partial => 'shared/_poll_job.js.erb')
           end
@@ -457,7 +451,7 @@ describe SubmissionsController do
       end
       get_as @admin,
              :downloads,
-             params: { assessment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id }
+             params: { assignment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id }
 
       expect('application/zip').to eq(response.header['Content-Type'])
       is_expected.to respond_with(:success)
@@ -493,7 +487,7 @@ describe SubmissionsController do
       request.env['HTTP_REFERER'] = 'back'
       get_as @admin,
              :downloads,
-             params: { assessment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id }
+             params: { assignment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id }
 
       is_expected.to respond_with(:redirect)
     end
@@ -513,7 +507,7 @@ describe SubmissionsController do
       request.env['HTTP_REFERER'] = 'back'
       get_as @admin,
              :downloads,
-             params: { assessment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id,
+             params: { assignment_id: @assignment.id, id: @submission.id, grouping_id: @grouping.id,
                        revision_identifier: 0 }
 
       is_expected.to respond_with(:redirect)
@@ -521,9 +515,7 @@ describe SubmissionsController do
 
     describe 'attempting to download groupings files' do
       before(:each) do
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_min: 1)
+        @assignment = create(:assignment)
         @grouping_ids = []
         (1..3).to_a.each do |i|
           @grouping = create(:grouping,
@@ -546,7 +538,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to download all groups\' submissions' do
-        post_as @admin, :download_groupings_files, params: { assessment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -566,7 +558,7 @@ describe SubmissionsController do
 
       it 'should be able to download a subset of the submissions' do
         grouping_ids = @grouping_ids[0...2]
-        post_as @admin, :download_groupings_files, params: { assessment_id: @assignment.id, groupings: grouping_ids }
+        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -584,7 +576,7 @@ describe SubmissionsController do
 
       it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
         @ta = create(:ta)
-        post_as @ta, :download_groupings_files, params: { assessment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -603,7 +595,7 @@ describe SubmissionsController do
         @assignment.groupings.each do |grouping|
           create(:ta_membership, user: @ta, grouping: grouping)
         end
-        post_as @ta, :download_groupings_files, params: { assessment_id: @assignment.id, groupings: @grouping_ids }
+        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
         is_expected.to respond_with(:success)
         zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
         zip_path = Pathname.new('tmp') + zip_subpath
@@ -623,12 +615,12 @@ describe SubmissionsController do
 
   describe 'An unauthenticated or unauthorized user' do
     it 'should not be able to download the svn checkout commands' do
-      get :download_repo_checkout_commands, params: { assessment_id: 1 }
+      get :download_repo_checkout_commands, params: { assignment_id: 1 }
       is_expected.to respond_with(:redirect)
     end
 
     it 'should not be able to download the svn repository list' do
-      get :download_repo_list, params: { assessment_id: 1 }
+      get :download_repo_list, params: { assignment_id: 1 }
       is_expected.to respond_with(:redirect)
     end
   end

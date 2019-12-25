@@ -465,7 +465,7 @@ class ResultsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(submission.grouping_id)
     revision_identifier = submission.revision_identifier
-    repo_folder = assignment.repository_folder
+    repo_folder = assignment.assignment_properties.repository_folder
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
     zip_path = if params[:include_annotations] == 'true'
@@ -480,7 +480,7 @@ class ResultsController < ApplicationController
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       grouping.group.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+        repo.send_tree_to_zip(repo_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
           submission_file.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
         end

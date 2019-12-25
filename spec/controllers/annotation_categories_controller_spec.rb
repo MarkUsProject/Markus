@@ -11,19 +11,19 @@ describe AnnotationCategoriesController do
 
   context '#upload' do
     include_examples 'a controller supporting upload' do
-      let(:params) { { assessment_id: assignment.id } }
+      let(:params) { { assignment_id: assignment.id } }
     end
 
     it 'accepts a valid csv file' do
       file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
 
-      post :upload, params: { assessment_id: assignment.id, upload_file: file_good }
+      post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
 
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 2)].map { |f| extract_text f })
-      expect(response).to redirect_to(action: 'index', assessment_id: assignment.id)
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
       expect(AnnotationCategory.all.size).to eq(2)
       # check that the data is being updated, in particular
@@ -46,18 +46,18 @@ describe AnnotationCategoriesController do
         'files/annotation_categories/form_invalid_column.csv', 'text/csv'
       )
 
-      post :upload, params: { assessment_id: assignment.id, upload_file: @file_invalid_column }
+      post :upload, params: { assignment_id: assignment.id, upload_file: @file_invalid_column }
 
       expect(response.status).to eq(302)
       # One annotation category was created, and one has an error.
       expect(AnnotationCategory.all.size).to eq(1)
       expect(flash[:error].size).to eq(1)
-      expect(response).to redirect_to(action: 'index', assessment_id: assignment.id)
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
 
     it 'accepts a valid yml file' do
       @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml.yml', 'text/yml')
-      post :upload, params: { assessment_id: assignment.id, upload_file: @valid_yml_file }
+      post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
       expect(flash[:success].size).to eq(1)
       expect(response.status).to eq(302)
@@ -77,12 +77,12 @@ describe AnnotationCategoriesController do
     it 'does not accept files with empty annotation category name' do
       @yml_with_invalid_category = fixture_file_upload('files/annotation_categories/yml_with_invalid_category.yml')
 
-      post :upload, params: { assessment_id: assignment.id,
+      post :upload, params: { assignment_id: assignment.id,
                               upload_file: @yml_with_invalid_category }
       expect(response.status).to eq(302)
       expect(flash[:error].size).to eq(1)
       expect(AnnotationCategory.all.size).to eq(0)
-      expect(response).to redirect_to action: 'index', assessment_id: assignment.id
+      expect(response).to redirect_to action: 'index', assignment_id: assignment.id
     end
   end
 
@@ -107,13 +107,13 @@ describe AnnotationCategoriesController do
     end
 
     it 'responds with appropriate status' do
-      get :download, params: { assessment_id: assignment.id }, format: 'csv'
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
       expect(response.status).to eq(200)
     end
 
     # parse header object to check for the right disposition
     it 'sets disposition as attachment' do
-      get :download, params: { assessment_id: assignment.id }, format: 'csv'
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
       d = response.header['Content-Disposition'].split.first
       expect(d).to eq 'attachment;'
     end
@@ -123,18 +123,18 @@ describe AnnotationCategoriesController do
         # to prevent a 'missing template' error
         @controller.head :ok
       }
-      get :download, params: { assessment_id: assignment.id }, format: 'csv'
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
     end
 
     # parse header object to check for the right content type
     it 'returns text/csv type' do
-      get :download, params: { assessment_id: assignment.id }, format: 'csv'
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
       expect(response.media_type).to eq 'text/csv'
     end
 
     # parse header object to check for the right file naming convention
     it 'filename passes naming conventions' do
-      get :download, params: { assessment_id: assignment.id }, format: 'csv'
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
       filename = response.header['Content-Disposition']
                          .split[1].split('"').second
       expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
@@ -151,14 +151,14 @@ describe AnnotationCategoriesController do
     it 'should render an annotation context, where first part of its content matches given string' do
       string = 'This is an'
 
-      get :find_annotation_text, params: { assessment_id: annotation_category.assessment_id, string: string }
+      get :find_annotation_text, params: { assignment_id: annotation_category.assignment_id, string: string }
       expect(response.body).to eq(@annotation_text_one.content)
     end
 
     it 'should render an empty string if string does not match first part of any annotation text' do
       string = 'Hello'
 
-      get :find_annotation_text, params: { assessment_id: assignment.id, string: string }
+      get :find_annotation_text, params: { assignment_id: assignment.id, string: string }
       expect(response.body).to eq('')
     end
 
@@ -168,7 +168,7 @@ describe AnnotationCategoriesController do
                                    content: 'This is another annotation text.')
       string = 'This is an'
 
-      get :find_annotation_text, params: { assessment_id: assignment.id, string: string }
+      get :find_annotation_text, params: { assignment_id: assignment.id, string: string }
       expect(response.body).to eq('')
     end
   end

@@ -30,9 +30,9 @@ class CriteriaController < ApplicationController
     @criterion = criterion_class.new
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
     if @criterion.update(name: params[:new_criterion_prompt],
-                             assignment_id: @assignment.id,
-                             max_mark: params[:max_mark_prompt],
-                             position: @assignment.next_criterion_position)
+                         assignment: @assignment,
+                         max_mark: params[:max_mark_prompt],
+                         position: @assignment.next_criterion_position)
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
     else

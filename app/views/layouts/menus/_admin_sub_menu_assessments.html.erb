@@ -82,7 +82,7 @@
                     summary_assignment_path(target_id) %>
       </li>
     <% end %>
-    <% if assessment.enable_test %>
+    <% if assessment.assignment_properties.enable_test %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
         <%= link_to t('automated_tests.test_runs_status'),
                     batch_runs_assignment_path(target_id) %>

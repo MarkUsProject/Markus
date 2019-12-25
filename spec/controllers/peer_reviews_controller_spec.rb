@@ -29,7 +29,7 @@ describe PeerReviewsController do
       end
 
       # Perform peer_review_mapping via GET
-      get :peer_review_mapping, params: { assessment_id: @pr_id }
+      get :peer_review_mapping, params: { assignment_id: @pr_id }
       @downloaded_text = response.body
       @found_filename = response.header['Content-Disposition'].include?(
         "filename=\"#{@assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\""
@@ -61,7 +61,7 @@ describe PeerReviewsController do
 
   describe '#upload' do
     include_examples 'a controller supporting upload' do
-      let(:params) { { assessment_id: @pr_id, model: PeerReview } }
+      let(:params) { { assignment_id: @pr_id, model: PeerReview } }
     end
 
     context 'with a valid upload file' do
@@ -70,10 +70,10 @@ describe PeerReviewsController do
              params: { actionString: 'random_assign',
                        selectedReviewerGroupIds: @selected_reviewer_group_ids,
                        selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                       assessment_id: @pr_id,
+                       assignment_id: @pr_id,
                        numGroupsToAssign: 1
                      }
-        get :peer_review_mapping, params: { assessment_id: @pr_id }
+        get :peer_review_mapping, params: { assignment_id: @pr_id }
         @downloaded_text = response.body
         PeerReview.all.destroy_all
         @path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
@@ -86,7 +86,7 @@ describe PeerReviewsController do
         fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
         allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
-        post :upload, params: { assessment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
+        post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
       end
 
       after :each do
@@ -105,7 +105,7 @@ describe PeerReviewsController do
            params: { actionString: 'random_assign',
                      selectedReviewerGroupIds: @selected_reviewer_group_ids,
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assessment_id: @pr_id,
+                     assignment_id: @pr_id,
                      numGroupsToAssign: 1
            }
     end
@@ -137,7 +137,7 @@ describe PeerReviewsController do
            params: { actionString: 'assign',
                      selectedReviewerGroupIds: @selected_reviewer_group_ids,
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assessment_id: @pr_id
+                     assignment_id: @pr_id
            }
     end
 
@@ -166,7 +166,7 @@ describe PeerReviewsController do
            params: { actionString: 'assign',
                      selectedReviewerGroupIds: @selected_reviewer_group_ids,
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assessment_id: @pr_id
+                     assignment_id: @pr_id
            }
       @num_peer_reviews = @assignment_with_pr.peer_reviews.count
     end
@@ -176,7 +176,7 @@ describe PeerReviewsController do
         post :assign_groups,
              params: { actionString: 'unassign',
                        selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
-                       assessment_id: @pr_id
+                       assignment_id: @pr_id
              }
       end
       it 'deletes the correct number of peer reviews' do
@@ -195,7 +195,7 @@ describe PeerReviewsController do
         post :assign_groups,
              params: { actionString: 'unassign',
                        selectedReviewerInRevieweeGroups: selected,
-                       assessment_id: @pr_id
+                       assignment_id: @pr_id
              }
       end
 
